@@ -106,7 +106,7 @@ tasks:
     title: Icon set ported from design-reference/components.jsx
     phase: 1
     depends_on: [P1-04-primitives-base]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
     behavioral_reference: design-reference/components.jsx
     done_when:
