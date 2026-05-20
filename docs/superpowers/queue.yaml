@@ -485,7 +485,7 @@ tasks:
     title: Today screen — data wiring (sessions/sets)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-today-data.md
     done_when:
       - "spec docs/superpowers/specs/TODO-today-data.md exists"
