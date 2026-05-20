@@ -71,7 +71,10 @@
       "!src/domain/program/**/__tests__/**",
       "src/domain/plates/**/*.ts",
       "!src/domain/plates/**/*.d.ts",
-      "!src/domain/plates/**/__tests__/**"
+      "!src/domain/plates/**/__tests__/**",
+      "src/domain/e1rm/**/*.ts",
+      "!src/domain/e1rm/**/*.d.ts",
+      "!src/domain/e1rm/**/__tests__/**"
     ],
     "coverageThreshold": {
       "src/domain/program/": {
@@ -81,6 +84,12 @@
         "statements": 100
       },
       "src/domain/plates/": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      },
+      "src/domain/e1rm/": {
         "branches": 100,
         "functions": 100,
         "lines": 100,
