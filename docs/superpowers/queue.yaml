@@ -1,2 +1,470 @@
 version: 1
-tasks: []
+tasks:
+  # ───────────────────────────────── Phase 1 — Design system ─────────────────────────────────
+  - id: P1-01-tokens
+    title: Port tokens.css to typed tokens.ts
+    phase: 1
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/tokens.css
+    done_when:
+      - "apps/mobile/src/design/tokens.ts exists with named exports for colors, type, shape, motion"
+      - "Every variable in design-reference/tokens.css has a matching export"
+      - "pnpm typecheck passes"
+      - "pnpm lint passes"
+      - "rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src --type ts | grep -v tokens.ts returns empty"
+    notes: |
+      Tokens must be plain TS constants (not theme objects). Theme provider
+      will consume these. Match all alias variables (--ember, --sage, etc.).
+
+  - id: P1-02-theme-provider
+    title: ThemeProvider + useTheme + accent override hook
+    phase: 1
+    depends_on: [P1-01-tokens]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/app.jsx
+    done_when:
+      - "apps/mobile/src/design/theme.ts exports ThemeProvider, useTheme, useAccentOverride"
+      - "useAccentOverride supports the 5 accent swatches from design-reference"
+      - "jest test verifies useTheme returns tokens unchanged when no override"
+      - "jest test verifies useAccentOverride mutates only the hot accent"
+      - "pnpm test passes"
+
+  - id: P1-03-fonts
+    title: Bundle Space Grotesk + JetBrains Mono via expo-font
+    phase: 1
+    depends_on: [P1-01-tokens]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    done_when:
+      - "Both font families downloaded into apps/mobile/assets/fonts/ (5 weights each)"
+      - "expo-font useFonts hook called in root layout"
+      - "App boots without 'font not loaded' warnings"
+      - "Fonts referenced by name match the strings used in tokens.ts"
+    notes: |
+      Download Space Grotesk and JetBrains Mono from Google Fonts as TTF.
+      File names: SpaceGrotesk-{Regular,Medium,SemiBold,Bold}.ttf,
+      JetBrainsMono-{Regular,Medium,SemiBold,Bold}.ttf.
+
+  - id: P1-04-primitives-base
+    title: Box, Text, Caps, Eyebrow, WeightNum primitives
+    phase: 1
+    depends_on: [P1-02-theme-provider, P1-03-fonts]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/primitives/{Box,Text,Caps,Eyebrow,WeightNum}.tsx exist"
+      - "Each primitive has a Jest test asserting it renders and applies tokens"
+      - "rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src/design/primitives returns empty"
+      - "pnpm test passes"
+
+  - id: P1-05-press-button
+    title: PressButton primitive (ember, inverse, ghost x sm/md/lg)
+    phase: 1
+    depends_on: [P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/primitives/PressButton.tsx exists"
+      - "Supports variants: ember, inverse, ghost; sizes: sm, md, lg"
+      - "Jest test asserts accessibilityRole='button' and disabled state"
+      - "Jest test asserts onPress fires; haptic feedback fires on press"
+
+  - id: P1-06-card-segrail-stepper
+    title: Card, SegRail, NumberStepper primitives
+    phase: 1
+    depends_on: [P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/primitives/{Card,SegRail,NumberStepper}.tsx exist"
+      - "Each has accessibility roles set (button for SegRail items, adjustable for NumberStepper)"
+      - "NumberStepper jest test asserts ± buttons clamp to min/max and step value"
+      - "pnpm test passes"
+
+  - id: P1-07-storybook
+    title: Storybook 8 for React Native + dev-only route
+    phase: 1
+    depends_on: [P1-05-press-button, P1-06-card-segrail-stepper]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
+    done_when:
+      - "apps/mobile/.storybook/ configured for RN Storybook 8"
+      - "apps/mobile/app/_storybook.tsx route mounts the storybook UI"
+      - "Route is gated behind __DEV__ — production build omits it"
+      - "pnpm typecheck passes"
+
+  - id: P1-08-primitive-stories
+    title: Storybook stories for every primitive variant
+    phase: 1
+    depends_on: [P1-07-storybook]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
+    done_when:
+      - "Stories exist for: PressButton (ember/inverse/ghost x sm/md/lg), Card, SegRail, NumberStepper, WeightNum (sm/md/lg)"
+      - "Each story renders without a warning"
+      - "Storybook builds via `pnpm --filter @proof-531/mobile storybook:build` (or equivalent)"
+
+  - id: P1-09-icons
+    title: Icon set ported from design-reference/components.jsx
+    phase: 1
+    depends_on: [P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/icons/index.tsx exports Icon component with name prop"
+      - "Icon names cover at least: home, dumbbell, calendar, history, settings, arrow-right, plus, minus, check, x"
+      - "Story exists rendering the full icon catalog"
+
+  # ───────────────────────────────── Phase 2 — Domain ─────────────────────────────────
+  - id: P2-01-program-math
+    title: 5/3/1 program math (week scheme, percentages, reps, deload)
+    phase: 2
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
+    behavioral_reference: design-reference/app.jsx
+    done_when:
+      - "apps/mobile/src/domain/program/index.ts exports prescribedSets(trainingMax, week) returning Set[]"
+      - "Week 1 returns 5/5/5+ at 65/75/85%; week 2 returns 3/3/3+ at 70/80/90%; week 3 returns 5/3/1+ at 75/85/95%; week 4 deload at 40/50/60%"
+      - "fast-check property test asserts AMRAP set is always last and >= prescribed reps"
+      - "pnpm test passes"
+      - "Coverage on src/domain/program/ is 100%"
+
+  - id: P2-02-plates
+    title: calcPlates with bar weight + inventory
+    phase: 2
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/domain/plates/index.ts exports calcPlates({ target, bar, inventory }) returning { plates, remainder }"
+      - "Greedy algorithm: largest plate first, plates returned for one side"
+      - "fast-check property: sum(plates) * 2 + bar + remainder === target for valid inputs"
+      - "Unit tests for: 135lb std bar, 225lb std bar, 315lb std bar, metric (20kg bar), insufficient inventory"
+
+  - id: P2-03-e1rm
+    title: Epley e1RM + PR detection
+    phase: 2
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
+    done_when:
+      - "apps/mobile/src/domain/e1rm/index.ts exports epley(weight, reps), isPR(currentE1RM, history)"
+      - "epley(100, 10) === 133 (rounded), epley(100, 1) === 100"
+      - "fast-check property: epley is monotonically increasing in reps"
+      - "isPR returns true iff currentE1RM > max(history)"
+
+  - id: P2-04-progression
+    title: TM bump rules + cycle advance
+    phase: 2
+    depends_on: [P2-01-program-math]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
+    done_when:
+      - "apps/mobile/src/domain/progression/index.ts exports nextTrainingMax(current, category)"
+      - "upper categories bump +5; lower categories bump +10"
+      - "Cycle advance helper returns next cycle number and resets week to 1"
+      - "Unit tests cover both categories and an edge case (TM=0 ignored)"
+
+  - id: P2-05-domain-coverage-gate
+    title: Enforce 95% coverage gate on src/domain/
+    phase: 2
+    depends_on: [P2-01-program-math, P2-02-plates, P2-03-e1rm, P2-04-progression]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-3--unit--property-tests
+    done_when:
+      - "apps/mobile/jest.config.ts (or .js) has coverageThreshold for src/domain/ at 95%"
+      - "pnpm test --coverage exits 0 and prints domain coverage >= 95%"
+      - "CI workflow runs pnpm test --coverage"
+
+  # ───────────────────────────────── Phase 3 — Data ─────────────────────────────────
+  - id: P3-01-drizzle-schema
+    title: Drizzle schema + migration setup
+    phase: 3
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--data-model-drizzle-schema-sketch
+    done_when:
+      - "apps/mobile/src/data/db/schema.ts defines tables: lifts, cycles, sessions, sets, assistance"
+      - "drizzle-kit configured; pnpm --filter mobile run db:generate creates migration files"
+      - "pnpm typecheck passes"
+
+  - id: P3-02-drizzle-studio
+    title: drizzle-studio-expo plugin for in-app DB inspection
+    phase: 3
+    depends_on: [P3-01-drizzle-schema]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-1--type-safety
+    done_when:
+      - "drizzle-studio-expo plugin installed and configured"
+      - "Dev menu shows 'Open Drizzle Studio' entry in dev client"
+      - "Studio reads the running app's database without crashes"
+
+  - id: P3-03-repos
+    title: Repositories for every domain table
+    phase: 3
+    depends_on: [P3-01-drizzle-schema]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
+    done_when:
+      - "apps/mobile/src/data/repositories/{liftRepo,cycleRepo,sessionRepo,setRepo,assistanceRepo}.ts exist"
+      - "Each repo exposes: list/get/create/update where applicable"
+      - "Each repo has a jest test against in-memory SQLite (':memory:')"
+      - "pnpm test passes"
+
+  - id: P3-04-repo-memory-harness
+    title: Reusable in-memory SQLite test harness
+    phase: 3
+    depends_on: [P3-01-drizzle-schema]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-3--unit--property-tests
+    done_when:
+      - "apps/mobile/src/data/db/test-harness.ts exports createTestDb() that runs all migrations"
+      - "Used by every repo test"
+
+  - id: P3-05-query-hooks
+    title: TanStack Query hooks for session, cycle, history, PR strip
+    phase: 3
+    depends_on: [P3-03-repos]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
+    done_when:
+      - "apps/mobile/src/data/queries/ exposes: useActiveCycle, useSession, useStartSet, useCompleteSet, useHistory, usePRStrip"
+      - "Mutations invalidate the correct query keys"
+      - "Hook tests use @tanstack/react-query test utilities"
+
+  - id: P3-06-demo-seed
+    title: Seed script producing the four demo states
+    phase: 3
+    depends_on: [P3-03-repos]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
+    behavioral_reference: design-reference/app.jsx
+    done_when:
+      - "apps/mobile/src/data/db/seed.ts exports seedDemo(db, stage) for stages: freshStart, midCycle, benchOnly, advanced"
+      - "Each seed produces values matching design-reference/app.jsx buildDemoSession()"
+      - "Storybook screen stories will consume this"
+
+  # ───────────────────────────────── Phase 4 — Nav + Home ─────────────────────────────────
+  - id: P4-01-router-layout
+    title: Expo Router root layout + tabs + modals + onboarding stack
+    phase: 4
+    depends_on: [P1-07-storybook, P3-05-query-hooks]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
+    done_when:
+      - "apps/mobile/app/_layout.tsx mounts QueryClientProvider and ThemeProvider and runs db migrations"
+      - "(tabs)/_layout.tsx defines 5 tabs"
+      - "live and pr exist as modal screens"
+      - "onboarding/ is a separate stack"
+      - "App boots in dev client with no warnings"
+
+  - id: P4-02-tab-bar
+    title: Glassy tab bar component (hot-on-bg-2 pill)
+    phase: 4
+    depends_on: [P4-01-router-layout, P1-05-press-button, P1-09-icons]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
+    behavioral_reference: design-reference/app.jsx
+    done_when:
+      - "apps/mobile/src/features/navigation/TabBar.tsx renders 5 tabs with the glassy backdrop blur"
+      - "Active tab shows label + icon in hot; inactive shows icon only in 55% ink"
+      - "Story renders all 5 tab-active states"
+
+  - id: P4-03-home-screen
+    title: Home screen ported from screens-meta.jsx
+    phase: 4
+    depends_on: [P4-02-tab-bar, P3-06-demo-seed]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#52-home--the-free-picker
+    behavioral_reference: design-reference/screens-meta.jsx
+    done_when:
+      - "apps/mobile/src/features/home/HomeScreen.tsx exists"
+      - "Greeting, headline, cycle status pill, lift picker grid, stats row all render"
+      - "Single-lift mode renders one full-width card instead of grid"
+      - "Last-cycle progression notice appears when cycle just advanced"
+
+  - id: P4-04-home-stories
+    title: Home stories for all four demo stages
+    phase: 4
+    depends_on: [P4-03-home-screen, P3-06-demo-seed]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
+    done_when:
+      - "Storybook stories: home/freshStart, home/midCycle, home/benchOnly, home/advanced"
+      - "Each story seeds the in-memory db with the matching seed function"
+
+  - id: P4-05-maestro-home
+    title: Maestro flow home-renders.yaml + committed screenshots
+    phase: 4
+    depends_on: [P4-03-home-screen]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-5--e2e-with-maestro
+    done_when:
+      - "apps/mobile/.maestro/home-renders.yaml exists"
+      - "maestro test passes on iOS simulator"
+      - "apps/mobile/.maestro/screenshots/home-renders/ contains baseline PNGs"
+      - "CI runs the flow against iOS simulator"
+
+  # ───────────────────────────────── Phase 5 — Plate viz ─────────────────────────────────
+  - id: P5-01-skia-barbell
+    title: Skia Barbell plate-viz variant
+    phase: 5
+    depends_on: [P2-02-plates, P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--plate-visualization-a-centerpiece
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/plates/Barbell.tsx renders side-view bar with stacked plates via Skia"
+      - "Plate diameter scales 42%–100%; sleeves silver gradient; collars between bar/plate"
+      - "Story: Barbell variant for 5 representative weights (135/225/315/405/495 lbs)"
+
+  - id: P5-02-skia-chips
+    title: Skia Chips plate-viz variant
+    phase: 5
+    depends_on: [P2-02-plates, P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--plate-visualization-a-centerpiece
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/plates/Chips.tsx renders colored pill chips per plate per side"
+      - "Story covers the same 5 weights as Barbell"
+
+  - id: P5-03-skia-numerical
+    title: Numerical plate-viz variant
+    phase: 5
+    depends_on: [P2-02-plates, P1-04-primitives-base]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--plate-visualization-a-centerpiece
+    behavioral_reference: design-reference/components.jsx
+    done_when:
+      - "apps/mobile/src/design/plates/Numerical.tsx renders grouped count × weight"
+      - "Per-side caption rendered"
+      - "Story covers the same 5 weights"
+
+  - id: P5-04-plate-perf-budget
+    title: Reassure perf budget for plate variants
+    phase: 5
+    depends_on: [P5-01-skia-barbell, P5-02-skia-chips, P5-03-skia-numerical]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-6--perf-budgets
+    done_when:
+      - "Reassure measurement under 4ms render for each variant at 225 lbs"
+      - "CI fails if any variant regresses >10% from baseline"
+
+  # ───────────────────────────────── Phase 6 — Observability + delivery ─────────────────────────────────
+  - id: P6-01-sentry
+    title: Sentry wired with sourcemap upload via EAS Build
+    phase: 6
+    depends_on: [P4-01-router-layout]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-7--crash--behavior-monitoring
+    done_when:
+      - "@sentry/react-native installed and initialized in apps/mobile/src/lib/sentry.ts"
+      - "DSN read from EXPO_PUBLIC_SENTRY_DSN env var"
+      - "Test event sent successfully (manual or scripted)"
+      - "EAS Build hook uploads sourcemaps"
+
+  - id: P6-02-posthog
+    title: PostHog opt-in analytics
+    phase: 6
+    depends_on: [P4-01-router-layout]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-7--crash--behavior-monitoring
+    done_when:
+      - "posthog-react-native installed and initialized"
+      - "Default OFF; user toggle in Settings (stub) flips the switch"
+      - "Four events wired: onboarding_complete, set_completed, pr_detected, cycle_advanced"
+      - "No tracking when toggle is off (verified via test)"
+
+  - id: P6-03-eas-profiles
+    title: eas.json with development, preview, production profiles
+    phase: 6
+    depends_on: [P0-01-bootstrap]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
+    done_when:
+      - "apps/mobile/eas.json defines development (dev client), preview (internal), production (store) profiles"
+      - "EAS CLI accepts the config (eas build:configure --profile production --dry-run if available, otherwise eas build --dry-run for each)"
+
+  - id: P6-04-testflight
+    title: First TestFlight + Internal-track build
+    phase: 6
+    depends_on: [P6-01-sentry, P6-02-posthog, P6-03-eas-profiles, P4-05-maestro-home]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#77-phase-6--observability--delivery-half-day
+    done_when:
+      - "iOS production build succeeds via EAS Build"
+      - "Build uploaded to TestFlight"
+      - "Android production build succeeds via EAS Build"
+      - "Build uploaded to Play Console internal track"
+
+  # ───────────────────────────────── Phase 7 — Hand-off ─────────────────────────────────
+  - id: P7-01-architecture-doc
+    title: docs/ARCHITECTURE.md distilled from the spec
+    phase: 7
+    depends_on: [P4-03-home-screen]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#3--architecture
+    done_when:
+      - "docs/ARCHITECTURE.md exists summarizing stack, layout, boundary rules"
+      - "Document references the spec without restating it verbatim"
+
+  - id: P7-02-contributing-doc
+    title: docs/CONTRIBUTING.md
+    phase: 7
+    depends_on: [P0-04-skill-scaffold]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md
+    done_when:
+      - "docs/CONTRIBUTING.md exists explaining /initial-implement, queue.yaml, the harness, and how to add a new task"
+
+  - id: P7-03-backlog-screens
+    title: Append future screen tasks to queue.yaml
+    phase: 7
+    depends_on: []
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#backlog-post-foundation-separate-specs
+    done_when:
+      - "queue.yaml contains placeholder tasks (status todo, depends_on empty, body to be specified) for: onboarding, today-editorial, today-cards, today-data, live, cycle, history, library, settings, pr-modal"
+      - "Each task's spec_ref points to a still-to-be-written spec path under docs/superpowers/specs/"
+    notes: |
+      These tasks are markers — they cannot be started until their per-screen
+      spec is written via a brainstorm/spec cycle. The orchestrator will
+      decline them (planner returns BLOCKED) until specs exist.
+
+  - id: P7-04-readme
+    title: Final README pass
+    phase: 7
+    depends_on: [P4-03-home-screen]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md
+    done_when:
+      - "README.md includes: project goal, dev quick-start, link to DESIGN.md, link to ARCHITECTURE.md, /initial-implement usage"
+
+  # ───────── Phase 0 markers (already shipped by Phase 0 plan; deps reference these) ─────────
+  - id: P0-01-bootstrap
+    title: Bootstrap pnpm workspace + Expo SDK 55 app
+    phase: 0
+    depends_on: []
+    status: done
+    spec_ref: docs/superpowers/plans/2026-05-19-phase-0-bootstrap.md#task-p0-01-bootstrap-pnpm-workspace--expo-sdk-55-app
+    done_when:
+      - "Marker — see plan task P0-01"
+
+  - id: P0-04-skill-scaffold
+    title: /initial-implement skill scaffold
+    phase: 0
+    depends_on: []
+    status: done
+    spec_ref: docs/superpowers/plans/2026-05-19-phase-0-bootstrap.md#task-p0-04-initial-implement-skill-scaffold
+    done_when:
+      - "Marker — see plan task P0-04"

@@ -35,4 +35,4 @@ yq -r '.tasks | sort_by(.phase, .id) | .[] | [.id, .status, (.depends_on // [] |
         fi
       done
       $ready && echo "$id"
-    done
+    done || true   # mask pipefail's EOF=1 from the inner read loop
