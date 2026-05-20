@@ -348,7 +348,7 @@ tasks:
     title: PostHog opt-in analytics
     phase: 6
     depends_on: [P4-01-router-layout]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-7--crash--behavior-monitoring
     done_when:
       - "posthog-react-native installed and initialized"
