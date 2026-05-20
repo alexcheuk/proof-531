@@ -143,3 +143,62 @@ jobs:
           name: reassure-report
           path: apps/mobile/.reassure/
           if-no-files-found: ignore
+
+  maestro:
+    name: Maestro (iOS)
+    runs-on: macos-14
+    needs: static
+    # Boots an iOS simulator, builds the Expo dev client locally, installs it,
+    # then runs the home-renders.yaml flow. Baseline PNG screenshots produced
+    # by the flow's takeScreenshot steps land in apps/mobile/.maestro/screenshots/
+    # and are uploaded as a CI artifact.
+    #
+    # NOTE: EAS local build requires `EXPO_TOKEN` and an Apple-team membership
+    # only for production-signed builds. Internal distribution via the
+    # `preview` profile in eas.json should work without Apple credentials on
+    # an Apple Silicon macOS runner. If the build step fails on first run,
+    # configure secrets per docs/CONTRIBUTING.md and re-run.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Boot iOS simulator
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices "iPhone 15" available -j | jq -r '.devices | to_entries[] | .value[] | select(.isAvailable == true) | .udid' | head -n 1)
+          echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+
+      - name: Build Expo dev client (iOS, simulator)
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile preview --non-interactive --output ./build/proof-531.app
+
+      - name: Install app on simulator
+        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
+
+      - name: Run Maestro flow
+        run: maestro test apps/mobile/.maestro/home-renders.yaml
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots
+          path: apps/mobile/.maestro/screenshots/
+          if-no-files-found: warn

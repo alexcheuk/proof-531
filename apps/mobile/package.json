@@ -14,6 +14,7 @@
     "doctor": "expo-doctor",
     "storybook:generate": "node scripts/storybook-generate.mjs",
     "storybook:build": "pnpm run storybook:generate && pnpm typecheck",
+    "maestro:home": "maestro test .maestro/home-renders.yaml",
     "db:generate": "drizzle-kit generate",
     "perf": "reassure",
     "perf:baseline": "reassure --baseline"
