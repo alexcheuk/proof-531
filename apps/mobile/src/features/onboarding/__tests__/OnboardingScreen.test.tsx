@@ -11,12 +11,12 @@ describe('OnboardingScreen', () => {
     const { getByTestId, getByText, getAllByRole } = wrap(<OnboardingScreen onFinish={onFinish} />);
 
     // Intro
-    const introHeader = getByText('Welcome to 531 Strength');
+    const introHeader = getByTestId('intro-header');
     expect(introHeader.props.accessibilityRole).toBe('header');
     fireEvent.press(getByTestId('intro-begin'));
 
     // Select
-    const selectHeader = getByText('Pick your lifts');
+    const selectHeader = getByTestId('select-header');
     expect(selectHeader.props.accessibilityRole).toBe('header');
     expect(getByTestId('lift-toggle-squat')).toBeTruthy();
     expect(getByTestId('lift-toggle-bench')).toBeTruthy();
