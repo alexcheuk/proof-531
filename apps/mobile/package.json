@@ -68,10 +68,19 @@
     "collectCoverageFrom": [
       "src/domain/program/**/*.ts",
       "!src/domain/program/**/*.d.ts",
-      "!src/domain/program/**/__tests__/**"
+      "!src/domain/program/**/__tests__/**",
+      "src/domain/plates/**/*.ts",
+      "!src/domain/plates/**/*.d.ts",
+      "!src/domain/plates/**/__tests__/**"
     ],
     "coverageThreshold": {
       "src/domain/program/": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      },
+      "src/domain/plates/": {
         "branches": 100,
         "functions": 100,
         "lines": 100,
