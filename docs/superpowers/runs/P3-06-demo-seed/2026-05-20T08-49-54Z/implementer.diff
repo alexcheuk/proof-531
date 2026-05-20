@@ -1,0 +1,548 @@
+diff --git a/apps/mobile/src/data/db/__tests__/seed.test.ts b/apps/mobile/src/data/db/__tests__/seed.test.ts
+new file mode 100644
+index 0000000..ba4509f
+--- /dev/null
++++ b/apps/mobile/src/data/db/__tests__/seed.test.ts
+@@ -0,0 +1,199 @@
++import { type DemoStage, seedDemo } from '../seed';
++import { createTestDb } from '../test-harness';
++
++type Count = { n: number };
++
++function count(sqlite: { prepare: (sql: string) => { get: () => unknown } }, sql: string): number {
++  return (sqlite.prepare(sql).get() as Count).n;
++}
++
++describe('seedDemo', () => {
++  describe('freshStart', () => {
++    it('seeds 4 lifts (all enabled) and no cycles/sessions/sets', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'freshStart');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts')).toBe(4);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts WHERE enabled = 1')).toBe(4);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM cycles')).toBe(0);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sessions')).toBe(0);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sets')).toBe(0);
++      } finally {
++        close();
++      }
++    });
++
++    it('uses the canonical training maxes from buildDemoSession', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'freshStart');
++        const rows = sqlite
++          .prepare('SELECT id, training_max FROM lifts ORDER BY id')
++          .all() as Array<{ id: string; training_max: number }>;
++        const tm = Object.fromEntries(rows.map((r) => [r.id, r.training_max]));
++        expect(tm).toEqual({ squat: 235, bench: 175, deadlift: 305, press: 115 });
++      } finally {
++        close();
++      }
++    });
++  });
++
++  describe('midCycle', () => {
++    it('seeds 4 lifts with 3 enabled (no press) and matches canonical TMs', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'midCycle');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts')).toBe(4);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts WHERE enabled = 1')).toBe(3);
++        const enabledRow = sqlite.prepare('SELECT id FROM lifts WHERE enabled = 0').get() as {
++          id: string;
++        };
++        expect(enabledRow.id).toBe('press');
++        const rows = sqlite
++          .prepare('SELECT id, training_max FROM lifts ORDER BY id')
++          .all() as Array<{ id: string; training_max: number }>;
++        const tm = Object.fromEntries(rows.map((r) => [r.id, r.training_max]));
++        expect(tm).toEqual({ squat: 275, bench: 195, deadlift: 345, press: 0 });
++      } finally {
++        close();
++      }
++    });
++
++    it('seeds 3 cycles (2 completed, cycle 3 active) and one active session', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'midCycle');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM cycles')).toBe(3);
++        expect(
++          count(sqlite, 'SELECT COUNT(*) AS n FROM cycles WHERE completed_at IS NOT NULL'),
++        ).toBe(2);
++        // 8 completed sessions + 1 active = 9
++        expect(
++          count(sqlite, 'SELECT COUNT(*) AS n FROM sessions WHERE completed_at IS NOT NULL'),
++        ).toBe(8);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sessions WHERE completed_at IS NULL')).toBe(
++          1,
++        );
++        // Sets: 3 per completed session
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sets')).toBe(24);
++      } finally {
++        close();
++      }
++    });
++  });
++
++  describe('benchOnly', () => {
++    it('seeds only bench as enabled with TM 215', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'benchOnly');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts WHERE enabled = 1')).toBe(1);
++        const row = sqlite
++          .prepare('SELECT id, training_max FROM lifts WHERE enabled = 1')
++          .get() as { id: string; training_max: number };
++        expect(row.id).toBe('bench');
++        expect(row.training_max).toBe(215);
++        // Other lifts present but TM=0
++        const others = sqlite
++          .prepare('SELECT training_max FROM lifts WHERE enabled = 0')
++          .all() as Array<{ training_max: number }>;
++        expect(others).toHaveLength(3);
++        for (const o of others) expect(o.training_max).toBe(0);
++      } finally {
++        close();
++      }
++    });
++
++    it('seeds cycle 4 active with 1 completed bench session', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'benchOnly');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM cycles')).toBe(4);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM cycles WHERE completed_at IS NULL')).toBe(
++          1,
++        );
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sessions')).toBe(1);
++        const session = sqlite.prepare('SELECT lift_id, completed_at FROM sessions').get() as {
++          lift_id: string;
++          completed_at: number | null;
++        };
++        expect(session.lift_id).toBe('bench');
++        expect(session.completed_at).not.toBeNull();
++      } finally {
++        close();
++      }
++    });
++  });
++
++  describe('advanced', () => {
++    it('seeds 6 cycles (5 completed, cycle 6 active) with canonical TMs', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'advanced');
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM cycles')).toBe(6);
++        expect(
++          count(sqlite, 'SELECT COUNT(*) AS n FROM cycles WHERE completed_at IS NOT NULL'),
++        ).toBe(5);
++        const rows = sqlite
++          .prepare('SELECT id, training_max FROM lifts ORDER BY id')
++          .all() as Array<{ id: string; training_max: number }>;
++        const tm = Object.fromEntries(rows.map((r) => [r.id, r.training_max]));
++        expect(tm).toEqual({ squat: 320, bench: 220, deadlift: 405, press: 145 });
++      } finally {
++        close();
++      }
++    });
++
++    it('seeds 13 completed sessions and 1 active session with 2 completed sets', () => {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        seedDemo(db, 'advanced');
++        expect(
++          count(sqlite, 'SELECT COUNT(*) AS n FROM sessions WHERE completed_at IS NOT NULL'),
++        ).toBe(13);
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM sessions WHERE completed_at IS NULL')).toBe(
++          1,
++        );
++        const active = sqlite
++          .prepare('SELECT id, lift_id FROM sessions WHERE completed_at IS NULL')
++          .get() as { id: number; lift_id: string };
++        expect(active.lift_id).toBe('bench');
++        // 2 of 3 sets done on the active session
++        const completedSetsOnActive = count(
++          sqlite,
++          `SELECT COUNT(*) AS n FROM sets WHERE session_id = ${active.id} AND completed_at IS NOT NULL`,
++        );
++        expect(completedSetsOnActive).toBe(2);
++        const totalSetsOnActive = count(
++          sqlite,
++          `SELECT COUNT(*) AS n FROM sets WHERE session_id = ${active.id}`,
++        );
++        expect(totalSetsOnActive).toBe(3);
++      } finally {
++        close();
++      }
++    });
++  });
++
++  it('throws on an unknown stage', () => {
++    const { db, close } = createTestDb();
++    try {
++      expect(() => seedDemo(db, 'bogus' as unknown as DemoStage)).toThrow(/unknown stage/);
++    } finally {
++      close();
++    }
++  });
++
++  it('is idempotent per-fresh-db across stages (separate dbs)', () => {
++    for (const stage of ['freshStart', 'midCycle', 'benchOnly', 'advanced'] as const) {
++      const { db, sqlite, close } = createTestDb();
++      try {
++        expect(() => seedDemo(db, stage)).not.toThrow();
++        // At minimum lifts must be populated for every stage.
++        expect(count(sqlite, 'SELECT COUNT(*) AS n FROM lifts')).toBe(4);
++      } finally {
++        close();
++      }
++    }
++  });
++});
+diff --git a/apps/mobile/src/data/db/seed.ts b/apps/mobile/src/data/db/seed.ts
+new file mode 100644
+index 0000000..60535c0
+--- /dev/null
++++ b/apps/mobile/src/data/db/seed.ts
+@@ -0,0 +1,337 @@
++/**
++ * seedDemo — populate an in-memory or dev SQLite database with one of four
++ * canonical demo stages. Values mirror `design-reference/app.jsx
++ * buildDemoSession()` so screen stories and the dev shell render identically.
++ *
++ * Stage summary (from buildDemoSession):
++ *   freshStart: cycle 1, week 1, all 4 lifts enabled, 0 sessions
++ *   midCycle:   cycle 3, week 2, 3 lifts (no press), 8 sessions complete
++ *   benchOnly:  cycle 4, week 2, bench only, 1 session complete
++ *   advanced:   cycle 6, week 3, all 4 lifts, 13 sessions complete
++ */
++import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
++import * as schema from './schema';
++
++export type DemoStage = 'freshStart' | 'midCycle' | 'benchOnly' | 'advanced';
++
++type DemoDb = BetterSQLite3Database<typeof schema>;
++
++const DAY = 24 * 60 * 60 * 1000;
++
++type LiftSeed = {
++  id: string;
++  label: string;
++  category: 'lower' | 'upper';
++  trainingMax: number;
++  enabled: boolean;
++};
++
++const ALL_LIFTS: Record<string, Omit<LiftSeed, 'trainingMax' | 'enabled'>> = {
++  squat: { id: 'squat', label: 'Squat', category: 'lower' },
++  bench: { id: 'bench', label: 'Bench', category: 'upper' },
++  deadlift: { id: 'deadlift', label: 'Deadlift', category: 'lower' },
++  press: { id: 'press', label: 'Press', category: 'upper' },
++};
++
++function buildLifts(
++  trainingMax: Record<string, number>,
++  enabledIds: ReadonlyArray<string>,
++): LiftSeed[] {
++  const enabledSet = new Set(enabledIds);
++  return Object.values(ALL_LIFTS).map((base) => ({
++    ...base,
++    trainingMax: trainingMax[base.id] ?? 0,
++    enabled: enabledSet.has(base.id),
++  }));
++}
++
++function insertLifts(db: DemoDb, lifts: LiftSeed[]): void {
++  db.insert(schema.lifts).values(lifts).run();
++}
++
++/** Round to nearest 5 lb — matches the spec's plate rounding. */
++function round5(n: number): number {
++  return Math.round(n / 5) * 5;
++}
++
++/**
++ * 5/3/1 week 1 set scheme: 65%/75%/85% × 5/5/5+
++ * Generates the three main work sets for a given training max.
++ */
++function week1Sets(
++  sessionId: number,
++  trainingMax: number,
++  completedAt: Date,
++): Array<typeof schema.sets.$inferInsert> {
++  const pcts = [0.65, 0.75, 0.85] as const;
++  return pcts.map((pct, i) => ({
++    sessionId,
++    index: i,
++    type: i === 2 ? 'amrap' : 'main',
++    prescribedWeight: round5(trainingMax * pct),
++    prescribedReps: 5,
++    actualReps: i === 2 ? 7 : 5, // AMRAP set went 7
++    completedAt,
++  }));
++}
++
++function seedFreshStart(db: DemoDb): void {
++  insertLifts(
++    db,
++    buildLifts({ squat: 235, bench: 175, deadlift: 305, press: 115 }, [
++      'squat',
++      'bench',
++      'deadlift',
++      'press',
++    ]),
++  );
++  // No cycles / sessions / sets — fresh slate post-onboarding.
++}
++
++function seedMidCycle(db: DemoDb): void {
++  insertLifts(
++    db,
++    buildLifts({ squat: 275, bench: 195, deadlift: 345, press: 0 }, ['squat', 'bench', 'deadlift']),
++  );
++
++  const now = new Date();
++  // Cycle 3 started ~5 weeks ago; cycles 1 and 2 are prior.
++  const cycle1Start = new Date(now.getTime() - 13 * 7 * DAY);
++  const cycle1End = new Date(now.getTime() - 9 * 7 * DAY);
++  const cycle2Start = cycle1End;
++  const cycle2End = new Date(now.getTime() - 5 * 7 * DAY);
++  const cycle3Start = cycle2End;
++
++  db.insert(schema.cycles)
++    .values([
++      { number: 1, startedAt: cycle1Start, completedAt: cycle1End },
++      { number: 2, startedAt: cycle2Start, completedAt: cycle2End },
++      { number: 3, startedAt: cycle3Start },
++    ])
++    .run();
++
++  // Cycle 3 in flight: week 1 complete for all 3 lifts, week 2 squat completed,
++  // week 2 bench completed, week 2 deadlift completed, week 2 squat day in progress.
++  // Total sessions in cycle 3: 3 (week 1) + 3 (week 2 prior) + 1 (active) = 7.
++  // Combined with 1 catch-up from cycle 2 we land at the canonical 8 completed
++  // sessions described in buildDemoSession.
++  const cycle3Id = 3;
++
++  // 6 completed sessions across cycle 3 (week 1 x 3 lifts, week 2 x 3 lifts)
++  // plus 1 catch-up from cycle 2 makes 7 completed — and a final active session.
++  // We materialize 7 completed + 1 active = 8 total sessions, 8 completed-or-active.
++  // (buildDemoSession reports "8 sessions done" — we treat that as 8 completed.)
++  const completedSessions: Array<{
++    cycleId: number;
++    liftId: string;
++    week: number;
++    daysAgo: number;
++  }> = [
++    { cycleId: 2, liftId: 'press', week: 4, daysAgo: 36 }, // cycle 2 tail
++    { cycleId: cycle3Id, liftId: 'squat', week: 1, daysAgo: 28 },
++    { cycleId: cycle3Id, liftId: 'bench', week: 1, daysAgo: 26 },
++    { cycleId: cycle3Id, liftId: 'deadlift', week: 1, daysAgo: 24 },
++    { cycleId: cycle3Id, liftId: 'squat', week: 2, daysAgo: 21 },
++    { cycleId: cycle3Id, liftId: 'bench', week: 2, daysAgo: 19 },
++    { cycleId: cycle3Id, liftId: 'deadlift', week: 2, daysAgo: 17 },
++    { cycleId: cycle3Id, liftId: 'squat', week: 2, daysAgo: 7 },
++  ];
++
++  for (const s of completedSessions) {
++    if (s.liftId === 'press') {
++      // Cycle 2 press session — we skip it because press isn't enabled in cycle
++      // 3's lift roster. But we still want it in the historical record. The
++      // foreign key targets `lifts(id)`, and `press` is present in the lifts
++      // table (just `enabled = false`). Keep it.
++    }
++    const startedAt = new Date(now.getTime() - s.daysAgo * DAY);
++    const completedAt = new Date(startedAt.getTime() + 60 * 60 * 1000);
++    const row = db
++      .insert(schema.sessions)
++      .values({
++        cycleId: s.cycleId,
++        liftId: s.liftId,
++        week: s.week,
++        startedAt,
++        completedAt,
++      })
++      .returning({ id: schema.sessions.id })
++      .get();
++    if (!row) throw new Error('seedMidCycle: failed to insert session');
++    // Add 3 work sets — pulled from the lift's TM. Use TM as denominator;
++    // skip press where TM is 0.
++    const tm =
++      s.liftId === 'squat' ? 275 : s.liftId === 'bench' ? 195 : s.liftId === 'deadlift' ? 345 : 115; // press fallback
++    db.insert(schema.sets)
++      .values(week1Sets(row.id, tm, completedAt))
++      .run();
++  }
++
++  // Active session — today's squat day 1
++  db.insert(schema.sessions)
++    .values({
++      cycleId: cycle3Id,
++      liftId: 'squat',
++      week: 2,
++      startedAt: now,
++    })
++    .run();
++}
++
++function seedBenchOnly(db: DemoDb): void {
++  insertLifts(db, buildLifts({ squat: 0, bench: 215, deadlift: 0, press: 0 }, ['bench']));
++
++  const now = new Date();
++  // 3 prior cycles complete, cycle 4 active.
++  const weekOffset = (wks: number): Date => new Date(now.getTime() + wks * 7 * DAY);
++  const c1Start = weekOffset(-21);
++  const c2Start = weekOffset(-14);
++  const c3Start = weekOffset(-7);
++  const c4Start = weekOffset(0);
++  db.insert(schema.cycles)
++    .values([
++      { number: 1, startedAt: c1Start, completedAt: c2Start },
++      { number: 2, startedAt: c2Start, completedAt: c3Start },
++      { number: 3, startedAt: c3Start, completedAt: c4Start },
++      { number: 4, startedAt: c4Start },
++    ])
++    .run();
++
++  // 1 completed bench session in cycle 4 (week 1) — matches "completedSessions: 1".
++  const startedAt = new Date(now.getTime() - 3 * DAY);
++  const completedAt = new Date(startedAt.getTime() + 60 * 60 * 1000);
++  const row = db
++    .insert(schema.sessions)
++    .values({
++      cycleId: 4,
++      liftId: 'bench',
++      week: 1,
++      startedAt,
++      completedAt,
++    })
++    .returning({ id: schema.sessions.id })
++    .get();
++  if (!row) throw new Error('seedBenchOnly: failed to insert session');
++  db.insert(schema.sets)
++    .values(week1Sets(row.id, 215, completedAt))
++    .run();
++}
++
++function seedAdvanced(db: DemoDb): void {
++  insertLifts(
++    db,
++    buildLifts({ squat: 320, bench: 220, deadlift: 405, press: 145 }, [
++      'squat',
++      'bench',
++      'deadlift',
++      'press',
++    ]),
++  );
++
++  const now = new Date();
++  // 5 completed cycles + cycle 6 active.
++  const cycleRows: Array<typeof schema.cycles.$inferInsert> = [];
++  for (let n = 1; n <= 5; n++) {
++    const startedAt = new Date(now.getTime() - (6 - n) * 4 * 7 * DAY);
++    const completedAt = new Date(now.getTime() - (5 - n) * 4 * 7 * DAY);
++    cycleRows.push({ number: n, startedAt, completedAt });
++  }
++  cycleRows.push({ number: 6, startedAt: new Date(now.getTime() - 14 * DAY) });
++  db.insert(schema.cycles).values(cycleRows).run();
++
++  // 13 completed sessions: 3 from cycle 6 week 1 (squat/bench/deadlift), week 2
++  // all 4, week 3 squat + deadlift + press + bench (today's in progress not
++  // counted). Plus 2 historical leftovers. Keep precise enough to satisfy the
++  // canonical "completedSessions: 13".
++  const completed: Array<{
++    cycleId: number;
++    liftId: string;
++    week: number;
++    daysAgo: number;
++    tm: number;
++  }> = [
++    { cycleId: 5, liftId: 'press', week: 4, daysAgo: 30, tm: 145 },
++    { cycleId: 5, liftId: 'deadlift', week: 4, daysAgo: 28, tm: 405 },
++    { cycleId: 6, liftId: 'squat', week: 1, daysAgo: 14, tm: 320 },
++    { cycleId: 6, liftId: 'bench', week: 1, daysAgo: 12, tm: 220 },
++    { cycleId: 6, liftId: 'deadlift', week: 1, daysAgo: 10, tm: 405 },
++    { cycleId: 6, liftId: 'press', week: 1, daysAgo: 9, tm: 145 },
++    { cycleId: 6, liftId: 'squat', week: 2, daysAgo: 7, tm: 320 },
++    { cycleId: 6, liftId: 'bench', week: 2, daysAgo: 5, tm: 220 },
++    { cycleId: 6, liftId: 'deadlift', week: 2, daysAgo: 4, tm: 405 },
++    { cycleId: 6, liftId: 'press', week: 2, daysAgo: 3, tm: 145 },
++    { cycleId: 6, liftId: 'squat', week: 3, daysAgo: 2, tm: 320 },
++    { cycleId: 6, liftId: 'deadlift', week: 3, daysAgo: 1, tm: 405 },
++    { cycleId: 6, liftId: 'press', week: 3, daysAgo: 1, tm: 145 },
++  ];
++  for (const s of completed) {
++    const startedAt = new Date(now.getTime() - s.daysAgo * DAY);
++    const completedAt = new Date(startedAt.getTime() + 60 * 60 * 1000);
++    const row = db
++      .insert(schema.sessions)
++      .values({
++        cycleId: s.cycleId,
++        liftId: s.liftId,
++        week: s.week,
++        startedAt,
++        completedAt,
++      })
++      .returning({ id: schema.sessions.id })
++      .get();
++    if (!row) throw new Error('seedAdvanced: failed to insert session');
++    db.insert(schema.sets)
++      .values(week1Sets(row.id, s.tm, completedAt))
++      .run();
++  }
++
++  // Today's active session — bench, week 3, 2 sets done (mirrors
++  // completedSets: 2 in buildDemoSession).
++  const benchActive = db
++    .insert(schema.sessions)
++    .values({ cycleId: 6, liftId: 'bench', week: 3, startedAt: now })
++    .returning({ id: schema.sessions.id })
++    .get();
++  if (!benchActive) throw new Error('seedAdvanced: failed to insert active session');
++  // 2 of 3 sets completed (no completedAt on session — still in progress).
++  const pcts = [0.75, 0.85, 0.95] as const;
++  db.insert(schema.sets)
++    .values(
++      pcts.map((pct, i) => ({
++        sessionId: benchActive.id,
++        index: i,
++        type: i === 2 ? 'amrap' : 'main',
++        prescribedWeight: round5(220 * pct),
++        prescribedReps: i === 2 ? 1 : i === 1 ? 3 : 5,
++        actualReps: i < 2 ? (i === 1 ? 3 : 5) : null,
++        completedAt: i < 2 ? now : null,
++      })),
++    )
++    .run();
++}
++
++/**
++ * Populate `db` with the canonical demo data for `stage`.
++ *
++ * Stage values must match `buildDemoSession` in `design-reference/app.jsx`.
++ * Call against a database that already has migrations applied.
++ */
++export function seedDemo(db: DemoDb, stage: DemoStage): void {
++  switch (stage) {
++    case 'freshStart':
++      seedFreshStart(db);
++      return;
++    case 'midCycle':
++      seedMidCycle(db);
++      return;
++    case 'benchOnly':
++      seedBenchOnly(db);
++      return;
++    case 'advanced':
++      seedAdvanced(db);
++      return;
++    default: {
++      const _exhaustive: never = stage;
++      throw new Error(`seedDemo: unknown stage ${String(_exhaustive)}`);
++    }
++  }
++}

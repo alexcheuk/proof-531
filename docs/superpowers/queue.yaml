@@ -226,7 +226,7 @@ tasks:
     title: Seed script producing the four demo states
     phase: 3
     depends_on: [P3-03-repos]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
     behavioral_reference: design-reference/app.jsx
     done_when:
