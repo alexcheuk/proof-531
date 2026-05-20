@@ -410,7 +410,7 @@ tasks:
     title: Final README pass
     phase: 7
     depends_on: [P4-03-home-screen]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md
     done_when:
       - "README.md includes: project goal, dev quick-start, link to DESIGN.md, link to ARCHITECTURE.md, /initial-implement usage"
