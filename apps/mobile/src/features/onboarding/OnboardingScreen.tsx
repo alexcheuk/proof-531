@@ -1,6 +1,6 @@
-import { colors, shape } from '@/design/tokens';
+import { colors } from '@/design/tokens';
 import { useCallback, useReducer } from 'react';
-import { ScrollView } from 'react-native';
+import { View } from 'react-native';
 import {
   LIFT_ORDER,
   type LiftId,
@@ -108,11 +108,7 @@ export function OnboardingScreen({ onFinish }: OnboardingScreenProps) {
   }, [onFinish, state.unit, state.entries, state.enabled]);
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.bg0 }}
-      contentContainerStyle={{ padding: shape.rLg, gap: shape.rLg }}
-      testID="onboarding-screen"
-    >
+    <View style={{ flex: 1, backgroundColor: colors.bg0 }} testID="onboarding-screen">
       {state.step === 'intro' ? <IntroStep onBegin={() => dispatch({ type: 'BEGIN' })} /> : null}
 
       {state.step === 'select' ? (
@@ -149,7 +145,7 @@ export function OnboardingScreen({ onFinish }: OnboardingScreenProps) {
           onDone={handleFinish}
         />
       ) : null}
-    </ScrollView>
+    </View>
   );
 }
 

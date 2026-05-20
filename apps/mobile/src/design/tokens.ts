@@ -70,6 +70,11 @@ export const shape = {
   weekLabel: 48,
   iconButton: 36,
   /**
+   * 26-px circular numbered bullet used in onboarding's intro panel.
+   * Matches `design-reference/screens-onboarding.jsx` `BulletPoint`.
+   */
+  bulletDot: 26,
+  /**
    * A 1-px hairline border — the smallest discrete border width on a
    * standard display. Use instead of inline `1` literals so the constant has
    * a name and lives in tokens.
