@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "lint": "biome check src app",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "storybook:generate": "node scripts/storybook-generate.mjs",
+    "storybook:build": "pnpm run storybook:generate && pnpm typecheck"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
