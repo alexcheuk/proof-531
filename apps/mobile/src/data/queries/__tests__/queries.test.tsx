@@ -203,7 +203,9 @@ describe('useStartSet (mutation)', () => {
         prescribedReps: 5,
       });
     });
-    expect(result.current.isSuccess).toBe(true);
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
     expect(result.current.data?.sessionId).toBe(sessionId);
     expect(result.current.data?.prescribedWeight).toBe(195);
     h.close();
@@ -222,7 +224,9 @@ describe('useCompleteSet (mutation)', () => {
     await act(async () => {
       await result.current.mutateAsync({ id: setId, actualReps: 7 });
     });
-    expect(result.current.isSuccess).toBe(true);
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
     expect(result.current.data?.actualReps).toBe(7);
     expect(result.current.data?.completedAt).toBeInstanceOf(Date);
     h.close();
