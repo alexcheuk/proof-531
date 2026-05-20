@@ -380,7 +380,7 @@ tasks:
     title: docs/ARCHITECTURE.md distilled from the spec
     phase: 7
     depends_on: [P4-03-home-screen]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#3--architecture
     done_when:
       - "docs/ARCHITECTURE.md exists summarizing stack, layout, boundary rules"
