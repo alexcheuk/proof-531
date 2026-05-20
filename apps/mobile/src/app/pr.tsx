@@ -1,20 +1,21 @@
-import { Text } from '@/design/primitives/Text';
-import { colors } from '@/design/tokens';
-import { StyleSheet, View } from 'react-native';
+import { PRModal } from '@/features/pr/PRModal';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
-export default function PrModal() {
+export default function PrModalRoute() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{
+    liftLabel?: string;
+    priorE1RM?: string;
+    newE1RM?: string;
+    unit?: string;
+  }>();
   return (
-    <View style={styles.container}>
-      <Text variant="title">PR</Text>
-    </View>
+    <PRModal
+      liftLabel={params.liftLabel ?? 'Lift'}
+      priorE1RM={params.priorE1RM ? Number(params.priorE1RM) : 0}
+      newE1RM={params.newE1RM ? Number(params.newE1RM) : 0}
+      unit={(params.unit as 'lbs' | 'kg') ?? 'lbs'}
+      onContinue={() => router.back()}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

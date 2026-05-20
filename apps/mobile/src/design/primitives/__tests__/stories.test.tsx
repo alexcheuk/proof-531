@@ -7,6 +7,7 @@ import * as HistoryScreenStories from '@/features/history/__stories__/HistoryScr
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as LibraryScreenStories from '@/features/library/__stories__/LibraryScreen.stories';
 import * as LiveScreenStories from '@/features/live/__stories__/LiveScreen.stories';
+import * as PRModalStories from '@/features/pr/__stories__/PRModal.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
 import * as NumericalStories from '../../plates/__stories__/Numerical.stories';
@@ -19,6 +20,8 @@ import * as WeightNumStories from '../__stories__/WeightNum.stories';
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
 }));
 
 jest.mock('@shopify/react-native-skia', () => {
@@ -60,6 +63,7 @@ const modules: Record<string, StoryModule> = {
   HistoryScreen: HistoryScreenStories as unknown as StoryModule,
   LibraryScreen: LibraryScreenStories as unknown as StoryModule,
   LiveScreen: LiveScreenStories as unknown as StoryModule,
+  PRModal: PRModalStories as unknown as StoryModule,
 };
 
 describe('storybook: every primitive story renders without warning', () => {
