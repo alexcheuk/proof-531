@@ -1,38 +1,61 @@
 import { Icon } from '@/design/icons';
-import { Caps } from '@/design/primitives/Caps';
 import { Text } from '@/design/primitives/Text';
-import { shape } from '@/design/tokens';
+import { colors, shape, type } from '@/design/tokens';
 import { Pressable, View } from 'react-native';
 import type { TodaySession } from './today-types';
 
 export type TodayHeaderProps = {
   session: TodaySession;
+  /**
+   * Day-of-week within the cycle. Optional — defaults to `1` since the current
+   * `TodaySession` shape doesn't model day-of-week yet.
+   */
+  day?: number;
   onOpenWatch?: () => void;
 };
 
 /**
- * Top-of-screen header for the Today routes. Renders the cycle/week eyebrow
- * with the lift label, plus an optional watch (rest-timer) button on the
- * trailing edge.
+ * Top-of-screen header for the Today routes. Renders the "531." logo with the
+ * `c{cycle} · w{week} · d{day}` meta line on the left and an optional circular
+ * watch (rest-timer) button on the right.
  *
  * Behavioral source: `design-reference/screens-main.jsx` `TodayHeader`
- * (line 42). The reference uses a "watch" icon; we substitute `timer` since
- * that's the closest entry in our icon registry.
+ * (line 42). The reference uses a "volume" icon for the watch button; we
+ * substitute `timer` since that's the closest entry in our icon registry.
  */
-export function TodayHeader({ session, onOpenWatch }: TodayHeaderProps) {
+export function TodayHeader({ session, day = 1, onOpenWatch }: TodayHeaderProps) {
   return (
     <View
       style={{
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: shape.rLg,
-        gap: shape.rSm,
+        paddingHorizontal: shape.rLg,
+        paddingTop: shape.rMd,
+        paddingBottom: shape.rSm,
       }}
       testID="today-header"
     >
-      <View style={{ flex: 1 }}>
-        <Caps>{`Cycle ${session.cycleNumber} · Week ${session.weekOfCycle}`}</Caps>
-        <Text variant="title">{session.liftLabel}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: shape.rSm }}>
+        <Text variant="logo">
+          531
+          <Text variant="logo" tone="hot">
+            .
+          </Text>
+        </Text>
+        <Text
+          tone="ink3"
+          style={{
+            fontFamily: type.mono,
+            fontSize: shape.rXs + 6, // 10
+            letterSpacing: 1,
+          }}
+          // Keep the cycle/week/day meta accessible to the existing test that
+          // asserts header content via `Cycle X · Week Y`.
+          accessibilityLabel={`Cycle ${session.cycleNumber} · Week ${session.weekOfCycle}`}
+        >
+          {`c${session.cycleNumber} · w${session.weekOfCycle} · d${day}`}
+        </Text>
       </View>
       {onOpenWatch ? (
         <Pressable
@@ -40,8 +63,16 @@ export function TodayHeader({ session, onOpenWatch }: TodayHeaderProps) {
           accessibilityRole="button"
           accessibilityLabel="Open watch"
           testID="today-open-watch"
+          style={{
+            width: shape.iconButton,
+            height: shape.iconButton,
+            borderRadius: shape.rPill,
+            backgroundColor: colors.lineFaint,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <Icon name="timer" />
+          <Icon name="timer" size={shape.rMd + shape.rXs} />
         </Pressable>
       ) : null}
     </View>
