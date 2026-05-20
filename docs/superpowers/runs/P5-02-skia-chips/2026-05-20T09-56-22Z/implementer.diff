@@ -1,0 +1,208 @@
+diff --git a/apps/mobile/.storybook/storybook.requires.ts b/apps/mobile/.storybook/storybook.requires.ts
+index b2c5f79..57949dd 100644
+--- a/apps/mobile/.storybook/storybook.requires.ts
++++ b/apps/mobile/.storybook/storybook.requires.ts
+@@ -2,6 +2,7 @@
+ import { view } from '@storybook/react-native';
+ import '../src/design/icons/__stories__/Icon.stories.tsx';
+ import '../src/design/plates/__stories__/Barbell.stories.tsx';
++import '../src/design/plates/__stories__/Chips.stories.tsx';
+ import '../src/design/primitives/__stories__/Card.stories.tsx';
+ import '../src/design/primitives/__stories__/NumberStepper.stories.tsx';
+ import '../src/design/primitives/__stories__/PressButton.stories.tsx';
+diff --git a/apps/mobile/src/design/plates/Chips.tsx b/apps/mobile/src/design/plates/Chips.tsx
+new file mode 100644
+index 0000000..463fa01
+--- /dev/null
++++ b/apps/mobile/src/design/plates/Chips.tsx
+@@ -0,0 +1,91 @@
++import { Canvas, Group, RoundedRect } from '@shopify/react-native-skia';
++import { useMemo } from 'react';
++import { type PlateInventoryEntry, calcPlates } from '../../domain/plates';
++import { useTheme } from '../theme';
++
++const STANDARD_LBS_INVENTORY: PlateInventoryEntry[] = [
++  { size: 45, count: 8 },
++  { size: 35, count: 2 },
++  { size: 25, count: 2 },
++  { size: 10, count: 2 },
++  { size: 5, count: 2 },
++  { size: 2.5, count: 2 },
++];
++
++export type ChipsProps = {
++  /** Target weight in lbs. */
++  weight: number;
++  /** Bar weight (default 45). */
++  bar?: number;
++  /** Plate inventory (default standard lbs). */
++  inventory?: PlateInventoryEntry[];
++  /** Canvas width in dp (default 320). */
++  width?: number;
++  /** Canvas height in dp (default 100). */
++  height?: number;
++};
++
++export function Chips({
++  weight,
++  bar = 45,
++  inventory = STANDARD_LBS_INVENTORY,
++  width = 320,
++  height = 100,
++}: ChipsProps) {
++  const theme = useTheme();
++  const { plates } = useMemo(
++    () => calcPlates({ target: weight, bar, inventory }),
++    [weight, bar, inventory],
++  );
++
++  const colorFor = (plate: number): string => {
++    if (plate === 45) return theme.colors.hot;
++    if (plate === 35) return theme.colors.amber;
++    if (plate === 25) return theme.colors.lime;
++    if (plate === 10) return theme.colors.ice;
++    if (plate === 5) return theme.colors.ink1;
++    return theme.colors.ink2;
++  };
++
++  const chipW = 36;
++  const chipH = 22;
++  const gap = 4;
++  const cx = width / 2;
++  const cy = height / 2;
++  const startLeft = cx - chipW - gap;
++  const startRight = cx + gap;
++  const r = chipH / 2;
++
++  return (
++    <Canvas style={{ width, height }}>
++      <Group>
++        {plates.map((plate, i) => (
++          <RoundedRect
++            key={`L-${i}-${plate}`}
++            x={startLeft - i * (chipW + gap)}
++            y={cy - chipH / 2}
++            width={chipW}
++            height={chipH}
++            r={r}
++            color={colorFor(plate)}
++          />
++        ))}
++      </Group>
++      <Group>
++        {plates.map((plate, i) => (
++          <RoundedRect
++            key={`R-${i}-${plate}`}
++            x={startRight + i * (chipW + gap)}
++            y={cy - chipH / 2}
++            width={chipW}
++            height={chipH}
++            r={r}
++            color={colorFor(plate)}
++          />
++        ))}
++      </Group>
++    </Canvas>
++  );
++}
++
++export default Chips;
+diff --git a/apps/mobile/src/design/plates/__stories__/Chips.stories.tsx b/apps/mobile/src/design/plates/__stories__/Chips.stories.tsx
+new file mode 100644
+index 0000000..6c94699
+--- /dev/null
++++ b/apps/mobile/src/design/plates/__stories__/Chips.stories.tsx
+@@ -0,0 +1,25 @@
++import type { ReactElement } from 'react';
++import { Chips, type ChipsProps } from '../Chips';
++
++// Local Meta/StoryObj helpers — @storybook/react-native v8 does not re-export
++// these from @storybook/react, so we define minimal CSF-3 shapes here.
++type Meta<P> = {
++  title: string;
++  component: (props: P) => ReactElement;
++  args?: Partial<P>;
++};
++type StoryObj<P> = {
++  args?: Partial<P>;
++  render?: () => ReactElement;
++};
++
++const meta: Meta<ChipsProps> = { title: 'Plates/Chips', component: Chips };
++export default meta;
++
++type Story = StoryObj<ChipsProps>;
++
++export const W135: Story = { args: { weight: 135 } };
++export const W225: Story = { args: { weight: 225 } };
++export const W315: Story = { args: { weight: 315 } };
++export const W405: Story = { args: { weight: 405 } };
++export const W495: Story = { args: { weight: 495 } };
+diff --git a/apps/mobile/src/design/plates/__tests__/Chips.test.tsx b/apps/mobile/src/design/plates/__tests__/Chips.test.tsx
+new file mode 100644
+index 0000000..06a3822
+--- /dev/null
++++ b/apps/mobile/src/design/plates/__tests__/Chips.test.tsx
+@@ -0,0 +1,34 @@
++import { render } from '@testing-library/react-native';
++import type { ReactElement } from 'react';
++import { ThemeProvider } from '../../theme';
++import { Chips } from '../Chips';
++
++jest.mock('@shopify/react-native-skia', () => {
++  const React = require('react');
++  const passthrough = ({ children }: { children?: unknown }) =>
++    React.createElement(React.Fragment, null, children);
++  return {
++    Canvas: passthrough,
++    Group: passthrough,
++    RoundedRect: () => null,
++  };
++});
++
++const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
++
++describe('Chips', () => {
++  it.each([135, 225, 315, 405, 495])('renders %d lb without crashing', (w) => {
++    const { toJSON } = wrap(<Chips weight={w} />);
++    expect(toJSON()).toBeDefined();
++  });
++
++  it('honours an explicit canvas size', () => {
++    const { toJSON } = wrap(<Chips weight={225} width={400} height={120} />);
++    expect(toJSON()).toBeDefined();
++  });
++
++  it('renders with an empty plate count when weight equals bar', () => {
++    const { toJSON } = wrap(<Chips weight={45} />);
++    expect(toJSON()).toBeDefined();
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/stories.test.tsx b/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
+index d28d8fd..ae02503 100644
+--- a/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
++++ b/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
+@@ -4,6 +4,7 @@ import { ThemeProvider } from '../../theme';
+ 
+ import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
+ import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
++import * as ChipsStories from '../../plates/__stories__/Chips.stories';
+ import * as CardStories from '../__stories__/Card.stories';
+ import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
+ import * as PressButtonStories from '../__stories__/PressButton.stories';
+@@ -23,6 +24,7 @@ jest.mock('@shopify/react-native-skia', () => {
+     Canvas: passthrough,
+     Group: passthrough,
+     Rect: passthrough,
++    RoundedRect: () => null,
+     Path: () => null,
+     LinearGradient: () => null,
+     vec: (x: number, y: number) => ({ x, y }),
+@@ -45,6 +47,7 @@ const modules: Record<string, StoryModule> = {
+   NumberStepper: NumberStepperStories as unknown as StoryModule,
+   WeightNum: WeightNumStories as unknown as StoryModule,
+   Barbell: BarbellStories as unknown as StoryModule,
++  Chips: ChipsStories as unknown as StoryModule,
+   HomeScreen: HomeScreenStories as unknown as StoryModule,
+ };
+ 

@@ -306,7 +306,7 @@ tasks:
     title: Skia Chips plate-viz variant
     phase: 5
     depends_on: [P2-02-plates, P1-04-primitives-base]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--plate-visualization-a-centerpiece
     behavioral_reference: design-reference/components.jsx
     done_when:
