@@ -3,6 +3,7 @@ import type React from 'react';
 import { ThemeProvider } from '../../theme';
 
 import * as CycleScreenStories from '@/features/cycle/__stories__/CycleScreen.stories';
+import * as HistoryScreenStories from '@/features/history/__stories__/HistoryScreen.stories';
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
@@ -54,6 +55,7 @@ const modules: Record<string, StoryModule> = {
   Numerical: NumericalStories as unknown as StoryModule,
   HomeScreen: HomeScreenStories as unknown as StoryModule,
   CycleScreen: CycleScreenStories as unknown as StoryModule,
+  HistoryScreen: HistoryScreenStories as unknown as StoryModule,
 };
 
 describe('storybook: every primitive story renders without warning', () => {

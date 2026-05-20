@@ -518,7 +518,7 @@ tasks:
     title: History tab (calendar + session list)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-history.md
     done_when:
       - "spec docs/superpowers/specs/TODO-history.md exists"
