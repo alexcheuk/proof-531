@@ -1,0 +1,117 @@
+/* 531 Strength — design tokens
+   ────────────────────────────────────────────────
+   "PROOF" aesthetic — athletic, technical, mechanical.
+   Dark canvas. Geometric sans. Hot orange accent. Tabular mono numerics.
+   No serif. No editorial italics. Brutal precision.                 */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── surfaces ────────────────────────────────────── */
+  --bg-0:        #0B0C0E;   /* app canvas, deepest */
+  --bg-1:        #131519;   /* card surface */
+  --bg-2:        #1B1E24;   /* raised surface */
+  --bg-3:        #262A32;   /* input / hover */
+
+  /* ── ink (text) ──────────────────────────────────── */
+  --ink-0:       #FAFAF5;   /* primary text */
+  --ink-1:       #D8D8D2;   /* secondary */
+  --ink-2:       #8E8F8A;   /* tertiary */
+  --ink-3:       #5C5E5A;   /* muted */
+  --ink-4:       #3A3C3F;   /* very muted */
+
+  /* ── lines ───────────────────────────────────────── */
+  --line:        rgba(250, 250, 245, 0.08);
+  --line-strong: rgba(250, 250, 245, 0.14);
+  --line-faint:  rgba(250, 250, 245, 0.04);
+
+  /* ── accents ─────────────────────────────────────── */
+  --hot:         #FF5530;   /* primary accent — vivid orange, "fire" */
+  --hot-soft:    #3A1A0E;   /* dim accent bg */
+  --hot-text:    #FFB59C;   /* accent text on dark */
+  --lime:        #D4FE3F;   /* energy / PR */
+  --lime-soft:   #2A3209;
+  --ice:         #5BB6F0;   /* info */
+  --red:         #F03A3A;   /* warning / over-time */
+  --amber:       #FFB13A;   /* deload */
+
+  /* light surfaces (used rarely — modals, splash) */
+  --paper:       #FAFAF5;
+  --paper-dim:   #E8E8E2;
+
+  /* ── type ────────────────────────────────────────── */
+  --display: 'Space Grotesk', 'Inter Display', system-ui, sans-serif;
+  --sans:    'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* ── shape ───────────────────────────────────────── */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-pill: 999px;
+
+  /* ── motion ──────────────────────────────────────── */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur:  0.22s;
+
+  /* ── backwards-compat aliases for legacy refs ────── */
+  --ember:        var(--hot);
+  --ember-deep:   #B83A1F;
+  --ember-soft:   var(--hot-soft);
+  --sage:         var(--lime);
+  --sage-soft:    var(--lime-soft);
+  --night:        var(--bg-0);
+  --night-soft:   var(--bg-1);
+  --night-line:   var(--line);
+  --slate:        var(--ice);
+  --ink:          var(--ink-0);
+  --paper-soft:   var(--bg-1);
+  --paper-bright: var(--bg-2);
+  --amber-soft:   #3A2810;
+  --serif:        var(--display);
+  --muted:        var(--ink-2);
+}
+
+/* ── utilities ─────────────────────────────────────── */
+.display { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; }
+.sans    { font-family: var(--sans); }
+.mono    { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Big numeric display — tabular mono, tight tracking, semibold */
+.weight-num {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+/* Caps — wide-tracked all-caps label */
+.caps {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Tick marks helper — for technical-drawing details */
+.ticks {
+  display: flex;
+  gap: 2px;
+}
+.ticks > i {
+  display: block;
+  width: 1px;
+  height: 6px;
+  background: var(--line-strong);
+}
+.ticks > i:nth-child(5n) { height: 10px; }
+
+/* tap reset */
+button { font-family: inherit; cursor: pointer; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* base */
+body { background: var(--bg-0); color: var(--ink-0); font-family: var(--sans); }
