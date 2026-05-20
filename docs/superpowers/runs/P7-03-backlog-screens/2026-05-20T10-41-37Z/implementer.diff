@@ -1,0 +1,134 @@
+diff --git a/docs/superpowers/queue.yaml b/docs/superpowers/queue.yaml
+index befc290..20007d5 100644
+--- a/docs/superpowers/queue.yaml
++++ b/docs/superpowers/queue.yaml
+@@ -443,3 +443,129 @@ tasks:
+       - pnpm typecheck passes
+       - pnpm lint passes
+     notes: Smallest possible task. Creates SMOKE.md with literal content. Proves planner/implementer/verifier/reviewer wire together correctly before real work begins.
++
++  # ───────────────────────────────── Phase 8 — Backlog (per-screen specs needed) ─────────────────────────────────
++  # Placeholder tasks for future screens. Each one is blocked until a per-screen
++  # spec is written at the linked path; the orchestrator will refuse to plan
++  # them until then. To unblock: write the spec, brainstorm/refine done_when,
++  # then move the entry above this comment block or fill it in inline.
++
++  - id: P8-onboarding
++    title: Onboarding flow (TM intake, units, lift selection)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-onboarding.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-onboarding.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-today-editorial
++    title: Today screen — editorial header
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-today-editorial.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-today-editorial.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-today-cards
++    title: Today screen — set cards
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-today-cards.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-today-cards.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-today-data
++    title: Today screen — data wiring (sessions/sets)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-today-data.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-today-data.md exists"
++      - "data flow implemented per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-live
++    title: Live session screen (in-progress lifting)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-live.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-live.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-cycle
++    title: Cycle tab (overview + advance)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-cycle.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-cycle.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-history
++    title: History tab (calendar + session list)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-history.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-history.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-library
++    title: Library tab (lifts + assistance)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-library.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-library.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-settings
++    title: Settings tab (units, themes, opt-ins)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-settings.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-settings.md exists"
++      - "screen ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
++
++  - id: P8-pr-modal
++    title: PR modal (post-AMRAP celebration)
++    phase: 8
++    depends_on: []
++    status: todo
++    spec_ref: docs/superpowers/specs/TODO-pr-modal.md
++    done_when:
++      - "spec docs/superpowers/specs/TODO-pr-modal.md exists"
++      - "modal ported per spec"
++    notes: |
++      Placeholder. Write the screen spec at the spec_ref path before invoking.
