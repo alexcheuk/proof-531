@@ -7,20 +7,25 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+import { colors } from '@/design/tokens';
+
+// NOTE: Expo template leftover. The app's only theme is dark; both `light`
+// and `dark` entries map to the same dark palette tokens until P4-* replaces
+// this with the proper theme provider in `src/design/theme.ts`.
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: colors.ink0,
+    background: colors.bg0,
+    backgroundElement: colors.bg1,
+    backgroundSelected: colors.bg2,
+    textSecondary: colors.ink2,
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: colors.ink0,
+    background: colors.bg0,
+    backgroundElement: colors.bg1,
+    backgroundSelected: colors.bg2,
+    textSecondary: colors.ink2,
   },
 } as const;
 
