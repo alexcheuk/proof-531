@@ -176,7 +176,7 @@ tasks:
     title: Drizzle schema + migration setup
     phase: 3
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#6--data-model-drizzle-schema-sketch
     done_when:
       - "apps/mobile/src/data/db/schema.ts defines tables: lifts, cycles, sessions, sets, assistance"
