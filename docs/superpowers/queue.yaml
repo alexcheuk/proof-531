@@ -96,7 +96,7 @@ tasks:
     title: Storybook stories for every primitive variant
     phase: 1
     depends_on: [P1-07-storybook]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
     done_when:
       - "Stories exist for: PressButton (ember/inverse/ghost x sm/md/lg), Card, SegRail, NumberStepper, WeightNum (sm/md/lg)"

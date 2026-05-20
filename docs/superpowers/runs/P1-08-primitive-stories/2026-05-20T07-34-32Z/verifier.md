@@ -1,0 +1,1 @@
+{"task_id":"P1-08-primitive-stories","result":"pass","harness":{"install":"pass","typecheck":"pass","lint":"pass","test":"pass","storybook_build":"pass"},"summary":"All done_when criteria met. 23 stories across 5 files. 131 tests pass."}

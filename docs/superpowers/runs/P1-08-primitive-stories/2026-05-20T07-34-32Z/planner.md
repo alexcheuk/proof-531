@@ -1,0 +1,1 @@
+P1-08 plan: stories for PressButton/Card/SegRail/NumberStepper/WeightNum + ThemeProvider decorator + scripts/storybook-generate.mjs + stories.test.tsx renders all stories with no console.warn. See implementer prompt.
