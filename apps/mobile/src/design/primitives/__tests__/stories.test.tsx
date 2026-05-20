@@ -5,6 +5,7 @@ import { ThemeProvider } from '../../theme';
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
+import * as NumericalStories from '../../plates/__stories__/Numerical.stories';
 import * as CardStories from '../__stories__/Card.stories';
 import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
 import * as PressButtonStories from '../__stories__/PressButton.stories';
@@ -48,6 +49,7 @@ const modules: Record<string, StoryModule> = {
   WeightNum: WeightNumStories as unknown as StoryModule,
   Barbell: BarbellStories as unknown as StoryModule,
   Chips: ChipsStories as unknown as StoryModule,
+  Numerical: NumericalStories as unknown as StoryModule,
   HomeScreen: HomeScreenStories as unknown as StoryModule,
 };
 

@@ -3,6 +3,7 @@ import { view } from '@storybook/react-native';
 import '../src/design/icons/__stories__/Icon.stories.tsx';
 import '../src/design/plates/__stories__/Barbell.stories.tsx';
 import '../src/design/plates/__stories__/Chips.stories.tsx';
+import '../src/design/plates/__stories__/Numerical.stories.tsx';
 import '../src/design/primitives/__stories__/Card.stories.tsx';
 import '../src/design/primitives/__stories__/NumberStepper.stories.tsx';
 import '../src/design/primitives/__stories__/PressButton.stories.tsx';
