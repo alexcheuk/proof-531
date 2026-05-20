@@ -1,20 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from '../../db/schema';
+import { createTestDb } from '../../db/test-harness';
 import { createLiftRepo } from '../liftRepo';
 
 function makeDb() {
-  const sqlite = new Database(':memory:');
-  sqlite.exec(`
-    CREATE TABLE lifts (
-      id TEXT PRIMARY KEY,
-      label TEXT NOT NULL,
-      category TEXT NOT NULL,
-      training_max INTEGER NOT NULL,
-      enabled INTEGER NOT NULL
-    );
-  `);
-  return drizzle(sqlite, { schema });
+  return createTestDb().db;
 }
 
 describe('liftRepo', () => {

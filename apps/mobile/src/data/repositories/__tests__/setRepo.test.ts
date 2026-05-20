@@ -1,43 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from '../../db/schema';
+import { createTestDb } from '../../db/test-harness';
 import { createSetRepo } from '../setRepo';
 
 function makeDb() {
-  const sqlite = new Database(':memory:');
-  sqlite.exec(`
-    CREATE TABLE lifts (
-      id TEXT PRIMARY KEY,
-      label TEXT NOT NULL,
-      category TEXT NOT NULL,
-      training_max INTEGER NOT NULL,
-      enabled INTEGER NOT NULL
-    );
-    CREATE TABLE cycles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      number INTEGER NOT NULL,
-      started_at INTEGER NOT NULL,
-      completed_at INTEGER
-    );
-    CREATE TABLE sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
-      lift_id TEXT NOT NULL REFERENCES lifts(id),
-      week INTEGER NOT NULL,
-      started_at INTEGER NOT NULL,
-      completed_at INTEGER
-    );
-    CREATE TABLE sets (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      session_id INTEGER NOT NULL REFERENCES sessions(id),
-      "index" INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      prescribed_weight INTEGER NOT NULL,
-      prescribed_reps INTEGER NOT NULL,
-      actual_reps INTEGER,
-      completed_at INTEGER
-    );
-  `);
+  const { db, sqlite } = createTestDb();
   sqlite
     .prepare(
       "INSERT INTO lifts (id, label, category, training_max, enabled) VALUES ('squat', 'Squat', 'lower', 315, 1)",
@@ -54,7 +19,7 @@ function makeDb() {
       "INSERT INTO sessions (cycle_id, lift_id, week, started_at) VALUES (1, 'squat', 2, 1736294400)",
     )
     .run();
-  return drizzle(sqlite, { schema });
+  return db;
 }
 
 describe('setRepo', () => {

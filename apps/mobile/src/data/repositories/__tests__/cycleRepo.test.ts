@@ -1,19 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from '../../db/schema';
+import { createTestDb } from '../../db/test-harness';
 import { createCycleRepo } from '../cycleRepo';
 
 function makeDb() {
-  const sqlite = new Database(':memory:');
-  sqlite.exec(`
-    CREATE TABLE cycles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      number INTEGER NOT NULL,
-      started_at INTEGER NOT NULL,
-      completed_at INTEGER
-    );
-  `);
-  return drizzle(sqlite, { schema });
+  return createTestDb().db;
 }
 
 describe('cycleRepo', () => {

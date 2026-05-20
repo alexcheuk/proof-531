@@ -1,21 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from '../../db/schema';
+import { createTestDb } from '../../db/test-harness';
 import { createAssistanceRepo } from '../assistanceRepo';
 
 function makeDb() {
-  const sqlite = new Database(':memory:');
-  sqlite.exec(`
-    CREATE TABLE assistance (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      default_sets INTEGER NOT NULL,
-      default_reps INTEGER NOT NULL,
-      favorite INTEGER NOT NULL
-    );
-  `);
-  return drizzle(sqlite, { schema });
+  return createTestDb().db;
 }
 
 describe('assistanceRepo', () => {

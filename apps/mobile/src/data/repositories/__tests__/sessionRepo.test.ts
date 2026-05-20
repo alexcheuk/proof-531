@@ -1,33 +1,8 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from '../../db/schema';
+import { createTestDb } from '../../db/test-harness';
 import { createSessionRepo } from '../sessionRepo';
 
 function makeDb() {
-  const sqlite = new Database(':memory:');
-  sqlite.exec(`
-    CREATE TABLE lifts (
-      id TEXT PRIMARY KEY,
-      label TEXT NOT NULL,
-      category TEXT NOT NULL,
-      training_max INTEGER NOT NULL,
-      enabled INTEGER NOT NULL
-    );
-    CREATE TABLE cycles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      number INTEGER NOT NULL,
-      started_at INTEGER NOT NULL,
-      completed_at INTEGER
-    );
-    CREATE TABLE sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
-      lift_id TEXT NOT NULL REFERENCES lifts(id),
-      week INTEGER NOT NULL,
-      started_at INTEGER NOT NULL,
-      completed_at INTEGER
-    );
-  `);
+  const { db, sqlite } = createTestDb();
   // Seed referenced rows
   sqlite
     .prepare(
@@ -41,7 +16,7 @@ function makeDb() {
     .run();
   sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (1, 1735689600)').run();
   sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (2, 1738368000)').run();
-  return drizzle(sqlite, { schema });
+  return db;
 }
 
 describe('sessionRepo', () => {
