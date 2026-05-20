@@ -1,0 +1,1 @@
+P2-01 plan: prescribedSets(trainingMax, week, {roundTo}) returning PrescribedSet[]. 4-week scheme + fast-check properties + 100% coverage threshold on src/domain/program/. See implementer prompt.

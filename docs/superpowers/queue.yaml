@@ -118,7 +118,7 @@ tasks:
     title: 5/3/1 program math (week scheme, percentages, reps, deload)
     phase: 2
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
     behavioral_reference: design-reference/app.jsx
     done_when:
