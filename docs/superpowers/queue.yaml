@@ -34,7 +34,7 @@ tasks:
     title: Bundle Space Grotesk + JetBrains Mono via expo-font
     phase: 1
     depends_on: [P1-01-tokens]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
     done_when:
       - "Both font families downloaded into apps/mobile/assets/fonts/ (5 weights each)"
