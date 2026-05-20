@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native';
 import type React from 'react';
 import { ThemeProvider } from '../../theme';
 
+import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as CardStories from '../__stories__/Card.stories';
 import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
 import * as PressButtonStories from '../__stories__/PressButton.stories';
@@ -28,6 +29,7 @@ const modules: Record<string, StoryModule> = {
   SegRail: SegRailStories as unknown as StoryModule,
   NumberStepper: NumberStepperStories as unknown as StoryModule,
   WeightNum: WeightNumStories as unknown as StoryModule,
+  HomeScreen: HomeScreenStories as unknown as StoryModule,
 };
 
 describe('storybook: every primitive story renders without warning', () => {
