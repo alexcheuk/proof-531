@@ -540,7 +540,7 @@ tasks:
     title: Settings tab (units, themes, opt-ins)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-settings.md
     done_when:
       - "spec docs/superpowers/specs/TODO-settings.md exists"
