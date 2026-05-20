@@ -474,7 +474,7 @@ tasks:
     title: Today screen — set cards
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-today-cards.md
     done_when:
       - "spec docs/superpowers/specs/TODO-today-cards.md exists"
