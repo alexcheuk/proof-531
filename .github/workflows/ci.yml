@@ -148,16 +148,15 @@ jobs:
     name: Maestro (iOS)
     runs-on: macos-14
     needs: static
-    # Boots an iOS simulator, builds the Expo dev client locally, installs it,
-    # then runs the home-renders.yaml flow. Baseline PNG screenshots produced
-    # by the flow's takeScreenshot steps land in apps/mobile/.maestro/screenshots/
-    # and are uploaded as a CI artifact.
+    # Boots an iOS simulator, builds an unsigned simulator .app locally via
+    # the `simulator` EAS profile (ios.simulator: true), installs it, then
+    # runs the home-renders.yaml flow. Screenshots from takeScreenshot steps
+    # land in apps/mobile/.maestro/screenshots/ and are uploaded as a CI
+    # artifact.
     #
-    # NOTE: EAS local build requires `EXPO_TOKEN` and an Apple-team membership
-    # only for production-signed builds. Internal distribution via the
-    # `preview` profile in eas.json should work without Apple credentials on
-    # an Apple Silicon macOS runner. If the build step fails on first run,
-    # configure secrets per docs/CONTRIBUTING.md and re-run.
+    # NO Apple Developer Program membership required — `ios.simulator: true`
+    # produces an unsigned bundle for the Simulator only. NO EXPO_TOKEN
+    # required either — `eas build --local` is unauthenticated.
     steps:
       - uses: actions/checkout@v4
 
@@ -184,10 +183,8 @@ jobs:
           xcrun simctl boot "$DEVICE_ID" || true
           xcrun simctl bootstatus "$DEVICE_ID" -b
 
-      - name: Build Expo dev client (iOS, simulator)
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile preview --non-interactive --output ./build/proof-531.app
+      - name: Build Expo dev client (iOS, simulator — unsigned)
+        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile simulator --non-interactive --output ./build/proof-531.app
 
       - name: Install app on simulator
         run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
