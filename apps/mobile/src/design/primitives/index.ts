@@ -12,3 +12,6 @@ export type { EyebrowProps } from './Eyebrow';
 
 export { WeightNum } from './WeightNum';
 export type { WeightNumProps, WeightNumSize } from './WeightNum';
+
+export { PressButton } from './PressButton';
+export type { PressButtonProps, PressButtonSize, PressButtonVariant } from './PressButton';
