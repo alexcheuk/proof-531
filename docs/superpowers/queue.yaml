@@ -327,7 +327,7 @@ tasks:
     title: Reassure perf budget for plate variants
     phase: 5
     depends_on: [P5-01-skia-barbell, P5-02-skia-chips, P5-03-skia-numerical]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-6--perf-budgets
     done_when:
       - "Reassure measurement under 4ms render for each variant at 225 lbs"
