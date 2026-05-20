@@ -14,7 +14,7 @@ function makeProps(activeIndex = 0): TabBarProps & { navigation: TabBarProps['na
       index: activeIndex,
       routes: [
         { key: 'home-1', name: 'home', params: undefined },
-        { key: 'library-1', name: 'library', params: undefined },
+        { key: 'train-1', name: 'train', params: undefined },
         { key: 'cycle-1', name: 'cycle', params: undefined },
         { key: 'history-1', name: 'history', params: undefined },
         { key: 'settings-1', name: 'settings', params: undefined },
@@ -57,22 +57,22 @@ describe('TabBar', () => {
   it('exposes a humanised accessibilityLabel per tab', () => {
     const { getByLabelText } = wrap(<TabBar {...makeProps(0)} />);
     expect(getByLabelText('Home')).toBeTruthy();
-    expect(getByLabelText('Library')).toBeTruthy();
+    expect(getByLabelText('Train')).toBeTruthy();
     expect(getByLabelText('Cycle')).toBeTruthy();
     expect(getByLabelText('History')).toBeTruthy();
-    expect(getByLabelText('Settings')).toBeTruthy();
+    expect(getByLabelText('You')).toBeTruthy();
   });
 
   it('navigates to the tapped route when an inactive tab is pressed', () => {
     const props = makeProps(0);
     const { getByLabelText } = wrap(<TabBar {...props} />);
-    fireEvent.press(getByLabelText('Library'));
+    fireEvent.press(getByLabelText('Train'));
     expect(props.navigation.emit).toHaveBeenCalledWith({
       type: 'tabPress',
-      target: 'library-1',
+      target: 'train-1',
       canPreventDefault: true,
     });
-    expect(props.navigation.navigate).toHaveBeenCalledWith('library', undefined);
+    expect(props.navigation.navigate).toHaveBeenCalledWith('train', undefined);
   });
 
   it('does not navigate when the already-active tab is pressed', () => {
@@ -93,8 +93,8 @@ describe('TabBar', () => {
 
   it('renders the active tab label (only) — inactive tabs show icon only', () => {
     const { queryByText } = wrap(<TabBar {...makeProps(1)} />);
-    // Library is active → label rendered.
-    expect(queryByText('Library')).toBeTruthy();
+    // Train is active → label rendered.
+    expect(queryByText('Train')).toBeTruthy();
     // Home is inactive → label suppressed.
     expect(queryByText('Home')).toBeNull();
     expect(queryByText('Cycle')).toBeNull();

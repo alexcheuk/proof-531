@@ -11,10 +11,10 @@ export default function TabsLayout() {
         tabBar={(props) => <TabBar state={props.state} navigation={props.navigation} />}
       >
         <Tabs.Screen name="home" options={{ title: 'Home' }} />
-        <Tabs.Screen name="library" options={{ title: 'Library' }} />
+        <Tabs.Screen name="train" options={{ title: 'Train' }} />
         <Tabs.Screen name="cycle" options={{ title: 'Cycle' }} />
         <Tabs.Screen name="history" options={{ title: 'History' }} />
-        <Tabs.Screen name="settings" options={{ title: 'Settings' }} />
+        <Tabs.Screen name="settings" options={{ title: 'You' }} />
       </Tabs>
     </SafeAreaView>
   );

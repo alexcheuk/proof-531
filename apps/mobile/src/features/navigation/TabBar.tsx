@@ -44,7 +44,7 @@ export type TabBarProps = {
 
 const TAB_ICONS: Record<string, IconName> = {
   home: 'home',
-  library: 'list',
+  train: 'dumbbell',
   cycle: 'calendar',
   history: 'history',
   settings: 'settings',
@@ -52,10 +52,10 @@ const TAB_ICONS: Record<string, IconName> = {
 
 const TAB_LABELS: Record<string, string> = {
   home: 'Home',
-  library: 'Library',
+  train: 'Train',
   cycle: 'Cycle',
   history: 'History',
-  settings: 'Settings',
+  settings: 'You',
 };
 
 export function TabBar({ state, navigation }: TabBarProps) {

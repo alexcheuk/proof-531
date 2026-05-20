@@ -53,6 +53,7 @@ export default function RootLayout() {
           <ThemeProvider>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="library" />
               <Stack.Screen name="live" options={{ presentation: 'modal' }} />
               <Stack.Screen name="pr" options={{ presentation: 'modal' }} />
               <Stack.Screen name="onboarding" />
