@@ -35,7 +35,14 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "TODO_ORG",
+          "project": "TODO_PROJECT"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

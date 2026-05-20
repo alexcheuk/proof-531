@@ -9,6 +9,9 @@ import { DataProvider } from '@/data/context';
 import { db, sqlite } from '@/data/db/client';
 import migrations from '@/data/db/migrations';
 import { ThemeProvider } from '@/design/theme';
+import { initSentry } from '@/lib/sentry';
+
+initSentry();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
