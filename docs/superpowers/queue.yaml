@@ -49,7 +49,7 @@ tasks:
     title: Box, Text, Caps, Eyebrow, WeightNum primitives
     phase: 1
     depends_on: [P1-02-theme-provider, P1-03-fonts]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
     behavioral_reference: design-reference/components.jsx
     done_when:

@@ -1,0 +1,403 @@
+diff --git a/apps/mobile/src/design/primitives/Box.tsx b/apps/mobile/src/design/primitives/Box.tsx
+new file mode 100644
+index 0000000..25ec246
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/Box.tsx
+@@ -0,0 +1,31 @@
++import { View, type ViewProps, type ViewStyle } from 'react-native';
++import { type Colors, type Shape, colors, shape } from '../tokens';
++
++type ShapeKey = keyof Shape;
++type ColorKey = keyof Colors;
++
++export type BoxProps = ViewProps & {
++  padding?: ShapeKey;
++  margin?: ShapeKey;
++  gap?: ShapeKey;
++  radius?: ShapeKey;
++  bg?: ColorKey;
++  borderColor?: ColorKey;
++};
++
++export function Box({ padding, margin, gap, radius, bg, borderColor, style, ...rest }: BoxProps) {
++  const computed: ViewStyle = {};
++  if (padding !== undefined) computed.padding = shape[padding];
++  if (margin !== undefined) computed.margin = shape[margin];
++  if (gap !== undefined) computed.gap = shape[gap];
++  if (radius !== undefined) computed.borderRadius = shape[radius];
++  if (bg !== undefined) computed.backgroundColor = colors[bg];
++  if (borderColor !== undefined) {
++    computed.borderColor = colors[borderColor];
++    computed.borderWidth = 1;
++  }
++
++  // Merge passed-through style on top so callers can override.
++  const merged: ViewStyle = style ? { ...computed, ...(style as ViewStyle) } : computed;
++  return <View style={merged} {...rest} />;
++}
+diff --git a/apps/mobile/src/design/primitives/Caps.tsx b/apps/mobile/src/design/primitives/Caps.tsx
+new file mode 100644
+index 0000000..19763c5
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/Caps.tsx
+@@ -0,0 +1,18 @@
++import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
++import { colors, type } from '../tokens';
++
++export type CapsProps = RNTextProps;
++
++const STYLE: TextStyle = {
++  fontFamily: type.mono,
++  fontSize: 10,
++  fontWeight: '600',
++  letterSpacing: 1.8,
++  textTransform: 'uppercase',
++  color: colors.ink2,
++};
++
++export function Caps({ style, ...rest }: CapsProps) {
++  const merged: TextStyle = style ? { ...STYLE, ...(style as TextStyle) } : STYLE;
++  return <RNText style={merged} {...rest} />;
++}
+diff --git a/apps/mobile/src/design/primitives/Eyebrow.tsx b/apps/mobile/src/design/primitives/Eyebrow.tsx
+new file mode 100644
+index 0000000..f6dbb20
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/Eyebrow.tsx
+@@ -0,0 +1,18 @@
++import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
++import { colors, type } from '../tokens';
++
++export type EyebrowProps = RNTextProps;
++
++const STYLE: TextStyle = {
++  fontFamily: type.mono,
++  fontSize: 11,
++  fontWeight: '500',
++  letterSpacing: 1.76,
++  textTransform: 'uppercase',
++  color: colors.ink2,
++};
++
++export function Eyebrow({ style, ...rest }: EyebrowProps) {
++  const merged: TextStyle = style ? { ...STYLE, ...(style as TextStyle) } : STYLE;
++  return <RNText style={merged} {...rest} />;
++}
+diff --git a/apps/mobile/src/design/primitives/Text.tsx b/apps/mobile/src/design/primitives/Text.tsx
+new file mode 100644
+index 0000000..514dd89
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/Text.tsx
+@@ -0,0 +1,31 @@
++import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
++import { useTheme } from '../theme';
++
++export type TextVariant = 'default' | 'title' | 'subtitle' | 'small' | 'smallBold' | 'caption';
++
++export type TextTone = 'ink0' | 'ink1' | 'ink2' | 'ink3' | 'ink4' | 'hot' | 'lime';
++
++export type TextProps = RNTextProps & {
++  variant?: TextVariant;
++  tone?: TextTone;
++};
++
++const VARIANT_STYLES: Record<TextVariant, TextStyle> = {
++  default: { fontSize: 15, fontWeight: '400' },
++  title: { fontSize: 28, fontWeight: '600', letterSpacing: -0.5 },
++  subtitle: { fontSize: 20, fontWeight: '500' },
++  small: { fontSize: 13, fontWeight: '400' },
++  smallBold: { fontSize: 13, fontWeight: '600' },
++  caption: { fontSize: 11, fontWeight: '400' },
++};
++
++export function Text({ variant = 'default', tone = 'ink0', style, ...rest }: TextProps) {
++  const theme = useTheme();
++  const base: TextStyle = {
++    fontFamily: theme.type.sans,
++    color: theme.colors[tone],
++    ...VARIANT_STYLES[variant],
++  };
++  const merged: TextStyle = style ? { ...base, ...(style as TextStyle) } : base;
++  return <RNText style={merged} {...rest} />;
++}
+diff --git a/apps/mobile/src/design/primitives/WeightNum.tsx b/apps/mobile/src/design/primitives/WeightNum.tsx
+new file mode 100644
+index 0000000..a70199e
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/WeightNum.tsx
+@@ -0,0 +1,30 @@
++import { Text as RNText, type StyleProp, type TextStyle } from 'react-native';
++import { colors, type } from '../tokens';
++
++export type WeightNumSize = 'sm' | 'md' | 'lg';
++
++export type WeightNumProps = {
++  value: number | string;
++  size?: WeightNumSize;
++  style?: StyleProp<TextStyle>;
++};
++
++const SIZES: Record<WeightNumSize, number> = {
++  sm: 14,
++  md: 22,
++  lg: 36,
++};
++
++export function WeightNum({ value, size = 'md', style }: WeightNumProps) {
++  const fontSize = SIZES[size];
++  const base: TextStyle = {
++    fontFamily: type.mono,
++    fontWeight: '500',
++    fontSize,
++    letterSpacing: -fontSize * 0.04,
++    color: colors.ink0,
++    fontVariant: ['tabular-nums'],
++  };
++  const merged: TextStyle = style ? { ...base, ...(style as TextStyle) } : base;
++  return <RNText style={merged}>{String(value)}</RNText>;
++}
+diff --git a/apps/mobile/src/design/primitives/__tests__/Box.test.tsx b/apps/mobile/src/design/primitives/__tests__/Box.test.tsx
+new file mode 100644
+index 0000000..90a6d4a
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/Box.test.tsx
+@@ -0,0 +1,42 @@
++import { render } from '@testing-library/react-native';
++import { Text as RNText } from 'react-native';
++import { colors, shape } from '../../tokens';
++import { Box } from '../Box';
++
++describe('Box', () => {
++  it('renders children', () => {
++    const { getByText } = render(
++      <Box>
++        <RNText>hello</RNText>
++      </Box>,
++    );
++    expect(getByText('hello')).toBeTruthy();
++  });
++
++  it('applies token-derived padding, radius, bg, and gap', () => {
++    const { getByTestId } = render(
++      <Box testID="box" padding="rMd" margin="rSm" gap="rSm" radius="rLg" bg="bg1" />,
++    );
++    const node = getByTestId('box');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        padding: shape.rMd,
++        margin: shape.rSm,
++        gap: shape.rSm,
++        borderRadius: shape.rLg,
++        backgroundColor: colors.bg1,
++      }),
++    );
++  });
++
++  it('applies a 1px border when borderColor is set', () => {
++    const { getByTestId } = render(<Box testID="box" borderColor="line" />);
++    const node = getByTestId('box');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        borderColor: colors.line,
++        borderWidth: 1,
++      }),
++    );
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/Caps.test.tsx b/apps/mobile/src/design/primitives/__tests__/Caps.test.tsx
+new file mode 100644
+index 0000000..e268d61
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/Caps.test.tsx
+@@ -0,0 +1,25 @@
++import { render } from '@testing-library/react-native';
++import { colors, type } from '../../tokens';
++import { Caps } from '../Caps';
++
++describe('Caps', () => {
++  it('renders children', () => {
++    const { getByText } = render(<Caps>label</Caps>);
++    expect(getByText('label')).toBeTruthy();
++  });
++
++  it('applies token-derived style: mono, 10px/600, letter-spacing 1.8, uppercase, ink2', () => {
++    const { getByText } = render(<Caps>label</Caps>);
++    const node = getByText('label');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontFamily: type.mono,
++        fontSize: 10,
++        fontWeight: '600',
++        letterSpacing: 1.8,
++        textTransform: 'uppercase',
++        color: colors.ink2,
++      }),
++    );
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/Eyebrow.test.tsx b/apps/mobile/src/design/primitives/__tests__/Eyebrow.test.tsx
+new file mode 100644
+index 0000000..97f260e
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/Eyebrow.test.tsx
+@@ -0,0 +1,25 @@
++import { render } from '@testing-library/react-native';
++import { colors, type } from '../../tokens';
++import { Eyebrow } from '../Eyebrow';
++
++describe('Eyebrow', () => {
++  it('renders children', () => {
++    const { getByText } = render(<Eyebrow>tag</Eyebrow>);
++    expect(getByText('tag')).toBeTruthy();
++  });
++
++  it('applies token-derived style: mono, 11px/500, letter-spacing 1.76, uppercase, ink2', () => {
++    const { getByText } = render(<Eyebrow>tag</Eyebrow>);
++    const node = getByText('tag');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontFamily: type.mono,
++        fontSize: 11,
++        fontWeight: '500',
++        letterSpacing: 1.76,
++        textTransform: 'uppercase',
++        color: colors.ink2,
++      }),
++    );
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/Text.test.tsx b/apps/mobile/src/design/primitives/__tests__/Text.test.tsx
+new file mode 100644
+index 0000000..716ac26
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/Text.test.tsx
+@@ -0,0 +1,51 @@
++import { render } from '@testing-library/react-native';
++import type React from 'react';
++import { ThemeProvider } from '../../theme';
++import { colors, type } from '../../tokens';
++import { Text } from '../Text';
++
++const wrap = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
++
++describe('Text', () => {
++  it('renders children', () => {
++    const { getByText } = wrap(<Text>hello</Text>);
++    expect(getByText('hello')).toBeTruthy();
++  });
++
++  it('applies default variant + tone (ink0, 15px/400, sans family)', () => {
++    const { getByText } = wrap(<Text>hi</Text>);
++    const node = getByText('hi');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontFamily: type.sans,
++        fontSize: 15,
++        fontWeight: '400',
++        color: colors.ink0,
++      }),
++    );
++  });
++
++  it('applies the title variant sizing', () => {
++    const { getByText } = wrap(<Text variant="title">hi</Text>);
++    const node = getByText('hi');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontSize: 28,
++        fontWeight: '600',
++        letterSpacing: -0.5,
++      }),
++    );
++  });
++
++  it('applies the hot tone using the theme accent (so accent overrides flow through)', () => {
++    const { getByText } = wrap(<Text tone="hot">hi</Text>);
++    const node = getByText('hi');
++    expect(node.props.style).toEqual(expect.objectContaining({ color: colors.hot }));
++  });
++
++  it('applies the lime tone via tokens', () => {
++    const { getByText } = wrap(<Text tone="lime">hi</Text>);
++    const node = getByText('hi');
++    expect(node.props.style).toEqual(expect.objectContaining({ color: colors.lime }));
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/WeightNum.test.tsx b/apps/mobile/src/design/primitives/__tests__/WeightNum.test.tsx
+new file mode 100644
+index 0000000..76357de
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/WeightNum.test.tsx
+@@ -0,0 +1,52 @@
++import { render } from '@testing-library/react-native';
++import { colors, type } from '../../tokens';
++import { WeightNum } from '../WeightNum';
++
++describe('WeightNum', () => {
++  it('renders the numeric value', () => {
++    const { getByText } = render(<WeightNum value={225} />);
++    expect(getByText('225')).toBeTruthy();
++  });
++
++  it('renders string values verbatim', () => {
++    const { getByText } = render(<WeightNum value="—" />);
++    expect(getByText('—')).toBeTruthy();
++  });
++
++  it('applies default (md) sizing: mono, 22px/500, -0.88 letter-spacing, tabular-nums, ink0', () => {
++    const { getByText } = render(<WeightNum value={100} />);
++    const node = getByText('100');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontFamily: type.mono,
++        fontSize: 22,
++        fontWeight: '500',
++        letterSpacing: -22 * 0.04,
++        color: colors.ink0,
++        fontVariant: ['tabular-nums'],
++      }),
++    );
++  });
++
++  it('applies sm sizing (14px)', () => {
++    const { getByText } = render(<WeightNum value={50} size="sm" />);
++    const node = getByText('50');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontSize: 14,
++        letterSpacing: -14 * 0.04,
++      }),
++    );
++  });
++
++  it('applies lg sizing (36px)', () => {
++    const { getByText } = render(<WeightNum value={315} size="lg" />);
++    const node = getByText('315');
++    expect(node.props.style).toEqual(
++      expect.objectContaining({
++        fontSize: 36,
++        letterSpacing: -36 * 0.04,
++      }),
++    );
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/index.ts b/apps/mobile/src/design/primitives/index.ts
+new file mode 100644
+index 0000000..a7bfbb6
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/index.ts
+@@ -0,0 +1,14 @@
++export { Box } from './Box';
++export type { BoxProps } from './Box';
++
++export { Text } from './Text';
++export type { TextProps, TextVariant, TextTone } from './Text';
++
++export { Caps } from './Caps';
++export type { CapsProps } from './Caps';
++
++export { Eyebrow } from './Eyebrow';
++export type { EyebrowProps } from './Eyebrow';
++
++export { WeightNum } from './WeightNum';
++export type { WeightNumProps, WeightNumSize } from './WeightNum';
