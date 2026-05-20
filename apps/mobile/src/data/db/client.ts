@@ -10,16 +10,20 @@ export const sqlite = openDatabaseSync('proof-531.db');
 // CREATE TABLE IF NOT EXISTS so it's safe to call on every cold start.
 sqlite.execSync(EMBEDDED_SCHEMA_SQL);
 
-// First-run seed: insert the 4 default lifts if the lifts table is empty.
-// Uses INSERT OR IGNORE so re-runs are no-ops. Lets the Home screen show
-// something meaningful before the user completes Onboarding.
-sqlite.execSync(`
-  INSERT OR IGNORE INTO lifts (id, label, category, training_max, enabled) VALUES
-    ('squat',    'Squat',    'lower', 275, 1),
-    ('bench',    'Bench',    'upper', 195, 1),
-    ('deadlift', 'Deadlift', 'lower', 345, 1),
-    ('press',    'Press',    'upper', 125, 1);
-`);
+/** Dev/onboarding reset helper — wipes every user table in a single
+ * transaction. Kept here next to the schema bootstrap so the SQL stays
+ * trivially auditable. Called from the Settings/You "Reset" button. */
+export function wipeAllData(): void {
+  sqlite.execSync(`
+    BEGIN;
+    DELETE FROM sets;
+    DELETE FROM sessions;
+    DELETE FROM cycles;
+    DELETE FROM lifts;
+    DELETE FROM assistance;
+    COMMIT;
+  `);
+}
 
 export const db = drizzle(sqlite, { schema });
 
