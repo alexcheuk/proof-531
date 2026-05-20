@@ -551,7 +551,7 @@ tasks:
     title: PR modal (post-AMRAP celebration)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-pr-modal.md
     done_when:
       - "spec docs/superpowers/specs/TODO-pr-modal.md exists"
