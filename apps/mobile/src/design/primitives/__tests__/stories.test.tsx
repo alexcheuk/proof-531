@@ -3,6 +3,7 @@ import type React from 'react';
 import { ThemeProvider } from '../../theme';
 
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
+import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as CardStories from '../__stories__/Card.stories';
 import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
 import * as PressButtonStories from '../__stories__/PressButton.stories';
@@ -13,6 +14,20 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
+
+jest.mock('@shopify/react-native-skia', () => {
+  const React = require('react');
+  const passthrough = ({ children }: { children?: unknown }) =>
+    React.createElement(React.Fragment, null, children);
+  return {
+    Canvas: passthrough,
+    Group: passthrough,
+    Rect: passthrough,
+    Path: () => null,
+    LinearGradient: () => null,
+    vec: (x: number, y: number) => ({ x, y }),
+  };
+});
 
 type StoryModule = Record<string, unknown> & {
   default: { component?: React.ComponentType<unknown> };
@@ -29,6 +44,7 @@ const modules: Record<string, StoryModule> = {
   SegRail: SegRailStories as unknown as StoryModule,
   NumberStepper: NumberStepperStories as unknown as StoryModule,
   WeightNum: WeightNumStories as unknown as StoryModule,
+  Barbell: BarbellStories as unknown as StoryModule,
   HomeScreen: HomeScreenStories as unknown as StoryModule,
 };
 
