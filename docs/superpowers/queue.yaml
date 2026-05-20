@@ -250,7 +250,7 @@ tasks:
     title: Glassy tab bar component (hot-on-bg-2 pill)
     phase: 4
     depends_on: [P4-01-router-layout, P1-05-press-button, P1-09-icons]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
     behavioral_reference: design-reference/app.jsx
     done_when:
