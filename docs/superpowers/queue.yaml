@@ -261,7 +261,7 @@ tasks:
     title: Home screen ported from screens-meta.jsx
     phase: 4
     depends_on: [P4-02-tab-bar, P3-06-demo-seed]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#52-home--the-free-picker
     behavioral_reference: design-reference/screens-meta.jsx
     done_when:
