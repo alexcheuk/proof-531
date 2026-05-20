@@ -69,6 +69,12 @@ export const shape = {
   rPill: 999,
   weekLabel: 48,
   iconButton: 36,
+  /**
+   * A 1-px hairline border — the smallest discrete border width on a
+   * standard display. Use instead of inline `1` literals so the constant has
+   * a name and lives in tokens.
+   */
+  hairline: 1,
 } as const;
 
 export type Shape = typeof shape;
