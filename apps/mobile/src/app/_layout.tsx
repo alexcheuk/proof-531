@@ -1,15 +1,16 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useFonts } from 'expo-font';
-import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { useMemo } from 'react';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
-import { sqlite } from '@/data/db/client';
+import { DataProvider } from '@/data/context';
+import { db, sqlite } from '@/data/db/client';
+import migrations from '@/data/db/migrations';
+import { ThemeProvider } from '@/design/theme';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  useDrizzleStudio(__DEV__ ? sqlite : null);
+export default function RootLayout() {
   const [loaded, error] = useFonts({
     'SpaceGrotesk-Regular': require('../../assets/fonts/SpaceGrotesk-Regular.ttf'),
     'SpaceGrotesk-Medium': require('../../assets/fonts/SpaceGrotesk-Medium.ttf'),
@@ -21,14 +22,36 @@ export default function TabLayout() {
     'JetBrainsMono-Bold': require('../../assets/fonts/JetBrainsMono-Bold.ttf'),
   });
 
+  useDrizzleStudio(__DEV__ ? sqlite : null);
+
+  // Run drizzle migrations on boot. With a properly wired drizzle-kit bundler
+  // step this applies pending SQL migrations from `src/data/db/migrations/`.
+  // Until that bundling lands, `migrations` is a no-op stub and the hook
+  // immediately resolves `success: true`.
+  const { success: migSuccess, error: migError } = useMigrations(db, migrations);
+
+  // Singleton QueryClient — created once per app lifetime.
+  const queryClient = useMemo(() => new QueryClient(), []);
+
   if (!loaded && !error) {
+    return null;
+  }
+  if (!migSuccess && !migError) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <DataProvider db={db}>
+        <ThemeProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="live" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="pr" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="onboarding" />
+          </Stack>
+        </ThemeProvider>
+      </DataProvider>
+    </QueryClientProvider>
   );
 }
