@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native';
 import type React from 'react';
 import { ThemeProvider } from '../../theme';
 
+import * as CycleScreenStories from '@/features/cycle/__stories__/CycleScreen.stories';
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
@@ -29,6 +30,7 @@ jest.mock('@shopify/react-native-skia', () => {
     Path: () => null,
     LinearGradient: () => null,
     vec: (x: number, y: number) => ({ x, y }),
+    Skia: { Path: { Make: () => ({ addCircle() {}, addArc() {} }) } },
   };
 });
 
@@ -51,6 +53,7 @@ const modules: Record<string, StoryModule> = {
   Chips: ChipsStories as unknown as StoryModule,
   Numerical: NumericalStories as unknown as StoryModule,
   HomeScreen: HomeScreenStories as unknown as StoryModule,
+  CycleScreen: CycleScreenStories as unknown as StoryModule,
 };
 
 describe('storybook: every primitive story renders without warning', () => {

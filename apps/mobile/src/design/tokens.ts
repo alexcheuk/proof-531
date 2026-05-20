@@ -67,6 +67,7 @@ export const shape = {
   rMd: 12,
   rLg: 18,
   rPill: 999,
+  weekLabel: 48,
 } as const;
 
 export type Shape = typeof shape;
