@@ -5,7 +5,7 @@ tasks:
     title: Port tokens.css to typed tokens.ts
     phase: 1
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#72-phase-1--design-system-1-2-days
     behavioral_reference: design-reference/tokens.css
     done_when:

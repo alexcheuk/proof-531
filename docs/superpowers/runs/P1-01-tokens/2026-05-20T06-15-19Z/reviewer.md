@@ -1,0 +1,1 @@
+{"task_id":"P1-01-tokens","decision":"approve","violations":[],"summary":"tokens.ts ports every CSS var with appropriate grouping/types, aliases preserve legacy names for P1-02, template hex literals and jest config fix are scoped exactly as authorized, conventional commits in place, boundary regex clean across .ts and .tsx."}
