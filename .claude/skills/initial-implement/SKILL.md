@@ -45,6 +45,10 @@ You are the orchestrator. Your job is to move tasks from `docs/superpowers/queue
 4. Mark task `in_progress` via `scripts/mark-status.sh`.
 5. Create worktree at `.worktrees/<task-id>` on branch `auto/<task-id>` via the `using-git-worktrees` skill or `git worktree add`.
 6. Spawn PLANNER subagent (template: `subagent-prompts/planner.md`).
+   - **Before spawning ANY subagent for this task**, pin the run-log timestamp:
+     `export RUN_LOG_TS="$(date -u +%Y-%m-%dT%H-%M-%SZ)"`. Every `write-run-log.sh`
+     invocation for this task will then land in the same `docs/superpowers/runs/<id>/<RUN_LOG_TS>/`
+     directory. Without this, each subagent's log lands in its own timestamp dir.
    - Output: ordered list of implementation steps.
    - Log to `docs/superpowers/runs/<task-id>/<ISO-timestamp>/planner.md`.
 7. Spawn IMPLEMENTER subagent (template: `subagent-prompts/implementer.md`) in the worktree.

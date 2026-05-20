@@ -19,7 +19,7 @@ fi
 TASK_ID="$1"
 SUBAGENT="$2"
 CONTENT_SRC="${3:-/dev/stdin}"
-TS="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+TS="${RUN_LOG_TS:-$(date -u +%Y-%m-%dT%H-%M-%SZ)}"
 LOG_DIR="docs/superpowers/runs/$TASK_ID/$TS"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/${SUBAGENT}.md"
