@@ -85,7 +85,7 @@ tasks:
     title: Storybook 8 for React Native + dev-only route
     phase: 1
     depends_on: [P1-05-press-button, P1-06-card-segrail-stepper]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
     done_when:
       - "apps/mobile/.storybook/ configured for RN Storybook 8"
