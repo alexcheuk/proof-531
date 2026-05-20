@@ -1,0 +1,439 @@
+diff --git a/apps/mobile/src/design/primitives/Card.tsx b/apps/mobile/src/design/primitives/Card.tsx
+new file mode 100644
+index 0000000..964a06e
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/Card.tsx
+@@ -0,0 +1,35 @@
++import type React from 'react';
++import { Pressable, View, type ViewStyle } from 'react-native';
++import { colors, shape } from '../tokens';
++
++export type CardProps = {
++  children?: React.ReactNode;
++  padded?: boolean;
++  interactive?: boolean;
++  onPress?: () => void;
++  testID?: string;
++};
++
++export function Card({ children, padded = true, interactive = false, onPress, testID }: CardProps) {
++  const style: ViewStyle = {
++    backgroundColor: colors.bg1,
++    borderColor: colors.line,
++    borderWidth: 1,
++    borderRadius: shape.rMd,
++    ...(padded ? { padding: shape.rMd } : null),
++  };
++  if (interactive || onPress) {
++    return (
++      <Pressable accessibilityRole="button" onPress={onPress} style={style} testID={testID}>
++        {children}
++      </Pressable>
++    );
++  }
++  return (
++    <View style={style} testID={testID}>
++      {children}
++    </View>
++  );
++}
++
++export default Card;
+diff --git a/apps/mobile/src/design/primitives/NumberStepper.tsx b/apps/mobile/src/design/primitives/NumberStepper.tsx
+new file mode 100644
+index 0000000..9bd16fa
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/NumberStepper.tsx
+@@ -0,0 +1,100 @@
++import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
++import { colors, shape, type } from '../tokens';
++import { WeightNum } from './WeightNum';
++
++export type NumberStepperProps = {
++  value: number;
++  min: number;
++  max: number;
++  step: number;
++  onChange: (next: number) => void;
++  unit?: string;
++  testID?: string;
++};
++
++const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
++
++const BUTTON_SIZE: ViewStyle = {
++  width: shape.rLg * 2 + shape.rMd,
++  height: shape.rLg * 2 + shape.rMd,
++  borderRadius: shape.rPill,
++  alignItems: 'center',
++  justifyContent: 'center',
++  backgroundColor: colors.bg2,
++};
++
++const CONTAINER: ViewStyle = {
++  flexDirection: 'row',
++  alignItems: 'center',
++  justifyContent: 'space-between',
++  backgroundColor: colors.bg1,
++  borderRadius: shape.rPill,
++  padding: shape.rSm,
++  gap: shape.rXs,
++};
++
++const VALUE_GROUP: ViewStyle = {
++  flexDirection: 'row',
++  alignItems: 'baseline',
++  justifyContent: 'center',
++  flex: 1,
++  gap: shape.rSm,
++};
++
++const GLYPH: TextStyle = {
++  color: colors.ink0,
++  fontSize: shape.rLg,
++  fontFamily: type.sans,
++  fontWeight: '500',
++};
++
++const UNIT: TextStyle = {
++  color: colors.ink2,
++  fontFamily: type.mono,
++  fontSize: shape.rMd,
++};
++
++export function NumberStepper({
++  value,
++  min,
++  max,
++  step,
++  onChange,
++  unit,
++  testID,
++}: NumberStepperProps) {
++  const handleDec = () => onChange(clamp(value - step, min, max));
++  const handleInc = () => onChange(clamp(value + step, min, max));
++  return (
++    <View
++      accessible
++      accessibilityRole="adjustable"
++      accessibilityValue={{ min, max, now: value }}
++      style={CONTAINER}
++      testID={testID}
++    >
++      <Pressable
++        accessibilityRole="button"
++        accessibilityLabel="Decrement"
++        onPress={handleDec}
++        style={BUTTON_SIZE}
++      >
++        <RNText style={GLYPH}>−</RNText>
++      </Pressable>
++      <View style={VALUE_GROUP}>
++        <WeightNum value={value} size="lg" />
++        {unit ? <RNText style={UNIT}>{unit}</RNText> : null}
++      </View>
++      <Pressable
++        accessibilityRole="button"
++        accessibilityLabel="Increment"
++        onPress={handleInc}
++        style={BUTTON_SIZE}
++      >
++        <RNText style={GLYPH}>+</RNText>
++      </Pressable>
++    </View>
++  );
++}
++
++export default NumberStepper;
+diff --git a/apps/mobile/src/design/primitives/SegRail.tsx b/apps/mobile/src/design/primitives/SegRail.tsx
+new file mode 100644
+index 0000000..c5b6b5a
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/SegRail.tsx
+@@ -0,0 +1,65 @@
++import { Pressable, type TextStyle, View, type ViewStyle } from 'react-native';
++import { useTheme } from '../theme';
++import { shape, type } from '../tokens';
++import { Text } from './Text';
++
++export type SegRailOption<T extends string = string> = T | { value: T; label: string };
++
++export type SegRailProps<T extends string = string> = {
++  options: ReadonlyArray<SegRailOption<T>>;
++  value: T;
++  onChange: (next: T) => void;
++  testID?: string;
++};
++
++function normalize<T extends string>(o: SegRailOption<T>): { value: T; label: string } {
++  return typeof o === 'string' ? { value: o, label: o } : o;
++}
++
++export function SegRail<T extends string = string>({
++  options,
++  value,
++  onChange,
++  testID,
++}: SegRailProps<T>) {
++  const theme = useTheme();
++  const container: ViewStyle = {
++    flexDirection: 'row',
++    alignSelf: 'flex-start',
++    backgroundColor: theme.colors.bg1,
++    borderRadius: shape.rPill,
++    padding: shape.rXs,
++  };
++  return (
++    <View style={container} testID={testID}>
++      {options.map((opt) => {
++        const { value: v, label } = normalize(opt);
++        const active = v === value;
++        const itemStyle: ViewStyle = {
++          paddingVertical: shape.rSm,
++          paddingHorizontal: shape.rMd,
++          borderRadius: shape.rPill,
++        };
++        const labelStyle: TextStyle = {
++          fontFamily: type.sans,
++          fontSize: shape.rMd,
++          fontWeight: '500',
++          color: active ? theme.colors.hot : theme.colors.ink2,
++        };
++        return (
++          <Pressable
++            key={v}
++            accessibilityRole="button"
++            accessibilityState={{ selected: active }}
++            onPress={() => onChange(v)}
++            style={itemStyle}
++          >
++            <Text style={labelStyle}>{label}</Text>
++          </Pressable>
++        );
++      })}
++    </View>
++  );
++}
++
++export default SegRail;
+diff --git a/apps/mobile/src/design/primitives/__tests__/Card.test.tsx b/apps/mobile/src/design/primitives/__tests__/Card.test.tsx
+new file mode 100644
+index 0000000..486ce04
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/Card.test.tsx
+@@ -0,0 +1,53 @@
++import { fireEvent, render } from '@testing-library/react-native';
++import { Text as RNText } from 'react-native';
++import { colors, shape } from '../../tokens';
++import { Card } from '../Card';
++
++const flatten = (s: unknown): Record<string, unknown> =>
++  (Array.isArray(s) ? Object.assign({}, ...s) : s) as Record<string, unknown>;
++
++describe('Card', () => {
++  it('renders children inside a bg1 container with rMd radius, line border, padding=rMd', () => {
++    const { getByTestId, getByText } = render(
++      <Card testID="card">
++        <RNText>body</RNText>
++      </Card>,
++    );
++    expect(getByText('body')).toBeTruthy();
++    const style = flatten(getByTestId('card').props.style);
++    expect(style).toEqual(
++      expect.objectContaining({
++        backgroundColor: colors.bg1,
++        borderColor: colors.line,
++        borderWidth: 1,
++        borderRadius: shape.rMd,
++        padding: shape.rMd,
++      }),
++    );
++  });
++
++  it('omits padding when padded={false}', () => {
++    const { getByTestId } = render(<Card testID="card" padded={false} />);
++    expect(flatten(getByTestId('card').props.style).padding).toBeUndefined();
++  });
++
++  it('when interactive with onPress, exposes role=button and fires onPress', () => {
++    const onPress = jest.fn();
++    const { getByRole } = render(
++      <Card interactive onPress={onPress}>
++        <RNText>tap</RNText>
++      </Card>,
++    );
++    fireEvent.press(getByRole('button'));
++    expect(onPress).toHaveBeenCalledTimes(1);
++  });
++
++  it('without onPress, does not expose role=button', () => {
++    const { queryByRole } = render(
++      <Card>
++        <RNText>static</RNText>
++      </Card>,
++    );
++    expect(queryByRole('button')).toBeNull();
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/NumberStepper.test.tsx b/apps/mobile/src/design/primitives/__tests__/NumberStepper.test.tsx
+new file mode 100644
+index 0000000..ff421ee
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/NumberStepper.test.tsx
+@@ -0,0 +1,65 @@
++import { fireEvent, render } from '@testing-library/react-native';
++import { NumberStepper } from '../NumberStepper';
++
++describe('NumberStepper', () => {
++  it('exposes role=adjustable with accessibilityValue {min,max,now}', () => {
++    const { getByRole } = render(
++      <NumberStepper value={20} min={0} max={100} step={5} onChange={() => {}} />,
++    );
++    expect(getByRole('adjustable').props.accessibilityValue).toEqual({
++      min: 0,
++      max: 100,
++      now: 20,
++    });
++  });
++
++  it('renders the current value', () => {
++    const { getByText } = render(
++      <NumberStepper value={45} min={0} max={100} step={5} onChange={() => {}} />,
++    );
++    expect(getByText('45')).toBeTruthy();
++  });
++
++  it('increment steps by step', () => {
++    const onChange = jest.fn();
++    const { getByLabelText } = render(
++      <NumberStepper value={20} min={0} max={100} step={5} onChange={onChange} />,
++    );
++    fireEvent.press(getByLabelText('Increment'));
++    expect(onChange).toHaveBeenLastCalledWith(25);
++  });
++
++  it('decrement steps by step', () => {
++    const onChange = jest.fn();
++    const { getByLabelText } = render(
++      <NumberStepper value={20} min={0} max={100} step={5} onChange={onChange} />,
++    );
++    fireEvent.press(getByLabelText('Decrement'));
++    expect(onChange).toHaveBeenLastCalledWith(15);
++  });
++
++  it('clamps decrement at min', () => {
++    const onChange = jest.fn();
++    const { getByLabelText } = render(
++      <NumberStepper value={2} min={0} max={100} step={5} onChange={onChange} />,
++    );
++    fireEvent.press(getByLabelText('Decrement'));
++    expect(onChange).toHaveBeenLastCalledWith(0);
++  });
++
++  it('clamps increment at max', () => {
++    const onChange = jest.fn();
++    const { getByLabelText } = render(
++      <NumberStepper value={98} min={0} max={100} step={5} onChange={onChange} />,
++    );
++    fireEvent.press(getByLabelText('Increment'));
++    expect(onChange).toHaveBeenLastCalledWith(100);
++  });
++
++  it('renders ± buttons with role=button', () => {
++    const { getAllByRole } = render(
++      <NumberStepper value={10} min={0} max={50} step={1} onChange={() => {}} />,
++    );
++    expect(getAllByRole('button')).toHaveLength(2);
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/SegRail.test.tsx b/apps/mobile/src/design/primitives/__tests__/SegRail.test.tsx
+new file mode 100644
+index 0000000..c2f3493
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/SegRail.test.tsx
+@@ -0,0 +1,68 @@
++import { fireEvent, render } from '@testing-library/react-native';
++import type React from 'react';
++import { ThemeProvider } from '../../theme';
++import { colors } from '../../tokens';
++import { SegRail } from '../SegRail';
++
++const wrap = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
++const flatten = (s: unknown): Record<string, unknown> =>
++  (Array.isArray(s) ? Object.assign({}, ...s) : s) as Record<string, unknown>;
++
++describe('SegRail', () => {
++  it('renders one button per option', () => {
++    const { getAllByRole } = wrap(
++      <SegRail
++        options={[
++          { value: 'a', label: 'A' },
++          { value: 'b', label: 'B' },
++          { value: 'c', label: 'C' },
++        ]}
++        value="a"
++        onChange={() => {}}
++      />,
++    );
++    expect(getAllByRole('button')).toHaveLength(3);
++  });
++
++  it('marks active item selected with hot label and ink2 for inactive', () => {
++    const { getByText } = wrap(
++      <SegRail
++        options={[
++          { value: 'a', label: 'A' },
++          { value: 'b', label: 'B' },
++        ]}
++        value="b"
++        onChange={() => {}}
++      />,
++    );
++    expect(flatten(getByText('B').props.style)).toEqual(
++      expect.objectContaining({ color: colors.hot }),
++    );
++    expect(flatten(getByText('A').props.style)).toEqual(
++      expect.objectContaining({ color: colors.ink2 }),
++    );
++  });
++
++  it('fires onChange with option value', () => {
++    const onChange = jest.fn();
++    const { getByText } = wrap(
++      <SegRail
++        options={[
++          { value: 'lbs', label: 'LBS' },
++          { value: 'kg', label: 'KG' },
++        ]}
++        value="lbs"
++        onChange={onChange}
++      />,
++    );
++    fireEvent.press(getByText('KG'));
++    expect(onChange).toHaveBeenCalledWith('kg');
++  });
++
++  it('accepts plain-string options', () => {
++    const onChange = jest.fn();
++    const { getByText } = wrap(<SegRail options={['lbs', 'kg']} value="lbs" onChange={onChange} />);
++    fireEvent.press(getByText('kg'));
++    expect(onChange).toHaveBeenCalledWith('kg');
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/index.ts b/apps/mobile/src/design/primitives/index.ts
+index 385d988..beea836 100644
+--- a/apps/mobile/src/design/primitives/index.ts
++++ b/apps/mobile/src/design/primitives/index.ts
+@@ -15,3 +15,12 @@ export type { WeightNumProps, WeightNumSize } from './WeightNum';
+ 
+ export { PressButton } from './PressButton';
+ export type { PressButtonProps, PressButtonSize, PressButtonVariant } from './PressButton';
++
++export { Card } from './Card';
++export type { CardProps } from './Card';
++
++export { SegRail } from './SegRail';
++export type { SegRailOption, SegRailProps } from './SegRail';
++
++export { NumberStepper } from './NumberStepper';
++export type { NumberStepperProps } from './NumberStepper';
