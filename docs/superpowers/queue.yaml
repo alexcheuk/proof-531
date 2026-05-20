@@ -165,7 +165,7 @@ tasks:
     title: Enforce 95% coverage gate on src/domain/
     phase: 2
     depends_on: [P2-01-program-math, P2-02-plates, P2-03-e1rm, P2-04-progression]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-3--unit--property-tests
     done_when:
       - "apps/mobile/jest.config.ts (or .js) has coverageThreshold for src/domain/ at 95%"
