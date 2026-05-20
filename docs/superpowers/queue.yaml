@@ -496,7 +496,7 @@ tasks:
     title: Live session screen (in-progress lifting)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-live.md
     done_when:
       - "spec docs/superpowers/specs/TODO-live.md exists"
