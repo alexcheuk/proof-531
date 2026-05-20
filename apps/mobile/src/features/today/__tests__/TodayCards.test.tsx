@@ -23,8 +23,10 @@ jest.mock('@shopify/react-native-skia', () => {
 const wrap = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
 const session: TodaySession = {
+  cycleNumber: 3,
   liftId: 'squat',
   liftLabel: 'Squat',
+  trainingMax: 300,
   unit: 'lbs',
   weekOfCycle: 1,
   sets: [

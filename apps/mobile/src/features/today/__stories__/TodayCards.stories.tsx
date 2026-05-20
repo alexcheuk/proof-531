@@ -13,8 +13,10 @@ type Story = {
 };
 
 const week1: TodaySession = {
+  cycleNumber: 3,
   liftId: 'squat',
   liftLabel: 'Squat',
+  trainingMax: 300,
   unit: 'lbs',
   weekOfCycle: 1,
   sets: [
@@ -25,8 +27,10 @@ const week1: TodaySession = {
 };
 
 const week3Heavy: TodaySession = {
+  cycleNumber: 3,
   liftId: 'deadlift',
   liftLabel: 'Deadlift',
+  trainingMax: 345,
   unit: 'lbs',
   weekOfCycle: 3,
   sets: [
@@ -37,8 +41,10 @@ const week3Heavy: TodaySession = {
 };
 
 const allDone: TodaySession = {
+  cycleNumber: 2,
   liftId: 'bench',
   liftLabel: 'Bench',
+  trainingMax: 200,
   unit: 'lbs',
   weekOfCycle: 2,
   sets: [
