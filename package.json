@@ -1,0 +1,22 @@
+{
+  "name": "proof-531",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r --parallel typecheck",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "pnpm -r --parallel test",
+    "expo-doctor": "pnpm --filter @proof-531/mobile exec expo-doctor",
+    "ci": "pnpm typecheck && pnpm lint && pnpm test && pnpm expo-doctor"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
+}
