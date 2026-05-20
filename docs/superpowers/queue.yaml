@@ -143,7 +143,7 @@ tasks:
     title: Epley e1RM + PR detection
     phase: 2
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
     done_when:
       - "apps/mobile/src/domain/e1rm/index.ts exports epley(weight, reps), isPR(currentE1RM, history)"
