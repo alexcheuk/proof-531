@@ -15,3 +15,12 @@ export type { WeightNumProps, WeightNumSize } from './WeightNum';
 
 export { PressButton } from './PressButton';
 export type { PressButtonProps, PressButtonSize, PressButtonVariant } from './PressButton';
+
+export { Card } from './Card';
+export type { CardProps } from './Card';
+
+export { SegRail } from './SegRail';
+export type { SegRailOption, SegRailProps } from './SegRail';
+
+export { NumberStepper } from './NumberStepper';
+export type { NumberStepperProps } from './NumberStepper';
