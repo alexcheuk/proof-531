@@ -21,33 +21,116 @@ type Story = {
 //   2. The seed values are documented and stable — keeping props in lock-step
 //      with seedDemo's stage definitions is sufficient for visual fixtures.
 //      The matching jest tests in seed.test.ts already cover the seed paths.
-//
-// Per-stage summary (see seed.ts header):
-//   freshStart: TMs {squat:235, bench:175, deadlift:305, press:115}, fresh
-//   midCycle:   TMs {squat:275, bench:195, deadlift:345}, press disabled,
-//               cycle 3 week 2 active, 8 sessions done
-//   benchOnly:  bench only (TM 215), cycle 4 week 2, 1 session done
-//   advanced:   TMs {squat:320, bench:220, deadlift:405, press:145},
-//               cycle 6 week 3 active, 13 sessions done
 
-const freshStartLifts = [
-  { id: 'squat', label: 'Squat', trainingMax: 235 },
-  { id: 'bench', label: 'Bench', trainingMax: 175 },
-  { id: 'deadlift', label: 'Deadlift', trainingMax: 305 },
-  { id: 'press', label: 'Press', trainingMax: 115 },
+// Top-set numbers are derived offline from `prescribedSets(tm, week)` so the
+// stories don't depend on the runtime domain code path.
+
+const freshStartLifts: HomeScreenProps['lifts'] = [
+  {
+    id: 'squat',
+    label: 'Squat',
+    trainingMax: 235,
+    topWeight: 200,
+    topReps: 5,
+    amrap: true,
+    pct: 0.85,
+  },
+  {
+    id: 'bench',
+    label: 'Bench',
+    trainingMax: 175,
+    topWeight: 150,
+    topReps: 5,
+    amrap: true,
+    pct: 0.85,
+  },
+  {
+    id: 'deadlift',
+    label: 'Deadlift',
+    trainingMax: 305,
+    topWeight: 260,
+    topReps: 5,
+    amrap: true,
+    pct: 0.85,
+  },
+  {
+    id: 'press',
+    label: 'Press',
+    trainingMax: 115,
+    topWeight: 100,
+    topReps: 5,
+    amrap: true,
+    pct: 0.85,
+  },
 ];
 
-const midCycleLifts = [
-  { id: 'squat', label: 'Squat', trainingMax: 275 },
-  { id: 'bench', label: 'Bench', trainingMax: 195 },
-  { id: 'deadlift', label: 'Deadlift', trainingMax: 345 },
+const midCycleLifts: HomeScreenProps['lifts'] = [
+  {
+    id: 'squat',
+    label: 'Squat',
+    trainingMax: 275,
+    topWeight: 250,
+    topReps: 3,
+    amrap: true,
+    pct: 0.9,
+  },
+  {
+    id: 'bench',
+    label: 'Bench',
+    trainingMax: 195,
+    topWeight: 175,
+    topReps: 3,
+    amrap: true,
+    pct: 0.9,
+  },
+  {
+    id: 'deadlift',
+    label: 'Deadlift',
+    trainingMax: 345,
+    topWeight: 310,
+    topReps: 3,
+    amrap: true,
+    pct: 0.9,
+  },
 ];
 
-const advancedLifts = [
-  { id: 'squat', label: 'Squat', trainingMax: 320 },
-  { id: 'bench', label: 'Bench', trainingMax: 220 },
-  { id: 'deadlift', label: 'Deadlift', trainingMax: 405 },
-  { id: 'press', label: 'Press', trainingMax: 145 },
+const advancedLifts: HomeScreenProps['lifts'] = [
+  {
+    id: 'squat',
+    label: 'Squat',
+    trainingMax: 320,
+    topWeight: 305,
+    topReps: 1,
+    amrap: true,
+    pct: 0.95,
+  },
+  {
+    id: 'bench',
+    label: 'Bench',
+    trainingMax: 220,
+    topWeight: 210,
+    topReps: 1,
+    amrap: true,
+    pct: 0.95,
+  },
+  {
+    id: 'deadlift',
+    label: 'Deadlift',
+    trainingMax: 405,
+    topWeight: 385,
+    topReps: 1,
+    amrap: true,
+    pct: 0.95,
+  },
+  {
+    id: 'press',
+    label: 'Press',
+    trainingMax: 145,
+    topWeight: 140,
+    topReps: 1,
+    amrap: true,
+    pct: 0.95,
+  },
 ];
 
 const meta: Meta<HomeScreenProps> = {
@@ -59,39 +142,53 @@ export default meta;
 export const freshStart: Story = {
   args: {
     greeting: 'Good morning',
-    headline: 'Welcome.',
     cycleStatus: { kind: 'freshStart' },
     lifts: freshStartLifts,
-    stats: { prs: 0, sessions: 0, daysLifted: 0 },
+    unit: 'lbs',
+    completedSessions: 0,
   },
 };
 
 export const midCycle: Story = {
   args: {
     greeting: 'Good afternoon',
-    headline: 'Time to lift.',
     cycleStatus: { kind: 'active', cycle: 3, week: 2 },
     lifts: midCycleLifts,
-    stats: { prs: 2, sessions: 8, daysLifted: 22 },
+    unit: 'lbs',
+    completedSessions: 8,
   },
 };
 
 export const benchOnly: Story = {
   args: {
     greeting: 'Good evening',
-    headline: 'Single focus.',
     cycleStatus: { kind: 'active', cycle: 4, week: 2 },
-    lifts: [{ id: 'bench', label: 'Bench', trainingMax: 215 }],
-    stats: { prs: 1, sessions: 1, daysLifted: 1 },
+    lifts: [
+      {
+        id: 'bench',
+        label: 'Bench',
+        trainingMax: 215,
+        topWeight: 195,
+        topReps: 3,
+        amrap: true,
+        pct: 0.9,
+      },
+    ],
+    unit: 'lbs',
+    completedSessions: 1,
   },
 };
 
 export const advanced: Story = {
   args: {
     greeting: 'Good morning',
-    headline: 'Strong cycle.',
     cycleStatus: { kind: 'justAdvanced', fromCycle: 5, toCycle: 6 },
     lifts: advancedLifts,
-    stats: { prs: 5, sessions: 13, daysLifted: 42 },
+    unit: 'lbs',
+    completedSessions: 13,
+    recentNotice: {
+      title: '+10 deadlift training max',
+      subline: 'cycle 5 cleared — keep going.',
+    },
   },
 };
