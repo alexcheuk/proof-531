@@ -1,12 +1,15 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { sqlite } from '@/data/db/client';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  useDrizzleStudio(__DEV__ ? sqlite : null);
   const [loaded, error] = useFonts({
     'SpaceGrotesk-Regular': require('../../assets/fonts/SpaceGrotesk-Regular.ttf'),
     'SpaceGrotesk-Medium': require('../../assets/fonts/SpaceGrotesk-Medium.ttf'),
