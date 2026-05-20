@@ -107,3 +107,15 @@ export const aliases = {
 } as const;
 
 export type Aliases = typeof aliases;
+
+// ── accent swatches (editor-tweakable overrides for `colors.hot`) ─────────
+// Sourced from design-reference/app.jsx:358 — the TweakColor palette.
+export const accentSwatches = {
+  ember: '#C13D11',
+  sage: '#1F8A5B',
+  slate: '#3B6685',
+  bronze: '#8A6B1E',
+  night: '#15130F',
+} as const;
+
+export type AccentSwatchKey = keyof typeof accentSwatches;

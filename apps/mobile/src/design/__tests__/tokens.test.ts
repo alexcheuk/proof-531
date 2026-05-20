@@ -1,4 +1,4 @@
-import { aliases, colors, motion, shape, type } from '../tokens';
+import { accentSwatches, aliases, colors, motion, shape, type } from '../tokens';
 
 describe('design tokens', () => {
   describe('canonical groups', () => {
@@ -198,5 +198,24 @@ describe('design tokens', () => {
       expect(aliases.amberSoft.startsWith('#')).toBe(true);
       expect(aliases.amberSoft.length).toBe(7);
     });
+  });
+
+  describe('accentSwatches', () => {
+    it('defines accentSwatches with the 5 expected keys', () => {
+      expect(accentSwatches).toBeDefined();
+      expect(typeof accentSwatches).toBe('object');
+      const keys = Object.keys(accentSwatches).sort();
+      expect(keys).toEqual(['bronze', 'ember', 'night', 'sage', 'slate']);
+    });
+
+    it.each(['ember', 'sage', 'slate', 'bronze', 'night'] as const)(
+      'accentSwatches.%s is a 7-char hex string',
+      (key) => {
+        const value = accentSwatches[key];
+        expect(typeof value).toBe('string');
+        expect(value.startsWith('#')).toBe(true);
+        expect(value.length).toBe(7);
+      },
+    );
   });
 });
