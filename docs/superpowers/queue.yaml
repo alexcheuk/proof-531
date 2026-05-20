@@ -507,7 +507,7 @@ tasks:
     title: Cycle tab (overview + advance)
     phase: 8
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/TODO-cycle.md
     done_when:
       - "spec docs/superpowers/specs/TODO-cycle.md exists"
