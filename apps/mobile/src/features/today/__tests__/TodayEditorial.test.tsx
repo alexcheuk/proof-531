@@ -41,15 +41,22 @@ describe('TodayEditorial', () => {
     expect(getByTestId('today-header')).toBeTruthy();
   });
 
-  it('header shows cycle and week info', () => {
+  it('header shows the brand mark with cycle/week/day meta', () => {
     const { getByText } = wrap(<TodayEditorial session={session} />);
-    expect(getByText('Cycle 3 · Week 1')).toBeTruthy();
-    expect(getByText('Squat')).toBeTruthy();
+    expect(getByText(/^531/)).toBeTruthy();
+    expect(getByText('c3 · w1 · d1')).toBeTruthy();
   });
 
-  it('renders the week scheme label', () => {
+  it('hero renders the lift name (first word + accent suffix)', () => {
     const { getByText } = wrap(<TodayEditorial session={session} />);
-    expect(getByText('5 / 5 / 5+')).toBeTruthy();
+    // Single-word lift labels split into "<word>" + "day" accent suffix.
+    expect(getByText('day')).toBeTruthy();
+  });
+
+  it('renders the week-scheme eyebrow with date and week label', () => {
+    const { getByText } = wrap(<TodayEditorial session={session} />);
+    // Eyebrow format: "<date> · week <n>, <scheme>"
+    expect(getByText(/week 1, 5 \/ 5 \/ 5\+/)).toBeTruthy();
   });
 
   it('renders 3 prescribed set rows for a week-1 session', () => {
