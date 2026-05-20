@@ -389,7 +389,7 @@ tasks:
     title: docs/CONTRIBUTING.md
     phase: 7
     depends_on: [P0-04-skill-scaffold]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md
     done_when:
       - "docs/CONTRIBUTING.md exists explaining /initial-implement, queue.yaml, the harness, and how to add a new task"
