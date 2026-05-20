@@ -4,22 +4,27 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const storybookDir = resolve(here, '..', '.storybook');
-const storiesDir = resolve(here, '..', 'src/design/primitives/__stories__');
+const designDir = resolve(here, '..', 'src/design');
 
 function listStories(dir) {
   const out = [];
   try {
     for (const name of readdirSync(dir)) {
       const full = join(dir, name);
-      if (statSync(full).isFile() && /\.stories\.(ts|tsx)$/.test(name)) out.push(full);
+      const st = statSync(full);
+      if (st.isDirectory()) {
+        out.push(...listStories(full));
+      } else if (st.isFile() && /\.stories\.(ts|tsx)$/.test(name)) {
+        out.push(full);
+      }
     }
   } catch {
     // no stories dir yet — that's fine, generator emits an empty list.
   }
-  return out.sort();
+  return out;
 }
 
-const files = listStories(storiesDir);
+const files = listStories(designDir).sort();
 mkdirSync(storybookDir, { recursive: true });
 
 const imports = files
