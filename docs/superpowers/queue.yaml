@@ -89,7 +89,7 @@ tasks:
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-4--storybook-on-device
     done_when:
       - "apps/mobile/.storybook/ configured for RN Storybook 8"
-      - "apps/mobile/app/_storybook.tsx route mounts the storybook UI"
+      - "apps/mobile/src/app/_storybook.tsx route mounts the storybook UI"
       - "Route is gated behind __DEV__ — production build omits it"
       - "pnpm typecheck passes"
   - id: P1-08-primitive-stories
@@ -241,7 +241,7 @@ tasks:
     status: todo
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
     done_when:
-      - "apps/mobile/app/_layout.tsx mounts QueryClientProvider and ThemeProvider and runs db migrations"
+      - "apps/mobile/src/app/_layout.tsx mounts QueryClientProvider and ThemeProvider and runs db migrations"
       - "(tabs)/_layout.tsx defines 5 tabs"
       - "live and pr exist as modal screens"
       - "onboarding/ is a separate stack"

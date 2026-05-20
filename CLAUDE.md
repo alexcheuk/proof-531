@@ -20,14 +20,17 @@ The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superp
 
 ```
 apps/mobile/
-  app/                  # expo-router routes (thin shells)
   src/
+    app/                # expo-router routes (thin shells) — Expo SDK 55 src/app layout
     design/             # tokens, theme, primitives, plates, icons, motion
     domain/             # pure business logic — NO React, NO async, NO DB
     data/               # Drizzle, repos, query hooks
     features/           # screen composition
     ui-state/           # Zustand
     lib/                # haptics/sentry/posthog init
+    components/         # Expo template leftovers (themed-text, app-tabs, etc.)
+    hooks/              # Expo template leftovers
+    constants/          # Expo template leftovers
 ```
 
 ## Boundary rules (enforced by reviewer)

@@ -30,6 +30,9 @@ android/local.properties
 # EAS
 .easignore
 
+# Orchestrator worktrees (created by /initial-implement at .worktrees/<task-id>/)
+.worktrees/
+
 # IDE
 .idea/
 .vscode/*
