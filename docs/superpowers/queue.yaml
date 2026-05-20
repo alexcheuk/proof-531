@@ -359,7 +359,7 @@ tasks:
     title: eas.json with development, preview, production profiles
     phase: 6
     depends_on: [P0-01-bootstrap]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#75-phase-4--navigation-shell--home-1-day--pipeline-prover
     done_when:
       - "apps/mobile/eas.json defines development (dev client), preview (internal), production (store) profiles"
