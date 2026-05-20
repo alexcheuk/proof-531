@@ -10,6 +10,7 @@ import * as LiveScreenStories from '@/features/live/__stories__/LiveScreen.stori
 import * as PRModalStories from '@/features/pr/__stories__/PRModal.stories';
 import * as SettingsScreenStories from '@/features/settings/__stories__/SettingsScreen.stories';
 import * as TodayCardsStories from '@/features/today/__stories__/TodayCards.stories';
+import * as TodayDataStories from '@/features/today/__stories__/TodayData.stories';
 import * as TodayEditorialStories from '@/features/today/__stories__/TodayEditorial.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
@@ -69,6 +70,7 @@ const modules: Record<string, StoryModule> = {
   PRModal: PRModalStories as unknown as StoryModule,
   SettingsScreen: SettingsScreenStories as unknown as StoryModule,
   TodayCards: TodayCardsStories as unknown as StoryModule,
+  TodayData: TodayDataStories as unknown as StoryModule,
   TodayEditorial: TodayEditorialStories as unknown as StoryModule,
 };
 
