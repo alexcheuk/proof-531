@@ -1,8 +1,12 @@
+import { TabBar } from '@/features/navigation/TabBar';
 import { Tabs } from 'expo-router';
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <TabBar state={props.state} navigation={props.navigation} />}
+    >
       <Tabs.Screen name="home" options={{ title: 'Home' }} />
       <Tabs.Screen name="library" options={{ title: 'Library' }} />
       <Tabs.Screen name="cycle" options={{ title: 'Cycle' }} />

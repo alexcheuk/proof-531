@@ -1,7 +1,10 @@
 import type { StorybookConfig } from '@storybook/react-native';
 
 const main: StorybookConfig = {
-  stories: ['../src/design/**/__stories__/*.stories.@(ts|tsx)'],
+  stories: [
+    '../src/design/**/__stories__/*.stories.@(ts|tsx)',
+    '../src/features/**/__stories__/*.stories.@(ts|tsx)',
+  ],
   addons: [],
 };
 

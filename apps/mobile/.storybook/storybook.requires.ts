@@ -6,4 +6,5 @@ import '../src/design/primitives/__stories__/NumberStepper.stories.tsx';
 import '../src/design/primitives/__stories__/PressButton.stories.tsx';
 import '../src/design/primitives/__stories__/SegRail.stories.tsx';
 import '../src/design/primitives/__stories__/WeightNum.stories.tsx';
+import '../src/features/navigation/__stories__/TabBar.stories.tsx';
 export { view };

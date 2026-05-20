@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const storybookDir = resolve(here, '..', '.storybook');
-const designDir = resolve(here, '..', 'src/design');
+// Story sources — keep in sync with .storybook/main.ts `stories` globs.
+const storyRoots = [resolve(here, '..', 'src/design'), resolve(here, '..', 'src/features')];
 
 function listStories(dir) {
   const out = [];
@@ -24,7 +25,7 @@ function listStories(dir) {
   return out;
 }
 
-const files = listStories(designDir).sort();
+const files = storyRoots.flatMap((root) => listStories(root)).sort();
 mkdirSync(storybookDir, { recursive: true });
 
 const imports = files
