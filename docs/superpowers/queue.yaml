@@ -216,7 +216,7 @@ tasks:
     title: TanStack Query hooks for session, cycle, history, PR strip
     phase: 3
     depends_on: [P3-03-repos]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
     done_when:
       - "apps/mobile/src/data/queries/ exposes: useActiveCycle, useSession, useStartSet, useCompleteSet, useHistory, usePRStrip"

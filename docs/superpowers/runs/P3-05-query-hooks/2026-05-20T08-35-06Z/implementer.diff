@@ -1,0 +1,622 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index d3a358a..112e425 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -21,6 +21,7 @@
+     "@react-navigation/bottom-tabs": "^7.15.5",
+     "@react-navigation/elements": "^2.9.10",
+     "@react-navigation/native": "^7.1.33",
++    "@tanstack/react-query": "^5.100.11",
+     "drizzle-orm": "^0.45.2",
+     "expo": "~55.0.25",
+     "expo-constants": "~55.0.16",
+diff --git a/apps/mobile/src/data/context.tsx b/apps/mobile/src/data/context.tsx
+new file mode 100644
+index 0000000..3952915
+--- /dev/null
++++ b/apps/mobile/src/data/context.tsx
+@@ -0,0 +1,51 @@
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import { type ReactNode, createContext, useContext, useMemo } from 'react';
++import type * as schema from './db/schema';
++import { createAssistanceRepo } from './repositories/assistanceRepo';
++import { createCycleRepo } from './repositories/cycleRepo';
++import { createLiftRepo } from './repositories/liftRepo';
++import { createSessionRepo } from './repositories/sessionRepo';
++import { createSetRepo } from './repositories/setRepo';
++
++// All repos share the same drizzle SQLite database shape (sync mode + schema).
++// We use `unknown` for the runResult slot because expo-sqlite and better-sqlite3
++// produce different run-result shapes but both fit the same query surface.
++export type DataDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export type Repos = {
++  lifts: ReturnType<typeof createLiftRepo>;
++  cycles: ReturnType<typeof createCycleRepo>;
++  sessions: ReturnType<typeof createSessionRepo>;
++  sets: ReturnType<typeof createSetRepo>;
++  assistance: ReturnType<typeof createAssistanceRepo>;
++};
++
++const DataContext = createContext<Repos | null>(null);
++
++export function DataProvider({
++  db,
++  children,
++}: {
++  db: DataDb;
++  children: ReactNode;
++}) {
++  const repos = useMemo<Repos>(
++    () => ({
++      lifts: createLiftRepo(db),
++      cycles: createCycleRepo(db),
++      sessions: createSessionRepo(db),
++      sets: createSetRepo(db),
++      assistance: createAssistanceRepo(db),
++    }),
++    [db],
++  );
++  return <DataContext.Provider value={repos}>{children}</DataContext.Provider>;
++}
++
++export function useRepos(): Repos {
++  const ctx = useContext(DataContext);
++  if (!ctx) {
++    throw new Error('useRepos must be used inside <DataProvider>');
++  }
++  return ctx;
++}
+diff --git a/apps/mobile/src/data/queries/__tests__/queries.test.tsx b/apps/mobile/src/data/queries/__tests__/queries.test.tsx
+new file mode 100644
+index 0000000..e85f24e
+--- /dev/null
++++ b/apps/mobile/src/data/queries/__tests__/queries.test.tsx
+@@ -0,0 +1,243 @@
++import { act, renderHook, waitFor } from '@testing-library/react-native';
++import {
++  useActiveCycle,
++  useCompleteSet,
++  useHistory,
++  usePRStrip,
++  useSession,
++  useStartSet,
++} from '..';
++import type { DataDb } from '../../context';
++import { type TestDb, createTestDb } from '../../db/test-harness';
++import { makeWrapper } from '../test-wrapper';
++
++type Harness = TestDb & { wrapper: ReturnType<typeof makeWrapper> };
++
++function setup(): Harness {
++  const h = createTestDb();
++  // better-sqlite3's drizzle adapter and expo-sqlite's adapter share the
++  // BaseSQLiteDatabase<'sync', unknown, schema> shape we typed DataDb as.
++  const wrapper = makeWrapper(h.db as unknown as DataDb);
++  return { ...h, wrapper };
++}
++
++function seedLift(h: TestDb, id: string, label = 'Squat', tm = 300): void {
++  h.sqlite
++    .prepare(
++      'INSERT INTO lifts (id, label, category, training_max, enabled) VALUES (?, ?, ?, ?, ?)',
++    )
++    .run(id, label, 'lower', tm, 1);
++}
++
++function seedCycle(h: TestDb, number = 1, startedAt = Date.now()): number {
++  const r = h.sqlite
++    .prepare('INSERT INTO cycles (number, started_at) VALUES (?, ?)')
++    .run(number, Math.floor(startedAt / 1000));
++  return Number(r.lastInsertRowid);
++}
++
++function seedSession(
++  h: TestDb,
++  cycleId: number,
++  liftId: string,
++  week = 1,
++  startedAt = Date.now(),
++): number {
++  const r = h.sqlite
++    .prepare('INSERT INTO sessions (cycle_id, lift_id, week, started_at) VALUES (?, ?, ?, ?)')
++    .run(cycleId, liftId, week, Math.floor(startedAt / 1000));
++  return Number(r.lastInsertRowid);
++}
++
++function seedSet(
++  h: TestDb,
++  sessionId: number,
++  weight: number,
++  reps: number,
++  actualReps: number | null = null,
++  completedAt: number | null = null,
++): number {
++  const r = h.sqlite
++    .prepare(
++      'INSERT INTO sets (session_id, "index", type, prescribed_weight, prescribed_reps, actual_reps, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
++    )
++    .run(sessionId, 0, 'main', weight, reps, actualReps, completedAt);
++  return Number(r.lastInsertRowid);
++}
++
++describe('useActiveCycle', () => {
++  it('returns null when no cycles exist', async () => {
++    const { wrapper, close } = setup();
++    const { result } = renderHook(() => useActiveCycle(), { wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toBeNull();
++    close();
++  });
++
++  it('returns the most recently-started incomplete cycle', async () => {
++    const h = setup();
++    seedCycle(h, 1, new Date('2026-01-01').getTime());
++    seedCycle(h, 2, new Date('2026-02-01').getTime());
++    const { result } = renderHook(() => useActiveCycle(), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data?.number).toBe(2);
++    h.close();
++  });
++});
++
++describe('useSession', () => {
++  it('returns null for an unknown id', async () => {
++    const h = setup();
++    const { result } = renderHook(() => useSession(999), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toBeNull();
++    h.close();
++  });
++
++  it('returns the session row when it exists', async () => {
++    const h = setup();
++    seedLift(h, 'squat');
++    const cycleId = seedCycle(h);
++    const sessionId = seedSession(h, cycleId, 'squat');
++    const { result } = renderHook(() => useSession(sessionId), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data?.id).toBe(sessionId);
++    expect(result.current.data?.liftId).toBe('squat');
++    h.close();
++  });
++});
++
++describe('useHistory', () => {
++  it('returns [] initially', async () => {
++    const h = setup();
++    const { result } = renderHook(() => useHistory(), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toEqual([]);
++    h.close();
++  });
++
++  it('returns only completed sessions, newest-first', async () => {
++    const h = setup();
++    seedLift(h, 'squat');
++    const cycleId = seedCycle(h);
++    // one completed, one in-progress
++    const a = seedSession(h, cycleId, 'squat', 1, new Date('2026-01-01').getTime());
++    h.sqlite
++      .prepare('UPDATE sessions SET completed_at = ? WHERE id = ?')
++      .run(Math.floor(new Date('2026-01-02').getTime() / 1000), a);
++    const b = seedSession(h, cycleId, 'squat', 2, new Date('2026-01-05').getTime());
++    h.sqlite
++      .prepare('UPDATE sessions SET completed_at = ? WHERE id = ?')
++      .run(Math.floor(new Date('2026-01-06').getTime() / 1000), b);
++    seedSession(h, cycleId, 'squat', 3, new Date('2026-01-10').getTime()); // incomplete
++
++    const { result } = renderHook(() => useHistory(), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toHaveLength(2);
++    expect(result.current.data?.[0]?.id).toBe(b);
++    expect(result.current.data?.[1]?.id).toBe(a);
++    h.close();
++  });
++});
++
++describe('usePRStrip', () => {
++  it('returns [] when there are no completed sets', async () => {
++    const h = setup();
++    const { result } = renderHook(() => usePRStrip(), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toEqual([]);
++    h.close();
++  });
++
++  it('computes per-lift e1RM and PR flag from completed sets', async () => {
++    const h = setup();
++    seedLift(h, 'squat');
++    const cycleId = seedCycle(h);
++    const sessionId = seedSession(h, cycleId, 'squat');
++    const completedAt = Math.floor(Date.now() / 1000);
++    seedSet(h, sessionId, 200, 5, 5, completedAt);
++    seedSet(h, sessionId, 210, 5, 5, completedAt);
++
++    const { result } = renderHook(() => usePRStrip(), { wrapper: h.wrapper });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toHaveLength(1);
++    const entry = result.current.data?.[0];
++    expect(entry?.liftId).toBe('squat');
++    // best is 210 * (1 + 5/30) = 245
++    expect(entry?.e1rm).toBe(245);
++    expect(entry?.isPR).toBe(true);
++    h.close();
++  });
++});
++
++describe('useStartSet (mutation)', () => {
++  it('creates a set and invalidates per-session keys', async () => {
++    const h = setup();
++    seedLift(h, 'squat');
++    const cycleId = seedCycle(h);
++    const sessionId = seedSession(h, cycleId, 'squat');
++
++    const { result } = renderHook(() => useStartSet(), { wrapper: h.wrapper });
++    await act(async () => {
++      await result.current.mutateAsync({
++        sessionId,
++        index: 0,
++        type: 'main',
++        prescribedWeight: 195,
++        prescribedReps: 5,
++      });
++    });
++    expect(result.current.isSuccess).toBe(true);
++    expect(result.current.data?.sessionId).toBe(sessionId);
++    expect(result.current.data?.prescribedWeight).toBe(195);
++    h.close();
++  });
++});
++
++describe('useCompleteSet (mutation)', () => {
++  it('updates actualReps and completedAt and invalidates history/PR keys', async () => {
++    const h = setup();
++    seedLift(h, 'squat');
++    const cycleId = seedCycle(h);
++    const sessionId = seedSession(h, cycleId, 'squat');
++    const setId = seedSet(h, sessionId, 195, 5);
++
++    const { result } = renderHook(() => useCompleteSet(), { wrapper: h.wrapper });
++    await act(async () => {
++      await result.current.mutateAsync({ id: setId, actualReps: 7 });
++    });
++    expect(result.current.isSuccess).toBe(true);
++    expect(result.current.data?.actualReps).toBe(7);
++    expect(result.current.data?.completedAt).toBeInstanceOf(Date);
++    h.close();
++  });
++
++  it('returns undefined data and does not throw when set id is unknown', async () => {
++    const h = setup();
++    const { result } = renderHook(() => useCompleteSet(), { wrapper: h.wrapper });
++    await act(async () => {
++      await result.current.mutateAsync({ id: 999, actualReps: 5 });
++    });
++    await waitFor(() => {
++      expect(result.current.isSuccess).toBe(true);
++    });
++    expect(result.current.data).toBeUndefined();
++    h.close();
++  });
++});
+diff --git a/apps/mobile/src/data/queries/index.ts b/apps/mobile/src/data/queries/index.ts
+new file mode 100644
+index 0000000..1e09913
+--- /dev/null
++++ b/apps/mobile/src/data/queries/index.ts
+@@ -0,0 +1,7 @@
++export { queryKeys } from './keys';
++export { useActiveCycle } from './useActiveCycle';
++export { useCompleteSet } from './useCompleteSet';
++export { useHistory } from './useHistory';
++export { usePRStrip } from './usePRStrip';
++export { useSession } from './useSession';
++export { useStartSet } from './useStartSet';
+diff --git a/apps/mobile/src/data/queries/keys.ts b/apps/mobile/src/data/queries/keys.ts
+new file mode 100644
+index 0000000..c6c5123
+--- /dev/null
++++ b/apps/mobile/src/data/queries/keys.ts
+@@ -0,0 +1,14 @@
++/**
++ * Query-key factory for react-query.
++ *
++ * Centralizing keys here keeps cache invalidation in mutations honest:
++ * if a key shape changes, callers and invalidators update together.
++ */
++export const queryKeys = {
++  activeCycle: ['cycle', 'active'] as const,
++  cycle: (id: number) => ['cycle', id] as const,
++  session: (id: number) => ['session', id] as const,
++  setsBySession: (sessionId: number) => ['sets', { sessionId }] as const,
++  history: ['history'] as const,
++  prStrip: ['pr-strip'] as const,
++};
+diff --git a/apps/mobile/src/data/queries/test-wrapper.tsx b/apps/mobile/src/data/queries/test-wrapper.tsx
+new file mode 100644
+index 0000000..2f7beb9
+--- /dev/null
++++ b/apps/mobile/src/data/queries/test-wrapper.tsx
+@@ -0,0 +1,26 @@
++import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
++import type { ReactNode } from 'react';
++import { type DataDb, DataProvider } from '../context';
++
++/**
++ * Build a wrapper component for renderHook() that provides both a fresh
++ * QueryClient (retries off, gcTime zero) and a DataProvider bound to the
++ * passed test database.
++ *
++ * Each call returns an independent QueryClient so tests don't share cache.
++ */
++export function makeWrapper(db: DataDb) {
++  const queryClient = new QueryClient({
++    defaultOptions: {
++      queries: { retry: false, gcTime: 0 },
++      mutations: { retry: false },
++    },
++  });
++  return function Wrapper({ children }: { children: ReactNode }) {
++    return (
++      <QueryClientProvider client={queryClient}>
++        <DataProvider db={db}>{children}</DataProvider>
++      </QueryClientProvider>
++    );
++  };
++}
+diff --git a/apps/mobile/src/data/queries/useActiveCycle.ts b/apps/mobile/src/data/queries/useActiveCycle.ts
+new file mode 100644
+index 0000000..cc855bf
+--- /dev/null
++++ b/apps/mobile/src/data/queries/useActiveCycle.ts
+@@ -0,0 +1,21 @@
++import { useQuery } from '@tanstack/react-query';
++import { useRepos } from '../context';
++import { queryKeys } from './keys';
++
++/**
++ * The active cycle = the most recently-started cycle that has not been
++ * marked complete. Returns null when no such cycle exists.
++ */
++export function useActiveCycle() {
++  const { cycles } = useRepos();
++  return useQuery({
++    queryKey: queryKeys.activeCycle,
++    queryFn: () => {
++      const all = cycles.list();
++      const active = all
++        .filter((c) => c.completedAt === null)
++        .sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
++      return active.length > 0 ? active[0] : null;
++    },
++  });
++}
+diff --git a/apps/mobile/src/data/queries/useCompleteSet.ts b/apps/mobile/src/data/queries/useCompleteSet.ts
+new file mode 100644
+index 0000000..dfcbacd
+--- /dev/null
++++ b/apps/mobile/src/data/queries/useCompleteSet.ts
+@@ -0,0 +1,24 @@
++import { useMutation, useQueryClient } from '@tanstack/react-query';
++import { useRepos } from '../context';
++import { queryKeys } from './keys';
++
++/**
++ * Mark a set complete with actual reps. Invalidates the per-session set
++ * list, the parent session, history, and PR strip — completion can
++ * promote a set to a new PR, which downstream views must reflect.
++ */
++export function useCompleteSet() {
++  const { sets } = useRepos();
++  const qc = useQueryClient();
++  return useMutation({
++    mutationFn: ({ id, actualReps }: { id: number; actualReps: number }) =>
++      Promise.resolve(sets.update(id, { actualReps, completedAt: new Date() })),
++    onSuccess: (updated) => {
++      if (!updated) return;
++      qc.invalidateQueries({ queryKey: queryKeys.setsBySession(updated.sessionId) });
++      qc.invalidateQueries({ queryKey: queryKeys.session(updated.sessionId) });
++      qc.invalidateQueries({ queryKey: queryKeys.history });
++      qc.invalidateQueries({ queryKey: queryKeys.prStrip });
++    },
++  });
++}
+diff --git a/apps/mobile/src/data/queries/useHistory.ts b/apps/mobile/src/data/queries/useHistory.ts
+new file mode 100644
+index 0000000..eea45ac
+--- /dev/null
++++ b/apps/mobile/src/data/queries/useHistory.ts
+@@ -0,0 +1,22 @@
++import { useQuery } from '@tanstack/react-query';
++import { useRepos } from '../context';
++import { queryKeys } from './keys';
++
++/**
++ * All completed sessions, newest-first. The "history" view consumes this.
++ */
++export function useHistory() {
++  const { sessions } = useRepos();
++  return useQuery({
++    queryKey: queryKeys.history,
++    queryFn: () =>
++      sessions
++        .list()
++        .filter((s) => s.completedAt !== null)
++        .sort((a, b) => {
++          const aT = a.completedAt?.getTime() ?? 0;
++          const bT = b.completedAt?.getTime() ?? 0;
++          return bT - aT;
++        }),
++  });
++}
+diff --git a/apps/mobile/src/data/queries/usePRStrip.ts b/apps/mobile/src/data/queries/usePRStrip.ts
+new file mode 100644
+index 0000000..ac896a1
+--- /dev/null
++++ b/apps/mobile/src/data/queries/usePRStrip.ts
+@@ -0,0 +1,59 @@
++import { useQuery } from '@tanstack/react-query';
++import { epley, isPR } from '../../domain/e1rm';
++import { useRepos } from '../context';
++import { queryKeys } from './keys';
++
++export type PRStripEntry = {
++  liftId: string;
++  e1rm: number;
++  isPR: boolean;
++};
++
++/**
++ * For each lift the user has performed completed sets on, compute the
++ * current best e1RM (Epley) and whether that best is a new PR vs prior history.
++ *
++ * Implementation notes:
++ * - Only completed sets (actualReps != null && completedAt != null) count.
++ * - We join sets to sessions in memory to resolve lift_id. This is fine
++ *   for the data volume of a personal training log; if it ever isn't, push
++ *   the join into the repo layer.
++ */
++export function usePRStrip() {
++  const { sets, sessions } = useRepos();
++  return useQuery({
++    queryKey: queryKeys.prStrip,
++    queryFn: (): PRStripEntry[] => {
++      const allSets = sets.list();
++      const allSessions = sessions.list();
++      const sessionById = new Map<number, (typeof allSessions)[number]>();
++      for (const s of allSessions) {
++        sessionById.set(s.id, s);
++      }
++
++      const byLift = new Map<string, number[]>();
++      for (const s of allSets) {
++        if (s.actualReps == null || s.completedAt == null) continue;
++        const session = sessionById.get(s.sessionId);
++        if (!session) continue;
++        const e1 = epley(s.prescribedWeight, s.actualReps);
++        const arr = byLift.get(session.liftId);
++        if (arr) {
++          arr.push(e1);
++        } else {
++          byLift.set(session.liftId, [e1]);
++        }
++      }
++
++      const out: PRStripEntry[] = [];
++      for (const [liftId, history] of byLift) {
++        const sorted = [...history].sort((a, b) => b - a);
++        const current = sorted[0];
++        if (current === undefined) continue;
++        const past = sorted.slice(1);
++        out.push({ liftId, e1rm: current, isPR: isPR(current, past) });
++      }
++      return out;
++    },
++  });
++}
+diff --git a/apps/mobile/src/data/queries/useSession.ts b/apps/mobile/src/data/queries/useSession.ts
+new file mode 100644
+index 0000000..f842c92
+--- /dev/null
++++ b/apps/mobile/src/data/queries/useSession.ts
+@@ -0,0 +1,12 @@
++import { useQuery } from '@tanstack/react-query';
++import { useRepos } from '../context';
++import { queryKeys } from './keys';
++
++/** Fetch a single session by id. Returns null when not found. */
++export function useSession(sessionId: number) {
++  const { sessions } = useRepos();
++  return useQuery({
++    queryKey: queryKeys.session(sessionId),
++    queryFn: () => sessions.get(sessionId) ?? null,
++  });
++}
+diff --git a/apps/mobile/src/data/queries/useStartSet.ts b/apps/mobile/src/data/queries/useStartSet.ts
+new file mode 100644
+index 0000000..8c12911
+--- /dev/null
++++ b/apps/mobile/src/data/queries/useStartSet.ts
+@@ -0,0 +1,22 @@
++import { useMutation, useQueryClient } from '@tanstack/react-query';
++import { useRepos } from '../context';
++import type { sets as setsTable } from '../db/schema';
++import { queryKeys } from './keys';
++
++type NewSet = typeof setsTable.$inferInsert;
++
++/**
++ * Create a new prescribed set on a session. Invalidates the per-session
++ * set list and the session itself so consumers refresh.
++ */
++export function useStartSet() {
++  const { sets } = useRepos();
++  const qc = useQueryClient();
++  return useMutation({
++    mutationFn: (input: NewSet) => Promise.resolve(sets.create(input)),
++    onSuccess: (created) => {
++      qc.invalidateQueries({ queryKey: queryKeys.setsBySession(created.sessionId) });
++      qc.invalidateQueries({ queryKey: queryKeys.session(created.sessionId) });
++    },
++  });
++}
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 6a49c2e..98584da 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -26,6 +26,9 @@ importers:
+       '@react-navigation/native':
+         specifier: ^7.1.33
+         version: 7.2.4(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
++      '@tanstack/react-query':
++        specifier: ^5.100.11
++        version: 5.100.11(react@19.2.0)
+       drizzle-orm:
+         specifier: ^0.45.2
+         version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.10.0)(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))
+@@ -1970,6 +1973,14 @@ packages:
+     peerDependencies:
+       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+ 
++  '@tanstack/query-core@5.100.11':
++    resolution: {integrity: sha512-lmE0994apShXPj8CUxgx4ch5yUJhE9k/+tVwihBvPOyerACWdBocfFg24t8+0RhtlTd7tEgchDkhlCxNssvDxw==}
++
++  '@tanstack/react-query@5.100.11':
++    resolution: {integrity: sha512-J0f9s5x3LE1450nNNfYx+e/n0DMa0uOBdFJUy5r0RvmsXd4nB/n0rbHtHI1vYXhikNFan+wf51p6Tmp4c8ucrg==}
++    peerDependencies:
++      react: ^18 || ^19
++
+   '@testing-library/react-native@13.3.3':
+     resolution: {integrity: sha512-k6Mjsd9dbZgvY4Bl7P1NIpePQNi+dfYtlJ5voi9KQlynxSyQkfOgJmYGCYmw/aSgH/rUcFvG8u5gd4npzgRDyg==}
+     engines: {node: '>=18'}
+@@ -7073,6 +7084,13 @@ snapshots:
+     dependencies:
+       storybook: 8.6.18(prettier@2.8.8)
+ 
++  '@tanstack/query-core@5.100.11': {}
++
++  '@tanstack/react-query@5.100.11(react@19.2.0)':
++    dependencies:
++      '@tanstack/query-core': 5.100.11
++      react: 19.2.0
++
+   '@testing-library/react-native@13.3.3(jest@29.7.0(@types/node@25.9.1))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react-test-renderer@19.2.0(react@19.2.0))(react@19.2.0)':
+     dependencies:
+       jest-matcher-utils: 30.4.1
