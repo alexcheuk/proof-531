@@ -207,7 +207,7 @@ tasks:
     title: Reusable in-memory SQLite test harness
     phase: 3
     depends_on: [P3-01-drizzle-schema]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-3--unit--property-tests
     done_when:
       - "apps/mobile/src/data/db/test-harness.ts exports createTestDb() that runs all migrations"
