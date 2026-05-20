@@ -1,0 +1,108 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index bbff401..5c9a8b3 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -74,7 +74,10 @@
+       "!src/domain/plates/**/__tests__/**",
+       "src/domain/e1rm/**/*.ts",
+       "!src/domain/e1rm/**/*.d.ts",
+-      "!src/domain/e1rm/**/__tests__/**"
++      "!src/domain/e1rm/**/__tests__/**",
++      "src/domain/progression/**/*.ts",
++      "!src/domain/progression/**/*.d.ts",
++      "!src/domain/progression/**/__tests__/**"
+     ],
+     "coverageThreshold": {
+       "src/domain/program/": {
+@@ -94,6 +97,12 @@
+         "functions": 100,
+         "lines": 100,
+         "statements": 100
++      },
++      "src/domain/progression/": {
++        "branches": 100,
++        "functions": 100,
++        "lines": 100,
++        "statements": 100
+       }
+     }
+   },
+diff --git a/apps/mobile/src/domain/progression/__tests__/index.test.ts b/apps/mobile/src/domain/progression/__tests__/index.test.ts
+new file mode 100644
+index 0000000..02e5d30
+--- /dev/null
++++ b/apps/mobile/src/domain/progression/__tests__/index.test.ts
+@@ -0,0 +1,41 @@
++import { type LiftCategory, advanceCycle, nextTrainingMax } from '..';
++
++describe('nextTrainingMax', () => {
++  it('upper category bumps +5', () => {
++    expect(nextTrainingMax(135, 'upper')).toBe(140);
++  });
++  it('lower category bumps +10', () => {
++    expect(nextTrainingMax(225, 'lower')).toBe(235);
++  });
++  it('returns current unchanged when TM is 0', () => {
++    expect(nextTrainingMax(0, 'upper')).toBe(0);
++    expect(nextTrainingMax(0, 'lower')).toBe(0);
++  });
++  it('returns current unchanged when TM is negative', () => {
++    expect(nextTrainingMax(-50, 'upper')).toBe(-50);
++  });
++  it('handles fractional TM (kg gyms)', () => {
++    expect(nextTrainingMax(102.5, 'upper')).toBe(107.5);
++    expect(nextTrainingMax(102.5, 'lower')).toBe(112.5);
++  });
++  it('throws on invalid category', () => {
++    expect(() => nextTrainingMax(100, 'middle' as LiftCategory)).toThrow();
++  });
++  it('throws on NaN current', () => {
++    expect(() => nextTrainingMax(Number.NaN, 'upper')).toThrow();
++  });
++});
++
++describe('advanceCycle', () => {
++  it('increments cycle, resets week to 1', () => {
++    expect(advanceCycle({ cycle: 1, week: 4 })).toEqual({ cycle: 2, week: 1 });
++    expect(advanceCycle({ cycle: 7, week: 2 })).toEqual({ cycle: 8, week: 1 });
++  });
++  it('throws on non-positive cycle', () => {
++    expect(() => advanceCycle({ cycle: 0, week: 1 })).toThrow();
++    expect(() => advanceCycle({ cycle: -1, week: 1 })).toThrow();
++  });
++  it('throws on non-integer cycle', () => {
++    expect(() => advanceCycle({ cycle: 1.5, week: 1 })).toThrow();
++  });
++});
+diff --git a/apps/mobile/src/domain/progression/index.ts b/apps/mobile/src/domain/progression/index.ts
+new file mode 100644
+index 0000000..6df8740
+--- /dev/null
++++ b/apps/mobile/src/domain/progression/index.ts
+@@ -0,0 +1,26 @@
++export type LiftCategory = 'upper' | 'lower';
++
++const UPPER_BUMP = 5;
++const LOWER_BUMP = 10;
++
++export function nextTrainingMax(current: number, category: LiftCategory): number {
++  if (!Number.isFinite(current)) {
++    throw new Error(`nextTrainingMax: current must be finite, got ${current}`);
++  }
++  if (current <= 0) return current;
++  switch (category) {
++    case 'upper':
++      return current + UPPER_BUMP;
++    case 'lower':
++      return current + LOWER_BUMP;
++    default:
++      throw new Error(`nextTrainingMax: unknown category ${category}`);
++  }
++}
++
++export function advanceCycle(state: { cycle: number; week: number }): { cycle: number; week: 1 } {
++  if (!Number.isInteger(state.cycle) || state.cycle <= 0) {
++    throw new Error(`advanceCycle: cycle must be positive integer, got ${state.cycle}`);
++  }
++  return { cycle: state.cycle + 1, week: 1 };
++}

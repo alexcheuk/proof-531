@@ -154,7 +154,7 @@ tasks:
     title: TM bump rules + cycle advance
     phase: 2
     depends_on: [P2-01-program-math]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#73-phase-2--domain-layer-1-day
     done_when:
       - "apps/mobile/src/domain/progression/index.ts exports nextTrainingMax(current, category)"
