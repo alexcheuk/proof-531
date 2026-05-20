@@ -9,6 +9,7 @@ import * as LibraryScreenStories from '@/features/library/__stories__/LibraryScr
 import * as LiveScreenStories from '@/features/live/__stories__/LiveScreen.stories';
 import * as PRModalStories from '@/features/pr/__stories__/PRModal.stories';
 import * as SettingsScreenStories from '@/features/settings/__stories__/SettingsScreen.stories';
+import * as TodayCardsStories from '@/features/today/__stories__/TodayCards.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
 import * as ChipsStories from '../../plates/__stories__/Chips.stories';
 import * as NumericalStories from '../../plates/__stories__/Numerical.stories';
@@ -66,6 +67,7 @@ const modules: Record<string, StoryModule> = {
   LiveScreen: LiveScreenStories as unknown as StoryModule,
   PRModal: PRModalStories as unknown as StoryModule,
   SettingsScreen: SettingsScreenStories as unknown as StoryModule,
+  TodayCards: TodayCardsStories as unknown as StoryModule,
 };
 
 describe('storybook: every primitive story renders without warning', () => {
