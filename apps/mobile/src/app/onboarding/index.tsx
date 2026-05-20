@@ -1,20 +1,13 @@
-import { Text } from '@/design/primitives/Text';
-import { colors } from '@/design/tokens';
-import { StyleSheet, View } from 'react-native';
+import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen';
+import { useRouter } from 'expo-router';
 
 export default function OnboardingWelcome() {
+  const router = useRouter();
   return (
-    <View style={styles.container}>
-      <Text variant="title">Welcome</Text>
-    </View>
+    <OnboardingScreen
+      onFinish={() => {
+        router.replace('/(tabs)');
+      }}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
