@@ -196,7 +196,7 @@ tasks:
     title: Repositories for every domain table
     phase: 3
     depends_on: [P3-01-drizzle-schema]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#74-phase-3--data-layer-1-day
     done_when:
       - "apps/mobile/src/data/repositories/{liftRepo,cycleRepo,sessionRepo,setRepo,assistanceRepo}.ts exist"

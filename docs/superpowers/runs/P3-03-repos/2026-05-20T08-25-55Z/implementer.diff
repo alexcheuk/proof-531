@@ -1,0 +1,1371 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 32e4f05..d3a358a 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -54,9 +54,11 @@
+     "@fast-check/jest": "^2.2.0",
+     "@storybook/react-native": "^8.5.0",
+     "@testing-library/react-native": "^13.3.3",
++    "@types/better-sqlite3": "^7.6.13",
+     "@types/jest": "~29.5.14",
+     "@types/react": "~19.2.2",
+     "@types/react-test-renderer": "^19.1.0",
++    "better-sqlite3": "^12.10.0",
+     "drizzle-kit": "^0.31.10",
+     "expo-doctor": "^1.18.22",
+     "fast-check": "^4.8.0",
+diff --git a/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts
+new file mode 100644
+index 0000000..594f558
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts
+@@ -0,0 +1,92 @@
++import Database from 'better-sqlite3';
++import { drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from '../../db/schema';
++import { createAssistanceRepo } from '../assistanceRepo';
++
++function makeDb() {
++  const sqlite = new Database(':memory:');
++  sqlite.exec(`
++    CREATE TABLE assistance (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      name TEXT NOT NULL,
++      category TEXT NOT NULL,
++      default_sets INTEGER NOT NULL,
++      default_reps INTEGER NOT NULL,
++      favorite INTEGER NOT NULL
++    );
++  `);
++  return drizzle(sqlite, { schema });
++}
++
++describe('assistanceRepo', () => {
++  it('list returns [] when empty', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    expect(repo.list()).toEqual([]);
++  });
++
++  it('create + get + list', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    const row = repo.create({
++      name: 'Chinup',
++      category: 'pull',
++      defaultSets: 5,
++      defaultReps: 10,
++      favorite: true,
++    });
++    expect(row.id).toBe(1);
++    expect(row.name).toBe('Chinup');
++    expect(row.favorite).toBe(true);
++    expect(repo.get(row.id)).toEqual(row);
++    expect(repo.list()).toEqual([row]);
++  });
++
++  it('get returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    expect(repo.get(999)).toBeUndefined();
++  });
++
++  it('update modifies fields', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    const created = repo.create({
++      name: 'Chinup',
++      category: 'pull',
++      defaultSets: 5,
++      defaultReps: 10,
++      favorite: false,
++    });
++    const updated = repo.update(created.id, { favorite: true, defaultSets: 4 });
++    expect(updated?.favorite).toBe(true);
++    expect(updated?.defaultSets).toBe(4);
++    expect(repo.get(created.id)?.favorite).toBe(true);
++  });
++
++  it('update returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    expect(repo.update(999, { favorite: true })).toBeUndefined();
++  });
++
++  it('list returns multiple rows', () => {
++    const db = makeDb();
++    const repo = createAssistanceRepo(db);
++    repo.create({
++      name: 'Chinup',
++      category: 'pull',
++      defaultSets: 5,
++      defaultReps: 10,
++      favorite: true,
++    });
++    repo.create({
++      name: 'Dip',
++      category: 'push',
++      defaultSets: 5,
++      defaultReps: 15,
++      favorite: false,
++    });
++    expect(repo.list()).toHaveLength(2);
++  });
++});
+diff --git a/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts
+new file mode 100644
+index 0000000..eda7053
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts
+@@ -0,0 +1,72 @@
++import Database from 'better-sqlite3';
++import { drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from '../../db/schema';
++import { createCycleRepo } from '../cycleRepo';
++
++function makeDb() {
++  const sqlite = new Database(':memory:');
++  sqlite.exec(`
++    CREATE TABLE cycles (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      number INTEGER NOT NULL,
++      started_at INTEGER NOT NULL,
++      completed_at INTEGER
++    );
++  `);
++  return drizzle(sqlite, { schema });
++}
++
++describe('cycleRepo', () => {
++  it('list returns [] when empty', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    expect(repo.list()).toEqual([]);
++  });
++
++  it('create assigns autoincrement id and returns row', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    const startedAt = new Date('2026-01-01T00:00:00Z');
++    const cycle = repo.create({ number: 1, startedAt });
++    expect(cycle.id).toBe(1);
++    expect(cycle.number).toBe(1);
++    expect(cycle.startedAt.getTime()).toBe(startedAt.getTime());
++    expect(cycle.completedAt).toBeNull();
++  });
++
++  it('get returns inserted row', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    const created = repo.create({ number: 1, startedAt: new Date('2026-01-01') });
++    expect(repo.get(created.id)).toEqual(created);
++  });
++
++  it('get returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    expect(repo.get(999)).toBeUndefined();
++  });
++
++  it('update sets completedAt', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    const created = repo.create({ number: 1, startedAt: new Date('2026-01-01') });
++    const completedAt = new Date('2026-02-01');
++    const updated = repo.update(created.id, { completedAt });
++    expect(updated?.completedAt?.getTime()).toBe(completedAt.getTime());
++  });
++
++  it('update returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    expect(repo.update(999, { number: 5 })).toBeUndefined();
++  });
++
++  it('list returns all rows', () => {
++    const db = makeDb();
++    const repo = createCycleRepo(db);
++    repo.create({ number: 1, startedAt: new Date('2026-01-01') });
++    repo.create({ number: 2, startedAt: new Date('2026-02-01') });
++    expect(repo.list()).toHaveLength(2);
++  });
++});
+diff --git a/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts
+new file mode 100644
+index 0000000..7013a8a
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts
+@@ -0,0 +1,92 @@
++import Database from 'better-sqlite3';
++import { drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from '../../db/schema';
++import { createLiftRepo } from '../liftRepo';
++
++function makeDb() {
++  const sqlite = new Database(':memory:');
++  sqlite.exec(`
++    CREATE TABLE lifts (
++      id TEXT PRIMARY KEY,
++      label TEXT NOT NULL,
++      category TEXT NOT NULL,
++      training_max INTEGER NOT NULL,
++      enabled INTEGER NOT NULL
++    );
++  `);
++  return drizzle(sqlite, { schema });
++}
++
++describe('liftRepo', () => {
++  it('list returns [] when empty', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    expect(repo.list()).toEqual([]);
++  });
++
++  it('create + get + list', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    const lift = repo.create({
++      id: 'squat',
++      label: 'Squat',
++      category: 'lower',
++      trainingMax: 315,
++      enabled: true,
++    });
++    expect(lift.id).toBe('squat');
++    expect(lift.label).toBe('Squat');
++    expect(lift.trainingMax).toBe(315);
++    expect(lift.enabled).toBe(true);
++    expect(repo.get('squat')).toEqual(lift);
++    expect(repo.list()).toEqual([lift]);
++  });
++
++  it('get returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    expect(repo.get('nope')).toBeUndefined();
++  });
++
++  it('update modifies fields and returns updated row', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    repo.create({
++      id: 'squat',
++      label: 'Squat',
++      category: 'lower',
++      trainingMax: 315,
++      enabled: true,
++    });
++    const updated = repo.update('squat', { trainingMax: 325, enabled: false });
++    expect(updated?.trainingMax).toBe(325);
++    expect(updated?.enabled).toBe(false);
++    expect(repo.get('squat')?.trainingMax).toBe(325);
++  });
++
++  it('update returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    expect(repo.update('nope', { trainingMax: 1 })).toBeUndefined();
++  });
++
++  it('list returns multiple rows', () => {
++    const db = makeDb();
++    const repo = createLiftRepo(db);
++    repo.create({
++      id: 'squat',
++      label: 'Squat',
++      category: 'lower',
++      trainingMax: 315,
++      enabled: true,
++    });
++    repo.create({
++      id: 'bench',
++      label: 'Bench',
++      category: 'upper',
++      trainingMax: 225,
++      enabled: true,
++    });
++    expect(repo.list()).toHaveLength(2);
++  });
++});
+diff --git a/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts
+new file mode 100644
+index 0000000..d138a1e
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts
+@@ -0,0 +1,104 @@
++import Database from 'better-sqlite3';
++import { drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from '../../db/schema';
++import { createSessionRepo } from '../sessionRepo';
++
++function makeDb() {
++  const sqlite = new Database(':memory:');
++  sqlite.exec(`
++    CREATE TABLE lifts (
++      id TEXT PRIMARY KEY,
++      label TEXT NOT NULL,
++      category TEXT NOT NULL,
++      training_max INTEGER NOT NULL,
++      enabled INTEGER NOT NULL
++    );
++    CREATE TABLE cycles (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      number INTEGER NOT NULL,
++      started_at INTEGER NOT NULL,
++      completed_at INTEGER
++    );
++    CREATE TABLE sessions (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
++      lift_id TEXT NOT NULL REFERENCES lifts(id),
++      week INTEGER NOT NULL,
++      started_at INTEGER NOT NULL,
++      completed_at INTEGER
++    );
++  `);
++  // Seed referenced rows
++  sqlite
++    .prepare(
++      "INSERT INTO lifts (id, label, category, training_max, enabled) VALUES ('squat', 'Squat', 'lower', 315, 1)",
++    )
++    .run();
++  sqlite
++    .prepare(
++      "INSERT INTO lifts (id, label, category, training_max, enabled) VALUES ('bench', 'Bench', 'upper', 225, 1)",
++    )
++    .run();
++  sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (1, 1735689600)').run();
++  sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (2, 1738368000)').run();
++  return drizzle(sqlite, { schema });
++}
++
++describe('sessionRepo', () => {
++  it('list returns [] when empty', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    expect(repo.list()).toEqual([]);
++  });
++
++  it('create + get returns row', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    const startedAt = new Date('2026-01-01T08:00:00Z');
++    const session = repo.create({ cycleId: 1, liftId: 'squat', week: 1, startedAt });
++    expect(session.id).toBe(1);
++    expect(session.cycleId).toBe(1);
++    expect(session.liftId).toBe('squat');
++    expect(session.week).toBe(1);
++    expect(repo.get(session.id)).toEqual(session);
++  });
++
++  it('get returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    expect(repo.get(999)).toBeUndefined();
++  });
++
++  it('listByCycle filters to the cycle', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    repo.create({ cycleId: 1, liftId: 'squat', week: 1, startedAt: new Date('2026-01-01') });
++    repo.create({ cycleId: 1, liftId: 'bench', week: 1, startedAt: new Date('2026-01-02') });
++    repo.create({ cycleId: 2, liftId: 'squat', week: 1, startedAt: new Date('2026-02-01') });
++    const c1 = repo.listByCycle(1);
++    expect(c1).toHaveLength(2);
++    expect(c1.every((s) => s.cycleId === 1)).toBe(true);
++    expect(repo.listByCycle(2)).toHaveLength(1);
++    expect(repo.listByCycle(999)).toEqual([]);
++  });
++
++  it('update sets completedAt', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    const created = repo.create({
++      cycleId: 1,
++      liftId: 'squat',
++      week: 1,
++      startedAt: new Date('2026-01-01'),
++    });
++    const completedAt = new Date('2026-01-01T09:00:00Z');
++    const updated = repo.update(created.id, { completedAt });
++    expect(updated?.completedAt?.getTime()).toBe(completedAt.getTime());
++  });
++
++  it('update returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createSessionRepo(db);
++    expect(repo.update(999, { week: 2 })).toBeUndefined();
++  });
++});
+diff --git a/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts
+new file mode 100644
+index 0000000..6123e3a
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts
+@@ -0,0 +1,143 @@
++import Database from 'better-sqlite3';
++import { drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from '../../db/schema';
++import { createSetRepo } from '../setRepo';
++
++function makeDb() {
++  const sqlite = new Database(':memory:');
++  sqlite.exec(`
++    CREATE TABLE lifts (
++      id TEXT PRIMARY KEY,
++      label TEXT NOT NULL,
++      category TEXT NOT NULL,
++      training_max INTEGER NOT NULL,
++      enabled INTEGER NOT NULL
++    );
++    CREATE TABLE cycles (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      number INTEGER NOT NULL,
++      started_at INTEGER NOT NULL,
++      completed_at INTEGER
++    );
++    CREATE TABLE sessions (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
++      lift_id TEXT NOT NULL REFERENCES lifts(id),
++      week INTEGER NOT NULL,
++      started_at INTEGER NOT NULL,
++      completed_at INTEGER
++    );
++    CREATE TABLE sets (
++      id INTEGER PRIMARY KEY AUTOINCREMENT,
++      session_id INTEGER NOT NULL REFERENCES sessions(id),
++      "index" INTEGER NOT NULL,
++      type TEXT NOT NULL,
++      prescribed_weight INTEGER NOT NULL,
++      prescribed_reps INTEGER NOT NULL,
++      actual_reps INTEGER,
++      completed_at INTEGER
++    );
++  `);
++  sqlite
++    .prepare(
++      "INSERT INTO lifts (id, label, category, training_max, enabled) VALUES ('squat', 'Squat', 'lower', 315, 1)",
++    )
++    .run();
++  sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (1, 1735689600)').run();
++  sqlite
++    .prepare(
++      "INSERT INTO sessions (cycle_id, lift_id, week, started_at) VALUES (1, 'squat', 1, 1735689600)",
++    )
++    .run();
++  sqlite
++    .prepare(
++      "INSERT INTO sessions (cycle_id, lift_id, week, started_at) VALUES (1, 'squat', 2, 1736294400)",
++    )
++    .run();
++  return drizzle(sqlite, { schema });
++}
++
++describe('setRepo', () => {
++  it('list returns [] when empty', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    expect(repo.list()).toEqual([]);
++  });
++
++  it('create + get returns row', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    const set = repo.create({
++      sessionId: 1,
++      index: 0,
++      type: 'warmup',
++      prescribedWeight: 135,
++      prescribedReps: 5,
++    });
++    expect(set.id).toBe(1);
++    expect(set.sessionId).toBe(1);
++    expect(set.index).toBe(0);
++    expect(set.type).toBe('warmup');
++    expect(set.prescribedWeight).toBe(135);
++    expect(set.prescribedReps).toBe(5);
++    expect(set.actualReps).toBeNull();
++    expect(repo.get(set.id)).toEqual(set);
++  });
++
++  it('get returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    expect(repo.get(999)).toBeUndefined();
++  });
++
++  it('listBySession filters by session', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    repo.create({
++      sessionId: 1,
++      index: 0,
++      type: 'warmup',
++      prescribedWeight: 135,
++      prescribedReps: 5,
++    });
++    repo.create({
++      sessionId: 1,
++      index: 1,
++      type: 'working',
++      prescribedWeight: 225,
++      prescribedReps: 5,
++    });
++    repo.create({
++      sessionId: 2,
++      index: 0,
++      type: 'warmup',
++      prescribedWeight: 135,
++      prescribedReps: 5,
++    });
++    expect(repo.listBySession(1)).toHaveLength(2);
++    expect(repo.listBySession(2)).toHaveLength(1);
++    expect(repo.listBySession(999)).toEqual([]);
++  });
++
++  it('update sets actualReps and completedAt', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    const created = repo.create({
++      sessionId: 1,
++      index: 0,
++      type: 'working',
++      prescribedWeight: 225,
++      prescribedReps: 5,
++    });
++    const completedAt = new Date('2026-01-01T08:30:00Z');
++    const updated = repo.update(created.id, { actualReps: 7, completedAt });
++    expect(updated?.actualReps).toBe(7);
++    expect(updated?.completedAt?.getTime()).toBe(completedAt.getTime());
++  });
++
++  it('update returns undefined for missing id', () => {
++    const db = makeDb();
++    const repo = createSetRepo(db);
++    expect(repo.update(999, { actualReps: 1 })).toBeUndefined();
++  });
++});
+diff --git a/apps/mobile/src/data/repositories/assistanceRepo.ts b/apps/mobile/src/data/repositories/assistanceRepo.ts
+new file mode 100644
+index 0000000..e75130a
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/assistanceRepo.ts
+@@ -0,0 +1,32 @@
++import { eq } from 'drizzle-orm';
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import type * as schema from '../db/schema';
++import { assistance } from '../db/schema';
++
++type Assistance = typeof assistance.$inferSelect;
++type NewAssistance = typeof assistance.$inferInsert;
++
++export type AssistanceRepoDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export function createAssistanceRepo(db: AssistanceRepoDb) {
++  return {
++    list(): Assistance[] {
++      return db.select().from(assistance).all();
++    },
++    get(id: number): Assistance | undefined {
++      return db.select().from(assistance).where(eq(assistance.id, id)).get();
++    },
++    create(a: NewAssistance): Assistance {
++      const inserted = db.insert(assistance).values(a).returning().get();
++      if (!inserted) {
++        throw new Error('createAssistanceRepo.create: insert returned no row');
++      }
++      return inserted;
++    },
++    update(id: number, patch: Partial<NewAssistance>): Assistance | undefined {
++      return db.update(assistance).set(patch).where(eq(assistance.id, id)).returning().get();
++    },
++  };
++}
++
++export type AssistanceRepo = ReturnType<typeof createAssistanceRepo>;
+diff --git a/apps/mobile/src/data/repositories/cycleRepo.ts b/apps/mobile/src/data/repositories/cycleRepo.ts
+new file mode 100644
+index 0000000..8202125
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/cycleRepo.ts
+@@ -0,0 +1,32 @@
++import { eq } from 'drizzle-orm';
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import type * as schema from '../db/schema';
++import { cycles } from '../db/schema';
++
++type Cycle = typeof cycles.$inferSelect;
++type NewCycle = typeof cycles.$inferInsert;
++
++export type CycleRepoDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export function createCycleRepo(db: CycleRepoDb) {
++  return {
++    list(): Cycle[] {
++      return db.select().from(cycles).all();
++    },
++    get(id: number): Cycle | undefined {
++      return db.select().from(cycles).where(eq(cycles.id, id)).get();
++    },
++    create(cycle: NewCycle): Cycle {
++      const inserted = db.insert(cycles).values(cycle).returning().get();
++      if (!inserted) {
++        throw new Error('createCycleRepo.create: insert returned no row');
++      }
++      return inserted;
++    },
++    update(id: number, patch: Partial<NewCycle>): Cycle | undefined {
++      return db.update(cycles).set(patch).where(eq(cycles.id, id)).returning().get();
++    },
++  };
++}
++
++export type CycleRepo = ReturnType<typeof createCycleRepo>;
+diff --git a/apps/mobile/src/data/repositories/liftRepo.ts b/apps/mobile/src/data/repositories/liftRepo.ts
+new file mode 100644
+index 0000000..04ae6c0
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/liftRepo.ts
+@@ -0,0 +1,32 @@
++import { eq } from 'drizzle-orm';
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import type * as schema from '../db/schema';
++import { lifts } from '../db/schema';
++
++type Lift = typeof lifts.$inferSelect;
++type NewLift = typeof lifts.$inferInsert;
++
++export type LiftRepoDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export function createLiftRepo(db: LiftRepoDb) {
++  return {
++    list(): Lift[] {
++      return db.select().from(lifts).all();
++    },
++    get(id: string): Lift | undefined {
++      return db.select().from(lifts).where(eq(lifts.id, id)).get();
++    },
++    create(lift: NewLift): Lift {
++      const inserted = db.insert(lifts).values(lift).returning().get();
++      if (!inserted) {
++        throw new Error('createLiftRepo.create: insert returned no row');
++      }
++      return inserted;
++    },
++    update(id: string, patch: Partial<NewLift>): Lift | undefined {
++      return db.update(lifts).set(patch).where(eq(lifts.id, id)).returning().get();
++    },
++  };
++}
++
++export type LiftRepo = ReturnType<typeof createLiftRepo>;
+diff --git a/apps/mobile/src/data/repositories/sessionRepo.ts b/apps/mobile/src/data/repositories/sessionRepo.ts
+new file mode 100644
+index 0000000..a170688
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/sessionRepo.ts
+@@ -0,0 +1,35 @@
++import { eq } from 'drizzle-orm';
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import type * as schema from '../db/schema';
++import { sessions } from '../db/schema';
++
++type Session = typeof sessions.$inferSelect;
++type NewSession = typeof sessions.$inferInsert;
++
++export type SessionRepoDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export function createSessionRepo(db: SessionRepoDb) {
++  return {
++    list(): Session[] {
++      return db.select().from(sessions).all();
++    },
++    get(id: number): Session | undefined {
++      return db.select().from(sessions).where(eq(sessions.id, id)).get();
++    },
++    listByCycle(cycleId: number): Session[] {
++      return db.select().from(sessions).where(eq(sessions.cycleId, cycleId)).all();
++    },
++    create(session: NewSession): Session {
++      const inserted = db.insert(sessions).values(session).returning().get();
++      if (!inserted) {
++        throw new Error('createSessionRepo.create: insert returned no row');
++      }
++      return inserted;
++    },
++    update(id: number, patch: Partial<NewSession>): Session | undefined {
++      return db.update(sessions).set(patch).where(eq(sessions.id, id)).returning().get();
++    },
++  };
++}
++
++export type SessionRepo = ReturnType<typeof createSessionRepo>;
+diff --git a/apps/mobile/src/data/repositories/setRepo.ts b/apps/mobile/src/data/repositories/setRepo.ts
+new file mode 100644
+index 0000000..b3afd93
+--- /dev/null
++++ b/apps/mobile/src/data/repositories/setRepo.ts
+@@ -0,0 +1,35 @@
++import { eq } from 'drizzle-orm';
++import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
++import type * as schema from '../db/schema';
++import { sets } from '../db/schema';
++
++type SetRow = typeof sets.$inferSelect;
++type NewSet = typeof sets.$inferInsert;
++
++export type SetRepoDb = BaseSQLiteDatabase<'sync', unknown, typeof schema>;
++
++export function createSetRepo(db: SetRepoDb) {
++  return {
++    list(): SetRow[] {
++      return db.select().from(sets).all();
++    },
++    get(id: number): SetRow | undefined {
++      return db.select().from(sets).where(eq(sets.id, id)).get();
++    },
++    listBySession(sessionId: number): SetRow[] {
++      return db.select().from(sets).where(eq(sets.sessionId, sessionId)).all();
++    },
++    create(set: NewSet): SetRow {
++      const inserted = db.insert(sets).values(set).returning().get();
++      if (!inserted) {
++        throw new Error('createSetRepo.create: insert returned no row');
++      }
++      return inserted;
++    },
++    update(id: number, patch: Partial<NewSet>): SetRow | undefined {
++      return db.update(sets).set(patch).where(eq(sets.id, id)).returning().get();
++    },
++  };
++}
++
++export type SetRepo = ReturnType<typeof createSetRepo>;
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 0619d6c..6a49c2e 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -28,7 +28,7 @@ importers:
+         version: 7.2.4(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
+       drizzle-orm:
+         specifier: ^0.45.2
+-        version: 0.45.2(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))
++        version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.10.0)(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))
+       expo:
+         specifier: ~55.0.25
+         version: 55.0.25(@babel/core@7.29.0)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.15)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
+@@ -120,6 +120,9 @@ importers:
+       '@testing-library/react-native':
+         specifier: ^13.3.3
+         version: 13.3.3(jest@29.7.0(@types/node@25.9.1))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react-test-renderer@19.2.0(react@19.2.0))(react@19.2.0)
++      '@types/better-sqlite3':
++        specifier: ^7.6.13
++        version: 7.6.13
+       '@types/jest':
+         specifier: ~29.5.14
+         version: 29.5.14
+@@ -129,6 +132,9 @@ importers:
+       '@types/react-test-renderer':
+         specifier: ^19.1.0
+         version: 19.1.0
++      better-sqlite3:
++        specifier: ^12.10.0
++        version: 12.10.0
+       drizzle-kit:
+         specifier: ^0.31.10
+         version: 0.31.10
+@@ -1992,6 +1998,9 @@ packages:
+   '@types/babel__traverse@7.28.0':
+     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
+ 
++  '@types/better-sqlite3@7.6.13':
++    resolution: {integrity: sha512-NMv9ASNARoKksWtsq/SHakpYAYnhBrQgGD8zkLYk/jaK8jUGn08CfEdTRgYhMypUQAfzSP8W6gNLe0q19/t4VA==}
++
+   '@types/graceful-fs@4.1.9':
+     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
+ 
+@@ -2239,10 +2248,20 @@ packages:
+     resolution: {integrity: sha512-aVNobHnJqLiUelTaHat9DZ1qM2w0C0Eym4LPI/3JxOnSokGVdsl1T1kN7TFvsEAD8G47A6VKQ0TVHqbBnYMJlQ==}
+     engines: {node: '>=12.0.0'}
+ 
++  better-sqlite3@12.10.0:
++    resolution: {integrity: sha512-CyzaZRQKyHkB2ZInfTTl2nvT33EbDpjkLEbE8/Zck3Ll6O0qqvuGdrJ45HgtH+HykRg88ITY3AdreBGN70aBSQ==}
++    engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x || 26.x}
++
+   big-integer@1.6.52:
+     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
+     engines: {node: '>=0.6'}
+ 
++  bindings@1.5.0:
++    resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
++
++  bl@4.1.0:
++    resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
++
+   boolbase@1.0.0:
+     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
+ 
+@@ -2336,6 +2355,9 @@ packages:
+     resolution: {integrity: sha512-cbGOjAptfM2LVmWhwRFHEKTPkLwNddVmuqYZQt895yXwAsWsXObCG+YN4DGQ/JBtT4GP1a1lPPdio2z413LmTg==}
+     engines: {node: '>=12.20'}
+ 
++  chownr@1.1.4:
++    resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
++
+   chrome-launcher@0.15.2:
+     resolution: {integrity: sha512-zdLEwNo3aUVzIhKhTtXfxhdvZhUghrnmkvcAq2NoDd+LeOHKf03H5jwZ8T/STsAlzyALkBVK552iaG1fGf1xVQ==}
+     engines: {node: '>=12.13.0'}
+@@ -2515,6 +2537,10 @@ packages:
+     resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
+     engines: {node: '>=0.10'}
+ 
++  decompress-response@6.0.0:
++    resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
++    engines: {node: '>=10'}
++
+   dedent@1.7.2:
+     resolution: {integrity: sha512-WzMx3mW98SN+zn3hgemf4OzdmyNhhhKz5Ay0pUfQiMQ3e1g+xmTJWp/pKdwKVXhdSkAEGIIzqeuWrL3mV/AXbA==}
+     peerDependencies:
+@@ -2523,6 +2549,10 @@ packages:
+       babel-plugin-macros:
+         optional: true
+ 
++  deep-extend@0.6.0:
++    resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}
++    engines: {node: '>=4.0.0'}
++
+   deepmerge@4.3.1:
+     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+     engines: {node: '>=0.10.0'}
+@@ -2707,6 +2737,9 @@ packages:
+     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
+     engines: {node: '>= 0.8'}
+ 
++  end-of-stream@1.4.5:
++    resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
++
+   entities@4.5.0:
+     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
+     engines: {node: '>=0.12'}
+@@ -2810,6 +2843,10 @@ packages:
+     resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
+     engines: {node: '>= 0.8.0'}
+ 
++  expand-template@2.0.3:
++    resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
++    engines: {node: '>=6'}
++
+   expect@29.7.0:
+     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
+     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+@@ -3066,6 +3103,9 @@ packages:
+   fetch-nodeshim@0.4.10:
+     resolution: {integrity: sha512-m6I8ALe4L4XpdETy7MJZWs6L1IVMbjs99bwbpIKphxX+0CTns4IKDWJY0LWfr4YsFjfg+z1TjzTMU8lKl8rG0w==}
+ 
++  file-uri-to-path@1.0.0:
++    resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
++
+   fill-range@7.1.1:
+     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
+     engines: {node: '>=8'}
+@@ -3100,6 +3140,9 @@ packages:
+     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
+     engines: {node: '>= 0.6'}
+ 
++  fs-constants@1.0.0:
++    resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
++
+   fs.realpath@1.0.0:
+     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
+ 
+@@ -3154,6 +3197,9 @@ packages:
+     resolution: {integrity: sha512-VilgtJj/ALgGY77fiLam5iD336eSWi96Q15JSAG1zi8NRBysm3LXKdGnHb4m5cuyxvOLQQKWpBZAT6ni4FI2iQ==}
+     engines: {node: '>=6'}
+ 
++  github-from-package@0.0.0:
++    resolution: {integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==}
++
+   glob@13.0.6:
+     resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
+     engines: {node: 18 || 20 || >=22}
+@@ -3286,6 +3332,9 @@ packages:
+   inherits@2.0.4:
+     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
+ 
++  ini@1.3.8:
++    resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
++
+   inline-style-prefixer@7.0.1:
+     resolution: {integrity: sha512-lhYo5qNTQp3EvSSp3sRvXMbVQTLrvGV6DycRMJ5dm2BLMiJ30wpXKdDdgX+GmJZ5uQMucwRKHamXSst3Sj/Giw==}
+ 
+@@ -3836,6 +3885,10 @@ packages:
+     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
+     engines: {node: '>=6'}
+ 
++  mimic-response@3.1.0:
++    resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
++    engines: {node: '>=10'}
++
+   min-indent@1.0.1:
+     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
+     engines: {node: '>=4'}
+@@ -3847,10 +3900,16 @@ packages:
+   minimatch@3.1.5:
+     resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
+ 
++  minimist@1.2.8:
++    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
++
+   minipass@7.1.3:
+     resolution: {integrity: sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==}
+     engines: {node: '>=16 || 14 >=14.17'}
+ 
++  mkdirp-classic@0.5.3:
++    resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
++
+   mkdirp@1.0.4:
+     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
+     engines: {node: '>=10'}
+@@ -3870,6 +3929,9 @@ packages:
+     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+     hasBin: true
+ 
++  napi-build-utils@2.0.0:
++    resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
++
+   natural-compare@1.4.0:
+     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+ 
+@@ -3885,6 +3947,10 @@ packages:
+     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
+     engines: {node: '>= 0.6'}
+ 
++  node-abi@3.92.0:
++    resolution: {integrity: sha512-KdHvFWZjEKDf0cakgFjebl371GPsISX2oZHcuyKqM7DtogIsHrqKeLTo8wBHxaXRAQlY2PsPlZmfo+9ZCxEREQ==}
++    engines: {node: '>=10'}
++
+   node-fetch@2.7.0:
+     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
+     engines: {node: 4.x || >=6.0.0}
+@@ -4060,6 +4126,12 @@ packages:
+     resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
+     engines: {node: ^10 || ^12 || >=14}
+ 
++  prebuild-install@7.1.3:
++    resolution: {integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==}
++    engines: {node: '>=10'}
++    deprecated: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
++    hasBin: true
++
+   prettier@2.8.8:
+     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
+     engines: {node: '>=10.13.0'}
+@@ -4098,6 +4170,9 @@ packages:
+   psl@1.15.0:
+     resolution: {integrity: sha512-JZd3gMVBAVQkSs6HdNZo9Sdo0LNcQeMNP3CozBJb3JYC/QUYZTnKxP+f8oWRX4rHP5EurWxqAHTSwUCjlNKa1w==}
+ 
++  pump@3.0.4:
++    resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
++
+   punycode@2.3.1:
+     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
+     engines: {node: '>=6'}
+@@ -4122,6 +4197,10 @@ packages:
+     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
+     engines: {node: '>= 0.6'}
+ 
++  rc@1.2.8:
++    resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
++    hasBin: true
++
+   react-devtools-core@6.1.5:
+     resolution: {integrity: sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==}
+ 
+@@ -4263,6 +4342,10 @@ packages:
+     resolution: {integrity: sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==}
+     engines: {node: '>=0.10.0'}
+ 
++  readable-stream@3.6.2:
++    resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
++    engines: {node: '>= 6'}
++
+   recast@0.23.11:
+     resolution: {integrity: sha512-YTUo+Flmw4ZXiWfQKGcwwc11KnoRAYgzAE2E7mXKCjSviTKShtxBsN6YUUBB2gtaBzKzeKunxhUwNHQuRryhWA==}
+     engines: {node: '>= 4'}
+@@ -4418,6 +4501,12 @@ packages:
+   signal-exit@3.0.7:
+     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+ 
++  simple-concat@1.0.1:
++    resolution: {integrity: sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==}
++
++  simple-get@4.0.1:
++    resolution: {integrity: sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==}
++
+   simple-plist@1.3.1:
+     resolution: {integrity: sha512-iMSw5i0XseMnrhtIzRb7XpQEXepa9xhWxGUojHBL43SIpQuDQkh3Wpy67ZbDzZVr6EKxvwVChnVpdl8hEVLDiw==}
+ 
+@@ -4528,6 +4617,9 @@ packages:
+     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
+     engines: {node: '>=8'}
+ 
++  string_decoder@1.3.0:
++    resolution: {integrity: sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==}
++
+   strip-ansi@5.2.0:
+     resolution: {integrity: sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==}
+     engines: {node: '>=6'}
+@@ -4552,6 +4644,10 @@ packages:
+     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
+     engines: {node: '>=8'}
+ 
++  strip-json-comments@2.0.1:
++    resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
++    engines: {node: '>=0.10.0'}
++
+   strip-json-comments@3.1.1:
+     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
+     engines: {node: '>=8'}
+@@ -4585,6 +4681,13 @@ packages:
+   symbol-tree@3.2.4:
+     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
+ 
++  tar-fs@2.1.4:
++    resolution: {integrity: sha512-mDAjwmZdh7LTT6pNleZ05Yt65HC3E+NiQzl672vQG38jIrehtJk/J3mNwIg+vShQPcLF/LV7CMnDW6vjj6sfYQ==}
++
++  tar-stream@2.2.0:
++    resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
++    engines: {node: '>=6'}
++
+   terminal-link@2.1.1:
+     resolution: {integrity: sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ==}
+     engines: {node: '>=8'}
+@@ -4637,6 +4740,9 @@ packages:
+     engines: {node: '>=18.0.0'}
+     hasBin: true
+ 
++  tunnel-agent@0.6.0:
++    resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
++
+   type-detect@4.0.8:
+     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+     engines: {node: '>=4'}
+@@ -4732,6 +4838,9 @@ packages:
+     peerDependencies:
+       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+ 
++  util-deprecate@1.0.2:
++    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
++
+   util@0.12.5:
+     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
+ 
+@@ -6999,6 +7108,10 @@ snapshots:
+     dependencies:
+       '@babel/types': 7.29.0
+ 
++  '@types/better-sqlite3@7.6.13':
++    dependencies:
++      '@types/node': 25.9.1
++
+   '@types/graceful-fs@4.1.9':
+     dependencies:
+       '@types/node': 25.9.1
+@@ -7288,8 +7401,23 @@ snapshots:
+     dependencies:
+       open: 8.4.2
+ 
++  better-sqlite3@12.10.0:
++    dependencies:
++      bindings: 1.5.0
++      prebuild-install: 7.1.3
++
+   big-integer@1.6.52: {}
+ 
++  bindings@1.5.0:
++    dependencies:
++      file-uri-to-path: 1.0.0
++
++  bl@4.1.0:
++    dependencies:
++      buffer: 5.7.1
++      inherits: 2.0.4
++      readable-stream: 3.6.2
++
+   boolbase@1.0.0: {}
+ 
+   bplist-creator@0.1.0:
+@@ -7385,6 +7513,8 @@ snapshots:
+ 
+   char-regex@2.0.2: {}
+ 
++  chownr@1.1.4: {}
++
+   chrome-launcher@0.15.2:
+     dependencies:
+       '@types/node': 25.9.1
+@@ -7576,8 +7706,14 @@ snapshots:
+ 
+   decode-uri-component@0.2.2: {}
+ 
++  decompress-response@6.0.0:
++    dependencies:
++      mimic-response: 3.1.0
++
+   dedent@1.7.2: {}
+ 
++  deep-extend@0.6.0: {}
++
+   deepmerge@4.3.1: {}
+ 
+   defaults@1.0.4:
+@@ -7637,8 +7773,10 @@ snapshots:
+       esbuild: 0.25.12
+       tsx: 4.22.3
+ 
+-  drizzle-orm@0.45.2(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)):
++  drizzle-orm@0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@12.10.0)(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)):
+     optionalDependencies:
++      '@types/better-sqlite3': 7.6.13
++      better-sqlite3: 12.10.0
+       expo-sqlite: 55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
+ 
+   dunder-proto@1.0.1:
+@@ -7659,6 +7797,10 @@ snapshots:
+ 
+   encodeurl@2.0.0: {}
+ 
++  end-of-stream@1.4.5:
++    dependencies:
++      once: 1.4.0
++
+   entities@4.5.0: {}
+ 
+   entities@6.0.1: {}
+@@ -7818,6 +7960,8 @@ snapshots:
+ 
+   exit@0.1.2: {}
+ 
++  expand-template@2.0.3: {}
++
+   expect@29.7.0:
+     dependencies:
+       '@jest/expect-utils': 29.7.0
+@@ -8128,6 +8272,8 @@ snapshots:
+ 
+   fetch-nodeshim@0.4.10: {}
+ 
++  file-uri-to-path@1.0.0: {}
++
+   fill-range@7.1.1:
+     dependencies:
+       to-regex-range: 5.0.1
+@@ -8169,6 +8315,8 @@ snapshots:
+ 
+   fresh@0.5.2: {}
+ 
++  fs-constants@1.0.0: {}
++
+   fs.realpath@1.0.0: {}
+ 
+   fsevents@2.3.3:
+@@ -8214,6 +8362,8 @@ snapshots:
+ 
+   getenv@2.0.0: {}
+ 
++  github-from-package@0.0.0: {}
++
+   glob@13.0.6:
+     dependencies:
+       minimatch: 10.2.5
+@@ -8347,6 +8497,8 @@ snapshots:
+ 
+   inherits@2.0.4: {}
+ 
++  ini@1.3.8: {}
++
+   inline-style-prefixer@7.0.1:
+     dependencies:
+       css-in-js-utils: 3.1.0
+@@ -9205,6 +9357,8 @@ snapshots:
+ 
+   mimic-fn@2.1.0: {}
+ 
++  mimic-response@3.1.0: {}
++
+   min-indent@1.0.1: {}
+ 
+   minimatch@10.2.5:
+@@ -9215,8 +9369,12 @@ snapshots:
+     dependencies:
+       brace-expansion: 1.1.14
+ 
++  minimist@1.2.8: {}
++
+   minipass@7.1.3: {}
+ 
++  mkdirp-classic@0.5.3: {}
++
+   mkdirp@1.0.4: {}
+ 
+   ms@2.0.0: {}
+@@ -9227,6 +9385,8 @@ snapshots:
+ 
+   nanoid@3.3.12: {}
+ 
++  napi-build-utils@2.0.0: {}
++
+   natural-compare@1.4.0: {}
+ 
+   negotiator@0.6.3: {}
+@@ -9235,6 +9395,10 @@ snapshots:
+ 
+   negotiator@1.0.0: {}
+ 
++  node-abi@3.92.0:
++    dependencies:
++      semver: 7.8.0
++
+   node-fetch@2.7.0:
+     dependencies:
+       whatwg-url: 5.0.0
+@@ -9392,6 +9556,21 @@ snapshots:
+       picocolors: 1.1.1
+       source-map-js: 1.2.1
+ 
++  prebuild-install@7.1.3:
++    dependencies:
++      detect-libc: 2.1.2
++      expand-template: 2.0.3
++      github-from-package: 0.0.0
++      minimist: 1.2.8
++      mkdirp-classic: 0.5.3
++      napi-build-utils: 2.0.0
++      node-abi: 3.92.0
++      pump: 3.0.4
++      rc: 1.2.8
++      simple-get: 4.0.1
++      tar-fs: 2.1.4
++      tunnel-agent: 0.6.0
++
+   prettier@2.8.8: {}
+ 
+   pretty-format@29.7.0:
+@@ -9430,6 +9609,11 @@ snapshots:
+     dependencies:
+       punycode: 2.3.1
+ 
++  pump@3.0.4:
++    dependencies:
++      end-of-stream: 1.4.5
++      once: 1.4.0
++
+   punycode@2.3.1: {}
+ 
+   pure-rand@6.1.0: {}
+@@ -9451,6 +9635,13 @@ snapshots:
+ 
+   range-parser@1.2.1: {}
+ 
++  rc@1.2.8:
++    dependencies:
++      deep-extend: 0.6.0
++      ini: 1.3.8
++      minimist: 1.2.8
++      strip-json-comments: 2.0.1
++
+   react-devtools-core@6.1.5:
+     dependencies:
+       shell-quote: 1.8.3
+@@ -9646,6 +9837,12 @@ snapshots:
+ 
+   react@19.2.0: {}
+ 
++  readable-stream@3.6.2:
++    dependencies:
++      inherits: 2.0.4
++      string_decoder: 1.3.0
++      util-deprecate: 1.0.2
++
+   recast@0.23.11:
+     dependencies:
+       ast-types: 0.16.1
+@@ -9798,6 +9995,14 @@ snapshots:
+ 
+   signal-exit@3.0.7: {}
+ 
++  simple-concat@1.0.1: {}
++
++  simple-get@4.0.1:
++    dependencies:
++      decompress-response: 6.0.0
++      once: 1.4.0
++      simple-concat: 1.0.1
++
+   simple-plist@1.3.1:
+     dependencies:
+       bplist-creator: 0.1.0
+@@ -9899,6 +10104,10 @@ snapshots:
+       is-fullwidth-code-point: 3.0.0
+       strip-ansi: 6.0.1
+ 
++  string_decoder@1.3.0:
++    dependencies:
++      safe-buffer: 5.2.1
++
+   strip-ansi@5.2.0:
+     dependencies:
+       ansi-regex: 4.1.1
+@@ -9919,6 +10128,8 @@ snapshots:
+     dependencies:
+       min-indent: 1.0.1
+ 
++  strip-json-comments@2.0.1: {}
++
+   strip-json-comments@3.1.1: {}
+ 
+   structured-headers@0.4.1: {}
+@@ -9946,6 +10157,21 @@ snapshots:
+ 
+   symbol-tree@3.2.4: {}
+ 
++  tar-fs@2.1.4:
++    dependencies:
++      chownr: 1.1.4
++      mkdirp-classic: 0.5.3
++      pump: 3.0.4
++      tar-stream: 2.2.0
++
++  tar-stream@2.2.0:
++    dependencies:
++      bl: 4.1.0
++      end-of-stream: 1.4.5
++      fs-constants: 1.0.0
++      inherits: 2.0.4
++      readable-stream: 3.6.2
++
+   terminal-link@2.1.1:
+     dependencies:
+       ansi-escapes: 4.3.2
+@@ -9999,6 +10225,10 @@ snapshots:
+     optionalDependencies:
+       fsevents: 2.3.3
+ 
++  tunnel-agent@0.6.0:
++    dependencies:
++      safe-buffer: 5.2.1
++
+   type-detect@4.0.8: {}
+ 
+   type-fest@0.21.3: {}
+@@ -10064,6 +10294,8 @@ snapshots:
+     dependencies:
+       react: 19.2.0
+ 
++  util-deprecate@1.0.2: {}
++
+   util@0.12.5:
+     dependencies:
+       inherits: 2.0.4
