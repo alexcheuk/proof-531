@@ -1,5 +1,6 @@
 import { useRepos } from '@/data/context';
 import { useActiveCycle } from '@/data/queries/useActiveCycle';
+import { prescribedSets } from '@/domain/program';
 import { type HomeCycleStatus, HomeScreen } from '@/features/home/HomeScreen';
 import { useRouter } from 'expo-router';
 
@@ -22,17 +23,32 @@ export default function HomeRoute() {
     ? { kind: 'active', cycle: cycle.number, week: 1 }
     : { kind: 'freshStart' };
 
+  const week: 1 | 2 | 3 | 4 = cycleStatus.kind === 'active' ? cycleStatus.week : 1;
+
+  const liftsWithTopSet = enabledLifts.map((l) => {
+    const sets = prescribedSets(l.trainingMax, week);
+    const top = sets[sets.length - 1];
+    if (!top) {
+      throw new Error(`HomeRoute: prescribedSets returned no sets for lift ${l.id}`);
+    }
+    return {
+      id: l.id,
+      label: l.label,
+      trainingMax: l.trainingMax,
+      topWeight: top.weight,
+      topReps: top.reps,
+      amrap: top.amrap,
+      pct: top.percent,
+    };
+  });
+
   return (
     <HomeScreen
       greeting={pickGreeting(new Date())}
-      headline="Time to lift."
       cycleStatus={cycleStatus}
-      lifts={enabledLifts.map((l) => ({
-        id: l.id,
-        label: l.label,
-        trainingMax: l.trainingMax,
-      }))}
-      stats={{ prs: 0, sessions: 0, daysLifted: 0 }}
+      lifts={liftsWithTopSet}
+      unit="lbs"
+      completedSessions={0}
       onLiftPress={(liftId) => router.navigate({ pathname: '/train', params: { liftId } })}
     />
   );
