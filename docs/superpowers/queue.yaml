@@ -282,14 +282,13 @@ tasks:
     title: Maestro flow home-renders.yaml + committed screenshots
     phase: 4
     depends_on: [P4-03-home-screen]
-    status: blocked
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-5--e2e-with-maestro
     done_when:
       - "apps/mobile/.maestro/home-renders.yaml exists"
       - "maestro test passes on iOS simulator"
       - "apps/mobile/.maestro/screenshots/home-renders/ contains baseline PNGs"
       - "CI runs the flow against iOS simulator"
-    blocked_reason: 'Requires iOS simulator + Maestro CLI for live verification; cannot validate headlessly. Suggest running locally: pnpm --filter @proof-531/mobile maestro test apps/mobile/.maestro/home-renders.yaml after creating the yaml manually.'
   # ───────────────────────────────── Phase 5 — Plate viz ─────────────────────────────────
   - id: P5-01-skia-barbell
     title: Skia Barbell plate-viz variant

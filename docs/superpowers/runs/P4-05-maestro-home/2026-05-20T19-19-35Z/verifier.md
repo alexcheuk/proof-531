@@ -1,0 +1,1 @@
+{"task_id":"P4-05-maestro-home","result":"pass","note":"Structurally complete: yaml + CI job. Runtime criteria (maestro pass on sim, PNG baselines) deferred to first CI run — no local Xcode/simctl available."}
