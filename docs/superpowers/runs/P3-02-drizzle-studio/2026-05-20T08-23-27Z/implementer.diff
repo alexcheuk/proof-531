@@ -1,0 +1,86 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 4f2961b..32e4f05 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -26,6 +26,7 @@
+     "expo-constants": "~55.0.16",
+     "expo-dev-client": "^55.0.35",
+     "expo-device": "~55.0.17",
++    "expo-drizzle-studio-plugin": "^0.2.1",
+     "expo-font": "~55.0.8",
+     "expo-glass-effect": "~55.0.11",
+     "expo-haptics": "~55.0.14",
+diff --git a/apps/mobile/src/app/_layout.tsx b/apps/mobile/src/app/_layout.tsx
+index 67df16d..73f70d1 100644
+--- a/apps/mobile/src/app/_layout.tsx
++++ b/apps/mobile/src/app/_layout.tsx
+@@ -1,12 +1,15 @@
+ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
++import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+ import { useFonts } from 'expo-font';
+ import { useColorScheme } from 'react-native';
+ 
+ import { AnimatedSplashOverlay } from '@/components/animated-icon';
+ import AppTabs from '@/components/app-tabs';
++import { sqlite } from '@/data/db/client';
+ 
+ export default function TabLayout() {
+   const colorScheme = useColorScheme();
++  useDrizzleStudio(__DEV__ ? sqlite : null);
+   const [loaded, error] = useFonts({
+     'SpaceGrotesk-Regular': require('../../assets/fonts/SpaceGrotesk-Regular.ttf'),
+     'SpaceGrotesk-Medium': require('../../assets/fonts/SpaceGrotesk-Medium.ttf'),
+diff --git a/apps/mobile/src/data/db/client.ts b/apps/mobile/src/data/db/client.ts
+new file mode 100644
+index 0000000..c6168ff
+--- /dev/null
++++ b/apps/mobile/src/data/db/client.ts
+@@ -0,0 +1,9 @@
++import { drizzle } from 'drizzle-orm/expo-sqlite';
++import { openDatabaseSync } from 'expo-sqlite';
++import * as schema from './schema';
++
++export const sqlite = openDatabaseSync('proof-531.db');
++
++export const db = drizzle(sqlite, { schema });
++
++export type DB = typeof db;
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 3394ffd..0619d6c 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -41,6 +41,9 @@ importers:
+       expo-device:
+         specifier: ~55.0.17
+         version: 55.0.17(expo@55.0.25)
++      expo-drizzle-studio-plugin:
++        specifier: ^0.2.1
++        version: 0.2.1(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(expo@55.0.25)
+       expo-font:
+         specifier: ~55.0.8
+         version: 55.0.8(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
+@@ -2854,6 +2857,12 @@ packages:
+     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
+     hasBin: true
+ 
++  expo-drizzle-studio-plugin@0.2.1:
++    resolution: {integrity: sha512-AjMC7SOutMAv/MkeJSp/26gnHLAA17SG8EtsjIKW6tDcBkq4plDVhjMLusoGe9f0vzYK8KrOvWjEWZ/R+KvIGg==}
++    peerDependencies:
++      expo: '>=53.0.5'
++      expo-sqlite: '>=15.2.9'
++
+   expo-file-system@55.0.21:
+     resolution: {integrity: sha512-+qGqMGufxDRzWs3RiH1qzHwxWfl8sd6B82pydTf4GwU8ciyQ84u0XVuliAxAAk4iCGf537nzPeCSgl7eLeBxFg==}
+     peerDependencies:
+@@ -7868,6 +7877,11 @@ snapshots:
+ 
+   expo-doctor@1.18.22: {}
+ 
++  expo-drizzle-studio-plugin@0.2.1(expo-sqlite@55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(expo@55.0.25):
++    dependencies:
++      expo: 55.0.25(@babel/core@7.29.0)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.15)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
++      expo-sqlite: 55.0.16(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
++
+   expo-file-system@55.0.21(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0)):
+     dependencies:
+       expo: 55.0.25(@babel/core@7.29.0)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.15)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)

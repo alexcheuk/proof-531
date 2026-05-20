@@ -186,7 +186,7 @@ tasks:
     title: drizzle-studio-expo plugin for in-app DB inspection
     phase: 3
     depends_on: [P3-01-drizzle-schema]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#layer-1--type-safety
     done_when:
       - "drizzle-studio-expo plugin installed and configured"
