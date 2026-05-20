@@ -4,6 +4,7 @@ import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { useMemo } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { DataProvider } from '@/data/context';
 import { db, sqlite } from '@/data/db/client';
@@ -46,17 +47,19 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <DataProvider db={db}>
-        <ThemeProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="live" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="pr" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="onboarding" />
-          </Stack>
-        </ThemeProvider>
-      </DataProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <DataProvider db={db}>
+          <ThemeProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="live" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="pr" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="onboarding" />
+            </Stack>
+          </ThemeProvider>
+        </DataProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
