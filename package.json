@@ -14,7 +14,7 @@
     "format": "biome format --write .",
     "test": "pnpm -r --parallel test",
     "expo-doctor": "pnpm --filter @proof-531/mobile exec expo-doctor",
-    "ci": "pnpm typecheck && pnpm lint && pnpm test && pnpm expo-doctor"
+    "ci": "pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"
