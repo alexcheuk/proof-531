@@ -4,6 +4,7 @@ import { ThemeProvider } from '../../theme';
 
 import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
 import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
+import * as ChipsStories from '../../plates/__stories__/Chips.stories';
 import * as CardStories from '../__stories__/Card.stories';
 import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
 import * as PressButtonStories from '../__stories__/PressButton.stories';
@@ -23,6 +24,7 @@ jest.mock('@shopify/react-native-skia', () => {
     Canvas: passthrough,
     Group: passthrough,
     Rect: passthrough,
+    RoundedRect: () => null,
     Path: () => null,
     LinearGradient: () => null,
     vec: (x: number, y: number) => ({ x, y }),
@@ -45,6 +47,7 @@ const modules: Record<string, StoryModule> = {
   NumberStepper: NumberStepperStories as unknown as StoryModule,
   WeightNum: WeightNumStories as unknown as StoryModule,
   Barbell: BarbellStories as unknown as StoryModule,
+  Chips: ChipsStories as unknown as StoryModule,
   HomeScreen: HomeScreenStories as unknown as StoryModule,
 };
 
