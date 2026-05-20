@@ -44,6 +44,7 @@
     "expo-symbols": "~55.0.9",
     "expo-system-ui": "~55.0.18",
     "expo-web-browser": "~55.0.16",
+    "posthog-react-native": "^4.45.10",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
@@ -53,7 +54,8 @@
     "react-native-screens": "~4.23.0",
     "react-native-svg": "15.15.3",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.7.4"
+    "react-native-worklets": "0.7.4",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@callstack/reassure-cli": "^1.4.1",
