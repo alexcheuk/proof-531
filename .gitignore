@@ -33,6 +33,9 @@ android/local.properties
 # Orchestrator worktrees (created by /initial-implement at .worktrees/<task-id>/)
 .worktrees/
 
+# Claude Code EnterWorktree tool puts session worktrees here
+.claude/worktrees/
+
 # IDE
 .idea/
 .vscode/*
