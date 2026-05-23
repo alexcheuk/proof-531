@@ -198,7 +198,7 @@ tasks:
     title: PlateBar primitive — plain Views, no SVG
     phase: 2
     depends_on: [PB-04-primitive-box-text]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#3--stack
     behavioral_reference: ~/Development/531-pwa/src/components/plate-bar.tsx
     done_when:
