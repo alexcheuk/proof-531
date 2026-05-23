@@ -2,7 +2,7 @@ import BetterSqlite3 from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
-import { cancelSession, completeSession, createSession, getSession } from '../session';
+import { cancelSession, completeSession, createSession, getSession, getSessions } from '../session';
 import { getSettings, seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
@@ -70,6 +70,30 @@ describe('session accessor', () => {
     await expect(completeSession(db, sessionId)).resolves.toBeUndefined();
     const settings = await getSettings(db);
     expect(settings.day).toBe(2); // not advanced twice
+  });
+
+  it('getSessions returns all sessions, newest first', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 250, 'lbs');
+    await setTrainingMax(db, 'bench', 200, 'lbs');
+    const a = await createSession(db, 'squat');
+    // Force a later startedAt so ordering is deterministic regardless of clock
+    // resolution within the same ms.
+    await new Promise((r) => setTimeout(r, 2));
+    const b = await createSession(db, 'bench');
+
+    const list = await getSessions(db);
+    expect(list).toHaveLength(2);
+    expect(list[0]?.id).toBe(b.id);
+    expect(list[1]?.id).toBe(a.id);
+  });
+
+  it('getSessions returns an empty array when no sessions exist', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    const list = await getSessions(db);
+    expect(list).toEqual([]);
   });
 
   it('cancelSession marks cancelled and does NOT advance day', async () => {

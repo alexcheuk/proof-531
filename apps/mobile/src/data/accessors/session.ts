@@ -21,7 +21,7 @@
  * mobile DB is single-writer (JS event loop, no concurrent expo-sqlite writers
  * in practice) we skip the wrapper. Each call's reads/writes are still sequential.
  */
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
 import { sessions } from '../drizzle/schema';
@@ -72,6 +72,20 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
 export async function getSession(db: AnyDb, sessionId: number): Promise<Session | undefined> {
   const rows = await Promise.resolve(db.select().from(sessions).where(eq(sessions.id, sessionId)));
   return (rows as Session[])[0];
+}
+
+/**
+ * Return every session, newest first. Backs the History tab list.
+ *
+ * Ordered by `startedAt DESC` (then `id DESC` as a tiebreaker for sessions
+ * created within the same millisecond — rare in practice, but keeps the
+ * ordering deterministic for tests).
+ */
+export async function getSessions(db: AnyDb): Promise<Session[]> {
+  const rows = await Promise.resolve(
+    db.select().from(sessions).orderBy(desc(sessions.startedAt), desc(sessions.id)),
+  );
+  return rows as Session[];
 }
 
 /**
