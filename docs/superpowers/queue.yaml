@@ -425,7 +425,7 @@ tasks:
     title: Live screen (BigWeight, RestTimer, AmrapLogSheet, CancelConfirmSheet)
     phase: 5
     depends_on: [PE-04-session-today, PB-13-primitive-sheet]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     behavioral_reference: ~/Development/531-pwa/src/features/session/LiveScreen.tsx
     done_when:
