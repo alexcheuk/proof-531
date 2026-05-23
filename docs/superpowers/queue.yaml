@@ -211,7 +211,7 @@ tasks:
     title: domain/types.ts — Lift, Unit, PlateSet, Week, Day
     phase: 3
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/db/schema.ts
     done_when:
