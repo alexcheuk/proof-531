@@ -103,13 +103,13 @@ describe('session accessor', () => {
     expect(list).toEqual([]);
   });
 
-  it('getActiveSession returns the in-progress row, or undefined when none', async () => {
+  it('getActiveSession returns the in-progress row, or null when none', async () => {
     const db = freshDb();
     await seedDefaultSettings(db);
     await setTrainingMax(db, 'squat', 250, 'lbs');
 
     // No sessions yet.
-    expect(await getActiveSession(db)).toBeUndefined();
+    expect(await getActiveSession(db)).toBeNull();
 
     const s = await createSession(db, 'squat');
     const active = await getActiveSession(db);
@@ -118,7 +118,7 @@ describe('session accessor', () => {
 
     // After completion the in-progress row should be gone.
     await completeSession(db, s.id as number);
-    expect(await getActiveSession(db)).toBeUndefined();
+    expect(await getActiveSession(db)).toBeNull();
   });
 
   it('cancelSession marks cancelled and does NOT advance day', async () => {

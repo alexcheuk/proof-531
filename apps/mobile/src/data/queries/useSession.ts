@@ -16,7 +16,7 @@ export function useSession(sessionId: number | null) {
   return useQuery({
     queryKey: SESSION_KEY(sessionId),
     queryFn: () => {
-      if (sessionId == null) return Promise.resolve(undefined);
+      if (sessionId == null) return Promise.resolve(null);
       return getSession(db, sessionId);
     },
     enabled: sessionId != null,

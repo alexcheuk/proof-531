@@ -61,12 +61,14 @@ export function OnboardingScreen() {
         enabledLifts: state.enabledLifts,
         oneRMs,
       });
-      // Invalidate the queries FirstLaunchGate + HomeScreen read so the
-      // post-replace render sees the new TMs/settings — otherwise the gate's
-      // stale empty cache bounces us right back to /onboarding.
+      // Refetch (not just invalidate) so we navigate AFTER the cache holds
+      // the new TMs/settings — `invalidateQueries` marks stale + triggers a
+      // refetch but doesn't wait for it, so the gate would race the refetch
+      // and see the still-cached empty array, bouncing us right back to
+      // /onboarding. `refetchQueries` awaits the refetch.
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
-        queryClient.invalidateQueries({ queryKey: ['settings'] }),
+        queryClient.refetchQueries({ queryKey: ['trainingMaxes'] }),
+        queryClient.refetchQueries({ queryKey: ['settings'] }),
       ]);
       router.replace('/');
     } catch (err) {

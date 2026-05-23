@@ -68,10 +68,10 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
   return result;
 }
 
-/** Look up a session row by id. */
-export async function getSession(db: AnyDb, sessionId: number): Promise<Session | undefined> {
+/** Look up a session row by id. Returns null when no row matches. */
+export async function getSession(db: AnyDb, sessionId: number): Promise<Session | null> {
   const rows = await Promise.resolve(db.select().from(sessions).where(eq(sessions.id, sessionId)));
-  return (rows as Session[])[0];
+  return (rows as Session[])[0] ?? null;
 }
 
 /**
@@ -81,11 +81,11 @@ export async function getSession(db: AnyDb, sessionId: number): Promise<Session 
  * with `status === 'in_progress'` exists. This accessor returns the first
  * such row.
  */
-export async function getActiveSession(db: AnyDb): Promise<Session | undefined> {
+export async function getActiveSession(db: AnyDb): Promise<Session | null> {
   const rows = (await Promise.resolve(
     db.select().from(sessions).where(eq(sessions.status, 'in_progress')),
   )) as Session[];
-  return rows[0];
+  return rows[0] ?? null;
 }
 
 /**
