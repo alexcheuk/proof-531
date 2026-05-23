@@ -438,7 +438,7 @@ tasks:
     title: Session Complete screen (PRCertificate, ReceiptRow, DateStamp)
     phase: 5
     depends_on: [PE-05-session-live]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/session/SessionCompleteScreen.tsx
     done_when:
