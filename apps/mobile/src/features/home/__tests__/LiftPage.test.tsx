@@ -1,0 +1,142 @@
+/**
+ * Behavioral tests for LiftPage CTAs + eyebrow + cycle strip.
+ *
+ * Mocks reanimated + expo-router + expo-haptics so the component renders
+ * headless under jest-expo.
+ */
+import { ThemeProvider } from '@/design/theme';
+import { fireEvent, render, within } from '@testing-library/react-native';
+import type { ReactElement } from 'react';
+
+jest.mock('react-native-reanimated', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
+    LinearTransition: { duration: () => ({}) },
+    FadeIn: { duration: () => ({}) },
+    FadeOut: { duration: () => ({}) },
+  };
+});
+
+const mockRouterPush = jest.fn();
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockRouterPush, replace: jest.fn(), back: jest.fn() }),
+}));
+
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn(),
+  selectionAsync: jest.fn(),
+  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+}));
+
+import { colors } from '@/design/tokens';
+// Import after mocks.
+import { LiftPage } from '../components/LiftPage';
+
+const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+
+type RequiredProps = Parameters<typeof LiftPage>[0];
+
+const baseProps: RequiredProps = {
+  lift: 'squat',
+  week: 1,
+  cycle: 2,
+  storageUnit: 'lbs',
+  displayUnit: 'lbs',
+  plateSet: 'standard',
+  tm: 315,
+  bestE1RM: null,
+  isInProgress: false,
+  onBegin: () => {},
+  onResume: () => {},
+  onOpenPlan: () => {},
+};
+
+describe('LiftPage', () => {
+  beforeEach(() => {
+    mockRouterPush.mockClear();
+  });
+
+  it('renders the Begin session CTA when not in progress', () => {
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={false} />);
+    const cta = screen.getByTestId('lift-page-squat-cta');
+    expect(within(cta).getByText('Begin session')).toBeTruthy();
+    expect(within(cta).getByText('→')).toBeTruthy();
+  });
+
+  it('renders the Resume session CTA + ↩ glyph when in progress', () => {
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={true} />);
+    const cta = screen.getByTestId('lift-page-squat-cta');
+    expect(within(cta).getByText('Resume session')).toBeTruthy();
+    expect(within(cta).getByText('↩')).toBeTruthy();
+  });
+
+  it('fires onBegin when primary CTA is pressed (not in progress)', () => {
+    const onBegin = jest.fn();
+    const onResume = jest.fn();
+    const screen = wrap(
+      <LiftPage {...baseProps} isInProgress={false} onBegin={onBegin} onResume={onResume} />,
+    );
+    fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
+    expect(onBegin).toHaveBeenCalledTimes(1);
+    expect(onResume).not.toHaveBeenCalled();
+  });
+
+  it('fires onResume when primary CTA is pressed (in progress)', () => {
+    const onBegin = jest.fn();
+    const onResume = jest.fn();
+    const screen = wrap(
+      <LiftPage {...baseProps} isInProgress={true} onBegin={onBegin} onResume={onResume} />,
+    );
+    fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
+    expect(onResume).toHaveBeenCalledTimes(1);
+    expect(onBegin).not.toHaveBeenCalled();
+  });
+
+  it('fires onOpenPlan when the secondary "SEE FULL SESSION" button is pressed', () => {
+    const onOpenPlan = jest.fn();
+    const screen = wrap(<LiftPage {...baseProps} onOpenPlan={onOpenPlan} />);
+    fireEvent.press(screen.getByTestId('lift-page-squat-open-plan'));
+    expect(onOpenPlan).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders 4 CycleStrip cells and inverts the active week', () => {
+    const screen = wrap(<LiftPage {...baseProps} week={2} />);
+    // All four cells present.
+    expect(screen.getByTestId('cycle-strip-cell-1')).toBeTruthy();
+    const active = screen.getByTestId('cycle-strip-cell-2');
+    expect(active).toBeTruthy();
+    expect(screen.getByTestId('cycle-strip-cell-3')).toBeTruthy();
+    expect(screen.getByTestId('cycle-strip-cell-4')).toBeTruthy();
+
+    // Active cell is inverted (ink0 background). Style may be an array.
+    const flatten = (s: unknown): Record<string, unknown> => {
+      if (Array.isArray(s)) return Object.assign({}, ...s.map(flatten));
+      if (s && typeof s === 'object') return s as Record<string, unknown>;
+      return {};
+    };
+    const style = flatten(active.props.style);
+    expect(style.backgroundColor).toBe(colors.ink0);
+  });
+
+  it('renders the "In progress" eyebrow only when isInProgress', () => {
+    const off = wrap(<LiftPage {...baseProps} isInProgress={false} />);
+    expect(off.queryByTestId('lift-page-squat-in-progress')).toBeNull();
+    expect(off.queryByText('In progress')).toBeNull();
+
+    off.unmount();
+
+    const on = wrap(<LiftPage {...baseProps} isInProgress={true} />);
+    expect(on.getByTestId('lift-page-squat-in-progress')).toBeTruthy();
+    expect(on.getByText('In progress')).toBeTruthy();
+  });
+
+  it('renders the empty state (NO TRAINING MAX SET) when tm is null', () => {
+    const screen = wrap(<LiftPage {...baseProps} tm={null} />);
+    expect(screen.getByText('NO TRAINING MAX SET')).toBeTruthy();
+    expect(screen.getByTestId('lift-page-squat-open-settings')).toBeTruthy();
+    // No primary CTA in empty state.
+    expect(screen.queryByTestId('lift-page-squat-cta')).toBeNull();
+  });
+});

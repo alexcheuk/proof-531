@@ -75,6 +75,20 @@ export async function getSession(db: AnyDb, sessionId: number): Promise<Session 
 }
 
 /**
+ * Return the (single) currently in-progress session, if any.
+ *
+ * The data model assumes the single-session invariant (§4): at most one row
+ * with `status === 'in_progress'` exists. This accessor returns the first
+ * such row.
+ */
+export async function getActiveSession(db: AnyDb): Promise<Session | undefined> {
+  const rows = (await Promise.resolve(
+    db.select().from(sessions).where(eq(sessions.status, 'in_progress')),
+  )) as Session[];
+  return rows[0];
+}
+
+/**
  * Return every session, newest first. Backs the History tab list.
  *
  * Ordered by `startedAt DESC` (then `id DESC` as a tiebreaker for sessions

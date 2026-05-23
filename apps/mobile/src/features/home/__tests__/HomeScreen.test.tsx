@@ -6,6 +6,9 @@
  *    enabled lift (squat → 315 lb).
  *  - Pressing the second tab (bench) updates the TM cell to bench's TM
  *    (245 lb), proving the lift-switch flow and the LiftPage swap.
+ *  - When another lift is mid-session, tapping Begin on a different lift
+ *    routes to the in-progress lift and skips createSession (single-session
+ *    invariant, §4).
  *
  * Mocks every data hook + expo-router + expo-haptics so the screen renders
  * headless under jest-expo. Reanimated 4 is auto-mocked by `jest-expo`.
@@ -31,14 +34,39 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
+const mockRouterPush = jest.fn();
+const mockRouterReplace = jest.fn();
+
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ replace: jest.fn(), push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({
+    replace: mockRouterReplace,
+    push: mockRouterPush,
+    back: jest.fn(),
+  }),
 }));
 
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   selectionAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+}));
+
+const mockCreateSession = jest.fn(async (..._args: unknown[]) => ({ id: 999 }));
+jest.mock('@/data/accessors/session', () => ({
+  createSession: (...args: unknown[]) => mockCreateSession(...args),
+}));
+
+const mockInvalidateQueries = jest.fn(async () => undefined);
+jest.mock('@tanstack/react-query', () => {
+  const actual = jest.requireActual('@tanstack/react-query');
+  return {
+    ...actual,
+    useQueryClient: () => ({ invalidateQueries: mockInvalidateQueries }),
+  };
+});
+
+jest.mock('@/data/DbProvider', () => ({
+  useDb: () => ({ __mock: 'db' }),
 }));
 
 type MockQueryState = {
@@ -87,6 +115,14 @@ const mockPrsState: MockQueryState = {
   refetch: jest.fn(),
 };
 
+const mockActiveSessionState: MockQueryState = {
+  data: undefined,
+  isLoading: false,
+  isError: false,
+  error: null,
+  refetch: jest.fn(),
+};
+
 function resetMockState() {
   mockSettingsState.data = {
     id: 1,
@@ -114,6 +150,14 @@ function resetMockState() {
   mockPrsState.isLoading = false;
   mockPrsState.isError = false;
   mockPrsState.error = null;
+  mockActiveSessionState.data = undefined;
+  mockActiveSessionState.isLoading = false;
+  mockActiveSessionState.isError = false;
+  mockActiveSessionState.error = null;
+  mockRouterPush.mockClear();
+  mockRouterReplace.mockClear();
+  mockCreateSession.mockClear();
+  mockInvalidateQueries.mockClear();
 }
 
 jest.mock('@/data/queries/useSettings', () => ({
@@ -126,6 +170,11 @@ jest.mock('@/data/queries/useLatestTm', () => ({
 
 jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => mockPrsState,
+}));
+
+jest.mock('@/data/queries/useActiveSession', () => ({
+  useActiveSession: () => mockActiveSessionState,
+  ACTIVE_SESSION_KEY: ['activeSession'],
 }));
 
 // Import after mocks.
@@ -182,5 +231,34 @@ describe('HomeScreen', () => {
     const tmCell = screen.getByTestId('lift-stats-cell-0');
     const valueText = within(tmCell).getByText(/245/);
     expect(childText(valueText)).toBe('245 lb');
+  });
+
+  it('cross-lift Begin redirects to the in-progress lift and skips createSession', async () => {
+    // Bench is mid-session. Squat tab is active by default.
+    mockActiveSessionState.data = {
+      id: 42,
+      lift: 'bench',
+      cycle: 2,
+      week: 1,
+      startedAt: 1,
+      status: 'in_progress',
+      trainingMaxSnapshot: 245,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+    };
+
+    const screen = renderScreen(<HomeScreen />);
+
+    // Squat page is the default. Tap its primary CTA ("Begin session").
+    fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
+
+    // createSession must NOT be called — we're redirecting to bench.
+    expect(mockCreateSession).not.toHaveBeenCalled();
+
+    // Router should be pushed to the bench session.
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    const [arg] = mockRouterPush.mock.calls[0] as [{ pathname: string; params: { lift: string } }];
+    expect(arg.pathname).toBe('/session/today');
+    expect(arg.params.lift).toBe('bench');
   });
 });

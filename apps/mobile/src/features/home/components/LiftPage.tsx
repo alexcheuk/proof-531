@@ -1,3 +1,4 @@
+import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
@@ -16,13 +17,14 @@ import { convert, displayUnit, round } from '@/domain/units';
  * single page at a time keyed on `lift` and lets Reanimated tween the
  * resulting layout swap.
  *
- * Empty state (no TM for this lift): replaces TopSet/LiftStats with a
- * "NO TRAINING MAX SET" strip and a CTA pointing the user back at
+ * Empty state (no TM for this lift): replaces TopSet/CycleStrip/LiftStats
+ * with a "NO TRAINING MAX SET" strip and a CTA pointing the user back at
  * onboarding so a TM can be set.
  */
 import { useRouter } from 'expo-router';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
+import { CycleStrip } from './CycleStrip';
 import { LiftStats } from './LiftStats';
 
 type LiftPageProps = {
@@ -34,10 +36,18 @@ type LiftPageProps = {
   plateSet: PlateSet;
   tm: number | null;
   bestE1RM: number | null;
+  isInProgress: boolean;
+  onBegin: () => void;
+  onResume: () => void;
+  onOpenPlan: () => void;
 };
 
-const TITLE_SIZE = 56;
-const TITLE_LETTER_SPACING = -2.24;
+const TITLE_SIZE = 64;
+// PWA `tracking-[-0.04em]` × 64px = -2.56 letter spacing.
+const TITLE_LETTER_SPACING = -2.56;
+// PWA `leading-[0.92]` ≈ 0.92 * 64 ≈ 58.88; RN clips descenders on tight
+// line heights, so we bump to 74 (matches the spec note in the plan).
+const TITLE_LINE_HEIGHT = 74;
 
 export function LiftPage({
   lift,
@@ -48,6 +58,10 @@ export function LiftPage({
   plateSet,
   tm,
   bestE1RM,
+  isInProgress,
+  onBegin,
+  onResume,
+  onOpenPlan,
 }: LiftPageProps) {
   const router = useRouter();
   const { colors, spacing } = useTheme();
@@ -62,6 +76,46 @@ export function LiftPage({
     flex: 1,
   };
 
+  // Eyebrow — "Cycle N · Day W" on the left, "In progress" on the right
+  // (only when a session is actively running for this lift).
+  const eyebrow = (
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: spacing.sm,
+      }}
+    >
+      <Text
+        variant="mono"
+        weight="semibold"
+        size={10}
+        color="ink2"
+        style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
+      >
+        Cycle {cycle} · Day {week}
+      </Text>
+      {isInProgress ? (
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+          testID={`lift-page-${lift}-in-progress`}
+        >
+          <View style={{ width: 6, height: 6, backgroundColor: colors.ink0 }} />
+          <Text
+            variant="mono"
+            weight="bold"
+            size={9}
+            color="ink0"
+            style={{ textTransform: 'uppercase', letterSpacing: 1.98 }}
+          >
+            In progress
+          </Text>
+        </View>
+      ) : null}
+    </View>
+  );
+
   // Title — typographic, e-ink heavy.
   const title = (
     <Text
@@ -70,9 +124,9 @@ export function LiftPage({
       size={TITLE_SIZE}
       color="ink0"
       style={{
-        lineHeight: TITLE_SIZE,
+        lineHeight: TITLE_LINE_HEIGHT,
         letterSpacing: TITLE_LETTER_SPACING,
-        marginTop: spacing.sm,
+        marginTop: spacing.md,
       }}
     >
       {liftDisplayName(lift)}.
@@ -88,6 +142,7 @@ export function LiftPage({
         style={pageStyle}
         testID={`lift-page-${lift}`}
       >
+        {eyebrow}
         {title}
         <View
           style={{
@@ -150,9 +205,10 @@ export function LiftPage({
       style={pageStyle}
       testID={`lift-page-${lift}`}
     >
+      {eyebrow}
       {title}
 
-      <View style={{ marginTop: spacing.xl }}>
+      <View style={{ marginTop: spacing.lg }}>
         <TopSetBlock
           weight={topWeight}
           unitGlyph={displayUnit(displayUnitProp)}
@@ -166,9 +222,40 @@ export function LiftPage({
         />
       </View>
 
-      <View style={{ marginTop: spacing.xl }}>
+      <CycleStrip currentWeek={week} />
+
+      <View style={{ marginTop: spacing.lg }}>
         <LiftStats tmValue={tmDisplay} tmUnit={displayUnitProp} bestE1RM={bestE1RM} cycle={cycle} />
       </View>
+
+      <View style={{ flex: 1, minHeight: 18 }} />
+
+      <PrimaryPillButton
+        onPress={isInProgress ? onResume : onBegin}
+        glyph={isInProgress ? '↩' : '→'}
+        testID={`lift-page-${lift}-cta`}
+      >
+        {isInProgress ? 'Resume session' : 'Begin session'}
+      </PrimaryPillButton>
+
+      <Pressable
+        onPress={onOpenPlan}
+        testID={`lift-page-${lift}-open-plan`}
+        style={{ paddingVertical: spacing.sm, marginTop: spacing.md, alignItems: 'center' }}
+      >
+        <Text
+          variant="mono"
+          weight="semibold"
+          size={10}
+          color="ink2"
+          style={{ textTransform: 'uppercase', letterSpacing: 2.2, textAlign: 'center' }}
+        >
+          {/* eslint-disable-next-line */}
+          SEE FULL SESSION →
+        </Text>
+      </Pressable>
     </Animated.View>
   );
 }
+
+export type { LiftPageProps };

@@ -2,7 +2,14 @@ import BetterSqlite3 from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
-import { cancelSession, completeSession, createSession, getSession, getSessions } from '../session';
+import {
+  cancelSession,
+  completeSession,
+  createSession,
+  getActiveSession,
+  getSession,
+  getSessions,
+} from '../session';
 import { getSettings, seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
@@ -94,6 +101,24 @@ describe('session accessor', () => {
     await seedDefaultSettings(db);
     const list = await getSessions(db);
     expect(list).toEqual([]);
+  });
+
+  it('getActiveSession returns the in-progress row, or undefined when none', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 250, 'lbs');
+
+    // No sessions yet.
+    expect(await getActiveSession(db)).toBeUndefined();
+
+    const s = await createSession(db, 'squat');
+    const active = await getActiveSession(db);
+    expect(active?.id).toBe(s.id);
+    expect(active?.status).toBe('in_progress');
+
+    // After completion the in-progress row should be gone.
+    await completeSession(db, s.id as number);
+    expect(await getActiveSession(db)).toBeUndefined();
   });
 
   it('cancelSession marks cancelled and does NOT advance day', async () => {
