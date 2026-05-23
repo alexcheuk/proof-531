@@ -105,7 +105,7 @@ tasks:
     title: SegRail primitive (haptics on segment change)
     phase: 2
     depends_on: [PB-04-primitive-box-text]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     behavioral_reference: ~/Development/531-pwa/src/components/ui/seg-rail.tsx
     done_when:
