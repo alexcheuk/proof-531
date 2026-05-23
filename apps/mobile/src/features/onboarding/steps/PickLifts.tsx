@@ -55,20 +55,14 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
         <Text
           variant="sans"
           weight="bold"
-          size={40}
+          size={44}
           color="ink0"
-          style={{ letterSpacing: -1.4, lineHeight: 46 }}
+          style={{ letterSpacing: -1.54, lineHeight: 48 }}
         >
-          Which lifts
-        </Text>
-        <Text
-          variant="sans"
-          weight="medium"
-          size={40}
-          color="ink2"
-          style={{ letterSpacing: -1.4, lineHeight: 46 }}
-        >
-          are you training?
+          Which lifts{'\n'}
+          <Text variant="sans" weight="medium" size={44} color="ink2">
+            are you training?
+          </Text>
         </Text>
         <Text
           variant="sans"
