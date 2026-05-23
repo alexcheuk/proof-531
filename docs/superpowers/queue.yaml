@@ -604,3 +604,69 @@ tasks:
       - "PRCertificate 48 / 78 headlines use ~1.15× lineHeights"
       - "LiftPage's 64px lift name uses lineHeight 74"
       - "rg returns no remaining 'lineHeight: X' lines where X === fontSize for size >= 24 in apps/mobile/src/features and apps/mobile/src/design/primitives (except CycleStrip's 10/10)"
+
+  # ──────── Phase H — Workflow fixes + visual catch-up #2 ────────
+  - id: PG-01-workflow-blockers
+    title: Workflow blockers — drop expo-av, AMRAP→complete navigation, post-complete cache invalidate, AMRAP sheet bg
+    phase: 8
+    depends_on: [PE-13-home-active-session-routing, PE-06-session-complete]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
+    done_when:
+      - "useLiveScreenState no longer references expo-av (Cannot find native module 'ExponentAV' is gone)"
+      - "On phase 'complete', LiveScreen router.replace('/session/complete?sessionId=…') (was router.back())"
+      - "completeSession invalidates ['activeSession'], ['sessions'], ['session', id] in tanstack-query"
+      - "AmrapLogSheet renders on bg0 paper background (not native sheet default)"
+      - "After AMRAP that finishes the workout, user lands on SessionCompleteScreen"
+      - "After session complete, Home no longer shows the lift as 'in progress'"
+
+  - id: PG-02-today-live-plates-bbb
+    title: Today full session plan + BBB; Live PlateBar inside LiveBigWeight
+    phase: 8
+    depends_on: [PE-04-session-today, PE-05-session-live, PB-18-primitive-plate-bar, PC-04-domain-plates]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
+    behavioral_reference: ~/Development/531-pwa/src/features/session/components/TodayBody.tsx
+    done_when:
+      - "TodayBody renders per-set PlateBar decompositions (not bare numbers)"
+      - "TodayBody renders BBB (5×10 @ 50% TM) section with plate viz"
+      - "LiveBigWeight (LiveScreen 'set' phase) renders the PlateBar for the prescribed weight"
+      - "Jest test asserts PlateBar testID present on both screens for a non-bar-only weight"
+
+  - id: PG-03-rest-phase-port
+    title: Port PWA RestPhase faithfully — eyebrow + logged-set summary + timer
+    phase: 8
+    depends_on: [PE-05-session-live]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
+    behavioral_reference: ~/Development/531-pwa/src/features/session/components/RestPhase.tsx
+    done_when:
+      - "RestPhase shows caps eyebrow, headline (logged weight × reps), optional est-1RM line, and prominent timer"
+      - "Timer counts DOWN from the configurable target (PG-04 lands target in settings; PG-03 wires the consumer)"
+      - "RestPhase layout matches PWA proportions (96px timer, ledger eyebrow, hairline-separated summary)"
+
+  - id: PG-04-rest-timer-setting
+    title: Configurable rest target seconds — settings field + Settings UI row
+    phase: 8
+    depends_on: [PD-03-accessor-settings, PE-11-settings-parity]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
+    done_when:
+      - "settings table has restTargetSeconds INTEGER NOT NULL DEFAULT 90"
+      - "domain/types.ts Settings carries restTargetSeconds: number"
+      - "SettingsScreen exposes a row to edit it (NumberStepper or SegRail with 60/90/120/180/240 presets)"
+      - "LiveScreen consumes settings.restTargetSeconds (not the hard-coded 60)"
+      - "Integration test asserts updating the setting changes the timer target on next rest enter"
+
+  - id: PG-05-home-swipe-carousel
+    title: Home — horizontal swipe between lifts (paged FlatList synced with LiftTabs)
+    phase: 8
+    depends_on: [PE-09-home-begin-cta, PE-13-home-active-session-routing]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
+    behavioral_reference: ~/Development/531-pwa/src/features/home/HomeScreen.tsx
+    done_when:
+      - "Home uses a horizontal pagingEnabled FlatList where each page = one LiftPage"
+      - "Swipe updates selectedLift; LiftTabs reflect it"
+      - "Tapping a tab scrolls the carousel to that lift (smooth)"
+      - "Jest test asserts swipe-driven onMomentumScrollEnd updates selectedLift"
