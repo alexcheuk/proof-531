@@ -1,5 +1,6 @@
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
+import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
@@ -52,7 +53,9 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const { colors } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
-  const live = useLiveScreenState(sessionId);
+  const settingsQuery = useSettings();
+  const restSeconds = settingsQuery.data?.restTargetSeconds;
+  const live = useLiveScreenState(sessionId, restSeconds !== undefined ? { restSeconds } : {});
 
   // Keep the screen awake for the entire session. Activate on mount,
   // deactivate on unmount.

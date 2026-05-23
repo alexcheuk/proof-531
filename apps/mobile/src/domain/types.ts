@@ -63,6 +63,12 @@ export interface Settings {
   currentCycle: number;
   week: Week;
   day: Day;
+  /**
+   * Target rest-timer duration (seconds) between working sets. User-tunable
+   * via Settings → Rest target. Default = 90s. Consumed by `useLiveScreenState`
+   * as the rest countdown's initial value.
+   */
+  restTargetSeconds: number;
 }
 
 /**
@@ -78,4 +84,5 @@ export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
   currentCycle: 1,
   week: 1,
   day: 1,
+  restTargetSeconds: 90,
 };

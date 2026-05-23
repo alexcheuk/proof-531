@@ -33,6 +33,16 @@ describe('settings accessor', () => {
     expect(s.currentCycle).toBe(1);
     expect(s.week).toBe(1);
     expect(s.day).toBe(1);
+    expect(s.restTargetSeconds).toBe(90);
+  });
+
+  it('updateSettings round-trips restTargetSeconds', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    const updated = await updateSettings(db, { restTargetSeconds: 180 });
+    expect(updated.restTargetSeconds).toBe(180);
+    const reread = await getSettings(db);
+    expect(reread.restTargetSeconds).toBe(180);
   });
 
   it('getSettings returns existing row on subsequent calls (no duplicate seed)', async () => {

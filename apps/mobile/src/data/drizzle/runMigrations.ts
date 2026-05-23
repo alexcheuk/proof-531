@@ -38,6 +38,22 @@ const REQUIRED_SESSIONS_COLUMNS = [
   'display_unit_snapshot',
 ] as const;
 
+/**
+ * Mirror of REQUIRED_SESSIONS_COLUMNS for the `settings` table. New columns
+ * added to `settings` should be listed here so the dev-time stale-schema
+ * reset triggers if the on-disk DB predates the column.
+ */
+const REQUIRED_SETTINGS_COLUMNS = [
+  'storage_unit',
+  'display_unit',
+  'plate_set',
+  'enabled_lifts',
+  'current_cycle',
+  'week',
+  'day',
+  'rest_target_seconds',
+] as const;
+
 function exec(db: MigrationTarget, sql: string): void {
   const asExpo = db as { execSync?: (sql: string) => void };
   const asBetter = db as { exec?: (sql: string) => void };
@@ -78,7 +94,9 @@ function getColumns(db: MigrationTarget, table: string): string[] {
     }
   }
   // Couldn't introspect — assume schema is fine and skip the dev-reset path.
-  return REQUIRED_SESSIONS_COLUMNS.slice();
+  // Returning a sentinel that contains every required column for both tables
+  // so the staleness check below treats it as "not stale".
+  return [...REQUIRED_SESSIONS_COLUMNS, ...REQUIRED_SETTINGS_COLUMNS];
 }
 
 /**
@@ -87,14 +105,17 @@ function getColumns(db: MigrationTarget, table: string): string[] {
  * first so the canonical 0001 migration can recreate them.
  */
 export function runMigrations(database: MigrationTarget): void {
-  const currentCols = getColumns(database, 'sessions');
-  const isStale =
-    currentCols.length > 0 && REQUIRED_SESSIONS_COLUMNS.some((c) => !currentCols.includes(c));
+  const sessionsCols = getColumns(database, 'sessions');
+  const settingsCols = getColumns(database, 'settings');
+  const sessionsStale =
+    sessionsCols.length > 0 && REQUIRED_SESSIONS_COLUMNS.some((c) => !sessionsCols.includes(c));
+  const settingsStale =
+    settingsCols.length > 0 && REQUIRED_SETTINGS_COLUMNS.some((c) => !settingsCols.includes(c));
+  const isStale = sessionsStale || settingsStale;
 
   if (isStale) {
-    // biome-ignore lint/suspicious/noConsole: dev migration trace
     console.warn(
-      '[runMigrations] stale schema detected on `sessions` (missing columns); dropping all tables to re-seed.',
+      '[runMigrations] stale schema detected (missing columns on sessions or settings); dropping all tables to re-seed.',
     );
     for (const t of ALL_TABLES) {
       exec(database, `DROP TABLE IF EXISTS ${t};`);

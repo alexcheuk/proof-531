@@ -286,6 +286,32 @@ describe('SettingsScreen', () => {
     expect(lbRow?.value).toBe(250);
   });
 
+  it('flipping the Rest target SegRail patches settings.restTargetSeconds', async () => {
+    const { db } = freshDb();
+    await seedDefaultSettings(db);
+
+    const Wrapper = makeWrapper(db);
+    const screen = render(
+      <Wrapper>
+        <SettingsScreen />
+      </Wrapper>,
+    );
+
+    // Default is 90s, so the 90-option is active. Press the 180 (3m) preset.
+    await waitFor(() => {
+      expect(screen.getByTestId('settings-rest-target-180')).toBeTruthy();
+    });
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('settings-rest-target-180'));
+    });
+
+    await waitFor(async () => {
+      const s = await getSettings(db);
+      expect(s.restTargetSeconds).toBe(180);
+    });
+  });
+
   it('cancelling on UnitMigrationSheet leaves storageUnit unchanged', async () => {
     const { db } = freshDb();
     await seedDefaultSettings(db);

@@ -64,6 +64,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
           currentCycle: existing.currentCycle,
           week: existing.week as Settings['week'],
           day: existing.day as Settings['day'],
+          restTargetSeconds: existing.restTargetSeconds,
         }
       : { id: 1 as const, ...DEFAULT_SETTINGS }),
     storageUnit: input.unit,
@@ -80,6 +81,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     currentCycle: next.currentCycle,
     week: next.week,
     day: next.day,
+    restTargetSeconds: next.restTargetSeconds,
   };
 
   if (existing) {

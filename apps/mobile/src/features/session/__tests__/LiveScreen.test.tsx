@@ -140,6 +140,27 @@ jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => ({ data: [], isLoading: false, error: null }),
 }));
 
+const mockSettingsState: { data: unknown; isLoading: boolean; error: unknown } = {
+  data: {
+    id: 1,
+    storageUnit: 'lbs',
+    displayUnit: 'lbs',
+    plateSet: 'standard',
+    enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+    currentCycle: 1,
+    week: 1,
+    day: 1,
+    restTargetSeconds: 90,
+  },
+  isLoading: false,
+  error: null,
+};
+
+jest.mock('@/data/queries/useSettings', () => ({
+  useSettings: () => mockSettingsState,
+  SETTINGS_KEY: ['settings'],
+}));
+
 jest.mock('@/data/accessors/setLog', () => ({
   appendSetLog: (...args: unknown[]) => mockAppendSetLog(...args),
 }));
@@ -181,6 +202,19 @@ describe('LiveScreen', () => {
     mockNotificationAsync.mockClear();
     mockBottomSheet.onChange = null;
     mockBottomSheet.onClose = null;
+    mockSettingsState.data = {
+      id: 1,
+      storageUnit: 'lbs',
+      displayUnit: 'lbs',
+      plateSet: 'standard',
+      enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+      currentCycle: 1,
+      week: 1,
+      day: 1,
+      restTargetSeconds: 90,
+    };
+    mockSettingsState.isLoading = false;
+    mockSettingsState.error = null;
   });
 
   afterEach(() => {
@@ -399,6 +433,46 @@ describe('LiveScreen', () => {
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith('/');
     });
+  });
+
+  it('uses settings.restTargetSeconds for the rest countdown (warning haptic fires at T-3s from the new target)', async () => {
+    // Bump the rest target to 120s. The warning haptic should fire at T-3s,
+    // i.e. after 117s advance — not after 87s (which is the default 90s case).
+    mockSettingsState.data = {
+      id: 1,
+      storageUnit: 'lbs',
+      displayUnit: 'lbs',
+      plateSet: 'standard',
+      enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+      currentCycle: 1,
+      week: 1,
+      day: 1,
+      restTargetSeconds: 120,
+    };
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => {
+      expect(mockAppendSetLog).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('rest-phase')).toBeTruthy();
+    });
+
+    // At 87s elapsed (T-33s for a 120s target) no warning yet.
+    act(() => {
+      jest.advanceTimersByTime(87_000);
+    });
+    expect(mockNotificationAsync).not.toHaveBeenCalled();
+
+    // Advance to 117s elapsed (T-3s for a 120s target) → warning fires.
+    act(() => {
+      jest.advanceTimersByTime(30_000);
+    });
+    expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
   });
 
   it('does not redirect while the session query is loading', async () => {

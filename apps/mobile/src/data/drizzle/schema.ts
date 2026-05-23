@@ -11,6 +11,7 @@ export const settings = sqliteTable('settings', {
   currentCycle: integer('current_cycle').notNull(),
   week: integer('week').notNull(),
   day: integer('day').notNull(),
+  restTargetSeconds: integer('rest_target_seconds').notNull(),
 });
 
 export const trainingMaxes = sqliteTable('training_maxes', {
@@ -68,4 +69,5 @@ export const DEFAULT_SETTINGS_VALUES = {
   currentCycle: 1,
   week: 1,
   day: 1,
+  restTargetSeconds: 90,
 };

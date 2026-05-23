@@ -50,6 +50,7 @@ function toRow(s: Settings): SettingsInsert {
     currentCycle: s.currentCycle,
     week: s.week,
     day: s.day,
+    restTargetSeconds: s.restTargetSeconds,
   };
 }
 
@@ -64,6 +65,7 @@ function fromRow(row: SettingsRow): Settings {
     currentCycle: row.currentCycle,
     week: row.week as Week,
     day: row.day as Day,
+    restTargetSeconds: row.restTargetSeconds,
   };
 }
 
