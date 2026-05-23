@@ -93,7 +93,7 @@ Forbidden paths (never edit, regardless of plan): `~/Development/531-pwa/` (read
 ## Test discipline
 
 - **TDD for `src/domain/`**: red → green → commit. Property tests via `fast-check` where applicable.
-- **Component tests assert behavior, not pixels.** Pixels are checked via Storybook + Maestro screenshots.
+- **Component tests assert behavior, not pixels.** Visual fidelity is checked manually against the PWA (screenshot pairs attached to each PR — see spec §7).
 - **No skipped tests** without a comment linking to a tracking issue.
 
 ## Commit discipline
