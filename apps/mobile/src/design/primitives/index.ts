@@ -4,3 +4,4 @@ export { Button } from './Button';
 export { PrimaryPillButton } from './PrimaryPillButton';
 export { MonoBadge } from './MonoBadge';
 export { SectionBand } from './SectionBand';
+export { TitleBlock } from './TitleBlock';
