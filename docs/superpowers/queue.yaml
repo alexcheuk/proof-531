@@ -278,7 +278,7 @@ tasks:
     title: domain/{labels,summary}.ts (TDD)
     phase: 3
     depends_on: [PC-06-domain-schemes, PC-02-domain-epley]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/features/session/domain/labels.ts
     done_when:
