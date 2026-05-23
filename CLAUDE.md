@@ -84,11 +84,41 @@ Exit 0 ⇒ Metro resolved every import.
 
 ## How work happens
 
-You will be invoked via `/initial-implement` (and its flags `--batch`, `--max-tasks N`, `--task <id>`, `--retry <id>`, `--status`). The skill picks the next ready task from `docs/superpowers/queue.yaml`, spawns subagents, runs the full harness, and commits.
+There are two entry points, each with its own orchestrator. Pick the one that matches the input.
+
+### Idea-driven entry: `rn-expo-pipeline`
+
+**Goal:** take an idea, description, or wireframe → coordinated design / frontend / QA team → PR-ready commit on `feat/<slug>`.
+
+**Trigger:** when the user describes a new feature, attaches a wireframe, says "port / build / add / implement X", or asks the design+frontend+QA team to ship a feature end-to-end. Also handles follow-ups ("revise the spec", "fix the QA findings", "re-run QA only"). Use the `rn-expo-pipeline` skill — do not bypass.
+
+Team: `rn-designer` → `rn-frontend` → `rn-qa` (agent team mode). Audit trail in `_workspace/`. The orchestrator commits but does not push, PR, or merge.
+
+### Queue-driven entry: `initial-implement`
+
+**Goal:** drain `docs/superpowers/queue.yaml` autonomously when a plan already exists.
+
+Invoked via `/initial-implement` (and its flags `--batch`, `--max-tasks N`, `--task <id>`, `--retry <id>`, `--status`). Spawns planner/implementer/verifier/fixer/reviewer subagents, runs the full harness, squash-merges to main.
 
 See `.claude/skills/initial-implement/SKILL.md` for the orchestrator's full behavior. See `.claude/skills/initial-implement/queue-format.md` for the task schema.
 
-Forbidden paths (never edit, regardless of plan): `~/Development/531-pwa/` (read-only reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
+### Forbidden paths
+
+Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
+
+## Harness: rn-expo (design + frontend + QA pipeline)
+
+**Goal:** ship a proof-531 feature end-to-end (idea → PR-ready commit) via a coordinated design/frontend/QA agent team.
+
+**Trigger:** any feature work originating from an idea, description, or wireframe — use the `rn-expo-pipeline` skill. Queue-driven work continues to use `initial-implement`. Simple questions and small fixes do not need the pipeline.
+
+**Components:** agents at `.claude/agents/{rn-designer,rn-frontend,rn-qa}.md`; role skills at `.claude/skills/{rn-design-spec,rn-feature-implementation,rn-feature-qa}/`; orchestrator at `.claude/skills/rn-expo-pipeline/`.
+
+**Change log:**
+
+| Date | Change | Target | Reason |
+|------|--------|--------|--------|
+| 2026-05-23 | Initial build — designer/frontend/QA team + role skills + orchestrator | `.claude/agents/`, `.claude/skills/` | New harness request |
 
 ## Test discipline
 
