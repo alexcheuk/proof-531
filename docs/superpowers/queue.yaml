@@ -235,7 +235,7 @@ tasks:
     title: domain/units.ts — lbs↔kg, rounding (TDD + property tests)
     phase: 3
     depends_on: [PC-01-domain-types]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/features/session/domain/units.ts
     done_when:
