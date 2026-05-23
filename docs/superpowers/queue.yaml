@@ -5,7 +5,7 @@ tasks:
     title: Port PWA globals.css to typed tokens.ts
     phase: 2
     depends_on: []
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#3--stack
     behavioral_reference: ~/Development/531-pwa/src/styles/globals.css
     done_when:
@@ -18,7 +18,6 @@ tasks:
       Tokens are plain TS constants — not theme objects. Match the PWA names
       verbatim where possible. Hex values are the only hex literals allowed
       outside tests.
-
   - id: PB-02-theme
     title: ThemeProvider + useTheme hook
     phase: 2
@@ -29,7 +28,6 @@ tasks:
       - "apps/mobile/src/design/theme.ts exports ThemeProvider and useTheme"
       - "Jest test: useTheme inside ThemeProvider returns tokens; outside throws"
       - "pnpm --filter @proof-531/mobile test passes"
-
   - id: PB-03-fonts
     title: Bundle IBM Plex Sans + Mono + Sans Condensed via expo-font
     phase: 2
@@ -45,7 +43,6 @@ tasks:
       - "App boots in Expo Go with no font-not-loaded warnings in Metro logs"
     notes: |
       Download IBM Plex TTFs from the official IBM repo or Google Fonts.
-
   - id: PB-04-primitive-box-text
     title: Box, Text primitives
     phase: 2
@@ -59,7 +56,6 @@ tasks:
       - "Jest render tests pass for both"
       - "rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src/design/primitives returns empty (no inline hex)"
       - "pnpm --filter @proof-531/mobile test passes"
-
   - id: PB-05-primitive-button-pill
     title: Button + PrimaryPillButton primitives with haptics
     phase: 2
@@ -74,7 +70,6 @@ tasks:
       - "Jest test asserts Haptics.impactAsync('light') is called on press (mocked)"
       - "Jest test asserts accessibilityRole='button' and disabled state"
       - "pnpm --filter @proof-531/mobile test passes"
-
   - id: PB-06-primitive-mono-badge
     title: MonoBadge primitive
     phase: 2
@@ -86,7 +81,6 @@ tasks:
       - "apps/mobile/src/design/primitives/MonoBadge.tsx exists"
       - "Jest render test passes"
       - "pnpm --filter @proof-531/mobile test passes"
-
   - id: PB-07-primitive-section-band
     title: SectionBand primitive
     phase: 2
@@ -97,7 +91,6 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/SectionBand.tsx exists"
       - "Jest render test passes"
-
   - id: PB-08-primitive-title-block
     title: TitleBlock primitive
     phase: 2
@@ -108,7 +101,6 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/TitleBlock.tsx exists"
       - "Jest render test passes"
-
   - id: PB-09-primitive-seg-rail
     title: SegRail primitive (haptics on segment change)
     phase: 2
@@ -120,7 +112,6 @@ tasks:
       - "apps/mobile/src/design/primitives/SegRail.tsx exists"
       - "Jest test asserts selectionAsync fires on segment change (mocked)"
       - "pnpm --filter @proof-531/mobile test passes"
-
   - id: PB-10-primitive-number-stepper
     title: NumberStepper primitive with haptics
     phase: 2
@@ -133,7 +124,6 @@ tasks:
       - "Increment/decrement props enforce min/max clamping"
       - "Jest test asserts onChange fires with clamped value"
       - "Jest test asserts impactAsync('light') fires on step (mocked)"
-
   - id: PB-11-primitive-checkbox-ledger
     title: CheckboxLedger primitive
     phase: 2
@@ -144,7 +134,6 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/CheckboxLedger.tsx exists"
       - "Jest test asserts toggled state and accessibilityRole='checkbox'"
-
   - id: PB-12-primitive-ledger-row-section
     title: LedgerRow + LedgerSection primitives
     phase: 2
@@ -156,7 +145,6 @@ tasks:
       - "apps/mobile/src/design/primitives/LedgerRow.tsx exists"
       - "apps/mobile/src/design/primitives/LedgerSection.tsx exists"
       - "Jest render tests pass for both"
-
   - id: PB-13-primitive-sheet
     title: Sheet primitive wrapping @gorhom/bottom-sheet
     phase: 2
@@ -169,7 +157,6 @@ tasks:
       - "Backdrop tap dismisses (jest test with mocked gesture handler)"
       - "Android hardware-back dismisses sheet first, not screen (jest test asserts handler registered)"
       - "Haptics.impactAsync('light') fires on snap to opened position"
-
   - id: PB-14-primitive-cta-bar
     title: CtaBar primitive
     phase: 2
@@ -180,7 +167,6 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/CtaBar.tsx exists"
       - "Bottom-safe-area inset respected"
-
   - id: PB-15-primitive-masthead
     title: Masthead primitive
     phase: 2
@@ -190,7 +176,6 @@ tasks:
     behavioral_reference: ~/Development/531-pwa/src/components/masthead.tsx
     done_when:
       - "apps/mobile/src/design/primitives/Masthead.tsx exists"
-
   - id: PB-16-primitive-stat-grid
     title: StatGrid primitive
     phase: 2
@@ -200,7 +185,6 @@ tasks:
     behavioral_reference: ~/Development/531-pwa/src/components/stat-grid.tsx
     done_when:
       - "apps/mobile/src/design/primitives/StatGrid.tsx exists"
-
   - id: PB-17-primitive-top-set-block
     title: TopSetBlock primitive
     phase: 2
@@ -210,7 +194,6 @@ tasks:
     behavioral_reference: ~/Development/531-pwa/src/components/top-set-block.tsx
     done_when:
       - "apps/mobile/src/design/primitives/TopSetBlock.tsx exists"
-
   - id: PB-18-primitive-plate-bar
     title: PlateBar primitive — plain Views, no SVG
     phase: 2
@@ -223,7 +206,6 @@ tasks:
       - "Implementation uses only View + flex (no react-native-svg, no Skia)"
       - "Jest test: given a plate decomposition, renders one View per plate with flex proportional to plate value"
       - "rg -n 'react-native-svg|@shopify/react-native-skia' apps/mobile/src returns empty"
-
   # ───────────────────────── Phase C — Domain (TDD) ─────────────────────────
   - id: PC-01-domain-types
     title: domain/types.ts — Lift, Unit, PlateSet, Week, Day
@@ -236,7 +218,6 @@ tasks:
       - "apps/mobile/src/domain/types.ts exists with Lift, Unit, PlateSet, Week, Day exports"
       - "Type definitions match PWA schema verbatim"
       - "rg -n '\\b(useState|useEffect|import React|async|await)\\b' apps/mobile/src/domain returns empty"
-
   - id: PC-02-domain-epley
     title: domain/epley.ts — estimated 1RM math (TDD + property test)
     phase: 3
@@ -250,7 +231,6 @@ tasks:
       - "Property: reps=1 ⇒ result === weight"
       - "Property: result monotonically increases with reps"
       - "pnpm --filter @proof-531/mobile test src/domain/__tests__/epley passes"
-
   - id: PC-03-domain-units
     title: domain/units.ts — lbs↔kg, rounding (TDD + property tests)
     phase: 3
@@ -262,7 +242,6 @@ tasks:
       - "apps/mobile/src/domain/units.ts exports convert, round"
       - "Property test: round(round(x)) === round(x) (idempotent)"
       - "Property test: convert(convert(x, 'lbs', 'kg'), 'kg', 'lbs') ≈ x within rounding tolerance"
-
   - id: PC-04-domain-plates
     title: domain/plates.ts — plate decomposition (TDD + property test)
     phase: 3
@@ -274,7 +253,6 @@ tasks:
       - "apps/mobile/src/domain/plates.ts exports decompose(target, plateSet)"
       - "Property test: sum of decomposed plates + bar ≈ target (within smallest plate)"
       - "Returns greedy descending decomposition matching PWA behavior"
-
   - id: PC-05-domain-increments
     title: domain/increments.ts — TM bumps (TDD)
     phase: 3
@@ -285,7 +263,6 @@ tasks:
     done_when:
       - "apps/mobile/src/domain/increments.ts exports nextTm(currentTm, lift, unit)"
       - "Test: bench/press → +5lb (or +2.5kg); squat/deadlift → +10lb (or +5kg)"
-
   - id: PC-06-domain-schemes
     title: domain/schemes.ts — week 1–4 prescription (TDD)
     phase: 3
@@ -297,7 +274,6 @@ tasks:
       - "apps/mobile/src/domain/schemes.ts exports prescription(week)"
       - "Returns the 3-set scheme for weeks 1, 2, 3 and the 3-set deload for week 4"
       - "Tests cover all 4 weeks"
-
   - id: PC-07-domain-labels-summary
     title: domain/{labels,summary}.ts (TDD)
     phase: 3
@@ -309,7 +285,6 @@ tasks:
       - "apps/mobile/src/domain/labels.ts exists with PWA-matching string outputs"
       - "apps/mobile/src/domain/summary.ts exists with session summary math"
       - "Tests cover at least one happy path per exported function"
-
   # ───────────────────────── Phase D — Data ─────────────────────────
   - id: PD-01-drizzle-init
     title: Drizzle + expo-sqlite client + schema
@@ -324,7 +299,6 @@ tasks:
       - "Column shapes match PWA's Dexie types per spec §4.3"
       - "enabledLifts column is TEXT (JSON-encoded)"
       - "pnpm --filter @proof-531/mobile typecheck passes"
-
   - id: PD-02-migration-0001
     title: First migration + runMigrations() boot helper
     phase: 4
@@ -336,7 +310,6 @@ tasks:
       - "apps/mobile/src/data/drizzle/runMigrations.ts exists"
       - "_layout.tsx calls runMigrations() once on app boot"
       - "Jest integration test opens :memory: sqlite, runs migration, asserts all 5 tables present"
-
   - id: PD-03-accessor-settings
     title: data/accessors/settings.ts (port from PWA)
     phase: 4
@@ -347,7 +320,6 @@ tasks:
     done_when:
       - "apps/mobile/src/data/accessors/settings.ts ports every exported function from the PWA"
       - "Integration test (in-memory sqlite) for each function"
-
   - id: PD-04-accessor-training-max
     title: data/accessors/trainingMax.ts (versioned, append-only)
     phase: 4
@@ -359,7 +331,6 @@ tasks:
       - "apps/mobile/src/data/accessors/trainingMax.ts exists; setTm INSERTs (never UPDATEs)"
       - "getLatestTm returns most recent row per lift"
       - "Integration tests cover both"
-
   - id: PD-05-accessor-session
     title: data/accessors/session.ts (snapshots TM + unit)
     phase: 4
@@ -370,7 +341,6 @@ tasks:
     done_when:
       - "createSession() persists trainingMaxSnapshot and unitSnapshot from current settings"
       - "Integration test: changing TM mid-session does not change session snapshot"
-
   - id: PD-06-accessor-set-log-prs
     title: data/accessors/{setLog,prs}.ts
     phase: 4
@@ -383,7 +353,6 @@ tasks:
       - "apps/mobile/src/data/accessors/prs.ts exists"
       - "PR detection: AMRAP set with estimated1RM > prior best bestE1RM marks isPR + upserts prs row"
       - "Integration tests for set logging and PR upsert"
-
   - id: PD-07-accessor-onboarding
     title: data/accessors/onboarding.ts
     phase: 4
@@ -394,7 +363,6 @@ tasks:
     done_when:
       - "apps/mobile/src/data/accessors/onboarding.ts ports completeOnboarding() behavior"
       - "Integration test: completeOnboarding inserts settings + initial TMs in one transaction"
-
   - id: PD-08-query-hooks
     title: data/queries — TanStack Query hooks wrapping accessors
     phase: 4
@@ -405,7 +373,6 @@ tasks:
       - "apps/mobile/src/data/queries/{useSettings,useLatestTm,useSession,usePrs,latestByLift}.ts exist"
       - "QueryClient is provided in src/app/_layout.tsx"
       - "Jest test renders a hook with a memory db and asserts the query resolves"
-
   # ───────────────────────── Phase E — Features ─────────────────────────
   - id: PE-01-tab-layout
     title: (tabs)/_layout.tsx with custom bottom nav (matches PWA)
@@ -419,7 +386,6 @@ tasks:
       - "tabBar={(props) => <CustomTabBar {...props} />} renders a PWA-matching bar"
       - "Tab switch fires Haptics.selectionAsync (mocked test)"
       - "Bottom-safe-area inset respected"
-
   - id: PE-02-onboarding
     title: Onboarding flow (Intro → PickLifts → OneRmEntry → Review)
     phase: 5
@@ -432,7 +398,6 @@ tasks:
       - "apps/mobile/src/app/onboarding.tsx is a thin shell rendering OnboardingScreen"
       - "Completing the flow invokes the onboarding accessor and routes to /"
       - "Jest test: stepping through all 4 steps with mock accessor calls onboarding accessor with the entered data"
-
   - id: PE-03-home
     title: Home screen (CycleStrip, LiftTabs, LiftPage, LiftStats)
     phase: 5
@@ -445,7 +410,6 @@ tasks:
       - "apps/mobile/src/app/(tabs)/index.tsx renders HomeScreen"
       - "Reanimated LinearTransition applied on LiftTabs/CycleStrip lift switch"
       - "Jest test: lift switch updates rendered LiftStats"
-
   - id: PE-04-session-today
     title: Today screen (entry to a session)
     phase: 5
@@ -457,7 +421,6 @@ tasks:
       - "apps/mobile/src/features/session/TodayScreen.tsx + components/{SessionLayout,SessionTopBar,TodayBody,SetRow}.tsx exist"
       - "apps/mobile/src/app/session/today.tsx renders TodayScreen"
       - "Tapping Start Session creates a session row and routes to /session/live"
-
   - id: PE-05-session-live
     title: Live screen (BigWeight, RestTimer, AmrapLogSheet, CancelConfirmSheet)
     phase: 5
@@ -471,7 +434,6 @@ tasks:
       - "AmrapLogSheet uses gorhom bottom-sheet"
       - "expo-keep-awake is active during the session (activateKeepAwake on enter, deactivate on leave)"
       - "Cancel confirmation requires the warning haptic + a second tap"
-
   - id: PE-06-session-complete
     title: Session Complete screen (PRCertificate, ReceiptRow, DateStamp)
     phase: 5
@@ -483,7 +445,6 @@ tasks:
       - "apps/mobile/src/features/session/SessionCompleteScreen.tsx + 3 components exist"
       - "On PR, Haptics.notificationAsync('success') fires (mocked test)"
       - "apps/mobile/src/app/session/complete.tsx renders the screen"
-
   - id: PE-07-history
     title: History screen + pull-to-refresh
     phase: 5
@@ -495,7 +456,6 @@ tasks:
       - "apps/mobile/src/features/history/HistoryScreen.tsx exists"
       - "apps/mobile/src/app/(tabs)/history.tsx renders it"
       - "RefreshControl wired to refetch underlying query"
-
   - id: PE-08-settings
     title: Settings screen + TmEditSheet
     phase: 5
@@ -507,7 +467,6 @@ tasks:
       - "apps/mobile/src/features/settings/{SettingsScreen.tsx,components/TmEditSheet.tsx,hooks,lifts.ts,nextEnabledLifts.ts,plateSetMapping.ts} match PWA structure"
       - "apps/mobile/src/app/(tabs)/settings.tsx renders SettingsScreen"
       - "Saving a new TM creates a new training_maxes row (does not overwrite)"
-
   # ───────────────────────── Phase F — Integration polish ─────────────────────────
   - id: PF-01-first-launch
     title: First-launch routing (no settings → onboarding; else → home)
@@ -519,7 +478,6 @@ tasks:
       - "Root layout checks useSettings(); redirects to /onboarding if no row, else /(tabs)"
       - "Jest test: with no settings row, root mounts onboarding shell"
       - "Jest test: with a settings row, root mounts tabs"
-
   - id: PF-02-empty-loading-error
     title: Empty/loading/error states sweep across all screens
     phase: 6
@@ -529,7 +487,6 @@ tasks:
     done_when:
       - "Each TanStack Query consumer renders an explicit loading and error state (not a blank screen)"
       - "rg -n 'isLoading|isError|isPending' apps/mobile/src/features returns matches for Home, History, Settings"
-
   - id: PF-03-status-bar
     title: Per-screen status-bar styling
     phase: 6
@@ -539,7 +496,6 @@ tasks:
     done_when:
       - "Each feature screen renders <StatusBar style='light' /> (expo-status-bar)"
       - "Manual: status bar is readable on the dark canvas across all screens"
-
   - id: PF-04-screenshot-pairs
     title: Manual screenshot-pair audit (RN vs PWA)
     phase: 6
@@ -549,7 +505,6 @@ tasks:
     done_when:
       - "For each feature PR, the description contains a screenshot pair (PWA + RN) confirming pixel-faithful port"
       - "Reviewer signs off on every pair"
-
   - id: PF-05-ci-green-metro-smoke
     title: CI green + Metro export smoke
     phase: 6
