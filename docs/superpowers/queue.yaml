@@ -22,7 +22,7 @@ tasks:
     title: ThemeProvider + useTheme hook
     phase: 2
     depends_on: [PB-01-tokens]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#3--stack
     done_when:
       - "apps/mobile/src/design/theme.ts exports ThemeProvider and useTheme"
