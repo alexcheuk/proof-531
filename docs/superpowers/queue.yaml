@@ -491,7 +491,7 @@ tasks:
     title: Per-screen status-bar styling
     phase: 6
     depends_on: [PE-02-onboarding, PE-05-session-live]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     done_when:
       - "Each feature screen renders <StatusBar style='light' /> (expo-status-bar)"
