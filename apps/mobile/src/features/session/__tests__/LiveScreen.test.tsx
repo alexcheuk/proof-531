@@ -18,6 +18,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockBack = jest.fn();
+const mockReplace = jest.fn();
 const mockAppendSetLog = jest.fn();
 const mockCompleteSession = jest.fn();
 const mockCancelSession = jest.fn();
@@ -27,7 +28,7 @@ const mockNotificationAsync = jest.fn();
 const mockSoundCreateAsync = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ replace: jest.fn(), push: jest.fn(), back: mockBack }),
+  useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -98,24 +99,49 @@ jest.mock('@/data/DbProvider', () => ({
   useDb: () => ({ __stub: 'db' }),
 }));
 
+type MockSessionState = {
+  data: unknown;
+  isLoading: boolean;
+  error: unknown;
+};
+
+const mockSessionState: MockSessionState = {
+  data: {
+    id: 7,
+    lift: 'squat',
+    cycle: 1,
+    week: 1,
+    startedAt: 0,
+    status: 'in_progress',
+    trainingMaxSnapshot: 300,
+    storageUnitSnapshot: 'lbs',
+    displayUnitSnapshot: 'lbs',
+    endedAt: null,
+  },
+  isLoading: false,
+  error: null,
+};
+
 jest.mock('@/data/queries/useSession', () => ({
-  useSession: () => ({
-    data: {
-      id: 7,
-      lift: 'squat',
-      cycle: 1,
-      week: 1,
-      startedAt: 0,
-      status: 'in_progress',
-      trainingMaxSnapshot: 300,
-      storageUnitSnapshot: 'lbs',
-      displayUnitSnapshot: 'lbs',
-      endedAt: null,
-    },
-    isLoading: false,
-    error: null,
-  }),
+  useSession: () => mockSessionState,
 }));
+
+function resetSessionState() {
+  mockSessionState.data = {
+    id: 7,
+    lift: 'squat',
+    cycle: 1,
+    week: 1,
+    startedAt: 0,
+    status: 'in_progress',
+    trainingMaxSnapshot: 300,
+    storageUnitSnapshot: 'lbs',
+    displayUnitSnapshot: 'lbs',
+    endedAt: null,
+  };
+  mockSessionState.isLoading = false;
+  mockSessionState.error = null;
+}
 
 jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => ({ data: [], isLoading: false, error: null }),
@@ -138,7 +164,9 @@ const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProv
 describe('LiveScreen', () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    resetSessionState();
     mockBack.mockClear();
+    mockReplace.mockClear();
     mockAppendSetLog.mockReset();
     mockAppendSetLog.mockResolvedValue({ id: 1 });
     mockCompleteSession.mockReset();
@@ -268,5 +296,51 @@ describe('LiveScreen', () => {
     await waitFor(() => {
       expect(screen.getByTestId('amrap-reps-stepper')).toBeTruthy();
     });
+  });
+
+  it('redirects to "/" when the session row no longer exists', async () => {
+    mockSessionState.data = undefined;
+    mockSessionState.isLoading = false;
+
+    renderScreen(<LiveScreen sessionId={7} />);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('redirects to "/" when the session transitions out of in_progress', async () => {
+    mockSessionState.data = {
+      id: 7,
+      lift: 'squat',
+      cycle: 1,
+      week: 1,
+      startedAt: 0,
+      status: 'cancelled',
+      trainingMaxSnapshot: 300,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+      endedAt: 100,
+    };
+    mockSessionState.isLoading = false;
+
+    renderScreen(<LiveScreen sessionId={7} />);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('does not redirect while the session query is loading', async () => {
+    mockSessionState.data = undefined;
+    mockSessionState.isLoading = true;
+
+    renderScreen(<LiveScreen sessionId={7} />);
+
+    // Flush microtasks so any pending effects run.
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

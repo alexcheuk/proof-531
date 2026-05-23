@@ -225,7 +225,7 @@ describe('HomeScreen', () => {
     const screen = renderScreen(<HomeScreen />);
 
     // Bench tab — second entry in enabledLifts.
-    fireEvent.press(screen.getByTestId('lift-tabs-rail-bench'));
+    fireEvent.press(screen.getByTestId('lift-tab-bench'));
 
     expect(screen.getByTestId('lift-page-bench')).toBeTruthy();
     const tmCell = screen.getByTestId('lift-stats-cell-0');

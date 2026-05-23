@@ -103,7 +103,12 @@ export function HomeScreen() {
   return (
     <Container>
       <Masthead rightSlot={<DateBadge label={dateLabel(new Date())} />} />
-      <LiftTabs enabled={enabledLifts} selected={selectedToRender} onSelect={setSelectedLift} />
+      <LiftTabs
+        enabled={enabledLifts}
+        selected={selectedToRender}
+        inProgressLift={inProgressLift}
+        onSelect={setSelectedLift}
+      />
       <LiftPage
         lift={selectedToRender}
         week={settings.data.week}

@@ -68,6 +68,22 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     }
   }, [live.phase, router]);
 
+  // Exit gate: if the session row disappears (deleted) or transitions out of
+  // `in_progress` from elsewhere (cancelled/completed in another surface),
+  // bounce home. Skip while the query is still loading so the loading-state
+  // chrome below renders without a spurious redirect.
+  const sessionStatus = sessionQuery.data?.status;
+  useEffect(() => {
+    if (sessionQuery.isLoading) return;
+    if (sessionQuery.data === undefined) {
+      router.replace('/' as never);
+      return;
+    }
+    if (sessionStatus && sessionStatus !== 'in_progress') {
+      router.replace('/' as never);
+    }
+  }, [sessionQuery.isLoading, sessionQuery.data, sessionStatus, router]);
+
   if (!sessionQuery.data) {
     // Loading or unknown session — render the layout chrome so the page
     // doesn't flash white. The Today CTA is the only entry point so a

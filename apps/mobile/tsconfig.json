@@ -1,21 +1,11 @@
 {
-  "extends": [
-    "expo/tsconfig.base",
-    "../../tsconfig.base.json"
-  ],
+  "extends": ["expo/tsconfig.base", "../../tsconfig.base.json"],
   "compilerOptions": {
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/assets/*": [
-        "./assets/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/assets/*": ["./assets/*"]
     },
     "baseUrl": "."
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"]
 }
