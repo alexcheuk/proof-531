@@ -3,6 +3,7 @@
  * states (PF-02). Mocks `useSettingsScreenData` so we don't need a real db.
  */
 import { ThemeProvider } from '@/design/theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
@@ -10,6 +11,10 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   selectionAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+}));
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ replace: jest.fn(), push: jest.fn(), back: jest.fn() }),
 }));
 
 // Reanimated 4 boots `react-native-worklets` at module load — that native
@@ -74,7 +79,14 @@ jest.mock('@/data/DbProvider', () => ({
 // Import after mocks.
 import { SettingsScreen } from '../SettingsScreen';
 
-const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+const renderScreen = (ui: ReactElement) => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={client}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
+  );
+};
 
 describe('SettingsScreen — QueryShell states', () => {
   beforeEach(() => {
