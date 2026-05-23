@@ -46,6 +46,9 @@ export function SegRail<T extends string>({
     width: '100%',
     borderWidth: 1,
     borderColor: colors.ink0,
+    // overflow:hidden clips children flush to the inner border so the active
+    // segment's ink0 fill doesn't leave a hairline gap from sub-pixel rounding.
+    overflow: 'hidden',
   };
 
   return (
