@@ -90,6 +90,22 @@ jest.mock('@/data/queries/useSetLogsForSession', () => ({
   }),
 }));
 
+jest.mock('@/data/queries/useSettings', () => ({
+  useSettings: () => ({
+    data: {
+      displayUnit: 'lbs',
+      storageUnit: 'lbs',
+      plateSet: 'standard',
+      enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+      currentCycle: 1,
+      week: 1,
+      restTargetSeconds: 90,
+    },
+    isLoading: false,
+    error: null,
+  }),
+}));
+
 // Import after mocks so the screen sees the stubs.
 import { SessionCompleteScreen } from '../SessionCompleteScreen';
 
@@ -169,6 +185,29 @@ describe('SessionCompleteScreen', () => {
       await Promise.resolve();
     });
     expect(mockNotificationAsync).not.toHaveBeenCalled();
+  });
+
+  it('renders the masthead wordmark + Filed chip and the cycle grid', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-complete-masthead')).toBeTruthy();
+      expect(screen.getByText('Filed')).toBeTruthy();
+      expect(screen.getByTestId('cycle-grid')).toBeTruthy();
+      // 4 lifts × 4 weeks = 16 cells.
+      expect(screen.getAllByTestId('cycle-cell')).toHaveLength(16);
+    });
+  });
+
+  it('renders the "In the / book." headline and a "See full record" secondary link', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/In the\s*book\./)).toBeTruthy();
+      expect(screen.getByTestId('session-complete-history-link')).toBeTruthy();
+    });
   });
 
   it('"Close the day" CTA calls router.replace("/")', async () => {

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Text as RNText, type StyleProp, type TextStyle, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
@@ -5,21 +6,15 @@ import { useTheme } from '../theme';
  * Monochrome side-view barbell visualization (LEDGER plate-v3).
  *
  * Pure-presentational. The caller passes a precomputed `perSide`
- * decomposition (heaviest plate first). This primitive does NOT depend on
- * the domain (`calcPlates` lands later as PC-04) — it just lays out the
- * bar, collars, and plate stacks symmetrically with the heaviest plate
- * closest to the bar on each side.
+ * decomposition (heaviest plate first). Plates stamp their weight number
+ * (rotated -90°) when they're tall enough to read.
  *
  * Two variants:
- *   - default (full): bar+collars+plates row + a "PER SIDE …" caption.
- *   - `mini`: same row at smaller dimensions, no caption.
+ *   - default (full): bar+collars+plates row + a hairline "PER SIDE" row
+ *     showing grouped plates and their per-side total.
+ *   - `mini`: same row at smaller dimensions, no PER SIDE row.
  *
- * No SVG, no Skia — View + flex only. Plate height scales with weight
- * (heavier → taller) using the same 0.36 → 1.0 ramp as the PWA.
- *
- * Ported from PWA `src/components/plate-bar.tsx`. The caption is
- * simplified ("PER SIDE: 2 × 45, 1 × 25") to drop the inline running-sum
- * cluster that the PWA renders.
+ * Ported from PWA `src/components/plate-bar.tsx`.
  */
 
 export type PlateBarProps = {
@@ -118,22 +113,62 @@ export function PlateBar({
     backgroundColor: colors.ink0,
   };
 
-  const captionRowStyle: ViewStyle = {
-    paddingTop: 6,
+  const perSideRowStyle: ViewStyle = {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
   };
-  const captionTextStyle: TextStyle = {
+  const perSideLabelStyle: TextStyle = {
     fontFamily: 'IBMPlexMono-Medium',
-    fontSize: 9,
-    lineHeight: 9,
-    letterSpacing: 1.26, // 0.14em × 9
+    fontSize: 10,
+    lineHeight: 10,
+    letterSpacing: 2.2, // 0.22em × 10
     color: colors.ink2,
     textTransform: 'uppercase',
   };
-
-  const captionText =
-    grouped.length === 0
-      ? `PER SIDE: — ${unitGlyph}`
-      : `PER SIDE: ${grouped.map((g) => `${g.count} × ${g.weight}`).join(', ')} ${unitGlyph}`;
+  const perSideValueRowStyle: ViewStyle = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    gap: 6,
+  };
+  const groupedNumStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 13,
+    lineHeight: 14,
+    letterSpacing: -0.13,
+    color: colors.ink0,
+  };
+  const groupedCountStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 11,
+    lineHeight: 14,
+    color: colors.ink2,
+  };
+  const plusStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 13,
+    lineHeight: 14,
+    color: colors.ink3,
+  };
+  const totalStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Bold',
+    fontSize: 13,
+    lineHeight: 14,
+    color: colors.ink0,
+    marginLeft: 4,
+  };
+  const dashStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 13,
+    lineHeight: 14,
+    color: colors.ink2,
+  };
 
   return (
     <View
@@ -150,9 +185,12 @@ export function PlateBar({
             <PlateRect
               // biome-ignore lint/suspicious/noArrayIndexKey: positional render of a numeric stack
               key={`l-${i}`}
+              weight={p}
               height={H * sizeFor(p, unitGlyph)}
               width={plateW}
+              mini={mini}
               ink0={colors.ink0}
+              bg0={colors.bg0}
               testID={testID ? `${testID}-plate-l-${i}` : undefined}
             />
           ))}
@@ -179,18 +217,42 @@ export function PlateBar({
             <PlateRect
               // biome-ignore lint/suspicious/noArrayIndexKey: positional render of a numeric stack
               key={`r-${i}`}
+              weight={p}
               height={H * sizeFor(p, unitGlyph)}
               width={plateW}
+              mini={mini}
               ink0={colors.ink0}
+              bg0={colors.bg0}
               testID={testID ? `${testID}-plate-r-${i}` : undefined}
             />
           ))}
         </View>
       </View>
 
-      {!mini && hasPlates && (
-        <View style={captionRowStyle} testID={testID ? `${testID}-caption` : undefined}>
-          <RNText style={captionTextStyle}>{captionText}</RNText>
+      {!mini && (
+        <View style={perSideRowStyle} testID={testID ? `${testID}-caption` : undefined}>
+          <RNText style={perSideLabelStyle}>PER SIDE</RNText>
+          <View style={perSideValueRowStyle}>
+            {grouped.length === 0 ? (
+              <RNText style={dashStyle}>—</RNText>
+            ) : (
+              <>
+                {grouped.map((g, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: positional render of a grouped stack
+                  <Fragment key={`g-${i}`}>
+                    {i > 0 ? <RNText style={plusStyle}>+</RNText> : null}
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      {g.count > 1 ? (
+                        <RNText style={groupedCountStyle}>{`${g.count}× `}</RNText>
+                      ) : null}
+                      <RNText style={groupedNumStyle}>{g.weight}</RNText>
+                    </View>
+                  </Fragment>
+                ))}
+                <RNText style={totalStyle}>{`= ${perSideTotal} ${unitGlyph}`}</RNText>
+              </>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -198,16 +260,31 @@ export function PlateBar({
 }
 
 function PlateRect({
+  weight,
   height,
   width,
+  mini,
   ink0,
+  bg0,
   testID,
 }: {
+  weight: number;
   height: number;
   width: number;
+  mini: boolean;
   ink0: string;
+  bg0: string;
   testID: string | undefined;
 }) {
+  // Only stamp the weight on plates large enough to read.
+  const showLabel = height >= 30 && width >= 10;
+  const labelStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Bold',
+    fontSize: mini ? 7 : 8,
+    lineHeight: mini ? 7 : 8,
+    letterSpacing: 0.32,
+    color: bg0,
+  };
   return (
     <View
       testID={testID}
@@ -216,7 +293,16 @@ function PlateRect({
         height,
         backgroundColor: ink0,
         borderRadius: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
       }}
-    />
+    >
+      {showLabel ? (
+        <RNText style={[labelStyle, { transform: [{ rotate: '-90deg' }] }]} numberOfLines={1}>
+          {weight}
+        </RNText>
+      ) : null}
+    </View>
   );
 }

@@ -68,30 +68,46 @@ describe('PlateBar', () => {
     expect(widthOf(getByTestId('pb-plate-l-0'))).toBe(12);
   });
 
-  it('caption renders in full variant with plates and groups equal adjacent plates', () => {
-    const { getByTestId } = wrap(
+  it('PER SIDE row renders in full variant — groups equal adjacent plates with grouped count', () => {
+    const { getByTestId, getByText, getAllByText } = wrap(
       <PlateBar testID="pb" perSide={[45, 45, 25]} unitGlyph="lb" weight={185} />,
     );
-    const caption = getByTestId('pb-caption');
-    // Drill into the Text child to read its content.
-    const text = caption.children[0] as { props: { children: string } };
-    expect(text.props.children).toContain('2 × 45');
-    expect(text.props.children).toContain('1 × 25');
-    expect(text.props.children).toContain('lb');
+    expect(getByTestId('pb-caption')).toBeTruthy();
+    // "PER SIDE" label sits on the left.
+    expect(getByText('PER SIDE')).toBeTruthy();
+    // Two 45s collapse to "2× " + "45"; one 25 stays as a bare "25". The
+    // weight numerics appear both as in-plate stamps AND in the PER SIDE
+    // numerics — `getAllByText` confirms each shows up at least once.
+    expect(getByText(/^2×/)).toBeTruthy();
+    expect(getAllByText('45').length).toBeGreaterThanOrEqual(1);
+    expect(getAllByText('25').length).toBeGreaterThanOrEqual(1);
+    // Total bumps to per-side sum + unit.
+    expect(getByText('= 115 lb')).toBeTruthy();
   });
 
-  it('caption is hidden when mini', () => {
+  it('stamps the weight number onto plates that are tall enough to read', () => {
+    const { getAllByText } = wrap(
+      <PlateBar testID="pb" perSide={[45, 45]} unitGlyph="lb" weight={225} />,
+    );
+    // Each 45 plate stamps its own "45" label; with 2 per side that's 4 stamps.
+    // The PER SIDE row also renders "45" once → at least 4 matches expected.
+    expect(getAllByText('45').length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('PER SIDE row is hidden when mini', () => {
     const { queryByTestId } = wrap(
       <PlateBar testID="pb" perSide={[45, 45]} unitGlyph="lb" weight={225} mini />,
     );
     expect(queryByTestId('pb-caption')).toBeNull();
   });
 
-  it('caption is hidden when there are no plates', () => {
-    const { queryByTestId } = wrap(
+  it('PER SIDE row renders an em-dash placeholder when there are no plates', () => {
+    const { getByTestId, getByText } = wrap(
       <PlateBar testID="pb" perSide={[]} unitGlyph="lb" weight={45} />,
     );
-    expect(queryByTestId('pb-caption')).toBeNull();
+    expect(getByTestId('pb-caption')).toBeTruthy();
+    expect(getByText('PER SIDE')).toBeTruthy();
+    expect(getByText('—')).toBeTruthy();
   });
 
   it('accessibilityLabel includes weight and unitGlyph (loaded with plates)', () => {

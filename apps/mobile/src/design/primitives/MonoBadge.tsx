@@ -72,6 +72,11 @@ export function MonoBadge({ children, size = 'sm', style, testID }: MonoBadgePro
     letterSpacing: sizing.letterSpacing,
     color: colors.ink0,
     textTransform: 'uppercase',
+    textAlign: 'center',
+    // letterSpacing adds trailing space after the last glyph, which makes the
+    // text appear left-shifted inside a centered container. Pulling the right
+    // edge back by `letterSpacing` re-centers the visible glyphs.
+    marginRight: -sizing.letterSpacing,
   };
 
   return (

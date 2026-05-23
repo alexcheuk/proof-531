@@ -97,18 +97,20 @@ describe('TodayScreen', () => {
     expect(screen.getByTestId('start-session')).toBeTruthy();
   });
 
-  it('renders a PlateBar under each working-set row and a BBB band with its own PlateBar', () => {
-    // squat / week 1 / TM 300 lbs → set 0 = 195 lb (bar 45 + 150/2 per side =
-    // 45 + 25 + 5). Not bar-only, so the PlateBar is present.
+  it('renders the top-set PlateBar hero and a numeric-only BBB band (no inline plate viz)', () => {
+    // squat / week 1 / TM 300 lbs → set 0 = 195 lb. Plate visualization is
+    // confined to the top-set hero (matching ref); working-set rows and BBB
+    // render numerics only.
     const screen = renderScreen(<TodayScreen lift="squat" />);
-    expect(screen.getByTestId('set-row-0-plate-bar')).toBeTruthy();
-    expect(screen.getByTestId('set-row-1-plate-bar')).toBeTruthy();
-    expect(screen.getByTestId('set-row-2-plate-bar')).toBeTruthy();
     // Top-set hero has its own PlateBar via TopSetBlock.
     expect(screen.getByTestId('today-top-set-plate-bar')).toBeTruthy();
-    // BBB section is present with its own PlateBar.
+    // BBB section is present but with NO inline PlateBar.
     expect(screen.getByTestId('today-bbb-band')).toBeTruthy();
-    expect(screen.getByTestId('today-bbb-plate-bar')).toBeTruthy();
+    expect(screen.queryByTestId('today-bbb-plate-bar')).toBeNull();
+    // Working-set rows expose no PlateBar either.
+    expect(screen.queryByTestId('set-row-0-plate-bar')).toBeNull();
+    expect(screen.queryByTestId('set-row-1-plate-bar')).toBeNull();
+    expect(screen.queryByTestId('set-row-2-plate-bar')).toBeNull();
   });
 
   it('creates a session and routes to /session/live on Start', async () => {

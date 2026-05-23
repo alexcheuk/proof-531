@@ -1,24 +1,24 @@
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
- * Rest countdown display. Pure presentational — caller owns the actual
- * countdown driver (`useLiveScreenState`) and passes seconds-remaining in.
+ * Rest count-up display. Pure presentational — caller owns the driver
+ * (`useLiveScreenState`) and passes seconds-remaining + target in.
  *
  * Structural port of `~/Development/531-pwa/src/features/session/components/
- * RestTimer.tsx`. The PWA timer counts UP (free-form rest); this port counts
- * DOWN from a configurable target (PG-04 wired `restTargetSeconds` into
- * settings + `useLiveScreenState`; PG-03 makes the consumer render it).
+ * RestTimer.tsx`. The PWA counts UP from `startedAt`; we derive the same
+ * count-up label from `target - remaining` so the visual matches the ref
+ * without changing the underlying countdown driver (which still fires the
+ * warning haptic at T-3s and the chime at T-0).
  *
  * Visual contract mirrors the PWA: REST caps eyebrow over a 96-px tabular
- * timer label. A muted "of m:ss" sub-line shows the target context so the
- * countdown reads as progress rather than a free-running clock.
+ * timer label. No "of m:ss" sub-line — the ref's rest is free-form.
  */
 import { View, type ViewStyle } from 'react-native';
 
 export type RestTimerProps = {
-  /** Seconds remaining in the countdown. */
+  /** Seconds remaining in the countdown driver. */
   remaining: number;
-  /** Total configured rest target — rendered as context under the timer. */
+  /** Total configured rest target — used to derive count-up elapsed. */
   target: number;
   testID?: string;
 };
@@ -32,8 +32,10 @@ function formatLabel(totalSeconds: number): string {
 
 export function RestTimer({ remaining, target, testID }: RestTimerProps) {
   const { spacing } = useTheme();
-  const label = formatLabel(remaining);
-  const targetLabel = formatLabel(target);
+  // Count UP from 0 to match the reference. After the target elapses we keep
+  // ticking past it (free-form rest — the ref has no fixed ceiling either).
+  const elapsed = Math.max(0, target - remaining);
+  const label = formatLabel(elapsed);
   const container: ViewStyle = {
     alignItems: 'center',
     marginTop: spacing.xxl,
@@ -67,16 +69,6 @@ export function RestTimer({ remaining, target, testID }: RestTimerProps) {
         testID="rest-timer-value"
       >
         {label}
-      </Text>
-      <Text
-        variant="mono"
-        weight="medium"
-        size={11}
-        color="ink3"
-        style={{ textTransform: 'uppercase', letterSpacing: 1.98, marginTop: 6 }}
-        testID="rest-timer-target"
-      >
-        of {targetLabel}
       </Text>
     </View>
   );

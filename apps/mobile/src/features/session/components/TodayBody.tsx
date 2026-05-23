@@ -1,5 +1,4 @@
 import { Masthead } from '@/design/primitives/Masthead';
-import { PlateBar } from '@/design/primitives/PlateBar';
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
@@ -16,9 +15,8 @@ import { convertWeight, displayUnit, displayWeight, round } from '@/domain/units
  * Pure presentation; the parent owns the data fetch + Start handler. Ported
  * from `~/Development/531-pwa/src/features/session/components/TodayBody.tsx`.
  *
- * Plate decompositions are computed inline against the display weight under
- * the configured `plateSet`. Each working-set row is followed by a mini
- * `PlateBar` so the lifter can see the load-out at a glance.
+ * Plate visualization lives only in the top-set hero (matching ref). Working
+ * sets and BBB show numerics only.
  */
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { SetRow } from './SetRow';
@@ -35,6 +33,12 @@ export type TodayBodyProps = {
   tm: number;
   /** Configured plate set — drives plate decomposition (bar + plate inventory). */
   plateSet: PlateSet;
+  /**
+   * 1-based index of the next-pending working set (1, 2, or 3). Renders an
+   * `UP NEXT` chip on that row. Defaults to 1 — the first set is "next" when
+   * no session progress is known.
+   */
+  nextSetIndex?: 1 | 2 | 3;
 };
 
 export function TodayBody({
@@ -45,6 +49,7 @@ export function TodayBody({
   displayUnit: displayUnitProp,
   tm,
   plateSet,
+  nextSetIndex = 1,
 }: TodayBodyProps) {
   const { colors, type } = useTheme();
   const sets = prescription(week);
@@ -67,10 +72,9 @@ export function TodayBody({
   const topWeight = displayWeight(topWeightStorage, storageUnit, renderUnit);
   const topDecomposed = decompose(topWeight, plateSet);
 
-  // BBB: 5×10 @ 50% TM. We render a single summary row + a mini PlateBar.
+  // BBB: 5×10 @ 50% TM. Summary-only row (no plate viz, matching ref).
   const bbbWeightStorage = round(tm * 0.5, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
-  const bbbDecomposed = decompose(bbbWeight, plateSet);
   const bbbCount = bbbSets(0.5).length;
 
   const cycleBadgeStyle: TextStyle = {
@@ -134,12 +138,6 @@ export function TodayBody({
     marginTop: 40,
   };
 
-  const setPlateRowStyle: ViewStyle = {
-    paddingTop: 6,
-    paddingBottom: 14,
-    paddingLeft: 34, // align under the weight cluster (past the index gutter)
-  };
-
   // BBB summary row — caps + giant weight + caps unit.
   const bbbSummaryRow: ViewStyle = {
     flexDirection: 'row',
@@ -171,9 +169,6 @@ export function TodayBody({
     letterSpacing: 2.2,
     textTransform: 'uppercase',
     color: colors.ink2,
-  };
-  const bbbPlateRowStyle: ViewStyle = {
-    paddingTop: 12,
   };
 
   return (
@@ -215,38 +210,29 @@ export function TodayBody({
           {sets.map((s, i) => {
             const wStorage = round(tm * s.pct, storageUnit);
             const w = displayWeight(wStorage, storageUnit, renderUnit);
-            const decomposed = decompose(w, plateSet);
             // Working sets are a fixed-length (3) prescription per (lift, week);
             // the (pct, reps) pair is stable per index, so it forms a stable key.
             const key = `${s.pct}-${s.reps}-${s.amrap ? 'a' : 'w'}`;
+            const oneBased = (i + 1) as 1 | 2 | 3;
             return (
-              <View key={key}>
-                <SetRow
-                  index={(i + 1) as 1 | 2 | 3}
-                  isLast={false}
-                  weight={w}
-                  unit={renderUnit}
-                  reps={s.reps}
-                  amrap={!!s.amrap}
-                  pct={s.pct}
-                  testID={`set-row-${i}`}
-                />
-                <View style={setPlateRowStyle} testID={`set-row-${i}-plate-row`}>
-                  <PlateBar
-                    perSide={decomposed.perSide}
-                    unitGlyph={unitGlyph}
-                    weight={w}
-                    mini
-                    testID={`set-row-${i}-plate-bar`}
-                  />
-                </View>
-              </View>
+              <SetRow
+                key={key}
+                index={oneBased}
+                isLast={i === sets.length - 1}
+                weight={w}
+                unit={renderUnit}
+                reps={s.reps}
+                amrap={!!s.amrap}
+                pct={s.pct}
+                next={oneBased === nextSetIndex}
+                testID={`set-row-${i}`}
+              />
             );
           })}
         </View>
       </View>
 
-      {/* BBB band — 5 × 10 @ 50% TM, summary + mini plate viz. */}
+      {/* BBB band — 5 × 10 @ 50% TM, numeric summary only (matching ref). */}
       <View style={bbbSectionStyle}>
         <View style={sectionHeaderRow}>
           <RNText style={capsLabel}>BBB · {bbbCount} × 10 @ 50% TM</RNText>
@@ -259,15 +245,6 @@ export function TodayBody({
               <RNText style={bbbWeightStyle}>{bbbWeight}</RNText>
               <RNText style={bbbWeightCapsStyle}>{unitGlyph} · 50%</RNText>
             </View>
-          </View>
-          <View style={bbbPlateRowStyle}>
-            <PlateBar
-              perSide={bbbDecomposed.perSide}
-              unitGlyph={unitGlyph}
-              weight={bbbWeight}
-              mini
-              testID="today-bbb-plate-bar"
-            />
           </View>
         </SectionBand>
       </View>

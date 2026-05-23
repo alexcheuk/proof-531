@@ -32,13 +32,20 @@ export function Sheet({
   backgroundColor,
   testID,
 }: SheetProps) {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
   const sheetRef = useRef<BottomSheet>(null);
   const effectiveSnapPoints = snapPoints ?? DEFAULT_SNAP_POINTS;
   const effectiveBackground = backgroundColor ?? colors.bg0;
   const backgroundStyle = useMemo<ViewStyle>(
     () => ({ backgroundColor: effectiveBackground }),
     [effectiveBackground],
+  );
+  // Reserve breathing room below the last interactive element so sheet CTAs
+  // don't sit flush against the home indicator / bottom edge. `xxl` is one
+  // step above the sheet's own inner `lg` padding for a comfortable gutter.
+  const contentContainerStyle = useMemo<ViewStyle>(
+    () => ({ paddingBottom: spacing.xxl }),
+    [spacing.xxl],
   );
 
   const renderBackdrop = useCallback(
@@ -85,7 +92,9 @@ export function Sheet({
       backdropComponent={renderBackdrop}
       backgroundStyle={backgroundStyle}
     >
-      <BottomSheetView testID={testID}>{children}</BottomSheetView>
+      <BottomSheetView testID={testID} style={contentContainerStyle}>
+        {children}
+      </BottomSheetView>
     </BottomSheet>
   );
 }

@@ -144,11 +144,17 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // still render the underlying set/rest surface, so they re-use the same
   // CTA from the phase they popped out of (handled implicitly by
   // useLiveScreenState's phaseBeforeCancelRef).
+  // CTA labels mirror the ref's `LiveScreen` logic exactly:
+  //   ready phase, working set → "Set complete" (✓)
+  //   ready phase, AMRAP set   → "Log AMRAP"   (→)
+  //   rest phase, has next set → "Next set"    (→)
+  //   rest phase, terminal     → "Complete session" (→)
   let cta: React.ReactElement | null = null;
   if (live.phase === 'rest') {
+    const hasNext = live.setIndex < 2;
     cta = (
-      <PrimaryPillButton testID="cta-advance-rest" onPress={live.onAdvanceFromRest}>
-        {live.setIndex < 2 ? 'Next set' : 'Complete session'}
+      <PrimaryPillButton testID="cta-advance-rest" glyph="→" onPress={live.onAdvanceFromRest}>
+        {hasNext ? 'Next set' : 'Complete session'}
       </PrimaryPillButton>
     );
   } else if (
@@ -158,7 +164,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   ) {
     if (live.isAmrap) {
       cta = (
-        <PrimaryPillButton testID="cta-log-amrap" onPress={live.onOpenAmrapSheet}>
+        <PrimaryPillButton testID="cta-log-amrap" glyph="→" onPress={live.onOpenAmrapSheet}>
           Log AMRAP
         </PrimaryPillButton>
       );
@@ -194,6 +200,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             }
             loggedReps={live.lastLogged?.reps ?? live.prescribedReps}
             loggedUnit={unit}
+            isAmrap={live.lastLogged?.isAmrap ?? false}
             estimated1RM={
               live.lastLogged?.estimated1RM !== undefined
                 ? displayWeight(live.lastLogged.estimated1RM, storageUnit, unit)
