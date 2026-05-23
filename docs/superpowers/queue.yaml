@@ -390,7 +390,7 @@ tasks:
     title: Onboarding flow (Intro → PickLifts → OneRmEntry → Review)
     phase: 5
     depends_on: [PD-07-accessor-onboarding, PB-10-primitive-number-stepper, PB-11-primitive-checkbox-ledger, PB-14-primitive-cta-bar]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/onboarding
     done_when:
