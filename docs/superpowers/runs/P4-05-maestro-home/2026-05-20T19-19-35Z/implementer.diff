@@ -1,0 +1,129 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index da907d3..94ba5ff 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -143,3 +143,62 @@ jobs:
+           name: reassure-report
+           path: apps/mobile/.reassure/
+           if-no-files-found: ignore
++
++  maestro:
++    name: Maestro (iOS)
++    runs-on: macos-14
++    needs: static
++    # Boots an iOS simulator, builds the Expo dev client locally, installs it,
++    # then runs the home-renders.yaml flow. Baseline PNG screenshots produced
++    # by the flow's takeScreenshot steps land in apps/mobile/.maestro/screenshots/
++    # and are uploaded as a CI artifact.
++    #
++    # NOTE: EAS local build requires `EXPO_TOKEN` and an Apple-team membership
++    # only for production-signed builds. Internal distribution via the
++    # `preview` profile in eas.json should work without Apple credentials on
++    # an Apple Silicon macOS runner. If the build step fails on first run,
++    # configure secrets per docs/CONTRIBUTING.md and re-run.
++    steps:
++      - uses: actions/checkout@v4
++
++      - uses: pnpm/action-setup@v4
++        with:
++          version: 9.15.0
++
++      - uses: actions/setup-node@v4
++        with:
++          node-version-file: .nvmrc
++          cache: pnpm
++
++      - run: pnpm install --frozen-lockfile
++
++      - name: Install Maestro CLI
++        run: |
++          curl -Ls "https://get.maestro.mobile.dev" | bash
++          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
++
++      - name: Boot iOS simulator
++        run: |
++          DEVICE_ID=$(xcrun simctl list devices "iPhone 15" available -j | jq -r '.devices | to_entries[] | .value[] | select(.isAvailable == true) | .udid' | head -n 1)
++          echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
++          xcrun simctl boot "$DEVICE_ID" || true
++          xcrun simctl bootstatus "$DEVICE_ID" -b
++
++      - name: Build Expo dev client (iOS, simulator)
++        env:
++          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
++        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile preview --non-interactive --output ./build/proof-531.app
++
++      - name: Install app on simulator
++        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
++
++      - name: Run Maestro flow
++        run: maestro test apps/mobile/.maestro/home-renders.yaml
++
++      - name: Upload Maestro artifacts
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: maestro-screenshots
++          path: apps/mobile/.maestro/screenshots/
++          if-no-files-found: warn
+diff --git a/apps/mobile/.maestro/home-renders.yaml b/apps/mobile/.maestro/home-renders.yaml
+new file mode 100644
+index 0000000..21c26f1
+--- /dev/null
++++ b/apps/mobile/.maestro/home-renders.yaml
+@@ -0,0 +1,41 @@
++appId: ${MAESTRO_APP_ID:-com.anonymous.mobile}
++name: home-renders
++tags:
++  - home
++  - smoke
++---
++- launchApp:
++    stopApp: true
++
++# Home screen mounts on launch (index.tsx redirects to /(tabs)/home).
++- assertVisible:
++    id: 'home-screen'
++
++# Greeting + headline render.
++- assertVisible:
++    id: 'cycle-status-pill'
++
++# Stats row (PRs / Sessions / Days) renders.
++- assertVisible:
++    id: 'stats-row'
++
++# Either the multi-lift grid OR the single-lift card is on screen.
++- runFlow:
++    when:
++      visible:
++        id: 'lift-picker-grid'
++    commands:
++      - assertVisible:
++          id: 'lift-picker-grid'
++      - takeScreenshot: home-multi
++- runFlow:
++    when:
++      visible:
++        id: 'lift-single'
++    commands:
++      - assertVisible:
++          id: 'lift-single'
++      - takeScreenshot: home-single
++
++# Tab bar visible at the bottom (P4-02).
++- assertVisible: 'home'
+diff --git a/apps/mobile/.maestro/screenshots/home-renders/.gitkeep b/apps/mobile/.maestro/screenshots/home-renders/.gitkeep
+new file mode 100644
+index 0000000..e69de29
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index ca2e612..e4900ce 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -14,6 +14,7 @@
+     "doctor": "expo-doctor",
+     "storybook:generate": "node scripts/storybook-generate.mjs",
+     "storybook:build": "pnpm run storybook:generate && pnpm typecheck",
++    "maestro:home": "maestro test .maestro/home-renders.yaml",
+     "db:generate": "drizzle-kit generate",
+     "perf": "reassure",
+     "perf:baseline": "reassure --baseline"

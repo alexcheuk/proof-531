@@ -43,7 +43,7 @@ You are the orchestrator. Your job is to move tasks from `docs/superpowers/queue
    - If `--retry <id>`: load that task. Reset status to todo. (User-initiated reset, no dep check beyond normal.)
    - Otherwise: run `.claude/skills/initial-implement/scripts/pick-next.sh`. It prints the id of the next ready task, or empty if none.
 4. Mark task `in_progress` via `scripts/mark-status.sh`.
-5. Create worktree at `.worktrees/<task-id>` on branch `auto/<task-id>` via the `using-git-worktrees` skill or `git worktree add`.
+5. Create worktree at `.worktrees/<task-id>` on branch `auto/<task-id>` via the `using-git-worktrees` skill or `git worktree add`. Immediately after creating the worktree, run `pnpm install` inside it — git worktrees do not share `node_modules` with the primary checkout, and tests/typecheck/lint will fail with `Cannot find module` errors until deps are installed. If install fails, mark the task `blocked` with the install error and abort the task.
 6. Spawn PLANNER subagent (template: `subagent-prompts/planner.md`).
    - **Before spawning ANY subagent for this task**, pin the run-log timestamp:
      `export RUN_LOG_TS="$(date -u +%Y-%m-%dT%H-%M-%SZ)"`. Every `write-run-log.sh`

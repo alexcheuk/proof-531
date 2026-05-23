@@ -36,6 +36,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Reassure perf measurement artifacts (regenerated per CI run)
+.reassure/
+
 app-example
 
 # generated native folders

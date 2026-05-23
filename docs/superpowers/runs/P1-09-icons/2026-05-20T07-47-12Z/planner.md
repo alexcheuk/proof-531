@@ -1,0 +1,1 @@
+P1-09 plan: icons registry (32 icons incl. required 10) + Icon component + Catalog story + test. react-native-svg via expo install. Path data ported from design-reference + Feather-style additions. See implementer prompt for full content.

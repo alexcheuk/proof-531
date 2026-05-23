@@ -1,0 +1,427 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 823fe02..dfa91c6 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -52,7 +52,7 @@
+   "jest": {
+     "preset": "jest-expo",
+     "transformIgnorePatterns": [
+-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@shopify/.*))"
++      "node_modules/(?!(\\.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@shopify/.*))"
+     ]
+   },
+   "private": true
+diff --git a/apps/mobile/src/components/animated-icon.tsx b/apps/mobile/src/components/animated-icon.tsx
+index 073efa2..ae7aa67 100644
+--- a/apps/mobile/src/components/animated-icon.tsx
++++ b/apps/mobile/src/components/animated-icon.tsx
+@@ -4,6 +4,8 @@ import { Dimensions, StyleSheet, View } from 'react-native';
+ import Animated, { Easing, Keyframe } from 'react-native-reanimated';
+ import { scheduleOnRN } from 'react-native-worklets';
+ 
++import { colors } from '@/design/tokens';
++
+ const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
+ const DURATION = 600;
+ 
+@@ -119,14 +121,14 @@ const styles = StyleSheet.create({
+   },
+   background: {
+     borderRadius: 40,
+-    experimental_backgroundImage: 'linear-gradient(180deg, #3C9FFE, #0274DF)',
++    experimental_backgroundImage: `linear-gradient(180deg, ${colors.hot}, ${colors.hotSoft})`,
+     width: 128,
+     height: 128,
+     position: 'absolute',
+   },
+   backgroundSolidColor: {
+     ...StyleSheet.absoluteFillObject,
+-    backgroundColor: '#208AEF',
++    backgroundColor: colors.bg0,
+     zIndex: 1000,
+   },
+ });
+diff --git a/apps/mobile/src/components/themed-text.tsx b/apps/mobile/src/components/themed-text.tsx
+index bc0eacb..ce65c2a 100644
+--- a/apps/mobile/src/components/themed-text.tsx
++++ b/apps/mobile/src/components/themed-text.tsx
+@@ -1,6 +1,7 @@
+ import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+ 
+ import { Fonts, type ThemeColor } from '@/constants/theme';
++import { colors } from '@/design/tokens';
+ import { useTheme } from '@/hooks/use-theme';
+ 
+ export type ThemedTextProps = TextProps & {
+@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
+   linkPrimary: {
+     lineHeight: 30,
+     fontSize: 14,
+-    color: '#3c87f7',
++    color: colors.ice,
+   },
+   code: {
+     fontFamily: Fonts.mono,
+diff --git a/apps/mobile/src/constants/theme.ts b/apps/mobile/src/constants/theme.ts
+index c10ed27..2615952 100644
+--- a/apps/mobile/src/constants/theme.ts
++++ b/apps/mobile/src/constants/theme.ts
+@@ -7,20 +7,25 @@ import '@/global.css';
+ 
+ import { Platform } from 'react-native';
+ 
++import { colors } from '@/design/tokens';
++
++// NOTE: Expo template leftover. The app's only theme is dark; both `light`
++// and `dark` entries map to the same dark palette tokens until P4-* replaces
++// this with the proper theme provider in `src/design/theme.ts`.
+ export const Colors = {
+   light: {
+-    text: '#000000',
+-    background: '#ffffff',
+-    backgroundElement: '#F0F0F3',
+-    backgroundSelected: '#E0E1E6',
+-    textSecondary: '#60646C',
++    text: colors.ink0,
++    background: colors.bg0,
++    backgroundElement: colors.bg1,
++    backgroundSelected: colors.bg2,
++    textSecondary: colors.ink2,
+   },
+   dark: {
+-    text: '#ffffff',
+-    background: '#000000',
+-    backgroundElement: '#212225',
+-    backgroundSelected: '#2E3135',
+-    textSecondary: '#B0B4BA',
++    text: colors.ink0,
++    background: colors.bg0,
++    backgroundElement: colors.bg1,
++    backgroundSelected: colors.bg2,
++    textSecondary: colors.ink2,
+   },
+ } as const;
+ 
+diff --git a/apps/mobile/src/design/__tests__/tokens.test.ts b/apps/mobile/src/design/__tests__/tokens.test.ts
+new file mode 100644
+index 0000000..c03ae18
+--- /dev/null
++++ b/apps/mobile/src/design/__tests__/tokens.test.ts
+@@ -0,0 +1,202 @@
++import { aliases, colors, motion, shape, type } from '../tokens';
++
++describe('design tokens', () => {
++  describe('canonical groups', () => {
++    it('defines colors', () => {
++      expect(colors).toBeDefined();
++      expect(typeof colors).toBe('object');
++    });
++
++    it('defines type', () => {
++      expect(type).toBeDefined();
++      expect(typeof type).toBe('object');
++    });
++
++    it('defines shape', () => {
++      expect(shape).toBeDefined();
++      expect(typeof shape).toBe('object');
++    });
++
++    it('defines motion', () => {
++      expect(motion).toBeDefined();
++      expect(typeof motion).toBe('object');
++    });
++
++    it('defines aliases', () => {
++      expect(aliases).toBeDefined();
++      expect(typeof aliases).toBe('object');
++    });
++  });
++
++  describe('colors', () => {
++    const colorKeys = [
++      'bg0',
++      'bg1',
++      'bg2',
++      'bg3',
++      'ink0',
++      'ink1',
++      'ink2',
++      'ink3',
++      'ink4',
++      'line',
++      'lineStrong',
++      'lineFaint',
++      'hot',
++      'hotSoft',
++      'hotText',
++      'lime',
++      'limeSoft',
++      'ice',
++      'red',
++      'amber',
++      'paper',
++      'paperDim',
++    ] as const;
++
++    it.each(colorKeys)('has color %s as a string', (key) => {
++      const value = colors[key];
++      expect(typeof value).toBe('string');
++      expect(value.length).toBeGreaterThan(0);
++    });
++
++    it('hex color values start with hash and have length 7', () => {
++      const hexKeys: Array<keyof typeof colors> = [
++        'bg0',
++        'bg1',
++        'bg2',
++        'bg3',
++        'ink0',
++        'ink1',
++        'ink2',
++        'ink3',
++        'ink4',
++        'hot',
++        'hotSoft',
++        'hotText',
++        'lime',
++        'limeSoft',
++        'ice',
++        'red',
++        'amber',
++        'paper',
++        'paperDim',
++      ];
++      for (const key of hexKeys) {
++        const value = colors[key];
++        expect(value.startsWith('#')).toBe(true);
++        expect(value.length).toBe(7);
++      }
++    });
++
++    it('rgba line values start with rgba', () => {
++      expect(colors.line.startsWith('rgba')).toBe(true);
++      expect(colors.lineStrong.startsWith('rgba')).toBe(true);
++      expect(colors.lineFaint.startsWith('rgba')).toBe(true);
++    });
++  });
++
++  describe('type', () => {
++    it('display family includes Space Grotesk', () => {
++      expect(type.display).toContain('Space Grotesk');
++    });
++
++    it('sans family includes Space Grotesk', () => {
++      expect(type.sans).toContain('Space Grotesk');
++    });
++
++    it('mono family includes JetBrains Mono', () => {
++      expect(type.mono).toContain('JetBrains Mono');
++    });
++  });
++
++  describe('shape', () => {
++    it('has radii at the expected values', () => {
++      expect(shape.rXs).toBe(4);
++      expect(shape.rSm).toBe(8);
++      expect(shape.rMd).toBe(12);
++      expect(shape.rLg).toBe(18);
++      expect(shape.rPill).toBe(999);
++    });
++  });
++
++  describe('motion', () => {
++    it('has ease cubic-bezier string', () => {
++      expect(motion.ease).toBe('cubic-bezier(0.2, 0.7, 0.2, 1)');
++    });
++
++    it('has ease bezier tuple', () => {
++      expect(motion.easeBezier).toEqual([0.2, 0.7, 0.2, 1]);
++    });
++
++    it('has duration 220ms', () => {
++      expect(motion.dur).toBe(220);
++    });
++  });
++
++  describe('aliases', () => {
++    it('ember references colors.hot', () => {
++      expect(aliases.ember).toBe(colors.hot);
++    });
++
++    it('emberSoft references colors.hotSoft', () => {
++      expect(aliases.emberSoft).toBe(colors.hotSoft);
++    });
++
++    it('sage references colors.lime', () => {
++      expect(aliases.sage).toBe(colors.lime);
++    });
++
++    it('sageSoft references colors.limeSoft', () => {
++      expect(aliases.sageSoft).toBe(colors.limeSoft);
++    });
++
++    it('night references colors.bg0', () => {
++      expect(aliases.night).toBe(colors.bg0);
++    });
++
++    it('nightSoft references colors.bg1', () => {
++      expect(aliases.nightSoft).toBe(colors.bg1);
++    });
++
++    it('nightLine references colors.line', () => {
++      expect(aliases.nightLine).toBe(colors.line);
++    });
++
++    it('slate references colors.ice', () => {
++      expect(aliases.slate).toBe(colors.ice);
++    });
++
++    it('ink references colors.ink0', () => {
++      expect(aliases.ink).toBe(colors.ink0);
++    });
++
++    it('paperSoft references colors.bg1', () => {
++      expect(aliases.paperSoft).toBe(colors.bg1);
++    });
++
++    it('paperBright references colors.bg2', () => {
++      expect(aliases.paperBright).toBe(colors.bg2);
++    });
++
++    it('serif references type.display', () => {
++      expect(aliases.serif).toBe(type.display);
++    });
++
++    it('muted references colors.ink2', () => {
++      expect(aliases.muted).toBe(colors.ink2);
++    });
++
++    it('emberDeep is a 7-char hex string', () => {
++      expect(typeof aliases.emberDeep).toBe('string');
++      expect(aliases.emberDeep.startsWith('#')).toBe(true);
++      expect(aliases.emberDeep.length).toBe(7);
++    });
++
++    it('amberSoft is a 7-char hex string', () => {
++      expect(typeof aliases.amberSoft).toBe('string');
++      expect(aliases.amberSoft.startsWith('#')).toBe(true);
++      expect(aliases.amberSoft.length).toBe(7);
++    });
++  });
++});
+diff --git a/apps/mobile/src/design/tokens.ts b/apps/mobile/src/design/tokens.ts
+new file mode 100644
+index 0000000..10da93f
+--- /dev/null
++++ b/apps/mobile/src/design/tokens.ts
+@@ -0,0 +1,109 @@
++/**
++ * 531 Strength — design tokens.
++ *
++ * Ported verbatim from `design-reference/tokens.css`. This is the ONLY file
++ * in `apps/mobile/src` that may contain hex / px / motion literals. Every
++ * other file in the design system imports from here.
++ *
++ * Boundary rule (enforced by reviewer):
++ *   rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src --type ts | grep -v tokens.ts
++ * MUST return empty.
++ */
++
++// ── surfaces ───────────────────────────────────────────────────────────────
++// ── ink (text) ─────────────────────────────────────────────────────────────
++// ── lines (with alpha) ────────────────────────────────────────────────────
++// ── accents ────────────────────────────────────────────────────────────────
++// ── light surfaces (rare — modals, splash) ────────────────────────────────
++export const colors = {
++  // surfaces
++  bg0: '#0B0C0E', // app canvas, deepest
++  bg1: '#131519', // card surface
++  bg2: '#1B1E24', // raised surface
++  bg3: '#262A32', // input / hover
++
++  // ink
++  ink0: '#FAFAF5', // primary text
++  ink1: '#D8D8D2', // secondary
++  ink2: '#8E8F8A', // tertiary
++  ink3: '#5C5E5A', // muted
++  ink4: '#3A3C3F', // very muted
++
++  // lines
++  line: 'rgba(250, 250, 245, 0.08)',
++  lineStrong: 'rgba(250, 250, 245, 0.14)',
++  lineFaint: 'rgba(250, 250, 245, 0.04)',
++
++  // accents
++  hot: '#FF5530', // primary accent — vivid orange, "fire"
++  hotSoft: '#3A1A0E', // dim accent bg
++  hotText: '#FFB59C', // accent text on dark
++  lime: '#D4FE3F', // energy / PR
++  limeSoft: '#2A3209',
++  ice: '#5BB6F0', // info
++  red: '#F03A3A', // warning / over-time
++  amber: '#FFB13A', // deload
++
++  // light surfaces
++  paper: '#FAFAF5',
++  paperDim: '#E8E8E2',
++} as const;
++
++export type Colors = typeof colors;
++
++// ── type families ─────────────────────────────────────────────────────────
++export const type = {
++  display: "'Space Grotesk', 'Inter Display', system-ui, sans-serif",
++  sans: "'Space Grotesk', 'Inter', system-ui, sans-serif",
++  mono: "'JetBrains Mono', ui-monospace, 'SF Mono', monospace",
++} as const;
++
++export type TypeTokens = typeof type;
++
++// ── shape (radii, in px) ──────────────────────────────────────────────────
++export const shape = {
++  rXs: 4,
++  rSm: 8,
++  rMd: 12,
++  rLg: 18,
++  rPill: 999,
++} as const;
++
++export type Shape = typeof shape;
++
++// ── motion ────────────────────────────────────────────────────────────────
++// `ease` is the CSS-format string for use with Reanimated `Easing.bezier(...)` callers
++// that want a string; `easeBezier` is the numeric tuple suitable for
++// `Easing.bezier(...controlPoints)`. `dur` is in milliseconds.
++export const motion = {
++  ease: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
++  easeBezier: [0.2, 0.7, 0.2, 1] as const,
++  dur: 220,
++} as const;
++
++export type Motion = typeof motion;
++
++// ── backwards-compat aliases for legacy refs ──────────────────────────────
++// Mirrors the `--ember`, `--sage`, `--night`, etc. names that some
++// design-reference components still use. New code should prefer the
++// canonical names above; aliases exist so a 1:1 port of a reference
++// component doesn't have to rename every identifier.
++export const aliases = {
++  ember: colors.hot,
++  emberDeep: '#B83A1F',
++  emberSoft: colors.hotSoft,
++  sage: colors.lime,
++  sageSoft: colors.limeSoft,
++  night: colors.bg0,
++  nightSoft: colors.bg1,
++  nightLine: colors.line,
++  slate: colors.ice,
++  ink: colors.ink0,
++  paperSoft: colors.bg1,
++  paperBright: colors.bg2,
++  amberSoft: '#3A2810',
++  serif: type.display,
++  muted: colors.ink2,
++} as const;
++
++export type Aliases = typeof aliases;

@@ -1,0 +1,11 @@
+ apps/mobile/assets/fonts/JetBrainsMono-Bold.ttf    | Bin 0 -> 114828 bytes
+ apps/mobile/assets/fonts/JetBrainsMono-Medium.ttf  | Bin 0 -> 114920 bytes
+ apps/mobile/assets/fonts/JetBrainsMono-Regular.ttf | Bin 0 -> 114904 bytes
+ .../mobile/assets/fonts/JetBrainsMono-SemiBold.ttf | Bin 0 -> 114900 bytes
+ apps/mobile/assets/fonts/SpaceGrotesk-Bold.ttf     | Bin 0 -> 86516 bytes
+ apps/mobile/assets/fonts/SpaceGrotesk-Medium.ttf   | Bin 0 -> 86612 bytes
+ apps/mobile/assets/fonts/SpaceGrotesk-Regular.ttf  | Bin 0 -> 86588 bytes
+ apps/mobile/assets/fonts/SpaceGrotesk-SemiBold.ttf | Bin 0 -> 86572 bytes
+ .../src/app/__tests__/_layout.fonts.test.tsx       |  38 +++++++++++++++++++++
+ apps/mobile/src/app/_layout.tsx                    |  16 +++++++++
+ 10 files changed, 54 insertions(+)

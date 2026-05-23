@@ -1,0 +1,1 @@
+{"task_id":"P1-03-fonts","decision":"approve","violations":[],"summary":"Scope matches expected 3 categories: 8 valid TTF binaries, useFonts wired with exactly 8 PostScript-style keys, render gated on !loaded && !error, content-inspection test. No hex literals introduced outside tokens.ts. Inline node ambient typings minimal and justified. Commits follow conventional format."}

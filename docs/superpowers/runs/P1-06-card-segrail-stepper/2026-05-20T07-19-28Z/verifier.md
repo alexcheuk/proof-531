@@ -1,0 +1,1 @@
+{"task_id":"P1-06-card-segrail-stepper","result":"pass","harness":{"install":"pass","typecheck":"pass","lint":"pass","test":"pass"},"criteria":[{"desc":"3 primitives exist","result":"pass"},{"desc":"accessibility roles","result":"pass"},{"desc":"clamp tests","result":"pass"},{"desc":"pnpm test","result":"pass"}],"summary":"All pass; 108 tests."}

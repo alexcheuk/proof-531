@@ -1,0 +1,1 @@
+{"task_id":"P1-02-theme-provider","decision":"approve","violations":[],"summary":"ThemeProvider/useTheme/useAccentOverride land cleanly with full test coverage, boundary-clean (no hex outside tokens.ts), correct override semantics (only colors.hot mutated), and proper outside-provider error guard."}

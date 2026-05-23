@@ -1,0 +1,298 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 5ee10a9..5329fa6 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -23,6 +23,7 @@
+     "expo-device": "~55.0.17",
+     "expo-font": "~55.0.8",
+     "expo-glass-effect": "~55.0.11",
++    "expo-haptics": "~55.0.14",
+     "expo-image": "~55.0.10",
+     "expo-linking": "~55.0.15",
+     "expo-router": "~55.0.15",
+diff --git a/apps/mobile/src/design/primitives/PressButton.tsx b/apps/mobile/src/design/primitives/PressButton.tsx
+new file mode 100644
+index 0000000..662a813
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/PressButton.tsx
+@@ -0,0 +1,103 @@
++import * as Haptics from 'expo-haptics';
++import type React from 'react';
++import { useMemo } from 'react';
++import { Pressable, type PressableProps, type TextStyle, type ViewStyle } from 'react-native';
++import { type Theme, useTheme } from '../theme';
++import { shape } from '../tokens';
++import { Text } from './Text';
++
++export type PressButtonVariant = 'ember' | 'inverse' | 'ghost';
++export type PressButtonSize = 'sm' | 'md' | 'lg';
++
++export type PressButtonProps = Omit<PressableProps, 'children' | 'style'> & {
++  children: React.ReactNode;
++  variant?: PressButtonVariant;
++  size?: PressButtonSize;
++  disabled?: boolean;
++  onPress?: () => void;
++};
++
++const SIZE_STYLES: Record<
++  PressButtonSize,
++  { paddingVertical: number; paddingHorizontal: number; fontSize: number }
++> = {
++  sm: { paddingVertical: 8, paddingHorizontal: 14, fontSize: 13 },
++  md: { paddingVertical: 12, paddingHorizontal: 20, fontSize: 15 },
++  lg: { paddingVertical: 16, paddingHorizontal: 28, fontSize: 17 },
++};
++
++const DISABLED_OPACITY = 0.5;
++
++function buildVariantStyles(
++  theme: Theme,
++): Record<PressButtonVariant, { container: ViewStyle; label: TextStyle }> {
++  return {
++    ember: {
++      container: { backgroundColor: theme.colors.hot },
++      label: { color: theme.colors.ink0 },
++    },
++    inverse: {
++      container: { backgroundColor: theme.colors.ink0 },
++      label: { color: theme.colors.bg0 },
++    },
++    ghost: {
++      container: {
++        backgroundColor: 'transparent',
++        borderWidth: 1,
++        borderColor: theme.colors.hot,
++      },
++      label: { color: theme.colors.hot },
++    },
++  };
++}
++
++export function PressButton({
++  children,
++  variant = 'ember',
++  size = 'md',
++  disabled = false,
++  onPress,
++  ...rest
++}: PressButtonProps) {
++  const theme = useTheme();
++  const variants = useMemo(() => buildVariantStyles(theme), [theme]);
++  const sizeStyle = SIZE_STYLES[size];
++  const variantStyle = variants[variant];
++
++  const containerStyle: ViewStyle = {
++    paddingVertical: sizeStyle.paddingVertical,
++    paddingHorizontal: sizeStyle.paddingHorizontal,
++    borderRadius: shape.rMd,
++    alignItems: 'center',
++    justifyContent: 'center',
++    opacity: disabled ? DISABLED_OPACITY : 1,
++    ...variantStyle.container,
++  };
++
++  const labelStyle: TextStyle = {
++    fontSize: sizeStyle.fontSize,
++    fontWeight: '600',
++    ...variantStyle.label,
++  };
++
++  const handlePress = () => {
++    if (disabled) return;
++    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
++    onPress?.();
++  };
++
++  return (
++    <Pressable
++      accessibilityRole="button"
++      accessibilityState={{ disabled }}
++      disabled={disabled}
++      onPress={handlePress}
++      style={containerStyle}
++      {...rest}
++    >
++      <Text style={labelStyle}>{children as React.ReactNode}</Text>
++    </Pressable>
++  );
++}
++
++export default PressButton;
+diff --git a/apps/mobile/src/design/primitives/__tests__/PressButton.test.tsx b/apps/mobile/src/design/primitives/__tests__/PressButton.test.tsx
+new file mode 100644
+index 0000000..dc58db0
+--- /dev/null
++++ b/apps/mobile/src/design/primitives/__tests__/PressButton.test.tsx
+@@ -0,0 +1,123 @@
++import { fireEvent, render } from '@testing-library/react-native';
++import * as Haptics from 'expo-haptics';
++import type React from 'react';
++import { ThemeProvider } from '../../theme';
++import { colors, shape } from '../../tokens';
++import { PressButton } from '../PressButton';
++
++jest.mock('expo-haptics', () => ({
++  impactAsync: jest.fn(() => Promise.resolve()),
++  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
++}));
++
++const wrap = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
++
++beforeEach(() => {
++  (Haptics.impactAsync as jest.Mock).mockClear();
++});
++
++const flatten = (s: unknown): Record<string, unknown> =>
++  (Array.isArray(s) ? Object.assign({}, ...s) : s) as Record<string, unknown>;
++
++describe('PressButton', () => {
++  it('renders with accessibilityRole="button" and the label', () => {
++    const { getByRole, getByText } = wrap(<PressButton onPress={() => {}}>Go</PressButton>);
++    expect(getByRole('button')).toBeTruthy();
++    expect(getByText('Go')).toBeTruthy();
++  });
++
++  it('fires onPress and triggers haptic feedback when pressed', () => {
++    const onPress = jest.fn();
++    const { getByRole } = wrap(<PressButton onPress={onPress}>Tap</PressButton>);
++    fireEvent.press(getByRole('button'));
++    expect(onPress).toHaveBeenCalledTimes(1);
++    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
++    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Medium);
++  });
++
++  it('does not fire onPress or haptic when disabled, and exposes accessibilityState.disabled', () => {
++    const onPress = jest.fn();
++    const { getByRole } = wrap(
++      <PressButton onPress={onPress} disabled>
++        Nope
++      </PressButton>,
++    );
++    const node = getByRole('button');
++    expect(node.props.accessibilityState).toEqual(expect.objectContaining({ disabled: true }));
++    fireEvent.press(node);
++    expect(onPress).not.toHaveBeenCalled();
++    expect(Haptics.impactAsync).not.toHaveBeenCalled();
++  });
++
++  it('ember variant uses theme hot background and md size paddings', () => {
++    const { getByRole } = wrap(
++      <PressButton variant="ember" size="md" onPress={() => {}}>
++        Ember
++      </PressButton>,
++    );
++    const style = flatten(getByRole('button').props.style);
++    expect(style).toEqual(
++      expect.objectContaining({
++        backgroundColor: colors.hot,
++        paddingVertical: 12,
++        paddingHorizontal: 20,
++        borderRadius: shape.rMd,
++      }),
++    );
++  });
++
++  it('inverse variant uses ink0 background and bg0 text color', () => {
++    const { getByRole, getByText } = wrap(
++      <PressButton variant="inverse" onPress={() => {}}>
++        Inverse
++      </PressButton>,
++    );
++    expect(flatten(getByRole('button').props.style)).toEqual(
++      expect.objectContaining({ backgroundColor: colors.ink0 }),
++    );
++    expect(flatten(getByText('Inverse').props.style)).toEqual(
++      expect.objectContaining({ color: colors.bg0 }),
++    );
++  });
++
++  it('ghost variant is transparent with hot-colored border + hot text', () => {
++    const { getByRole, getByText } = wrap(
++      <PressButton variant="ghost" onPress={() => {}}>
++        Ghost
++      </PressButton>,
++    );
++    expect(flatten(getByRole('button').props.style)).toEqual(
++      expect.objectContaining({
++        backgroundColor: 'transparent',
++        borderColor: colors.hot,
++        borderWidth: 1,
++      }),
++    );
++    expect(flatten(getByText('Ghost').props.style)).toEqual(
++      expect.objectContaining({ color: colors.hot }),
++    );
++  });
++
++  it('sm size has smaller paddings/fontSize than lg', () => {
++    const { getByRole, getByText, rerender } = wrap(
++      <PressButton size="sm" onPress={() => {}}>
++        X
++      </PressButton>,
++    );
++    expect(flatten(getByRole('button').props.style)).toEqual(
++      expect.objectContaining({ paddingVertical: 8, paddingHorizontal: 14 }),
++    );
++    expect(flatten(getByText('X').props.style)).toEqual(expect.objectContaining({ fontSize: 13 }));
++
++    rerender(
++      <ThemeProvider>
++        <PressButton size="lg" onPress={() => {}}>
++          X
++        </PressButton>
++      </ThemeProvider>,
++    );
++    expect(flatten(getByRole('button').props.style)).toEqual(
++      expect.objectContaining({ paddingVertical: 16, paddingHorizontal: 28 }),
++    );
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/index.ts b/apps/mobile/src/design/primitives/index.ts
+index a7bfbb6..385d988 100644
+--- a/apps/mobile/src/design/primitives/index.ts
++++ b/apps/mobile/src/design/primitives/index.ts
+@@ -12,3 +12,6 @@ export type { EyebrowProps } from './Eyebrow';
+ 
+ export { WeightNum } from './WeightNum';
+ export type { WeightNumProps, WeightNumSize } from './WeightNum';
++
++export { PressButton } from './PressButton';
++export type { PressButtonProps, PressButtonSize, PressButtonVariant } from './PressButton';
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 339ce25..4e94d9d 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -41,6 +41,9 @@ importers:
+       expo-glass-effect:
+         specifier: ~55.0.11
+         version: 55.0.11(expo@55.0.25)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
++      expo-haptics:
++        specifier: ~55.0.14
++        version: 55.0.14(expo@55.0.25)
+       expo-image:
+         specifier: ~55.0.10
+         version: 55.0.10(expo@55.0.25)(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
+@@ -2076,6 +2079,11 @@ packages:
+       react: '*'
+       react-native: '*'
+ 
++  expo-haptics@55.0.14:
++    resolution: {integrity: sha512-KjDItBsA9mi1f5nRwf8g1wOdfEcLHwvEdt5Jl1sMCDETR/homcGOl+F3QIiPOl/PRlbGVieQsjTtF4DGtHOj6g==}
++    peerDependencies:
++      expo: '*'
++
+   expo-image@55.0.10:
+     resolution: {integrity: sha512-We+vq/Z8jy8zmGxcOP8vrhiWkkwyXFdSks8cSlPi0bpu6D0Ei6l9Nj2xHWCD+yoENh92aCEe1+QRujAwXbogGA==}
+     peerDependencies:
+@@ -6329,6 +6337,10 @@ snapshots:
+       react: 19.2.0
+       react-native: 0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0)
+ 
++  expo-haptics@55.0.14(expo@55.0.25):
++    dependencies:
++      expo: 55.0.25(@babel/core@7.29.0)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.15)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
++
+   expo-image@55.0.10(expo@55.0.25)(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0):
+     dependencies:
+       expo: 55.0.25(@babel/core@7.29.0)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.15)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)

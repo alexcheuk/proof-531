@@ -1,0 +1,235 @@
+diff --git a/apps/mobile/src/data/db/test-harness.ts b/apps/mobile/src/data/db/test-harness.ts
+new file mode 100644
+index 0000000..7e227a7
+--- /dev/null
++++ b/apps/mobile/src/data/db/test-harness.ts
+@@ -0,0 +1,40 @@
++import { readFileSync, readdirSync } from 'node:fs';
++import { join } from 'node:path';
++import Database, { type Database as BetterSqlite3Db } from 'better-sqlite3';
++import { type BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3';
++import * as schema from './schema';
++
++const MIGRATIONS_DIR = join(__dirname, 'migrations');
++
++export type TestDb = {
++  db: BetterSQLite3Database<typeof schema>;
++  sqlite: BetterSqlite3Db;
++  close: () => void;
++};
++
++function applyMigrations(sqlite: BetterSqlite3Db): void {
++  const files = readdirSync(MIGRATIONS_DIR)
++    .filter((f) => f.endsWith('.sql'))
++    .sort();
++  for (const f of files) {
++    const sql = readFileSync(join(MIGRATIONS_DIR, f), 'utf8');
++    // Drizzle-kit uses `--> statement-breakpoint` as a statement separator.
++    const stmts = sql.split('--> statement-breakpoint');
++    for (const s of stmts) {
++      const trimmed = s.trim();
++      if (trimmed.length > 0) sqlite.exec(trimmed);
++    }
++  }
++}
++
++/** Creates a fresh in-memory SQLite database with the full schema applied. */
++export function createTestDb(): TestDb {
++  const sqlite = new Database(':memory:');
++  applyMigrations(sqlite);
++  const db = drizzle(sqlite, { schema });
++  return {
++    db,
++    sqlite,
++    close: () => sqlite.close(),
++  };
++}
+diff --git a/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts
+index 594f558..7433cda 100644
+--- a/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts
++++ b/apps/mobile/src/data/repositories/__tests__/assistanceRepo.test.ts
+@@ -1,21 +1,8 @@
+-import Database from 'better-sqlite3';
+-import { drizzle } from 'drizzle-orm/better-sqlite3';
+-import * as schema from '../../db/schema';
++import { createTestDb } from '../../db/test-harness';
+ import { createAssistanceRepo } from '../assistanceRepo';
+ 
+ function makeDb() {
+-  const sqlite = new Database(':memory:');
+-  sqlite.exec(`
+-    CREATE TABLE assistance (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      name TEXT NOT NULL,
+-      category TEXT NOT NULL,
+-      default_sets INTEGER NOT NULL,
+-      default_reps INTEGER NOT NULL,
+-      favorite INTEGER NOT NULL
+-    );
+-  `);
+-  return drizzle(sqlite, { schema });
++  return createTestDb().db;
+ }
+ 
+ describe('assistanceRepo', () => {
+diff --git a/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts
+index eda7053..b007db2 100644
+--- a/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts
++++ b/apps/mobile/src/data/repositories/__tests__/cycleRepo.test.ts
+@@ -1,19 +1,8 @@
+-import Database from 'better-sqlite3';
+-import { drizzle } from 'drizzle-orm/better-sqlite3';
+-import * as schema from '../../db/schema';
++import { createTestDb } from '../../db/test-harness';
+ import { createCycleRepo } from '../cycleRepo';
+ 
+ function makeDb() {
+-  const sqlite = new Database(':memory:');
+-  sqlite.exec(`
+-    CREATE TABLE cycles (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      number INTEGER NOT NULL,
+-      started_at INTEGER NOT NULL,
+-      completed_at INTEGER
+-    );
+-  `);
+-  return drizzle(sqlite, { schema });
++  return createTestDb().db;
+ }
+ 
+ describe('cycleRepo', () => {
+diff --git a/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts
+index 7013a8a..7c51629 100644
+--- a/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts
++++ b/apps/mobile/src/data/repositories/__tests__/liftRepo.test.ts
+@@ -1,20 +1,8 @@
+-import Database from 'better-sqlite3';
+-import { drizzle } from 'drizzle-orm/better-sqlite3';
+-import * as schema from '../../db/schema';
++import { createTestDb } from '../../db/test-harness';
+ import { createLiftRepo } from '../liftRepo';
+ 
+ function makeDb() {
+-  const sqlite = new Database(':memory:');
+-  sqlite.exec(`
+-    CREATE TABLE lifts (
+-      id TEXT PRIMARY KEY,
+-      label TEXT NOT NULL,
+-      category TEXT NOT NULL,
+-      training_max INTEGER NOT NULL,
+-      enabled INTEGER NOT NULL
+-    );
+-  `);
+-  return drizzle(sqlite, { schema });
++  return createTestDb().db;
+ }
+ 
+ describe('liftRepo', () => {
+diff --git a/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts
+index d138a1e..e2d654c 100644
+--- a/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts
++++ b/apps/mobile/src/data/repositories/__tests__/sessionRepo.test.ts
+@@ -1,33 +1,8 @@
+-import Database from 'better-sqlite3';
+-import { drizzle } from 'drizzle-orm/better-sqlite3';
+-import * as schema from '../../db/schema';
++import { createTestDb } from '../../db/test-harness';
+ import { createSessionRepo } from '../sessionRepo';
+ 
+ function makeDb() {
+-  const sqlite = new Database(':memory:');
+-  sqlite.exec(`
+-    CREATE TABLE lifts (
+-      id TEXT PRIMARY KEY,
+-      label TEXT NOT NULL,
+-      category TEXT NOT NULL,
+-      training_max INTEGER NOT NULL,
+-      enabled INTEGER NOT NULL
+-    );
+-    CREATE TABLE cycles (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      number INTEGER NOT NULL,
+-      started_at INTEGER NOT NULL,
+-      completed_at INTEGER
+-    );
+-    CREATE TABLE sessions (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
+-      lift_id TEXT NOT NULL REFERENCES lifts(id),
+-      week INTEGER NOT NULL,
+-      started_at INTEGER NOT NULL,
+-      completed_at INTEGER
+-    );
+-  `);
++  const { db, sqlite } = createTestDb();
+   // Seed referenced rows
+   sqlite
+     .prepare(
+@@ -41,7 +16,7 @@ function makeDb() {
+     .run();
+   sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (1, 1735689600)').run();
+   sqlite.prepare('INSERT INTO cycles (number, started_at) VALUES (2, 1738368000)').run();
+-  return drizzle(sqlite, { schema });
++  return db;
+ }
+ 
+ describe('sessionRepo', () => {
+diff --git a/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts b/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts
+index 6123e3a..d7d4952 100644
+--- a/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts
++++ b/apps/mobile/src/data/repositories/__tests__/setRepo.test.ts
+@@ -1,43 +1,8 @@
+-import Database from 'better-sqlite3';
+-import { drizzle } from 'drizzle-orm/better-sqlite3';
+-import * as schema from '../../db/schema';
++import { createTestDb } from '../../db/test-harness';
+ import { createSetRepo } from '../setRepo';
+ 
+ function makeDb() {
+-  const sqlite = new Database(':memory:');
+-  sqlite.exec(`
+-    CREATE TABLE lifts (
+-      id TEXT PRIMARY KEY,
+-      label TEXT NOT NULL,
+-      category TEXT NOT NULL,
+-      training_max INTEGER NOT NULL,
+-      enabled INTEGER NOT NULL
+-    );
+-    CREATE TABLE cycles (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      number INTEGER NOT NULL,
+-      started_at INTEGER NOT NULL,
+-      completed_at INTEGER
+-    );
+-    CREATE TABLE sessions (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      cycle_id INTEGER NOT NULL REFERENCES cycles(id),
+-      lift_id TEXT NOT NULL REFERENCES lifts(id),
+-      week INTEGER NOT NULL,
+-      started_at INTEGER NOT NULL,
+-      completed_at INTEGER
+-    );
+-    CREATE TABLE sets (
+-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+-      session_id INTEGER NOT NULL REFERENCES sessions(id),
+-      "index" INTEGER NOT NULL,
+-      type TEXT NOT NULL,
+-      prescribed_weight INTEGER NOT NULL,
+-      prescribed_reps INTEGER NOT NULL,
+-      actual_reps INTEGER,
+-      completed_at INTEGER
+-    );
+-  `);
++  const { db, sqlite } = createTestDb();
+   sqlite
+     .prepare(
+       "INSERT INTO lifts (id, label, category, training_max, enabled) VALUES ('squat', 'Squat', 'lower', 315, 1)",
+@@ -54,7 +19,7 @@ function makeDb() {
+       "INSERT INTO sessions (cycle_id, lift_id, week, started_at) VALUES (1, 'squat', 2, 1736294400)",
+     )
+     .run();
+-  return drizzle(sqlite, { schema });
++  return db;
+ }
+ 
+ describe('setRepo', () => {

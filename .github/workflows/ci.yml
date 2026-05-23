@@ -58,4 +58,144 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Jest
-        run: pnpm test
+        run: pnpm test --coverage
+
+  perf:
+    name: Reassure perf
+    runs-on: ubuntu-latest
+    needs: static
+    # Plate variants must each render in under 4ms @ 225 lb and may not
+    # regress >10% from the baseline measured on main. Reassure surfaces
+    # regressions via the comparison step below; CI fails on regression.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Reassure baseline (main)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git switch --detach FETCH_HEAD
+          pnpm install --frozen-lockfile
+          pnpm --filter @proof-531/mobile run perf:baseline
+          git switch --detach -
+
+      - name: Reassure current
+        if: github.event_name == 'pull_request'
+        run: pnpm --filter @proof-531/mobile run perf
+
+      - name: Enforce perf budget (4ms render, +10% regression cap)
+        if: github.event_name == 'pull_request'
+        run: |
+          node -e '
+            const fs = require("fs");
+            const report = JSON.parse(
+              fs.readFileSync("apps/mobile/.reassure/output.json", "utf8")
+            );
+            const HARD_MS = 4;
+            const REGRESS_PCT = 0.10;
+            const failures = [];
+            const check = (entry) => {
+              const name = entry.name + " [" + entry.type + "]";
+              const curr = entry.current?.meanDuration;
+              const base = entry.baseline?.meanDuration;
+              if (typeof curr === "number" && curr > HARD_MS) {
+                failures.push(`${name}: ${curr.toFixed(2)}ms > ${HARD_MS}ms hard budget`);
+              }
+              if (typeof curr === "number" && typeof base === "number" && base > 0) {
+                const delta = (curr - base) / base;
+                if (delta > REGRESS_PCT) {
+                  failures.push(
+                    `${name}: regressed ${(delta * 100).toFixed(1)}% (>${REGRESS_PCT * 100}%) — ${base.toFixed(2)}ms → ${curr.toFixed(2)}ms`
+                  );
+                }
+              }
+            };
+            for (const entry of report.significant || []) check(entry);
+            for (const entry of report.meaningless || []) check(entry);
+            if (failures.length) {
+              console.error("Perf budget violations:\n - " + failures.join("\n - "));
+              process.exit(1);
+            }
+            console.log("Perf budget OK.");
+          '
+
+      - name: Reassure baseline (push to main)
+        if: github.event_name == 'push'
+        run: pnpm --filter @proof-531/mobile run perf:baseline
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reassure-report
+          path: apps/mobile/.reassure/
+          if-no-files-found: ignore
+
+  maestro:
+    name: Maestro (iOS)
+    runs-on: macos-14
+    needs: static
+    # Boots an iOS simulator, builds an unsigned simulator .app locally via
+    # the `simulator` EAS profile (ios.simulator: true), installs it, then
+    # runs the home-renders.yaml flow. Screenshots from takeScreenshot steps
+    # land in apps/mobile/.maestro/screenshots/ and are uploaded as a CI
+    # artifact.
+    #
+    # NO Apple Developer Program membership required — `ios.simulator: true`
+    # produces an unsigned bundle for the Simulator only. NO EXPO_TOKEN
+    # required either — `eas build --local` is unauthenticated.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Boot iOS simulator
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices "iPhone 15" available -j | jq -r '.devices | to_entries[] | .value[] | select(.isAvailable == true) | .udid' | head -n 1)
+          echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+
+      - name: Build Expo dev client (iOS, simulator — unsigned)
+        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile simulator --non-interactive --output ./build/proof-531.app
+
+      - name: Install app on simulator
+        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
+
+      - name: Run Maestro flow
+        run: maestro test apps/mobile/.maestro/home-renders.yaml
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots
+          path: apps/mobile/.maestro/screenshots/
+          if-no-files-found: warn

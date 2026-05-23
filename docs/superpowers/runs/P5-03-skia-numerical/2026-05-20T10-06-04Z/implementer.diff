@@ -1,0 +1,236 @@
+diff --git a/apps/mobile/.storybook/storybook.requires.ts b/apps/mobile/.storybook/storybook.requires.ts
+index 57949dd..e2abda0 100644
+--- a/apps/mobile/.storybook/storybook.requires.ts
++++ b/apps/mobile/.storybook/storybook.requires.ts
+@@ -3,6 +3,7 @@ import { view } from '@storybook/react-native';
+ import '../src/design/icons/__stories__/Icon.stories.tsx';
+ import '../src/design/plates/__stories__/Barbell.stories.tsx';
+ import '../src/design/plates/__stories__/Chips.stories.tsx';
++import '../src/design/plates/__stories__/Numerical.stories.tsx';
+ import '../src/design/primitives/__stories__/Card.stories.tsx';
+ import '../src/design/primitives/__stories__/NumberStepper.stories.tsx';
+ import '../src/design/primitives/__stories__/PressButton.stories.tsx';
+diff --git a/apps/mobile/src/design/plates/Numerical.tsx b/apps/mobile/src/design/plates/Numerical.tsx
+new file mode 100644
+index 0000000..9a23440
+--- /dev/null
++++ b/apps/mobile/src/design/plates/Numerical.tsx
+@@ -0,0 +1,98 @@
++import { useMemo } from 'react';
++import { StyleSheet, View } from 'react-native';
++import { type PlateInventoryEntry, calcPlates } from '../../domain/plates';
++import { Caps } from '../primitives/Caps';
++import { Text } from '../primitives/Text';
++import { useTheme } from '../theme';
++
++const STANDARD_LBS_INVENTORY: PlateInventoryEntry[] = [
++  { size: 45, count: 8 },
++  { size: 35, count: 2 },
++  { size: 25, count: 2 },
++  { size: 10, count: 2 },
++  { size: 5, count: 2 },
++  { size: 2.5, count: 2 },
++];
++
++export type NumericalProps = {
++  /** Target weight in lbs. */
++  weight: number;
++  /** Bar weight (default 45). */
++  bar?: number;
++  /** Plate inventory (default standard lbs). */
++  inventory?: PlateInventoryEntry[];
++};
++
++type PlateGroup = { size: number; count: number };
++
++function groupPlates(plates: readonly number[]): PlateGroup[] {
++  const counts = new Map<number, number>();
++  for (const p of plates) {
++    counts.set(p, (counts.get(p) ?? 0) + 1);
++  }
++  return [...counts.entries()]
++    .sort((a, b) => b[0] - a[0])
++    .map(([size, count]) => ({ size, count }));
++}
++
++export function Numerical({
++  weight,
++  bar = 45,
++  inventory = STANDARD_LBS_INVENTORY,
++}: NumericalProps) {
++  const theme = useTheme();
++  const { plates, remainder } = useMemo(
++    () => calcPlates({ target: weight, bar, inventory }),
++    [weight, bar, inventory],
++  );
++
++  const grouped = useMemo(() => groupPlates(plates), [plates]);
++
++  const containerStyle = useMemo(
++    () => ({
++      ...styles.container,
++      backgroundColor: theme.colors.bg1,
++      padding: theme.shape.rMd,
++      borderRadius: theme.shape.rMd,
++      gap: theme.shape.rXs,
++    }),
++    [theme],
++  );
++
++  const rowStyle = useMemo(() => ({ ...styles.row, gap: theme.shape.rSm }), [theme]);
++
++  return (
++    <View testID="numerical" style={containerStyle}>
++      <Caps>Per side</Caps>
++      {grouped.length === 0 ? (
++        <Text variant="subtitle">Bar only ({bar} lb)</Text>
++      ) : (
++        <View style={rowStyle}>
++          {grouped.map((g, i) => (
++            <Text key={`${g.size}-${i}`} variant="subtitle">
++              {g.count} × {g.size}
++            </Text>
++          ))}
++        </View>
++      )}
++      {remainder > 0 ? (
++        <Text tone="ink2" variant="small">
++          Short by {remainder} lb
++        </Text>
++      ) : null}
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  container: {
++    alignSelf: 'flex-start',
++  },
++  row: {
++    flexDirection: 'row',
++    flexWrap: 'wrap',
++    alignItems: 'baseline',
++  },
++});
++
++export default Numerical;
+diff --git a/apps/mobile/src/design/plates/__stories__/Numerical.stories.tsx b/apps/mobile/src/design/plates/__stories__/Numerical.stories.tsx
+new file mode 100644
+index 0000000..a00a44a
+--- /dev/null
++++ b/apps/mobile/src/design/plates/__stories__/Numerical.stories.tsx
+@@ -0,0 +1,25 @@
++import type { ReactElement } from 'react';
++import { Numerical, type NumericalProps } from '../Numerical';
++
++// Local Meta/StoryObj helpers — @storybook/react-native v8 does not re-export
++// these from @storybook/react, so we define minimal CSF-3 shapes here.
++type Meta<P> = {
++  title: string;
++  component: (props: P) => ReactElement;
++  args?: Partial<P>;
++};
++type StoryObj<P> = {
++  args?: Partial<P>;
++  render?: () => ReactElement;
++};
++
++const meta: Meta<NumericalProps> = { title: 'Plates/Numerical', component: Numerical };
++export default meta;
++
++type Story = StoryObj<NumericalProps>;
++
++export const W135: Story = { args: { weight: 135 } };
++export const W225: Story = { args: { weight: 225 } };
++export const W315: Story = { args: { weight: 315 } };
++export const W405: Story = { args: { weight: 405 } };
++export const W495: Story = { args: { weight: 495 } };
+diff --git a/apps/mobile/src/design/plates/__tests__/Numerical.test.tsx b/apps/mobile/src/design/plates/__tests__/Numerical.test.tsx
+new file mode 100644
+index 0000000..0fd5e5c
+--- /dev/null
++++ b/apps/mobile/src/design/plates/__tests__/Numerical.test.tsx
+@@ -0,0 +1,63 @@
++import { render } from '@testing-library/react-native';
++import type { ReactElement } from 'react';
++import { ThemeProvider } from '../../theme';
++import { Numerical } from '../Numerical';
++
++const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
++
++describe('Numerical', () => {
++  it('renders 135 lb as 1 × 45 per side', () => {
++    const { getByText } = wrap(<Numerical weight={135} />);
++    expect(getByText('1 × 45')).toBeTruthy();
++  });
++
++  it('renders 225 lb as 2 × 45 per side', () => {
++    const { getByText } = wrap(<Numerical weight={225} />);
++    expect(getByText('2 × 45')).toBeTruthy();
++  });
++
++  it('renders 315 lb as 3 × 45 per side', () => {
++    const { getByText } = wrap(<Numerical weight={315} />);
++    expect(getByText('3 × 45')).toBeTruthy();
++  });
++
++  it('renders 405 lb as 4 × 45 per side', () => {
++    const { getByText } = wrap(<Numerical weight={405} />);
++    expect(getByText('4 × 45')).toBeTruthy();
++  });
++
++  it('groups mixed plates (e.g. 285 lb → 2 × 45 + 1 × 25 + 1 × 5)', () => {
++    const { getByText } = wrap(<Numerical weight={285} />);
++    expect(getByText('2 × 45')).toBeTruthy();
++    expect(getByText('1 × 25')).toBeTruthy();
++    expect(getByText('1 × 5')).toBeTruthy();
++  });
++
++  it('renders bar-only when weight equals bar', () => {
++    const { getByText } = wrap(<Numerical weight={45} />);
++    expect(getByText(/Bar only/)).toBeTruthy();
++  });
++
++  it('renders the "Per side" caption', () => {
++    const { getByText } = wrap(<Numerical weight={225} />);
++    expect(getByText('Per side')).toBeTruthy();
++  });
++
++  it.each([135, 225, 315, 405, 495])('renders %d lb without crashing', (w) => {
++    const { toJSON } = wrap(<Numerical weight={w} />);
++    expect(toJSON()).toBeDefined();
++  });
++
++  it('renders a remainder hint when the inventory cannot reach the target', () => {
++    const { getByText } = wrap(
++      <Numerical
++        weight={200}
++        inventory={[
++          { size: 45, count: 2 },
++          { size: 10, count: 0 },
++        ]}
++      />,
++    );
++    expect(getByText(/Short by/)).toBeTruthy();
++  });
++});
+diff --git a/apps/mobile/src/design/primitives/__tests__/stories.test.tsx b/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
+index ae02503..96d1af6 100644
+--- a/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
++++ b/apps/mobile/src/design/primitives/__tests__/stories.test.tsx
+@@ -5,6 +5,7 @@ import { ThemeProvider } from '../../theme';
+ import * as HomeScreenStories from '@/features/home/__stories__/HomeScreen.stories';
+ import * as BarbellStories from '../../plates/__stories__/Barbell.stories';
+ import * as ChipsStories from '../../plates/__stories__/Chips.stories';
++import * as NumericalStories from '../../plates/__stories__/Numerical.stories';
+ import * as CardStories from '../__stories__/Card.stories';
+ import * as NumberStepperStories from '../__stories__/NumberStepper.stories';
+ import * as PressButtonStories from '../__stories__/PressButton.stories';
+@@ -48,6 +49,7 @@ const modules: Record<string, StoryModule> = {
+   WeightNum: WeightNumStories as unknown as StoryModule,
+   Barbell: BarbellStories as unknown as StoryModule,
+   Chips: ChipsStories as unknown as StoryModule,
++  Numerical: NumericalStories as unknown as StoryModule,
+   HomeScreen: HomeScreenStories as unknown as StoryModule,
+ };
+ 

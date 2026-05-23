@@ -1,0 +1,157 @@
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index a67c446..bbff401 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -71,7 +71,10 @@
+       "!src/domain/program/**/__tests__/**",
+       "src/domain/plates/**/*.ts",
+       "!src/domain/plates/**/*.d.ts",
+-      "!src/domain/plates/**/__tests__/**"
++      "!src/domain/plates/**/__tests__/**",
++      "src/domain/e1rm/**/*.ts",
++      "!src/domain/e1rm/**/*.d.ts",
++      "!src/domain/e1rm/**/__tests__/**"
+     ],
+     "coverageThreshold": {
+       "src/domain/program/": {
+@@ -85,6 +88,12 @@
+         "functions": 100,
+         "lines": 100,
+         "statements": 100
++      },
++      "src/domain/e1rm/": {
++        "branches": 100,
++        "functions": 100,
++        "lines": 100,
++        "statements": 100
+       }
+     }
+   },
+diff --git a/apps/mobile/src/domain/e1rm/__tests__/index.test.ts b/apps/mobile/src/domain/e1rm/__tests__/index.test.ts
+new file mode 100644
+index 0000000..3cbfa00
+--- /dev/null
++++ b/apps/mobile/src/domain/e1rm/__tests__/index.test.ts
+@@ -0,0 +1,80 @@
++import { fc, test as fcTest } from '@fast-check/jest';
++import { epley, isPR } from '..';
++
++describe('epley', () => {
++  it('epley(100, 1) === 100', () => expect(epley(100, 1)).toBe(100));
++  it('epley(100, 10) === 133 (rounded)', () => expect(epley(100, 10)).toBe(133));
++  it('rounds to nearest integer (105*1.0833... = 113.75 -> 114)', () => {
++    // 105 * (1 + 5/30) = 105 * 1.16666... = 122.5 -> 123 (Banker? or .5 up?)
++    expect(epley(105, 5)).toBe(123);
++  });
++  it('throws on non-positive weight', () => {
++    expect(() => epley(0, 1)).toThrow();
++    expect(() => epley(-10, 1)).toThrow();
++  });
++  it('throws on non-positive reps', () => {
++    expect(() => epley(100, 0)).toThrow();
++    expect(() => epley(100, -1)).toThrow();
++  });
++  it('throws on non-integer reps', () => {
++    expect(() => epley(100, 1.5)).toThrow();
++  });
++});
++
++describe('epley — properties', () => {
++  const weightArb = fc.integer({ min: 1, max: 1000 });
++  const repsArb = fc.integer({ min: 1, max: 20 });
++
++  fcTest.prop([weightArb])('epley(w, 1) === w', (w) => {
++    expect(epley(w, 1)).toBe(w);
++  });
++
++  fcTest.prop([weightArb, repsArb])('monotonically non-decreasing in reps', (w, r) => {
++    const a = epley(w, r);
++    const b = epley(w, r + 1);
++    expect(b).toBeGreaterThanOrEqual(a);
++  });
++
++  // For r >= 2, epley(w, r) > w only once w*(r/30) clears the rounding boundary (>= 0.5).
++  // Smallest weight guaranteeing this at r=2 is 8 (8*2/30 ≈ 0.533).
++  fcTest.prop([fc.integer({ min: 8, max: 1000 }), fc.integer({ min: 2, max: 20 })])(
++    'strictly increasing in reps (r >= 2)',
++    (w, r) => {
++      expect(epley(w, r)).toBeGreaterThan(epley(w, 1));
++    },
++  );
++});
++
++describe('isPR', () => {
++  it('returns true when current > max(history)', () => {
++    expect(isPR(200, [100, 150, 180])).toBe(true);
++  });
++  it('returns false when current === max(history)', () => {
++    expect(isPR(180, [100, 150, 180])).toBe(false);
++  });
++  it('returns false when current < max(history)', () => {
++    expect(isPR(170, [100, 150, 180])).toBe(false);
++  });
++  it('returns true for any positive number when history is empty', () => {
++    expect(isPR(1, [])).toBe(true);
++    expect(isPR(0.0001, [])).toBe(true);
++  });
++  it('throws on non-finite or negative current', () => {
++    expect(() => isPR(Number.NaN, [100])).toThrow();
++    expect(() => isPR(-1, [100])).toThrow();
++  });
++  it('throws on non-finite history entry', () => {
++    expect(() => isPR(200, [100, Number.NaN])).toThrow();
++  });
++});
++
++describe('isPR — properties', () => {
++  const valArb = fc.integer({ min: 0, max: 10000 });
++  fcTest.prop([valArb, fc.array(valArb, { maxLength: 50 })])(
++    'iff current > max(history)',
++    (current, history) => {
++      const expected = history.length === 0 ? current >= 0 : current > Math.max(...history);
++      expect(isPR(current, history)).toBe(expected);
++    },
++  );
++});
+diff --git a/apps/mobile/src/domain/e1rm/index.ts b/apps/mobile/src/domain/e1rm/index.ts
+new file mode 100644
+index 0000000..f1e0c80
+--- /dev/null
++++ b/apps/mobile/src/domain/e1rm/index.ts
+@@ -0,0 +1,36 @@
++/**
++ * e1RM (Epley) + PR detection.
++ *
++ * Epley: e1RM = weight * (1 + reps / 30)
++ *
++ * Pure module: no React, no async, no IO.
++ */
++
++export function epley(weight: number, reps: number): number {
++  if (!Number.isFinite(weight) || weight <= 0) {
++    throw new Error(`epley: weight must be finite and > 0, got ${weight}`);
++  }
++  if (!Number.isInteger(reps) || reps <= 0) {
++    throw new Error(`epley: reps must be a positive integer, got ${reps}`);
++  }
++  // Epley convention: a single rep is its own 1RM (no extrapolation).
++  if (reps === 1) return weight;
++  return Math.round(weight * (1 + reps / 30));
++}
++
++/**
++ * isPR(current, history) — true iff current strictly exceeds max(history).
++ * Empty history is a vacuous PR for any non-negative current value.
++ */
++export function isPR(currentE1RM: number, history: readonly number[]): boolean {
++  if (!Number.isFinite(currentE1RM) || currentE1RM < 0) {
++    throw new Error(`isPR: currentE1RM must be finite and >= 0, got ${currentE1RM}`);
++  }
++  for (const h of history) {
++    if (!Number.isFinite(h)) {
++      throw new Error(`isPR: history must contain only finite numbers, got ${h}`);
++    }
++  }
++  if (history.length === 0) return true;
++  return currentE1RM > Math.max(...history);
++}

@@ -1,0 +1,377 @@
+diff --git a/apps/mobile/.storybook/main.ts b/apps/mobile/.storybook/main.ts
+index bd88970..1173baf 100644
+--- a/apps/mobile/.storybook/main.ts
++++ b/apps/mobile/.storybook/main.ts
+@@ -1,7 +1,10 @@
+ import type { StorybookConfig } from '@storybook/react-native';
+ 
+ const main: StorybookConfig = {
+-  stories: ['../src/design/**/__stories__/*.stories.@(ts|tsx)'],
++  stories: [
++    '../src/design/**/__stories__/*.stories.@(ts|tsx)',
++    '../src/features/**/__stories__/*.stories.@(ts|tsx)',
++  ],
+   addons: [],
+ };
+ 
+diff --git a/apps/mobile/.storybook/storybook.requires.ts b/apps/mobile/.storybook/storybook.requires.ts
+index ffc9b38..abebf80 100644
+--- a/apps/mobile/.storybook/storybook.requires.ts
++++ b/apps/mobile/.storybook/storybook.requires.ts
+@@ -6,4 +6,5 @@ import '../src/design/primitives/__stories__/NumberStepper.stories.tsx';
+ import '../src/design/primitives/__stories__/PressButton.stories.tsx';
+ import '../src/design/primitives/__stories__/SegRail.stories.tsx';
+ import '../src/design/primitives/__stories__/WeightNum.stories.tsx';
++import '../src/features/navigation/__stories__/TabBar.stories.tsx';
+ export { view };
+diff --git a/apps/mobile/scripts/storybook-generate.mjs b/apps/mobile/scripts/storybook-generate.mjs
+index ba7629b..6091342 100644
+--- a/apps/mobile/scripts/storybook-generate.mjs
++++ b/apps/mobile/scripts/storybook-generate.mjs
+@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
+ 
+ const here = dirname(fileURLToPath(import.meta.url));
+ const storybookDir = resolve(here, '..', '.storybook');
+-const designDir = resolve(here, '..', 'src/design');
++// Story sources — keep in sync with .storybook/main.ts `stories` globs.
++const storyRoots = [resolve(here, '..', 'src/design'), resolve(here, '..', 'src/features')];
+ 
+ function listStories(dir) {
+   const out = [];
+@@ -24,7 +25,7 @@ function listStories(dir) {
+   return out;
+ }
+ 
+-const files = listStories(designDir).sort();
++const files = storyRoots.flatMap((root) => listStories(root)).sort();
+ mkdirSync(storybookDir, { recursive: true });
+ 
+ const imports = files
+diff --git a/apps/mobile/src/app/(tabs)/_layout.tsx b/apps/mobile/src/app/(tabs)/_layout.tsx
+index 3cd7055..245c014 100644
+--- a/apps/mobile/src/app/(tabs)/_layout.tsx
++++ b/apps/mobile/src/app/(tabs)/_layout.tsx
+@@ -1,8 +1,12 @@
++import { TabBar } from '@/features/navigation/TabBar';
+ import { Tabs } from 'expo-router';
+ 
+ export default function TabsLayout() {
+   return (
+-    <Tabs screenOptions={{ headerShown: false }}>
++    <Tabs
++      screenOptions={{ headerShown: false }}
++      tabBar={(props) => <TabBar state={props.state} navigation={props.navigation} />}
++    >
+       <Tabs.Screen name="home" options={{ title: 'Home' }} />
+       <Tabs.Screen name="library" options={{ title: 'Library' }} />
+       <Tabs.Screen name="cycle" options={{ title: 'Cycle' }} />
+diff --git a/apps/mobile/src/features/navigation/TabBar.tsx b/apps/mobile/src/features/navigation/TabBar.tsx
+new file mode 100644
+index 0000000..7dcf4ee
+--- /dev/null
++++ b/apps/mobile/src/features/navigation/TabBar.tsx
+@@ -0,0 +1,132 @@
++import { Icon, type IconName } from '@/design/icons';
++import { Text } from '@/design/primitives/Text';
++import { colors, shape } from '@/design/tokens';
++/**
++ * 531 Strength — bottom TabBar.
++ *
++ * Glassy floating pill rendered as the `tabBar` prop for expo-router's
++ * `<Tabs>` layout. Active tab shows icon + label in `hot`; inactive tabs
++ * show icon only in `ink2` (the muted/inactive ink token).
++ *
++ * Backdrop blur is provided by `expo-glass-effect`'s `GlassView` — the
++ * SDK 55-blessed glass primitive. On non-iOS platforms `GlassView`
++ * degrades to a plain `View`, so we layer a `bg1` tint underneath via
++ * the wrapper to keep the bar legible on Android / Web.
++ */
++import { GlassView } from 'expo-glass-effect';
++import { type GestureResponderEvent, Pressable, View } from 'react-native';
++import { useSafeAreaInsets } from 'react-native-safe-area-context';
++
++// ── Minimal local mirror of @react-navigation/bottom-tabs' BottomTabBarProps ──
++// We only consume `state.{index,routes}` + `navigation.{emit,navigate}` so we
++// keep a focused local shape rather than dragging the full transitive type.
++type TabRoute = {
++  key: string;
++  name: string;
++  params?: object | undefined;
++};
++
++type TabNavigationEmitResult = { defaultPrevented: boolean };
++
++type TabNavigation = {
++  emit: (event: {
++    type: 'tabPress';
++    target: string;
++    canPreventDefault: true;
++  }) => TabNavigationEmitResult;
++  navigate: (name: string, params?: object) => void;
++};
++
++export type TabBarProps = {
++  state: { index: number; routes: TabRoute[] };
++  navigation: TabNavigation;
++};
++
++const TAB_ICONS: Record<string, IconName> = {
++  home: 'home',
++  library: 'list',
++  cycle: 'calendar',
++  history: 'history',
++  settings: 'settings',
++};
++
++const TAB_LABELS: Record<string, string> = {
++  home: 'Home',
++  library: 'Library',
++  cycle: 'Cycle',
++  history: 'History',
++  settings: 'Settings',
++};
++
++export function TabBar({ state, navigation }: TabBarProps) {
++  const insets = useSafeAreaInsets();
++
++  return (
++    <View
++      pointerEvents="box-none"
++      style={{
++        position: 'absolute',
++        left: shape.rMd,
++        right: shape.rMd,
++        bottom: insets.bottom + shape.rMd,
++      }}
++    >
++      <GlassView
++        glassEffectStyle="regular"
++        colorScheme="dark"
++        style={{
++          flexDirection: 'row',
++          borderRadius: shape.rPill,
++          padding: shape.rXs,
++          overflow: 'hidden',
++          backgroundColor: colors.bg1,
++        }}
++      >
++        {state.routes.map((route, index) => {
++          const active = state.index === index;
++          const iconName = TAB_ICONS[route.name] ?? 'circle';
++          const label = TAB_LABELS[route.name] ?? route.name;
++          const onPress = (_event: GestureResponderEvent) => {
++            const event = navigation.emit({
++              type: 'tabPress',
++              target: route.key,
++              canPreventDefault: true,
++            });
++            if (!active && !event.defaultPrevented) {
++              navigation.navigate(route.name, route.params);
++            }
++          };
++          return (
++            <Pressable
++              key={route.key}
++              accessibilityRole="button"
++              accessibilityState={{ selected: active }}
++              accessibilityLabel={label}
++              onPress={onPress}
++              style={{
++                flex: 1,
++                flexDirection: 'row',
++                alignItems: 'center',
++                justifyContent: 'center',
++                gap: shape.rXs,
++                paddingVertical: shape.rSm,
++                paddingHorizontal: shape.rSm,
++                borderRadius: shape.rPill,
++                backgroundColor: active ? colors.bg2 : 'transparent',
++              }}
++            >
++              <Icon name={iconName} size={20} color={active ? colors.hot : colors.ink2} />
++              {active ? (
++                <Text variant="smallBold" tone="hot">
++                  {label}
++                </Text>
++              ) : null}
++            </Pressable>
++          );
++        })}
++      </GlassView>
++    </View>
++  );
++}
++
++export default TabBar;
+diff --git a/apps/mobile/src/features/navigation/__stories__/TabBar.stories.tsx b/apps/mobile/src/features/navigation/__stories__/TabBar.stories.tsx
+new file mode 100644
+index 0000000..ceef911
+--- /dev/null
++++ b/apps/mobile/src/features/navigation/__stories__/TabBar.stories.tsx
+@@ -0,0 +1,58 @@
++import { colors } from '@/design/tokens';
++import type { ReactElement } from 'react';
++import { View } from 'react-native';
++import { TabBar, type TabBarProps } from '../TabBar';
++
++// Local Meta/StoryObj helpers — @storybook/react-native v8 does not re-export
++// these from @storybook/react, so we define minimal CSF-3 shapes here (same
++// pattern as src/design/primitives/__stories__/*).
++type Meta<P> = {
++  title: string;
++  component: (props: P) => ReactElement;
++};
++type StoryObj = {
++  render: () => ReactElement;
++};
++
++const ROUTE_NAMES = ['home', 'library', 'cycle', 'history', 'settings'] as const;
++
++const makeProps = (active: number): TabBarProps => ({
++  state: {
++    index: active,
++    routes: ROUTE_NAMES.map((name, i) => ({ key: `${name}-${i}`, name, params: undefined })),
++  },
++  navigation: {
++    emit: () => ({ defaultPrevented: false }),
++    navigate: () => {},
++  },
++});
++
++// Mount the bar inside a fixed-height dark stage so the floating pill has
++// somewhere to rest above the bottom edge.
++const Stage = ({ children }: { children: ReactElement }) => (
++  <View style={{ height: 140, backgroundColor: colors.bg0, justifyContent: 'flex-end' }}>
++    {children}
++  </View>
++);
++
++const meta: Meta<Record<string, never>> = {
++  title: 'Features/Navigation/TabBar',
++  component: () => <Stage>{<TabBar {...makeProps(0)} />}</Stage>,
++};
++export default meta;
++
++export const HomeActive: StoryObj = {
++  render: () => <Stage>{<TabBar {...makeProps(0)} />}</Stage>,
++};
++export const LibraryActive: StoryObj = {
++  render: () => <Stage>{<TabBar {...makeProps(1)} />}</Stage>,
++};
++export const CycleActive: StoryObj = {
++  render: () => <Stage>{<TabBar {...makeProps(2)} />}</Stage>,
++};
++export const HistoryActive: StoryObj = {
++  render: () => <Stage>{<TabBar {...makeProps(3)} />}</Stage>,
++};
++export const SettingsActive: StoryObj = {
++  render: () => <Stage>{<TabBar {...makeProps(4)} />}</Stage>,
++};
+diff --git a/apps/mobile/src/features/navigation/__tests__/TabBar.test.tsx b/apps/mobile/src/features/navigation/__tests__/TabBar.test.tsx
+new file mode 100644
+index 0000000..7cca887
+--- /dev/null
++++ b/apps/mobile/src/features/navigation/__tests__/TabBar.test.tsx
+@@ -0,0 +1,102 @@
++import { ThemeProvider } from '@/design/theme';
++import { fireEvent, render } from '@testing-library/react-native';
++import type React from 'react';
++import { SafeAreaProvider } from 'react-native-safe-area-context';
++import { TabBar, type TabBarProps } from '../TabBar';
++
++// Minimal props factory matching the local TabBarProps shape we ported from
++// @react-navigation/bottom-tabs' BottomTabBarProps.
++function makeProps(activeIndex = 0): TabBarProps & { navigation: TabBarProps['navigation'] } {
++  const emit = jest.fn(() => ({ defaultPrevented: false }));
++  const navigate = jest.fn();
++  return {
++    state: {
++      index: activeIndex,
++      routes: [
++        { key: 'home-1', name: 'home', params: undefined },
++        { key: 'library-1', name: 'library', params: undefined },
++        { key: 'cycle-1', name: 'cycle', params: undefined },
++        { key: 'history-1', name: 'history', params: undefined },
++        { key: 'settings-1', name: 'settings', params: undefined },
++      ],
++    },
++    navigation: { emit, navigate },
++  };
++}
++
++// Seed insets so `useSafeAreaInsets()` returns deterministic values in tests.
++const safeAreaMetrics = {
++  frame: { x: 0, y: 0, width: 320, height: 640 },
++  insets: { top: 0, right: 0, bottom: 16, left: 0 },
++};
++
++const wrap = (ui: React.ReactElement) =>
++  render(
++    <SafeAreaProvider initialMetrics={safeAreaMetrics}>
++      <ThemeProvider>{ui}</ThemeProvider>
++    </SafeAreaProvider>,
++  );
++
++describe('TabBar', () => {
++  it('renders one button per route (5 tabs)', () => {
++    const { getAllByRole } = wrap(<TabBar {...makeProps(0)} />);
++    expect(getAllByRole('button')).toHaveLength(5);
++  });
++
++  it('marks only the active tab as selected', () => {
++    const { getAllByRole } = wrap(<TabBar {...makeProps(2)} />);
++    const buttons = getAllByRole('button');
++    const [home, , cycle, , settings] = buttons;
++    expect(cycle?.props.accessibilityState).toEqual(expect.objectContaining({ selected: true }));
++    expect(home?.props.accessibilityState).toEqual(expect.objectContaining({ selected: false }));
++    expect(settings?.props.accessibilityState).toEqual(
++      expect.objectContaining({ selected: false }),
++    );
++  });
++
++  it('exposes a humanised accessibilityLabel per tab', () => {
++    const { getByLabelText } = wrap(<TabBar {...makeProps(0)} />);
++    expect(getByLabelText('Home')).toBeTruthy();
++    expect(getByLabelText('Library')).toBeTruthy();
++    expect(getByLabelText('Cycle')).toBeTruthy();
++    expect(getByLabelText('History')).toBeTruthy();
++    expect(getByLabelText('Settings')).toBeTruthy();
++  });
++
++  it('navigates to the tapped route when an inactive tab is pressed', () => {
++    const props = makeProps(0);
++    const { getByLabelText } = wrap(<TabBar {...props} />);
++    fireEvent.press(getByLabelText('Library'));
++    expect(props.navigation.emit).toHaveBeenCalledWith({
++      type: 'tabPress',
++      target: 'library-1',
++      canPreventDefault: true,
++    });
++    expect(props.navigation.navigate).toHaveBeenCalledWith('library', undefined);
++  });
++
++  it('does not navigate when the already-active tab is pressed', () => {
++    const props = makeProps(2);
++    const { getByLabelText } = wrap(<TabBar {...props} />);
++    fireEvent.press(getByLabelText('Cycle'));
++    expect(props.navigation.emit).toHaveBeenCalledTimes(1);
++    expect(props.navigation.navigate).not.toHaveBeenCalled();
++  });
++
++  it('does not navigate when the tabPress event is preventDefault-ed', () => {
++    const props = makeProps(0);
++    (props.navigation.emit as jest.Mock).mockReturnValueOnce({ defaultPrevented: true });
++    const { getByLabelText } = wrap(<TabBar {...props} />);
++    fireEvent.press(getByLabelText('History'));
++    expect(props.navigation.navigate).not.toHaveBeenCalled();
++  });
++
++  it('renders the active tab label (only) — inactive tabs show icon only', () => {
++    const { queryByText } = wrap(<TabBar {...makeProps(1)} />);
++    // Library is active → label rendered.
++    expect(queryByText('Library')).toBeTruthy();
++    // Home is inactive → label suppressed.
++    expect(queryByText('Home')).toBeNull();
++    expect(queryByText('Cycle')).toBeNull();
++  });
++});

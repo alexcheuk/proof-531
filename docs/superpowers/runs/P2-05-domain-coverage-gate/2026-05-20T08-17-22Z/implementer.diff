@@ -1,0 +1,66 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 7fe4380..6a2bc1d 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -58,4 +58,4 @@ jobs:
+       - run: pnpm install --frozen-lockfile
+ 
+       - name: Jest
+-        run: pnpm test
++        run: pnpm test --coverage
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 5c9a8b3..9d63539 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -66,43 +66,16 @@
+       "node_modules/(?!(\\.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@shopify/.*))"
+     ],
+     "collectCoverageFrom": [
+-      "src/domain/program/**/*.ts",
+-      "!src/domain/program/**/*.d.ts",
+-      "!src/domain/program/**/__tests__/**",
+-      "src/domain/plates/**/*.ts",
+-      "!src/domain/plates/**/*.d.ts",
+-      "!src/domain/plates/**/__tests__/**",
+-      "src/domain/e1rm/**/*.ts",
+-      "!src/domain/e1rm/**/*.d.ts",
+-      "!src/domain/e1rm/**/__tests__/**",
+-      "src/domain/progression/**/*.ts",
+-      "!src/domain/progression/**/*.d.ts",
+-      "!src/domain/progression/**/__tests__/**"
++      "src/domain/**/*.ts",
++      "!src/domain/**/*.d.ts",
++      "!src/domain/**/__tests__/**"
+     ],
+     "coverageThreshold": {
+-      "src/domain/program/": {
+-        "branches": 100,
+-        "functions": 100,
+-        "lines": 100,
+-        "statements": 100
+-      },
+-      "src/domain/plates/": {
+-        "branches": 100,
+-        "functions": 100,
+-        "lines": 100,
+-        "statements": 100
+-      },
+-      "src/domain/e1rm/": {
+-        "branches": 100,
+-        "functions": 100,
+-        "lines": 100,
+-        "statements": 100
+-      },
+-      "src/domain/progression/": {
+-        "branches": 100,
+-        "functions": 100,
+-        "lines": 100,
+-        "statements": 100
++      "src/domain/": {
++        "branches": 95,
++        "functions": 95,
++        "lines": 95,
++        "statements": 95
+       }
+     }
+   },

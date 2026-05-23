@@ -1,0 +1,1 @@
+P2-02 plan: calcPlates with greedy + inventory. plates=per-side desc, remainder=total. Property: sum*2+bar+remainder === target. Coverage gate extended. See implementer prompt.

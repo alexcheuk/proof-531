@@ -1,3 +1,0 @@
-# Smoke
-
-orchestrator smoke ok
