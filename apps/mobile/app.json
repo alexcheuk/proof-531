@@ -6,7 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mobile",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
     "platforms": ["ios", "android"],
     "ios": {
       "icon": "./assets/expo.icon"
@@ -23,6 +24,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-font",
       [
         "expo-splash-screen",
         {
@@ -33,14 +35,7 @@
           }
         }
       ],
-      "expo-sqlite",
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "TODO_ORG",
-          "project": "TODO_PROJECT"
-        }
-      ]
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
