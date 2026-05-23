@@ -335,7 +335,7 @@ tasks:
     title: data/accessors/session.ts (snapshots TM + unit)
     phase: 4
     depends_on: [PD-04-accessor-training-max]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
     behavioral_reference: ~/Development/531-pwa/src/db/accessors/session.ts
     done_when:
