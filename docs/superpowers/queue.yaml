@@ -449,7 +449,7 @@ tasks:
     title: History screen + pull-to-refresh
     phase: 5
     depends_on: [PD-08-query-hooks, PB-12-primitive-ledger-row-section]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     behavioral_reference: ~/Development/531-pwa/src/features/history/HistoryScreen.tsx
     done_when:
