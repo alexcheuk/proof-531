@@ -44,11 +44,6 @@ export function SegRail<T extends string>({
   const container: ViewStyle = {
     flexDirection: 'row',
     width: '100%',
-    borderWidth: 1,
-    borderColor: colors.ink0,
-    // overflow:hidden clips children flush to the inner border so the active
-    // segment's ink0 fill doesn't leave a hairline gap from sub-pixel rounding.
-    overflow: 'hidden',
   };
 
   return (
@@ -56,14 +51,23 @@ export function SegRail<T extends string>({
       {options.map((opt, i) => {
         const active = opt.value === value;
         const disabled = opt.disabled === true;
+        const isLast = i === options.length - 1;
 
+        // Borders live on each segment (top/bottom always, left always for the
+        // divider/outer edge, right only on the last segment) instead of on
+        // the parent. This makes the active segment's ink0 background paint
+        // flush to its own borders — eliminating the hairline gap RN sub-
+        // pixel rounding leaves when borders are on the container.
         const segmentStyle: ViewStyle = {
           flex: 1,
           paddingVertical: 12,
           paddingHorizontal: 12,
           backgroundColor: disabled ? 'transparent' : active ? colors.ink0 : 'transparent',
-          borderLeftWidth: i > 0 ? 1 : 0,
-          borderLeftColor: colors.ink0,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderLeftWidth: 1,
+          borderRightWidth: isLast ? 1 : 0,
+          borderColor: colors.ink0,
         };
 
         const labelStyle: TextStyle = {
