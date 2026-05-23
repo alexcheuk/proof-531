@@ -13,4 +13,5 @@ export { TitleBlock } from './TitleBlock';
 export { LedgerRow, LedgerRowLabel, LedgerRowValue } from './LedgerRow';
 export { LedgerSection } from './LedgerSection';
 export { Masthead } from './Masthead';
+export { PlateBar, type PlateBarProps } from './PlateBar';
 export { Sheet } from './Sheet';
