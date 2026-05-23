@@ -2,6 +2,7 @@ import { DbProvider } from '@/data/DbProvider';
 import { db, expoDb } from '@/data/drizzle/client';
 import { runMigrations } from '@/data/drizzle/runMigrations';
 import { useAppFonts } from '@/design/fonts';
+import { ThemeProvider } from '@/design/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -46,10 +47,12 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <DbProvider db={db}>
-        <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0B0C0E' }}>
-          <StatusBar style="dark" />
-          <Slot />
-        </GestureHandlerRootView>
+        <ThemeProvider>
+          <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0B0C0E' }}>
+            <StatusBar style="dark" />
+            <Slot />
+          </GestureHandlerRootView>
+        </ThemeProvider>
       </DbProvider>
     </QueryClientProvider>
   );

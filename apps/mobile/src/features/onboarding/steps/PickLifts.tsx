@@ -57,7 +57,7 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
           weight="bold"
           size={40}
           color="ink0"
-          style={{ letterSpacing: -1.4, lineHeight: 40 }}
+          style={{ letterSpacing: -1.4, lineHeight: 46 }}
         >
           Which lifts
         </Text>
@@ -66,7 +66,7 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
           weight="medium"
           size={40}
           color="ink2"
-          style={{ letterSpacing: -1.4, lineHeight: 40 }}
+          style={{ letterSpacing: -1.4, lineHeight: 46 }}
         >
           are you training?
         </Text>
