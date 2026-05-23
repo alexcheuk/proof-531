@@ -303,7 +303,7 @@ tasks:
     title: First migration + runMigrations() boot helper
     phase: 4
     depends_on: [PD-01-drizzle-init]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
     done_when:
       - "apps/mobile/src/data/drizzle/migrations/0001_init.sql exists creating all 5 tables"
