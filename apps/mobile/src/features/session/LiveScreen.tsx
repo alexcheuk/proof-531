@@ -5,6 +5,7 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayWeight } from '@/domain/units';
+import { useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -47,6 +48,7 @@ export type LiveScreenProps = {
 
 export function LiveScreen({ sessionId }: LiveScreenProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { colors } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
@@ -61,12 +63,25 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     };
   }, []);
 
-  // After session is complete (or cancelled) route back home.
+  // After the session machine settles into `complete` (via normal finish OR
+  // cancel — `cancelSession` also transitions to `complete`), invalidate the
+  // session-shaped queries so Home/History refetch, then route to the
+  // session-complete screen. Doing the invalidation here (rather than inside
+  // the hook) keeps the hook driver-agnostic.
   useEffect(() => {
-    if (live.phase === 'complete') {
-      router.back();
-    }
-  }, [live.phase, router]);
+    if (live.phase !== 'complete' || sessionId == null) return;
+    void Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
+      queryClient.invalidateQueries({ queryKey: ['sessions'] }),
+      queryClient.invalidateQueries({ queryKey: ['session', sessionId] }),
+    ]).then(() => {
+      router.replace({
+        pathname: '/session/complete',
+        params: { sessionId: String(sessionId) },
+        // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
+      } as any);
+    });
+  }, [live.phase, sessionId, queryClient, router]);
 
   // Exit gate: if the session row disappears (deleted) or transitions out of
   // `in_progress` from elsewhere (cancelled/completed in another surface),

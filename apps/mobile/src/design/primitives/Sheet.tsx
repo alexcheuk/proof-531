@@ -1,25 +1,45 @@
+import { useTheme } from '@/design/theme';
 import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
-import { type ReactNode, useCallback, useEffect, useRef } from 'react';
-import { BackHandler } from 'react-native';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import { BackHandler, type ViewStyle } from 'react-native';
 
 type SheetProps = {
   open: boolean;
   onDismiss: () => void;
   children: ReactNode;
   snapPoints?: (string | number)[];
+  /**
+   * Override the paper background color. Defaults to `colors.bg0` so sheets
+   * blend with the app canvas (gorhom's default is white, which clashes with
+   * the paper-tone theme).
+   */
+  backgroundColor?: string;
   testID?: string;
 };
 
 const DEFAULT_SNAP_POINTS: (string | number)[] = ['50%'];
 
-export function Sheet({ open, onDismiss, children, snapPoints, testID }: SheetProps) {
+export function Sheet({
+  open,
+  onDismiss,
+  children,
+  snapPoints,
+  backgroundColor,
+  testID,
+}: SheetProps) {
+  const { colors } = useTheme();
   const sheetRef = useRef<BottomSheet>(null);
   const effectiveSnapPoints = snapPoints ?? DEFAULT_SNAP_POINTS;
+  const effectiveBackground = backgroundColor ?? colors.bg0;
+  const backgroundStyle = useMemo<ViewStyle>(
+    () => ({ backgroundColor: effectiveBackground }),
+    [effectiveBackground],
+  );
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -63,6 +83,7 @@ export function Sheet({ open, onDismiss, children, snapPoints, testID }: SheetPr
       onChange={handleChange}
       onClose={handleClose}
       backdropComponent={renderBackdrop}
+      backgroundStyle={backgroundStyle}
     >
       <BottomSheetView testID={testID}>{children}</BottomSheetView>
     </BottomSheet>

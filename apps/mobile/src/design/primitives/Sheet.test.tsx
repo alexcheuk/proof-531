@@ -1,7 +1,11 @@
+import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
 import * as Haptics from 'expo-haptics';
+import type { ReactElement } from 'react';
 import { BackHandler, Text } from 'react-native';
 import { Sheet } from './Sheet';
+
+const renderWithTheme = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
@@ -86,7 +90,7 @@ describe('Sheet', () => {
 
   it('configures backdrop with pressBehavior="close" and dismisses via onClose', () => {
     const onDismiss = jest.fn();
-    render(
+    renderWithTheme(
       <Sheet open onDismiss={onDismiss}>
         <Text>body</Text>
       </Sheet>,
@@ -103,7 +107,7 @@ describe('Sheet', () => {
 
   it('registers a hardware-back handler that dismisses the sheet and consumes the event', () => {
     const onDismiss = jest.fn();
-    render(
+    renderWithTheme(
       <Sheet open onDismiss={onDismiss}>
         <Text>body</Text>
       </Sheet>,
@@ -119,7 +123,7 @@ describe('Sheet', () => {
   });
 
   it('fires Haptics.impactAsync("light") when snapping to opened index 0, not on close index -1', () => {
-    render(
+    renderWithTheme(
       <Sheet open onDismiss={() => {}}>
         <Text>body</Text>
       </Sheet>,
@@ -134,7 +138,7 @@ describe('Sheet', () => {
   });
 
   it('does not register a back-handler when closed', () => {
-    render(
+    renderWithTheme(
       <Sheet open={false} onDismiss={() => {}}>
         <Text>body</Text>
       </Sheet>,
@@ -144,7 +148,7 @@ describe('Sheet', () => {
   });
 
   it('removes the back-handler subscription on unmount', () => {
-    const { unmount } = render(
+    const { unmount } = renderWithTheme(
       <Sheet open onDismiss={() => {}}>
         <Text>body</Text>
       </Sheet>,

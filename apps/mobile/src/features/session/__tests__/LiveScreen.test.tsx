@@ -1,12 +1,16 @@
 /**
  * Behavioral test for the Live screen.
  *
- * Asserts the PE-05 done_when contract:
+ * Asserts:
  *   - expo-keep-awake is activated on mount and deactivated on unmount.
- *   - Rest timer fires the warning haptic at T-3s and the chime at T-0.
+ *   - Rest timer fires the warning haptic at T-3s. (T-0 audio cue was removed
+ *     when expo-av was dropped — Expo Go on SDK 55 no longer ships its
+ *     native module.)
  *   - Cancel button uses a two-tap pattern: first tap fires the warning
  *     haptic, second tap calls cancelSession.
  *   - The AMRAP bottom sheet is visible while in the `amrap-log` phase.
+ *   - On phase==='complete', session-shaped queries are invalidated and the
+ *     router replaces to `/session/complete?sessionId=…`.
  *
  * Every cross-cutting dependency is mocked so the screen renders headless
  * under jest-expo. The bottom-sheet mock follows the pattern from
@@ -14,6 +18,7 @@
  * directly inside a Fragment.
  */
 import { ThemeProvider } from '@/design/theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
@@ -25,7 +30,6 @@ const mockCancelSession = jest.fn();
 const mockActivateKeepAwake = jest.fn();
 const mockDeactivateKeepAwake = jest.fn();
 const mockNotificationAsync = jest.fn();
-const mockSoundCreateAsync = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: mockBack }),
@@ -43,17 +47,6 @@ jest.mock('expo-haptics', () => ({
 jest.mock('expo-keep-awake', () => ({
   activateKeepAwake: (...args: unknown[]) => mockActivateKeepAwake(...args),
   deactivateKeepAwake: (...args: unknown[]) => mockDeactivateKeepAwake(...args),
-}));
-
-jest.mock('expo-av', () => ({
-  Audio: {
-    Sound: {
-      createAsync: (...args: unknown[]) => {
-        mockSoundCreateAsync(...args);
-        return Promise.resolve({ sound: { unloadAsync: jest.fn() } });
-      },
-    },
-  },
 }));
 
 jest.mock('react-native-safe-area-context', () => ({
@@ -159,11 +152,21 @@ jest.mock('@/data/accessors/session', () => ({
 // Import after mocks.
 import { LiveScreen } from '../LiveScreen';
 
-const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+let queryClient: QueryClient;
+let invalidateSpy: jest.SpyInstance;
+
+const renderScreen = (ui: ReactElement) =>
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
+  );
 
 describe('LiveScreen', () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
     resetSessionState();
     mockBack.mockClear();
     mockReplace.mockClear();
@@ -176,12 +179,13 @@ describe('LiveScreen', () => {
     mockActivateKeepAwake.mockClear();
     mockDeactivateKeepAwake.mockClear();
     mockNotificationAsync.mockClear();
-    mockSoundCreateAsync.mockClear();
     mockBottomSheet.onChange = null;
     mockBottomSheet.onClose = null;
   });
 
   afterEach(() => {
+    invalidateSpy.mockRestore();
+    queryClient.clear();
     jest.useRealTimers();
   });
 
@@ -193,7 +197,7 @@ describe('LiveScreen', () => {
     expect(mockDeactivateKeepAwake).toHaveBeenCalledTimes(1);
   });
 
-  it('fires a warning haptic at T-3s and plays the chime at T-0 during rest', async () => {
+  it('fires a warning haptic at T-3s during rest (no audio cue — expo-av dropped)', async () => {
     const screen = renderScreen(<LiveScreen sessionId={7} />);
 
     // Week 1, set 0 → working set (non-AMRAP). Log it to enter rest phase.
@@ -217,11 +221,77 @@ describe('LiveScreen', () => {
     expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
     expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
 
-    // Advance to T-0 (90s elapsed) → chime via expo-av.
+    // Advance to T-0 (90s elapsed) — no extra haptic fires; no audio cue.
     act(() => {
       jest.advanceTimersByTime(3_000);
     });
-    expect(mockSoundCreateAsync).toHaveBeenCalledTimes(1);
+    expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('on phase=complete: invalidates session-shaped queries and replaces to /session/complete', async () => {
+    // Walk through to setIndex=2 AMRAP and save → triggers completeSession +
+    // setPhase('complete'), which the screen-level effect then handles.
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    // Set 0.
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('rest-phase')).toBeTruthy();
+    });
+    act(() => {
+      jest.advanceTimersByTime(90_000);
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+
+    // Set 1.
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('rest-phase')).toBeTruthy();
+    });
+    act(() => {
+      jest.advanceTimersByTime(90_000);
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+
+    // Set 2 is AMRAP on week 1.
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    await waitFor(() => {
+      expect(mockCompleteSession).toHaveBeenCalledTimes(1);
+    });
+
+    // Flush the Promise.all in the invalidation effect.
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // All three session-shaped query keys invalidated.
+    const invalidatedKeys = invalidateSpy.mock.calls.map((call) => call[0]?.queryKey);
+    expect(invalidatedKeys).toEqual(
+      expect.arrayContaining([['activeSession'], ['sessions'], ['session', 7]]),
+    );
+
+    // Router replaced to the complete screen with the sessionId.
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/session/complete',
+        params: { sessionId: '7' },
+      });
+    });
   });
 
   it('cancel button is a two-tap pattern: first tap arms + warning haptic, second tap calls cancelSession', async () => {

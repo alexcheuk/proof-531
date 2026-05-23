@@ -12,7 +12,8 @@ import { round as snapWeight } from '@/domain/units';
  * keyed on persisted SetLog rows. The mobile port simplifies to an explicit
  * phase tag so the screen can also model the AMRAP rep-entry sheet and the
  * cancel-confirm sheet as first-class states, and so the rest timer can
- * count DOWN (per PE-05 done_when: T-3s warning haptic, T-0 chime).
+ * count DOWN (T-3s warning haptic; T-0 has no audio cue under Expo Go since
+ * the SDK 55 split removed expo-av's native module from Expo Go).
  *
  * Phases:
  *   - `prep`            — not yet entered first set (currently unused; reserved
@@ -23,9 +24,9 @@ import { round as snapWeight } from '@/domain/units';
  *   - `complete`        — session finished, parent should route away.
  *   - `cancel-confirm`  — bottom sheet open for cancel confirmation.
  *
- * Rest duration is fixed at 90s for this iteration. The chime + warning haptic
- * fire deterministically off the countdown so they can be asserted by
- * advancing fake timers in tests.
+ * Rest duration is fixed at 90s for this iteration. The warning haptic at T-3s
+ * fires deterministically off the countdown so it can be asserted by advancing
+ * fake timers in tests.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -44,11 +45,6 @@ export type UseLiveScreenStateOptions = {
    * Defaults to expo-haptics' `notificationAsync(Warning)` — injectable for tests.
    */
   fireWarningHaptic?: () => void;
-  /**
-   * Fires the chime when the rest timer reaches T-0.
-   * Defaults to a graceful expo-av loader — injectable for tests.
-   */
-  playChime?: () => void;
 };
 
 export type UseLiveScreenStateResult = {
@@ -94,39 +90,6 @@ function defaultFireWarningHaptic() {
   }
 }
 
-/**
- * Default chime player. Attempts to load an expo-av Sound from the bundled
- * placeholder. The asset may not exist yet — log and continue rather than
- * throwing.
- */
-function defaultPlayChime() {
-  try {
-    // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
-    const ExpoAv = require('expo-av') as any;
-    const Audio = ExpoAv?.Audio;
-    if (!Audio?.Sound?.createAsync) return;
-    // Fire-and-forget — tests only assert `Audio.Sound.createAsync` was called.
-    Promise.resolve()
-      .then(() => {
-        // The asset may not exist; the catch below swallows the load error.
-        let asset: unknown = null;
-        try {
-          asset = require('../../../../assets/audio/chime.wav');
-        } catch {
-          // No bundled asset yet — pass an empty source; Audio.Sound.createAsync
-          // in production will reject, but tests assert call only.
-          asset = null;
-        }
-        return Audio.Sound.createAsync(asset, { shouldPlay: true });
-      })
-      .catch((err: unknown) => {
-        console.warn('useLiveScreenState: chime asset unavailable', err);
-      });
-  } catch (err) {
-    console.warn('useLiveScreenState: chime player unavailable', err);
-  }
-}
-
 export function useLiveScreenState(
   sessionId: number | null,
   options: UseLiveScreenStateOptions = {},
@@ -134,7 +97,6 @@ export function useLiveScreenState(
   const db = useDb();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
-  const playChime = options.playChime ?? defaultPlayChime;
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;
@@ -146,10 +108,9 @@ export function useLiveScreenState(
   // The phase to return to when the cancel sheet is dismissed. Captured at
   // open time so the cancel flow doesn't disturb the underlying state.
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
-  // Track which thresholds have already fired in the current rest cycle so we
-  // don't double-trigger on re-renders or imprecise tick alignment.
+  // Track whether the warning threshold has already fired in the current rest
+  // cycle so we don't double-trigger on re-renders or imprecise tick alignment.
   const warningFiredRef = useRef(false);
-  const chimeFiredRef = useRef(false);
 
   // Per-set view model — derived from the session week + current index.
   // Defaults are safe (week=1, snapshot=0) so the hook never throws while
@@ -168,7 +129,6 @@ export function useLiveScreenState(
   useEffect(() => {
     if (phase !== 'rest') return;
     warningFiredRef.current = false;
-    chimeFiredRef.current = false;
     setRestRemaining(restSeconds);
     const id = setInterval(() => {
       setRestRemaining((prev) => {
@@ -182,20 +142,18 @@ export function useLiveScreenState(
   }, [phase, restSeconds]);
 
   // Side-effect bus on every restRemaining tick. Kept separate from the
-  // interval callback so the haptic/chime fire from inside React's commit
-  // phase rather than from a setState updater (which can run twice under
-  // StrictMode and would double-fire the side effect).
+  // interval callback so the haptic fires from inside React's commit phase
+  // rather than from a setState updater (which can run twice under StrictMode
+  // and would double-fire the side effect). The T-0 audio cue was removed
+  // when expo-av was dropped — Expo Go on SDK 55 no longer ships the
+  // ExponentAV native module.
   useEffect(() => {
     if (phase !== 'rest') return;
     if (restRemaining === WARNING_THRESHOLD && !warningFiredRef.current) {
       warningFiredRef.current = true;
       fireWarningHaptic();
     }
-    if (restRemaining === 0 && !chimeFiredRef.current) {
-      chimeFiredRef.current = true;
-      playChime();
-    }
-  }, [phase, restRemaining, fireWarningHaptic, playChime]);
+  }, [phase, restRemaining, fireWarningHaptic]);
 
   const onLogWorkingSet = useCallback(async () => {
     if (!session?.id) return;
