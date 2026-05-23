@@ -116,7 +116,7 @@ tasks:
     title: NumberStepper primitive with haptics
     phase: 2
     depends_on: [PB-04-primitive-box-text]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     behavioral_reference: ~/Development/531-pwa/src/components/ui/number-stepper.tsx
     done_when:
