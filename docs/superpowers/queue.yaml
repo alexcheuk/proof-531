@@ -402,7 +402,7 @@ tasks:
     title: Home screen (CycleStrip, LiftTabs, LiftPage, LiftStats)
     phase: 5
     depends_on: [PD-08-query-hooks, PB-09-primitive-seg-rail, PB-16-primitive-stat-grid, PB-17-primitive-top-set-block]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/home
     done_when:
