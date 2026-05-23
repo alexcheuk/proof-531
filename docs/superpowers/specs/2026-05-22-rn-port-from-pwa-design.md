@@ -36,7 +36,7 @@ Behavioral source of truth is the running PWA at `~/Development/531-pwa`. The cu
 
 | Concern | Choice | Notes |
 |---|---|---|
-| Runtime | Expo SDK 55, React Native 0.81+, New Architecture **off** unless required | Expo Go compatible |
+| Runtime | Expo SDK 55, React Native 0.81+, New Architecture **on** (SDK 55 default) | Expo Go compatible |
 | Language | TypeScript strict, Biome | unchanged |
 | Routing | `expo-router` (file-based) | tabs + stack |
 | Persistence | `expo-sqlite` + **Drizzle ORM** | mirrors PWA's relational schema 1:1 |
@@ -50,6 +50,7 @@ Behavioral source of truth is the running PWA at `~/Development/531-pwa`. The cu
 | Haptics | `expo-haptics` | Tap on every primary action, success on set-complete, notification on PR |
 | Blur | `expo-blur` | sheet backdrops |
 | Audio | `expo-av` | rest-timer chime |
+| Keep-awake | `expo-keep-awake` | active while a session is in progress |
 | Unit tests | Jest + `@testing-library/react-native` + `fast-check` (domain) | |
 | E2E | **None.** | per user direction — skipped |
 | Error tracking / analytics | **Deferred.** | Sentry / PostHog require dev client |
@@ -150,12 +151,18 @@ Property tests via `fast-check`:
 Phases are ordered; tasks within a phase parallelize where `depends_on` allows.
 Each becomes a row in `docs/superpowers/queue.yaml` for `/initial-implement`.
 
-**Phase A — Reset (manual, single commit, not orchestrated)**
+**Phase A — Reset (human-driven prep, before orchestrator picks anything up)**
+
+Done as one or two direct commits, not via `/initial-implement`. The orchestrator
+must not run until Phase A lands, because the old `queue.yaml` will still be
+pointing at retired specs.
+
 - A-01 Delete `apps/mobile/src/*`, `design-reference/`, old specs & TODOs, old `queue.yaml`.
 - A-02 Update `CLAUDE.md`: stack reset (drop Skia/Sentry/PostHog, drop "Dev Client"
   language, point `design-reference` references at `~/Development/531-pwa`).
 - A-03 Re-scaffold minimal `apps/mobile/src/app/_layout.tsx` rendering an empty view.
   Confirm Expo Go boots.
+- A-04 Write the new `queue.yaml` containing Phases B–F as orchestrator tasks.
 
 **Phase B — Design system**
 - B-01 `tokens.ts` (colors, type scale, radii, spacing) ported from PWA `globals.css`.
