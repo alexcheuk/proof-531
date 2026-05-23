@@ -357,7 +357,7 @@ tasks:
     title: data/accessors/onboarding.ts
     phase: 4
     depends_on: [PD-05-accessor-session]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
     behavioral_reference: ~/Development/531-pwa/src/db/accessors/onboarding.ts
     done_when:
