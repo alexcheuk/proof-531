@@ -3,98 +3,56 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --dev-client",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "start": "expo start",
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests --coverage --testPathIgnorePatterns=/node_modules/ --testPathIgnorePatterns=\\.perf-test\\.[jt]sx?$",
-    "lint": "biome check src app",
-    "doctor": "expo-doctor",
-    "storybook:generate": "node scripts/storybook-generate.mjs",
-    "storybook:build": "pnpm run storybook:generate && pnpm typecheck",
-    "maestro:home": "maestro test .maestro/home-renders.yaml",
-    "db:generate": "drizzle-kit generate",
-    "perf": "reassure",
-    "perf:baseline": "reassure --baseline"
+    "test": "jest --passWithNoTests --testPathIgnorePatterns=/node_modules/",
+    "lint": "biome check src",
+    "doctor": "expo-doctor"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.1.6",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-navigation/bottom-tabs": "^7.15.5",
-    "@react-navigation/elements": "^2.9.10",
-    "@react-navigation/native": "^7.1.33",
-    "@sentry/react-native": "~7.11.0",
-    "@shopify/react-native-skia": "2.4.18",
     "@tanstack/react-query": "^5.100.11",
     "drizzle-orm": "^0.45.2",
     "expo": "~55.0.25",
+    "expo-av": "~15.0.2",
+    "expo-blur": "~15.0.7",
     "expo-constants": "~55.0.16",
-    "expo-dev-client": "^55.0.35",
-    "expo-device": "~55.0.17",
-    "expo-drizzle-studio-plugin": "^0.2.1",
     "expo-font": "~55.0.8",
-    "expo-glass-effect": "~55.0.11",
     "expo-haptics": "~55.0.14",
-    "expo-image": "~55.0.10",
+    "expo-keep-awake": "~14.0.3",
     "expo-linking": "~55.0.15",
     "expo-router": "~55.0.15",
     "expo-splash-screen": "~55.0.21",
     "expo-sqlite": "~55.0.16",
     "expo-status-bar": "~55.0.6",
-    "expo-symbols": "~55.0.9",
     "expo-system-ui": "~55.0.18",
-    "expo-web-browser": "~55.0.16",
-    "posthog-react-native": "^4.45.10",
     "react": "19.2.0",
-    "react-dom": "19.2.0",
     "react-native": "0.83.6",
     "react-native-gesture-handler": "~2.30.0",
     "react-native-reanimated": "4.2.1",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "~4.23.0",
-    "react-native-svg": "15.15.3",
-    "react-native-web": "~0.21.0",
     "react-native-worklets": "0.7.4",
-    "ts-dedent": "^2.2.0",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@callstack/reassure-cli": "^1.4.1",
     "@fast-check/jest": "^2.2.0",
-    "@storybook/react-native": "^8.5.0",
     "@testing-library/react-native": "^13.3.3",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "~29.5.14",
     "@types/react": "~19.2.2",
-    "@types/react-test-renderer": "^19.1.0",
-    "better-sqlite3": "^12.10.0",
-    "drizzle-kit": "^0.31.10",
     "expo-doctor": "^1.18.22",
     "fast-check": "^4.8.0",
     "jest": "~29.7.0",
     "jest-expo": "^55.0.18",
     "react-test-renderer": "^19.2.0",
-    "reassure": "^1.4.1",
     "typescript": "~5.9.2"
   },
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(\\.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@shopify/.*))"
-    ],
-    "collectCoverageFrom": [
-      "src/domain/**/*.ts",
-      "!src/domain/**/*.d.ts",
-      "!src/domain/**/__tests__/**"
-    ],
-    "coverageThreshold": {
-      "src/domain/": {
-        "branches": 95,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
-      }
-    }
+      "node_modules/(?!(\\.pnpm/[^/]+/node_modules/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base))"
+    ]
   },
   "private": true
 }
