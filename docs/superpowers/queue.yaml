@@ -555,7 +555,7 @@ tasks:
     title: Settings parity — Units/Migration/Reset/Cycle/Progression/PlateSet/About/Danger
     phase: 7
     depends_on: [PE-10-storage-vs-display-unit, PB-13-primitive-sheet, PD-03-accessor-settings, PD-04-accessor-training-max]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
     behavioral_reference: ~/Development/531-pwa/src/features/settings/SettingsScreen.tsx
     done_when:
