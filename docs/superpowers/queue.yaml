@@ -378,7 +378,7 @@ tasks:
     title: (tabs)/_layout.tsx with custom bottom nav (matches PWA)
     phase: 5
     depends_on: [PB-04-primitive-box-text, PB-05-primitive-button-pill]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/app/layout/BottomNav.tsx
     done_when:
