@@ -460,7 +460,7 @@ tasks:
     title: Settings screen + TmEditSheet
     phase: 5
     depends_on: [PD-04-accessor-training-max, PD-03-accessor-settings, PB-13-primitive-sheet, PB-10-primitive-number-stepper]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/settings
     done_when:
