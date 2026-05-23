@@ -3,11 +3,14 @@ import { db, expoDb } from '@/data/drizzle/client';
 import { runMigrations } from '@/data/drizzle/runMigrations';
 import { useAppFonts } from '@/design/fonts';
 import { ThemeProvider } from '@/design/theme';
+import { colors } from '@/design/tokens';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * Single QueryClient for the app's lifetime. Created at module scope so we
@@ -22,6 +25,23 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+/**
+ * Pushes the rendered slot below the status bar / notch with a paper-colored
+ * top stripe of `insets.top` height. The status bar itself is set to `dark`
+ * (ink glyphs on the paper bg), so the stripe + glyphs blend into one strip.
+ *
+ * Per-screen bottom safe-area is handled by CtaBar / the tab bar, not here —
+ * forcing a global paddingBottom would fight those components.
+ */
+function SafeTopFrame() {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.bg0 }}>
+      <Slot />
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const { fontsLoaded, fontError } = useAppFonts();
@@ -45,15 +65,17 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <DbProvider db={db}>
-        <ThemeProvider>
-          <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0B0C0E' }}>
-            <StatusBar style="dark" />
-            <Slot />
-          </GestureHandlerRootView>
-        </ThemeProvider>
-      </DbProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <DbProvider db={db}>
+          <ThemeProvider>
+            <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg0 }}>
+              <StatusBar style="dark" />
+              <SafeTopFrame />
+            </GestureHandlerRootView>
+          </ThemeProvider>
+        </DbProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }

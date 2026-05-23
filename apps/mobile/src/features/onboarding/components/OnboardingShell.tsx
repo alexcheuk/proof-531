@@ -16,7 +16,6 @@ import { useTheme } from '@/design/theme';
  */
 import type { ReactNode } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface OnboardingShellProps {
   /** When provided, header shows a back-arrow button. When omitted, shows the wordmark. */
@@ -40,12 +39,12 @@ export function OnboardingShell({
   footer,
 }: OnboardingShellProps) {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
 
+  // Top safe-area inset is applied globally by the root layout's SafeTopFrame;
+  // don't double-pad here.
   const containerStyle: ViewStyle = {
     flex: 1,
     backgroundColor: colors.bg0,
-    paddingTop: insets.top,
   };
 
   const contentStyle: ViewStyle = {

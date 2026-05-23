@@ -14,7 +14,6 @@ import { useTheme } from '@/design/theme';
  */
 import type { ReactNode } from 'react';
 import { View, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type SessionLayoutProps = {
   children?: ReactNode;
@@ -23,12 +22,11 @@ export type SessionLayoutProps = {
 
 export function SessionLayout({ children, testID }: SessionLayoutProps) {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
-
+  // Top safe-area inset is applied globally by the root layout's SafeTopFrame;
+  // don't double-pad here.
   const rootStyle: ViewStyle = {
     flex: 1,
     backgroundColor: colors.bg0,
-    paddingTop: insets.top,
   };
 
   return (
