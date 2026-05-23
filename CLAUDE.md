@@ -5,32 +5,29 @@
 ## What this repo is
 
 A production scaffold for **531 Strength** — a 5/3/1 + BBB training tracker for iOS and Android.
-The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superpowers/specs/2026-05-19-expo-scaffold-design.md`.
+The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md`.
 
 ## Stack
 
-- Expo SDK 55, React Native 0.81+ (New Architecture on), Dev Client workflow
+- Expo SDK 55, React Native 0.83+ (New Architecture on), **Expo Go workflow** (no custom dev client)
 - TypeScript strict, Biome, pnpm workspaces, Node 22
-- expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query, Zustand
-- Reanimated 4, react-native-skia, expo-haptics, expo-blur
-- Sentry, PostHog (opt-in)
-- Jest + RTL, Maestro, Storybook 8 for RN, Reassure
+- expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query, Zustand (only when earned)
+- React Native Reanimated 4, expo-haptics, expo-blur, expo-av, expo-keep-awake
+- `@gorhom/bottom-sheet` v5 for sheets; IBM Plex Sans/Mono/Sans-Condensed via expo-font
+- Jest + @testing-library/react-native + fast-check (domain property tests)
+- No Sentry, no PostHog, no Skia, no Storybook, no Maestro, no Reassure (all deferred until dev-client build)
 
 ## Layout
 
 ```
 apps/mobile/
   src/
-    app/                # expo-router routes (thin shells) — Expo SDK 55 src/app layout
-    design/             # tokens, theme, primitives, plates, icons, motion
-    domain/             # pure business logic — NO React, NO async, NO DB
-    data/               # Drizzle, repos, query hooks
-    features/           # screen composition
-    ui-state/           # Zustand
-    lib/                # haptics/sentry/posthog init
-    components/         # Expo template leftovers (themed-text, app-tabs, etc.)
-    hooks/              # Expo template leftovers
-    constants/          # Expo template leftovers
+    app/                # expo-router routes (thin shells)
+    design/             # tokens, theme, primitives (ONLY place hex/px lives)
+    domain/             # pure 5/3/1 math — NO React, NO async, NO DB
+    data/               # Drizzle, accessors, TanStack Query hooks
+    features/           # screen composition (no barrels here)
+    lib/                # haptics, time helpers
 ```
 
 ## Boundary rules (enforced by reviewer)
@@ -44,15 +41,15 @@ apps/mobile/
 
 ## Design reference
 
-`design-reference/` is the **behavioral source of truth** for visuals and interactions. When porting a screen or component, read the matching `design-reference/*.jsx` file and port faithfully — do not reinvent.
+`~/Development/531-pwa` is the **behavioral source of truth** for visuals, interactions, and screen flow. When porting a screen or component, open the matching file under `~/Development/531-pwa/src/` and port faithfully — do not reinvent.
 
-`design-reference/` is **never modified** by orchestrator-run tasks.
+The PWA repo is **never modified** by orchestrator-run tasks. Treat it as read-only reference.
 
 ## Dev commands
 
 ```bash
 pnpm install                                    # workspace install
-pnpm --filter @proof-531/mobile start           # boot dev client
+pnpm --filter @proof-531/mobile start           # boot Expo Go (scan QR with Expo Go app)
 pnpm typecheck                                  # tsc --noEmit across workspace
 pnpm lint                                       # biome
 pnpm test                                       # jest
@@ -83,7 +80,7 @@ Exit 0 ⇒ Metro resolved every import.
 - **pnpm 9.15+** (auto-installed via Corepack: `corepack enable && corepack prepare pnpm@latest --activate`)
 - **bash 4+** for the orchestrator scripts (`mapfile`, `declare -A`). macOS ships bash 3.2 — install via `brew install bash`.
 - **yq v4** (mikefarah/yq) for queue scripts: `brew install yq` on macOS, or download from https://github.com/mikefarah/yq/releases on Linux/CI.
-- **Xcode 26+** for iOS native builds (current spec target SDK 55). JS-only dev works without it.
+- **Expo Go** installed on a physical device, or iOS Simulator / Android Emulator if doing JS-only work.
 
 ## How work happens
 
@@ -91,7 +88,7 @@ You will be invoked via `/initial-implement` (and its flags `--batch`, `--max-ta
 
 See `.claude/skills/initial-implement/SKILL.md` for the orchestrator's full behavior. See `.claude/skills/initial-implement/queue-format.md` for the task schema.
 
-Forbidden paths (never edit, regardless of plan): `design-reference/`, `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
+Forbidden paths (never edit, regardless of plan): `~/Development/531-pwa/` (read-only reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
 
 ## Test discipline
 
