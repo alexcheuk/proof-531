@@ -45,3 +45,37 @@ export type SetLog = {
   isPR?: boolean;
   estimated1RM?: number;
 };
+
+/**
+ * The singleton settings row. Mirrors the PWA's `Settings` interface verbatim
+ * (see `~/Development/531-pwa/src/db/schema.ts`).
+ *
+ * Persisted by the `settings` Drizzle table (id = 1, always). `enabledLifts`
+ * is stored as a JSON-encoded TEXT column at the data layer; this shape is
+ * the in-memory representation accessors expose to the rest of the app.
+ */
+export interface Settings {
+  id: 1;
+  storageUnit: Unit;
+  displayUnit: Unit;
+  plateSet: PlateSet;
+  enabledLifts: Lift[];
+  currentCycle: number;
+  week: Week;
+  day: Day;
+}
+
+/**
+ * Defaults inserted into the `settings` row on first boot — mirrors the PWA's
+ * `DEFAULT_SETTINGS` constant (see `~/Development/531-pwa/src/db/schema.ts`).
+ * Excludes `id` since the row is always keyed at `id = 1`.
+ */
+export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
+  storageUnit: 'lbs',
+  displayUnit: 'lbs',
+  plateSet: 'standard',
+  enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+  currentCycle: 1,
+  week: 1,
+  day: 1,
+};
