@@ -19,12 +19,16 @@ import type { ReactElement } from 'react';
 
 const mockRefetch = jest.fn(() => Promise.resolve({ data: [] as Session[] }));
 let mockSessions: Session[] = [];
+let mockIsLoading = false;
+let mockIsError = false;
+let mockError: unknown = null;
 
 jest.mock('@/data/queries/useSessions', () => ({
   useSessions: () => ({
     data: mockSessions,
-    isLoading: false,
-    error: null,
+    isLoading: mockIsLoading,
+    isError: mockIsError,
+    error: mockError,
     refetch: mockRefetch,
   }),
 }));
@@ -54,6 +58,23 @@ describe('HistoryScreen', () => {
   beforeEach(() => {
     mockRefetch.mockClear();
     mockSessions = [];
+    mockIsLoading = false;
+    mockIsError = false;
+    mockError = null;
+  });
+
+  it('renders the LOADING… caps line while the sessions query is loading', () => {
+    mockIsLoading = true;
+    const screen = renderScreen(<HistoryScreen />);
+    expect(screen.getByText('LOADING…')).toBeTruthy();
+  });
+
+  it("renders the COULDN'T LOAD caps line + message when the sessions query errors", () => {
+    mockIsError = true;
+    mockError = new Error('db offline');
+    const screen = renderScreen(<HistoryScreen />);
+    expect(screen.getByText("COULDN'T LOAD")).toBeTruthy();
+    expect(screen.getByText('db offline')).toBeTruthy();
   });
 
   it('renders empty-state caps line when no sessions exist', () => {

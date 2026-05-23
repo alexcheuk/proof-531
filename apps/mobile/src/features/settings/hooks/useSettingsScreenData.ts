@@ -16,6 +16,9 @@ export interface SettingsScreenData {
   settings: Settings | undefined;
   tmsByLift: Partial<Record<Lift, TrainingMax>> | undefined;
   isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  refetch: () => Promise<unknown>;
 }
 
 export function useSettingsScreenData(): SettingsScreenData {
@@ -35,5 +38,8 @@ export function useSettingsScreenData(): SettingsScreenData {
     settings: settingsQuery.data,
     tmsByLift,
     isLoading: settingsQuery.isLoading || tmsQuery.isLoading,
+    isError: settingsQuery.isError || tmsQuery.isError,
+    error: settingsQuery.error ?? tmsQuery.error,
+    refetch: () => Promise.all([settingsQuery.refetch(), tmsQuery.refetch()]),
   };
 }

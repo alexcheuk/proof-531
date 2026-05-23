@@ -6,6 +6,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { dateLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
+import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 /**
  * Home screen — composes Masthead + CycleStrip + LiftTabs + LiftPage.
  *
@@ -43,8 +44,13 @@ export function HomeScreen() {
     }
   }, [settings.data, router]);
 
-  if (settings.isLoading || tms.isLoading) {
-    return null;
+  const combined = combineQueries(settings, tms, prs);
+  if (combined.isLoading || combined.isError) {
+    return (
+      <Container>
+        <QueryShell query={combined}>{null}</QueryShell>
+      </Container>
+    );
   }
   if (!settings.data || enabledLifts.length === 0) {
     return null;

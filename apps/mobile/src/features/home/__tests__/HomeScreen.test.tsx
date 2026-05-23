@@ -41,38 +41,91 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 
+type MockQueryState = {
+  data?: unknown;
+  isLoading?: boolean;
+  isError?: boolean;
+  error?: unknown;
+  refetch?: jest.Mock;
+};
+
+const mockSettingsState: MockQueryState = {
+  data: {
+    id: 1,
+    storageUnit: 'lbs',
+    displayUnit: 'lbs',
+    plateSet: 'standard',
+    enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+    currentCycle: 2,
+    week: 1,
+    day: 1,
+  },
+  isLoading: false,
+  isError: false,
+  error: null,
+  refetch: jest.fn(),
+};
+
+const mockTmsState: MockQueryState = {
+  data: [
+    { id: 1, lift: 'squat', value: 315, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 2, lift: 'bench', value: 245, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 3, lift: 'deadlift', value: 405, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 4, lift: 'press', value: 155, unit: 'lbs', updatedAt: 1, note: null },
+  ],
+  isLoading: false,
+  isError: false,
+  error: null,
+  refetch: jest.fn(),
+};
+
+const mockPrsState: MockQueryState = {
+  data: [],
+  isLoading: false,
+  isError: false,
+  error: null,
+  refetch: jest.fn(),
+};
+
+function resetMockState() {
+  mockSettingsState.data = {
+    id: 1,
+    storageUnit: 'lbs',
+    displayUnit: 'lbs',
+    plateSet: 'standard',
+    enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+    currentCycle: 2,
+    week: 1,
+    day: 1,
+  };
+  mockSettingsState.isLoading = false;
+  mockSettingsState.isError = false;
+  mockSettingsState.error = null;
+  mockTmsState.data = [
+    { id: 1, lift: 'squat', value: 315, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 2, lift: 'bench', value: 245, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 3, lift: 'deadlift', value: 405, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 4, lift: 'press', value: 155, unit: 'lbs', updatedAt: 1, note: null },
+  ];
+  mockTmsState.isLoading = false;
+  mockTmsState.isError = false;
+  mockTmsState.error = null;
+  mockPrsState.data = [];
+  mockPrsState.isLoading = false;
+  mockPrsState.isError = false;
+  mockPrsState.error = null;
+}
+
 jest.mock('@/data/queries/useSettings', () => ({
-  useSettings: () => ({
-    data: {
-      id: 1,
-      storageUnit: 'lbs',
-      displayUnit: 'lbs',
-      plateSet: 'standard',
-      enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
-      currentCycle: 2,
-      week: 1,
-      day: 1,
-    },
-    isLoading: false,
-    error: null,
-  }),
+  useSettings: () => mockSettingsState,
 }));
 
 jest.mock('@/data/queries/useLatestTm', () => ({
-  useLatestTms: () => ({
-    data: [
-      { id: 1, lift: 'squat', value: 315, unit: 'lbs', updatedAt: 1, note: null },
-      { id: 2, lift: 'bench', value: 245, unit: 'lbs', updatedAt: 1, note: null },
-      { id: 3, lift: 'deadlift', value: 405, unit: 'lbs', updatedAt: 1, note: null },
-      { id: 4, lift: 'press', value: 155, unit: 'lbs', updatedAt: 1, note: null },
-    ],
-    isLoading: false,
-    error: null,
-  }),
+  useLatestTms: () => mockTmsState,
 }));
 
 jest.mock('@/data/queries/usePrs', () => ({
-  usePrs: () => ({ data: [], isLoading: false, error: null }),
+  usePrs: () => mockPrsState,
 }));
 
 // Import after mocks.
@@ -89,6 +142,24 @@ const childText = (node: unknown): string => {
 };
 
 describe('HomeScreen', () => {
+  beforeEach(() => {
+    resetMockState();
+  });
+
+  it('renders the LOADING… caps line while any query is loading', () => {
+    mockSettingsState.isLoading = true;
+    const screen = renderScreen(<HomeScreen />);
+    expect(screen.getByText('LOADING…')).toBeTruthy();
+  });
+
+  it("renders the COULDN'T LOAD caps line + message when a query errors", () => {
+    mockTmsState.isError = true;
+    mockTmsState.error = new Error('boom');
+    const screen = renderScreen(<HomeScreen />);
+    expect(screen.getByText("COULDN'T LOAD")).toBeTruthy();
+    expect(screen.getByText('boom')).toBeTruthy();
+  });
+
   it('initially renders the first enabled lift (squat) with its TM', () => {
     const screen = renderScreen(<HomeScreen />);
 

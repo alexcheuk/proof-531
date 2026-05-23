@@ -19,6 +19,7 @@ import { Masthead } from '@/design/primitives/Masthead';
 import { Text } from '@/design/primitives/Text';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
+import { QueryShell } from '@/features/shared/QueryShell';
 import { useCallback, useState } from 'react';
 import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionListRow } from './components/SessionListRow';
@@ -43,6 +44,27 @@ export function HistoryScreen() {
   };
 
   const rows = sessions.data ?? [];
+
+  if (sessions.isLoading || sessions.isError) {
+    return (
+      <View style={containerStyle} testID="history-screen">
+        <Masthead
+          rightSlot={
+            <Text
+              variant="mono"
+              weight="medium"
+              size={10}
+              color="ink2"
+              style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
+            >
+              history
+            </Text>
+          }
+        />
+        <QueryShell query={sessions}>{null}</QueryShell>
+      </View>
+    );
+  }
 
   return (
     <View style={containerStyle} testID="history-screen">

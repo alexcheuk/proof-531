@@ -20,6 +20,7 @@ import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import type { Lift, PlateSet, Settings, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
+import { QueryShell } from '@/features/shared/QueryShell';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Text as RNText, ScrollView, type TextStyle, View, type ViewStyle } from 'react-native';
@@ -31,7 +32,8 @@ import { type PlateSetUi, schemaToUiPlateSet, uiToSchemaPlateSet } from './plate
 
 export function SettingsScreen() {
   const { colors, type } = useTheme();
-  const { settings, tmsByLift } = useSettingsScreenData();
+  const screenData = useSettingsScreenData();
+  const { settings, tmsByLift, isLoading, isError, error, refetch } = screenData;
   const [editingLift, setEditingLift] = useState<Lift | null>(null);
 
   const containerStyle: ViewStyle = {
@@ -46,6 +48,15 @@ export function SettingsScreen() {
     textTransform: 'uppercase',
     color: colors.ink2,
   };
+
+  if (isLoading || isError) {
+    return (
+      <View style={containerStyle} testID="settings-loading">
+        <Masthead rightSlot={<RNText style={settingsCapsStyle}>settings</RNText>} />
+        <QueryShell query={{ isLoading, isError, error, refetch }}>{null}</QueryShell>
+      </View>
+    );
+  }
 
   if (!settings) {
     return <View style={containerStyle} testID="settings-loading" />;
