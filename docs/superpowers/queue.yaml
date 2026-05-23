@@ -509,7 +509,7 @@ tasks:
     title: CI green + Metro export smoke
     phase: 6
     depends_on: [PF-01-first-launch, PF-02-empty-loading-error]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#7--testing-strategy
     done_when:
       - "pnpm run ci passes (typecheck + lint + test)"
