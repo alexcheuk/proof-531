@@ -11,13 +11,15 @@ import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useQueryClient } from '@tanstack/react-query';
 /**
- * Home screen — composes Masthead + LiftTabs + LiftPage.
+ * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
+ * `LiftPage`s, one page per enabled lift.
  *
- * Ported from `~/Development/531-pwa/src/features/home/HomeScreen.tsx`.
- * The PWA carousel is collapsed to a single page keyed on the selected
- * lift; layout swaps animate via Reanimated `LinearTransition` (see
- * `LiftPage`). The CycleStrip lives inside LiftPage (matching the PWA
- * structure post-PE-09); HomeScreen no longer renders it directly.
+ * Ported from `~/Development/531-pwa/src/features/home/HomeScreen.tsx`. The
+ * PWA uses a CSS-snap horizontal scroll container; the RN port uses a
+ * `pagingEnabled` horizontal `FlatList` keyed on the lift, with
+ * `onMomentumScrollEnd` driving `setSelectedLift` and a `scrollToIndex`
+ * effect that re-syncs when the selected lift changes externally (e.g. via
+ * a LiftTab tap).
  *
  * Boundary: this file lives under `features/` and composes design
  * primitives + data queries — it never imports drizzle hex directly.
@@ -27,8 +29,16 @@ import { useQueryClient } from '@tanstack/react-query';
  */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  Dimensions,
+  FlatList,
+  type ListRenderItem,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
@@ -41,9 +51,15 @@ export function HomeScreen() {
   const db = useDb();
   const queryClient = useQueryClient();
 
-  const enabledLifts = settings.data?.enabledLifts ?? [];
+  const enabledLifts = useMemo<Lift[]>(
+    () => settings.data?.enabledLifts ?? [],
+    [settings.data?.enabledLifts],
+  );
   const firstLift: Lift = enabledLifts[0] ?? 'squat';
   const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(firstLift);
+
+  const listRef = useRef<FlatList<Lift>>(null);
+  const screenWidth = Dimensions.get('window').width;
 
   // If onboarding has not produced an enabled-lifts set, redirect.
   useEffect(() => {
@@ -51,6 +67,113 @@ export function HomeScreen() {
       router.replace('/onboarding');
     }
   }, [settings.data, router]);
+
+  // Sync the carousel position when selectedLift changes externally
+  // (e.g. via tab tap or settings edit). Guarded against out-of-range.
+  useEffect(() => {
+    const idx = enabledLifts.indexOf(selectedLift);
+    if (idx >= 0 && listRef.current) {
+      // Defer to next tick so initial mount has a layout to scroll within.
+      // `scrollToIndex` is a no-op if the list isn't rendered yet, but on
+      // Expo SDK 55 a microtask is enough for the initial layout pass.
+      try {
+        listRef.current.scrollToIndex({ index: idx, animated: true });
+      } catch {
+        // scrollToIndex can throw before initial layout; ignore.
+      }
+    }
+  }, [selectedLift, enabledLifts]);
+
+  const onMomentumScrollEnd = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const idx = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
+      const lift = enabledLifts[idx];
+      if (lift && lift !== selectedLift) {
+        setSelectedLift(lift);
+      }
+    },
+    [enabledLifts, selectedLift, screenWidth, setSelectedLift],
+  );
+
+  const handleBegin = useCallback(
+    async (lift: Lift) => {
+      // Single-session invariant (§4): if another lift is mid-session, do not
+      // start a second one. Navigate to that lift instead.
+      if (inProgressLift && inProgressLift !== lift) {
+        // typedRoutes is disabled (PF-05); cast the params object.
+        router.push({
+          pathname: '/session/today',
+          params: { lift: inProgressLift },
+        } as never);
+        return;
+      }
+      try {
+        await createSession(db, lift);
+        await queryClient.invalidateQueries({ queryKey: ['activeSession'] });
+        await queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      } catch (err) {
+        console.error('HomeScreen.handleBegin createSession failed', err);
+      }
+      router.push({ pathname: '/session/today', params: { lift } } as never);
+    },
+    [db, inProgressLift, queryClient, router],
+  );
+
+  const handleResume = useCallback(
+    (lift: Lift) => {
+      router.push({ pathname: '/session/today', params: { lift } } as never);
+    },
+    [router],
+  );
+
+  const handleOpenPlan = useCallback(
+    (lift: Lift) => {
+      router.push({ pathname: '/session/today', params: { lift } } as never);
+    },
+    [router],
+  );
+
+  const settingsData = settings.data;
+  const tmsData = tms.data;
+  const prsData = prs.data;
+
+  const renderItem = useCallback<ListRenderItem<Lift>>(
+    ({ item: lift }) => {
+      if (!settingsData) return null;
+      const tmRow = tmsData?.find((t) => t.lift === lift);
+      const pr = prsData?.find((p) => p.lift === lift);
+      const storageUnit = tmRow?.unit ?? settingsData.storageUnit;
+      const displayUnit = settingsData.displayUnit ?? settingsData.storageUnit;
+      return (
+        <View style={{ width: screenWidth }}>
+          <LiftPage
+            lift={lift}
+            week={settingsData.week}
+            cycle={settingsData.currentCycle}
+            storageUnit={storageUnit}
+            displayUnit={displayUnit}
+            plateSet={settingsData.plateSet}
+            tm={tmRow?.value ?? null}
+            bestE1RM={pr?.bestE1RM ?? null}
+            isInProgress={lift === inProgressLift}
+            onBegin={() => handleBegin(lift)}
+            onResume={() => handleResume(lift)}
+            onOpenPlan={() => handleOpenPlan(lift)}
+          />
+        </View>
+      );
+    },
+    [
+      settingsData,
+      tmsData,
+      prsData,
+      inProgressLift,
+      screenWidth,
+      handleBegin,
+      handleResume,
+      handleOpenPlan,
+    ],
+  );
 
   const combined = combineQueries(settings, tms, prs);
   if (combined.isLoading || combined.isError) {
@@ -67,38 +190,7 @@ export function HomeScreen() {
   // If the selected lift is no longer enabled (e.g. settings edit), snap
   // back to the first enabled lift.
   const selectedToRender = enabledLifts.includes(selectedLift) ? selectedLift : firstLift;
-
-  const tmRow = tms.data?.find((t) => t.lift === selectedToRender);
-  const pr = prs.data?.find((p) => p.lift === selectedToRender);
-
-  const storageUnit = tmRow?.unit ?? settings.data.storageUnit;
-  const displayUnit = settings.data.displayUnit ?? settings.data.storageUnit;
-
-  const handleBegin = async (lift: Lift) => {
-    // Single-session invariant (§4): if another lift is mid-session, do not
-    // start a second one. Navigate to that lift instead.
-    if (inProgressLift && inProgressLift !== lift) {
-      // typedRoutes is disabled (PF-05); cast the params object.
-      router.push({ pathname: '/session/today', params: { lift: inProgressLift } } as never);
-      return;
-    }
-    try {
-      await createSession(db, lift);
-      await queryClient.invalidateQueries({ queryKey: ['activeSession'] });
-      await queryClient.invalidateQueries({ queryKey: ['sessions'] });
-    } catch (err) {
-      console.error('HomeScreen.handleBegin createSession failed', err);
-    }
-    router.push({ pathname: '/session/today', params: { lift } } as never);
-  };
-
-  const handleResume = (lift: Lift) => {
-    router.push({ pathname: '/session/today', params: { lift } } as never);
-  };
-
-  const handleOpenPlan = (lift: Lift) => {
-    router.push({ pathname: '/session/today', params: { lift } } as never);
-  };
+  const initialIdx = Math.max(0, enabledLifts.indexOf(selectedToRender));
 
   return (
     <Container>
@@ -109,19 +201,24 @@ export function HomeScreen() {
         inProgressLift={inProgressLift}
         onSelect={setSelectedLift}
       />
-      <LiftPage
-        lift={selectedToRender}
-        week={settings.data.week}
-        cycle={settings.data.currentCycle}
-        storageUnit={storageUnit}
-        displayUnit={displayUnit}
-        plateSet={settings.data.plateSet}
-        tm={tmRow?.value ?? null}
-        bestE1RM={pr?.bestE1RM ?? null}
-        isInProgress={selectedToRender === inProgressLift}
-        onBegin={() => handleBegin(selectedToRender)}
-        onResume={() => handleResume(selectedToRender)}
-        onOpenPlan={() => handleOpenPlan(selectedToRender)}
+      <FlatList
+        ref={listRef}
+        testID="home-lift-carousel"
+        data={enabledLifts}
+        keyExtractor={(l) => l}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        getItemLayout={(_, i) => ({
+          length: screenWidth,
+          offset: screenWidth * i,
+          index: i,
+        })}
+        initialScrollIndex={initialIdx}
+        initialNumToRender={enabledLifts.length}
+        windowSize={enabledLifts.length || 1}
       />
     </Container>
   );

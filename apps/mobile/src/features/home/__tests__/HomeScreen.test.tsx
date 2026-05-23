@@ -212,25 +212,50 @@ describe('HomeScreen', () => {
   it('initially renders the first enabled lift (squat) with its TM', () => {
     const screen = renderScreen(<HomeScreen />);
 
-    expect(screen.getByTestId('lift-page-squat')).toBeTruthy();
-
-    const tmCell = screen.getByTestId('lift-stats-cell-0');
-    // The cell's body has the caps label + value; we check the value
-    // text contains "315".
+    // The carousel mounts every enabled lift page at once; assert the
+    // squat page's own LiftStats TM cell value.
+    const squatPage = screen.getByTestId('lift-page-squat');
+    const tmCell = within(squatPage).getByTestId('lift-stats-cell-0');
     const valueText = within(tmCell).getByText(/315/);
     expect(childText(valueText)).toBe('315 lb');
+
+    // Squat tab is selected initially.
+    expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(true);
   });
 
-  it('updates the LiftStats TM when a different lift tab is pressed', () => {
+  it('updates LiftTabs selection when a different lift tab is pressed', () => {
     const screen = renderScreen(<HomeScreen />);
 
     // Bench tab — second entry in enabledLifts.
     fireEvent.press(screen.getByTestId('lift-tab-bench'));
 
-    expect(screen.getByTestId('lift-page-bench')).toBeTruthy();
-    const tmCell = screen.getByTestId('lift-stats-cell-0');
+    expect(screen.getByTestId('lift-tab-bench').props.accessibilityState.selected).toBe(true);
+    // Bench page is mounted in the carousel with its own TM value.
+    const benchPage = screen.getByTestId('lift-page-bench');
+    const tmCell = within(benchPage).getByTestId('lift-stats-cell-0');
     const valueText = within(tmCell).getByText(/245/);
     expect(childText(valueText)).toBe('245 lb');
+  });
+
+  it('updates selectedLift when the carousel swipes (onMomentumScrollEnd)', () => {
+    const screen = renderScreen(<HomeScreen />);
+
+    // Squat starts selected.
+    expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(true);
+
+    // Simulate a swipe to the second page. jest-expo's Dimensions returns
+    // a 750px window — pageWidth = 750 → contentOffset.x = 750 for idx 1.
+    const carousel = screen.getByTestId('home-lift-carousel');
+    fireEvent(carousel, 'momentumScrollEnd', {
+      nativeEvent: {
+        contentOffset: { x: 750, y: 0 },
+        contentSize: { width: 3000, height: 600 },
+        layoutMeasurement: { width: 750, height: 600 },
+      },
+    });
+
+    expect(screen.getByTestId('lift-tab-bench').props.accessibilityState.selected).toBe(true);
+    expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(false);
   });
 
   it('cross-lift Begin redirects to the in-progress lift and skips createSession', async () => {
