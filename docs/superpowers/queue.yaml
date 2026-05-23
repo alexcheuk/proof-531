@@ -500,7 +500,7 @@ tasks:
     title: Manual screenshot-pair audit (RN vs PWA)
     phase: 6
     depends_on: [PE-02-onboarding, PE-03-home, PE-05-session-live, PE-06-session-complete, PE-07-history, PE-08-settings]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#7--testing-strategy
     done_when:
       - "For each feature PR, the description contains a screenshot pair (PWA + RN) confirming pixel-faithful port"
