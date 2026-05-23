@@ -16,6 +16,7 @@ import type { Lift } from '@/domain/types';
  * in the flow (the SegRail on Intro is the single seed point).
  */
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useState } from 'react';
 import { useOnboardingState } from './hooks/useOnboardingState';
 import { Intro } from './steps/Intro';
@@ -69,23 +70,29 @@ export function OnboardingScreen() {
 
   if (state.step === 1) {
     return (
-      <Intro
-        onNext={() => dispatch({ type: 'NEXT' })}
-        unit={state.unit}
-        onUnitChange={(next) => dispatch({ type: 'SET_UNIT', unit: next })}
-      />
+      <>
+        <StatusBar style="dark" />
+        <Intro
+          onNext={() => dispatch({ type: 'NEXT' })}
+          unit={state.unit}
+          onUnitChange={(next) => dispatch({ type: 'SET_UNIT', unit: next })}
+        />
+      </>
     );
   }
 
   if (state.step === 2) {
     return (
-      <PickLifts
-        enabled={state.enabledLifts}
-        unit={state.unit}
-        onToggle={(lift) => dispatch({ type: 'TOGGLE_LIFT', lift })}
-        onBack={() => dispatch({ type: 'BACK' })}
-        onNext={() => dispatch({ type: 'NEXT' })}
-      />
+      <>
+        <StatusBar style="dark" />
+        <PickLifts
+          enabled={state.enabledLifts}
+          unit={state.unit}
+          onToggle={(lift) => dispatch({ type: 'TOGGLE_LIFT', lift })}
+          onBack={() => dispatch({ type: 'BACK' })}
+          onNext={() => dispatch({ type: 'NEXT' })}
+        />
+      </>
     );
   }
 
@@ -95,39 +102,48 @@ export function OnboardingScreen() {
       // Defensive: enabledLifts can never be empty here (reducer invariants).
       // If cursor is out of range, bounce back to step 2.
       return (
-        <PickLifts
-          enabled={state.enabledLifts}
-          unit={state.unit}
-          onToggle={(l) => dispatch({ type: 'TOGGLE_LIFT', lift: l })}
-          onBack={() => dispatch({ type: 'BACK' })}
-          onNext={() => dispatch({ type: 'NEXT' })}
-        />
+        <>
+          <StatusBar style="dark" />
+          <PickLifts
+            enabled={state.enabledLifts}
+            unit={state.unit}
+            onToggle={(l) => dispatch({ type: 'TOGGLE_LIFT', lift: l })}
+            onBack={() => dispatch({ type: 'BACK' })}
+            onNext={() => dispatch({ type: 'NEXT' })}
+          />
+        </>
       );
     }
     return (
-      <OneRmEntry
-        lift={lift}
-        step={state.cursor + 1}
-        total={state.enabledLifts.length}
-        data={state.perLift[lift]}
-        computed={computed[lift] ?? 0}
-        unit={state.unit}
-        onChange={(patch) => dispatch({ type: 'SET_LIFT_INPUT', lift, patch })}
-        onBack={() => dispatch({ type: 'BACK' })}
-        onNext={() => dispatch({ type: 'NEXT' })}
-      />
+      <>
+        <StatusBar style="dark" />
+        <OneRmEntry
+          lift={lift}
+          step={state.cursor + 1}
+          total={state.enabledLifts.length}
+          data={state.perLift[lift]}
+          computed={computed[lift] ?? 0}
+          unit={state.unit}
+          onChange={(patch) => dispatch({ type: 'SET_LIFT_INPUT', lift, patch })}
+          onBack={() => dispatch({ type: 'BACK' })}
+          onNext={() => dispatch({ type: 'NEXT' })}
+        />
+      </>
     );
   }
 
   // step === 4
   return (
-    <Review
-      enabledLifts={state.enabledLifts}
-      computed={computed}
-      unit={state.unit}
-      onBack={() => dispatch({ type: 'BACK' })}
-      onFinish={handleFinish}
-      finishing={finishing}
-    />
+    <>
+      <StatusBar style="dark" />
+      <Review
+        enabledLifts={state.enabledLifts}
+        computed={computed}
+        unit={state.unit}
+        onBack={() => dispatch({ type: 'BACK' })}
+        onFinish={handleFinish}
+        finishing={finishing}
+      />
+    </>
   );
 }

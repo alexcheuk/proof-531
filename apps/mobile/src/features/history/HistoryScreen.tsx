@@ -20,6 +20,7 @@ import { Text } from '@/design/primitives/Text';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { QueryShell } from '@/features/shared/QueryShell';
+import { StatusBar } from 'expo-status-bar';
 import { useCallback, useState } from 'react';
 import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionListRow } from './components/SessionListRow';
@@ -48,6 +49,7 @@ export function HistoryScreen() {
   if (sessions.isLoading || sessions.isError) {
     return (
       <View style={containerStyle} testID="history-screen">
+        <StatusBar style="dark" />
         <Masthead
           rightSlot={
             <Text
@@ -68,6 +70,7 @@ export function HistoryScreen() {
 
   return (
     <View style={containerStyle} testID="history-screen">
+      <StatusBar style="dark" />
       <Masthead
         rightSlot={
           <Text

@@ -20,6 +20,7 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
  * directly.
  */
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import { CycleStrip } from './components/CycleStrip';
@@ -93,7 +94,12 @@ function Container({ children }: { children: React.ReactNode }) {
     flex: 1,
     backgroundColor: colors.bg0,
   };
-  return <View style={style}>{children}</View>;
+  return (
+    <View style={style}>
+      <StatusBar style="dark" />
+      {children}
+    </View>
+  );
 }
 
 function DateBadge({ label }: { label: string }) {

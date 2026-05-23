@@ -12,6 +12,7 @@ import type { Lift, SetLog, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 /**
  * Session complete screen — the "stamped receipt" surface shown after the
  * Live screen completes (or the Today Complete pill is tapped).
@@ -80,7 +81,11 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
   if (!sessionQuery.data) {
-    return <SessionLayout />;
+    return (
+      <SessionLayout>
+        <StatusBar style="dark" />
+      </SessionLayout>
+    );
   }
 
   const session = sessionQuery.data;
@@ -152,6 +157,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
 
   return (
     <SessionLayout>
+      <StatusBar style="dark" />
       <ScrollView
         testID="session-complete-scroll"
         style={scrollStyle}

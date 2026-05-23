@@ -18,6 +18,7 @@ import type { Lift } from '@/domain/types';
  * thin wrapper that parses `:lift` from the URL.
  */
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
@@ -33,12 +34,20 @@ export function TodayScreen({ lift }: { lift: Lift }) {
 
   // Loading — blank paper canvas, no flicker.
   if (settings.isLoading || tm.isLoading) {
-    return <SessionLayout />;
+    return (
+      <SessionLayout>
+        <StatusBar style="dark" />
+      </SessionLayout>
+    );
   }
   // No TM for this lift or settings missing → blank canvas (PE-04 ships the
   // preview path; empty-state UI follows when the Live screen lands).
   if (!settings.data || !tm.data) {
-    return <SessionLayout />;
+    return (
+      <SessionLayout>
+        <StatusBar style="dark" />
+      </SessionLayout>
+    );
   }
 
   const storageUnit = tm.data.unit;
@@ -48,6 +57,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
 
   return (
     <SessionLayout>
+      <StatusBar style="dark" />
       <SessionTopBar onBack={() => router.back()} />
       <ScrollView
         style={scrollStyle}

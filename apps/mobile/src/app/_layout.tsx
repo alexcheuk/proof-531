@@ -4,6 +4,7 @@ import { runMigrations } from '@/data/drizzle/runMigrations';
 import { useAppFonts } from '@/design/fonts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -46,6 +47,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <DbProvider db={db}>
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#0B0C0E' }}>
+          <StatusBar style="dark" />
           <Slot />
         </GestureHandlerRootView>
       </DbProvider>

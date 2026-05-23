@@ -22,6 +22,7 @@ import type { Lift, PlateSet, Settings, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { QueryShell } from '@/features/shared/QueryShell';
 import { useQueryClient } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Text as RNText, ScrollView, type TextStyle, View, type ViewStyle } from 'react-native';
 import { TmEditSheet } from './components/TmEditSheet';
@@ -52,6 +53,7 @@ export function SettingsScreen() {
   if (isLoading || isError) {
     return (
       <View style={containerStyle} testID="settings-loading">
+        <StatusBar style="dark" />
         <Masthead rightSlot={<RNText style={settingsCapsStyle}>settings</RNText>} />
         <QueryShell query={{ isLoading, isError, error, refetch }}>{null}</QueryShell>
       </View>
@@ -59,7 +61,11 @@ export function SettingsScreen() {
   }
 
   if (!settings) {
-    return <View style={containerStyle} testID="settings-loading" />;
+    return (
+      <View style={containerStyle} testID="settings-loading">
+        <StatusBar style="dark" />
+      </View>
+    );
   }
 
   const storageUnit = settings.storageUnit;
@@ -67,6 +73,7 @@ export function SettingsScreen() {
 
   return (
     <View style={containerStyle}>
+      <StatusBar style="dark" />
       <Masthead rightSlot={<RNText style={settingsCapsStyle}>settings</RNText>} />
       <TitleBlock eyebrow="The dials" title="Settings." />
 

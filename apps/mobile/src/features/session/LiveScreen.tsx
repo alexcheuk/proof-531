@@ -6,6 +6,7 @@ import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 /**
  * Live screen — runs the user through three working sets with a countdown
  * rest timer between sets, an AMRAP bottom sheet for the top set, and a
@@ -70,7 +71,11 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     // Loading or unknown session — render the layout chrome so the page
     // doesn't flash white. The Today CTA is the only entry point so a
     // truly missing session is an error path that resolves by going home.
-    return <SessionLayout />;
+    return (
+      <SessionLayout>
+        <StatusBar style="dark" />
+      </SessionLayout>
+    );
   }
 
   const session = sessionQuery.data;
@@ -120,6 +125,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   return (
     <SessionLayout>
+      <StatusBar style="dark" />
       <SessionTopBar
         onBack={() => router.back()}
         backLabel="Back to plan"
