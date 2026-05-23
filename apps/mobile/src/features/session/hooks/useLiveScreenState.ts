@@ -2,6 +2,7 @@ import { useDb } from '@/data/DbProvider';
 import { cancelSession, completeSession } from '@/data/accessors/session';
 import { appendSetLog } from '@/data/accessors/setLog';
 import { useSession } from '@/data/queries/useSession';
+import { estimateOneRm } from '@/domain/epley';
 import { type WorkingSetIndex, getWorkingSetByIndex, isAmrapSet } from '@/domain/schemes';
 import { round as snapWeight } from '@/domain/units';
 /**
@@ -47,11 +48,27 @@ export type UseLiveScreenStateOptions = {
   fireWarningHaptic?: () => void;
 };
 
+/**
+ * Snapshot of the most recently logged working/AMRAP set. Captured at the
+ * moment of write so RestPhase can render the just-logged headline without
+ * re-deriving from query state (which would race the rest transition).
+ */
+export type LastLoggedSet = {
+  weight: number;
+  reps: number;
+  estimated1RM: number | undefined;
+  isAmrap: boolean;
+};
+
 export type UseLiveScreenStateResult = {
   phase: LivePhase;
   setIndex: WorkingSetIndex;
   /** Seconds remaining in the rest timer; 0 when not resting. */
   restRemaining: number;
+  /** Configured rest target in seconds — exposed so RestPhase can render context (e.g. "of 1:30"). */
+  restTarget: number;
+  /** Snapshot of the most recently logged set. Cleared between sessions; null until the first log of this session. */
+  lastLogged: LastLoggedSet | null;
   /** True if the current working set is the AMRAP top set. */
   isAmrap: boolean;
   /** Prescribed weight for the current set, snapped to the session's storage unit. */
@@ -105,6 +122,7 @@ export function useLiveScreenState(
   const [setIndex, setSetIndex] = useState<WorkingSetIndex>(0);
   const [restRemaining, setRestRemaining] = useState(0);
   const [cancelArmed, setCancelArmed] = useState(false);
+  const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
   // The phase to return to when the cancel sheet is dismissed. Captured at
   // open time so the cancel flow doesn't disturb the underlying state.
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
@@ -166,6 +184,15 @@ export function useLiveScreenState(
         prescribedReps,
         actualReps: prescribedReps,
       });
+      // Snapshot the just-logged set for RestPhase. Non-AMRAP working sets
+      // don't carry an estimated 1RM (matches the PWA's `isAmrap` gate on
+      // the RestPhase est-1RM column).
+      setLastLogged({
+        weight: prescribedWeight,
+        reps: prescribedReps,
+        estimated1RM: undefined,
+        isAmrap: false,
+      });
       // Last working set on a non-AMRAP week (deload, week 4) → complete.
       // On AMRAP weeks the terminal set is logged via onSaveAmrap.
       if (setIndex === 2) {
@@ -198,6 +225,15 @@ export function useLiveScreenState(
           prescribedWeight,
           prescribedReps,
           actualReps: reps,
+        });
+        // Snapshot the just-logged AMRAP for RestPhase (even though AMRAP
+        // is terminal, the snapshot keeps the contract consistent and lets
+        // future flows reuse it without branching).
+        setLastLogged({
+          weight: prescribedWeight,
+          reps,
+          estimated1RM: estimateOneRm(prescribedWeight, reps),
+          isAmrap: true,
         });
         // AMRAP is always terminal — go straight to complete.
         await completeSession(db, session.id);
@@ -250,6 +286,8 @@ export function useLiveScreenState(
     phase,
     setIndex,
     restRemaining,
+    restTarget: restSeconds,
+    lastLogged,
     isAmrap,
     prescribedWeight,
     prescribedReps,

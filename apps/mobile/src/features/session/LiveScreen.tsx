@@ -186,7 +186,23 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         {showRestSurface ? (
-          <RestPhase remaining={live.restRemaining} testID="rest-phase" />
+          <RestPhase
+            loggedWeight={
+              live.lastLogged
+                ? displayWeight(live.lastLogged.weight, storageUnit, unit)
+                : prescribedDisplay
+            }
+            loggedReps={live.lastLogged?.reps ?? live.prescribedReps}
+            loggedUnit={unit}
+            estimated1RM={
+              live.lastLogged?.estimated1RM !== undefined
+                ? displayWeight(live.lastLogged.estimated1RM, storageUnit, unit)
+                : undefined
+            }
+            remaining={live.restRemaining}
+            target={live.restTarget}
+            testID="rest-phase"
+          />
         ) : showSetSurface || live.phase === 'cancel-confirm' ? (
           <>
             <LiveHeader setIndex={live.setIndex} isAmrap={live.isAmrap} testID="live-header" />
