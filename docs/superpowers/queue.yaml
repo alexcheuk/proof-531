@@ -514,3 +514,93 @@ tasks:
     done_when:
       - "pnpm run ci passes (typecheck + lint + test)"
       - "pnpm --filter @proof-531/mobile exec expo export --platform ios --output-dir /tmp/x --dump-sourcemap=false --dump-assetmap=false exits 0"
+  # ──────── Phase G — PWA catch-up (post-6783d63) ────────
+  - id: PE-09-home-begin-cta
+    title: Home Begin/Resume CTA + CycleStrip + active session hook
+    phase: 7
+    depends_on: [PE-03-home, PD-05-accessor-session]
+    status: in_progress
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
+    behavioral_reference: ~/Development/531-pwa/src/features/home/components/LiftPage.tsx
+    done_when:
+      - "LiftPage renders PrimaryPillButton 'Begin session' (→) / 'Resume session' (↩) gated by isInProgress"
+      - "LiftPage renders secondary 'SEE FULL SESSION →' button below the primary CTA"
+      - "LiftPage renders 4-cell CycleStrip (D1 5·5·5+ / D2 3·3·3+ / D3 5·3·1+ / D4 Deload) with active week inverted"
+      - "LiftPage renders in-progress eyebrow with ink dot when a session is active for that lift"
+      - "data/accessors/session.ts exports getActiveSession(db); data/queries/useActiveSession.ts wraps it"
+      - "Begin tap calls createSession(db, lift) then router.push('/session/today?lift=…')"
+      - "Begin tap with a different lift already in progress routes to the in-progress lift instead (no createSession)"
+      - "Jest test covers Begin / Resume / cross-lift-redirect paths"
+    notes: |
+      The current LiftPage at apps/mobile/src/features/home/components/LiftPage.tsx has no CTA — this is the
+      root cause of "I can't start a workout." Port the PWA LiftPage faithfully.
+  - id: PE-10-storage-vs-display-unit
+    title: Wire storageUnit/displayUnit split end-to-end
+    phase: 7
+    depends_on: [PE-09-home-begin-cta, PC-03-domain-units]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
+    behavioral_reference: ~/Development/531-pwa/src/features/session/domain/units.ts
+    done_when:
+      - "Every weight render site uses displayWeight(storageVal, storageUnit, displayUnit); never raw storage"
+      - "e1RM / PR readouts use convertWeight (no snap) so derived stats keep precision"
+      - "data/accessors/migrateStorageUnit.ts exists — appends a new TM row per lift via convertAndSnap, then updates settings.storageUnit; if displayUnit was tied to old storage, drags it along"
+      - "Integration test: write TM in lbs; flip displayUnit→kg via setDisplayUnit; assert Home renders kg-snapped numbers; storage row untouched"
+      - "Integration test: migrateStorageUnit('kg') appends new TMs with note='unit-migration', leaves prior rows intact"
+    notes: |
+      domain/units.ts already exports convert/round; PWA's display/convert/convertAndSnap aliases may need adding.
+      Touch screens: LiftPage, TopSetBlock callers, TodayBody/SetRow, LiveScreen, AmrapLogSheet, RestPhase,
+      SessionCompleteScreen/ReceiptRow, Settings rows, TmEditSheet.
+  - id: PE-11-settings-parity
+    title: Settings parity — Units/Migration/Reset/Cycle/Progression/PlateSet/About/Danger
+    phase: 7
+    depends_on: [PE-10-storage-vs-display-unit, PB-13-primitive-sheet, PD-03-accessor-settings, PD-04-accessor-training-max]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
+    behavioral_reference: ~/Development/531-pwa/src/features/settings/SettingsScreen.tsx
+    done_when:
+      - "SettingsScreen renders 8 sections matching PWA: Units (storage+display), Active lifts, Training maxes, Cycle prescription, Progression rules, Plate set, About, Danger zone"
+      - "components/UnitMigrationSheet.tsx renders preview rows + confirm/cancel; confirm calls migrateStorageUnit"
+      - "components/ResetConfirmSheet.tsx renders blur-backdrop confirm; confirm calls resetEverything then navigates to /onboarding"
+      - "data/accessors/reset.ts exports resetEverything(db) truncating all 5 tables in one transaction"
+      - "Integration test: resetEverything wipes all tables; subsequent boot redirects to /onboarding (FirstLaunchGate)"
+      - "Integration test: UnitMigrationSheet confirm path appends migrated TMs and patches settings.storageUnit"
+  - id: PE-12-picklifts-visual-parity
+    title: PickLifts visual parity (44px title, single Text with newline, callout, dynamic CTA)
+    phase: 7
+    depends_on: [PE-02-onboarding]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
+    behavioral_reference: ~/Development/531-pwa/src/features/onboarding/steps/PickLifts.tsx
+    done_when:
+      - "Title renders at size 44 with letterSpacing -1.54 and lineHeight 48 (~1.09×)"
+      - "Title uses a single Text with embedded newline so line spacing comes from one lineHeight"
+      - "Dashed callout under the list reads '{count} lifts · {count*4} sessions per cycle' (or singular variant)"
+      - "Primary CTA copy is dynamic: 'Continue · N {lift|lifts}'"
+      - "Existing PickLifts test still passes"
+  - id: PE-13-home-active-session-routing
+    title: Home in-progress dot + cross-lift Begin redirect + Live exit gate
+    phase: 7
+    depends_on: [PE-09-home-begin-cta]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
+    behavioral_reference: ~/Development/531-pwa/src/features/home/components/LiftTabs.tsx
+    done_when:
+      - "LiftTabs shows a 5×5 ink dot next to the lift name when inProgressLift === lift"
+      - "useHomeScreenState exposes inProgressLift from useActiveSession()"
+      - "LiveScreen redirects to / when its active session disappears (cancelled or completed elsewhere)"
+      - "Jest test covers the in-progress dot rendering"
+      - "Jest test covers LiveScreen redirect-on-missing-session"
+  - id: PE-14-headline-lineheight-pass
+    title: Bump headline lineHeight to ~1.15× fontSize to fit descenders
+    phase: 7
+    depends_on: [PE-02-onboarding, PE-06-session-complete]
+    status: todo
+    spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
+    done_when:
+      - "Intro 56px headlines use lineHeight 64"
+      - "OneRmEntry 40px headline uses lineHeight 46"
+      - "Review 40px headline uses lineHeight 46"
+      - "PRCertificate 48 / 78 headlines use ~1.15× lineHeights"
+      - "LiftPage's 64px lift name uses lineHeight 74"
+      - "rg returns no remaining 'lineHeight: X' lines where X === fontSize for size >= 24 in apps/mobile/src/features and apps/mobile/src/design/primitives (except CycleStrip's 10/10)"
