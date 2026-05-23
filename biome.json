@@ -10,6 +10,7 @@
       "apps/*/android",
       "apps/*/dist",
       "apps/*/assets/expo.icon",
+      "apps/*/expo-env.d.ts",
       "apps/*/assets/**/*.json",
       "design-reference",
       "docs/superpowers/runs",
