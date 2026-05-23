@@ -15,3 +15,4 @@ export { LedgerSection } from './LedgerSection';
 export { Masthead } from './Masthead';
 export { PlateBar, type PlateBarProps } from './PlateBar';
 export { Sheet } from './Sheet';
+export { TopSetBlock, type TopSetBlockProps } from './TopSetBlock';
