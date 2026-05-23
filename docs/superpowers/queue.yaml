@@ -622,7 +622,7 @@ tasks:
     title: Today full session plan + BBB; Live PlateBar inside LiveBigWeight
     phase: 8
     depends_on: [PE-04-session-today, PE-05-session-live, PB-18-primitive-plate-bar, PC-04-domain-plates]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/session/components/TodayBody.tsx
     done_when:
@@ -634,7 +634,7 @@ tasks:
     title: Port PWA RestPhase faithfully — eyebrow + logged-set summary + timer
     phase: 8
     depends_on: [PE-05-session-live]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#6--mobile-ux-defaults
     behavioral_reference: ~/Development/531-pwa/src/features/session/components/RestPhase.tsx
     done_when:
