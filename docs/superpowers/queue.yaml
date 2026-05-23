@@ -414,7 +414,7 @@ tasks:
     title: Today screen (entry to a session)
     phase: 5
     depends_on: [PD-08-query-hooks, PB-12-primitive-ledger-row-section]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#5--phasing
     behavioral_reference: ~/Development/531-pwa/src/features/session/TodayScreen.tsx
     done_when:
