@@ -3,6 +3,7 @@ import { completeOnboarding } from '@/data/accessors/onboarding';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
 import type { Lift } from '@/domain/types';
+import { useQueryClient } from '@tanstack/react-query';
 /**
  * Four-step onboarding wizard orchestrator. Ported from
  * `~/Development/531-pwa/src/features/onboarding/OnboardingScreen.tsx`.
@@ -27,6 +28,7 @@ import { Review } from './steps/Review';
 export function OnboardingScreen() {
   const router = useRouter();
   const db = useDb();
+  const queryClient = useQueryClient();
   const settings = useSettings();
   const initialUnit = settings.data?.storageUnit ?? 'lbs';
   const [state, dispatch] = useOnboardingState(initialUnit);
@@ -59,6 +61,13 @@ export function OnboardingScreen() {
         enabledLifts: state.enabledLifts,
         oneRMs,
       });
+      // Invalidate the queries FirstLaunchGate + HomeScreen read so the
+      // post-replace render sees the new TMs/settings — otherwise the gate's
+      // stale empty cache bounces us right back to /onboarding.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
+        queryClient.invalidateQueries({ queryKey: ['settings'] }),
+      ]);
       router.replace('/');
     } catch (err) {
       // Should not happen given reducer invariants (every enabled lift has
@@ -66,7 +75,7 @@ export function OnboardingScreen() {
       console.error('completeOnboarding failed', err);
       setFinishing(false);
     }
-  }, [computed, db, finishing, router, state.enabledLifts, state.unit]);
+  }, [computed, db, finishing, queryClient, router, state.enabledLifts, state.unit]);
 
   if (state.step === 1) {
     return (

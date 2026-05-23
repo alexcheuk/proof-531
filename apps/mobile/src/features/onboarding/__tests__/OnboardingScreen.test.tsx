@@ -14,6 +14,7 @@
  *  - `react-native-safe-area-context`    — stable insets in jest
  */
 import { ThemeProvider } from '@/design/theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
@@ -51,7 +52,14 @@ jest.mock('@/data/accessors/onboarding', () => ({
 // Import after mocks so the module sees the mocked dependencies.
 import { OnboardingScreen } from '../OnboardingScreen';
 
-const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+const renderScreen = (ui: ReactElement) => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={client}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
+  );
+};
 
 describe('OnboardingScreen', () => {
   beforeEach(() => {
