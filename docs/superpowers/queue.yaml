@@ -246,7 +246,7 @@ tasks:
     title: domain/plates.ts — plate decomposition (TDD + property test)
     phase: 3
     depends_on: [PC-01-domain-types, PC-03-domain-units]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/features/session/domain/plates.ts
     done_when:
