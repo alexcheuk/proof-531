@@ -538,7 +538,7 @@ tasks:
     title: Wire storageUnit/displayUnit split end-to-end
     phase: 7
     depends_on: [PE-09-home-begin-cta, PC-03-domain-units]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#43-data-model
     behavioral_reference: ~/Development/531-pwa/src/features/session/domain/units.ts
     done_when:
