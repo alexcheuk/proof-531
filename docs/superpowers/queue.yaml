@@ -171,7 +171,7 @@ tasks:
     title: Masthead primitive
     phase: 2
     depends_on: [PB-04-primitive-box-text]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/components/masthead.tsx
     done_when:
