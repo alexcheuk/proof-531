@@ -367,7 +367,7 @@ tasks:
     title: data/queries — TanStack Query hooks wrapping accessors
     phase: 4
     depends_on: [PD-07-accessor-onboarding, PD-06-accessor-set-log-prs]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#3--stack
     done_when:
       - "apps/mobile/src/data/queries/{useSettings,useLatestTm,useSession,usePrs,latestByLift}.ts exist"
