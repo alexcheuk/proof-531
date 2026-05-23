@@ -4,7 +4,8 @@ import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
-import type { Lift, Unit } from '@/domain/types';
+import { decompose } from '@/domain/plates';
+import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { displayWeight } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
@@ -126,6 +127,12 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // they diverge (post-migration on an in-flight session) the user sees
   // the snapped destination-unit weight.
   const prescribedDisplay = displayWeight(live.prescribedWeight, storageUnit, unit);
+  // Per-side plate decomposition for the prescribed weight. Falls back to the
+  // 'standard' plate set when settings haven't loaded — keeps the surface
+  // render-safe before the query resolves (the bigweight readout itself
+  // already renders under the same fallback in this file).
+  const plateSet: PlateSet = settingsQuery.data?.plateSet ?? 'standard';
+  const perSide = decompose(prescribedDisplay, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
@@ -190,6 +197,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
               unit={unit}
               reps={live.prescribedReps}
               amrap={live.isAmrap}
+              perSide={perSide}
               testID="live-big-weight"
             />
           </>

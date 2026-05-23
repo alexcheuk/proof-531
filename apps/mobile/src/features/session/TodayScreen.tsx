@@ -71,6 +71,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           storageUnit={storageUnit}
           displayUnit={displayUnit}
           tm={tm.data.value}
+          plateSet={settings.data.plateSet}
         />
         {/* Reserve room above the sticky CtaBar so the colophon isn't clipped. */}
         <View style={{ height: 120 }} />

@@ -97,6 +97,20 @@ describe('TodayScreen', () => {
     expect(screen.getByTestId('start-session')).toBeTruthy();
   });
 
+  it('renders a PlateBar under each working-set row and a BBB band with its own PlateBar', () => {
+    // squat / week 1 / TM 300 lbs → set 0 = 195 lb (bar 45 + 150/2 per side =
+    // 45 + 25 + 5). Not bar-only, so the PlateBar is present.
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    expect(screen.getByTestId('set-row-0-plate-bar')).toBeTruthy();
+    expect(screen.getByTestId('set-row-1-plate-bar')).toBeTruthy();
+    expect(screen.getByTestId('set-row-2-plate-bar')).toBeTruthy();
+    // Top-set hero has its own PlateBar via TopSetBlock.
+    expect(screen.getByTestId('today-top-set-plate-bar')).toBeTruthy();
+    // BBB section is present with its own PlateBar.
+    expect(screen.getByTestId('today-bbb-band')).toBeTruthy();
+    expect(screen.getByTestId('today-bbb-plate-bar')).toBeTruthy();
+  });
+
   it('creates a session and routes to /session/live on Start', async () => {
     const screen = renderScreen(<TodayScreen lift="squat" />);
 

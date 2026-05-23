@@ -223,6 +223,13 @@ describe('LiveScreen', () => {
     jest.useRealTimers();
   });
 
+  it('renders a PlateBar under the big-weight readout during the set phase', () => {
+    // Session is week 1, set 0 → prescribed = round(300 * 0.65, lbs) = 195 lb.
+    // 195 = bar 45 + per-side (45 + 25 + 5). Not bar-only, so PlateBar renders.
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    expect(screen.getByTestId('live-bigweight-plate-bar')).toBeTruthy();
+  });
+
   it('activates expo-keep-awake on mount and deactivates on unmount', () => {
     const screen = renderScreen(<LiveScreen sessionId={7} />);
     expect(mockActivateKeepAwake).toHaveBeenCalledTimes(1);
