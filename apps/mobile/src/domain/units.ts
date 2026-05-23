@@ -78,10 +78,27 @@ export function convertAndSnap(value: number, fromUnit: Unit, toUnit: Unit): num
 
 /**
  * PWA back-compat: bare conversion (no snap). Equivalent to
- * `convert(..., { snap: false })`.
+ * `convert(..., { snap: false })`. Identity short-circuits when units match
+ * so derived stats (e1RM, volume) keep full precision rather than re-running
+ * the (fromUnit===toUnit) snap branch in `convert`.
  */
 export function convertWeight(value: number, fromUnit: Unit, toUnit: Unit): number {
+  if (fromUnit === toUnit) return value;
   return convert(value, fromUnit, toUnit, { snap: false });
+}
+
+/**
+ * Convert a *stored* weight to the user's display unit and snap to the
+ * destination unit's step. The render-site equivalent of `snapWeight` for
+ * the two-unit model — every weight render site should route through this
+ * rather than the raw storage value.
+ *
+ * Identity when storageUnit === displayUnit (the snap is idempotent on a
+ * value that was already snapped at write time, so this stays a no-op for
+ * the common single-unit user).
+ */
+export function displayWeight(storageValue: number, storageUnit: Unit, displayUnit: Unit): number {
+  return convertAndSnap(storageValue, storageUnit, displayUnit);
 }
 
 /**

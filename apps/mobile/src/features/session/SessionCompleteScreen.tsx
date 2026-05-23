@@ -9,7 +9,7 @@ import { estimateOneRm } from '@/domain/epley';
 import { liftDisplayName, weekLabel } from '@/domain/labels';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
 import type { Lift, SetLog, Unit, Week } from '@/domain/types';
-import { displayUnit } from '@/domain/units';
+import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -106,15 +106,20 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   // accessor injection here we approximate "prior best" as zero (the cert
   // gates on `> 0`, so a freshly seeded log with isPR=true won't strand a
   // null prior into the render). Same conservative gate the PWA uses.
+  //
+  // e1RM is computed against storage-unit prescribed weights (set logs
+  // persist in storage). For the readout we convert via `convertWeight`
+  // (no snap) so derived precision survives the unit hop — snapping a
+  // 297.5 lb e1RM to 300 lb would be a lie.
   const amrapLog = workingLogs.find((l) => l.kind === 'amrap');
-  const newE1RM =
+  const newE1RMStorage =
     amrapLog && amrapLog.estimated1RM !== undefined
       ? amrapLog.estimated1RM
       : workingLogs.reduce((max, l) => {
           const v = estimateOneRm(l.prescribedWeight, l.actualReps);
           return v > max ? v : max;
         }, 0);
-  const e1RMDisplay = Math.round(newE1RM);
+  const e1RMDisplay = Math.round(convertWeight(newE1RMStorage, storageUnit, renderUnit));
   // Delta is computed defensively against a missing prior best — when the
   // certificate would otherwise have nothing meaningful to subtract, we
   // suppress the panel. Prior-best lookup ships in a follow-up task; today
@@ -131,15 +136,21 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const elapsedValue =
     elapsedReady && endedAtNum !== null ? formatElapsed(session.startedAt, endedAtNum) : '';
 
-  // Top working set (index 2) drives the receipt's first row.
+  // Top working set (index 2) drives the receipt's first row. The set log's
+  // `prescribedWeight` is in storage units (the snapshot invariant); we
+  // route it through `displayWeight` so the receipt's loadable number sits
+  // on the user's display-unit plate grid.
   const topSet = workingLogs.find((l) => l.index === 2);
-  const topWeight = topSet?.prescribedWeight ?? 0;
+  const topWeightStorage = topSet?.prescribedWeight ?? 0;
+  const topWeight = displayWeight(topWeightStorage, storageUnit, renderUnit);
   const topReps = topSet?.actualReps ?? 0;
   const topIsAmrap = topSet?.kind === 'amrap';
 
-  // Volume — converted is a no-op when storage === render, which is the only
-  // case PE-06 supports (cross-unit display is a settings-toggle follow-up).
-  const workingVolume = volumeOfWorkingSets(workingLogs);
+  // Volume — sum of working-set prescribedWeight × actualReps in storage
+  // units, then convert (no snap) to the render unit. Snapping would lie
+  // about the aggregate (volume is not loadable on the plate grid).
+  const workingVolumeStorage = volumeOfWorkingSets(workingLogs);
+  const workingVolume = Math.round(convertWeight(workingVolumeStorage, storageUnit, renderUnit));
 
   const sectionHeaderStyle = {
     fontFamily: 'IBMPlexMono-SemiBold',

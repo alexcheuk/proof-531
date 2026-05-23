@@ -4,7 +4,7 @@ import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, weekLabel } from '@/domain/labels';
 import { prescription } from '@/domain/schemes';
 import type { Lift, Unit, Week } from '@/domain/types';
-import { displayUnit, round } from '@/domain/units';
+import { convertWeight, displayUnit, displayWeight, round } from '@/domain/units';
 /**
  * Today screen body — masthead + title block + working-sets list.
  *
@@ -41,11 +41,13 @@ export function TodayBody({
 }: TodayBodyProps) {
   const { colors, type } = useTheme();
   const sets = prescription(week);
-  // For the MVP we display weights in the storage unit (no cross-unit
-  // conversion). The full PWA path runs storage→display via
-  // `displayWeight()` which is not yet ported. When `displayUnitProp` is
-  // omitted (the common case from useSettings) we fall back to storage.
+  // Render unit defaults to storage when the caller doesn't pass a display
+  // unit (e.g. legacy entry points). The TM label runs through
+  // `convertWeight` (no snap) so the eyebrow keeps full precision; the
+  // working-set rows run through `displayWeight` so loadable values stay
+  // on the destination plate grid.
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
+  const tmInDisplay = Math.round(convertWeight(tm, storageUnit, renderUnit));
 
   const cycleBadgeStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
@@ -109,12 +111,17 @@ export function TodayBody({
         <View style={sectionHeaderRow}>
           <RNText style={capsLabel}>WORKING SETS</RNText>
           <RNText style={capsHint}>
-            TM {tm} {displayUnit(renderUnit)}
+            TM {tmInDisplay} {displayUnit(renderUnit)}
           </RNText>
         </View>
         <View>
           {sets.map((s, i) => {
-            const w = round(tm * s.pct, storageUnit);
+            // Snap in storage units so each row sits on the storage-side
+            // plate grid, then convert for render. When storage === display
+            // the convert is identity; cross-unit users see the snapped
+            // destination-unit weight.
+            const wStorage = round(tm * s.pct, storageUnit);
+            const w = displayWeight(wStorage, storageUnit, renderUnit);
             // Working sets are a fixed-length (3) prescription per (lift, week);
             // the (pct, reps) pair is stable per index, so it forms a stable key.
             const key = `${s.pct}-${s.reps}-${s.amrap ? 'a' : 'w'}`;

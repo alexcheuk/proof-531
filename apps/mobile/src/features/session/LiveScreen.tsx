@@ -4,6 +4,7 @@ import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
+import { displayWeight } from '@/domain/units';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -82,9 +83,15 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const lift = session.lift as Lift;
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
   // Display unit isn't tracked on the live screen here — settings may flip
-  // mid-session per the PWA spec, but for PE-05 we render in the session's
-  // snapshot unit (display falls back to storage when missing).
+  // mid-session per the PWA spec, but the snapshot taken at createSession
+  // is the contract for this session's render unit. Falls back to the
+  // storage unit when the snapshot column is null.
   const unit: Unit = session.displayUnitSnapshot ?? storageUnit;
+  // Convert the storage-snapped prescribed weight into the session's
+  // display currency. When storage === display this is identity; when
+  // they diverge (post-migration on an in-flight session) the user sees
+  // the snapped destination-unit weight.
+  const prescribedDisplay = displayWeight(live.prescribedWeight, storageUnit, unit);
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
@@ -145,7 +152,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             <LiveBigWeight
               lift={lift}
               pct={live.pct}
-              weight={live.prescribedWeight}
+              weight={prescribedDisplay}
               unit={unit}
               reps={live.prescribedReps}
               amrap={live.isAmrap}
@@ -160,7 +167,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <AmrapLogSheet
         open={live.phase === 'amrap-log'}
         lift={lift}
-        prescribedWeight={live.prescribedWeight}
+        prescribedWeight={prescribedDisplay}
         prescribedReps={live.prescribedReps}
         unit={unit}
         existingBestE1RM={existingPR?.bestE1RM}
