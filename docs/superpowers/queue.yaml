@@ -161,7 +161,7 @@ tasks:
     title: CtaBar primitive
     phase: 2
     depends_on: [PB-05-primitive-button-pill]
-    status: todo
+    status: done
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#4--architecture
     behavioral_reference: ~/Development/531-pwa/src/components/cta-bar.tsx
     done_when:
