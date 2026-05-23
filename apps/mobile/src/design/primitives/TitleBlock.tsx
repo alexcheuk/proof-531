@@ -45,7 +45,7 @@ export function TitleBlock({ eyebrow, title, style, testID }: TitleBlockProps) {
         style={{
           fontFamily: `${type.sans}-Bold`,
           fontSize: 28,
-          lineHeight: 28,
+          lineHeight: 32,
           letterSpacing: -0.84,
           color: colors.ink0,
         }}

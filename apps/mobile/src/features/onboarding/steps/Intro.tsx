@@ -41,7 +41,7 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
           weight="bold"
           size={56}
           color="ink0"
-          style={{ letterSpacing: -2.52, lineHeight: 56 }}
+          style={{ letterSpacing: -2.52, lineHeight: 64 }}
         >
           Get strong
         </Text>
@@ -50,7 +50,7 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
           weight="medium"
           size={56}
           color="ink2"
-          style={{ letterSpacing: -2.52, lineHeight: 56 }}
+          style={{ letterSpacing: -2.52, lineHeight: 64 }}
         >
           slowly.
         </Text>

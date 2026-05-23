@@ -66,7 +66,7 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
           weight="bold"
           size={40}
           color="ink0"
-          style={{ letterSpacing: -1.4, lineHeight: 40 }}
+          style={{ letterSpacing: -1.4, lineHeight: 46 }}
         >
           Ready to{' '}
           <Text variant="sans" weight="medium" size={40} color="ink2">

@@ -97,7 +97,7 @@ export function PRCertificate({
         style={{
           fontFamily: `${type.display}-Bold`,
           fontSize: 52,
-          lineHeight: 48,
+          lineHeight: 56,
           letterSpacing: -2.34,
           color: colors.bg0,
           marginBottom: 14,
@@ -122,7 +122,7 @@ export function PRCertificate({
           style={{
             fontFamily: `${type.display}-Bold`,
             fontSize: 92,
-            lineHeight: 78,
+            lineHeight: 90,
             color: colors.bg0,
             letterSpacing: -4.6,
           }}

@@ -94,7 +94,7 @@ export function OneRmEntry({
           weight="bold"
           size={40}
           color="ink0"
-          style={{ letterSpacing: -1.4, lineHeight: 40 }}
+          style={{ letterSpacing: -1.4, lineHeight: 46 }}
         >
           {`${meta.label}.`}
         </Text>
