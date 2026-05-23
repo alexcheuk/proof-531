@@ -1,6 +1,7 @@
 export { Box } from './Box';
 export { Text } from './Text';
 export { Button } from './Button';
+export { CheckboxLedger } from './CheckboxLedger';
 export { PrimaryPillButton } from './PrimaryPillButton';
 export { MonoBadge } from './MonoBadge';
 export { NumberStepper } from './NumberStepper';
