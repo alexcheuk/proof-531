@@ -6,16 +6,23 @@ import type { ColorToken, SpacingToken } from '../tokens';
 /**
  * Bordered container primitive — replaces the recurring `borderWidth: 1,
  * borderColor: colors.line, padding...` blobs scattered across feature
- * components (LiftPageEmpty, PickLifts callout, FilterChips wrapper, etc.).
+ * components.
  *
- * Borders inherit from the theme palette; pick `tone="strong"` for a
- * heavier hairline (lineStrong), or `tone="dashed"` for a Polaroid-style
- * dashed border used in callouts.
+ * `tone` controls border palette:
+ *   - `default`  hairline (the `line` token)
+ *   - `strong`   heavier hairline (the `lineStrong` token)
+ *   - `dashed`   Polaroid-style dashed border (used in callouts)
+ *
+ * `borders` controls which sides get a 1px stroke:
+ *   - `all`        all four sides (default — typical card)
+ *   - `topBottom`  band-style stroke (used by AchievementStrip, LiftPageEmpty)
  */
 export type CardProps = {
   children?: ReactNode;
-  /** Border palette. Defaults to `'default'` (the line token). */
+  /** Border palette. Defaults to `'default'`. */
   tone?: 'default' | 'strong' | 'dashed';
+  /** Which sides get a 1px stroke. Defaults to `'all'`. */
+  borders?: 'all' | 'topBottom';
   /** Padding token applied uniformly. Use `px`/`py` to override per-axis. */
   padding?: SpacingToken;
   px?: SpacingToken;
@@ -29,6 +36,7 @@ export type CardProps = {
 export function Card({
   children,
   tone = 'default',
+  borders = 'all',
   padding,
   px,
   py,
@@ -39,10 +47,16 @@ export function Card({
   const { colors, spacing } = useTheme();
   const borderColor =
     tone === 'strong' ? colors.lineStrong : tone === 'dashed' ? colors.lineStrong : colors.line;
-  const cardStyle: ViewStyle = {
-    borderWidth: 1,
-    borderColor,
-  };
+  const cardStyle: ViewStyle = {};
+  if (borders === 'all') {
+    cardStyle.borderWidth = 1;
+    cardStyle.borderColor = borderColor;
+  } else {
+    // topBottom — band style, no left/right hairlines.
+    cardStyle.borderTopWidth = 1;
+    cardStyle.borderBottomWidth = 1;
+    cardStyle.borderColor = borderColor;
+  }
   if (tone === 'dashed') {
     cardStyle.borderStyle = 'dashed';
   }

@@ -1,8 +1,10 @@
 import { useDb } from '@/data/DbProvider';
 import { updateSettings } from '@/data/accessors/settings';
 import { SETTINGS_KEY } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { SegRail } from '@/design/primitives/SegRail';
+import { useTheme } from '@/design/theme';
 import { useQueryClient } from '@tanstack/react-query';
 
 type RestPreset = '60' | '90' | '120' | '180' | '240';
@@ -15,6 +17,13 @@ const REST_PRESETS: ReadonlyArray<{ value: RestPreset; label: string }> = [
   { value: '240', label: '4m' },
 ];
 
+function formatRestClock(seconds: number): string {
+  const safe = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(safe / 60);
+  const remainder = safe % 60;
+  return `${minutes}:${String(remainder).padStart(2, '0')}`;
+}
+
 export type RestTargetSectionProps = {
   restTargetSeconds: number;
 };
@@ -22,6 +31,7 @@ export type RestTargetSectionProps = {
 export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps) {
   const db = useDb();
   const queryClient = useQueryClient();
+  const { spacing } = useTheme();
   const current = String(restTargetSeconds) as RestPreset;
 
   async function commitRestTarget(next: RestPreset) {
@@ -37,6 +47,14 @@ export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps)
         options={REST_PRESETS}
         onChange={(next) => void commitRestTarget(next)}
       />
+      <CapsLabel
+        size="xs"
+        color="ink3"
+        style={{ marginTop: spacing.sm }}
+        testID="settings-rest-target-preview"
+      >
+        {`Currently ${formatRestClock(restTargetSeconds)} per set`}
+      </CapsLabel>
     </LedgerSection>
   );
 }

@@ -1,8 +1,9 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Card } from '@/design/primitives/Card';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 
 export type LiftPageEmptyProps = {
   /** testID prefix — the CTA tag is `${prefix}-open-settings`. */
@@ -19,16 +20,7 @@ export function LiftPageEmpty({ testIDPrefix }: LiftPageEmptyProps) {
   const { colors, spacing } = useTheme();
 
   return (
-    <View
-      style={{
-        marginTop: spacing.xl,
-        paddingVertical: spacing.xl,
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: colors.line,
-        alignItems: 'center',
-      }}
-    >
+    <Card borders="topBottom" py="xl" style={{ marginTop: spacing.xl, alignItems: 'center' }}>
       <CapsLabel size="md" weight="semibold">
         NO TRAINING MAX SET
       </CapsLabel>
@@ -57,6 +49,6 @@ export function LiftPageEmpty({ testIDPrefix }: LiftPageEmptyProps) {
           Open settings →
         </Text>
       </Pressable>
-    </View>
+    </Card>
   );
 }

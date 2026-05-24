@@ -1,7 +1,8 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Card } from '@/design/primitives/Card';
+import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
-import { useTheme } from '@/design/theme';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 import { ActivitySparkline } from './ActivitySparkline';
 
 export type AchievementStripProps = {
@@ -20,55 +21,39 @@ export type AchievementStripProps = {
  * state below the strip already speaks to that case.
  */
 export function AchievementStrip({ filed, prs, activity }: AchievementStripProps) {
-  const { colors, type } = useTheme();
   if (filed === 0) return null;
-
-  const wrap: ViewStyle = {
-    marginHorizontal: 24,
-    marginTop: 4,
-    marginBottom: 4,
-    paddingTop: 14,
-    paddingBottom: 14,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.line,
-    gap: 14,
-  };
-
-  const numberStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 22,
-    letterSpacing: -0.66,
-    color: colors.ink0,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
   return (
-    <View style={wrap} testID="history-achievements">
+    <Card
+      borders="topBottom"
+      style={{ marginHorizontal: 24, marginTop: 4, marginBottom: 4, gap: 14 }}
+      py="md"
+      testID="history-achievements"
+    >
       <Row justify="space-between" align="flex-end">
-        <Stat label={filed === 1 ? 'session filed' : 'sessions filed'}>
-          <RNText style={numberStyle}>{filed}</RNText>
-        </Stat>
-        <Stat label={prs === 1 ? 'personal record' : 'personal records'}>
-          <RNText style={numberStyle} testID="history-achievements-prs">
-            {prs}
-          </RNText>
-        </Stat>
+        <Stat label={filed === 1 ? 'session filed' : 'sessions filed'} value={filed} />
+        <Stat
+          label={prs === 1 ? 'personal record' : 'personal records'}
+          value={prs}
+          testID="history-achievements-prs"
+        />
       </Row>
       <ActivitySparkline activity={activity} />
-    </View>
+    </Card>
   );
 }
 
 type StatProps = {
   label: string;
-  children: React.ReactNode;
+  value: number;
+  testID?: string;
 };
 
-function Stat({ label, children }: StatProps) {
+function Stat({ label, value, testID }: StatProps) {
   return (
     <View>
-      {children}
+      <Heading size="s" numeric {...(testID !== undefined ? { testID } : {})}>
+        {value}
+      </Heading>
       <CapsLabel size="xs" color="ink3" style={{ marginTop: 4 }}>
         {label}
       </CapsLabel>
