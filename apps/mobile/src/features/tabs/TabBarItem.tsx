@@ -27,11 +27,6 @@ export type TabBarItemProps = {
   navigation: TabBarNavigation;
 };
 
-/**
- * One tab in the custom bottom bar — label + optional in-progress dot +
- * focused underline. Fires a selection haptic on navigation, suppressed
- * when re-pressing the active tab.
- */
 export function TabBarItem({ route, focused, showDot, navigation }: TabBarItemProps) {
   const { colors, spacing, type } = useTheme();
   const label = LABELS[route.name] ?? route.name.toUpperCase();
@@ -71,9 +66,11 @@ export function TabBarItem({ route, focused, showDot, navigation }: TabBarItemPr
   return (
     <Pressable
       testID={`tab-${route.name}`}
-      accessibilityRole="button"
+      accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
       accessibilityLabel={showDot ? `${label}, session in progress` : label}
+      accessibilityHint={focused ? undefined : `Switches to the ${label.toLowerCase()} tab`}
+      hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
       onPress={onPress}
       style={pressableStyle}
     >

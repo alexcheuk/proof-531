@@ -8,13 +8,17 @@
     "scheme": "mobile",
     "userInterfaceStyle": "dark",
     "platforms": ["ios", "android"],
+    "runtimeVersion": { "policy": "fingerprint" },
+    "updates": {
+      "url": "https://u.expo.dev/17bd8745-c34c-4448-bd19-9319a1e5b474"
+    },
     "ios": {
       "icon": "./assets/expo.icon"
     },
     "android": {
       "package": "com.alexcheuk.fivethreeone",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#E7E3D6",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -27,8 +31,12 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "android": {
+          "backgroundColor": "#E7E3D6",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76,
+          "resizeMode": "contain",
+          "dark": {
+            "backgroundColor": "#1A1812",
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
           }

@@ -12,8 +12,10 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
+    "format:check": "biome format .",
     "test": "pnpm -r --parallel test",
     "expo-doctor": "pnpm --filter @fivethreeone/mobile exec expo-doctor",
+    "bundle-check": "pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false",
     "ci": "pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {

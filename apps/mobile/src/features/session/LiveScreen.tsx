@@ -3,6 +3,7 @@ import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
@@ -10,29 +11,7 @@ import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayWeight } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-/**
- * Live screen — runs the user through three working sets with a countdown
- * rest timer between sets, an AMRAP bottom sheet for the top set, and a
- * cancel-confirm bottom sheet for destructive exits.
- *
- * Structural port of `~/Development/531-pwa/src/features/session/LiveScreen.tsx`.
- *
- * Behavior tied to PE-05 done_when:
- *   - `expo-keep-awake` is held active while the screen is mounted (the screen
- *     stays on during the entire session).
- *   - Rest timer counts DOWN from REST_SECONDS. At T-3s the warning haptic
- *     fires; at T-0 the chime plays. Both side effects are driven by
- *     `useLiveScreenState`.
- *   - Cancel button → CancelConfirmSheet. The destructive button uses a
- *     two-tap pattern: first tap arms (fires warning haptic), second tap
- *     actually cancels.
- *   - AmrapLogSheet uses `@gorhom/bottom-sheet` (via the shared `Sheet`
- *     primitive) and saves through `appendSetLog`.
- *
- * Boundary: composes design primitives + feature-local hook + data accessors.
- * No hex/px literals; no direct drizzle imports.
- */
-import { ScrollView, type ViewStyle } from 'react-native';
+import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { LiveCtaButton } from './components/LiveCtaButton';
@@ -70,12 +49,15 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const elapsedSeconds = useElapsedSeconds(sessionQuery.data?.startedAt ?? null);
 
   if (!sessionQuery.data) {
-    // Loading or unknown session — render the layout chrome so the page
-    // doesn't flash white. The Today CTA is the only entry point so a
-    // truly missing session is an error path that resolves by going home.
     return (
-      <SessionLayout>
+      <SessionLayout testID="live-loading">
         <StatusBar style="dark" />
+        <SessionTopBar onBack={() => router.back()} backLabel="Back to plan" />
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text variant="mono" weight="medium" size={11} color="ink3" style={{ letterSpacing: 2 }}>
+            LOADING SESSION…
+          </Text>
+        </View>
       </SessionLayout>
     );
   }

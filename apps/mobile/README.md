@@ -1,56 +1,40 @@
-# Welcome to your Expo app 👋
+# @fivethreeone/mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo SDK 55 / React Native New Arch app — the 531 Strength tracker.
 
-## Get started
+For project goals, architecture, contribution rules, and orchestrator workflow, see the [root README](../../README.md) and [CLAUDE.md](./CLAUDE.md).
 
-1. Install dependencies
+## Run it
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+From the repo root:
 
 ```bash
-npm run reset-project
+pnpm install
+pnpm --filter @fivethreeone/mobile start    # Metro + Expo Go QR
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+In the Expo CLI: press `i` for iOS Simulator, `a` for Android Emulator, or scan the QR with Expo Go.
 
-### Other setup steps
+## App-level scripts
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+pnpm --filter @fivethreeone/mobile start         # expo start
+pnpm --filter @fivethreeone/mobile typecheck     # tsc --noEmit
+pnpm --filter @fivethreeone/mobile lint          # biome check src
+pnpm --filter @fivethreeone/mobile test          # jest
+pnpm --filter @fivethreeone/mobile doctor        # expo-doctor
+```
 
-## Learn more
+## Layout
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+src/
+  app/           — expo-router routes (thin shells)
+  design/        — tokens, theme, primitives (only place hex/px lives)
+  domain/        — pure 5/3/1 math; no React, no async, no DB
+  data/          — Drizzle ORM + accessors + TanStack Query hooks
+  features/      — screen composition
+  lib/           — haptics, time helpers
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Boundary rules live in [CLAUDE.md](./CLAUDE.md). The reviewer enforces them.
