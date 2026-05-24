@@ -10,6 +10,7 @@ export { PrimaryPillButton } from './PrimaryPillButton';
 export { MonoBadge } from './MonoBadge';
 export { NumberStepper } from './NumberStepper';
 export { SectionBand } from './SectionBand';
+export { SectionHeader, type SectionHeaderProps } from './SectionHeader';
 export { SegRail } from './SegRail';
 export { StatGrid, type StatCell, type StatGridProps } from './StatGrid';
 export { TitleBlock } from './TitleBlock';

@@ -28,18 +28,17 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
  */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   FlatList,
   type ListRenderItem,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
   View,
   type ViewStyle,
   useWindowDimensions,
 } from 'react-native';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
+import { useHomeCarouselSync } from './hooks/useHomeCarouselSync';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {
@@ -58,11 +57,17 @@ export function HomeScreen() {
     enabledLifts,
   );
 
-  const listRef = useRef<FlatList<Lift>>(null);
   // Live width — rotates with the device so carousel page math, item
   // layout, and momentum-end index calculation stay correct under
   // orientation change.
   const { width: screenWidth } = useWindowDimensions();
+
+  const { listRef, onMomentumScrollEnd } = useHomeCarouselSync({
+    selectedLift,
+    enabledLifts,
+    screenWidth,
+    setSelectedLift,
+  });
 
   // If onboarding has not produced an enabled-lifts set, redirect.
   useEffect(() => {
@@ -70,33 +75,6 @@ export function HomeScreen() {
       goTo.onboarding(router);
     }
   }, [settings.data, router]);
-
-  // Sync the carousel position when selectedLift changes externally
-  // (e.g. via tab tap or settings edit). Guarded against out-of-range.
-  useEffect(() => {
-    const idx = enabledLifts.indexOf(selectedLift);
-    if (idx >= 0 && listRef.current) {
-      // Defer to next tick so initial mount has a layout to scroll within.
-      // `scrollToIndex` is a no-op if the list isn't rendered yet, but on
-      // Expo SDK 55 a microtask is enough for the initial layout pass.
-      try {
-        listRef.current.scrollToIndex({ index: idx, animated: true });
-      } catch {
-        // scrollToIndex can throw before initial layout; ignore.
-      }
-    }
-  }, [selectedLift, enabledLifts]);
-
-  const onMomentumScrollEnd = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const idx = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
-      const lift = enabledLifts[idx];
-      if (lift && lift !== selectedLift) {
-        setSelectedLift(lift);
-      }
-    },
-    [enabledLifts, selectedLift, screenWidth, setSelectedLift],
-  );
 
   const handleBegin = useCallback(
     (lift: Lift) => {

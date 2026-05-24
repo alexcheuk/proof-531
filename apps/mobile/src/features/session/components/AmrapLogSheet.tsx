@@ -1,4 +1,5 @@
 import { NumberStepper } from '@/design/primitives/NumberStepper';
+import { Row } from '@/design/primitives/Row';
 import { Sheet } from '@/design/primitives/Sheet';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
@@ -10,13 +11,12 @@ import { displayUnit } from '@/domain/units';
  * Bottom-sheet AMRAP rep logger.
  *
  * Structural port of `~/Development/531-pwa/src/features/session/components/
- * AmrapLogSheet.tsx`. Uses the shared gorhom `Sheet` primitive
- * (`src/design/primitives/Sheet.tsx`).
- * Parent owns the actual `appendSetLog` call — this component only stages reps
- * and surfaces an e1RM caption.
+ * AmrapLogSheet.tsx`. Parent owns the actual `appendSetLog` call — this
+ * component only stages reps and surfaces an e1RM caption. Rep/pending state
+ * lives in `useAmrapLogState` so the sheet body is pure presentation.
  */
-import { useEffect, useRef, useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
+import { useAmrapLogState } from '../hooks/useAmrapLogState';
 
 export type AmrapLogSheetProps = {
   open: boolean;
@@ -47,43 +47,13 @@ export function AmrapLogSheet({
   onSave,
   testID,
 }: AmrapLogSheetProps) {
-  const [reps, setReps] = useState<number>(prescribedReps);
-  const [pending, setPending] = useState(false);
   const { colors, spacing } = useTheme();
-  const mountedRef = useRef(true);
-  useEffect(
-    () => () => {
-      mountedRef.current = false;
-    },
-    [],
-  );
-
-  // Reset pending + rep count whenever the sheet re-opens — otherwise a
-  // previous error path (parent's onSave rejected) would leave both buttons
-  // permanently disabled when the user next opens the sheet, and reps would
-  // start from the user's last attempted value instead of the prescription.
-  useEffect(() => {
-    if (open) {
-      setPending(false);
-      setReps(prescribedReps);
-    }
-  }, [open, prescribedReps]);
-
-  async function handleSave() {
-    if (pending) return;
-    setPending(true);
-    try {
-      await Promise.resolve(onSave(reps));
-    } catch (err) {
-      console.error('AmrapLogSheet.onSave failed', err);
-      if (mountedRef.current) setPending(false);
-    }
-  }
-
-  function handleCancel() {
-    if (pending) return;
-    onCancel();
-  }
+  const { reps, setReps, pending, handleSave, handleCancel } = useAmrapLogState({
+    open,
+    prescribedReps,
+    onSave,
+    onCancel,
+  });
 
   const predictedE1RMRaw = estimateOneRm(prescribedWeight, reps);
   const predictedE1RM = Math.round(predictedE1RMRaw);
@@ -91,25 +61,13 @@ export function AmrapLogSheet({
   const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
   // Real-time delta against the user's current PR — the felt-quality win is
   // watching "+12" tick up as you crank out another rep on the AMRAP. Only
-  // surfaced when the user has a prior PR (no baseline → no delta to brag
-  // about; just shows the projected 1RM).
+  // surfaced when the user has a prior PR.
   const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
 
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-  };
-  const headerRow: ViewStyle = {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: spacing.md,
-  };
-  const footerRow: ViewStyle = {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.lg,
   };
   const button = (variant: 'primary' | 'ghost'): ViewStyle => ({
     flex: 1,
@@ -119,12 +77,13 @@ export function AmrapLogSheet({
     backgroundColor: variant === 'primary' ? colors.ink0 : 'transparent',
     borderWidth: 1,
     borderColor: colors.ink0,
+    opacity: pending ? 0.6 : 1,
   });
 
   return (
     <Sheet open={open} onDismiss={handleCancel} {...(testID !== undefined ? { testID } : {})}>
       <View style={bodyStyle}>
-        <View style={headerRow}>
+        <Row justify="space-between" align="baseline" style={{ marginBottom: spacing.md }}>
           <View>
             <Text
               variant="mono"
@@ -148,9 +107,9 @@ export function AmrapLogSheet({
           >
             {prescribedWeight} {displayUnit(unit)}
           </Text>
-        </View>
+        </Row>
 
-        <View style={headerRow}>
+        <Row justify="space-between" align="baseline" style={{ marginBottom: spacing.md }}>
           <Text
             variant="mono"
             weight="semibold"
@@ -174,7 +133,7 @@ export function AmrapLogSheet({
               : ''}
             {isPotentialPR ? ' · PR' : ''}
           </Text>
-        </View>
+        </Row>
 
         <NumberStepper
           value={reps}
@@ -187,7 +146,7 @@ export function AmrapLogSheet({
           testID="amrap-reps-stepper"
         />
 
-        <View style={footerRow}>
+        <Row gap="md" style={{ marginTop: spacing.lg }}>
           <Pressable
             testID="amrap-cancel"
             accessibilityRole="button"
@@ -222,7 +181,7 @@ export function AmrapLogSheet({
               Save
             </Text>
           </Pressable>
-        </View>
+        </Row>
       </View>
     </Sheet>
   );
