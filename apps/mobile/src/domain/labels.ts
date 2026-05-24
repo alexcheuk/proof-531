@@ -100,3 +100,31 @@ export function dateLabel(date: Date): string {
   const day = date.getDate();
   return `${weekday} · ${month} ${day}`;
 }
+
+/**
+ * Smart date label for History rows. Returns:
+ *   `TODAY`               — same local day as `now`
+ *   `YESTERDAY`           — previous local day
+ *   `MON · JAN 6` style   — older sessions (`dateLabel` format)
+ *
+ * Surfacing TODAY/YESTERDAY makes recent sessions instantly readable
+ * without forcing the user to do the date math themselves.
+ *
+ * Pure: pass `now` for testability.
+ */
+export function historyDateLabel(date: Date, now: number = Date.now()): string {
+  const startOfDay = (ms: number): number => {
+    const d = new Date(ms);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+  const today = startOfDay(now);
+  const target = startOfDay(date.getTime());
+  const dayDelta = Math.round((today - target) / (24 * 60 * 60 * 1000));
+  // Future timestamps (clock skew, restored backup with stale clock) collapse
+  // to TODAY rather than falling through to dateLabel — keeps the row from
+  // reading as a meaningfully-past date.
+  if (dayDelta <= 0) return 'TODAY';
+  if (dayDelta === 1) return 'YESTERDAY';
+  return dateLabel(date);
+}

@@ -78,8 +78,12 @@ export function useOnboardingFlow(): UseOnboardingFlowResult {
       goTo.home(router);
     } catch (err) {
       // Should not happen given reducer invariants (every enabled lift has
-      // a positive computed value). Log + re-enable so the user can retry.
+      // a positive computed value). Log so the user can retry.
       console.error('completeOnboarding failed', err);
+    } finally {
+      // Reset on BOTH success and failure paths. Success previously
+      // relied on navigation unmounting the screen, which is fine for
+      // goTo.home (replaces stack) but brittle if the flow changes.
       setFinishing(false);
     }
   }, [computed, db, finishing, queryClient, router, state.enabledLifts, state.unit]);

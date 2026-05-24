@@ -15,7 +15,7 @@ import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect } from 'react';
-import { BackHandler, ScrollView, type ViewStyle } from 'react-native';
+import { ScrollView, type ViewStyle } from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
@@ -24,6 +24,7 @@ import { SeeFullRecordLink } from './components/SeeFullRecordLink';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
+import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 
@@ -77,17 +78,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     goTo.history(router);
   }, [router]);
 
-  // Android system back: when we arrived from history, override the
-  // hardware back so it routes to /history rather than the default
-  // (which can land on the home tab on a cross-group push).
-  useEffect(() => {
-    if (origin !== 'history') return;
-    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      handleBackToHistory();
-      return true;
-    });
-    return () => sub.remove();
-  }, [origin, handleBackToHistory]);
+  useHistoryBackHandler({ enabled: origin === 'history', onBack: handleBackToHistory });
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 

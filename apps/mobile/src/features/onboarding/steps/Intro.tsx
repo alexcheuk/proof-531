@@ -24,7 +24,7 @@ const UNIT_OPTIONS = [
 ];
 
 export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
-  const { layout } = useTheme();
+  const { layout, spacing } = useTheme();
   return (
     <OnboardingShell
       footer={
@@ -33,8 +33,8 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
         </PrimaryPillButton>
       }
     >
-      <View style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: 36 }}>
-        <CapsLabel style={{ marginBottom: 14 }}>A program by Jim Wendler</CapsLabel>
+      <View style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: spacing.xxl + 4 }}>
+        <CapsLabel style={{ marginBottom: spacing.md + 2 }}>A program by Jim Wendler</CapsLabel>
 
         <Text
           variant="sans"
@@ -60,27 +60,27 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
           weight="regular"
           size={14}
           color="ink1"
-          style={{ lineHeight: 22, marginTop: 24, maxWidth: 320 }}
+          style={{ lineHeight: 22, marginTop: spacing.xl, maxWidth: 320 }}
         >
           Four lifts. Four days. Small jumps every cycle. We calculate your training max so the
           program does the math — you just lift.
         </Text>
 
-        <View style={{ marginTop: 32 }}>
+        <View style={{ marginTop: spacing.xxl }}>
           <Bullet n="01" label="Enter your four 1-rep maxes" sub="or use the calculator below" />
           <Bullet n="02" label="We set your training max to 90%" sub="that's your working number" />
           <Bullet n="03" label="Lift for 4 days, repeat" sub="add weight, every time" last />
         </View>
 
-        <View style={{ marginTop: 32 }}>
-          <CapsLabel style={{ marginBottom: 12 }}>Unit · pick yours</CapsLabel>
+        <View style={{ marginTop: spacing.xxl }}>
+          <CapsLabel style={{ marginBottom: spacing.md }}>Unit · pick yours</CapsLabel>
           <SegRail<Unit>
             value={unit}
             options={UNIT_OPTIONS}
             onChange={onUnitChange}
             testID="onboarding-unit"
           />
-          <CapsLabel size="xs" color="ink3" style={{ marginTop: 10 }}>
+          <CapsLabel size="xs" color="ink3" style={{ marginTop: spacing.sm + 2 }}>
             you can change display later in settings
           </CapsLabel>
         </View>
@@ -97,10 +97,10 @@ interface BulletProps {
 }
 
 function Bullet({ n, label, sub, last }: BulletProps) {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
 
   const rowStyle: ViewStyle = {
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.line,
     borderBottomWidth: last ? 1 : 0,
@@ -122,7 +122,7 @@ function Bullet({ n, label, sub, last }: BulletProps) {
         <Text variant="sans" weight="semibold" size={15} color="ink0">
           {label}
         </Text>
-        <CapsLabel size="xs" style={{ marginTop: 4 }}>
+        <CapsLabel size="xs" style={{ marginTop: spacing.xs }}>
           {sub}
         </CapsLabel>
       </View>

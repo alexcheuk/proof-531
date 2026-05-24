@@ -1,4 +1,12 @@
-import { LIFTS, dateLabel, isLift, liftDisplayName, weekIntent, weekLabel } from '../labels';
+import {
+  LIFTS,
+  dateLabel,
+  historyDateLabel,
+  isLift,
+  liftDisplayName,
+  weekIntent,
+  weekLabel,
+} from '../labels';
 
 describe('LIFTS', () => {
   it('contains 4 lifts in canonical order', () => {
@@ -50,5 +58,26 @@ describe('dateLabel', () => {
     const d = new Date(2026, 4, 22); // month is 0-based
     // Use day-of-week computed from the date itself to be timezone-resilient.
     expect(dateLabel(d)).toBe('FRI · MAY 22');
+  });
+});
+
+describe('historyDateLabel', () => {
+  const now = new Date(2026, 4, 22, 12, 0, 0).getTime(); // Fri May 22 noon
+  it('returns TODAY for the same local day', () => {
+    const d = new Date(2026, 4, 22, 9, 30); // earlier same day
+    expect(historyDateLabel(d, now)).toBe('TODAY');
+  });
+  it('returns YESTERDAY for the previous local day', () => {
+    const d = new Date(2026, 4, 21, 23, 30); // day before, late
+    expect(historyDateLabel(d, now)).toBe('YESTERDAY');
+  });
+  it('falls back to dateLabel format for older days', () => {
+    const d = new Date(2026, 4, 1); // 3 weeks earlier
+    expect(historyDateLabel(d, now)).toBe('FRI · MAY 1');
+  });
+  it('treats future dates as TODAY (defensive — clock skew should not yield negatives)', () => {
+    const d = new Date(2026, 4, 23, 10); // tomorrow
+    // Future delta is negative; dayDelta rounds → 0 → TODAY (safe fallback).
+    expect(historyDateLabel(d, now)).toBe('TODAY');
   });
 });

@@ -17,7 +17,7 @@ import { useDebouncedPress } from '@/design/hooks/useDebouncedPress';
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
-import { dateLabel, liftDisplayName } from '@/domain/labels';
+import { historyDateLabel, liftDisplayName } from '@/domain/labels';
 import { formatElapsedCompact } from '@/domain/summary';
 import type { Lift, Week } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
@@ -72,7 +72,7 @@ export function SessionListRow({
   const router = useRouter();
   const { colors, type } = useTheme();
   const date = new Date(session.startedAt);
-  const dateText = dateLabel(date);
+  const dateText = historyDateLabel(date);
   const week = session.week as Week;
   const lift = session.lift as Lift;
 
