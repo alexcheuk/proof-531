@@ -12,11 +12,20 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
+import { tmIncrement } from '@/domain/increments';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { LIFT_META } from '../lifts';
+
+/**
+ * A delta is "big" when it exceeds 2× the per-cycle recommended bump.
+ * Wendler's defaults are +5 lb upper / +10 lb lower (or +2.5 kg / +5 kg).
+ * Beyond 2× the program prescription, the user is shooting for territory
+ * the program no longer paces them safely toward.
+ */
+const BIG_JUMP_MULTIPLIER = 2;
 
 /**
  * Format a percentage delta for the TmEditSheet caption.
@@ -66,6 +75,12 @@ export function TmEditSheet({
   // +10 lb lower per cycle — ≈ 2–5% jumps).
   const deltaPctLabel =
     currentValue > 0 && !isUnchanged ? formatDeltaPct((delta / currentValue) * 100) : null;
+  // Flag deltas that exceed 2× the program's recommended per-cycle bump
+  // so the user gets a quiet nudge to verify their edit. Only positive
+  // deltas trigger the warning — slashing the TM is usually a deload /
+  // recovery move and isn't a "jump" in the dangerous sense.
+  const recommendedBump = tmIncrement(storageUnit, lift);
+  const isBigJump = delta > recommendedBump * BIG_JUMP_MULTIPLIER;
 
   async function handleSave() {
     if (saveDisabled) return;
@@ -143,6 +158,17 @@ export function TmEditSheet({
                 deltaPctLabel ? ` · ${deltaPctLabel}` : ''
               } from current`}
       </CapsLabel>
+
+      {isBigJump ? (
+        <CapsLabel
+          weight="bold"
+          color="ink0"
+          style={{ letterSpacing: 1.4 }}
+          testID="tm-edit-big-jump"
+        >
+          {`★ Big jump · program adds ${recommendedBump} ${displayUnitGlyph(storageUnit)} per cycle`}
+        </CapsLabel>
+      ) : null}
 
       {error ? (
         <CapsLabel weight="semibold" color="ink0" style={{ letterSpacing: 1.4 }}>

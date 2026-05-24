@@ -105,6 +105,63 @@ describe('TmEditSheet', () => {
     expect(screen.getByTestId('tm-edit-delta').props.children).toBe('+15 lb · +15% from current');
   });
 
+  it('hides the BIG JUMP nudge when delta is within 2× the per-cycle bump', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="bench"
+        currentValue={200}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // Bench (upper) recommended +5 lb / cycle → 2× = +10 lb. +5 stays clean.
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    expect(screen.queryByTestId('tm-edit-big-jump')).toBeNull();
+  });
+
+  it('surfaces the BIG JUMP nudge once the upper-body delta exceeds 2× the program bump', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="bench"
+        currentValue={200}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // Bench: +5 lb × 3 = +15 lb > 2× recommended (10 lb). BIG JUMP fires.
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    const hint = screen.getByTestId('tm-edit-big-jump');
+    expect(hint.props.children).toContain('Big jump');
+    expect(hint.props.children).toContain('5 lb per cycle');
+  });
+
+  it('uses the lower-body bump for squat / deadlift in the BIG JUMP comparison', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="squat"
+        currentValue={300}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // Squat (lower) recommended +10 lb / cycle → 2× = +20 lb.
+    // +5 lb × 4 = +20 lb: not over the threshold yet (strict `>`).
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    expect(screen.queryByTestId('tm-edit-big-jump')).toBeNull();
+    // One more bump (+25) crosses the line.
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    const hint = screen.getByTestId('tm-edit-big-jump');
+    expect(hint.props.children).toContain('10 lb per cycle');
+  });
+
   it('hides the storage ≠ display caption when both units match', () => {
     const screen = wrap(
       <TmEditSheet

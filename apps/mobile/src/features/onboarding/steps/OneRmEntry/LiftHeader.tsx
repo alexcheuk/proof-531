@@ -13,11 +13,17 @@ export type LiftHeaderProps = {
 
 /** "Lift 02 of 04" eyebrow + giant lift name + italic subtitle. */
 export function LiftHeader({ lift, step, total }: LiftHeaderProps) {
-  const { layout } = useTheme();
+  const { layout, spacing } = useTheme();
   const meta = LIFT_META[lift];
   return (
-    <View style={{ paddingHorizontal: layout.gutter, paddingTop: 20, paddingBottom: 12 }}>
-      <CapsLabel style={{ marginBottom: 6 }}>
+    <View
+      style={{
+        paddingHorizontal: layout.gutter,
+        paddingTop: spacing.lg + 4,
+        paddingBottom: spacing.md,
+      }}
+    >
+      <CapsLabel style={{ marginBottom: spacing.xs + 2 }}>
         {`Lift ${String(step).padStart(2, '0')} of ${String(total).padStart(2, '0')}`}
       </CapsLabel>
       <Text
@@ -29,7 +35,7 @@ export function LiftHeader({ lift, step, total }: LiftHeaderProps) {
       >
         {`${meta.label}.`}
       </Text>
-      <Text variant="sans" weight="medium" size={13} color="ink2" style={{ marginTop: 4 }}>
+      <Text variant="sans" weight="medium" size={13} color="ink2" style={{ marginTop: spacing.xs }}>
         {`${meta.italic}.`}
       </Text>
     </View>

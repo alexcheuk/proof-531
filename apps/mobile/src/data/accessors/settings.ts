@@ -107,10 +107,13 @@ export async function updateSettings(
   db: AnyDb,
   patch: Partial<Omit<Settings, 'id'>>,
 ): Promise<Settings> {
-  const current = (await selectSingleton(db)) ?? { id: 1 as const, ...DEFAULT_SETTINGS };
-  const next: Settings = { ...current, ...patch, id: 1 };
-  const existing = await selectSingleton(db);
-  if (existing) {
+  // Single read — the prior version called selectSingleton twice on every
+  // patch, doubling the SQL hit on the hottest write path in the app
+  // (advanceDay fires after every completed session).
+  const current = await selectSingleton(db);
+  const base = current ?? { id: 1 as const, ...DEFAULT_SETTINGS };
+  const next: Settings = { ...base, ...patch, id: 1 };
+  if (current) {
     await Promise.resolve(db.update(settings).set(toRow(next)).where(eq(settings.id, 1)));
   } else {
     await Promise.resolve(db.insert(settings).values(toRow(next)));

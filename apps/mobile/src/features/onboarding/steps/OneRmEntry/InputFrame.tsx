@@ -1,4 +1,5 @@
 import { NumberStepper } from '@/design/primitives/NumberStepper';
+import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { View } from 'react-native';
 import type { LiftInput } from '../../hooks/useOnboardingState';
@@ -16,6 +17,7 @@ export type InputFrameProps = {
  * parent so it can sit above this frame.
  */
 export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps) {
+  const { spacing } = useTheme();
   if (data.mode === 'direct') {
     return (
       <NumberStepper
@@ -30,7 +32,7 @@ export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps
     );
   }
   return (
-    <View>
+    <View style={{ gap: spacing.lg }}>
       <NumberStepper
         label="Weight you lifted"
         value={data.weight}
@@ -40,7 +42,6 @@ export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps
         max={9999}
         onChange={(v) => onChange({ weight: v })}
       />
-      <View style={{ height: 16 }} />
       <NumberStepper
         label="For how many reps"
         value={data.reps}
