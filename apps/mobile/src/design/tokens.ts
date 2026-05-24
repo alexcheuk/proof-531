@@ -45,7 +45,7 @@ export const colors = {
   lime: '#1A1812', // = ink0 (collapsed)
   ice: '#1A1812', // = ink0 (collapsed)
   red: '#1A1812', // = ink0 (collapsed)
-  amber: '#1A1812', // = ink0 (collapsed)
+  amber: '#8E5345', // = ink0 (collapsed)
 
   // Paper aliases
   paper: '#E7E3D6', // = bg0

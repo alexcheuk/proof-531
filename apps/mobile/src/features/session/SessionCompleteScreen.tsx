@@ -6,6 +6,7 @@ import { CtaBar } from '@/design/primitives/CtaBar';
 import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SectionBand } from '@/design/primitives/SectionBand';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { estimateOneRm } from '@/domain/epley';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
@@ -277,7 +278,6 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
     textTransform: 'uppercase',
     color: colors.ink2,
     marginBottom: 8,
-    paddingHorizontal: 24,
   };
   const cycleHeaderRow: ViewStyle = {
     flexDirection: 'row',
@@ -363,7 +363,18 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
           </RNText>
           <View style={titleRow}>
             <RNText style={titleHeadline} testID="session-complete-title">
-              {'In the\nbook.'}
+              {'In the\nbook'}
+              <Text
+                variant="sans"
+                weight="bold"
+                size={64}
+                color="amber"
+                style={{
+                  lineHeight: 74,
+                }}
+              >
+                .
+              </Text>
             </RNText>
             <DateStamp
               testID="session-complete-stamp"
@@ -401,14 +412,10 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
         ) : null}
 
         {/* The record — receipt rows. */}
-        <View style={{ paddingTop: 24 }}>
+        <View style={{ paddingTop: 24, paddingHorizontal: 24 }}>
           <RNText style={sectionHeader}>The record</RNText>
-          <SectionBand
-            testID="session-complete-receipt"
-            tone="strong"
-            padding="none"
-            style={{ paddingHorizontal: 24 }}
-          >
+
+          <SectionBand testID="session-complete-receipt" tone="strong" padding="none">
             <ReceiptRow
               testID="receipt-top"
               first

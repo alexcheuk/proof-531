@@ -100,7 +100,7 @@ export function TopSetBlock({
     gap: 10,
   };
 
-  const weightFontSize = isMini ? 56 : 64;
+  const weightFontSize = isMini ? 56 : 120;
   const weightStyle: TextStyle = {
     fontFamily: 'IBMPlexSans-Bold',
     fontSize: weightFontSize,
@@ -139,6 +139,7 @@ export function TopSetBlock({
     <>
       <View style={headerRowStyle} testID={testID ? `${testID}-header` : undefined}>
         <RNText style={eyebrowStyle}>{eyebrow}</RNText>
+
         {pctLabel || tmLabel ? (
           <RNText style={metaStyle}>{[pctLabel, tmLabel].filter(Boolean).join(' · ')}</RNText>
         ) : null}

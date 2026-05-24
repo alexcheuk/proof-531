@@ -1,4 +1,3 @@
-import { SectionBand } from '@/design/primitives/SectionBand';
 import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
@@ -65,9 +64,9 @@ export function RestPhase({
   const headerWrap: ViewStyle = {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.lg,
   };
-  const sectionBandWrap: ViewStyle = {
+  const _sectionBandWrap: ViewStyle = {
     marginHorizontal: spacing.xl,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -82,7 +81,7 @@ export function RestPhase({
     letterSpacing: -1.92,
     color: colors.ink0,
   };
-  const statLabelStyle: TextStyle = {
+  const _statLabelStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
     fontSize: 10,
     letterSpacing: 2.2,
@@ -90,14 +89,14 @@ export function RestPhase({
     color: colors.ink2,
     marginBottom: 6,
   };
-  const statCapsStyle: TextStyle = {
+  const _statCapsStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
     fontSize: 10,
     letterSpacing: 2.2,
     textTransform: 'uppercase',
     color: colors.ink2,
   };
-  const e1rmBigStyle: TextStyle = {
+  const _e1rmBigStyle: TextStyle = {
     fontFamily: `${type.sans}-Medium`,
     fontSize: 26,
     lineHeight: 26,
@@ -106,7 +105,7 @@ export function RestPhase({
     fontVariant: ['tabular-nums', 'lining-nums'],
   };
 
-  const showE1RM = isAmrap && estimated1RM !== undefined;
+  const _showE1RM = isAmrap && estimated1RM !== undefined;
 
   return (
     <View testID={testID ?? 'rest-phase'}>
@@ -119,52 +118,57 @@ export function RestPhase({
           style={{ textTransform: 'uppercase', letterSpacing: 2.2, marginBottom: 8 }}
           testID="rest-phase-eyebrow"
         >
-          {isPR ? 'NEW PERSONAL RECORD' : 'LOGGED · REST NOW'}
+          {isPR ? 'SET COMPLETED · NEW PERSONAL RECORD' : 'SET COMPLETED'}
         </Text>
+
         <RNText style={headlineStyle} testID="rest-phase-headline">
-          {isPR ? 'Stronger.' : 'Rest.'}
+          {isPR ? 'Stronger' : 'Rest'}
+          <Text
+            variant="sans"
+            weight="bold"
+            size={64}
+            color="amber"
+            style={{
+              lineHeight: 74,
+            }}
+          >
+            .
+          </Text>
         </RNText>
       </View>
 
-      {showE1RM ? (
-        <SectionBand padding="none" style={sectionBandWrap} testID="rest-phase-stats">
-          <View style={{ alignItems: 'flex-end' }}>
-            <RNText style={statLabelStyle}>EST. 1RM</RNText>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 4 }}>
-              <RNText style={e1rmBigStyle} testID="rest-phase-e1rm">
-                {Math.round(estimated1RM as number)}
-              </RNText>
-              <RNText style={[statCapsStyle, { paddingBottom: 3 }]}>{unitLabel}</RNText>
-            </View>
-          </View>
-        </SectionBand>
-      ) : null}
-
-      {nextSet ? (
-        <View
-          style={{
-            marginHorizontal: spacing.xl,
-            marginTop: spacing.lg,
-          }}
-          testID="rest-phase-next-set"
-        >
-          <TopSetBlock
-            eyebrow="NEXT SET"
-            weight={nextSet.weight}
-            unitGlyph={unitLabel}
-            reps={nextSet.reps}
-            amrap={nextSet.amrap}
-            pctLabel={`${Math.round(nextSet.pct * 100)}%`}
-            tmLabel={`TM ${nextSet.tmDisplay} ${unitLabel}`}
-            perSide={nextSet.perSide}
-            plateVariant="full"
-            bordered={false}
-            testID="rest-phase-next-set-block"
-          />
-        </View>
-      ) : null}
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
 
       <RestTimer remaining={remaining} target={target} testID="rest-timer" />
+
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+
+      {nextSet ? (
+        <>
+          <View
+            style={{
+              paddingHorizontal: spacing.xl,
+              paddingVertical: spacing.lg,
+            }}
+            testID="rest-phase-next-set"
+          >
+            <TopSetBlock
+              eyebrow="NEXT SET"
+              weight={nextSet.weight}
+              unitGlyph={unitLabel}
+              reps={nextSet.reps}
+              amrap={nextSet.amrap}
+              pctLabel={`${Math.round(nextSet.pct * 100)}%`}
+              tmLabel={`TM ${nextSet.tmDisplay} ${unitLabel}`}
+              perSide={nextSet.perSide}
+              plateVariant="full"
+              bordered={false}
+              testID="rest-phase-next-set-block"
+            />
+          </View>
+          <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+        </>
+      ) : null}
     </View>
   );
 }

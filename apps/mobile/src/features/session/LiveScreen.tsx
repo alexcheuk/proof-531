@@ -52,7 +52,7 @@ export type LiveScreenProps = {
 export function LiveScreen({ sessionId }: LiveScreenProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
   const settingsQuery = useSettings();
@@ -247,11 +247,18 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
           />
         ) : showSetSurface || live.phase === 'cancel-confirm' ? (
           <>
-            <LiveHeader setIndex={live.setIndex} isAmrap={live.isAmrap} testID="live-header" />
+            <LiveHeader
+              setIndex={live.setIndex}
+              isAmrap={live.isAmrap}
+              testID="live-header"
+              lift={liftDisplayName(lift)}
+            />
 
-            <View style={{ paddingHorizontal: 24, paddingBottom: 24, marginTop: 24 }}>
+            <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+
+            <View style={{ paddingHorizontal: 24, paddingVertical: spacing.lg }}>
               <TopSetBlock
-                eyebrow={`${liftDisplayName(lift)} · ${Math.round(live.pct * 100)}% TM`}
+                eyebrow={`On the bar · ${Math.round(live.pct * 100)}% TM`}
                 weight={prescribedDisplay}
                 unitGlyph={displayUnit(unit)}
                 reps={live.prescribedReps}
@@ -262,6 +269,8 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
                 testID="live-bigweight"
               />
             </View>
+
+            <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
           </>
         ) : null}
         <View style={{ height: 120 }} />

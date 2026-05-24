@@ -1,11 +1,11 @@
 /**
  * Behavioral test for RestPhase + RestTimer.
  *
- * Asserts the current layout: caps eyebrow ("LOGGED · REST NOW"),
- * display headline ("Rest." / "Stronger."), optional EST. 1RM column
- * (AMRAP only), and the count-up RestTimer below. The LOGGED weight ×
- * reps band was removed in favor of a "NEXT SET" TopSetBlock the parent
- * passes via `nextSet`.
+ * Asserts the current layout: caps eyebrow ("SET COMPLETED" /
+ * "SET COMPLETED · NEW PERSONAL RECORD"), display headline
+ * ("Rest" / "Stronger" with a separate amber period), optional NEXT SET
+ * TopSetBlock the parent passes via `nextSet`, and the count-up
+ * RestTimer.
  */
 import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
@@ -15,44 +15,26 @@ import { RestPhase } from '../RestPhase';
 const renderWithTheme = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
 describe('RestPhase', () => {
-  it('renders the LOGGED · REST NOW eyebrow and the rest-timer surface', () => {
+  it('renders the SET COMPLETED eyebrow and the rest-timer surface', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={87} target={90} />);
-    expect(screen.getByText('LOGGED · REST NOW')).toBeTruthy();
+    expect(screen.getByText('SET COMPLETED')).toBeTruthy();
     expect(screen.getByTestId('rest-timer')).toBeTruthy();
   });
 
-  it('renders the "Rest." headline on a non-PR set', () => {
+  it('renders the "Rest" headline word on a non-PR set', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} target={90} />);
-    expect(screen.getByText('Rest.')).toBeTruthy();
+    // The headline RNText holds a string child plus a sibling amber-period
+    // Text — getByText can't match the bare word, so assert on the
+    // children array of the testID'd node.
+    const headline = screen.getByTestId('rest-phase-headline');
+    expect(headline.props.children).toEqual(expect.arrayContaining(['Rest']));
   });
 
-  it('renders the "Stronger." headline and PR eyebrow on a PR set', () => {
+  it('renders the "Stronger" headline and PR eyebrow on a PR set', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} target={90} isPR />);
-    expect(screen.getByText('Stronger.')).toBeTruthy();
-    expect(screen.getByText('NEW PERSONAL RECORD')).toBeTruthy();
-  });
-
-  it('omits the EST. 1RM column when the set is not an AMRAP', () => {
-    const screen = renderWithTheme(
-      <RestPhase loggedUnit="lbs" estimated1RM={262.5} remaining={90} target={90} />,
-    );
-    expect(screen.queryByTestId('rest-phase-e1rm')).toBeNull();
-    expect(screen.queryByText('EST. 1RM')).toBeNull();
-  });
-
-  it('renders the EST. 1RM column rounded to an integer when AMRAP + e1RM provided', () => {
-    const screen = renderWithTheme(
-      <RestPhase loggedUnit="lbs" estimated1RM={262.5} remaining={90} target={90} isAmrap />,
-    );
-    expect(screen.getByText('EST. 1RM')).toBeTruthy();
-    expect(screen.getByTestId('rest-phase-e1rm').props.children).toBe(263);
-  });
-
-  it('renders kg as the EST. 1RM unit suffix when the session unit is kg', () => {
-    const screen = renderWithTheme(
-      <RestPhase loggedUnit="kg" estimated1RM={110.4} remaining={45} target={120} isAmrap />,
-    );
-    expect(screen.getByText('kg')).toBeTruthy();
+    const headline = screen.getByTestId('rest-phase-headline');
+    expect(headline.props.children).toEqual(expect.arrayContaining(['Stronger']));
+    expect(screen.getByText('SET COMPLETED · NEW PERSONAL RECORD')).toBeTruthy();
   });
 
   it('renders the optional NEXT SET TopSetBlock when nextSet is provided', () => {

@@ -13,7 +13,7 @@ import { useTheme } from '@/design/theme';
  * Visual contract mirrors the PWA: REST caps eyebrow over a 96-px tabular
  * timer label. No "of m:ss" sub-line — the ref's rest is free-form.
  */
-import { View, type ViewStyle } from 'react-native';
+import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 
 export type RestTimerProps = {
   /** Seconds remaining in the countdown driver. */
@@ -31,16 +31,43 @@ function formatLabel(totalSeconds: number): string {
 }
 
 export function RestTimer({ remaining, target, testID }: RestTimerProps) {
-  const { spacing } = useTheme();
+  const { spacing, colors } = useTheme();
   // Count UP from 0 to match the reference. After the target elapses we keep
   // ticking past it (free-form rest — the ref has no fixed ceiling either):
   // when `remaining` goes negative, `target - remaining` grows past `target`.
   const elapsed = target - remaining;
   const label = formatLabel(elapsed);
   const container: ViewStyle = {
-    alignItems: 'center',
-    marginTop: spacing.xxl,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
   };
+
+  const headerRowStyle: ViewStyle = {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // RN does not support 'baseline'; 'center' is the closest visual match.
+    alignItems: 'center',
+    marginBottom: 10,
+  };
+
+  const eyebrowStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 10,
+    lineHeight: 10,
+    letterSpacing: 2.2, // 0.22em × 10 — caps spec
+    textTransform: 'uppercase',
+    color: colors.ink2,
+  };
+
+  const metaStyle: TextStyle = {
+    fontFamily: 'IBMPlexMono-Medium',
+    fontSize: 10,
+    lineHeight: 10,
+    letterSpacing: 1.8, // 0.18em × 10
+    textTransform: 'uppercase',
+    color: colors.ink3,
+  };
+
   return (
     <View
       testID={testID ?? 'rest-timer'}
@@ -48,15 +75,12 @@ export function RestTimer({ remaining, target, testID }: RestTimerProps) {
       accessibilityLabel="Resting"
       accessibilityRole="timer"
     >
-      <Text
-        variant="mono"
-        weight="semibold"
-        size={10}
-        color="ink2"
-        style={{ textTransform: 'uppercase', letterSpacing: 2.2, marginBottom: 6 }}
-      >
-        REST
-      </Text>
+      <View style={headerRowStyle} testID={testID ? `${testID}-header` : undefined}>
+        <RNText style={eyebrowStyle}>Rest timer</RNText>
+
+        <RNText style={metaStyle}>TARGET</RNText>
+      </View>
+
       <Text
         variant="sans"
         weight="medium"
