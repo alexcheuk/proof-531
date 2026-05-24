@@ -73,6 +73,38 @@ describe('TmEditSheet', () => {
     expect(screen.getByTestId('tm-edit-delta').props.children).toBe('No change from current');
   });
 
+  it('appends a percent-delta clause when the user bumps the stepper', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="bench"
+        currentValue={200}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // +5 lb on a 200 lb TM = +2.5%.
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    expect(screen.getByTestId('tm-edit-delta').props.children).toBe('+5 lb · +2.5% from current');
+  });
+
+  it('drops the decimal on percent jumps ≥ 10%', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="press"
+        currentValue={100}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // Press +5 three times = +15 lb on 100 lb TM = +15%, rounds to "+15%".
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    fireEvent.press(screen.getByTestId('tm-edit-stepper-plus'));
+    expect(screen.getByTestId('tm-edit-delta').props.children).toBe('+15 lb · +15% from current');
+  });
+
   it('hides the storage ≠ display caption when both units match', () => {
     const screen = wrap(
       <TmEditSheet

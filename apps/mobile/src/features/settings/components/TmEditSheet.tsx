@@ -18,6 +18,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { LIFT_META } from '../lifts';
 
+/**
+ * Format a percentage delta for the TmEditSheet caption.
+ * Single-decimal under 10% (so 2.5%, 4.3% are legible); whole-number
+ * above (a 12.7% jump rounds to 13% — no spurious precision).
+ */
+function formatDeltaPct(pct: number): string {
+  const sign = pct > 0 ? '+' : '-';
+  const abs = Math.abs(pct);
+  return `${sign}${abs >= 10 ? abs.toFixed(0) : abs.toFixed(1)}%`;
+}
+
 export interface TmEditSheetProps {
   lift: Lift;
   currentValue: number;
@@ -50,6 +61,11 @@ export function TmEditSheet({
   const isUnchanged = delta === 0;
   const isZero = draft <= 0;
   const saveDisabled = pending || isUnchanged || isZero;
+  // Percent change of the delta vs the current TM. Surfaced so the user
+  // can sanity-check the edit (Wendler's rule of thumb is +5 lb upper /
+  // +10 lb lower per cycle — ≈ 2–5% jumps).
+  const deltaPctLabel =
+    currentValue > 0 && !isUnchanged ? formatDeltaPct((delta / currentValue) * 100) : null;
 
   async function handleSave() {
     if (saveDisabled) return;
@@ -62,6 +78,11 @@ export function TmEditSheet({
     } catch (err) {
       console.error('TmEditSheet.handleSave setTrainingMax failed', err);
       setError('Could not save · try again');
+    } finally {
+      // Reset on BOTH success and failure paths. Success previously
+      // depended on onClose unmounting the sheet, which is brittle if the
+      // parent state lags. Same pattern as useTodayScreenState +
+      // useOnboardingFlow + useAmrapLogState in prior loops.
       setPending(false);
     }
   }
@@ -118,7 +139,9 @@ export function TmEditSheet({
           ? 'Set a positive training max to continue'
           : isUnchanged
             ? 'No change from current'
-            : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)} from current`}
+            : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)}${
+                deltaPctLabel ? ` · ${deltaPctLabel}` : ''
+              } from current`}
       </CapsLabel>
 
       {error ? (
