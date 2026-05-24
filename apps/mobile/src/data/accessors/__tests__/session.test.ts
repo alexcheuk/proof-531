@@ -85,6 +85,10 @@ describe('session accessor', () => {
     await setTrainingMax(db, 'squat', 250, 'lbs');
     await setTrainingMax(db, 'bench', 200, 'lbs');
     const a = await createSession(db, 'squat');
+    // Complete the first session before creating the second — the
+    // single-session invariant means createSession would reuse the
+    // existing in_progress row otherwise.
+    await completeSession(db, a.id as number);
     // Force a later startedAt so ordering is deterministic regardless of clock
     // resolution within the same ms.
     await new Promise((r) => setTimeout(r, 2));
@@ -94,6 +98,26 @@ describe('session accessor', () => {
     expect(list).toHaveLength(2);
     expect(list[0]?.id).toBe(b.id);
     expect(list[1]?.id).toBe(a.id);
+  });
+
+  it('createSession reuses an existing in_progress row for the same lift', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 250, 'lbs');
+    const first = await createSession(db, 'squat');
+    const second = await createSession(db, 'squat');
+    expect(second.id).toBe(first.id);
+    const list = await getSessions(db);
+    expect(list).toHaveLength(1);
+  });
+
+  it('createSession refuses to create a parallel session for a different lift', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 250, 'lbs');
+    await setTrainingMax(db, 'bench', 200, 'lbs');
+    await createSession(db, 'squat');
+    await expect(createSession(db, 'bench')).rejects.toThrow(/in-progress session/);
   });
 
   it('getSessions returns an empty array when no sessions exist', async () => {

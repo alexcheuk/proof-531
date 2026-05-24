@@ -31,13 +31,13 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
-  Dimensions,
   FlatList,
   type ListRenderItem,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   View,
   type ViewStyle,
+  useWindowDimensions,
 } from 'react-native';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
@@ -56,10 +56,16 @@ export function HomeScreen() {
     [settings.data?.enabledLifts],
   );
   const firstLift: Lift = enabledLifts[0] ?? 'squat';
-  const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(firstLift);
+  const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(
+    firstLift,
+    enabledLifts,
+  );
 
   const listRef = useRef<FlatList<Lift>>(null);
-  const screenWidth = Dimensions.get('window').width;
+  // Live width — rotates with the device so carousel page math, item
+  // layout, and momentum-end index calculation stay correct under
+  // orientation change.
+  const { width: screenWidth } = useWindowDimensions();
 
   // If onboarding has not produced an enabled-lifts set, redirect.
   useEffect(() => {

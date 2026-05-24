@@ -6,7 +6,7 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { decompose } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { displayWeight } from '@/domain/units';
+import { convertWeight, displayWeight } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
@@ -68,40 +68,58 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   }, []);
 
   // After the session machine settles into `complete` (via normal finish OR
-  // cancel — `cancelSession` also transitions to `complete`), invalidate the
-  // session-shaped queries so Home/History refetch, then route to the
-  // session-complete screen. Doing the invalidation here (rather than inside
-  // the hook) keeps the hook driver-agnostic.
+  // cancel), invalidate the session-shaped queries so Home/History refetch,
+  // then route away. A cancelled session routes home (no celebration
+  // surface); a completed session routes to the receipt. Doing the
+  // invalidation here (rather than inside the hook) keeps the hook
+  // driver-agnostic. A .catch redirect-home fallback guarantees the screen
+  // never gets stranded if any invalidate rejects.
+  const sessionStatus = sessionQuery.data?.status;
   useEffect(() => {
     if (live.phase !== 'complete' || sessionId == null) return;
-    void Promise.all([
+    // Snapshot the status at the moment we enter `complete` — the exit
+    // gate below is gated off so it can't fire a competing replace.
+    const destination =
+      sessionStatus === 'cancelled'
+        ? ('/' as const)
+        : ({
+            pathname: '/session/complete' as const,
+            params: { sessionId: String(sessionId) },
+          } as const);
+    Promise.all([
       queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
       queryClient.invalidateQueries({ queryKey: ['sessions'] }),
       queryClient.invalidateQueries({ queryKey: ['session', sessionId] }),
-    ]).then(() => {
-      router.replace({
-        pathname: '/session/complete',
-        params: { sessionId: String(sessionId) },
+    ])
+      .then(() => {
         // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
-      } as any);
-    });
-  }, [live.phase, sessionId, queryClient, router]);
+        router.replace(destination as any);
+      })
+      .catch((err) => {
+        console.error('LiveScreen complete-flow invalidation failed', err);
+        // Fallback: route somewhere recoverable so the user isn't stranded
+        // on an empty surface waiting for a redirect that will never come.
+        // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
+        router.replace(destination as any);
+      });
+  }, [live.phase, sessionId, sessionStatus, queryClient, router]);
 
-  // Exit gate: if the session row disappears (deleted) or transitions out of
-  // `in_progress` from elsewhere (cancelled/completed in another surface),
-  // bounce home. Skip while the query is still loading so the loading-state
-  // chrome below renders without a spurious redirect.
-  const sessionStatus = sessionQuery.data?.status;
+  // Exit gate: if the session row disappears (deleted) or transitions out
+  // of `in_progress` from elsewhere (e.g. cancelled by another surface),
+  // bounce home. Skipped while still loading and while we're already
+  // mid-`complete` flow (the effect above owns routing in that case, so
+  // this would race it).
   useEffect(() => {
     if (sessionQuery.isLoading) return;
-    if (sessionQuery.data === undefined) {
+    if (live.phase === 'complete') return;
+    if (sessionQuery.data === null) {
       router.replace('/' as never);
       return;
     }
     if (sessionStatus && sessionStatus !== 'in_progress') {
       router.replace('/' as never);
     }
-  }, [sessionQuery.isLoading, sessionQuery.data, sessionStatus, router]);
+  }, [sessionQuery.isLoading, sessionQuery.data, sessionStatus, live.phase, router]);
 
   if (!sessionQuery.data) {
     // Loading or unknown session — render the layout chrome so the page
@@ -127,12 +145,13 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // they diverge (post-migration on an in-flight session) the user sees
   // the snapped destination-unit weight.
   const prescribedDisplay = displayWeight(live.prescribedWeight, storageUnit, unit);
-  // Per-side plate decomposition for the prescribed weight. Falls back to the
-  // 'standard' plate set when settings haven't loaded — keeps the surface
-  // render-safe before the query resolves (the bigweight readout itself
-  // already renders under the same fallback in this file).
-  const plateSet: PlateSet = settingsQuery.data?.plateSet ?? 'standard';
-  const perSide = decompose(prescribedDisplay, plateSet).perSide;
+  // Per-side plate decomposition. Decompose against the *storage* weight
+  // and a plate-set matched to the storage unit so the breakdown is
+  // physically correct (lb plates on a lb-storage TM produce a 45-lb bar +
+  // lb plates regardless of which currency the user is viewing in).
+  const plateSet: PlateSet =
+    settingsQuery.data?.plateSet ?? (storageUnit === 'kg' ? 'kg-standard' : 'standard');
+  const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
@@ -203,7 +222,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             isAmrap={live.lastLogged?.isAmrap ?? false}
             estimated1RM={
               live.lastLogged?.estimated1RM !== undefined
-                ? displayWeight(live.lastLogged.estimated1RM, storageUnit, unit)
+                ? Math.round(convertWeight(live.lastLogged.estimated1RM, storageUnit, unit))
                 : undefined
             }
             remaining={live.restRemaining}

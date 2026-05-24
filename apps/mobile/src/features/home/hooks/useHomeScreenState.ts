@@ -10,7 +10,7 @@ import type { Lift } from '@/domain/types';
  * `@/data/queries/*` and only delegates the selected-lift bookkeeping (and
  * the derived `inProgressLift`) to this hook.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type HomeState = {
   selectedLift: Lift;
@@ -19,9 +19,24 @@ export type HomeState = {
   inProgressLift: Lift | null;
 };
 
-/** Initialize with the first enabled lift; caller resets via `setSelectedLift`. */
-export function useHomeScreenState(initialLift: Lift): HomeState {
+/**
+ * Initialize with the first enabled lift; caller resets via `setSelectedLift`.
+ *
+ * Passing `enabledLifts` lets the hook re-anchor `selectedLift` if the user
+ * disables the previously-selected lift in Settings — without it, internal
+ * state would linger on a now-disabled lift and desync from the carousel.
+ */
+export function useHomeScreenState(
+  initialLift: Lift,
+  enabledLifts: ReadonlyArray<Lift> = [],
+): HomeState {
   const [selectedLift, setSelectedLift] = useState<Lift>(initialLift);
+  useEffect(() => {
+    if (enabledLifts.length === 0) return;
+    if (!enabledLifts.includes(selectedLift)) {
+      setSelectedLift(initialLift);
+    }
+  }, [enabledLifts, initialLift, selectedLift]);
   const activeSession = useActiveSession();
   const inProgressLift = (activeSession.data?.lift as Lift | undefined) ?? null;
   return { selectedLift, setSelectedLift, inProgressLift };

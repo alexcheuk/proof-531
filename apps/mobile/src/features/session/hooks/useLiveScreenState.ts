@@ -143,16 +143,15 @@ export function useLiveScreenState(
   const pct = workingSet.pct;
   const isAmrap = isAmrapSet(week, setIndex);
 
-  // Rest-timer driver. Runs only when phase === 'rest'.
+  // Rest-timer driver. Runs only when phase === 'rest'. Lets `remaining`
+  // go negative past T-0 so the count-up label in RestTimer keeps ticking
+  // past the configured target — rest is free-form per the PWA reference.
   useEffect(() => {
     if (phase !== 'rest') return;
     warningFiredRef.current = false;
     setRestRemaining(restSeconds);
     const id = setInterval(() => {
-      setRestRemaining((prev) => {
-        const next = Math.max(0, prev - 1);
-        return next;
-      });
+      setRestRemaining((prev) => prev - 1);
     }, 1000);
     return () => {
       clearInterval(id);

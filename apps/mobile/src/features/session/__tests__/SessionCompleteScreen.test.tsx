@@ -106,6 +106,10 @@ jest.mock('@/data/queries/useSettings', () => ({
   }),
 }));
 
+jest.mock('@/data/queries/usePrs', () => ({
+  usePrs: () => ({ data: [], isLoading: false, error: null }),
+}));
+
 // Import after mocks so the screen sees the stubs.
 import { SessionCompleteScreen } from '../SessionCompleteScreen';
 

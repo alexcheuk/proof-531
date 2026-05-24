@@ -33,8 +33,9 @@ function formatLabel(totalSeconds: number): string {
 export function RestTimer({ remaining, target, testID }: RestTimerProps) {
   const { spacing } = useTheme();
   // Count UP from 0 to match the reference. After the target elapses we keep
-  // ticking past it (free-form rest — the ref has no fixed ceiling either).
-  const elapsed = Math.max(0, target - remaining);
+  // ticking past it (free-form rest — the ref has no fixed ceiling either):
+  // when `remaining` goes negative, `target - remaining` grows past `target`.
+  const elapsed = target - remaining;
   const label = formatLabel(elapsed);
   const container: ViewStyle = {
     alignItems: 'center',

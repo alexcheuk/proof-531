@@ -37,9 +37,22 @@ export type Session = typeof sessions.$inferSelect;
  * Create a new in-progress Session for the given lift, snapshotting the
  * current TrainingMax (value + unit) and current displayUnit into the row.
  *
+ * Idempotent on the single-session invariant (§4): if an in_progress row
+ * already exists for this lift, returns it instead of inserting a duplicate.
+ * If an in_progress row exists for a DIFFERENT lift, throws — callers
+ * should check `getActiveSession` first and route to that lift's surface.
+ *
  * Throws if no TM exists for the lift — callers should gate on onboarding.
  */
 export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
+  // Single-session invariant: reuse any existing in_progress row for this
+  // lift; refuse to create a parallel session while another lift's session
+  // is open.
+  const active = await getActiveSession(db);
+  if (active) {
+    if (active.lift === lift) return active;
+    throw new Error(`createSession: an in-progress session already exists for '${active.lift}'`);
+  }
   const settings = await getSettings(db);
   const tms = await getCurrentTrainingMaxes(db);
   const tm = tms.find((t) => t.lift === lift);

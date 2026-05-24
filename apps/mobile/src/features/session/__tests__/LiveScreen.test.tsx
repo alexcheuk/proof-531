@@ -410,7 +410,9 @@ describe('LiveScreen', () => {
   });
 
   it('redirects to "/" when the session row no longer exists', async () => {
-    mockSessionState.data = undefined;
+    // getSession returns null (not undefined) for missing rows — the exit
+    // gate must handle null specifically.
+    mockSessionState.data = null;
     mockSessionState.isLoading = false;
 
     renderScreen(<LiveScreen sessionId={7} />);

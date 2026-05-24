@@ -1,3 +1,4 @@
+import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -47,6 +48,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const sessionQuery = useSession(sessionId);
   const setLogsQuery = useSetLogsForSession(sessionId);
   const settingsQuery = useSettings();
+  const prsQuery = usePrs();
 
   // Detect PR on the working/AMRAP logs. Compute eagerly so we can fire
   // the success haptic in the effect below.
@@ -74,9 +76,36 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [hasPR]);
 
+  // Defense in depth: the LiveScreen complete-flow routes cancelled
+  // sessions home, but a stale deep-link / manual route into this screen
+  // for a cancelled or in-progress session should bounce home rather than
+  // render the success masthead over a non-completed session.
+  const sessionStatusForGate = sessionQuery.data?.status;
+  useEffect(() => {
+    if (sessionQuery.isLoading) return;
+    if (sessionQuery.data === null) {
+      router.replace('/' as never);
+      return;
+    }
+    if (sessionStatusForGate && sessionStatusForGate !== 'completed') {
+      router.replace('/' as never);
+    }
+  }, [sessionQuery.isLoading, sessionQuery.data, sessionStatusForGate, router]);
+
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
   if (!sessionQuery.data) {
+    return (
+      <SessionLayout>
+        <StatusBar style="dark" />
+      </SessionLayout>
+    );
+  }
+
+  // The effect above will fire router.replace for non-completed sessions;
+  // render the loading chrome in the meantime rather than the success
+  // masthead.
+  if (sessionQuery.data.status !== 'completed') {
     return (
       <SessionLayout>
         <StatusBar style="dark" />
@@ -136,14 +165,34 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const workingVolume = Math.round(convertWeight(workingVolumeStorage, storageUnit, renderUnit));
 
   // Cycle position math — falls back to 4-lift defaults if settings haven't
-  // loaded (matches PWA conservative behavior).
+  // loaded (matches PWA conservative behavior). Uses a single resolved
+  // `liftsPerCycle` so the position math and the grid ceiling cannot
+  // disagree (e.g. empty enabledLifts had collapsed completedThisCycle to
+  // 1 against a 16-cell grid). Handles disabled-after-the-fact lifts via
+  // the indexOf=-1 → end-of-row fallback.
   const enabledLifts = settingsQuery.data?.enabledLifts ?? ['squat', 'bench', 'deadlift', 'press'];
-  const sessionsInCycle = (enabledLifts.length || 4) * 4;
-  const liftPos = Math.max(0, enabledLifts.indexOf(lift));
+  const liftsPerCycle = enabledLifts.length || 4;
+  const sessionsInCycle = liftsPerCycle * 4;
+  const indexInWeek = enabledLifts.indexOf(lift);
+  // Disabled-after-the-fact lift: place at the END of the week so the
+  // grid still highlights *some* cell within the correct week range.
+  const liftPos = indexInWeek === -1 ? liftsPerCycle - 1 : indexInWeek;
   const completedThisCycle = Math.min(
     sessionsInCycle,
-    Math.max(1, (session.week - 1) * enabledLifts.length + (liftPos + 1)),
+    Math.max(1, (session.week - 1) * liftsPerCycle + (liftPos + 1)),
   );
+
+  // PR baseline: the existing PR row for this lift (if any) holds the prior
+  // best e1RM. If no row exists yet, the PR is the very first one and we
+  // present the delta as 0 (the certificate's "stronger by" reduces to a
+  // baseline acknowledgement rather than misclaiming a "+N from 0" gain).
+  const existingPRStorage = prsQuery.data?.find((p) => p.lift === lift)?.bestE1RM ?? 0;
+  // Convert prior PR with same precision policy as new e1RM so the cert's
+  // delta arithmetic is internally consistent.
+  const prevE1RMDisplay = existingPRStorage
+    ? Math.round(convertWeight(existingPRStorage, storageUnit, renderUnit))
+    : 0;
+  const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
 
   const handleClose = () => {
     router.replace('/');
@@ -344,8 +393,8 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
           <PRCertificate
             testID="session-complete-cert"
             e1RM={e1RMDisplay}
-            prevE1RM={0}
-            delta={e1RMDisplay}
+            prevE1RM={prevE1RMDisplay}
+            delta={e1RMDelta}
             unit={unitGlyph}
             liftLabel={liftLower}
           />
