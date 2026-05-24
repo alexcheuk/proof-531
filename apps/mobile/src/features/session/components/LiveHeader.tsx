@@ -1,4 +1,6 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { MonoBadge } from '@/design/primitives/MonoBadge';
+import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
@@ -8,7 +10,8 @@ import { useTheme } from '@/design/theme';
  * SessionComplete titles (period-terminated, single short word). The AMRAP
  * chip sits inline with the title row so it baseline-aligns visually.
  */
-import { type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
+import { formatElapsedClock } from '../hooks/useElapsedSeconds';
 
 const TITLE_SIZE = 64;
 // PWA `tracking-[-0.04em]` × 64px = -2.56 letter spacing.
@@ -22,10 +25,15 @@ export type LiveHeaderProps = {
   isAmrap: boolean;
   testID?: string;
   lift: string;
+  /**
+   * Whole-second wall-clock elapsed since the session started. When set,
+   * a small `MM:SS` badge anchors the right of the eyebrow line.
+   */
+  elapsedSeconds?: number;
 };
 
-export function LiveHeader({ setIndex, isAmrap, testID, lift }: LiveHeaderProps) {
-  const { colors, spacing, type } = useTheme();
+export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: LiveHeaderProps) {
+  const { spacing } = useTheme();
   const oneBased = setIndex + 1;
 
   const container: ViewStyle = {
@@ -40,30 +48,25 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift }: LiveHeaderProps)
     marginTop: 4,
   };
 
-  const titleFontSize = 36;
-  const _titleStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: titleFontSize,
-    lineHeight: titleFontSize,
-    letterSpacing: -1.08, // -0.03em × 36
-    color: colors.ink0,
-  };
-
   const eyebrowTestID = testID ? `${testID}-eyebrow` : undefined;
-  const _titleTestID = testID ? `${testID}-title` : undefined;
+  const elapsedTestID = testID ? `${testID}-elapsed` : undefined;
 
   return (
     <View testID={testID} style={container}>
-      <Text
-        variant="mono"
-        weight="semibold"
-        size={10}
-        color="ink2"
-        style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
-        {...(eyebrowTestID ? { testID: eyebrowTestID } : null)}
-      >
-        SET {oneBased} OF 3
-      </Text>
+      <Row justify="space-between" align="baseline">
+        <CapsLabel {...(eyebrowTestID ? { testID: eyebrowTestID } : {})}>
+          {`SET ${oneBased} OF 3`}
+        </CapsLabel>
+        {elapsedSeconds !== undefined ? (
+          <CapsLabel
+            weight="semibold"
+            color="ink1"
+            {...(elapsedTestID ? { testID: elapsedTestID } : {})}
+          >
+            {formatElapsedClock(elapsedSeconds)}
+          </CapsLabel>
+        ) : null}
+      </Row>
 
       <View style={titleRow}>
         <Text
@@ -71,10 +74,7 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift }: LiveHeaderProps)
           weight="bold"
           size={TITLE_SIZE}
           color="ink0"
-          style={{
-            lineHeight: TITLE_LINE_HEIGHT,
-            letterSpacing: TITLE_LETTER_SPACING,
-          }}
+          style={{ lineHeight: TITLE_LINE_HEIGHT, letterSpacing: TITLE_LETTER_SPACING }}
         >
           {lift} now
           <Text
@@ -82,10 +82,7 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift }: LiveHeaderProps)
             weight="bold"
             size={TITLE_SIZE}
             color="amber"
-            style={{
-              lineHeight: TITLE_LINE_HEIGHT,
-              letterSpacing: TITLE_LETTER_SPACING,
-            }}
+            style={{ lineHeight: TITLE_LINE_HEIGHT, letterSpacing: TITLE_LETTER_SPACING }}
           >
             .
           </Text>

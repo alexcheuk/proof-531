@@ -1,4 +1,6 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
@@ -29,7 +31,6 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
   };
 
   const headerStyle: ViewStyle = {
-    flexDirection: 'row',
     paddingHorizontal: 14,
     paddingVertical: 10,
     backgroundColor: colors.ink0,
@@ -52,15 +53,7 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
       }
     >
       <View style={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 12 }}>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={10}
-          color="ink2"
-          style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 6 }}
-        >
-          Your numbers
-        </Text>
+        <CapsLabel style={{ marginBottom: 6 }}>Your numbers</CapsLabel>
         <Text
           variant="sans"
           weight="bold"
@@ -86,17 +79,9 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
       </View>
 
       <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={10}
-          color="ink2"
-          style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 8 }}
-        >
-          Training maxes
-        </Text>
+        <CapsLabel style={{ marginBottom: 8 }}>Training maxes</CapsLabel>
         <View style={tableStyle}>
-          <View style={headerStyle}>
+          <Row style={headerStyle}>
             <HeaderCell width={24}>№</HeaderCell>
             <HeaderCell flex>Lift</HeaderCell>
             <HeaderCell width={80} right>
@@ -105,27 +90,26 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
             <HeaderCell width={80} right>
               TM (90%)
             </HeaderCell>
-          </View>
+          </Row>
           {enabledLifts.map((lift, i) => {
             const oneRM = computed[lift] ?? 0;
             const tm = trainingMaxFrom(oneRM, unit);
             const isLast = i === enabledLifts.length - 1;
             return (
-              <View
+              <Row
                 key={lift}
+                align="flex-end"
                 style={{
-                  flexDirection: 'row',
                   paddingHorizontal: 14,
                   paddingVertical: 12,
-                  alignItems: 'flex-end',
                   borderBottomWidth: isLast ? 0 : 1,
                   borderBottomColor: colors.line,
                 }}
               >
                 <View style={{ width: 24 }}>
-                  <Text variant="mono" weight="bold" size={11} color="ink3">
+                  <CapsLabel weight="bold" color="ink3">
                     {String(i + 1).padStart(2, '0')}
-                  </Text>
+                  </CapsLabel>
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text variant="sans" weight="semibold" size={15} color="ink0">
@@ -154,24 +138,13 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
                     {String(tm)}
                   </Text>
                 </View>
-              </View>
+              </Row>
             );
           })}
         </View>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={9}
-          color="ink3"
-          style={{
-            letterSpacing: 1.62,
-            textTransform: 'uppercase',
-            marginTop: 8,
-            textAlign: 'right',
-          }}
-        >
+        <CapsLabel size="xs" color="ink3" style={{ marginTop: 8, textAlign: 'right' }}>
           {`all values in ${displayUnit(unit)}`}
-        </Text>
+        </CapsLabel>
       </View>
     </OnboardingShell>
   );
@@ -192,15 +165,9 @@ function HeaderCell({ children, width, flex, right }: HeaderCellProps) {
   };
   return (
     <View style={cellStyle}>
-      <Text
-        variant="mono"
-        weight="bold"
-        size={9}
-        color="bg0"
-        style={{ letterSpacing: 1.98, textTransform: 'uppercase' }}
-      >
+      <CapsLabel size="xs" weight="bold" color="bg0">
         {children}
-      </Text>
+      </CapsLabel>
     </View>
   );
 }

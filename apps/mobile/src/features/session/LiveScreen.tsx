@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -10,8 +9,6 @@ import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
-import { useQueryClient } from '@tanstack/react-query';
-import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 /**
@@ -36,7 +33,6 @@ import { StatusBar } from 'expo-status-bar';
  * Boundary: composes design primitives + feature-local hook + data accessors.
  * No hex/px literals; no direct drizzle imports.
  */
-import { useEffect } from 'react';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
@@ -44,6 +40,8 @@ import { LiveHeader } from './components/LiveHeader';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
+import { useElapsedSeconds } from './hooks/useElapsedSeconds';
+import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
 import { useLiveScreenState } from './hooks/useLiveScreenState';
 
 export type LiveScreenProps = {
@@ -52,81 +50,23 @@ export type LiveScreenProps = {
 
 export function LiveScreen({ sessionId }: LiveScreenProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { colors, spacing } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
   const settingsQuery = useSettings();
   const restSeconds = settingsQuery.data?.restTargetSeconds;
   const live = useLiveScreenState(sessionId, restSeconds !== undefined ? { restSeconds } : {});
-
-  // Keep the screen awake for the entire session. Activate on mount,
-  // deactivate on unmount. `activateKeepAwakeAsync` replaces the deprecated
-  // sync `activateKeepAwake` (Expo SDK 51+); fire-and-forget here since
-  // the activation is best-effort.
-  useEffect(() => {
-    void KeepAwake.activateKeepAwakeAsync();
-    return () => {
-      KeepAwake.deactivateKeepAwake();
-    };
-  }, []);
-
-  // After the session machine settles into `complete` (via normal finish OR
-  // cancel), invalidate the session-shaped queries so Home/History refetch,
-  // then route away. A cancelled session routes home (no celebration
-  // surface); a completed session routes to the receipt. Doing the
-  // invalidation here (rather than inside the hook) keeps the hook
-  // driver-agnostic. A .catch redirect-home fallback guarantees the screen
-  // never gets stranded if any invalidate rejects.
   const sessionStatus = sessionQuery.data?.status;
-  useEffect(() => {
-    if (live.phase !== 'complete' || sessionId == null) return;
-    // Snapshot the destination at the moment we enter `complete` — a
-    // cancelled session goes home (no celebration surface), a completed
-    // one goes to the receipt. completeSession runs advanceDay (mutates
-    // settings.week/cycle and, on wrap, the training_maxes history) and
-    // AMRAP saves may have set a new PR, so we invalidate the broader
-    // session-shaped surface alongside the three core keys. .catch
-    // re-fires the same replace so the user is never stranded.
-    const routeToDestination = () => {
-      if (sessionStatus === 'cancelled') {
-        goTo.home(router);
-      } else {
-        goTo.complete(router, sessionId, { replace: true });
-      }
-    };
-    Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
-      queryClient.invalidateQueries({ queryKey: ['sessions'] }),
-      queryClient.invalidateQueries({ queryKey: ['session', sessionId] }),
-      queryClient.invalidateQueries({ queryKey: ['settings'] }),
-      queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
-      queryClient.invalidateQueries({ queryKey: ['prs'] }),
-      queryClient.invalidateQueries({ queryKey: ['setLogsForSession', sessionId] }),
-    ])
-      .then(routeToDestination)
-      .catch((err) => {
-        console.error('LiveScreen complete-flow invalidation failed', err);
-        routeToDestination();
-      });
-  }, [live.phase, sessionId, sessionStatus, queryClient, router]);
 
-  // Exit gate: if the session row disappears (deleted) or transitions out
-  // of `in_progress` from elsewhere (e.g. cancelled by another surface),
-  // bounce home. Skipped while still loading and while we're already
-  // mid-`complete` flow (the effect above owns routing in that case, so
-  // this would race it).
-  useEffect(() => {
-    if (sessionQuery.isLoading) return;
-    if (live.phase === 'complete') return;
-    if (sessionQuery.data === null) {
-      goTo.home(router);
-      return;
-    }
-    if (sessionStatus && sessionStatus !== 'in_progress') {
-      goTo.home(router);
-    }
-  }, [sessionQuery.isLoading, sessionQuery.data, sessionStatus, live.phase, router]);
+  useLiveScreenEffects({
+    sessionId,
+    phase: live.phase,
+    sessionStatus,
+    sessionLoading: sessionQuery.isLoading,
+    sessionMissing: sessionQuery.data === null,
+  });
+
+  const elapsedSeconds = useElapsedSeconds(sessionQuery.data?.startedAt ?? null);
 
   if (!sessionQuery.data) {
     // Loading or unknown session — render the layout chrome so the page
@@ -252,6 +192,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
               isAmrap={live.isAmrap}
               testID="live-header"
               lift={liftDisplayName(lift)}
+              elapsedSeconds={elapsedSeconds}
             />
 
             <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />

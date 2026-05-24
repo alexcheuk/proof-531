@@ -1,3 +1,4 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
@@ -91,15 +92,9 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
         ))}
 
         <View style={calloutStyle}>
-          <Text
-            variant="mono"
-            weight="medium"
-            size={10}
-            color="ink1"
-            style={{ letterSpacing: 1.4, textTransform: 'uppercase', lineHeight: 16 }}
-          >
+          <CapsLabel color="ink1" style={{ lineHeight: 16 }}>
             {calloutCopy}
-          </Text>
+          </CapsLabel>
         </View>
       </View>
     </OnboardingShell>
