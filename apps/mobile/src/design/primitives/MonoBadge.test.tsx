@@ -40,10 +40,11 @@ describe('MonoBadge', () => {
     expect(containerStyle.backgroundColor).toBe('transparent');
   });
 
-  it('uses sm padding (1px × 6px) by default and md padding (4px × 8px) when size="md"', () => {
+  it('uses sm padding (2 vertical × 6 horizontal) by default and md padding (5 vertical × 8 horizontal) when size="md"', () => {
     const { getByTestId, rerender } = wrap(<MonoBadge testID="b">x</MonoBadge>);
     let containerStyle = StyleSheet.flatten(getByTestId('b').props.style);
-    expect(containerStyle.paddingVertical).toBe(1);
+    expect(containerStyle.paddingTop).toBe(2);
+    expect(containerStyle.paddingBottom).toBe(2);
     expect(containerStyle.paddingHorizontal).toBe(6);
 
     rerender(
@@ -54,7 +55,8 @@ describe('MonoBadge', () => {
       </ThemeProvider>,
     );
     containerStyle = StyleSheet.flatten(getByTestId('b').props.style);
-    expect(containerStyle.paddingVertical).toBe(4);
+    expect(containerStyle.paddingTop).toBe(5);
+    expect(containerStyle.paddingBottom).toBe(5);
     expect(containerStyle.paddingHorizontal).toBe(8);
   });
 

@@ -229,7 +229,7 @@ Replace the file with:
 
 ```json
 {
-  "name": "@proof-531/mobile",
+  "name": "@fivethreeone/mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -353,7 +353,7 @@ If the resulting file is uncertain, replace `plugins` with a minimal explicit li
 
 - [ ] **Step 7.3: Sanity — typecheck still parses config**
 
-Run: `pnpm --filter @proof-531/mobile expo config --type prebuild 2>&1 | tail -5`
+Run: `pnpm --filter @fivethreeone/mobile expo config --type prebuild 2>&1 | tail -5`
 Expected: no plugin-resolution errors. (We're not actually prebuilding — this just validates config.)
 
 - [ ] **Step 7.4: Commit**
@@ -421,31 +421,31 @@ export default function Index() {
 
 - [ ] **Step 8.4: Typecheck**
 
-Run: `pnpm --filter @proof-531/mobile typecheck`
+Run: `pnpm --filter @fivethreeone/mobile typecheck`
 Expected: zero errors.
 
 - [ ] **Step 8.5: Lint**
 
-Run: `pnpm --filter @proof-531/mobile lint`
+Run: `pnpm --filter @fivethreeone/mobile lint`
 Expected: zero errors. If Biome complains about the hex literals, add a Biome ignore comment OR rely on Biome's default (it does not flag hex literals; this should be clean).
 
 - [ ] **Step 8.6: Test (smoke)**
 
-Run: `pnpm --filter @proof-531/mobile test`
+Run: `pnpm --filter @fivethreeone/mobile test`
 Expected: `No tests found, exiting with code 0` (we passed `--passWithNoTests`). PASS.
 
 - [ ] **Step 8.7: Metro export smoke**
 
 Run:
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 Expected: exits 0; prints bundle output info. Catches missing transitive deps.
 
 - [ ] **Step 8.8: Boot in Expo Go (interactive — user runs this)**
 
-Run: `pnpm --filter @proof-531/mobile start`
+Run: `pnpm --filter @fivethreeone/mobile start`
 
 Tell the user: scan the QR code with **Expo Go** (not a custom build). Expected: the screen shows `proof-531 — phase A boot` on a dark background. If it fails: read the Metro/Expo Go error in the terminal, fix, retry.
 
@@ -486,8 +486,8 @@ tasks:
       - "apps/mobile/src/design/tokens.ts exists"
       - "tokens.ts exports named const objects: colors, type, radii, spacing, motion"
       - "Every CSS custom property in the PWA's globals.css has a matching named export"
-      - "pnpm --filter @proof-531/mobile typecheck passes"
-      - "pnpm --filter @proof-531/mobile lint passes"
+      - "pnpm --filter @fivethreeone/mobile typecheck passes"
+      - "pnpm --filter @fivethreeone/mobile lint passes"
     notes: |
       Tokens are plain TS constants — not theme objects. Match the PWA names
       verbatim where possible. Hex values are the only hex literals allowed
@@ -502,7 +502,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/theme.ts exports ThemeProvider and useTheme"
       - "Jest test: useTheme inside ThemeProvider returns tokens; outside throws"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
 
   - id: PB-03-fonts
     title: Bundle IBM Plex Sans + Mono + Sans Condensed via expo-font
@@ -532,7 +532,7 @@ tasks:
       - "apps/mobile/src/design/primitives/Text.tsx exists with variant prop (sans|mono|condensed) and weight/size from tokens"
       - "Jest render tests pass for both"
       - "rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src/design/primitives returns empty (no inline hex)"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
 
   - id: PB-05-primitive-button-pill
     title: Button + PrimaryPillButton primitives with haptics
@@ -547,7 +547,7 @@ tasks:
       - "Jest test asserts onPress fires"
       - "Jest test asserts Haptics.impactAsync('light') is called on press (mocked)"
       - "Jest test asserts accessibilityRole='button' and disabled state"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
 
   - id: PB-06-primitive-mono-badge
     title: MonoBadge primitive
@@ -559,7 +559,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/MonoBadge.tsx exists"
       - "Jest render test passes"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
 
   - id: PB-07-primitive-section-band
     title: SectionBand primitive
@@ -593,7 +593,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/SegRail.tsx exists"
       - "Jest test asserts selectionAsync fires on segment change (mocked)"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
 
   - id: PB-10-primitive-number-stepper
     title: NumberStepper primitive with haptics
@@ -723,7 +723,7 @@ tasks:
       - "apps/mobile/src/domain/__tests__/epley.test.ts has ≥1 property test using fast-check"
       - "Property: reps=1 ⇒ result === weight"
       - "Property: result monotonically increases with reps"
-      - "pnpm --filter @proof-531/mobile test src/domain/__tests__/epley passes"
+      - "pnpm --filter @fivethreeone/mobile test src/domain/__tests__/epley passes"
 
   - id: PC-03-domain-units
     title: domain/units.ts — lbs↔kg, rounding (TDD + property tests)
@@ -797,7 +797,7 @@ tasks:
       - "apps/mobile/src/data/drizzle/schema.ts defines tables: settings, training_maxes, sessions, set_logs, prs"
       - "Column shapes match PWA's Dexie types per spec §4.3"
       - "enabledLifts column is TEXT (JSON-encoded)"
-      - "pnpm --filter @proof-531/mobile typecheck passes"
+      - "pnpm --filter @fivethreeone/mobile typecheck passes"
 
   - id: PD-02-migration-0001
     title: First migration + runMigrations() boot helper
@@ -1032,7 +1032,7 @@ tasks:
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#7--testing-strategy
     done_when:
       - "pnpm run ci passes (typecheck + lint + test)"
-      - "pnpm --filter @proof-531/mobile exec expo export --platform ios --output-dir /tmp/x --dump-sourcemap=false --dump-assetmap=false exits 0"
+      - "pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/x --dump-sourcemap=false --dump-assetmap=false exits 0"
 ```
 
 - [ ] **Step 9.2: Validate the YAML parses**
@@ -1119,7 +1119,7 @@ The PWA repo is **never modified** by orchestrator-run tasks. Treat it as read-o
 
 - [ ] **Step 10.5: Update the Dev commands block**
 
-Edit the `pnpm --filter @proof-531/mobile start` line — drop the trailing `# boot dev client` and change comment to `# boot Expo Go`. Drop the `Xcode 26+` prerequisite line; replace with: `- **Expo Go** installed on a physical device, or iOS Simulator / Android Emulator if doing JS-only work.`
+Edit the `pnpm --filter @fivethreeone/mobile start` line — drop the trailing `# boot dev client` and change comment to `# boot Expo Go`. Drop the `Xcode 26+` prerequisite line; replace with: `- **Expo Go** installed on a physical device, or iOS Simulator / Android Emulator if doing JS-only work.`
 
 - [ ] **Step 10.6: Update forbidden paths line**
 
@@ -1164,14 +1164,14 @@ Expected: typecheck + lint + test all pass.
 
 Run:
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 Expected: exits 0.
 
 - [ ] **Step 11.3: Manual Expo Go boot (interactive)**
 
-Run: `pnpm --filter @proof-531/mobile start`. Scan with Expo Go. Expected: the "phase A boot" screen renders. Press `q` to stop.
+Run: `pnpm --filter @fivethreeone/mobile start`. Scan with Expo Go. Expected: the "phase A boot" screen renders. Press `q` to stop.
 
 - [ ] **Step 11.4: Confirm queue is orchestrator-ready**
 

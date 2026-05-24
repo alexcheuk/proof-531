@@ -2,8 +2,17 @@ import { useDb } from '@/data/DbProvider';
 import { cancelSession, completeSession } from '@/data/accessors/session';
 import { appendSetLog } from '@/data/accessors/setLog';
 import { useSession } from '@/data/queries/useSession';
+import {
+  SET_LOGS_FOR_SESSION_KEY,
+  useSetLogsForSession,
+} from '@/data/queries/useSetLogsForSession';
 import { estimateOneRm } from '@/domain/epley';
-import { type WorkingSetIndex, getWorkingSetByIndex, isAmrapSet } from '@/domain/schemes';
+import {
+  type WorkingSetIndex,
+  getWorkingSetByIndex,
+  isAmrapSet,
+  nextWorkingSetIndex,
+} from '@/domain/schemes';
 import { round as snapWeight } from '@/domain/units';
 /**
  * Live screen state machine + rest-timer driver.
@@ -25,10 +34,18 @@ import { round as snapWeight } from '@/domain/units';
  *   - `complete`        — session finished, parent should route away.
  *   - `cancel-confirm`  — bottom sheet open for cancel confirmation.
  *
+ * `setIndex` is **derived from the persisted `set_logs` rows on bootstrap**
+ * — when the user backs out of Live and resumes, the next-unfinished set is
+ * computed from the database, not from stale React state. After bootstrap
+ * the index advances via local state for transient phase transitions
+ * (set → rest → set), and the query is invalidated so other surfaces (Today's
+ * "Resume working set N" CTA, SessionComplete's receipt) see the new row.
+ *
  * Rest duration is fixed at 90s for this iteration. The warning haptic at T-3s
  * fires deterministically off the countdown so it can be asserted by advancing
  * fake timers in tests.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
@@ -107,28 +124,75 @@ function defaultFireWarningHaptic() {
   }
 }
 
+function computeNextSetIndex(
+  logs: ReadonlyArray<{ kind: string; index: number }> | undefined,
+): WorkingSetIndex | null {
+  if (!logs) return 0;
+  const completed = logs
+    .filter((l) => l.kind === 'working' || l.kind === 'amrap')
+    .map((l) => l.index)
+    .filter((i): i is WorkingSetIndex => i === 0 || i === 1 || i === 2);
+  return nextWorkingSetIndex(Array.from(new Set(completed)));
+}
+
 export function useLiveScreenState(
   sessionId: number | null,
   options: UseLiveScreenStateOptions = {},
 ): UseLiveScreenStateResult {
   const db = useDb();
+  const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;
 
+  // setLogs is the source of truth for which working/AMRAP indices have been
+  // recorded for this session. On first load we use it to bootstrap setIndex
+  // so a user who backs out of Live and resumes lands on the correct set.
+  const setLogsQuery = useSetLogsForSession(sessionId);
+  const setLogsData = setLogsQuery.data;
+
   const [phase, setPhase] = useState<LivePhase>('set');
   const [setIndex, setSetIndex] = useState<WorkingSetIndex>(0);
   const [restRemaining, setRestRemaining] = useState(0);
   const [cancelArmed, setCancelArmed] = useState(false);
   const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
+  // Bootstrap-once gate: keeps the first non-undefined setLogs read from
+  // overwriting subsequent local advances (after we manually setSetIndex on
+  // log-and-advance, the query refetches and arrives with one MORE row,
+  // which would otherwise re-derive the same setIndex value and cause a
+  // benign re-render — guard so the read only happens once per session).
+  const bootstrappedRef = useRef(false);
   // The phase to return to when the cancel sheet is dismissed. Captured at
   // open time so the cancel flow doesn't disturb the underlying state.
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
   // Track whether the warning threshold has already fired in the current rest
   // cycle so we don't double-trigger on re-renders or imprecise tick alignment.
   const warningFiredRef = useRef(false);
+
+  // Bootstrap setIndex (and possibly phase) from persisted set_logs the
+  // first time the query resolves. If every working/AMRAP slot is already
+  // filled we transition straight to `complete` (idempotent
+  // completeSession — protects against the edge case where the row update
+  // landed but the navigation effect never fired, e.g. due to crash).
+  useEffect(() => {
+    if (bootstrappedRef.current) return;
+    if (setLogsData === undefined) return; // still loading
+    bootstrappedRef.current = true;
+    const next = computeNextSetIndex(setLogsData);
+    if (next === null) {
+      // All three slots filled. Re-running completeSession is a no-op when
+      // status !== 'in_progress' (see accessors/session.completeSession).
+      if (session?.id) {
+        void completeSession(db, session.id).then(() => {
+          setPhase('complete');
+        });
+      }
+      return;
+    }
+    setSetIndex(next);
+  }, [setLogsData, session?.id, db]);
 
   // Per-set view model — derived from the session week + current index.
   // Defaults are safe (week=1, snapshot=0) so the hook never throws while
@@ -174,14 +238,20 @@ export function useLiveScreenState(
 
   const onLogWorkingSet = useCallback(async () => {
     if (!session?.id) return;
+    const loggedIndex = setIndex; // capture pre-advance index
     try {
       await appendSetLog(db, {
         sessionId: session.id,
-        index: setIndex,
+        index: loggedIndex,
         kind: 'working',
         prescribedWeight,
         prescribedReps,
         actualReps: prescribedReps,
+      });
+      // Invalidate the per-session set-logs cache so Today's "Resume working
+      // set N" CTA / SessionComplete's receipt see the new row immediately.
+      await queryClient.invalidateQueries({
+        queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
       });
       // Snapshot the just-logged set for RestPhase. Non-AMRAP working sets
       // don't carry an estimated 1RM (matches the PWA's `isAmrap` gate on
@@ -192,18 +262,22 @@ export function useLiveScreenState(
         estimated1RM: undefined,
         isAmrap: false,
       });
-      // Last working set on a non-AMRAP week (deload, week 4) → complete.
-      // On AMRAP weeks the terminal set is logged via onSaveAmrap.
-      if (setIndex === 2) {
+      // Terminal on the deload week (no AMRAP at index 2); AMRAP weeks
+      // come in through onSaveAmrap.
+      if (loggedIndex === 2) {
         await completeSession(db, session.id);
         setPhase('complete');
         return;
       }
+      // Advance setIndex locally — the query refetch above will eventually
+      // confirm the same value, but local advance keeps the transition
+      // synchronous and the UI in step with the user's tap.
+      setSetIndex((loggedIndex + 1) as WorkingSetIndex);
       setPhase('rest');
     } catch (err) {
       console.error('useLiveScreenState.onLogWorkingSet failed', err);
     }
-  }, [db, prescribedReps, prescribedWeight, session?.id, setIndex]);
+  }, [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex]);
 
   const onOpenAmrapSheet = useCallback(() => {
     setPhase('amrap-log');
@@ -216,14 +290,18 @@ export function useLiveScreenState(
   const onSaveAmrap = useCallback(
     async (reps: number) => {
       if (!session?.id) return;
+      const loggedIndex = setIndex;
       try {
         await appendSetLog(db, {
           sessionId: session.id,
-          index: setIndex,
+          index: loggedIndex,
           kind: 'amrap',
           prescribedWeight,
           prescribedReps,
           actualReps: reps,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
         });
         // Snapshot the just-logged AMRAP for RestPhase (even though AMRAP
         // is terminal, the snapshot keeps the contract consistent and lets
@@ -241,16 +319,18 @@ export function useLiveScreenState(
         console.error('useLiveScreenState.onSaveAmrap failed', err);
       }
     },
-    [db, prescribedReps, prescribedWeight, session?.id, setIndex],
+    [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex],
   );
 
   const onAdvanceFromRest = useCallback(() => {
-    if (setIndex < 2) {
-      setSetIndex((setIndex + 1) as WorkingSetIndex);
-      setPhase('set');
+    // setIndex was already advanced inside onLogWorkingSet (synchronously
+    // for UI snappiness). Here we just flip the surface back to 'set' so
+    // the user sees the next working set.
+    if (setIndex > 2) {
+      setPhase('complete');
       return;
     }
-    setPhase('complete');
+    setPhase('set');
   }, [setIndex]);
 
   const onRequestCancel = useCallback(() => {

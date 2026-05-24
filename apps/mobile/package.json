@@ -1,5 +1,5 @@
 {
-  "name": "@proof-531/mobile",
+  "name": "@fivethreeone/mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {

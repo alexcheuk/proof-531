@@ -1,5 +1,3 @@
-import { useDb } from '@/data/DbProvider';
-import { createSession } from '@/data/accessors/session';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
@@ -9,7 +7,6 @@ import { useTheme } from '@/design/theme';
 import { dateLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
-import { useQueryClient } from '@tanstack/react-query';
 /**
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
@@ -48,8 +45,6 @@ export function HomeScreen() {
   const settings = useSettings();
   const tms = useLatestTms();
   const prs = usePrs();
-  const db = useDb();
-  const queryClient = useQueryClient();
 
   const enabledLifts = useMemo<Lift[]>(
     () => settings.data?.enabledLifts ?? [],
@@ -102,27 +97,16 @@ export function HomeScreen() {
   );
 
   const handleBegin = useCallback(
-    async (lift: Lift) => {
+    (lift: Lift) => {
       // Single-session invariant (§4): if another lift is mid-session, do not
       // start a second one. Navigate to that lift instead.
-      if (inProgressLift && inProgressLift !== lift) {
-        // typedRoutes is disabled (PF-05); cast the params object.
-        router.push({
-          pathname: '/session/today',
-          params: { lift: inProgressLift },
-        } as never);
-        return;
-      }
-      try {
-        await createSession(db, lift);
-        await queryClient.invalidateQueries({ queryKey: ['activeSession'] });
-        await queryClient.invalidateQueries({ queryKey: ['sessions'] });
-      } catch (err) {
-        console.error('HomeScreen.handleBegin createSession failed', err);
-      }
-      router.push({ pathname: '/session/today', params: { lift } } as never);
+      // Session creation itself happens in TodayScreen (preview mode) so we
+      // don't insert a row that an unrelated tap-back leaves orphaned.
+      const target = inProgressLift && inProgressLift !== lift ? inProgressLift : lift;
+      // typedRoutes is disabled (PF-05); cast the params object.
+      router.push({ pathname: '/session/today', params: { lift: target } } as never);
     },
-    [db, inProgressLift, queryClient, router],
+    [inProgressLift, router],
   );
 
   const handleResume = useCallback(

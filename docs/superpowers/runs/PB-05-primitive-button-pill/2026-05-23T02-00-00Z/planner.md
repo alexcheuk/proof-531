@@ -278,9 +278,9 @@ export { PrimaryPillButton } from './PrimaryPillButton';
 
 ### Step 6 — Sweep + commit
 ```bash
-pnpm --filter @proof-531/mobile typecheck
-pnpm --filter @proof-531/mobile lint
-pnpm --filter @proof-531/mobile test
+pnpm --filter @fivethreeone/mobile typecheck
+pnpm --filter @fivethreeone/mobile lint
+pnpm --filter @fivethreeone/mobile test
 git add apps/mobile/src/design/primitives/Button.tsx apps/mobile/src/design/primitives/Button.test.tsx \
         apps/mobile/src/design/primitives/PrimaryPillButton.tsx apps/mobile/src/design/primitives/PrimaryPillButton.test.tsx \
         apps/mobile/src/design/primitives/index.ts

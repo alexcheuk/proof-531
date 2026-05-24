@@ -1,6 +1,6 @@
 ---
 name: rn-design-spec
-description: Produce a complete React Native + Expo design spec from an idea, description, or wireframe for the proof-531 codebase. Use when starting any new feature, porting a PWA screen, or revising an existing screen. The output spec drives implementation by the rn-frontend agent and verification by the rn-qa agent. Covers screen flow, per-screen layout, design tokens, data contracts, domain logic, accessibility, and PWA parity.
+description: Produce a complete React Native + Expo design spec from an idea, description, or wireframe for the 531 codebase. Use when starting any new feature, porting a PWA screen, or revising an existing screen. The output spec drives implementation by the rn-frontend agent and verification by the rn-qa agent. Covers screen flow, per-screen layout, design tokens, data contracts, domain logic, accessibility, and PWA parity.
 ---
 
 # rn-design-spec — produce an implementation-ready design spec
@@ -9,7 +9,7 @@ This skill is used by the `rn-designer` agent (and may be invoked directly when 
 
 ## When this skill triggers
 
-- Starting a new RN/Expo feature for proof-531
+- Starting a new RN/Expo feature for 531
 - Porting a screen from `~/Development/531-pwa` to React Native
 - Revising or expanding an existing design spec
 - Adding a new screen/flow to an existing feature

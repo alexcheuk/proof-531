@@ -10,8 +10,8 @@ import { displayUnit } from '@/domain/units';
  * Bottom-sheet AMRAP rep logger.
  *
  * Structural port of `~/Development/531-pwa/src/features/session/components/
- * AmrapLogSheet.tsx`. Uses the shared gorhom `Sheet` primitive (see
- * `~/Development/proof-531/apps/mobile/src/design/primitives/Sheet.tsx`).
+ * AmrapLogSheet.tsx`. Uses the shared gorhom `Sheet` primitive
+ * (`src/design/primitives/Sheet.tsx`).
  * Parent owns the actual `appendSetLog` call — this component only stages reps
  * and surfaces an e1RM caption.
  */

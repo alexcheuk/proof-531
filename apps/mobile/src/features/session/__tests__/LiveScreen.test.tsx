@@ -45,7 +45,10 @@ jest.mock('expo-haptics', () => ({
 }));
 
 jest.mock('expo-keep-awake', () => ({
-  activateKeepAwake: (...args: unknown[]) => mockActivateKeepAwake(...args),
+  activateKeepAwakeAsync: (...args: unknown[]) => {
+    mockActivateKeepAwake(...args);
+    return Promise.resolve();
+  },
   deactivateKeepAwake: (...args: unknown[]) => mockDeactivateKeepAwake(...args),
 }));
 
@@ -117,6 +120,12 @@ const mockSessionState: MockSessionState = {
 
 jest.mock('@/data/queries/useSession', () => ({
   useSession: () => mockSessionState,
+}));
+
+const mockSetLogsState: { data: Array<{ kind: string; index: number }> } = { data: [] };
+jest.mock('@/data/queries/useSetLogsForSession', () => ({
+  useSetLogsForSession: () => mockSetLogsState,
+  SET_LOGS_FOR_SESSION_KEY: (id: number | null) => ['setLogsForSession', id],
 }));
 
 function resetSessionState() {
@@ -241,6 +250,7 @@ describe('LiveScreen', () => {
     };
     mockSettingsState.isLoading = false;
     mockSettingsState.error = null;
+    mockSetLogsState.data = [];
   });
 
   afterEach(() => {
@@ -521,5 +531,54 @@ describe('LiveScreen', () => {
       await Promise.resolve();
     });
     expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('resume regression: bootstrap from persisted setLogs lands on the next un-logged set', async () => {
+    // Two working sets already in the DB → resume should land the user on
+    // setIndex=2 (set 3, AMRAP on week 1), NOT back at set 1.
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    // Flush the bootstrap effect.
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    // Set 3 on week 1 is AMRAP — the CTA should be the AMRAP one, proving
+    // setIndex bootstrapped to 2 (not 0).
+    expect(screen.getByTestId('cta-log-amrap')).toBeTruthy();
+    // The working-set CTA must NOT be rendered (we'd be at set 0 if state
+    // had reset).
+    expect(screen.queryByTestId('cta-log-working')).toBeNull();
+  });
+
+  it('resume regression: bootstrap with all 3 logs auto-completes the session', async () => {
+    // Edge case — session left in_progress with all three slots filled
+    // (e.g. completeSession write was interrupted). Resume should call
+    // completeSession + transition to the SessionComplete screen rather
+    // than re-prompting any set.
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+      { kind: 'amrap', index: 2 },
+    ];
+
+    renderScreen(<LiveScreen sessionId={7} />);
+
+    await waitFor(() => {
+      expect(mockCompleteSession).toHaveBeenCalledWith(expect.anything(), 7);
+    });
+
+    // Subsequent navigation effect routes to /session/complete.
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/session/complete',
+        params: { sessionId: '7' },
+      });
+    });
   });
 });

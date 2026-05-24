@@ -71,7 +71,7 @@ Translate `design-reference/tokens.css` into a single TypeScript module at `apps
    });
    ```
 
-2. Run `pnpm --filter @proof-531/mobile test apps/mobile/src/design/__tests__/tokens.test.ts`. Expected: FAIL with `Cannot find module '../tokens'`.
+2. Run `pnpm --filter @fivethreeone/mobile test apps/mobile/src/design/__tests__/tokens.test.ts`. Expected: FAIL with `Cannot find module '../tokens'`.
 
 3. Create `apps/mobile/src/design/tokens.ts`. Content:
 
@@ -159,7 +159,7 @@ Translate `design-reference/tokens.css` into a single TypeScript module at `apps
    export type Aliases = typeof aliases;
    ```
 
-4. Run `pnpm --filter @proof-531/mobile test apps/mobile/src/design/__tests__/tokens.test.ts`. Expected: PASS.
+4. Run `pnpm --filter @fivethreeone/mobile test apps/mobile/src/design/__tests__/tokens.test.ts`. Expected: PASS.
 
 5. Run `pnpm typecheck`. Expected: exit 0.
 

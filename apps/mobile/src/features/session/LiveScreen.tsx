@@ -3,10 +3,12 @@ import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
+import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayWeight } from '@/domain/units';
+import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
@@ -37,7 +39,6 @@ import { useEffect } from 'react';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
-import { LiveBigWeight } from './components/LiveBigWeight';
 import { LiveHeader } from './components/LiveHeader';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
@@ -59,9 +60,11 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const live = useLiveScreenState(sessionId, restSeconds !== undefined ? { restSeconds } : {});
 
   // Keep the screen awake for the entire session. Activate on mount,
-  // deactivate on unmount.
+  // deactivate on unmount. `activateKeepAwakeAsync` replaces the deprecated
+  // sync `activateKeepAwake` (Expo SDK 51+); fire-and-forget here since
+  // the activation is best-effort.
   useEffect(() => {
-    KeepAwake.activateKeepAwake();
+    void KeepAwake.activateKeepAwakeAsync();
     return () => {
       KeepAwake.deactivateKeepAwake();
     };
@@ -77,8 +80,13 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const sessionStatus = sessionQuery.data?.status;
   useEffect(() => {
     if (live.phase !== 'complete' || sessionId == null) return;
-    // Snapshot the status at the moment we enter `complete` — the exit
-    // gate below is gated off so it can't fire a competing replace.
+    // Snapshot the destination at the moment we enter `complete` — a
+    // cancelled session goes home (no celebration surface), a completed
+    // one goes to the receipt. completeSession runs advanceDay (mutates
+    // settings.week/cycle and, on wrap, the training_maxes history) and
+    // AMRAP saves may have set a new PR, so we invalidate the broader
+    // session-shaped surface alongside the three core keys. .catch
+    // re-fires the same replace so the user is never stranded.
     const destination =
       sessionStatus === 'cancelled'
         ? ('/' as const)
@@ -90,6 +98,10 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
       queryClient.invalidateQueries({ queryKey: ['sessions'] }),
       queryClient.invalidateQueries({ queryKey: ['session', sessionId] }),
+      queryClient.invalidateQueries({ queryKey: ['settings'] }),
+      queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
+      queryClient.invalidateQueries({ queryKey: ['prs'] }),
+      queryClient.invalidateQueries({ queryKey: ['setLogsForSession', sessionId] }),
     ])
       .then(() => {
         // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
@@ -97,8 +109,6 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       })
       .catch((err) => {
         console.error('LiveScreen complete-flow invalidation failed', err);
-        // Fallback: route somewhere recoverable so the user isn't stranded
-        // on an empty surface waiting for a redirect that will never come.
         // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
         router.replace(destination as any);
       });
@@ -212,12 +222,6 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       >
         {showRestSurface ? (
           <RestPhase
-            loggedWeight={
-              live.lastLogged
-                ? displayWeight(live.lastLogged.weight, storageUnit, unit)
-                : prescribedDisplay
-            }
-            loggedReps={live.lastLogged?.reps ?? live.prescribedReps}
             loggedUnit={unit}
             isAmrap={live.lastLogged?.isAmrap ?? false}
             estimated1RM={
@@ -227,21 +231,37 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             }
             remaining={live.restRemaining}
             target={live.restTarget}
+            // During rest, useLiveScreenState has already advanced setIndex
+            // to the next set, so live.prescribedWeight / .pct / .isAmrap /
+            // .prescribedReps describe that set. The PlateBar perSide is
+            // already computed off the same prescribed weight above.
+            nextSet={{
+              weight: prescribedDisplay,
+              reps: live.prescribedReps,
+              amrap: live.isAmrap,
+              pct: live.pct,
+              perSide,
+              tmDisplay: Math.round(convertWeight(session.trainingMaxSnapshot, storageUnit, unit)),
+            }}
             testID="rest-phase"
           />
         ) : showSetSurface || live.phase === 'cancel-confirm' ? (
           <>
             <LiveHeader setIndex={live.setIndex} isAmrap={live.isAmrap} testID="live-header" />
-            <LiveBigWeight
-              lift={lift}
-              pct={live.pct}
-              weight={prescribedDisplay}
-              unit={unit}
-              reps={live.prescribedReps}
-              amrap={live.isAmrap}
-              perSide={perSide}
-              testID="live-big-weight"
-            />
+
+            <View style={{ paddingHorizontal: 24, paddingBottom: 24, marginTop: 24 }}>
+              <TopSetBlock
+                eyebrow={`${liftDisplayName(lift)} · ${Math.round(live.pct * 100)}% TM`}
+                weight={prescribedDisplay}
+                unitGlyph={displayUnit(unit)}
+                reps={live.prescribedReps}
+                amrap={live.isAmrap}
+                perSide={perSide}
+                plateVariant="full"
+                bordered={false}
+                testID="live-bigweight"
+              />
+            </View>
           </>
         ) : null}
         <View style={{ height: 120 }} />

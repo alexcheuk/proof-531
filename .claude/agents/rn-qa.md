@@ -55,7 +55,7 @@ All three must exit 0. If any fail, FILE the failure and stop further checks for
 ### 2. Metro bundle resolution
 Run on any change that touches the import graph:
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 Catches runtime dep gaps that `pnpm run ci` misses.

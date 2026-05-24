@@ -1,6 +1,6 @@
 ---
 name: rn-feature-qa
-description: Run QA on a React Native + Expo feature for the proof-531 codebase. Verifies static checks (typecheck/lint/test), Metro bundle resolution, the project's boundary rules, design-spec compliance, cross-layer shape consistency (accessor ↔ hook ↔ component), and PWA behavioral parity. Use after rn-feature-implementation reports green local checks. Catches integration bugs that unit tests miss.
+description: Run QA on a React Native + Expo feature for the 531 codebase. Verifies static checks (typecheck/lint/test), Metro bundle resolution, the project's boundary rules, design-spec compliance, cross-layer shape consistency (accessor ↔ hook ↔ component), and PWA behavioral parity. Use after rn-feature-implementation reports green local checks. Catches integration bugs that unit tests miss.
 ---
 
 # rn-feature-qa — verify a feature against spec, boundaries, and PWA parity
@@ -52,7 +52,7 @@ All three must exit 0. Capture failures verbatim — do not paraphrase.
 ### 2. Metro bundle resolution (when import graph changed)
 
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 

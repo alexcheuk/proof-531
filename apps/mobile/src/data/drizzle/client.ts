@@ -3,7 +3,7 @@ import { openDatabaseSync } from 'expo-sqlite';
 import * as schema from './schema';
 
 // SQLite filename for the app's local database.
-const DB_NAME = 'proof-531.db';
+const DB_NAME = '531.db';
 
 /** Raw expo-sqlite handle. Exposed so the migration runner can issue
  * statements directly without going through drizzle. */

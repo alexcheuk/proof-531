@@ -17,12 +17,12 @@ index e0badcd..ee8b853 100644
  
  ```bash
 -pnpm install
--pnpm --filter @proof-531/mobile start
+-pnpm --filter @fivethreeone/mobile start
 +# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+, bash 4+, yq v4, Xcode 26+ for iOS native builds
 +corepack enable && corepack prepare pnpm@latest --activate
 +
 +pnpm install                                # workspace install
-+pnpm --filter @proof-531/mobile start       # boot dev client (Metro)
++pnpm --filter @fivethreeone/mobile start       # boot dev client (Metro)
  ```
  
 -Press `i` for iOS simulator or `a` for Android emulator (requires a dev-client build — see EAS docs).

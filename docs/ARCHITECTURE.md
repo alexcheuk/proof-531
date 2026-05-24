@@ -1,6 +1,6 @@
 # Architecture
 
-A short tour of how `proof-531` is laid out and why. For the full rationale — including rejected alternatives, harness layering, and the orchestrator design — see the engineering spec at [`docs/superpowers/specs/2026-05-19-expo-scaffold-design.md`](./superpowers/specs/2026-05-19-expo-scaffold-design.md). This document is a quick reference for working in the codebase; the spec is the source of truth.
+A short tour of how `531` is laid out and why. For the full rationale — including rejected alternatives, harness layering, and the orchestrator design — see the engineering spec at [`docs/superpowers/specs/2026-05-19-expo-scaffold-design.md`](./superpowers/specs/2026-05-19-expo-scaffold-design.md). This document is a quick reference for working in the codebase; the spec is the source of truth.
 
 ## Stack
 
@@ -27,7 +27,7 @@ Rejected alternatives (Nativewind, WatermelonDB, MMKV, raw React Navigation) and
 ## Layout
 
 ```
-proof-531/
+531/
 ├── apps/
 │   └── mobile/                       # the Expo app
 │       ├── src/

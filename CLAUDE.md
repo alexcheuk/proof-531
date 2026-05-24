@@ -1,4 +1,4 @@
-# Working in proof-531
+# Working in 531
 
 > Welcome. Read this first.
 
@@ -49,7 +49,7 @@ The PWA repo is **never modified** by orchestrator-run tasks. Treat it as read-o
 
 ```bash
 pnpm install                                    # workspace install
-pnpm --filter @proof-531/mobile start           # boot Expo Go (scan QR with Expo Go app)
+pnpm --filter @fivethreeone/mobile start           # boot Expo Go (scan QR with Expo Go app)
 pnpm typecheck                                  # tsc --noEmit across workspace
 pnpm lint                                       # biome
 pnpm test                                       # jest
@@ -68,7 +68,7 @@ pnpm run ci                                     # full chain (use `run` — `ci`
 If a task touches the import graph in non-trivial ways (adds a primitive that pulls in a new npm package, modifies storybook plumbing, edits route entry points), spot-check with:
 
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 
@@ -108,7 +108,7 @@ Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), 
 
 ## Harness: rn-expo (design + frontend + QA pipeline)
 
-**Goal:** ship a proof-531 feature end-to-end (idea → PR-ready commit) via a coordinated design/frontend/QA agent team.
+**Goal:** ship a 531 feature end-to-end (idea → PR-ready commit) via a coordinated design/frontend/QA agent team.
 
 **Trigger:** any feature work originating from an idea, description, or wireframe — use the `rn-expo-pipeline` skill. Queue-driven work continues to use `initial-implement`. Simple questions and small fixes do not need the pipeline.
 

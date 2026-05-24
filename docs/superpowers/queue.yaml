@@ -12,8 +12,8 @@ tasks:
       - "apps/mobile/src/design/tokens.ts exists"
       - "tokens.ts exports named const objects: colors, type, radii, spacing, motion"
       - "Every CSS custom property in the PWA's globals.css has a matching named export"
-      - "pnpm --filter @proof-531/mobile typecheck passes"
-      - "pnpm --filter @proof-531/mobile lint passes"
+      - "pnpm --filter @fivethreeone/mobile typecheck passes"
+      - "pnpm --filter @fivethreeone/mobile lint passes"
     notes: |
       Tokens are plain TS constants — not theme objects. Match the PWA names
       verbatim where possible. Hex values are the only hex literals allowed
@@ -27,7 +27,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/theme.ts exports ThemeProvider and useTheme"
       - "Jest test: useTheme inside ThemeProvider returns tokens; outside throws"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
   - id: PB-03-fonts
     title: Bundle IBM Plex Sans + Mono + Sans Condensed via expo-font
     phase: 2
@@ -55,7 +55,7 @@ tasks:
       - "apps/mobile/src/design/primitives/Text.tsx exists with variant prop (sans|mono|condensed) and weight/size from tokens"
       - "Jest render tests pass for both"
       - "rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src/design/primitives returns empty (no inline hex)"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
   - id: PB-05-primitive-button-pill
     title: Button + PrimaryPillButton primitives with haptics
     phase: 2
@@ -69,7 +69,7 @@ tasks:
       - "Jest test asserts onPress fires"
       - "Jest test asserts Haptics.impactAsync('light') is called on press (mocked)"
       - "Jest test asserts accessibilityRole='button' and disabled state"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
   - id: PB-06-primitive-mono-badge
     title: MonoBadge primitive
     phase: 2
@@ -80,7 +80,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/MonoBadge.tsx exists"
       - "Jest render test passes"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
   - id: PB-07-primitive-section-band
     title: SectionBand primitive
     phase: 2
@@ -111,7 +111,7 @@ tasks:
     done_when:
       - "apps/mobile/src/design/primitives/SegRail.tsx exists"
       - "Jest test asserts selectionAsync fires on segment change (mocked)"
-      - "pnpm --filter @proof-531/mobile test passes"
+      - "pnpm --filter @fivethreeone/mobile test passes"
   - id: PB-10-primitive-number-stepper
     title: NumberStepper primitive with haptics
     phase: 2
@@ -230,7 +230,7 @@ tasks:
       - "apps/mobile/src/domain/__tests__/epley.test.ts has ≥1 property test using fast-check"
       - "Property: reps=1 ⇒ result === weight"
       - "Property: result monotonically increases with reps"
-      - "pnpm --filter @proof-531/mobile test src/domain/__tests__/epley passes"
+      - "pnpm --filter @fivethreeone/mobile test src/domain/__tests__/epley passes"
   - id: PC-03-domain-units
     title: domain/units.ts — lbs↔kg, rounding (TDD + property tests)
     phase: 3
@@ -298,7 +298,7 @@ tasks:
       - "apps/mobile/src/data/drizzle/schema.ts defines tables: settings, training_maxes, sessions, set_logs, prs"
       - "Column shapes match PWA's Dexie types per spec §4.3"
       - "enabledLifts column is TEXT (JSON-encoded)"
-      - "pnpm --filter @proof-531/mobile typecheck passes"
+      - "pnpm --filter @fivethreeone/mobile typecheck passes"
   - id: PD-02-migration-0001
     title: First migration + runMigrations() boot helper
     phase: 4
@@ -513,7 +513,7 @@ tasks:
     spec_ref: docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md#7--testing-strategy
     done_when:
       - "pnpm run ci passes (typecheck + lint + test)"
-      - "pnpm --filter @proof-531/mobile exec expo export --platform ios --output-dir /tmp/x --dump-sourcemap=false --dump-assetmap=false exits 0"
+      - "pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/x --dump-sourcemap=false --dump-assetmap=false exits 0"
   # ──────── Phase G — PWA catch-up (post-6783d63) ────────
   - id: PE-09-home-begin-cta
     title: Home Begin/Resume CTA + CycleStrip + active session hook

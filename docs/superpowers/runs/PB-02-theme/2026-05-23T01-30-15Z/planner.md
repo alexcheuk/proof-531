@@ -71,7 +71,7 @@ describe('ThemeProvider + useTheme', () => {
 ### 2. Run the test — expect FAIL
 
 ```bash
-pnpm --filter @proof-531/mobile test theme
+pnpm --filter @fivethreeone/mobile test theme
 ```
 
 Expected: module resolution error for `./theme`.
@@ -117,15 +117,15 @@ export const useTheme = (): Theme => {
 ### 4. Run the test — expect PASS
 
 ```bash
-pnpm --filter @proof-531/mobile test theme
+pnpm --filter @fivethreeone/mobile test theme
 ```
 
 ### 5. Full sweep
 
 ```bash
-pnpm --filter @proof-531/mobile typecheck
-pnpm --filter @proof-531/mobile lint
-pnpm --filter @proof-531/mobile test
+pnpm --filter @fivethreeone/mobile typecheck
+pnpm --filter @fivethreeone/mobile lint
+pnpm --filter @fivethreeone/mobile test
 ```
 
 All exit 0.

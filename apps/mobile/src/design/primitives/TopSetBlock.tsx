@@ -10,7 +10,6 @@ import { SectionBand } from './SectionBand';
  * screen's hero strip). Pure — the caller computes the displayed weight via
  * `snapWeight(snapshotTM × pct, unit)` and the matching `perSide` plate
  * decomposition (heaviest first) and passes them in. Keeping plate math out
- * of this primitive preserves the boundary: `src/design/` knows nothing
  * about the domain.
  *
  *   bordered=true   → renders own top/bottom hairlines + py (Home).
@@ -28,16 +27,26 @@ export type TopSetBlockProps = {
   reps: number;
   /** When true, render the AMRAP "+" marker after `reps`. */
   amrap: boolean;
-  /** Eyebrow meta — e.g. "85%". */
-  pctLabel: string;
-  /** Eyebrow meta — e.g. "TM 245". */
-  tmLabel: string;
+  /**
+   * Right-side eyebrow meta — e.g. "85%". When both `pctLabel` and `tmLabel`
+   * are omitted the right meta cell is hidden, so the eyebrow can carry all
+   * the context (used on the Live screen where the eyebrow reads
+   * "SQUAT · 65% TM" and no extra meta is needed).
+   */
+  pctLabel?: string;
+  /** Right-side eyebrow meta — e.g. "TM 245". */
+  tmLabel?: string;
   /** Pre-computed plate decomposition (heaviest first). */
   perSide: readonly number[];
   /** `mini` shrinks weight + plate sizes (Home); `full` is hero-sized (Today). */
   plateVariant: 'mini' | 'full';
   /** When true, wrap content in a SectionBand with top + bottom hairlines. */
   bordered?: boolean;
+  /**
+   * Caps eyebrow label. Defaults to "TOP SET" (the climax row on Home). Pass
+   * "NEXT SET" on Today / Rest where the block tracks the next prescription.
+   */
+  eyebrow?: string;
   testID?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -52,6 +61,7 @@ export function TopSetBlock({
   perSide,
   plateVariant,
   bordered = false,
+  eyebrow = 'TOP SET',
   testID,
   style,
 }: TopSetBlockProps) {
@@ -86,8 +96,7 @@ export function TopSetBlock({
 
   const numberRowStyle: ViewStyle = {
     flexDirection: 'row',
-    // RN approximation of items-baseline.
-    alignItems: 'flex-end',
+    alignItems: 'baseline',
     gap: 10,
   };
 
@@ -111,7 +120,7 @@ export function TopSetBlock({
     color: colors.ink2,
   };
 
-  const repsFontSize = isMini ? 22 : 24;
+  const repsFontSize = isMini ? 22 : 32;
   const repsStyle: TextStyle = {
     fontFamily: 'IBMPlexSans-Medium',
     fontSize: repsFontSize,
@@ -129,19 +138,21 @@ export function TopSetBlock({
   const inner = (
     <>
       <View style={headerRowStyle} testID={testID ? `${testID}-header` : undefined}>
-        <RNText style={eyebrowStyle}>TOP SET</RNText>
-        <RNText style={metaStyle}>
-          {pctLabel} · {tmLabel}
-        </RNText>
+        <RNText style={eyebrowStyle}>{eyebrow}</RNText>
+        {pctLabel || tmLabel ? (
+          <RNText style={metaStyle}>{[pctLabel, tmLabel].filter(Boolean).join(' · ')}</RNText>
+        ) : null}
       </View>
 
       <View style={numberRowStyle} testID={testID ? `${testID}-number-row` : undefined}>
-        <RNText style={weightStyle} testID={testID ? `${testID}-weight` : undefined}>
-          {weight}
-        </RNText>
-        <RNText style={unitStyle} testID={testID ? `${testID}-unit` : undefined}>
-          {unitGlyph}
-        </RNText>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+          <RNText style={weightStyle} testID={testID ? `${testID}-weight` : undefined}>
+            {weight}
+          </RNText>
+          <RNText style={unitStyle} testID={testID ? `${testID}-unit` : undefined}>
+            {unitGlyph}
+          </RNText>
+        </View>
         <RNText style={repsStyle} testID={testID ? `${testID}-reps` : undefined}>
           × {reps}
           {amrap ? '+' : ''}

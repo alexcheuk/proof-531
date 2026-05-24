@@ -64,7 +64,7 @@ describe('Box', () => {
   });
 });
 ```
-Run `pnpm --filter @proof-531/mobile test Box` → expect FAIL.
+Run `pnpm --filter @fivethreeone/mobile test Box` → expect FAIL.
 
 ### Step 2 — Green: Box implementation
 Create apps/mobile/src/design/primitives/Box.tsx:
@@ -242,9 +242,9 @@ export { Text } from './Text';
 
 ### Step 6 — Sweep
 ```
-pnpm --filter @proof-531/mobile typecheck
-pnpm --filter @proof-531/mobile lint
-pnpm --filter @proof-531/mobile test
+pnpm --filter @fivethreeone/mobile typecheck
+pnpm --filter @fivethreeone/mobile lint
+pnpm --filter @fivethreeone/mobile test
 rg -n '#[0-9a-fA-F]{3,8}' apps/mobile/src/design/primitives   # expect empty
 ```
 

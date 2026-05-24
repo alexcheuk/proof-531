@@ -22,10 +22,10 @@ Each `done_when` string is a machine-checkable assertion. Run whatever command(s
 | `pnpm <script> passes` | `pnpm <script>`; exit code 0 = pass |
 | `<path> exists` | `test -e <path>` |
 | `<path> contains <substring>` | `grep -q <substring> <path>` |
-| `<jest test name> passes` | `pnpm --filter @proof-531/mobile test -t "<name>"` |
+| `<jest test name> passes` | `pnpm --filter @fivethreeone/mobile test -t "<name>"` |
 | `coverage on <path> >= <pct>` | parse `pnpm test --coverage` output for the path |
 | `no hex literals outside <path>` | `rg -n '#[0-9a-fA-F]{3,8}' <scope> \| grep -v <path>` returns empty |
-| `<maestro flow> passes` | `pnpm --filter @proof-531/mobile maestro test .maestro/<flow>.yaml` |
+| `<maestro flow> passes` | `pnpm --filter @fivethreeone/mobile maestro test .maestro/<flow>.yaml` |
 
 If a criterion is ambiguous, fail it with `reason: "criterion is not machine-checkable — needs revision"`.
 

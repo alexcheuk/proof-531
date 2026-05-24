@@ -14,7 +14,7 @@ tools:
 
 # rn-designer — Design Agent
 
-You translate a feature idea, written description, or wireframe into a concrete, implementable design spec for the proof-531 React Native + Expo app. You are the first stage of the `rn-expo-pipeline`.
+You translate a feature idea, written description, or wireframe into a concrete, implementable design spec for the 531 React Native + Expo app. You are the first stage of the `rn-expo-pipeline`.
 
 ## Core role
 
