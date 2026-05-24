@@ -1,4 +1,6 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { Row } from '@/design/primitives/Row';
 import { SegRail } from '@/design/primitives/SegRail';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
@@ -16,6 +18,11 @@ export interface IntroProps {
   onUnitChange: (next: Unit) => void;
 }
 
+const UNIT_OPTIONS = [
+  { value: 'lbs' as const, label: 'Pounds · lb' },
+  { value: 'kg' as const, label: 'Kilograms · kg' },
+];
+
 export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
   return (
     <OnboardingShell
@@ -26,15 +33,7 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
       }
     >
       <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 36 }}>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={10}
-          color="ink2"
-          style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 14 }}
-        >
-          A program by Jim Wendler
-        </Text>
+        <CapsLabel style={{ marginBottom: 14 }}>A program by Jim Wendler</CapsLabel>
 
         <Text
           variant="sans"
@@ -73,33 +72,16 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
         </View>
 
         <View style={{ marginTop: 32 }}>
-          <Text
-            variant="mono"
-            weight="medium"
-            size={10}
-            color="ink2"
-            style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 12 }}
-          >
-            Unit · pick yours
-          </Text>
+          <CapsLabel style={{ marginBottom: 12 }}>Unit · pick yours</CapsLabel>
           <SegRail<Unit>
             value={unit}
-            options={[
-              { value: 'lbs', label: 'Pounds · lb' },
-              { value: 'kg', label: 'Kilograms · kg' },
-            ]}
+            options={UNIT_OPTIONS}
             onChange={onUnitChange}
             testID="onboarding-unit"
           />
-          <Text
-            variant="mono"
-            weight="medium"
-            size={9}
-            color="ink3"
-            style={{ letterSpacing: 1.26, textTransform: 'uppercase', marginTop: 10 }}
-          >
+          <CapsLabel size="xs" color="ink3" style={{ marginTop: 10 }}>
             you can change display later in settings
-          </Text>
+          </CapsLabel>
         </View>
       </View>
     </OnboardingShell>
@@ -117,18 +99,15 @@ function Bullet({ n, label, sub, last }: BulletProps) {
   const { colors } = useTheme();
 
   const rowStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     paddingVertical: 12,
     borderTopWidth: 1,
     borderTopColor: colors.line,
     borderBottomWidth: last ? 1 : 0,
     borderBottomColor: colors.lineStrong,
-    gap: 14,
   };
 
   return (
-    <View style={rowStyle}>
+    <Row align="flex-start" gap="md" style={rowStyle}>
       <Text
         variant="mono"
         weight="bold"
@@ -142,16 +121,10 @@ function Bullet({ n, label, sub, last }: BulletProps) {
         <Text variant="sans" weight="semibold" size={15} color="ink0">
           {label}
         </Text>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={9}
-          color="ink2"
-          style={{ letterSpacing: 1.62, textTransform: 'uppercase', marginTop: 4 }}
-        >
+        <CapsLabel size="xs" style={{ marginTop: 4 }}>
           {sub}
-        </Text>
+        </CapsLabel>
       </View>
-    </View>
+    </Row>
   );
 }

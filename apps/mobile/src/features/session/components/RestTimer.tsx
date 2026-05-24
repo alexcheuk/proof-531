@@ -1,3 +1,5 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
@@ -62,38 +64,6 @@ export function RestTimer({
     paddingHorizontal: spacing.xl,
   };
 
-  const headerRowStyle: ViewStyle = {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    // RN does not support 'baseline'; 'center' is the closest visual match.
-    alignItems: 'center',
-    marginBottom: 10,
-  };
-
-  const eyebrowStyle: TextStyle = {
-    fontFamily: 'IBMPlexMono-Medium',
-    fontSize: 10,
-    lineHeight: 10,
-    letterSpacing: 2.2, // 0.22em × 10 — caps spec
-    textTransform: 'uppercase',
-    color: colors.ink2,
-  };
-
-  const metaStyle: TextStyle = {
-    fontFamily: 'IBMPlexMono-Medium',
-    fontSize: 10,
-    lineHeight: 10,
-    letterSpacing: 1.8, // 0.18em × 10
-    textTransform: 'uppercase',
-    color: overtime ? colors.amber : colors.ink3,
-  };
-
-  const controlRow: ViewStyle = {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.lg,
-  };
-
   const chipBase: ViewStyle = {
     flex: 1,
     paddingVertical: 12,
@@ -131,13 +101,16 @@ export function RestTimer({
       accessibilityLabel={overtime ? 'Resting · over target' : 'Resting'}
       accessibilityRole="timer"
     >
-      <View style={headerRowStyle} testID={testID ? `${testID}-header` : undefined}>
-        <RNText style={eyebrowStyle}>Rest timer</RNText>
-
-        <RNText style={metaStyle} testID="rest-timer-meta">
+      <Row
+        justify="space-between"
+        style={{ marginBottom: 10 }}
+        {...(testID ? { testID: `${testID}-header` } : {})}
+      >
+        <CapsLabel>Rest timer</CapsLabel>
+        <CapsLabel color={overtime ? 'amber' : 'ink3'} testID="rest-timer-meta">
           {overtime ? 'OVERTIME' : 'TARGET'}
-        </RNText>
-      </View>
+        </CapsLabel>
+      </Row>
 
       <Text
         variant="sans"
@@ -155,7 +128,7 @@ export function RestTimer({
       </Text>
 
       {showControls ? (
-        <View style={controlRow} testID="rest-timer-controls">
+        <Row gap="sm" style={{ marginTop: spacing.lg }} testID="rest-timer-controls">
           {onSubRest ? (
             <Pressable
               testID="rest-timer-sub"
@@ -189,7 +162,7 @@ export function RestTimer({
               <RNText style={chipLabelInverted}>Skip ›</RNText>
             </Pressable>
           ) : null}
-        </View>
+        </Row>
       ) : null}
     </View>
   );

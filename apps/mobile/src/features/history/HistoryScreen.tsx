@@ -20,6 +20,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
+import { recentActivity } from './activity';
 import { AchievementStrip } from './components/AchievementStrip';
 import { CycleSection } from './components/CycleSection';
 import { HistorySkeleton } from './components/HistorySkeleton';
@@ -74,6 +75,7 @@ export function HistoryScreen() {
   const prIds = prIdsQuery.data ?? new Set<number>();
   const grouped = useMemo(() => groupByCycle(rows), [rows]);
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
+  const activity = useMemo(() => recentActivity(rows), [rows]);
 
   const combined = combineQueries(sessions, prIdsQuery);
 
@@ -109,7 +111,7 @@ export function HistoryScreen() {
         }
       >
         <TitleBlock eyebrow="The record" title="History." />
-        <AchievementStrip filed={stats.filed} prs={stats.prs} />
+        <AchievementStrip filed={stats.filed} prs={stats.prs} activity={activity} />
         {rows.length === 0 ? (
           <View style={{ paddingHorizontal: 24, paddingTop: 24 }} testID="history-empty">
             <CapsLabel style={{ letterSpacing: 1.8 }}>FINISH A SESSION TO SEE IT HERE</CapsLabel>

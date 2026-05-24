@@ -4,7 +4,8 @@ import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
 import { getPR, getPRs } from '../prs';
 import { createSession } from '../session';
-import { appendSetLog, getSetLogsForSession } from '../setLog';
+import { completeSession } from '../session';
+import { appendSetLog, getSessionIdsWithPrs, getSetLogsForSession } from '../setLog';
 import { seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
@@ -143,5 +144,76 @@ describe('setLog + prs accessors', () => {
         actualReps: 6,
       }),
     ).rejects.toThrow();
+  });
+});
+
+describe('getSessionIdsWithPrs', () => {
+  it('returns an empty array when no PRs have been set', async () => {
+    const { db } = await setup();
+    expect(await getSessionIdsWithPrs(db)).toEqual([]);
+  });
+
+  it('returns the sessionId of a PR-bearing AMRAP set', async () => {
+    const { db, session } = await setup();
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 212.5,
+      prescribedReps: 5,
+      actualReps: 8,
+    });
+    expect(await getSessionIdsWithPrs(db)).toEqual([session.id]);
+  });
+
+  it('does NOT include sessions whose AMRAP did not beat the prior PR', async () => {
+    const { db, session: first } = await setup();
+    // First AMRAP — sets the PR
+    await appendSetLog(db, {
+      sessionId: first.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 212.5,
+      prescribedReps: 5,
+      actualReps: 8,
+    });
+    // Complete the first session so the single-session invariant lets us
+    // start a fresh one for the same lift.
+    await completeSession(db, first.id as number);
+    const second = await createSession(db, 'squat');
+    await appendSetLog(db, {
+      sessionId: second.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 200,
+      prescribedReps: 5,
+      actualReps: 6,
+    });
+    const ids = await getSessionIdsWithPrs(db);
+    expect(ids).toEqual([first.id]);
+    expect(ids).not.toContain(second.id);
+  });
+
+  it('deduplicates a session that produced multiple PRs', async () => {
+    const { db, session } = await setup();
+    // Two AMRAPs in the same session, both PRs (each one beats the prior).
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 212.5,
+      prescribedReps: 5,
+      actualReps: 8,
+    });
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 212.5,
+      prescribedReps: 5,
+      actualReps: 12,
+    });
+    const ids = await getSessionIdsWithPrs(db);
+    expect(ids).toEqual([session.id]);
   });
 });

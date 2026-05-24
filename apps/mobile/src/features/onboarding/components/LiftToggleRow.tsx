@@ -1,3 +1,4 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { tmIncrement } from '@/domain/increments';
@@ -85,19 +86,13 @@ export function LiftToggleRow({
         <Text variant="sans" weight="semibold" size={17} color="ink0">
           {meta.label}
         </Text>
-        <Text
-          variant="mono"
-          weight="medium"
-          size={9}
-          color="ink2"
-          style={{ letterSpacing: 1.62, textTransform: 'uppercase', marginTop: 3 }}
-        >
+        <CapsLabel size="xs" style={{ marginTop: 3 }}>
           {description}
-        </Text>
+        </CapsLabel>
       </View>
-      <Text variant="mono" weight="bold" size={10} color="ink3" style={{ letterSpacing: 1.8 }}>
+      <CapsLabel weight="bold" color="ink3">
         {String(index + 1).padStart(2, '0')}
-      </Text>
+      </CapsLabel>
     </Pressable>
   );
 }

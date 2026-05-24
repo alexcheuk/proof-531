@@ -1,3 +1,4 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
@@ -116,27 +117,11 @@ function Header({ onBack, label, step, total }: HeaderProps) {
           </Text>
         </View>
       )}
-      {label ? (
-        <Text
-          variant="mono"
-          weight="medium"
-          size={10}
-          color="ink2"
-          style={{ letterSpacing: 2.2, textTransform: 'uppercase' }}
-        >
-          {label}
-        </Text>
-      ) : null}
+      {label ? <CapsLabel>{label}</CapsLabel> : null}
       {step != null && total != null ? (
-        <Text
-          variant="mono"
-          weight="bold"
-          size={10}
-          color="ink0"
-          style={{ marginLeft: 'auto', letterSpacing: 1.8 }}
-        >
+        <CapsLabel weight="bold" color="ink0" style={{ marginLeft: 'auto' }}>
           {`${String(step).padStart(2, '0')} / ${String(total).padStart(2, '0')}`}
-        </Text>
+        </CapsLabel>
       ) : null}
     </View>
   );
