@@ -9,15 +9,21 @@ import { useTheme } from '../theme';
  * SessionCompleteScreen).
  *
  * `size="sm"` (default) is the inline chip baseline-aligned with a numeric
- * cluster: 9px glyph, 1px vertical + 6px horizontal padding.
- * `size="md"` is the standalone masthead chip: 10px glyph, 4px vertical +
- * 8px horizontal padding.
+ * cluster: 9px glyph, ~11px total chip height.
+ * `size="md"` is the standalone masthead chip: 10px glyph, ~18px total chip
+ * height.
+ *
+ * Vertical centering: `lineHeight === fontSize` collapses the line-box to
+ * the glyph height (keeps the chip's baseline aligned with display numerics
+ * in the same row), but IBM Plex Mono Bold caps render in the top ~76% of
+ * their em box — symmetric `paddingVertical` then makes the glyph appear
+ * top-loaded inside the chip. We compensate by splitting the padding so
+ * `paddingTop > paddingBottom` (one extra pixel above the line-box) which
+ * nudges the visible glyph down to the optical center without changing the
+ * chip's outer height.
  *
  * Letter spacing follows the PWA's `tracking-[0.22em]` — 22% of font size,
  * hardcoded per size to avoid runtime math on a constant.
- *
- * `lineHeight === fontSize` collapses the line-box to the glyph height so
- * the chip's baseline aligns with display numerics in the same row.
  */
 
 type MonoBadgeSize = 'sm' | 'md';
@@ -25,7 +31,8 @@ type MonoBadgeSize = 'sm' | 'md';
 type SizeStyle = {
   fontSize: number;
   letterSpacing: number;
-  paddingVertical: number;
+  paddingTop: number;
+  paddingBottom: number;
   paddingHorizontal: number;
 };
 
@@ -33,13 +40,15 @@ const SIZE_STYLES: Record<MonoBadgeSize, SizeStyle> = {
   sm: {
     fontSize: 9,
     letterSpacing: 1.98, // 0.22em × 9
-    paddingVertical: 1,
+    paddingTop: 2,
+    paddingBottom: 2,
     paddingHorizontal: 6,
   },
   md: {
     fontSize: 10,
     letterSpacing: 2.2, // 0.22em × 10
-    paddingVertical: 4,
+    paddingTop: 5,
+    paddingBottom: 5,
     paddingHorizontal: 8,
   },
 };
@@ -56,12 +65,12 @@ export function MonoBadge({ children, size = 'sm', style, testID }: MonoBadgePro
   const sizing = SIZE_STYLES[size];
 
   const containerStyle: ViewStyle = {
-    alignSelf: 'flex-start',
     borderWidth: 1,
     borderColor: colors.ink0,
     borderRadius: 0,
     backgroundColor: 'transparent',
-    paddingVertical: sizing.paddingVertical,
+    paddingTop: sizing.paddingTop,
+    paddingBottom: sizing.paddingBottom,
     paddingHorizontal: sizing.paddingHorizontal,
   };
 
@@ -73,6 +82,10 @@ export function MonoBadge({ children, size = 'sm', style, testID }: MonoBadgePro
     color: colors.ink0,
     textTransform: 'uppercase',
     textAlign: 'center',
+    // Android: drop the font's internal padding around the line-box so the
+    // glyph sits where our explicit padding puts it (iOS doesn't add this
+    // padding so the prop is a no-op there).
+    includeFontPadding: false,
     // letterSpacing adds trailing space after the last glyph, which makes the
     // text appear left-shifted inside a centered container. Pulling the right
     // edge back by `letterSpacing` re-centers the visible glyphs.

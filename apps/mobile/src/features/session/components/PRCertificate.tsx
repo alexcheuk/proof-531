@@ -1,3 +1,4 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
  * PR certificate — inverted-ink celebration surface for new estimated 1RMs.
@@ -97,13 +98,24 @@ export function PRCertificate({
         style={{
           fontFamily: `${type.display}-Bold`,
           fontSize: 52,
-          lineHeight: 56,
+          lineHeight: 72,
           letterSpacing: -2.34,
           color: colors.bg0,
           marginBottom: 14,
         }}
       >
-        Stronger.
+        Stronger
+        <Text
+          variant="sans"
+          weight="bold"
+          size={64}
+          color="amber"
+          style={{
+            lineHeight: 74,
+          }}
+        >
+          .
+        </Text>
       </RNText>
 
       {/* Hero number row */}

@@ -94,10 +94,10 @@ describe('TopSetBlock', () => {
     expect(style.fontSize).toBe(56);
   });
 
-  it('full plateVariant uses the hero weight font size of 64', () => {
+  it('full plateVariant uses the hero weight font size of 120', () => {
     const { getByTestId } = wrap(<TopSetBlock {...baseProps} plateVariant="full" />);
     const weight = getByTestId('tsb-weight');
     const style = flat(weight.props.style) as { fontSize?: number };
-    expect(style.fontSize).toBe(64);
+    expect(style.fontSize).toBe(120);
   });
 });

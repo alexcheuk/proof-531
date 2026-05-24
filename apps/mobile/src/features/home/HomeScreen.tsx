@@ -1,5 +1,3 @@
-import { useDb } from '@/data/DbProvider';
-import { createSession } from '@/data/accessors/session';
 import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
@@ -11,7 +9,6 @@ import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, relativeTimeLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
-import { useQueryClient } from '@tanstack/react-query';
 /**
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
@@ -24,23 +21,22 @@ import { useQueryClient } from '@tanstack/react-query';
  * a LiftTab tap).
  *
  * Boundary: this file lives under `features/` and composes design
- * primitives + data queries — it never imports drizzle hex directly.
- * The single `createSession` call below is the one allowed exception
- * (accessors are explicitly safe to call from features per §3 of the
- * boundary rules — only the raw drizzle handle is forbidden).
+ * primitives + data queries — it never imports drizzle directly.
+ * Session creation lives in TodayScreen so that an unrelated tap-back
+ * here doesn't leave an orphaned session row behind.
  */
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   type ListRenderItem,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   View,
   type ViewStyle,
+  useWindowDimensions,
 } from 'react-native';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
@@ -51,8 +47,6 @@ export function HomeScreen() {
   const settings = useSettings();
   const tms = useLatestTms();
   const prs = usePrs();
-  const db = useDb();
-  const queryClient = useQueryClient();
   const activeSession = useActiveSession();
 
   const enabledLifts = useMemo<Lift[]>(
@@ -60,7 +54,10 @@ export function HomeScreen() {
     [settings.data?.enabledLifts],
   );
   const firstLift: Lift = enabledLifts[0] ?? 'squat';
-  const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(firstLift);
+  const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(
+    firstLift,
+    enabledLifts,
+  );
 
   // Resume banner — session-local dismissal. State resets on every Home mount
   // (tab switch, app background, app kill), which keeps the recovery surface
@@ -79,7 +76,10 @@ export function HomeScreen() {
   }, []);
 
   const listRef = useRef<FlatList<Lift>>(null);
-  const screenWidth = Dimensions.get('window').width;
+  // Live width — rotates with the device so carousel page math, item
+  // layout, and momentum-end index calculation stay correct under
+  // orientation change.
+  const { width: screenWidth } = useWindowDimensions();
 
   // If onboarding has not produced an enabled-lifts set, redirect.
   useEffect(() => {
@@ -116,27 +116,16 @@ export function HomeScreen() {
   );
 
   const handleBegin = useCallback(
-    async (lift: Lift) => {
+    (lift: Lift) => {
       // Single-session invariant (§4): if another lift is mid-session, do not
       // start a second one. Navigate to that lift instead.
-      if (inProgressLift && inProgressLift !== lift) {
-        // typedRoutes is disabled (PF-05); cast the params object.
-        router.push({
-          pathname: '/session/today',
-          params: { lift: inProgressLift },
-        } as never);
-        return;
-      }
-      try {
-        await createSession(db, lift);
-        await queryClient.invalidateQueries({ queryKey: ['activeSession'] });
-        await queryClient.invalidateQueries({ queryKey: ['sessions'] });
-      } catch (err) {
-        console.error('HomeScreen.handleBegin createSession failed', err);
-      }
-      router.push({ pathname: '/session/today', params: { lift } } as never);
+      // Session creation itself happens in TodayScreen (preview mode) so we
+      // don't insert a row that an unrelated tap-back leaves orphaned.
+      const target = inProgressLift && inProgressLift !== lift ? inProgressLift : lift;
+      // typedRoutes is disabled (PF-05); cast the params object.
+      router.push({ pathname: '/session/today', params: { lift: target } } as never);
     },
-    [db, inProgressLift, queryClient, router],
+    [inProgressLift, router],
   );
 
   const handleResume = useCallback(

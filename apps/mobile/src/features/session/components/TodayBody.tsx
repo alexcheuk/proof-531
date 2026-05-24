@@ -5,7 +5,7 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, weekLabel } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
-import { WARMUPS, bbbSets, prescription } from '@/domain/schemes';
+import { WARMUPS, prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayUnit, displayWeight, round } from '@/domain/units';
 /**
@@ -56,6 +56,12 @@ export type TodayBodyProps = {
    */
   nextSetIndex?: 1 | 2 | 3;
   /**
+   * 0-based indices of working/AMRAP sets that have already been logged.
+   * Each matching `SetRow` renders with the `done` checkmark + line-through.
+   * Defaults to an empty list (preview mode — nothing done yet).
+   */
+  completedIndices?: ReadonlyArray<0 | 1 | 2>;
+  /**
    * Stretch path for W1.2 — invoked when a warmup-ramp row is tapped. The
    * caller is expected to dispatch `appendSetLog(... kind: 'warmup' ...)`
    * with the row's `negativeIndex`. When `undefined`, the rows render as
@@ -78,34 +84,37 @@ export function TodayBody({
   tm,
   plateSet,
   nextSetIndex = 1,
+  completedIndices = [],
   onLogWarmup,
   loggedWarmupIndices,
 }: TodayBodyProps) {
   const { colors, type } = useTheme();
   const sets = prescription(week);
-  // `prescription(week)` returns a fresh 3-tuple per call — index 2 is
-  // always defined. We still narrow via a runtime guard to keep the
-  // strict-null types happy without a non-null assertion.
-  const topSet = sets[2];
   // Render unit defaults to storage when the caller doesn't pass a display
   // unit (e.g. legacy entry points).
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
   const tmInDisplay = Math.round(convertWeight(tm, storageUnit, renderUnit));
 
-  if (!topSet) {
+  // Hero shows the NEXT SET to work on (advances as the user logs sets).
+  // Falls back to set 1 in preview mode (when nothing is completed yet).
+  // `prescription(week)` always returns a 3-tuple; we still narrow via a
+  // runtime guard to satisfy strict-null types.
+  const heroZeroBased = (nextSetIndex - 1) as 0 | 1 | 2;
+  const heroSet = sets[heroZeroBased];
+
+  if (!heroSet) {
     return null;
   }
 
-  // Top-set hero: snap storage, convert, decompose.
-  const topWeightStorage = round(tm * topSet.pct, storageUnit);
-  const topWeight = displayWeight(topWeightStorage, storageUnit, renderUnit);
-  const topDecomposed = decompose(topWeight, plateSet);
+  // Hero: snap storage, convert, decompose for the next-set weight.
+  const heroWeightStorage = round(tm * heroSet.pct, storageUnit);
+  const heroWeight = displayWeight(heroWeightStorage, storageUnit, renderUnit);
+  const heroDecomposed = decompose(heroWeight, plateSet);
 
   // BBB: 5×10 @ 50% TM. Summary-only row (no plate viz, matching ref).
   const bbbWeightStorage = round(tm * 0.5, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
-  const bbbCount = bbbSets(0.5).length;
 
   // Warmup ramp — canonical Wendler 5/3/1 warmup (40/50/60 % × 5/5/3).
   // Computed in storage units then converted to display. Per-side plate
@@ -244,17 +253,16 @@ export function TodayBody({
 
   return (
     <View style={{ backgroundColor: colors.bg0 }}>
-      <Masthead
-        underline="hairline"
-        rightSlot={<RNText style={cycleBadgeStyle}>{`c${cycle}·d${week}`}</RNText>}
-      />
+      <Masthead rightSlot={<RNText style={cycleBadgeStyle}>{`c${cycle}·d${week}`}</RNText>} />
       <TitleBlock
         eyebrow={`${dateLabel(new Date())} · ${weekLabel(week)}`}
         title={`${liftDisplayName(lift)}.`}
         style={{ paddingTop: 20, paddingBottom: 24 }}
       />
 
-      {/* W1.2 Warmup ramp — orthodox 5/3/1 warmup (40/50/60 × 5/5/3). */}
+      {/* W1.2 Warmup ramp — orthodox 5/3/1 warmup (40/50/60 × 5/5/3). Sits
+          above the next-set hero so the user can ramp before staring at
+          the prescription they're about to lift. */}
       <View style={warmupSectionStyle} testID="today-warmup-ramp">
         <View style={sectionHeaderRow}>
           <RNText style={capsLabel}>WARMUP</RNText>
@@ -310,16 +318,19 @@ export function TodayBody({
         </View>
       </View>
 
-      {/* Top set hero — full PlateBar inside TopSetBlock. */}
+      {/* Next-set hero — full PlateBar inside TopSetBlock. The eyebrow
+          reads "NEXT SET" so users prepping plates know which prescription
+          they're staring at (advances as completed sets accumulate). */}
       <View style={heroStyle}>
         <TopSetBlock
-          weight={topWeight}
+          eyebrow="NEXT SET"
+          weight={heroWeight}
           unitGlyph={unitGlyph}
-          reps={topSet.reps}
-          amrap={!!topSet.amrap}
-          pctLabel={`${Math.round(topSet.pct * 100)}%`}
+          reps={heroSet.reps}
+          amrap={!!heroSet.amrap}
+          pctLabel={`${Math.round(heroSet.pct * 100)}%`}
           tmLabel={`TM ${tmInDisplay} ${unitGlyph}`}
-          perSide={topDecomposed.perSide}
+          perSide={heroDecomposed.perSide}
           plateVariant="full"
           bordered={false}
           testID="today-top-set"
@@ -341,6 +352,8 @@ export function TodayBody({
             // the (pct, reps) pair is stable per index, so it forms a stable key.
             const key = `${s.pct}-${s.reps}-${s.amrap ? 'a' : 'w'}`;
             const oneBased = (i + 1) as 1 | 2 | 3;
+            const zeroBased = i as 0 | 1 | 2;
+            const isDone = completedIndices.includes(zeroBased);
             return (
               <SetRow
                 key={key}
@@ -351,7 +364,8 @@ export function TodayBody({
                 reps={s.reps}
                 amrap={!!s.amrap}
                 pct={s.pct}
-                next={oneBased === nextSetIndex}
+                done={isDone}
+                next={!isDone && oneBased === nextSetIndex}
                 testID={`set-row-${i}`}
               />
             );
@@ -362,8 +376,7 @@ export function TodayBody({
       {/* BBB band — 5 × 10 @ 50% TM, numeric summary only (matching ref). */}
       <View style={bbbSectionStyle}>
         <View style={sectionHeaderRow}>
-          <RNText style={capsLabel}>BBB · {bbbCount} × 10 @ 50% TM</RNText>
-          <RNText style={capsHint}>BORING BUT BIG</RNText>
+          <RNText style={capsLabel}>BORING BUT BIG</RNText>
         </View>
         <SectionBand padding="tight" testID="today-bbb-band">
           <View style={bbbSummaryRow}>

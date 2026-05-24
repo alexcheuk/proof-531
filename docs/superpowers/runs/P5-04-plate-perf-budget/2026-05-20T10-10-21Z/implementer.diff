@@ -36,12 +36,12 @@ index 6a2bc1d..da907d3 100644
 +          git fetch origin ${{ github.base_ref }} --depth=1
 +          git switch --detach FETCH_HEAD
 +          pnpm install --frozen-lockfile
-+          pnpm --filter @proof-531/mobile run perf:baseline
++          pnpm --filter @fivethreeone/mobile run perf:baseline
 +          git switch --detach -
 +
 +      - name: Reassure current
 +        if: github.event_name == 'pull_request'
-+        run: pnpm --filter @proof-531/mobile run perf
++        run: pnpm --filter @fivethreeone/mobile run perf
 +
 +      - name: Enforce perf budget (4ms render, +10% regression cap)
 +        if: github.event_name == 'pull_request'
@@ -81,7 +81,7 @@ index 6a2bc1d..da907d3 100644
 +
 +      - name: Reassure baseline (push to main)
 +        if: github.event_name == 'push'
-+        run: pnpm --filter @proof-531/mobile run perf:baseline
++        run: pnpm --filter @fivethreeone/mobile run perf:baseline
 +
 +      - name: Upload report
 +        if: always()

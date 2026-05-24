@@ -179,6 +179,7 @@ jest.mock('@/data/queries/useActiveSession', () => ({
 
 // Import after mocks.
 import { HomeScreen } from '../HomeScreen';
+import { __resetHomeScreenStateForTests } from '../hooks/useHomeScreenState';
 
 const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
@@ -193,6 +194,7 @@ const childText = (node: unknown): string => {
 describe('HomeScreen', () => {
   beforeEach(() => {
     resetMockState();
+    __resetHomeScreenStateForTests();
   });
 
   it('renders the LOADING… caps line while any query is loading', () => {

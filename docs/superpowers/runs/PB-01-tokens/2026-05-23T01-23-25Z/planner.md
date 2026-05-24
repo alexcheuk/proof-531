@@ -161,8 +161,8 @@ Create a single TypeScript module at `apps/mobile/src/design/tokens.ts` that por
    - `--ease-standard`, `--duration-base` → `motion.easeStandard`, `easeStandardBezier`, `durationBase`
    - All shadcn aliases (`--color-background`, `--color-foreground`, ..., `--color-ring`, `--radius`) → `colors.background..ring` (`--radius` is covered by `radii.md`, which is its target).
 
-3. Run `pnpm --filter @proof-531/mobile typecheck`. Expected: exit 0.
+3. Run `pnpm --filter @fivethreeone/mobile typecheck`. Expected: exit 0.
 
-4. Run `pnpm --filter @proof-531/mobile lint`. Expected: exit 0.
+4. Run `pnpm --filter @fivethreeone/mobile lint`. Expected: exit 0.
 
 5. Commit with `chore(PB-01-tokens): add typed design tokens ported from PWA globals.css`.

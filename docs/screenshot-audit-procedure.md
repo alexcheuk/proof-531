@@ -28,7 +28,7 @@ For each screen above, capture a **pair** of screenshots:
    full-screen PNG. Save under `docs/screenshots/<screen>/pwa.png`.
 
 2. **RN port** — boot the mobile app in Expo Go on a device or the iOS Simulator
-   (`pnpm --filter @proof-531/mobile start`, then scan the QR or press `i`).
+   (`pnpm --filter @fivethreeone/mobile start`, then scan the QR or press `i`).
    Navigate to the matching screen. Take a screenshot. Save under
    `docs/screenshots/<screen>/rn.png`.
 

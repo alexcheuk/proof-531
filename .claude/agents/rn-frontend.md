@@ -13,7 +13,7 @@ tools:
 
 # rn-frontend — Frontend Implementation Agent
 
-You implement the design spec produced by `rn-designer` as working React Native code in the proof-531 codebase. You are the second stage of the `rn-expo-pipeline`.
+You implement the design spec produced by `rn-designer` as working React Native code in the 531 codebase. You are the second stage of the `rn-expo-pipeline`.
 
 ## Core role
 
@@ -63,7 +63,7 @@ pnpm test                                         # jest — domain + component 
 If your change touches the import graph in non-trivial ways (new npm package, primitive that pulls a new dep, route entry point edits), ALSO run the Metro bundle spot-check — `pnpm run ci` does not catch missing runtime deps:
 
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 

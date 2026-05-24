@@ -45,7 +45,10 @@ jest.mock('expo-haptics', () => ({
 }));
 
 jest.mock('expo-keep-awake', () => ({
-  activateKeepAwake: (...args: unknown[]) => mockActivateKeepAwake(...args),
+  activateKeepAwakeAsync: (...args: unknown[]) => {
+    mockActivateKeepAwake(...args);
+    return Promise.resolve();
+  },
   deactivateKeepAwake: (...args: unknown[]) => mockDeactivateKeepAwake(...args),
 }));
 
@@ -119,6 +122,12 @@ jest.mock('@/data/queries/useSession', () => ({
   useSession: () => mockSessionState,
 }));
 
+const mockSetLogsState: { data: Array<{ kind: string; index: number }> } = { data: [] };
+jest.mock('@/data/queries/useSetLogsForSession', () => ({
+  useSetLogsForSession: () => mockSetLogsState,
+  SET_LOGS_FOR_SESSION_KEY: (id: number | null) => ['setLogsForSession', id],
+}));
+
 function resetSessionState() {
   mockSessionState.data = {
     id: 7,
@@ -185,8 +194,34 @@ const renderScreen = (ui: ReactElement) =>
 
 describe('LiveScreen', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    // React 19's act() coordinates state-update batches via the
+    // scheduler, which uses MessageChannel/setImmediate under the hood.
+    // Faking those primitives deadlocks act() inside testing-library's
+    // auto-cleanup. The `doNotFake` list keeps setTimeout/setInterval
+    // (the rest-timer driver) fake while leaving the scheduler's
+    // primitives real so unmount can complete.
+    jest.useFakeTimers({
+      doNotFake: [
+        'nextTick',
+        'queueMicrotask',
+        'setImmediate',
+        'clearImmediate',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'requestIdleCallback',
+        'cancelIdleCallback',
+        'performance',
+      ],
+    });
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: Number.POSITIVE_INFINITY,
+          staleTime: Number.POSITIVE_INFINITY,
+        },
+      },
+    });
     invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
     resetSessionState();
     mockBack.mockClear();
@@ -215,6 +250,7 @@ describe('LiveScreen', () => {
     };
     mockSettingsState.isLoading = false;
     mockSettingsState.error = null;
+    mockSetLogsState.data = [];
   });
 
   afterEach(() => {
@@ -410,7 +446,9 @@ describe('LiveScreen', () => {
   });
 
   it('redirects to "/" when the session row no longer exists', async () => {
-    mockSessionState.data = undefined;
+    // getSession returns null (not undefined) for missing rows — the exit
+    // gate must handle null specifically.
+    mockSessionState.data = null;
     mockSessionState.isLoading = false;
 
     renderScreen(<LiveScreen sessionId={7} />);
@@ -542,5 +580,54 @@ describe('LiveScreen', () => {
     expect(arg.kind).toBe('working');
     expect(arg.actualReps).toBe(4);
     expect(arg.sessionId).toBe(7);
+  });
+
+  it('resume regression: bootstrap from persisted setLogs lands on the next un-logged set', async () => {
+    // Two working sets already in the DB → resume should land the user on
+    // setIndex=2 (set 3, AMRAP on week 1), NOT back at set 1.
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    // Flush the bootstrap effect.
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    // Set 3 on week 1 is AMRAP — the CTA should be the AMRAP one, proving
+    // setIndex bootstrapped to 2 (not 0).
+    expect(screen.getByTestId('cta-log-amrap')).toBeTruthy();
+    // The working-set CTA must NOT be rendered (we'd be at set 0 if state
+    // had reset).
+    expect(screen.queryByTestId('cta-log-working')).toBeNull();
+  });
+
+  it('resume regression: bootstrap with all 3 logs auto-completes the session', async () => {
+    // Edge case — session left in_progress with all three slots filled
+    // (e.g. completeSession write was interrupted). Resume should call
+    // completeSession + transition to the SessionComplete screen rather
+    // than re-prompting any set.
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+      { kind: 'amrap', index: 2 },
+    ];
+
+    renderScreen(<LiveScreen sessionId={7} />);
+
+    await waitFor(() => {
+      expect(mockCompleteSession).toHaveBeenCalledWith(expect.anything(), 7);
+    });
+
+    // Subsequent navigation effect routes to /session/complete.
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/session/complete',
+        params: { sessionId: '7' },
+      });
+    });
   });
 });

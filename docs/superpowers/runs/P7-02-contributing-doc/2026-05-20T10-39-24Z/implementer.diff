@@ -35,7 +35,7 @@ index 0000000..7ade997
 +## Daily commands
 +
 +```bash
-+pnpm --filter @proof-531/mobile start    # boot Dev Client (Metro)
++pnpm --filter @fivethreeone/mobile start    # boot Dev Client (Metro)
 +pnpm typecheck                            # tsc --noEmit across workspace
 +pnpm lint                                 # biome
 +pnpm test                                 # jest

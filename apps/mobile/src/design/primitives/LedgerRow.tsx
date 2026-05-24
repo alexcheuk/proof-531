@@ -84,7 +84,7 @@ export function LedgerRowLabel({ primary, secondary }: LedgerRowLabelProps) {
 
   const primaryStyle: TextStyle = {
     fontFamily: type.sans,
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 15,
     letterSpacing: -0.225,
     color: colors.ink0,

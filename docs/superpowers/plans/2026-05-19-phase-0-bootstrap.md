@@ -193,7 +193,7 @@ Expected: `apps/mobile/` exists with `app/`, `package.json`, `app.json`, `tsconf
 - [ ] **Step 8: Rename the workspace package and add scripts**
 
 Edit `/Users/alexcheuk/Development/proof-531/apps/mobile/package.json`:
-- Change `"name"` from `"mobile"` (or whatever create-expo-app set) to `"@proof-531/mobile"`.
+- Change `"name"` from `"mobile"` (or whatever create-expo-app set) to `"@fivethreeone/mobile"`.
 - Inside `"scripts"`, ensure these keys exist (add or replace):
 
 ```json
@@ -225,7 +225,7 @@ Expected: dependencies resolved across workspace, single root `node_modules`. No
 Run from `/Users/alexcheuk/Development/proof-531`:
 
 ```bash
-pnpm --filter @proof-531/mobile add expo-dev-client
+pnpm --filter @fivethreeone/mobile add expo-dev-client
 ```
 
 Expected: `expo-dev-client` appears in `apps/mobile/package.json` dependencies.
@@ -254,7 +254,7 @@ Expo SDK 55, React Native New Architecture, iOS + Android.
 
 ```bash
 pnpm install
-pnpm --filter @proof-531/mobile start
+pnpm --filter @fivethreeone/mobile start
 ```
 
 Press `i` for iOS simulator or `a` for Android emulator (requires a dev-client build — see EAS docs).
@@ -956,10 +956,10 @@ Each `done_when` string is a machine-checkable assertion. Run whatever command(s
 | `pnpm <script> passes` | `pnpm <script>`; exit code 0 = pass |
 | `<path> exists` | `test -e <path>` |
 | `<path> contains <substring>` | `grep -q <substring> <path>` |
-| `<jest test name> passes` | `pnpm --filter @proof-531/mobile test -t "<name>"` |
+| `<jest test name> passes` | `pnpm --filter @fivethreeone/mobile test -t "<name>"` |
 | `coverage on <path> >= <pct>` | parse `pnpm test --coverage` output for the path |
 | `no hex literals outside <path>` | `rg -n '#[0-9a-fA-F]{3,8}' <scope> \| grep -v <path>` returns empty |
-| `<maestro flow> passes` | `pnpm --filter @proof-531/mobile maestro test .maestro/<flow>.yaml` |
+| `<maestro flow> passes` | `pnpm --filter @fivethreeone/mobile maestro test .maestro/<flow>.yaml` |
 
 If a criterion is ambiguous, fail it with `reason: "criterion is not machine-checkable — needs revision"`.
 
@@ -1513,7 +1513,7 @@ tasks:
     done_when:
       - "Stories exist for: PressButton (ember/inverse/ghost x sm/md/lg), Card, SegRail, NumberStepper, WeightNum (sm/md/lg)"
       - "Each story renders without a warning"
-      - "Storybook builds via `pnpm --filter @proof-531/mobile storybook:build` (or equivalent)"
+      - "Storybook builds via `pnpm --filter @fivethreeone/mobile storybook:build` (or equivalent)"
 
   - id: P1-09-icons
     title: Icon set ported from design-reference/components.jsx
@@ -2096,7 +2096,7 @@ apps/mobile/
 
 ```bash
 pnpm install                                    # workspace install
-pnpm --filter @proof-531/mobile start           # boot dev client
+pnpm --filter @fivethreeone/mobile start           # boot dev client
 pnpm typecheck                                  # tsc --noEmit across workspace
 pnpm lint                                       # biome
 pnpm test                                       # jest

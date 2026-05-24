@@ -1,6 +1,6 @@
 ---
 name: rn-feature-implementation
-description: Implement a React Native + Expo feature in the proof-531 codebase from a design spec. Use when an rn-designer spec is ready and code must be written across design/data/domain/features/app layers. Enforces strict boundary rules, TDD for domain code, Metro-bundle-clean imports, and component tests that assert behavior (not pixels). Hand off to rn-qa when local verification is green.
+description: Implement a React Native + Expo feature in the 531 codebase from a design spec. Use when an rn-designer spec is ready and code must be written across design/data/domain/features/app layers. Enforces strict boundary rules, TDD for domain code, Metro-bundle-clean imports, and component tests that assert behavior (not pixels). Hand off to rn-qa when local verification is green.
 ---
 
 # rn-feature-implementation — implement an RN/Expo feature from spec
@@ -116,7 +116,7 @@ pnpm test         # jest — must exit 0
 If your change touches the **import graph in a non-trivial way** (added a new npm package, new primitive that pulls a new transitive dep, edited a route entry, changed Storybook plumbing), run the Metro bundle spot-check:
 
 ```bash
-pnpm --filter @proof-531/mobile exec expo export --platform ios \
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
   --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false
 ```
 

@@ -91,13 +91,16 @@ export function SettingsScreen() {
   const storageUnit = settings.storageUnit;
   const displayUnitVal = settings.displayUnit ?? storageUnit;
 
+  // Preview every TM that the migration will actually rewrite — including
+  // TMs for currently-disabled lifts. Previously this only iterated
+  // enabledLifts, so disabled-lift TMs were silently migrated without
+  // surfacing to the user.
   const tmPreviews: TmPreview[] = pendingStorage
-    ? settings.enabledLifts
-        .map<TmPreview | null>((lift) => {
-          const tm = tmsByLift?.[lift];
+    ? Object.entries(tmsByLift ?? {})
+        .map<TmPreview | null>(([liftKey, tm]) => {
           if (!tm) return null;
           return {
-            lift,
+            lift: liftKey as Lift,
             oldValue: tm.value,
             oldUnit: tm.unit,
             newValue: convertAndSnap(tm.value, tm.unit, pendingStorage),

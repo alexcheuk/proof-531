@@ -89,12 +89,12 @@ jobs:
           git fetch origin ${{ github.base_ref }} --depth=1
           git switch --detach FETCH_HEAD
           pnpm install --frozen-lockfile
-          pnpm --filter @proof-531/mobile run perf:baseline
+          pnpm --filter @fivethreeone/mobile run perf:baseline
           git switch --detach -
 
       - name: Reassure current
         if: github.event_name == 'pull_request'
-        run: pnpm --filter @proof-531/mobile run perf
+        run: pnpm --filter @fivethreeone/mobile run perf
 
       - name: Enforce perf budget (4ms render, +10% regression cap)
         if: github.event_name == 'pull_request'
@@ -134,7 +134,7 @@ jobs:
 
       - name: Reassure baseline (push to main)
         if: github.event_name == 'push'
-        run: pnpm --filter @proof-531/mobile run perf:baseline
+        run: pnpm --filter @fivethreeone/mobile run perf:baseline
 
       - name: Upload report
         if: always()
@@ -184,10 +184,10 @@ jobs:
           xcrun simctl bootstatus "$DEVICE_ID" -b
 
       - name: Build Expo dev client (iOS, simulator — unsigned)
-        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile simulator --non-interactive --output ./build/proof-531.app
+        run: pnpm --filter @fivethreeone/mobile exec eas build --local --platform ios --profile simulator --non-interactive --output ./build/531.app
 
       - name: Install app on simulator
-        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
+        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/531.app
 
       - name: Run Maestro flow
         run: maestro test apps/mobile/.maestro/home-renders.yaml

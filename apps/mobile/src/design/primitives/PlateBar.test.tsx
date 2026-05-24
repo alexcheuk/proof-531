@@ -60,12 +60,12 @@ describe('PlateBar', () => {
     expect(widthOf(getByTestId('pb-plate-l-0'))).toBe(9);
   });
 
-  it('full variant uses larger bar-row height (96) and plate width (12)', () => {
+  it('full variant uses larger bar-row height (96) and plate width (16)', () => {
     const { getByTestId } = wrap(
       <PlateBar testID="pb" perSide={[45]} unitGlyph="lb" weight={135} />,
     );
     expect(heightOf(getByTestId('pb-row'))).toBe(96);
-    expect(widthOf(getByTestId('pb-plate-l-0'))).toBe(12);
+    expect(widthOf(getByTestId('pb-plate-l-0'))).toBe(16);
   });
 
   it('PER SIDE row renders in full variant — groups equal adjacent plates with grouped count', () => {

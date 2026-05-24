@@ -1,11 +1,11 @@
 ---
 name: rn-expo-pipeline
-description: End-to-end pipeline for React Native + Expo feature development in proof-531 — takes an idea, description, or wireframe and runs a coordinated design → frontend → QA team that produces a PR-ready commit on a feature branch. Use this skill whenever the user describes a new feature, attaches a wireframe, says "build / port / add / implement X screen", asks to ship a feature end-to-end, or wants the design+frontend+QA team to work together. Also handles follow-up work: "revise the spec", "fix the QA findings", "re-run QA only", "redo the design for X", "update the implementation based on feedback", "rerun the pipeline with these changes".
+description: End-to-end pipeline for React Native + Expo feature development in 531 — takes an idea, description, or wireframe and runs a coordinated design → frontend → QA team that produces a PR-ready commit on a feature branch. Use this skill whenever the user describes a new feature, attaches a wireframe, says "build / port / add / implement X screen", asks to ship a feature end-to-end, or wants the design+frontend+QA team to work together. Also handles follow-up work: "revise the spec", "fix the QA findings", "re-run QA only", "redo the design for X", "update the implementation based on feedback", "rerun the pipeline with these changes".
 ---
 
 # rn-expo-pipeline — design → frontend → QA, end-to-end
 
-Coordinates the three-agent team (`rn-designer`, `rn-frontend`, `rn-qa`) to take a feature from idea/wireframe to a PR-ready commit on a feature branch in the proof-531 codebase.
+Coordinates the three-agent team (`rn-designer`, `rn-frontend`, `rn-qa`) to take a feature from idea/wireframe to a PR-ready commit on a feature branch in the 531 codebase.
 
 ## Execution mode: agent team
 

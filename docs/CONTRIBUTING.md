@@ -1,4 +1,4 @@
-# Contributing to proof-531
+# Contributing to 531
 
 This guide covers everything you need to land a change — by hand or via the
 `/initial-implement` orchestrator. Read [`CLAUDE.md`](../CLAUDE.md) first; this
@@ -20,7 +20,7 @@ document picks up where that leaves off.
 
 ```bash
 git clone <repo>
-cd proof-531
+cd 531
 nvm use            # or: fnm use
 corepack enable
 pnpm install
@@ -29,7 +29,7 @@ pnpm install
 ## Daily commands
 
 ```bash
-pnpm --filter @proof-531/mobile start    # boot Dev Client (Metro)
+pnpm --filter @fivethreeone/mobile start    # boot Dev Client (Metro)
 pnpm typecheck                            # tsc --noEmit across workspace
 pnpm lint                                 # biome
 pnpm test                                 # jest

@@ -14,13 +14,22 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
+const mockPush = jest.fn();
 const mockCreateSession = jest.fn();
 const mockAppendSetLog = jest.fn();
 const mockInvalidateQueries = jest.fn(async () => undefined);
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ replace: mockReplace, push: mockPush, back: jest.fn() }),
 }));
+
+jest.mock('@tanstack/react-query', () => {
+  const actual = jest.requireActual('@tanstack/react-query');
+  return {
+    ...actual,
+    useQueryClient: () => ({ invalidateQueries: mockInvalidateQueries }),
+  };
+});
 
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
@@ -90,6 +99,7 @@ const mockSetLogsState: { data: unknown; isLoading: boolean; error: unknown } = 
 };
 jest.mock('@/data/queries/useSetLogsForSession', () => ({
   useSetLogsForSession: () => mockSetLogsState,
+  SET_LOGS_FOR_SESSION_KEY: (id: number | null) => ['setLogsForSession', id],
 }));
 
 // Import after mocks so the module graph picks up the mocked deps.
@@ -107,6 +117,10 @@ describe('TodayScreen', () => {
   beforeEach(() => {
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     mockReplace.mockClear();
+    mockPush.mockClear();
+    mockInvalidateQueries.mockClear();
+    mockActiveSessionState.data = undefined;
+    mockSetLogsState.data = [];
     mockCreateSession.mockReset();
     mockAppendSetLog.mockReset();
     mockAppendSetLog.mockResolvedValue({ id: 1 });
@@ -127,14 +141,16 @@ describe('TodayScreen', () => {
     });
   });
 
-  it('renders the working-set preview and a Start Session CTA', () => {
+  it('renders the working-set preview and a Begin session CTA in preview mode', () => {
     const screen = renderScreen(<TodayScreen lift="squat" />);
     // The preview surface renders the three working sets.
     expect(screen.getByTestId('set-row-0')).toBeTruthy();
     expect(screen.getByTestId('set-row-1')).toBeTruthy();
     expect(screen.getByTestId('set-row-2')).toBeTruthy();
-    // And the Start CTA.
-    expect(screen.getByTestId('start-session')).toBeTruthy();
+    // CTA copy reflects preview mode.
+    const cta = screen.getByTestId('start-session');
+    expect(cta).toBeTruthy();
+    expect(screen.getByText('Begin session')).toBeTruthy();
   });
 
   it('renders the top-set PlateBar hero and a numeric-only BBB band (no inline plate viz)', () => {
@@ -181,6 +197,7 @@ describe('TodayScreen', () => {
         trainingMaxSnapshot: 300,
         storageUnitSnapshot: 'lbs',
         displayUnitSnapshot: 'lbs',
+        endedAt: null,
       };
       const screen = renderScreen(<TodayScreen lift="squat" />);
       await act(async () => {
@@ -212,6 +229,7 @@ describe('TodayScreen', () => {
         trainingMaxSnapshot: 300,
         storageUnitSnapshot: 'lbs',
         displayUnitSnapshot: 'lbs',
+        endedAt: null,
       };
       mockSetLogsState.data = [
         {
@@ -233,7 +251,7 @@ describe('TodayScreen', () => {
     });
   });
 
-  it('creates a session and routes to /session/live on Start', async () => {
+  it('preview mode: creates a session and routes to /session/live on Begin', async () => {
     const screen = renderScreen(<TodayScreen lift="squat" />);
 
     await act(async () => {
@@ -247,11 +265,146 @@ describe('TodayScreen', () => {
     // First positional arg is the db stub, second is the lift.
     expect(mockCreateSession.mock.calls[0]?.[1]).toBe('squat');
 
+    // We push (not replace) into Live so Back from Live lands on Today.
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith({
+      expect(mockPush).toHaveBeenCalledWith({
         pathname: '/session/live',
         params: { sessionId: '42' },
       });
+    });
+  });
+
+  it('active mode: does NOT call createSession; routes to /session/live with the existing id', async () => {
+    mockActiveSessionState.data = {
+      id: 77,
+      lift: 'squat',
+      cycle: 1,
+      week: 1,
+      startedAt: 1,
+      status: 'in_progress',
+      trainingMaxSnapshot: 300,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+      endedAt: null,
+    };
+    mockSetLogsState.data = [];
+
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    expect(screen.getByText('Start session')).toBeTruthy();
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('start-session'));
+    });
+
+    expect(mockCreateSession).not.toHaveBeenCalled();
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/session/live',
+      params: { sessionId: '77' },
+    });
+  });
+
+  it('active mode with logged sets: CTA copy reads "Resume session"', () => {
+    mockActiveSessionState.data = {
+      id: 88,
+      lift: 'squat',
+      cycle: 1,
+      week: 1,
+      startedAt: 1,
+      status: 'in_progress',
+      trainingMaxSnapshot: 300,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+      endedAt: null,
+    };
+    mockSetLogsState.data = [
+      {
+        id: 1,
+        sessionId: 88,
+        index: 0,
+        kind: 'working',
+        prescribedWeight: 195,
+        prescribedReps: 5,
+        actualReps: 5,
+        completedAt: 1,
+        isPR: false,
+      },
+    ];
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    expect(screen.getByText('Resume session')).toBeTruthy();
+  });
+
+  it('active mode renders completed set rows with the done checkmark + strikethrough', () => {
+    mockActiveSessionState.data = {
+      id: 88,
+      lift: 'squat',
+      cycle: 1,
+      week: 1,
+      startedAt: 1,
+      status: 'in_progress',
+      trainingMaxSnapshot: 300,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+      endedAt: null,
+    };
+    mockSetLogsState.data = [
+      {
+        id: 1,
+        sessionId: 88,
+        index: 0,
+        kind: 'working',
+        prescribedWeight: 195,
+        prescribedReps: 5,
+        actualReps: 5,
+        completedAt: 1,
+        isPR: false,
+      },
+      {
+        id: 2,
+        sessionId: 88,
+        index: 1,
+        kind: 'working',
+        prescribedWeight: 225,
+        prescribedReps: 5,
+        actualReps: 5,
+        completedAt: 2,
+        isPR: false,
+      },
+    ];
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    // The "UP NEXT" chip lands on row 3 (index 2), not row 1.
+    expect(screen.queryByText('UP NEXT')).toBeTruthy();
+    // Both completed rows render a ✓ glyph (SetRow swaps the numeric index
+    // for ✓ when done=true).
+    const checks = screen.queryAllByText('✓');
+    expect(checks.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('preview-other-active: CTA redirects to the other lift without creating a session', async () => {
+    mockActiveSessionState.data = {
+      id: 99,
+      lift: 'bench',
+      cycle: 1,
+      week: 1,
+      startedAt: 1,
+      status: 'in_progress',
+      trainingMaxSnapshot: 245,
+      storageUnitSnapshot: 'lbs',
+      displayUnitSnapshot: 'lbs',
+      endedAt: null,
+    };
+
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    // CTA copy reflects the redirect target.
+    expect(screen.getByText(/Open bench/i)).toBeTruthy();
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('start-session'));
+    });
+
+    expect(mockCreateSession).not.toHaveBeenCalled();
+    expect(mockReplace).toHaveBeenCalledWith({
+      pathname: '/session/today',
+      params: { lift: 'bench' },
     });
   });
 });

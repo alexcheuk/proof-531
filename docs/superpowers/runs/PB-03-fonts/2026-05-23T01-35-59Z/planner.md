@@ -92,10 +92,10 @@ export default function RootLayout() {
 
 ### 5–8. Verification sweep
 ```bash
-pnpm --filter @proof-531/mobile typecheck   # exit 0
-pnpm --filter @proof-531/mobile lint        # exit 0
-pnpm --filter @proof-531/mobile test        # exit 0
-pnpm --filter @proof-531/mobile exec expo export --platform ios --output-dir /tmp/expo-bundle-check-pb03 --dump-sourcemap=false --dump-assetmap=false   # exit 0
+pnpm --filter @fivethreeone/mobile typecheck   # exit 0
+pnpm --filter @fivethreeone/mobile lint        # exit 0
+pnpm --filter @fivethreeone/mobile test        # exit 0
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/expo-bundle-check-pb03 --dump-sourcemap=false --dump-assetmap=false   # exit 0
 ```
 
 ### 9. Commit

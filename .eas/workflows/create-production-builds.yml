@@ -1,0 +1,13 @@
+name: Create Production Builds
+
+jobs:
+  build_android:
+    type: build
+    working_directory: apps/mobile
+    params:
+      platform: android
+  build_ios:
+    type: build
+    working_directory: apps/mobile
+    params:
+      platform: ios

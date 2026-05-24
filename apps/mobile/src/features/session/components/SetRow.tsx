@@ -123,14 +123,18 @@ export function SetRow({
     <View testID={testID} style={containerStyle}>
       <RNText style={indexStyle}>{done ? '✓' : (prefix ?? String(index).padStart(2, '0'))}</RNText>
       <View style={middleStyle}>
-        <RNText style={weightStyle}>{weight}</RNText>
-        <RNText style={capsStyle}>{displayUnit(unit)}</RNText>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+          <RNText style={weightStyle}>{weight}</RNText>
+          <RNText style={capsStyle}>{displayUnit(unit)}</RNText>
+        </View>
+
         <RNText style={repsStyle}>
           × {reps}
           {amrap ? '+' : ''}
         </RNText>
         {amrap ? <MonoBadge>AMRAP</MonoBadge> : null}
       </View>
+
       <View style={rightStyle}>
         {next ? <MonoBadge>UP NEXT</MonoBadge> : null}
         <RNText style={pctStyle}>{Math.round(pct * 100)}%</RNText>

@@ -50,10 +50,10 @@ index da907d3..94ba5ff 100644
 +      - name: Build Expo dev client (iOS, simulator)
 +        env:
 +          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-+        run: pnpm --filter @proof-531/mobile exec eas build --local --platform ios --profile preview --non-interactive --output ./build/proof-531.app
++        run: pnpm --filter @fivethreeone/mobile exec eas build --local --platform ios --profile preview --non-interactive --output ./build/531.app
 +
 +      - name: Install app on simulator
-+        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/proof-531.app
++        run: xcrun simctl install "$DEVICE_ID" apps/mobile/build/531.app
 +
 +      - name: Run Maestro flow
 +        run: maestro test apps/mobile/.maestro/home-renders.yaml

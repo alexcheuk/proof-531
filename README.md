@@ -13,7 +13,7 @@ The 5/3/1 program math, plate calculator, e1RM, and PR detection are pure module
 corepack enable && corepack prepare pnpm@latest --activate
 
 pnpm install                                # workspace install
-pnpm --filter @proof-531/mobile start       # boot dev client (Metro)
+pnpm --filter @fivethreeone/mobile start       # boot dev client (Metro)
 ```
 
 Press `i` for iOS simulator or `a` for Android emulator. A dev client build is required — see [EAS docs](https://docs.expo.dev/build/setup/) and the `eas.json` profiles (`development` / `preview` / `production`).

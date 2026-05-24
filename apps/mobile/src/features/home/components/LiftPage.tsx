@@ -129,7 +129,18 @@ export function LiftPage({
         marginTop: spacing.md,
       }}
     >
-      {liftDisplayName(lift)}.
+      {liftDisplayName(lift)}
+      <Text
+        variant="sans"
+        weight="bold"
+        size={64}
+        color="amber"
+        style={{
+          lineHeight: 74,
+        }}
+      >
+        .
+      </Text>
     </Text>
   );
 

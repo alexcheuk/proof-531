@@ -16,17 +16,6 @@ type MigrationTarget =
  */
 const ALL_TABLES = ['prs', 'set_logs', 'sessions', 'training_maxes', 'settings'] as const;
 
-/**
- * Columns we require to be present in the current `sessions` table. If any
- * is missing, we treat the on-disk schema as a stale dev artifact and wipe
- * everything before re-running the canonical migration.
- *
- * This is a dev-only safety net: pre-release we re-shape the schema often
- * and `CREATE TABLE IF NOT EXISTS` is silently a no-op against an existing
- * table, so older DBs would carry stale columns forever. Once schema is
- * frozen and we ship the first build, swap this for proper additive
- * migrations (0002, 0003…).
- */
 const REQUIRED_SESSIONS_COLUMNS = [
   'lift',
   'cycle',
@@ -38,11 +27,6 @@ const REQUIRED_SESSIONS_COLUMNS = [
   'display_unit_snapshot',
 ] as const;
 
-/**
- * Mirror of REQUIRED_SESSIONS_COLUMNS for the `settings` table. New columns
- * added to `settings` should be listed here so the dev-time stale-schema
- * reset triggers if the on-disk DB predates the column.
- */
 const REQUIRED_SETTINGS_COLUMNS = [
   'storage_unit',
   'display_unit',
@@ -53,6 +37,25 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'day',
   'rest_target_seconds',
 ] as const;
+
+/**
+ * Additive columns we can safely add in production via `ALTER TABLE ADD
+ * COLUMN`. Each entry MUST supply a default so existing rows acquire a
+ * value without further migration work. New schema bumps that need a column
+ * should add their entry here BEFORE bumping the REQUIRED_*_COLUMNS lists,
+ * so existing user installs receive the column non-destructively.
+ */
+const ADDITIVE_COLUMNS: ReadonlyArray<{
+  table: string;
+  column: string;
+  ddl: string;
+}> = [
+  {
+    table: 'settings',
+    column: 'rest_target_seconds',
+    ddl: 'ALTER TABLE settings ADD COLUMN rest_target_seconds INTEGER NOT NULL DEFAULT 90',
+  },
+];
 
 function exec(db: MigrationTarget, sql: string): void {
   const asExpo = db as { execSync?: (sql: string) => void };
@@ -72,11 +75,15 @@ function exec(db: MigrationTarget, sql: string): void {
  * Returns the list of column names for a table, or [] if the table doesn't
  * exist. Uses PRAGMA table_info which is supported by both expo-sqlite and
  * better-sqlite3 — but they return rows differently, so we accept either.
+ *
+ * Returns `null` when introspection isn't possible on this driver — callers
+ * must NOT assume the schema is fine in that case (the previous behavior of
+ * sentinel-returning the required column list silently skipped real
+ * staleness on unfamiliar drivers).
  */
-function getColumns(db: MigrationTarget, table: string): string[] {
+function getColumns(db: MigrationTarget, table: string): string[] | null {
   // biome-ignore lint/suspicious/noExplicitAny: cross-driver query
   const anyDb = db as any;
-  // expo-sqlite SDK 55 exposes getAllSync; better-sqlite3 exposes prepare().all().
   if (typeof anyDb.getAllSync === 'function') {
     try {
       const rows = anyDb.getAllSync(`PRAGMA table_info(${table});`) as Array<{ name: string }>;
@@ -93,32 +100,92 @@ function getColumns(db: MigrationTarget, table: string): string[] {
       return [];
     }
   }
-  // Couldn't introspect — assume schema is fine and skip the dev-reset path.
-  // Returning a sentinel that contains every required column for both tables
-  // so the staleness check below treats it as "not stale".
-  return [...REQUIRED_SESSIONS_COLUMNS, ...REQUIRED_SETTINGS_COLUMNS];
+  return null;
 }
 
 /**
- * Apply all migrations in order. Idempotent on a clean DB; for dev DBs with
- * stale schema (missing required columns on `sessions`), drops every table
- * first so the canonical 0001 migration can recreate them.
+ * True in dev/test contexts. Production bundles set `__DEV__ === false`.
+ * Tests run under Node where `__DEV__` is undefined → treated as dev.
+ */
+function isDevEnv(): boolean {
+  // biome-ignore lint/suspicious/noExplicitAny: __DEV__ is a global injected by Metro
+  const dev = (globalThis as any).__DEV__;
+  return dev !== false;
+}
+
+/**
+ * Apply all migrations in order. Idempotent on a clean DB.
+ *
+ * On a DB whose schema is missing required columns:
+ *   - Production: attempt non-destructive `ALTER TABLE ADD COLUMN` for any
+ *     known additive column (see {@link ADDITIVE_COLUMNS}). Never drops a
+ *     table — user data is preserved.
+ *   - Dev (`__DEV__ !== false`): drop every table first so the canonical
+ *     migration can recreate them. Convenient while the schema is in flux.
  */
 export function runMigrations(database: MigrationTarget): void {
   const sessionsCols = getColumns(database, 'sessions');
   const settingsCols = getColumns(database, 'settings');
+
+  // Try additive ALTER first — safe in both dev and prod, and resolves
+  // stale schemas without dropping user data.
+  if (settingsCols && settingsCols.length > 0) {
+    for (const additive of ADDITIVE_COLUMNS) {
+      if (additive.table !== 'settings') continue;
+      if (!settingsCols.includes(additive.column)) {
+        try {
+          exec(database, `${additive.ddl};`);
+          settingsCols.push(additive.column);
+        } catch (err) {
+          console.warn(
+            `[runMigrations] additive ALTER failed for settings.${additive.column}`,
+            err,
+          );
+        }
+      }
+    }
+  }
+  if (sessionsCols && sessionsCols.length > 0) {
+    for (const additive of ADDITIVE_COLUMNS) {
+      if (additive.table !== 'sessions') continue;
+      if (!sessionsCols.includes(additive.column)) {
+        try {
+          exec(database, `${additive.ddl};`);
+          sessionsCols.push(additive.column);
+        } catch (err) {
+          console.warn(
+            `[runMigrations] additive ALTER failed for sessions.${additive.column}`,
+            err,
+          );
+        }
+      }
+    }
+  }
+
   const sessionsStale =
-    sessionsCols.length > 0 && REQUIRED_SESSIONS_COLUMNS.some((c) => !sessionsCols.includes(c));
+    sessionsCols !== null &&
+    sessionsCols.length > 0 &&
+    REQUIRED_SESSIONS_COLUMNS.some((c) => !sessionsCols.includes(c));
   const settingsStale =
-    settingsCols.length > 0 && REQUIRED_SETTINGS_COLUMNS.some((c) => !settingsCols.includes(c));
+    settingsCols !== null &&
+    settingsCols.length > 0 &&
+    REQUIRED_SETTINGS_COLUMNS.some((c) => !settingsCols.includes(c));
   const isStale = sessionsStale || settingsStale;
 
   if (isStale) {
-    console.warn(
-      '[runMigrations] stale schema detected (missing columns on sessions or settings); dropping all tables to re-seed.',
-    );
-    for (const t of ALL_TABLES) {
-      exec(database, `DROP TABLE IF EXISTS ${t};`);
+    if (isDevEnv()) {
+      console.warn(
+        '[runMigrations] stale schema detected (missing columns on sessions or settings); dropping all tables to re-seed.',
+      );
+      for (const t of ALL_TABLES) {
+        exec(database, `DROP TABLE IF EXISTS ${t};`);
+      }
+    } else {
+      // Production: never destroy user data. Surface the gap loudly so the
+      // failing query reveals what additive entry is missing.
+      console.error(
+        '[runMigrations] stale schema detected in production build; missing column(s) cannot be added automatically — add an entry to ADDITIVE_COLUMNS.',
+      );
     }
   }
 

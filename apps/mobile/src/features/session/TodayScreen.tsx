@@ -26,7 +26,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo } from 'react';
-import { ScrollView, View, type ViewStyle } from 'react-native';
+import { ScrollView, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { TodayBody, type WarmupRampRow } from './components/TodayBody';
@@ -36,7 +36,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const router = useRouter();
   const settings = useSettings();
   const tm = useLatestTm(lift);
-  const { starting, start } = useTodayScreenState(lift);
+  const state = useTodayScreenState(lift);
   const { colors } = useTheme();
   const db = useDb();
   const queryClient = useQueryClient();
@@ -100,6 +100,22 @@ export function TodayScreen({ lift }: { lift: Lift }) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
+  // CTA copy mirrors the PWA's bottom-CTA matrix
+  // (`531-pwa/src/features/session/TodayScreen.tsx`):
+  //   preview                → "Begin session"
+  //   active (no logs yet)   → "Start session"
+  //   active (>=1 log)       → "Resume session"
+  //   preview-other-active   → "Open <other lift> →"
+  const ctaLabel =
+    state.mode === 'preview'
+      ? 'Begin session'
+      : state.mode === 'preview-other-active' && state.otherLift
+        ? `Open ${state.otherLift} →`
+        : state.completedCount === 0
+          ? 'Start session'
+          : 'Resume session';
+  const ctaGlyph = state.mode === 'active' && state.completedCount > 0 ? '↩' : '→';
+
   return (
     <SessionLayout>
       <StatusBar style="dark" />
@@ -117,15 +133,20 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           displayUnit={displayUnit}
           tm={tm.data.value}
           plateSet={settings.data.plateSet}
+          completedIndices={state.completedIndices}
+          nextSetIndex={state.nextSetIndex !== null ? ((state.nextSetIndex + 1) as 1 | 2 | 3) : 1}
           {...(activeForLift ? { onLogWarmup: handleLogWarmup } : null)}
           loggedWarmupIndices={loggedWarmupIndices}
         />
-        {/* Reserve room above the sticky CtaBar so the colophon isn't clipped. */}
-        <View style={{ height: 120 }} />
       </ScrollView>
       <CtaBar>
-        <PrimaryPillButton testID="start-session" onPress={start} disabled={starting}>
-          Start Session
+        <PrimaryPillButton
+          testID="start-session"
+          glyph={ctaGlyph}
+          onPress={state.onPressCta}
+          disabled={state.starting}
+        >
+          {ctaLabel}
         </PrimaryPillButton>
       </CtaBar>
     </SessionLayout>

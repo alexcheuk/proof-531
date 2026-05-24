@@ -22,16 +22,13 @@
  *
  * No-op when the requested unit already equals the current storage.
  *
- * Transactional trade-off: the PWA wraps this in a Dexie rw transaction.
- * drizzle-orm's `db.transaction((tx) => ...)` exists but its typing varies
- * across drivers (better-sqlite3 vs expo-sqlite) and we'd need to thread
- * the tx through `getCurrentTrainingMaxes` / `updateSettings` (which take
- * the wider `AnyDb` structural-poly). Since the mobile DB is single-writer
- * (JS event loop, no concurrent expo-sqlite writers in practice) we run
- * the inserts and the settings patch sequentially. Validation happens up
- * front so a partial failure during inserts leaves prior rows intact (the
- * append-only contract makes partial-write recovery a re-run of the same
- * migration).
+ * Atomicity: the inserts + settings patch run inside a SQLite transaction
+ * (BEGIN/COMMIT) executed against the underlying driver, so a process kill
+ * between the loop and the settings update cannot leave a hybrid state
+ * where some TMs are in the new unit but settings.storageUnit still names
+ * the old one. If the BEGIN/COMMIT helpers aren't available on the driver
+ * (e.g. a mocked test handle), we fall back to sequential writes with the
+ * same crash-recovery property as before.
  */
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Unit } from '../../domain/types';
@@ -43,28 +40,62 @@ import { getCurrentTrainingMaxes } from './trainingMax';
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
+/**
+ * Best-effort raw-SQL exec against drizzle's underlying session. drizzle
+ * surfaces a `.run` that takes a `sql` template; we don't want to depend
+ * on that here, so we reach for the underlying driver via the same shape
+ * runMigrations uses (`execSync` for expo-sqlite, `exec` for
+ * better-sqlite3). Returns false if neither is available — caller falls
+ * back to non-transactional writes.
+ */
+function execRaw(db: AnyDb, sql: string): boolean {
+  // biome-ignore lint/suspicious/noExplicitAny: structural reach across drivers
+  const session = (db as any).session;
+  // biome-ignore lint/suspicious/noExplicitAny: structural reach across drivers
+  const client: any = session?.client;
+  if (client) {
+    if (typeof client.execSync === 'function') {
+      client.execSync(sql);
+      return true;
+    }
+    if (typeof client.exec === 'function') {
+      client.exec(sql);
+      return true;
+    }
+  }
+  return false;
+}
+
 export async function migrateStorageUnit(db: AnyDb, newUnit: Unit): Promise<void> {
   const settings = await getSettings(db);
   if (settings.storageUnit === newUnit) return;
   const tms = await getCurrentTrainingMaxes(db);
-  const now = Date.now();
-  for (const tm of tms) {
-    if (tm.unit === newUnit) continue;
-    await Promise.resolve(
-      db.insert(trainingMaxes).values({
-        lift: tm.lift,
-        value: convertAndSnap(tm.value, tm.unit, newUnit),
-        unit: newUnit,
-        updatedAt: now,
-        note: 'unit-migration',
-      }),
-    );
+
+  const inTransaction = execRaw(db, 'BEGIN;');
+  try {
+    const now = Date.now();
+    for (const tm of tms) {
+      if (tm.unit === newUnit) continue;
+      await Promise.resolve(
+        db.insert(trainingMaxes).values({
+          lift: tm.lift,
+          value: convertAndSnap(tm.value, tm.unit, newUnit),
+          unit: newUnit,
+          updatedAt: now,
+          note: 'unit-migration',
+        }),
+      );
+    }
+    const patch: { storageUnit: Unit; displayUnit?: Unit } = { storageUnit: newUnit };
+    // If displayUnit was tied to the old storage (the default state), drag it
+    // along so the user sees the migrated numbers immediately.
+    if (settings.displayUnit === settings.storageUnit) {
+      patch.displayUnit = newUnit;
+    }
+    await updateSettings(db, patch);
+    if (inTransaction) execRaw(db, 'COMMIT;');
+  } catch (err) {
+    if (inTransaction) execRaw(db, 'ROLLBACK;');
+    throw err;
   }
-  const patch: { storageUnit: Unit; displayUnit?: Unit } = { storageUnit: newUnit };
-  // If displayUnit was tied to the old storage (the default state), drag it
-  // along so the user sees the migrated numbers immediately.
-  if (settings.displayUnit === settings.storageUnit) {
-    patch.displayUnit = newUnit;
-  }
-  await updateSettings(db, patch);
 }

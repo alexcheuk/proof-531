@@ -63,8 +63,8 @@ export function PlateBar({
   const { colors } = useTheme();
 
   const H = mini ? 64 : 96;
-  const plateW = mini ? 9 : 12;
-  const sleeveH = 2;
+  const plateW = mini ? 9 : 16;
+  const sleeveH = 4;
   const barMidW = mini ? 32 : 48;
   const collarH = H * 0.32;
   const hasPlates = perSide.length > 0;
@@ -280,11 +280,15 @@ function PlateRect({
   const showLabel = height >= 30 && width >= 10;
   const labelStyle: TextStyle = {
     fontFamily: 'IBMPlexMono-Bold',
-    fontSize: mini ? 7 : 8,
+    fontSize: mini ? 7 : 10,
     lineHeight: mini ? 7 : 8,
-    letterSpacing: 0.32,
+    letterSpacing: 1,
     color: bg0,
   };
+  // The label is laid out inside a wrapper whose width matches the plate's
+  // HEIGHT (i.e. its long axis after rotation). That gives "2.5" enough
+  // horizontal room to render at its natural width; without it, RN measures
+  // the Text against the plate's 12px width and truncates the decimal.
   return (
     <View
       testID={testID}
@@ -295,13 +299,23 @@ function PlateRect({
         borderRadius: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden',
       }}
     >
       {showLabel ? (
-        <RNText style={[labelStyle, { transform: [{ rotate: '-90deg' }] }]} numberOfLines={1}>
-          {weight}
-        </RNText>
+        <View
+          pointerEvents="none"
+          style={{
+            width: height,
+            height: width,
+            alignItems: 'center',
+            justifyContent: 'center',
+            transform: [{ rotate: '-90deg' }],
+          }}
+        >
+          <RNText style={labelStyle} numberOfLines={1}>
+            {weight}
+          </RNText>
+        </View>
       ) : null}
     </View>
   );

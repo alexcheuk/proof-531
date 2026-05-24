@@ -236,7 +236,7 @@ them by default; deviation requires a callout in the PR description.
   (`expo-sqlite`'s `:memory:`). Mock the minimum; DB integration tests hit real SQLite.
 - **Manual:** per-feature screenshot pair (RN vs PWA) attached to each PR description.
 - **CI:** `pnpm run ci` (typecheck + lint + Jest) plus
-  `pnpm --filter @proof-531/mobile exec expo export --platform ios --output-dir /tmp/x`
+  `pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/x`
   as a Metro-resolution smoke (catches the `ts-dedent` class of bug).
 - **No e2e harness.** No Maestro, no Playwright, no device farm. Revisit when shipping.
 
