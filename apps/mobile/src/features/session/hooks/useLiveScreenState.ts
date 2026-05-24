@@ -47,6 +47,7 @@ import { round as snapWeight } from '@/domain/units';
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRestTimer } from './useRestTimer';
 
 export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
 
@@ -166,7 +167,6 @@ export function useLiveScreenState(
 
   const [phase, setPhase] = useState<LivePhase>('set');
   const [setIndex, setSetIndex] = useState<WorkingSetIndex>(0);
-  const [restRemaining, setRestRemaining] = useState(0);
   const [cancelArmed, setCancelArmed] = useState(false);
   const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
   // Bootstrap-once gate: keeps the first non-undefined setLogs read from
@@ -178,9 +178,15 @@ export function useLiveScreenState(
   // The phase to return to when the cancel sheet is dismissed. Captured at
   // open time so the cancel flow doesn't disturb the underlying state.
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
-  // Track whether the warning threshold has already fired in the current rest
-  // cycle so we don't double-trigger on re-renders or imprecise tick alignment.
-  const warningFiredRef = useRef(false);
+
+  // Rest-timer driver — extracted hook owns the countdown, warning latch,
+  // and ±30s controls.
+  const restTimer = useRestTimer({
+    active: phase === 'rest',
+    seconds: restSeconds,
+    warningThresholdSeconds: WARNING_THRESHOLD,
+    fireWarningHaptic,
+  });
 
   // Bootstrap setIndex (and possibly phase) from persisted set_logs the
   // first time the query resolves. If every working/AMRAP slot is already
@@ -217,35 +223,6 @@ export function useLiveScreenState(
   const prescribedReps = workingSet.reps;
   const pct = workingSet.pct;
   const isAmrap = isAmrapSet(week, setIndex);
-
-  // Rest-timer driver. Runs only when phase === 'rest'. Lets `remaining`
-  // go negative past T-0 so the count-up label in RestTimer keeps ticking
-  // past the configured target — rest is free-form per the PWA reference.
-  useEffect(() => {
-    if (phase !== 'rest') return;
-    warningFiredRef.current = false;
-    setRestRemaining(restSeconds);
-    const id = setInterval(() => {
-      setRestRemaining((prev) => prev - 1);
-    }, 1000);
-    return () => {
-      clearInterval(id);
-    };
-  }, [phase, restSeconds]);
-
-  // Side-effect bus on every restRemaining tick. Kept separate from the
-  // interval callback so the haptic fires from inside React's commit phase
-  // rather than from a setState updater (which can run twice under StrictMode
-  // and would double-fire the side effect). The T-0 audio cue was removed
-  // when expo-av was dropped — Expo Go on SDK 55 no longer ships the
-  // ExponentAV native module.
-  useEffect(() => {
-    if (phase !== 'rest') return;
-    if (restRemaining === WARNING_THRESHOLD && !warningFiredRef.current) {
-      warningFiredRef.current = true;
-      fireWarningHaptic();
-    }
-  }, [phase, restRemaining, fireWarningHaptic]);
 
   const onLogWorkingSet = useCallback(async () => {
     if (!session?.id) return;
@@ -333,21 +310,6 @@ export function useLiveScreenState(
     [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex],
   );
 
-  const onAddRest = useCallback(() => {
-    setRestRemaining((prev) => prev + 30);
-  }, []);
-
-  const onSubRest = useCallback(() => {
-    // Subtract but never push below 1s — leaving 0/negative would re-fire
-    // the warning haptic at the next T-3s threshold once the user adds time
-    // again. 1s keeps the visible counter responsive to a follow-up + tap.
-    setRestRemaining((prev) => Math.max(1, prev - 30));
-    // Re-arm the warning haptic if the user pulls back above the threshold.
-    if (restRemaining - 30 > WARNING_THRESHOLD) {
-      warningFiredRef.current = false;
-    }
-  }, [restRemaining]);
-
   const onAdvanceFromRest = useCallback(() => {
     // setIndex was already advanced inside onLogWorkingSet (synchronously
     // for UI snappiness). Here we just flip the surface back to 'set' so
@@ -404,7 +366,7 @@ export function useLiveScreenState(
   return {
     phase,
     setIndex,
-    restRemaining,
+    restRemaining: restTimer.remaining,
     restTarget: restSeconds,
     lastLogged,
     isAmrap,
@@ -417,8 +379,8 @@ export function useLiveScreenState(
     onSaveAmrap,
     onCancelAmrapSheet,
     onAdvanceFromRest,
-    onAddRest,
-    onSubRest,
+    onAddRest: restTimer.addTime,
+    onSubRest: restTimer.subtractTime,
     onRequestCancel,
     onConfirmCancelFirstTap,
     onConfirmCancelSecondTap,

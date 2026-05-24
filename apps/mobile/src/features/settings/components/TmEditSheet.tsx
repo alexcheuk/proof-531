@@ -5,20 +5,18 @@ import { useDb } from '@/data/DbProvider';
  * append-only contract — never UPDATE).
  *
  * Ported from `~/Development/531-pwa/src/features/settings/components/TmEditSheet.tsx`.
- * Visual fidelity to the PWA is approximated using the mobile design
- * primitives (Sheet + NumberStepper + PrimaryPillButton).
  */
 import { setTrainingMax } from '@/data/accessors/trainingMax';
 import { TM_KEY } from '@/data/queries/useLatestTm';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { Sheet } from '@/design/primitives/Sheet';
+import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Text as RNText, type TextStyle } from 'react-native';
 import { LIFT_META } from '../lifts';
 
 export interface TmEditSheetProps {
@@ -43,18 +41,14 @@ export function TmEditSheet({
 }: TmEditSheetProps) {
   const db = useDb();
   const queryClient = useQueryClient();
-  const { colors, type, spacing } = useTheme();
+  const { colors, type } = useTheme();
   const [draft, setDraft] = useState<number>(currentValue);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Edits commit in the storage unit (the row's own unit).
   const step = storageUnit === 'kg' ? 2.5 : 5;
   const captionVisible = storageUnit !== displayUnit;
   const delta = draft - currentValue;
-  // Save is disabled when the draft equals the current value (would write a
-  // duplicate row under the append-only PD-04 contract) or is ≤ 0 (a TM of 0
-  // is meaningless). Surfaces the disabled state to the underlying button.
   const isUnchanged = delta === 0;
   const isZero = draft <= 0;
   const saveDisabled = pending || isUnchanged || isZero;
@@ -73,30 +67,6 @@ export function TmEditSheet({
       setPending(false);
     }
   }
-
-  const bodyStyle: ViewStyle = {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
-    backgroundColor: colors.bg2,
-    gap: spacing.lg,
-  };
-
-  const eyebrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginBottom: 6,
-  };
-
-  const titleStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 22,
-    letterSpacing: -0.66,
-    color: colors.ink0,
-  };
 
   const captionStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
@@ -122,54 +92,16 @@ export function TmEditSheet({
     color: colors.ink0,
   };
 
-  const cancelStyle: ViewStyle = {
-    paddingVertical: 16,
-    alignItems: 'center',
-  };
-
-  const cancelLabelStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 11,
-    letterSpacing: 2.42,
-    textTransform: 'uppercase',
-    color: pending ? colors.ink3 : colors.ink2,
-  };
-
   return (
-    <Sheet open onDismiss={onClose} testID="tm-edit-sheet">
-      <View style={bodyStyle}>
-        <View>
-          <RNText style={eyebrowStyle}>Edit training max</RNText>
-          <RNText style={titleStyle}>{LIFT_META[lift].label}</RNText>
-        </View>
-
-        <NumberStepper
-          testID="tm-edit-stepper"
-          label="Training max"
-          value={draft}
-          unit={storageUnit}
-          step={step}
-          min={0}
-          onChange={setDraft}
-        />
-
-        {captionVisible ? (
-          <RNText style={captionStyle}>
-            editing in {displayUnitGlyph(storageUnit)} · displayed as{' '}
-            {displayUnitGlyph(displayUnit)}
-          </RNText>
-        ) : null}
-
-        <RNText style={deltaStyle} testID="tm-edit-delta">
-          {isZero
-            ? 'Set a positive training max to continue'
-            : isUnchanged
-              ? 'No change from current'
-              : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)} from current`}
-        </RNText>
-
-        {error ? <RNText style={errorStyle}>{error}</RNText> : null}
-
+    <SheetLayout
+      open
+      onDismiss={onClose}
+      testID="tm-edit-sheet"
+      eyebrow="Edit training max"
+      title={LIFT_META[lift].label}
+      titleVariant="compact"
+      pending={pending}
+      primary={
         <PrimaryPillButton
           testID="tm-edit-save"
           onPress={handleSave}
@@ -178,18 +110,39 @@ export function TmEditSheet({
         >
           Save
         </PrimaryPillButton>
+      }
+      cancel={{
+        label: 'Cancel',
+        onPress: onClose,
+        variant: 'text',
+        testID: 'tm-edit-cancel',
+      }}
+    >
+      <NumberStepper
+        testID="tm-edit-stepper"
+        label="Training max"
+        value={draft}
+        unit={storageUnit}
+        step={step}
+        min={0}
+        onChange={setDraft}
+      />
 
-        <Pressable
-          testID="tm-edit-cancel"
-          onPress={onClose}
-          disabled={pending}
-          accessibilityRole="button"
-          accessibilityLabel="Cancel"
-          style={cancelStyle}
-        >
-          <RNText style={cancelLabelStyle}>Cancel</RNText>
-        </Pressable>
-      </View>
-    </Sheet>
+      {captionVisible ? (
+        <RNText style={captionStyle}>
+          editing in {displayUnitGlyph(storageUnit)} · displayed as {displayUnitGlyph(displayUnit)}
+        </RNText>
+      ) : null}
+
+      <RNText style={deltaStyle} testID="tm-edit-delta">
+        {isZero
+          ? 'Set a positive training max to continue'
+          : isUnchanged
+            ? 'No change from current'
+            : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)} from current`}
+      </RNText>
+
+      {error ? <RNText style={errorStyle}>{error}</RNText> : null}
+    </SheetLayout>
   );
 }

@@ -1,4 +1,5 @@
 import { useActiveSession } from '@/data/queries/useActiveSession';
+import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
@@ -33,91 +34,101 @@ export type CustomTabBarProps = {
 };
 
 export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
   const insets = useSafeAreaInsets();
-  // Surface "session in progress" on the TODAY tab from any screen — without
-  // this, a user mid-session who switches to History/You has no in-tab cue
-  // that they have unfinished business. The dot mirrors the LiftTabs
-  // affordance on the Home page.
+  // Surface "session in progress" on the TODAY tab from any screen.
   const activeSession = useActiveSession();
   const hasActiveSession = !!activeSession.data;
+
+  const barStyle: ViewStyle = {
+    backgroundColor: colors.bg0,
+    borderTopWidth: 1,
+    borderTopColor: colors.lineStrong,
+    paddingTop: 14,
+    paddingBottom: Math.max(insets.bottom, 0) + spacing.sm,
+  };
+
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: spacing.xxxl,
-        backgroundColor: colors.bg0,
-        borderTopWidth: 1,
-        borderTopColor: colors.lineStrong,
-        paddingTop: 14,
-        paddingBottom: Math.max(insets.bottom, 0) + spacing.sm,
-      }}
+    <Row justify="center" gap="xxxl" style={barStyle}>
+      {state.routes.map((route, index) => (
+        <TabBarItem
+          key={route.key}
+          route={route}
+          focused={state.index === index}
+          showDot={route.name === 'index' && hasActiveSession}
+          navigation={navigation}
+        />
+      ))}
+    </Row>
+  );
+}
+
+type TabBarItemProps = {
+  route: TabBarRoute;
+  focused: boolean;
+  showDot: boolean;
+  navigation: TabBarNavigation;
+};
+
+function TabBarItem({ route, focused, showDot, navigation }: TabBarItemProps) {
+  const { colors, spacing, type } = useTheme();
+  const label = LABELS[route.name] ?? route.name.toUpperCase();
+
+  const onPress = () => {
+    const event = navigation.emit({
+      type: 'tabPress',
+      target: route.key,
+      canPreventDefault: true,
+    });
+    if (!focused && !event.defaultPrevented) {
+      void Haptics.selectionAsync();
+      navigation.navigate(route.name);
+    }
+  };
+
+  const pressableStyle: ViewStyle = {
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingVertical: spacing.xs,
+    minWidth: 60,
+    gap: spacing.xs,
+  };
+
+  const dotStyle: ViewStyle = {
+    width: 5,
+    height: 5,
+    backgroundColor: colors.ink0,
+  };
+
+  const underlineStyle: ViewStyle = {
+    width: 16,
+    height: 1,
+    backgroundColor: focused ? colors.ink0 : 'transparent',
+  };
+
+  return (
+    <Pressable
+      testID={`tab-${route.name}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: focused }}
+      accessibilityLabel={showDot ? `${label}, session in progress` : label}
+      onPress={onPress}
+      style={pressableStyle}
     >
-      {state.routes.map((route, index) => {
-        const focused = state.index === index;
-        const label = LABELS[route.name] ?? route.name.toUpperCase();
-        const showDot = route.name === 'index' && hasActiveSession;
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!focused && !event.defaultPrevented) {
-            void Haptics.selectionAsync();
-            navigation.navigate(route.name);
-          }
-        };
-        const labelRowStyle: ViewStyle = {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 6,
-        };
-        const dotStyle: ViewStyle = {
-          width: 5,
-          height: 5,
-          backgroundColor: colors.ink0,
-        };
-        return (
-          <Pressable
-            key={route.key}
-            testID={`tab-${route.name}`}
-            accessibilityRole="button"
-            accessibilityState={{ selected: focused }}
-            accessibilityLabel={showDot ? `${label}, session in progress` : label}
-            onPress={onPress}
-            style={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              paddingVertical: spacing.xs,
-              minWidth: 60,
-              gap: spacing.xs,
-            }}
-          >
-            <View style={labelRowStyle}>
-              <RNText
-                style={{
-                  fontFamily: focused ? `${type.mono}-Bold` : `${type.mono}-Medium`,
-                  fontSize: 10,
-                  letterSpacing: 2.2,
-                  color: focused ? colors.ink0 : colors.ink3,
-                }}
-              >
-                {label}
-              </RNText>
-              {showDot ? <View style={dotStyle} testID="tab-index-progress-dot" /> : null}
-            </View>
-            <View
-              style={{
-                width: 16,
-                height: 1,
-                backgroundColor: focused ? colors.ink0 : 'transparent',
-              }}
-            />
-          </Pressable>
-        );
-      })}
-    </View>
+      <Row gap="xs">
+        <RNText
+          style={{
+            fontFamily: focused ? `${type.mono}-Bold` : `${type.mono}-Medium`,
+            fontSize: 10,
+            letterSpacing: 2.2,
+            color: focused ? colors.ink0 : colors.ink3,
+          }}
+        >
+          {label}
+        </RNText>
+        {showDot ? <View style={dotStyle} testID="tab-index-progress-dot" /> : null}
+      </Row>
+      <View style={underlineStyle} />
+    </Pressable>
   );
 }
