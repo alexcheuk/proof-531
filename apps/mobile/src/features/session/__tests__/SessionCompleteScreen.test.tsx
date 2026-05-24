@@ -180,6 +180,33 @@ describe('SessionCompleteScreen', () => {
     expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
   });
 
+  it('renders the PR certificate + delta + Adjust TM CTA when a PR was set', async () => {
+    setLogsState.rows = buildLogs({ isPR: true });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-complete-cert')).toBeTruthy();
+      // The e1RM hero number renders ...
+      expect(screen.getByTestId('session-complete-cert-e1rm')).toBeTruthy();
+      // ... and the delta column shows a "+N" string.
+      const delta = screen.getByTestId('session-complete-cert-delta');
+      expect(delta.props.children).toEqual(expect.stringMatching(/^\+\d+$/));
+      // Post-PR CTA routes to settings.
+      expect(screen.getByTestId('session-complete-adjust-tm')).toBeTruthy();
+    });
+  });
+
+  it('does NOT render the PR certificate or Adjust TM CTA without a PR', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-complete-title')).toBeTruthy();
+    });
+    expect(screen.queryByTestId('session-complete-cert')).toBeNull();
+    expect(screen.queryByTestId('session-complete-adjust-tm')).toBeNull();
+  });
+
   it('does NOT fire the success haptic when no log has isPR=true', async () => {
     setLogsState.rows = buildLogs({ isPR: false });
     renderScreen(<SessionCompleteScreen sessionId={42} />);

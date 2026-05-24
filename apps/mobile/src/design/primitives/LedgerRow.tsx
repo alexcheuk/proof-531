@@ -27,6 +27,8 @@ export type LedgerRowProps = {
   children: ReactNode;
   testID?: string;
   style?: StyleProp<ViewStyle>;
+  /** Composed accessibility label — overrides the auto-derived label. */
+  accessibilityLabel?: string;
 };
 
 export function LedgerRow({
@@ -36,6 +38,7 @@ export function LedgerRow({
   children,
   testID,
   style,
+  accessibilityLabel,
 }: LedgerRowProps) {
   const { colors } = useTheme();
 
@@ -52,7 +55,13 @@ export function LedgerRow({
 
   if (onPress && !disabled) {
     return (
-      <Pressable testID={testID} onPress={onPress} style={[containerStyle, style]}>
+      <Pressable
+        testID={testID}
+        onPress={onPress}
+        accessibilityRole="button"
+        {...(accessibilityLabel !== undefined ? { accessibilityLabel } : {})}
+        style={[containerStyle, style]}
+      >
         {children}
       </Pressable>
     );
@@ -62,6 +71,7 @@ export function LedgerRow({
     <View
       testID={testID}
       accessibilityState={disabled ? { disabled: true } : undefined}
+      {...(accessibilityLabel !== undefined ? { accessibilityLabel } : {})}
       style={[containerStyle, style]}
     >
       {children}

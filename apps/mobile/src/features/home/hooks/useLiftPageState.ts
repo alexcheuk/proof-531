@@ -1,0 +1,64 @@
+import { decompose } from '@/domain/plates';
+import { type WorkingSet, prescription } from '@/domain/schemes';
+import type { PlateSet, Unit, Week } from '@/domain/types';
+import { convert, round } from '@/domain/units';
+import { useMemo } from 'react';
+
+/**
+ * View model for `LiftPage`. Derives top-set weight / TM / plate
+ * decomposition from raw TM + week + plate set, and exposes an `empty`
+ * flag so the screen can short-circuit when no TM exists.
+ *
+ * Keeping this logic outside the component:
+ *   - shrinks `LiftPage` to pure layout
+ *   - makes the math independently unit-testable
+ *   - documents the storage-vs-display unit invariant in one place
+ *     (snap on storage, then convert for display)
+ */
+export type UseLiftPageStateOptions = {
+  week: Week;
+  storageUnit: Unit;
+  displayUnit: Unit;
+  plateSet: PlateSet;
+  tm: number | null;
+};
+
+export type UseLiftPageStateResult =
+  | { empty: true }
+  | {
+      empty: false;
+      topSet: WorkingSet;
+      topWeight: number;
+      tmDisplay: number;
+      perSide: ReturnType<typeof decompose>['perSide'];
+    };
+
+export function useLiftPageState({
+  week,
+  storageUnit,
+  displayUnit,
+  plateSet,
+  tm,
+}: UseLiftPageStateOptions): UseLiftPageStateResult {
+  return useMemo<UseLiftPageStateResult>(() => {
+    const sets = prescription(week);
+    const topSet = sets[2];
+    if (tm == null || topSet == null) return { empty: true };
+
+    // Snap in storage units, then convert for render — keeps the snap to
+    // the storage step (5 lb / 2.5 kg of the underlying TM row) while the
+    // user sees the number in whichever unit Settings currently picks.
+    const topWeightStorage = round(tm * topSet.pct, storageUnit);
+    const topWeight = convert(topWeightStorage, storageUnit, displayUnit);
+    const tmDisplay = convert(tm, storageUnit, displayUnit);
+    const decomposed = decompose(topWeight, plateSet);
+
+    return {
+      empty: false,
+      topSet,
+      topWeight,
+      tmDisplay,
+      perSide: decomposed.perSide,
+    };
+  }, [week, storageUnit, displayUnit, plateSet, tm]);
+}

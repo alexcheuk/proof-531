@@ -20,7 +20,7 @@
  * event loop, no concurrent expo-sqlite writers in practice) we skip the
  * wrapper. Each call's reads/writes are still sequential.
  */
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { estimateOneRm } from '../../domain/epley';
 import type { Lift } from '../../domain/types';
@@ -85,4 +85,21 @@ export async function getSetLogsForSession(db: AnyDb, sessionId: number): Promis
   return (await Promise.resolve(
     db.select().from(setLogs).where(eq(setLogs.sessionId, sessionId)),
   )) as SetLog[];
+}
+
+/**
+ * Return the distinct session ids that have at least one `isPR = true` row.
+ *
+ * Used by the History tab to render a PR marker on rows that produced a
+ * personal record. Returning ids (not full rows) keeps the wire small and
+ * matches the consumer's `Set<number>.has(id)` access pattern.
+ */
+export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
+  const rows = (await Promise.resolve(
+    db
+      .selectDistinct({ sessionId: setLogs.sessionId })
+      .from(setLogs)
+      .where(sql`${setLogs.isPR} = 1`),
+  )) as Array<{ sessionId: number }>;
+  return rows.map((r) => r.sessionId);
 }

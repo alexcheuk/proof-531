@@ -18,7 +18,9 @@ import { act, render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockRefetch = jest.fn(() => Promise.resolve({ data: [] as Session[] }));
+const mockPrIdsRefetch = jest.fn(() => Promise.resolve({ data: new Set<number>() }));
 let mockSessions: Session[] = [];
+let mockPrIds: Set<number> = new Set();
 let mockIsLoading = false;
 let mockIsError = false;
 let mockError: unknown = null;
@@ -30,6 +32,16 @@ jest.mock('@/data/queries/useSessions', () => ({
     isError: mockIsError,
     error: mockError,
     refetch: mockRefetch,
+  }),
+}));
+
+jest.mock('@/data/queries/useSessionPrIds', () => ({
+  useSessionPrIds: () => ({
+    data: mockPrIds,
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: mockPrIdsRefetch,
   }),
 }));
 
@@ -57,16 +69,18 @@ function makeSession(overrides: Partial<Session>): Session {
 describe('HistoryScreen', () => {
   beforeEach(() => {
     mockRefetch.mockClear();
+    mockPrIdsRefetch.mockClear();
     mockSessions = [];
+    mockPrIds = new Set();
     mockIsLoading = false;
     mockIsError = false;
     mockError = null;
   });
 
-  it('renders the LOADING… caps line while the sessions query is loading', () => {
+  it('renders the loading skeleton while the sessions query is loading', () => {
     mockIsLoading = true;
     const screen = renderScreen(<HistoryScreen />);
-    expect(screen.getByText('LOADING…')).toBeTruthy();
+    expect(screen.getByTestId('history-skeleton')).toBeTruthy();
   });
 
   it("renders the COULDN'T LOAD caps line + message when the sessions query errors", () => {
@@ -99,15 +113,36 @@ describe('HistoryScreen', () => {
     mockSessions = [makeSession({ id: 1 })];
     const screen = renderScreen(<HistoryScreen />);
     const scroll = screen.getByTestId('history-scroll');
-    // ScrollView's `refreshControl` prop holds the RefreshControl element. We
-    // invoke its `onRefresh` directly — equivalent to a pull-to-refresh
-    // gesture, but driver-agnostic (the native RefreshControl is not rendered
-    // as a discoverable node under jest).
     const refreshControl = scroll.props.refreshControl as { props: { onRefresh: () => void } };
     expect(typeof refreshControl.props.onRefresh).toBe('function');
     await act(async () => {
       refreshControl.props.onRefresh();
     });
     expect(mockRefetch).toHaveBeenCalledTimes(1);
+    expect(mockPrIdsRefetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the achievement strip with sessions + PRs totals once filed', () => {
+    mockSessions = [
+      makeSession({ id: 1, status: 'completed' }),
+      makeSession({ id: 2, status: 'completed' }),
+      makeSession({ id: 3, status: 'cancelled' }),
+    ];
+    mockPrIds = new Set([2]);
+    const screen = renderScreen(<HistoryScreen />);
+    expect(screen.getByTestId('history-achievements')).toBeTruthy();
+    expect(screen.getByText('sessions filed')).toBeTruthy();
+    expect(screen.getByTestId('history-achievements-prs').props.children).toBe(1);
+  });
+
+  it('renders a PR star on the rows that produced personal records', () => {
+    mockSessions = [
+      makeSession({ id: 11, status: 'completed' }),
+      makeSession({ id: 22, status: 'completed' }),
+    ];
+    mockPrIds = new Set([22]);
+    const screen = renderScreen(<HistoryScreen />);
+    expect(screen.queryByTestId('history-row-11-pr')).toBeNull();
+    expect(screen.getByTestId('history-row-22-pr')).toBeTruthy();
   });
 });

@@ -1,7 +1,10 @@
 import { useDb } from '@/data/DbProvider';
 import { cancelSession, completeSession } from '@/data/accessors/session';
 import { appendSetLog } from '@/data/accessors/setLog';
+import { PRS_KEY } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
+import { SESSION_PR_IDS_KEY } from '@/data/queries/useSessionPrIds';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import {
   SET_LOGS_FOR_SESSION_KEY,
   useSetLogsForSession,
@@ -254,6 +257,7 @@ export function useLiveScreenState(
       // come in through onSaveAmrap.
       if (loggedIndex === 2) {
         await completeSession(db, session.id);
+        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
         setPhase('complete');
         return;
       }
@@ -291,6 +295,11 @@ export function useLiveScreenState(
         await queryClient.invalidateQueries({
           queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
         });
+        // AMRAP can flip the PR table (and therefore the History tab's
+        // PR-marker query). Invalidate both so the next time the user lands
+        // on History the row shows its star without a manual refresh.
+        await queryClient.invalidateQueries({ queryKey: PRS_KEY });
+        await queryClient.invalidateQueries({ queryKey: SESSION_PR_IDS_KEY });
         // Snapshot the just-logged AMRAP for RestPhase (even though AMRAP
         // is terminal, the snapshot keeps the contract consistent and lets
         // future flows reuse it without branching).
@@ -302,6 +311,9 @@ export function useLiveScreenState(
         });
         // AMRAP is always terminal — go straight to complete.
         await completeSession(db, session.id);
+        // Session row's status flipped to 'completed' — the History list
+        // shouldn't carry a stale 'in_progress' row.
+        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
         setPhase('complete');
       } catch (err) {
         console.error('useLiveScreenState.onSaveAmrap failed', err);
@@ -357,11 +369,12 @@ export function useLiveScreenState(
     if (!session?.id) return;
     try {
       await cancelSession(db, session.id);
+      await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
       setPhase('complete');
     } catch (err) {
       console.error('useLiveScreenState.onConfirmCancelSecondTap failed', err);
     }
-  }, [db, session?.id]);
+  }, [db, queryClient, session?.id]);
 
   return {
     phase,

@@ -1,29 +1,24 @@
-import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { Text } from '@/design/primitives/Text';
-import { TopSetBlock } from '@/design/primitives/TopSetBlock';
-import { useTheme } from '@/design/theme';
-import { liftDisplayName } from '@/domain/labels';
-import { decompose } from '@/domain/plates';
-import { prescription } from '@/domain/schemes';
-import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
-import { convert, displayUnit, round } from '@/domain/units';
 /**
  * Per-lift content body on Home. Reanimated `LinearTransition` animates
  * layout when the selected lift changes (swap-out → swap-in feels like a
  * smooth strip, not a hard cut).
  *
  * Ported from `~/Development/531-pwa/src/features/home/components/LiftPage.tsx`.
- * The PWA renders inside a CSS scroll-snap carousel; the RN port renders a
- * single page at a time keyed on `lift` and lets Reanimated tween the
- * resulting layout swap.
- *
- * Empty state (no TM for this lift): replaces TopSet/CycleStrip/LiftStats
- * with a "NO TRAINING MAX SET" strip and a CTA pointing the user back at
- * onboarding so a TM can be set.
+ * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
+ * with a "NO TRAINING MAX SET" strip pointing at onboarding.
  */
+import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { Row } from '@/design/primitives/Row';
+import { Text } from '@/design/primitives/Text';
+import { TopSetBlock } from '@/design/primitives/TopSetBlock';
+import { useTheme } from '@/design/theme';
+import { liftDisplayName } from '@/domain/labels';
+import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
+import { displayUnit } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
+import { useLiftPageState } from '../hooks/useLiftPageState';
 import { CycleStrip } from './CycleStrip';
 import { LiftStats } from './LiftStats';
 
@@ -65,9 +60,7 @@ export function LiftPage({
 }: LiftPageProps) {
   const router = useRouter();
   const { colors, spacing } = useTheme();
-
-  const sets = prescription(week);
-  const topSet = sets[2];
+  const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
 
   const pageStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -79,14 +72,7 @@ export function LiftPage({
   // Eyebrow — "Cycle N · Day W" on the left, "In progress" on the right
   // (only when a session is actively running for this lift).
   const eyebrow = (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: spacing.sm,
-      }}
-    >
+    <Row justify="space-between" gap="sm">
       <Text
         variant="mono"
         weight="semibold"
@@ -97,10 +83,7 @@ export function LiftPage({
         Cycle {cycle} · Day {week}
       </Text>
       {isInProgress ? (
-        <View
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-          testID={`lift-page-${lift}-in-progress`}
-        >
+        <Row gap="xs" testID={`lift-page-${lift}-in-progress`}>
           <View style={{ width: 6, height: 6, backgroundColor: colors.ink0 }} />
           <Text
             variant="mono"
@@ -111,12 +94,11 @@ export function LiftPage({
           >
             In progress
           </Text>
-        </View>
+        </Row>
       ) : null}
-    </View>
+    </Row>
   );
 
-  // Title — typographic, e-ink heavy.
   const title = (
     <Text
       variant="sans"
@@ -130,22 +112,13 @@ export function LiftPage({
       }}
     >
       {liftDisplayName(lift)}
-      <Text
-        variant="sans"
-        weight="bold"
-        size={64}
-        color="amber"
-        style={{
-          lineHeight: 74,
-        }}
-      >
+      <Text variant="sans" weight="bold" size={64} color="amber" style={{ lineHeight: 74 }}>
         .
       </Text>
     </Text>
   );
 
-  // Empty state — no TM yet.
-  if (tm == null || topSet == null) {
+  if (state.empty) {
     return (
       <Animated.View
         layout={LinearTransition}
@@ -177,6 +150,8 @@ export function LiftPage({
           <Pressable
             onPress={() => router.push('/onboarding')}
             testID={`lift-page-${lift}-open-settings`}
+            accessibilityRole="button"
+            accessibilityLabel="Open onboarding to set a training max"
             style={{
               marginTop: spacing.md,
               paddingVertical: spacing.md,
@@ -199,16 +174,6 @@ export function LiftPage({
     );
   }
 
-  // Snap in storage units, then convert for render. This keeps the snap to
-  // the storage step (5 lb / 2.5 kg of the underlying TM row) while letting
-  // the user see the number in whichever unit Settings currently picks.
-  const topWeightStorage = round(tm * topSet.pct, storageUnit);
-  const topWeight = convert(topWeightStorage, storageUnit, displayUnitProp);
-  const tmDisplay = convert(tm, storageUnit, displayUnitProp);
-
-  // Decompose plates against the display weight under the configured plate set.
-  const decomposed = decompose(topWeight, plateSet);
-
   return (
     <Animated.View
       layout={LinearTransition}
@@ -221,13 +186,13 @@ export function LiftPage({
 
       <View style={{ marginTop: spacing.lg }}>
         <TopSetBlock
-          weight={topWeight}
+          weight={state.topWeight}
           unitGlyph={displayUnit(displayUnitProp)}
-          reps={topSet.reps}
-          amrap={!!topSet.amrap}
-          pctLabel={`${Math.round(topSet.pct * 100)}% TM`}
-          tmLabel={`TM ${tmDisplay} ${displayUnit(displayUnitProp)}`}
-          perSide={decomposed.perSide}
+          reps={state.topSet.reps}
+          amrap={!!state.topSet.amrap}
+          pctLabel={`${Math.round(state.topSet.pct * 100)}% TM`}
+          tmLabel={`TM ${state.tmDisplay} ${displayUnit(displayUnitProp)}`}
+          perSide={state.perSide}
           plateVariant="mini"
           bordered
         />
@@ -236,7 +201,12 @@ export function LiftPage({
       <CycleStrip currentWeek={week} />
 
       <View style={{ marginTop: spacing.lg }}>
-        <LiftStats tmValue={tmDisplay} tmUnit={displayUnitProp} bestE1RM={bestE1RM} cycle={cycle} />
+        <LiftStats
+          tmValue={state.tmDisplay}
+          tmUnit={displayUnitProp}
+          bestE1RM={bestE1RM}
+          cycle={cycle}
+        />
       </View>
 
       <View style={{ flex: 1, minHeight: 18 }} />
@@ -252,6 +222,8 @@ export function LiftPage({
       <Pressable
         onPress={onOpenPlan}
         testID={`lift-page-${lift}-open-plan`}
+        accessibilityRole="button"
+        accessibilityLabel={`See the full ${liftDisplayName(lift)} session`}
         style={{ paddingVertical: spacing.sm, marginTop: spacing.md, alignItems: 'center' }}
       >
         <Text
@@ -261,7 +233,6 @@ export function LiftPage({
           color="ink2"
           style={{ textTransform: 'uppercase', letterSpacing: 2.2, textAlign: 'center' }}
         >
-          {/* eslint-disable-next-line */}
           SEE FULL SESSION →
         </Text>
       </Pressable>

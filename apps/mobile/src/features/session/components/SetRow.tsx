@@ -1,4 +1,5 @@
 import { MonoBadge } from '@/design/primitives/MonoBadge';
+import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
@@ -14,7 +15,7 @@ import { displayUnit } from '@/domain/units';
  * into Live happens exclusively via the bottom `Start/Resume working set N`
  * CTA. The row visually marks state with `done` and `next` props.
  */
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Text as RNText, type TextStyle, type ViewStyle } from 'react-native';
 
 export type SetRowProps = {
   index: 1 | 2 | 3;
@@ -44,10 +45,7 @@ export function SetRow({
   const { colors, type } = useTheme();
 
   const containerStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingVertical: 14,
-    gap: 14,
     borderTopWidth: 1,
     borderTopColor: index === 1 ? colors.lineStrong : colors.line,
     ...(isLast ? { borderBottomWidth: 1, borderBottomColor: colors.lineStrong } : null),
@@ -60,14 +58,6 @@ export function SetRow({
     fontSize: 11,
     letterSpacing: 0.44,
     color: next ? colors.ink0 : colors.ink3,
-  };
-
-  const middleStyle: ViewStyle = {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 8,
   };
 
   const weightStyle: TextStyle = {
@@ -96,12 +86,6 @@ export function SetRow({
     fontVariant: ['tabular-nums', 'lining-nums'],
   };
 
-  const rightStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  };
-
   const pctStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
     fontSize: 11,
@@ -110,25 +94,25 @@ export function SetRow({
   };
 
   return (
-    <View testID={testID} style={containerStyle}>
+    <Row {...(testID !== undefined ? { testID } : {})} style={containerStyle} gap="md">
       <RNText style={indexStyle}>{done ? '✓' : String(index).padStart(2, '0')}</RNText>
-      <View style={middleStyle}>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+      <Row style={{ flex: 1 }} gap="sm" wrap>
+        <Row align="baseline" gap="xs">
           <RNText style={weightStyle}>{weight}</RNText>
           <RNText style={capsStyle}>{displayUnit(unit)}</RNText>
-        </View>
+        </Row>
 
         <RNText style={repsStyle}>
           × {reps}
           {amrap ? '+' : ''}
         </RNText>
         {amrap ? <MonoBadge>AMRAP</MonoBadge> : null}
-      </View>
+      </Row>
 
-      <View style={rightStyle}>
+      <Row gap="sm">
         {next ? <MonoBadge>UP NEXT</MonoBadge> : null}
         <RNText style={pctStyle}>{Math.round(pct * 100)}%</RNText>
-      </View>
-    </View>
+      </Row>
+    </Row>
   );
 }
