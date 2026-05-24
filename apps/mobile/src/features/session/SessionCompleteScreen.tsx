@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
@@ -85,11 +86,11 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   useEffect(() => {
     if (sessionQuery.isLoading) return;
     if (sessionQuery.data === null) {
-      router.replace('/' as never);
+      goTo.home(router);
       return;
     }
     if (sessionStatusForGate && sessionStatusForGate !== 'completed') {
-      router.replace('/' as never);
+      goTo.home(router);
     }
   }, [sessionQuery.isLoading, sessionQuery.data, sessionStatusForGate, router]);
 
@@ -196,7 +197,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
 
   const handleClose = () => {
-    router.replace('/');
+    goTo.home(router);
   };
 
   // ---------- styles ----------
@@ -508,7 +509,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
         <RNText
           testID="session-complete-history-link"
           accessibilityRole="button"
-          onPress={() => router.replace('/' as never)}
+          onPress={() => goTo.home(router)}
           style={secondaryLinkStyle}
         >
           See full record →

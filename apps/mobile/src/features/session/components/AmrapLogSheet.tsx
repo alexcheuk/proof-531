@@ -15,7 +15,7 @@ import { displayUnit } from '@/domain/units';
  * Parent owns the actual `appendSetLog` call — this component only stages reps
  * and surfaces an e1RM caption.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
 
 export type AmrapLogSheetProps = {
@@ -26,7 +26,13 @@ export type AmrapLogSheetProps = {
   unit: Unit;
   existingBestE1RM?: number | undefined;
   onCancel: () => void;
-  onSave: (reps: number) => void;
+  /**
+   * Called when the user confirms a rep count. May be sync or async — the
+   * sheet awaits the returned value so the disabled state resolves on parent
+   * resolution (and on parent error, falls back to re-enabling the buttons so
+   * the user can retry).
+   */
+  onSave: (reps: number) => void | Promise<void>;
   testID?: string | undefined;
 };
 
@@ -44,15 +50,50 @@ export function AmrapLogSheet({
   const [reps, setReps] = useState<number>(prescribedReps);
   const [pending, setPending] = useState(false);
   const { colors, spacing } = useTheme();
+  const mountedRef = useRef(true);
+  useEffect(
+    () => () => {
+      mountedRef.current = false;
+    },
+    [],
+  );
 
-  function handleSave() {
+  // Reset pending + rep count whenever the sheet re-opens — otherwise a
+  // previous error path (parent's onSave rejected) would leave both buttons
+  // permanently disabled when the user next opens the sheet, and reps would
+  // start from the user's last attempted value instead of the prescription.
+  useEffect(() => {
+    if (open) {
+      setPending(false);
+      setReps(prescribedReps);
+    }
+  }, [open, prescribedReps]);
+
+  async function handleSave() {
+    if (pending) return;
     setPending(true);
-    onSave(reps);
+    try {
+      await Promise.resolve(onSave(reps));
+    } catch (err) {
+      console.error('AmrapLogSheet.onSave failed', err);
+      if (mountedRef.current) setPending(false);
+    }
+  }
+
+  function handleCancel() {
+    if (pending) return;
+    onCancel();
   }
 
   const predictedE1RMRaw = estimateOneRm(prescribedWeight, reps);
   const predictedE1RM = Math.round(predictedE1RMRaw);
-  const isPotentialPR = predictedE1RMRaw > (existingBestE1RM ?? 0);
+  const existingBest = existingBestE1RM ?? 0;
+  const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
+  // Real-time delta against the user's current PR — the felt-quality win is
+  // watching "+12" tick up as you crank out another rep on the AMRAP. Only
+  // surfaced when the user has a prior PR (no baseline → no delta to brag
+  // about; just shows the projected 1RM).
+  const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
 
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -81,7 +122,7 @@ export function AmrapLogSheet({
   });
 
   return (
-    <Sheet open={open} onDismiss={onCancel} {...(testID !== undefined ? { testID } : {})}>
+    <Sheet open={open} onDismiss={handleCancel} {...(testID !== undefined ? { testID } : {})}>
       <View style={bodyStyle}>
         <View style={headerRow}>
           <View>
@@ -123,11 +164,15 @@ export function AmrapLogSheet({
             variant="mono"
             weight="semibold"
             size={10}
-            color="ink1"
+            color={isPotentialPR ? 'ink0' : 'ink1'}
             style={{ textTransform: 'uppercase', letterSpacing: 1.4 }}
+            testID="amrap-e1rm-caption"
           >
             EST. 1RM {predictedE1RM} {displayUnit(unit)}
-            {isPotentialPR && reps > 0 ? ' · PR' : ''}
+            {deltaFromBest !== null && reps > 0
+              ? ` · ${deltaFromBest >= 0 ? '+' : ''}${deltaFromBest} from best`
+              : ''}
+            {isPotentialPR ? ' · PR' : ''}
           </Text>
         </View>
 
@@ -147,7 +192,7 @@ export function AmrapLogSheet({
             testID="amrap-cancel"
             accessibilityRole="button"
             disabled={pending}
-            onPress={onCancel}
+            onPress={handleCancel}
             style={button('ghost')}
           >
             <Text

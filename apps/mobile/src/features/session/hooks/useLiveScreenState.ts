@@ -54,6 +54,13 @@ export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'ca
 export const REST_SECONDS = 90;
 /** Seconds-remaining at which the warning haptic fires. */
 export const WARNING_THRESHOLD = 3;
+/**
+ * How long the cancel-confirm destructive button stays armed before
+ * silently disarming itself. Prevents the footgun where a user taps once
+ * accidentally, looks away, and the second tap an hour later destroys the
+ * session.
+ */
+export const CANCEL_ARM_TIMEOUT_MS = 8000;
 
 export type UseLiveScreenStateOptions = {
   /** Defaults to REST_SECONDS — overridable so tests can assert on a shorter timeline. */
@@ -84,6 +91,10 @@ export type UseLiveScreenStateResult = {
   restRemaining: number;
   /** Configured rest target in seconds — exposed so RestPhase can render context (e.g. "of 1:30"). */
   restTarget: number;
+  /** Add 30s to the running countdown — no-op outside `rest`. */
+  onAddRest: () => void;
+  /** Subtract 30s from the running countdown (floored at -overtime allowed) — no-op outside `rest`. */
+  onSubRest: () => void;
   /** Snapshot of the most recently logged set. Cleared between sessions; null until the first log of this session. */
   lastLogged: LastLoggedSet | null;
   /** True if the current working set is the AMRAP top set. */
@@ -322,6 +333,21 @@ export function useLiveScreenState(
     [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex],
   );
 
+  const onAddRest = useCallback(() => {
+    setRestRemaining((prev) => prev + 30);
+  }, []);
+
+  const onSubRest = useCallback(() => {
+    // Subtract but never push below 1s — leaving 0/negative would re-fire
+    // the warning haptic at the next T-3s threshold once the user adds time
+    // again. 1s keeps the visible counter responsive to a follow-up + tap.
+    setRestRemaining((prev) => Math.max(1, prev - 30));
+    // Re-arm the warning haptic if the user pulls back above the threshold.
+    if (restRemaining - 30 > WARNING_THRESHOLD) {
+      warningFiredRef.current = false;
+    }
+  }, [restRemaining]);
+
   const onAdvanceFromRest = useCallback(() => {
     // setIndex was already advanced inside onLogWorkingSet (synchronously
     // for UI snappiness). Here we just flip the surface back to 'set' so
@@ -351,6 +377,20 @@ export function useLiveScreenState(
     fireWarningHaptic();
   }, [fireWarningHaptic]);
 
+  // Auto-disarm: when the destructive button has been armed for
+  // CANCEL_ARM_TIMEOUT_MS without a second tap, silently revert to the unarmed
+  // state. The user must tap once more to re-arm. Without this, the armed
+  // state could persist for an entire workout — a real footgun.
+  useEffect(() => {
+    if (!cancelArmed) return;
+    const id = setTimeout(() => {
+      setCancelArmed(false);
+    }, CANCEL_ARM_TIMEOUT_MS);
+    return () => {
+      clearTimeout(id);
+    };
+  }, [cancelArmed]);
+
   const onConfirmCancelSecondTap = useCallback(async () => {
     if (!session?.id) return;
     try {
@@ -377,6 +417,8 @@ export function useLiveScreenState(
     onSaveAmrap,
     onCancelAmrapSheet,
     onAdvanceFromRest,
+    onAddRest,
+    onSubRest,
     onRequestCancel,
     onConfirmCancelFirstTap,
     onConfirmCancelSecondTap,

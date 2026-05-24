@@ -60,9 +60,25 @@ export function OneRmEntry({
       step={step}
       total={total}
       footer={
-        <PrimaryPillButton onPress={onNext} disabled={!computed} testID="onboarding-onerm-next">
-          {isLast ? 'Review' : 'Next lift'}
-        </PrimaryPillButton>
+        <View style={{ gap: 10 }}>
+          {!computed ? (
+            <Text
+              variant="mono"
+              weight="medium"
+              size={10}
+              color="ink2"
+              style={{ letterSpacing: 1.8, textTransform: 'uppercase', textAlign: 'center' }}
+              testID="onboarding-onerm-hint"
+            >
+              {data.mode === 'direct'
+                ? 'Set a weight to continue'
+                : 'Enter a weight and reps to continue'}
+            </Text>
+          ) : null}
+          <PrimaryPillButton onPress={onNext} disabled={!computed} testID="onboarding-onerm-next">
+            {isLast ? 'Review' : 'Next lift'}
+          </PrimaryPillButton>
+        </View>
       }
     >
       <View style={tickRow}>

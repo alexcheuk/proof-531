@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { completeOnboarding } from '@/data/accessors/onboarding';
 import { useSettings } from '@/data/queries/useSettings';
@@ -70,7 +71,7 @@ export function OnboardingScreen() {
         queryClient.refetchQueries({ queryKey: ['trainingMaxes'] }),
         queryClient.refetchQueries({ queryKey: ['settings'] }),
       ]);
-      router.replace('/');
+      goTo.home(router);
     } catch (err) {
       // Should not happen given reducer invariants (every enabled lift has
       // a positive computed value). Log + re-enable so the user can retry.

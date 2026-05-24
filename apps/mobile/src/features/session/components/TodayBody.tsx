@@ -210,7 +210,12 @@ export function TodayBody({
 
       <View style={sectionStyle}>
         <View style={sectionHeaderRow}>
-          <RNText style={capsLabel}>WORKING SETS</RNText>
+          <RNText style={capsLabel}>
+            WORKING SETS
+            {completedIndices.length > 0
+              ? `  ·  ${completedIndices.length} OF ${sets.length} DONE`
+              : ''}
+          </RNText>
           <RNText style={capsHint}>
             TM {tmInDisplay} {unitGlyph}
           </RNText>

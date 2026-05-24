@@ -83,4 +83,18 @@ describe('PrimaryPillButton', () => {
     );
     expect(queryByText('→')).toBeNull();
   });
+
+  it('swallows synchronous double-taps (fires onPress only once)', () => {
+    const onPress = jest.fn();
+    const { getByTestId } = renderWithTheme(
+      <PrimaryPillButton onPress={onPress} testID="cta">
+        Begin
+      </PrimaryPillButton>,
+    );
+    // Three rapid synchronous taps — happens when a user's finger rebounds.
+    fireEvent.press(getByTestId('cta'));
+    fireEvent.press(getByTestId('cta'));
+    fireEvent.press(getByTestId('cta'));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -87,13 +88,13 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     // AMRAP saves may have set a new PR, so we invalidate the broader
     // session-shaped surface alongside the three core keys. .catch
     // re-fires the same replace so the user is never stranded.
-    const destination =
-      sessionStatus === 'cancelled'
-        ? ('/' as const)
-        : ({
-            pathname: '/session/complete' as const,
-            params: { sessionId: String(sessionId) },
-          } as const);
+    const routeToDestination = () => {
+      if (sessionStatus === 'cancelled') {
+        goTo.home(router);
+      } else {
+        goTo.complete(router, sessionId, { replace: true });
+      }
+    };
     Promise.all([
       queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
       queryClient.invalidateQueries({ queryKey: ['sessions'] }),
@@ -103,14 +104,10 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       queryClient.invalidateQueries({ queryKey: ['prs'] }),
       queryClient.invalidateQueries({ queryKey: ['setLogsForSession', sessionId] }),
     ])
-      .then(() => {
-        // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
-        router.replace(destination as any);
-      })
+      .then(routeToDestination)
       .catch((err) => {
         console.error('LiveScreen complete-flow invalidation failed', err);
-        // biome-ignore lint/suspicious/noExplicitAny: typedRoutes disabled
-        router.replace(destination as any);
+        routeToDestination();
       });
   }, [live.phase, sessionId, sessionStatus, queryClient, router]);
 
@@ -123,11 +120,11 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     if (sessionQuery.isLoading) return;
     if (live.phase === 'complete') return;
     if (sessionQuery.data === null) {
-      router.replace('/' as never);
+      goTo.home(router);
       return;
     }
     if (sessionStatus && sessionStatus !== 'in_progress') {
-      router.replace('/' as never);
+      goTo.home(router);
     }
   }, [sessionQuery.isLoading, sessionQuery.data, sessionStatus, live.phase, router]);
 
@@ -231,6 +228,9 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             }
             remaining={live.restRemaining}
             target={live.restTarget}
+            onAddRest={live.onAddRest}
+            onSubRest={live.onSubRest}
+            onSkip={live.onAdvanceFromRest}
             // During rest, useLiveScreenState has already advanced setIndex
             // to the next set, so live.prescribedWeight / .pct / .isAmrap /
             // .prescribedReps describe that set. The PlateBar perSide is

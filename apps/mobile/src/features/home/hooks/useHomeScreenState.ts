@@ -15,7 +15,7 @@ import type { Lift } from '@/domain/types';
  * the carousel snaps back to the first enabled lift on return. The cache is
  * in-memory only by design — a cold launch starts on the first lift again.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type HomeState = {
   selectedLift: Lift;
@@ -43,7 +43,12 @@ export function useHomeScreenState(
   enabledLifts: ReadonlyArray<Lift> = [],
 ): HomeState {
   const [selectedLift, setSelectedLiftInternal] = useState<Lift>(lastSelectedLift ?? initialLift);
+  // True once the user has explicitly chosen a lift (tap or swipe). Used to
+  // gate the in-progress-lift auto-focus below: we want to snap to the
+  // mid-session lift on cold open, but never override a deliberate swipe.
+  const userSelectedRef = useRef<boolean>(lastSelectedLift !== null);
   const setSelectedLift = useCallback((next: Lift) => {
+    userSelectedRef.current = true;
     lastSelectedLift = next;
     setSelectedLiftInternal(next);
   }, []);
@@ -59,5 +64,16 @@ export function useHomeScreenState(
   }, [enabledLifts, initialLift, selectedLift]);
   const activeSession = useActiveSession();
   const inProgressLift = (activeSession.data?.lift as Lift | undefined) ?? null;
+  // Auto-focus the in-progress lift on first observation so the user lands on
+  // a visible Resume CTA after backgrounding the app mid-session. Guarded by
+  // `userSelectedRef` so swiping or tapping a different tab always wins.
+  useEffect(() => {
+    if (userSelectedRef.current) return;
+    if (!inProgressLift) return;
+    if (inProgressLift === selectedLift) return;
+    if (enabledLifts.length > 0 && !enabledLifts.includes(inProgressLift)) return;
+    lastSelectedLift = inProgressLift;
+    setSelectedLiftInternal(inProgressLift);
+  }, [inProgressLift, enabledLifts, selectedLift]);
   return { selectedLift, setSelectedLift, inProgressLift };
 }

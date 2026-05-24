@@ -28,6 +28,10 @@ export type RestPhaseProps = {
   remaining: number;
   /** Total configured rest target — forwarded to RestTimer for the count-up math. */
   target: number;
+  /** Optional ±30s / Skip controls — forwarded to RestTimer. */
+  onAddRest?: () => void;
+  onSubRest?: () => void;
+  onSkip?: () => void;
   /**
    * Optional preview of the upcoming set — rendered as a TopSetBlock so the
    * user can prep plates while the timer counts down. Omit on the terminal
@@ -55,6 +59,9 @@ export function RestPhase({
   isPR = false,
   remaining,
   target,
+  onAddRest,
+  onSubRest,
+  onSkip,
   nextSet,
   testID,
 }: RestPhaseProps) {
@@ -139,7 +146,14 @@ export function RestPhase({
 
       <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
 
-      <RestTimer remaining={remaining} target={target} testID="rest-timer" />
+      <RestTimer
+        remaining={remaining}
+        target={target}
+        {...(onAddRest ? { onAddRest } : {})}
+        {...(onSubRest ? { onSubRest } : {})}
+        {...(onSkip ? { onSkip } : {})}
+        testID="rest-timer"
+      />
 
       <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
 

@@ -10,12 +10,14 @@
  * Reset routes through `ResetConfirmSheet` (which calls `resetEverything`
  * then navigates to `/onboarding`).
  */
+import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { migrateStorageUnit } from '@/data/accessors/migrateStorageUnit';
 import { resetEverything } from '@/data/accessors/reset';
 import { setDisplayUnit, updateSettings } from '@/data/accessors/settings';
 import { TM_KEY } from '@/data/queries/useLatestTm';
 import { SETTINGS_KEY } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CheckboxLedger } from '@/design/primitives/CheckboxLedger';
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
@@ -43,7 +45,7 @@ import { type PlateSetUi, schemaToUiPlateSet, uiToSchemaPlateSet } from './plate
 const LOWER_BODY: ReadonlySet<Lift> = new Set<Lift>(['squat', 'deadlift']);
 
 export function SettingsScreen() {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
   const db = useDb();
@@ -62,19 +64,11 @@ export function SettingsScreen() {
     backgroundColor: colors.bg0,
   };
 
-  const settingsCapsStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-  };
-
   if (isLoading || isError) {
     return (
       <View style={containerStyle} testID="settings-loading">
         <StatusBar style="dark" />
-        <Masthead rightSlot={<RNText style={settingsCapsStyle}>settings</RNText>} />
+        <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} />
         <QueryShell query={{ isLoading, isError, error, refetch }}>{null}</QueryShell>
       </View>
     );
@@ -131,8 +125,7 @@ export function SettingsScreen() {
       await resetEverything(db);
       queryClient.clear();
       setConfirmingReset(false);
-      // biome-ignore lint/suspicious/noExplicitAny: expo-router typed route literals
-      router.replace('/onboarding' as any);
+      goTo.onboarding(router);
     } catch (err) {
       console.error('resetEverything failed', err);
     } finally {
@@ -143,7 +136,7 @@ export function SettingsScreen() {
   return (
     <View style={containerStyle}>
       <StatusBar style="dark" />
-      <Masthead rightSlot={<RNText style={settingsCapsStyle}>settings</RNText>} />
+      <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 48 }}

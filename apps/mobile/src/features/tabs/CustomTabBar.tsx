@@ -1,6 +1,7 @@
+import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LABELS: Record<string, string> = {
@@ -34,6 +35,12 @@ export type CustomTabBarProps = {
 export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
   const { colors, spacing, type } = useTheme();
   const insets = useSafeAreaInsets();
+  // Surface "session in progress" on the TODAY tab from any screen — without
+  // this, a user mid-session who switches to History/You has no in-tab cue
+  // that they have unfinished business. The dot mirrors the LiftTabs
+  // affordance on the Home page.
+  const activeSession = useActiveSession();
+  const hasActiveSession = !!activeSession.data;
   return (
     <View
       style={{
@@ -50,6 +57,7 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
       {state.routes.map((route, index) => {
         const focused = state.index === index;
         const label = LABELS[route.name] ?? route.name.toUpperCase();
+        const showDot = route.name === 'index' && hasActiveSession;
         const onPress = () => {
           const event = navigation.emit({
             type: 'tabPress',
@@ -61,13 +69,23 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
             navigation.navigate(route.name);
           }
         };
+        const labelRowStyle: ViewStyle = {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+        };
+        const dotStyle: ViewStyle = {
+          width: 5,
+          height: 5,
+          backgroundColor: colors.ink0,
+        };
         return (
           <Pressable
             key={route.key}
             testID={`tab-${route.name}`}
             accessibilityRole="button"
             accessibilityState={{ selected: focused }}
-            accessibilityLabel={label}
+            accessibilityLabel={showDot ? `${label}, session in progress` : label}
             onPress={onPress}
             style={{
               flexDirection: 'column',
@@ -77,16 +95,19 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
               gap: spacing.xs,
             }}
           >
-            <RNText
-              style={{
-                fontFamily: focused ? `${type.mono}-Bold` : `${type.mono}-Medium`,
-                fontSize: 10,
-                letterSpacing: 2.2,
-                color: focused ? colors.ink0 : colors.ink3,
-              }}
-            >
-              {label}
-            </RNText>
+            <View style={labelRowStyle}>
+              <RNText
+                style={{
+                  fontFamily: focused ? `${type.mono}-Bold` : `${type.mono}-Medium`,
+                  fontSize: 10,
+                  letterSpacing: 2.2,
+                  color: focused ? colors.ink0 : colors.ink3,
+                }}
+              >
+                {label}
+              </RNText>
+              {showDot ? <View style={dotStyle} testID="tab-index-progress-dot" /> : null}
+            </View>
             <View
               style={{
                 width: 16,

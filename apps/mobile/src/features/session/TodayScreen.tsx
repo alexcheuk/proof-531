@@ -1,8 +1,12 @@
+import { goTo } from '@/app/routes';
 import { useLatestTm } from '@/data/queries/useLatestTm';
 import { useSettings } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
@@ -19,7 +23,7 @@ import type { Lift } from '@/domain/types';
  */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, type ViewStyle } from 'react-native';
+import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { TodayBody } from './components/TodayBody';
@@ -40,12 +44,15 @@ export function TodayScreen({ lift }: { lift: Lift }) {
       </SessionLayout>
     );
   }
-  // No TM for this lift or settings missing → blank canvas (PE-04 ships the
-  // preview path; empty-state UI follows when the Live screen lands).
+  // No TM for this lift (or settings row missing) → render a real empty
+  // state with an explanation + CTA so the user understands why the page
+  // is empty and how to fix it. A blank canvas reads as "broken app".
   if (!settings.data || !tm.data) {
     return (
       <SessionLayout>
         <StatusBar style="dark" />
+        <SessionTopBar onBack={() => router.back()} />
+        <NoTrainingMaxState lift={lift} onOpenSettings={() => goTo.settings(router)} />
       </SessionLayout>
     );
   }
@@ -103,5 +110,46 @@ export function TodayScreen({ lift }: { lift: Lift }) {
         </PrimaryPillButton>
       </CtaBar>
     </SessionLayout>
+  );
+}
+
+function NoTrainingMaxState({
+  lift,
+  onOpenSettings,
+}: {
+  lift: Lift;
+  onOpenSettings: () => void;
+}) {
+  const { colors, spacing } = useTheme();
+  const wrap: ViewStyle = {
+    flex: 1,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xxl,
+    backgroundColor: colors.bg0,
+  };
+  return (
+    <View style={wrap} testID="today-no-tm">
+      <CapsLabel style={{ marginBottom: spacing.md }}>No training max set</CapsLabel>
+      <Text variant="sans" weight="bold" size={40} color="ink0" style={{ letterSpacing: -1.2 }}>
+        Set your {liftDisplayName(lift)}
+        <Text variant="sans" weight="bold" size={40} color="amber">
+          .
+        </Text>
+      </Text>
+      <Text
+        variant="sans"
+        weight="regular"
+        size={14}
+        color="ink2"
+        style={{ marginTop: spacing.md, maxWidth: 280, lineHeight: 21 }}
+      >
+        Add a training max in Settings so the program can prescribe today's working sets.
+      </Text>
+      <View style={{ marginTop: spacing.xl }}>
+        <PrimaryPillButton testID="today-open-settings" onPress={onOpenSettings} glyph="→">
+          Open settings
+        </PrimaryPillButton>
+      </View>
+    </View>
   );
 }

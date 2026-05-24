@@ -1,8 +1,10 @@
+import { goTo } from '@/app/routes';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
-import { Text } from '@/design/primitives/Text';
+import { Skeleton } from '@/design/primitives/Skeleton';
 import { useTheme } from '@/design/theme';
 import { dateLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
@@ -65,7 +67,7 @@ export function HomeScreen() {
   // If onboarding has not produced an enabled-lifts set, redirect.
   useEffect(() => {
     if (settings.data && settings.data.enabledLifts.length === 0) {
-      router.replace('/onboarding');
+      goTo.onboarding(router);
     }
   }, [settings.data, router]);
 
@@ -103,22 +105,16 @@ export function HomeScreen() {
       // Session creation itself happens in TodayScreen (preview mode) so we
       // don't insert a row that an unrelated tap-back leaves orphaned.
       const target = inProgressLift && inProgressLift !== lift ? inProgressLift : lift;
-      // typedRoutes is disabled (PF-05); cast the params object.
-      router.push({ pathname: '/session/today', params: { lift: target } } as never);
+      goTo.today(router, target);
     },
     [inProgressLift, router],
   );
 
-  const handleResume = useCallback(
+  // Resume and "See full session" both land on the same Today route — they
+  // diverge in the LiftPage's CTA copy, not in the destination. One handler.
+  const handleOpenToday = useCallback(
     (lift: Lift) => {
-      router.push({ pathname: '/session/today', params: { lift } } as never);
-    },
-    [router],
-  );
-
-  const handleOpenPlan = useCallback(
-    (lift: Lift) => {
-      router.push({ pathname: '/session/today', params: { lift } } as never);
+      goTo.today(router, lift);
     },
     [router],
   );
@@ -147,34 +143,32 @@ export function HomeScreen() {
             bestE1RM={pr?.bestE1RM ?? null}
             isInProgress={lift === inProgressLift}
             onBegin={() => handleBegin(lift)}
-            onResume={() => handleResume(lift)}
-            onOpenPlan={() => handleOpenPlan(lift)}
+            onResume={() => handleOpenToday(lift)}
+            onOpenPlan={() => handleOpenToday(lift)}
           />
         </View>
       );
     },
-    [
-      settingsData,
-      tmsData,
-      prsData,
-      inProgressLift,
-      screenWidth,
-      handleBegin,
-      handleResume,
-      handleOpenPlan,
-    ],
+    [settingsData, tmsData, prsData, inProgressLift, screenWidth, handleBegin, handleOpenToday],
   );
 
   const combined = combineQueries(settings, tms, prs);
-  if (combined.isLoading || combined.isError) {
+  // Errors keep the QueryShell's retry surface — that's still the right
+  // recovery. The loading branch swaps to a paper-themed skeleton so the
+  // first paint feels intentional instead of flashing blank.
+  if (combined.isError) {
     return (
       <Container>
         <QueryShell query={combined}>{null}</QueryShell>
       </Container>
     );
   }
-  if (!settings.data || enabledLifts.length === 0) {
-    return null;
+  if (combined.isLoading || !settings.data || enabledLifts.length === 0) {
+    return (
+      <Container>
+        <HomeSkeleton />
+      </Container>
+    );
   }
 
   // If the selected lift is no longer enabled (e.g. settings edit), snap
@@ -228,16 +222,29 @@ function Container({ children }: { children: React.ReactNode }) {
   );
 }
 
-function DateBadge({ label }: { label: string }) {
+function HomeSkeleton() {
   return (
-    <Text
-      variant="mono"
-      weight="medium"
-      size={10}
-      color="ink2"
-      style={{ textTransform: 'uppercase', letterSpacing: 1.8 }}
+    <View
+      style={{ flex: 1, paddingHorizontal: 24, paddingTop: 24, gap: 14 }}
+      testID="home-skeleton"
     >
-      {label}
-    </Text>
+      <Skeleton width={84} height={10} />
+      <Skeleton width="60%" height={42} tone="lineStrong" />
+      <View style={{ flexDirection: 'row', gap: 14, marginTop: 18 }}>
+        <Skeleton width={44} height={10} />
+        <Skeleton width={44} height={10} />
+        <Skeleton width={44} height={10} />
+        <Skeleton width={44} height={10} />
+      </View>
+      <Skeleton width="100%" height={120} style={{ marginTop: 18 }} />
+      <Skeleton width="100%" height={56} style={{ marginTop: 18 }} />
+      <Skeleton width="100%" height={56} />
+    </View>
   );
+}
+
+function DateBadge({ label }: { label: string }) {
+  // Slightly tighter letter-spacing than the default 2.2 to match the PWA's
+  // 0.18em-on-10px right-slot caps treatment for dates specifically.
+  return <CapsLabel style={{ letterSpacing: 1.8 }}>{label}</CapsLabel>;
 }

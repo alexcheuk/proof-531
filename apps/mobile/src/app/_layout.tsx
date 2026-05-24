@@ -2,6 +2,7 @@ import { DbProvider } from '@/data/DbProvider';
 import { db, expoDb } from '@/data/drizzle/client';
 import { runMigrations } from '@/data/drizzle/runMigrations';
 import { useAppFonts } from '@/design/fonts';
+import { ErrorBoundary } from '@/design/primitives/ErrorBoundary';
 import { ThemeProvider } from '@/design/theme';
 import { colors } from '@/design/tokens';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -71,7 +72,14 @@ export default function RootLayout() {
           <ThemeProvider>
             <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg0 }}>
               <StatusBar style="dark" />
-              <SafeTopFrame />
+              {/*
+               * The boundary sits inside ThemeProvider/DbProvider/QueryClient
+               * so the default fallback can read tokens and a reset can keep
+               * the data/query layer warm — only the feature subtree remounts.
+               */}
+              <ErrorBoundary scope="root">
+                <SafeTopFrame />
+              </ErrorBoundary>
             </GestureHandlerRootView>
           </ThemeProvider>
         </DbProvider>

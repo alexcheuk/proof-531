@@ -51,9 +51,16 @@ export function TmEditSheet({
   // Edits commit in the storage unit (the row's own unit).
   const step = storageUnit === 'kg' ? 2.5 : 5;
   const captionVisible = storageUnit !== displayUnit;
+  const delta = draft - currentValue;
+  // Save is disabled when the draft equals the current value (would write a
+  // duplicate row under the append-only PD-04 contract) or is ≤ 0 (a TM of 0
+  // is meaningless). Surfaces the disabled state to the underlying button.
+  const isUnchanged = delta === 0;
+  const isZero = draft <= 0;
+  const saveDisabled = pending || isUnchanged || isZero;
 
   async function handleSave() {
-    if (pending) return;
+    if (saveDisabled) return;
     setPending(true);
     setError(null);
     try {
@@ -97,6 +104,14 @@ export function TmEditSheet({
     letterSpacing: 1.26,
     textTransform: 'uppercase',
     color: colors.ink3,
+  };
+
+  const deltaStyle: TextStyle = {
+    fontFamily: `${type.mono}-SemiBold`,
+    fontSize: 10,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    color: isZero ? colors.ink3 : colors.ink1,
   };
 
   const errorStyle: TextStyle = {
@@ -145,12 +160,20 @@ export function TmEditSheet({
           </RNText>
         ) : null}
 
+        <RNText style={deltaStyle} testID="tm-edit-delta">
+          {isZero
+            ? 'Set a positive training max to continue'
+            : isUnchanged
+              ? 'No change from current'
+              : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)} from current`}
+        </RNText>
+
         {error ? <RNText style={errorStyle}>{error}</RNText> : null}
 
         <PrimaryPillButton
           testID="tm-edit-save"
           onPress={handleSave}
-          disabled={pending}
+          disabled={saveDisabled}
           glyph={null}
         >
           Save

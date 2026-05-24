@@ -82,14 +82,18 @@ export function CancelConfirmSheet({
           color="ink2"
           style={{ marginTop: 10, marginBottom: 4 }}
         >
-          Sets already completed are kept in history. The session is closed — pick it up tomorrow.
+          {armed
+            ? 'Tap the dark button once more to cancel. Sets already logged stay in your history.'
+            : 'Sets already completed are kept in history. The session is closed — pick it up tomorrow.'}
         </Text>
 
         <Pressable
           testID="cancel-confirm-destructive"
           accessibilityRole="button"
           accessibilityLabel={
-            armed ? 'Tap again to cancel session' : 'Cancel session and return to Home'
+            armed
+              ? 'Confirm cancel — tap again to discard the session'
+              : 'Cancel session and return to Home'
           }
           onPress={armed ? onConfirmSecondTap : onConfirmFirstTap}
           style={confirmButton}
@@ -101,7 +105,7 @@ export function CancelConfirmSheet({
             color="bg0"
             style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}
           >
-            {armed ? 'Tap again to confirm' : 'Cancel session'}
+            {armed ? 'Tap again to discard' : 'Cancel session'}
           </Text>
         </Pressable>
 

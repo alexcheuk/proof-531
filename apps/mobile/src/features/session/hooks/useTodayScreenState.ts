@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { createSession } from '@/data/accessors/session';
 import { useActiveSession } from '@/data/queries/useActiveSession';
@@ -92,7 +93,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
     if (starting) return;
 
     if (mode === 'preview-other-active' && otherLift) {
-      router.replace({ pathname: '/session/today', params: { lift: otherLift } });
+      goTo.today(router, otherLift, { replace: true });
       return;
     }
 
@@ -100,10 +101,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
       // `push` (not `replace`) so the back stack stays
       // home → today → live and a Back tap from Live returns to the
       // session plan instead of skipping past it to home.
-      router.push({
-        pathname: '/session/live',
-        params: { sessionId: String(sessionForLift.id) },
-      });
+      goTo.live(router, sessionForLift.id);
       return;
     }
 
@@ -117,10 +115,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
         queryClient.invalidateQueries({ queryKey: ['sessions'] }),
       ]);
       // Same as above: push so Back from Live lands on Today.
-      router.push({
-        pathname: '/session/live',
-        params: { sessionId: String(session.id) },
-      });
+      goTo.live(router, session.id);
     } catch (err) {
       console.error('TodayScreen.onPressCta createSession failed', err);
       setStarting(false);

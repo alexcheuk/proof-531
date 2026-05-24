@@ -1,4 +1,7 @@
 export { Box } from './Box';
+export { CapsLabel, type CapsLabelProps } from './CapsLabel';
+export { ErrorBoundary, type ErrorBoundaryProps } from './ErrorBoundary';
+export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Text } from './Text';
 export { Button } from './Button';
 export { CheckboxLedger } from './CheckboxLedger';

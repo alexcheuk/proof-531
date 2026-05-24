@@ -197,10 +197,12 @@ describe('HomeScreen', () => {
     __resetHomeScreenStateForTests();
   });
 
-  it('renders the LOADING… caps line while any query is loading', () => {
+  it('renders the loading skeleton while any query is loading', () => {
     mockSettingsState.isLoading = true;
     const screen = renderScreen(<HomeScreen />);
-    expect(screen.getByText('LOADING…')).toBeTruthy();
+    // The QueryShell's "LOADING…" caps line was swapped for a paper-themed
+    // skeleton so the first paint feels intentional rather than a flash.
+    expect(screen.getByTestId('home-skeleton')).toBeTruthy();
   });
 
   it("renders the COULDN'T LOAD caps line + message when a query errors", () => {
