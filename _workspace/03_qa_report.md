@@ -406,3 +406,246 @@ e. **Import direction (`app → features → (design | data | domain)`)** — vi
 ### Bottom line
 
 PASS. Static checks green (408/408), Metro green, boundary audit clean, all five Wave-2 subsections substantially compliant with the revised spec, cross-layer shapes consistent. One must-fix-before-Wave-3 W2.1 NEXT-SET-band data-source issue (Finding 1, fix is small) and the accepted Reanimated bundle deferral (Findings 2). Hand off to orchestrator with Finding 1 as a Wave-3 prerequisite ticket.
+
+---
+
+## Wave 3 (final)
+
+Branch: `claude/workout-session-flow-audit-NMDoN` · HEAD `690032f` (Wave 3 commit, atop Wave 2 fixup `49c9e12`).
+Spec source of truth: `01_design_spec.md` Wave-3 sub-sections (W3.1–W3.5) + the deferred-animation items from Waves 1–2 (W3-A/B/C/D) + the cancel-sheet underlying-surface polish (W3-E).
+Baseline: 410 tests post Wave 2 fixup → 438 tests after Wave 3 (+28, all green).
+
+### Verdict
+
+**PASS** with the two pre-flagged deviations accepted (W3.2 Branch B copy + W3-A scope). Zero must-fix items. Wave 3 is shippable and concludes the three-wave redesign.
+
+### Static checks
+
+| Check | Command | Result |
+|---|---|---|
+| typecheck | `pnpm typecheck` | PASS (exit 0) |
+| lint | `pnpm lint` | PASS (`Checked 188 files in 230ms`) |
+| test | `pnpm test` | PASS (`Test Suites: 61 passed, 61 total · Tests: 438 passed, 438 total`) |
+| full ci | `pnpm run ci` | PASS (chains typecheck + lint + test, all green) |
+
+Test delta: 410 (Wave 2 fixup baseline) → 438 (+28). Zero regressions. The only test-runner noise is a "worker process has failed to exit gracefully" warning at the very end of the jest run — this is a pre-existing teardown leak from one of the test suites (Reanimated mock or a timer ref), surfaces under both Wave 2 and Wave 3 runs, does NOT change exit code, and does NOT affect the 438/438 pass count. Out of scope.
+
+### Metro bundle export
+
+```
+pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
+  --output-dir /tmp/expo-bundle-wave3-qa --dump-sourcemap=false --dump-assetmap=false
+```
+
+PASS — exit 0. `_expo/static/js/ios/entry-8c8ed159e770f70cf82af975f4751507.hbc (3.2MB)` exported. Wave 3 added inline-feature components only (`BreathingNextSetCta`, `SwipeDismissibleResumeBanner`, `NextSessionRow`, `CancelSplit` chip pair) plus the shared `jest.setup.ts`; no new npm deps. Reanimated + Gesture Handler were already in the dependency graph.
+
+### Boundary audit
+
+a. **Hex / px literals outside `src/design/`** — clean. `grep -rEn "#[0-9a-fA-F]{3,8}|[0-9]+px"` returns only PWA-reference comments in `SessionTopBar.tsx:11/15`, `LiveHeader.tsx:14`, `LiftPage.tsx:46`, and a `750px` test comment in `HomeScreen.test.tsx:237`. All pre-existing.
+
+b. **`src/domain/` purity** — clean. `grep -rEn "import React|async |from ['\"]drizzle|from ['\"]@?expo" apps/mobile/src/domain` returns no matches. Wave 3 added no new domain helpers; the existing `nextSessionPlan`, `bbbPlanRows`, `plateLoadInstruction` remain pure / sync / React-free.
+
+c. **Drizzle imports outside `src/data/`** — clean for production code. Only `__tests__` files have direct drizzle imports (`SettingsScreen.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`); both are pre-existing test harness patterns.
+
+d. **No barrels in `features/` or `domain/`** — clean. `find apps/mobile/src/features apps/mobile/src/domain -name 'index.ts' -o -name 'index.tsx'` returns nothing.
+
+e. **`jest.setup.ts` location** — at `apps/mobile/jest.setup.ts` (workspace root, not under `src/`), registered via `package.json` `jest.setupFiles`. Not a boundary violation — jest infra is allowed at the package root.
+
+f. **Wave 3 new-component literals** — `NextSessionRow.tsx` goes through `useTheme()` exclusively for `colors`, `spacing`, `type` (no raw `999`, no raw hex). `SessionTopBar.tsx`'s new `CancelSplit` chip pair pulls `colors`, `spacing`, `type` from `useTheme()` (chip dimensions 32×32 are explicit numeric layout, allowed because they're touch-target sizing and not visual tokens — same idiom as the existing back chip). The pre-existing `paddingHorizontal: 24` / `paddingVertical: 14` literals at lines 57/58, 180/181, 212/213 in `SessionTopBar.tsx` are unchanged by Wave 3; they pre-date the strict-token rule and are not in the Wave 3 diff.
+
+g. **Import direction** — `app → features → (design | data | domain)`. Spot-checked all Wave 3 touched files. `LiveScreen` imports the in-file `BreathingNextSetCta` (feature), `Animated`/`useSharedValue`/`withRepeat`/`useReducedMotion` (third-party), `motion` from `design/tokens` (design), `plateLoadInstruction` (domain). All one-way. `SessionCompleteScreen` imports `NextSessionRow` (feature), `nextSessionPlan` (domain), `useLatestTms` (data). One-way. `HomeScreen` imports Reanimated + Gesture Handler (third-party), `ResumeBanner` (design primitive). One-way.
+
+### Spec compliance — per Wave 3 subsection + deferred items
+
+#### W3.1 — Plate leftover caption below the live `TopSetBlock`
+
+| Item | Evidence | Status |
+|---|---|---|
+| Caption rendered immediately below `TopSetBlock` inside the same wrapper `View` | `LiveScreen.tsx:498-507` — caption sits inside the `paddingHorizontal: 24, paddingVertical: spacing.lg` View at line 477 | PASS |
+| Copy: `≈ {prescribed} {unit} — loaded {loaded} {unit} ({short} {unit} short)` | `LiveScreen.tsx:505` — template literal matches verbatim | PASS |
+| Style: mono medium, size 10, letterSpacing 1.8, color ink2, uppercase, textAlign center, marginTop spacing.sm | `LiveScreen.tsx:242-251` `leftoverCaptionStyle` matches spec | PASS |
+| Hidden when rounded leftover is 0 in display units | `LiveScreen.tsx:196` — `showLeftoverCaption = leftoverStorage > 0.1 && leftoverDisplayRounded > 0` | PASS |
+| Threshold > 0.1 storage units | Same line | PASS |
+| `decompose()` captures both `perSide` and `leftover` (not just `perSide`) | `LiveScreen.tsx:190-192` — `const decomposedLive = decompose(...); const perSide = ...; const leftoverStorage = ...` | PASS |
+| Leftover NOT added as `TopSetBlock` prop — feature-local sibling so Today's hero doesn't inherit | `TopSetBlock` signature unchanged; caption lives in `LiveScreen` only | PASS |
+| Accessibility: `accessibilityRole="text"` + composed label | `LiveScreen.tsx:500-501` matches spec | PASS |
+
+#### W3.2 — Cancel split visual
+
+| Item | Evidence | Status |
+|---|---|---|
+| New `RightAction` discriminated-union variant `'cancel-split'` (NOT mutating `'cancel'`) | `SessionTopBar.tsx:24-33` — new variant alongside existing `'none'`, `'cancel'`, `'complete'` | PASS |
+| X chip + overflow `…` chip, 32×32, ink-bordered, separated by `spacing.sm` | `SessionTopBar.tsx:125-144` — `wrapStyle: { gap: spacing.sm }`, `chipStyle: { width: 32, height: 32, borderWidth: 1, borderColor: colors.ink0, backgroundColor: colors.bg0 }` | PASS |
+| Glyphs: `×` and `⋯` (mono semibold size 13 ink0) | `SessionTopBar.tsx:161, 171` + `glyphStyle:139-144` | PASS |
+| Hit targets ≥ 44pt via `hitSlop` | `SessionTopBar.tsx:155, 167` — `hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}` (32 + 12 = 44) | PASS |
+| Branch A: tap X with 0 working rows → immediate cancel + `router.replace('/')` | `LiveScreen.tsx:283-292` `handleCancelRequest` — `if (live.loggedWorkingCount === 0) ... live.onImmediateCancel().then(() => router.replace('/'))` | PASS |
+| Branch B: tap X with ≥1 row → confirm sheet | `LiveScreen.tsx:291` — falls through to `live.onRequestCancel()` (existing two-tap `CancelConfirmSheet`) | PASS (Deviation 1 — see ruling) |
+| Branch C: long-press X (300ms) OR tap overflow → two-tap destructive sheet | `LiveScreen.tsx:296-298` `handleLongPressCancel`; `SessionTopBar.tsx:157-158` — `onLongPress={onLongPressCancel} delayLongPress={300}`; LiveScreen wires `onTapOverflow: handleLongPressCancel` | PASS |
+| Legacy `'cancel'` variant preserved for any future caller | `SessionTopBar.tsx:177-207` `CancelPill` unchanged | PASS |
+| Today's `SessionTopBar` consumer (no right action) untouched | Today screen does not pass `rightAction`; default is `{ kind: 'none' }` (line 48) | PASS |
+| Accessibility: X chip `accessibilityRole="button" accessibilityLabel="Cancel session"` + `accessibilityActions: [{ name: 'longpress', label: 'Force cancel session' }]` | `SessionTopBar.tsx:149-154` matches spec | PASS |
+| Overflow chip `accessibilityLabel="More session actions"` | `SessionTopBar.tsx:166` | PASS |
+
+#### W3.3 — Next-session handoff row on `SessionCompleteScreen`
+
+| Item | Evidence | Status |
+|---|---|---|
+| `NextSessionRow` inserted between cycle grid and CtaBar | `SessionCompleteScreen.tsx:630-640` — between cycle grid (ends at 628) and CtaBar (645). The pre-existing `<View style={{ height: 140 }} />` spacer is replaced. | PASS |
+| Slimmed trailing spacer (`height: 24`) below the row | `SessionCompleteScreen.tsx:642-643` | PASS |
+| `nextSessionPlan(currentLift, enabledLifts, week)` consumer | `SessionCompleteScreen.tsx:216` calls helper with current lift + `enabledLifts` + `session.week as Week`; returns `{ lift, week, day, topPct, topReps, amrap }` | PASS |
+| TM lookup via `useLatestTms()` | `SessionCompleteScreen.tsx:215` + `:217-225` — looks up next lift's TM, falls back to current `storageUnit` if missing | PASS |
+| Missing-TM fallback: render `--` placeholder + "Set a training max first" subline | `NextSessionRow.tsx:81-84, 186-190` — `weight === null` ⇒ `--` token in the weight line + `<RNText ... 'Set a training max first'>` shown only when `!hasTm` | PASS |
+| Card layout: lift name (sans medium 24) + `WEEK {n} · DAY {n}` (mono caps) on top row | `NextSessionRow.tsx:110-122` + `:175-181` | PASS |
+| Weight × reps row (sans medium 20, tabular-nums) | `NextSessionRow.tsx:123-130` + `:183-185` | PASS |
+| AMRAP `+` suffix on reps when `amrap === true` | `NextSessionRow.tsx:83-84` — `× ${reps}${amrap ? '+' : ''}` | PASS |
+| Outlined "Schedule reminder" stub button | `NextSessionRow.tsx:192-211` — `Pressable` with `stubButtonStyle` (`borderWidth: 1, borderColor: ink0`) | PASS |
+| Stub: selection haptic + 2-second inline caption `Reminders coming soon.` + auto-hide | `NextSessionRow.tsx:70-78` — `Haptics.selectionAsync()` + `setShowStubCaption(true)` + `setTimeout(... STUB_CAPTION_VISIBLE_MS=2000)` | PASS |
+| Stub button accessibility | `NextSessionRow.tsx:195-197` — `accessibilityRole="button" accessibilityLabel="Schedule reminder. Coming soon." accessibilityHint="Not yet available."` | PASS |
+| Section header `accessibilityRole="header"` | `NextSessionRow.tsx:171` | PASS |
+| Cleanup on unmount (clear timeout) | `NextSessionRow.tsx:64-68` — `useEffect` cleanup | PASS |
+
+#### W3.4 — Cycle grid responsive breakpoint
+
+| Item | Evidence | Status |
+|---|---|---|
+| `Dimensions.get('window').width < 360` switch | `SessionCompleteScreen.tsx:234-235` — `windowWidth = Dimensions.get('window').width; isNarrowScreen = windowWidth < 360` | PASS |
+| Standard width: existing 4×N flat grid unchanged | `SessionCompleteScreen.tsx:582-625` — wraps the unchanged `cycleGridRow` + `cycleWeekLabelsRow` in an else branch | PASS |
+| Narrow width: stacked single-row-per-week + horizontal ScrollView | `SessionCompleteScreen.tsx:515-580` — `ScrollView horizontal` containing 4 stacked `cellsByWeek` rows | PASS |
+| Leading `W{n}` label cell per row | `SessionCompleteScreen.tsx:538-543` — `<RNText ... testID="cycle-grid-week-label-{n}">W{row.week}</RNText>` | PASS |
+| Cells 32×16 inside each row | `SessionCompleteScreen.tsx:552` — `{ width: 32, height: 16 }` | PASS |
+| Gap 4 within each week row | `SessionCompleteScreen.tsx:530` — `gap: 4` | PASS |
+| `cycle-grid` testID preserved (on narrow-width ScrollView OR standard-width row) | `SessionCompleteScreen.tsx:523` (narrow) and `:583` (standard) both use `testID="cycle-grid"` | PASS |
+| Per-cell `accessibilityRole="text"` + composed label | `SessionCompleteScreen.tsx:557-558` | PASS |
+| Per-week-row `accessibilityRole="list"` + `accessibilityLabel="Week {n} progress"` | `SessionCompleteScreen.tsx:534-535` | PASS |
+| `current` cell inset indicator preserved | `SessionCompleteScreen.tsx:560-573` — `justNow ? <View ... /> : null` | PASS |
+| `cellsByWeek` helper materializes the 4×N split | `SessionCompleteScreen.tsx:241-252` | PASS |
+
+#### W3.5 — RestTimer TARGET m:ss
+
+| Item | Evidence | Status |
+|---|---|---|
+| `RestTimer.tsx` header right cell renders `TARGET {formatLabel(target)}` | `RestTimer.tsx:118-120` — `<RNText style={metaStyle} testID="rest-timer-target">TARGET {formatLabel(target)}</RNText>` | PASS |
+| Style unchanged — mono medium, size 10, letterSpacing 1.8, color ink3 | `RestTimer.tsx:74-81` `metaStyle` unchanged | PASS |
+| `target` prop already plumbed from LiveScreen → RestPhase → RestTimer | `LiveScreen.tsx:413` `target={live.restTarget}` (storage already correct) | PASS |
+| Tests cover 90s → `1:30` and 180s → `3:00` | `RestPhase.test.tsx` per implementation log added 2 tests; jest run shows `61 passed, 438 passed` | PASS |
+
+#### W3-A — Shared Reanimated jest mock at `apps/mobile/jest.setup.ts`
+
+| Item | Evidence | Status |
+|---|---|---|
+| File exists at `apps/mobile/jest.setup.ts` | Confirmed (read 119 lines) | PASS |
+| Registered via `apps/mobile/package.json` `jest.setupFiles` | Confirmed via Wave 3 commit diff (`apps/mobile/package.json` 1 line added) | PASS |
+| Covers Reanimated worklet runtime: `useSharedValue`, `useAnimatedStyle`, `useReducedMotion`, `withTiming`, `withRepeat`, `withSpring`, `runOnJS` | `jest.setup.ts:37-52` | PASS |
+| Covers `Easing.bezier` | `jest.setup.ts:53-57` — `Easing.bezier`, `Easing.inOut`, `Easing.linear` all stubbed | PASS |
+| Covers layout-animation primitives (`LinearTransition`, `FadeIn`, `FadeOut`) | `jest.setup.ts:33-35` | PASS |
+| Covers `default.View / .Text / .ScrollView` for `Animated.X` fallthrough | `jest.setup.ts:31` | PASS |
+| `react-native-gesture-handler` Gesture composable factories (`Gesture.Pan`, `Tap`, `LongPress`) | `jest.setup.ts:96-107` — chainable factory returns no-op methods | PASS |
+| Tests confirm Wave 3 animation tests use the shared mock | Test suite 61 passed / 438 passed — including the new Reanimated-consuming tests (`HomeScreen.test.tsx` swipe wrapper, `AmrapLogSheet.test.tsx` PR row wrapper, `LiveScreen.test.tsx` BreathingNextSetCta wrapper). The HomeScreen test removed its inline mock (implementation log confirms) and now relies on the shared one. | PASS |
+| 4 other test suites keep per-file inline mocks (LiftPage variants + SettingsScreen.queryShell) | Self-flagged as Deviation 2 — accepted (see ruling) | PASS — deviation accepted |
+| Mock fidelity: does not silently break animations in real runtime | The mock substitutes the API surface (returning numeric/object stubs) without changing worklet semantics. `withTiming(toValue)` returning the raw value is a valid jest stub because production tests do not assert on intermediate animation frames; the Metro export (exit 0) confirms the real Reanimated module bundles correctly for runtime. | PASS |
+
+#### W3-B — Breathing pulse on "Next set" CTA at T-0
+
+| Item | Evidence | Status |
+|---|---|---|
+| `useSharedValue(1)` scale | `LiveScreen.tsx:680` | PASS |
+| `withRepeat(withTiming(1.04, { duration: 800, easing: Easing.bezier(...) }), -1, true)` | `LiveScreen.tsx:687-695` — `withRepeat(withTiming(1.04, { duration: 800, easing: Easing.bezier(...motionTokens.easeStandardBezier) }), -1, true)` matches spec lines 380-390 exactly | PASS |
+| Pulse keyed off `restRemaining <= 0` | `LiveScreen.tsx:329-336` — `<BreathingNextSetCta active={live.restRemaining <= 0} ...>` | PASS |
+| Cleanup on `active === false`: snap scale back to 1 via single `withTiming(1, { duration: motion.durationBase })` | `LiveScreen.tsx:697-700` matches spec line 392 | PASS |
+| Reduced-motion fallback (`useReducedMotion()`): no worklet, static 2pt paper ring on active CTA | `LiveScreen.tsx:679, 683-685, 712-713` — `reduceMotion ? { borderWidth: 2, borderColor: colors.lineFaint } : undefined` applied via PrimaryPillButton's `style` prop | PASS |
+| `Animated.View` wrapper carries `cta-advance-rest-wrapper` testID (or default `cta-breathing-wrapper`) | `LiveScreen.tsx:716` — `testID={`${testID ?? 'cta-breathing'}-wrapper`}` | PASS |
+
+#### W3-C — PR row height tween in AmrapLogSheet
+
+| Item | Evidence | Status |
+|---|---|---|
+| `prRowHeight = useSharedValue(0)` | `AmrapLogSheet.tsx:108` | PASS |
+| `withTiming(40, { duration: motion.durationBase, easing: Easing.bezier(...) })` on cross-into-PR | `AmrapLogSheet.tsx:111-119` — `const target = showPRRow ? 40 : 0; withTiming(target, ...)` | PASS |
+| `withTiming(0, ...)` on cross-out | Same (ternary chooses 0 when `!showPRRow`) | PASS |
+| Reduced-motion fallback: snap shared value to target without tween | `AmrapLogSheet.tsx:112-114` — `if (reduceMotion) { prRowHeight.value = target; return; }` | PASS |
+| `overflow: 'hidden'` so clipped tween content doesn't leak | `AmrapLogSheet.tsx:121-124` — `prAnimatedStyle: { height: prRowHeight.value, overflow: 'hidden' }` | PASS |
+| Wrapper `Animated.View` always in tree (so tween can run) but content conditionally rendered | `AmrapLogSheet.tsx:108, 121-124` — `prRowHeight` always allocated; spec-allowed | PASS |
+| `accessibilityRole="alert"` only fires on visible PR row | Inner row content gated on `showPRRow` per spec | PASS |
+
+#### W3-D — Reanimated swipe-dismiss on ResumeBanner
+
+| Item | Evidence | Status |
+|---|---|---|
+| `Gesture.Pan().activeOffsetX([-12, 12]).onUpdate(...).onEnd(...)` composed in `SwipeDismissibleResumeBanner` wrapper | `HomeScreen.tsx:347-375` | PASS |
+| Threshold: translation < -80 OR velocity < -800 left | `HomeScreen.tsx:356-358` — `const past80 = e.translationX < -80; const fastLeft = e.velocityX < -800; if (past80 || fastLeft) ...` matches spec | PASS |
+| Snap-out: `withTiming(-screenWidth, { duration: durationBase, easing: bezier(...) })` then `runOnJS(onDismiss)` | `HomeScreen.tsx:359-368` | PASS |
+| Below-threshold snap-back: `withTiming(0, { duration: durationBase })` | `HomeScreen.tsx:370-373` | PASS |
+| 250ms post-mount grace period | `HomeScreen.tsx:329, 331-335` — `setTimeout(() => setGraceElapsed(true), 250)` | PASS |
+| Reduced-motion fallback: disable gesture entirely | `HomeScreen.tsx:348` — `.enabled(graceElapsed && !reduceMotion)` | PASS |
+| Primitive's `accessibilityActions: dismiss` remains canonical assistive path | `ResumeBanner.tsx` unchanged per implementation log; HomeScreen wraps it without removing the primitive's a11y wiring (`onDismiss={onDismiss}` still passed at `HomeScreen.tsx:388`) | PASS |
+| Wrapper goes at the feature layer (not primitive) so the primitive stays render-only | Lives in `HomeScreen.tsx` (feature); `ResumeBanner.tsx` (primitive) unchanged | PASS |
+
+#### W3-E — Cancel sheet underlying surface
+
+| Item | Evidence | Status |
+|---|---|---|
+| `phaseBeforeCancelRef` promoted from `useRef` to `phaseBeforeCancel` state | `useLiveScreenState.ts:267` — `const [phaseBeforeCancel, setPhaseBeforeCancel] = useState<LivePhase>('set');` | PASS |
+| Exposed on `UseLiveScreenStateResult` | `useLiveScreenState.ts:176` declaration; included in return shape | PASS |
+| `LiveScreen` derives `underlyingPhase = phase === 'cancel-confirm' ? phaseBeforeCancel : phase` | `LiveScreen.tsx:258` | PASS |
+| Used to gate surface render (`showSetSurface`, `showRestSurface`, `showBbbConfirmSurface`) | `LiveScreen.tsx:259-264` | PASS |
+| Same `underlyingPhase` keys CTA selection (so the right CTA stays underneath cancel sheet) | `LiveScreen.tsx:317, 337, 342-345` — `if (underlyingPhase === 'rest') ... else if (underlyingPhase === 'bbb-confirm') ... else if (underlyingPhase === 'set' || 'amrap-log' || 'working-set-log')` | PASS |
+| Cancel from `bbb-confirm` shows BBB surface beneath sheet | `LiveScreen.test.tsx` per implementation log adds a test for this; suite 438/438 green | PASS |
+| Cancel from `rest` shows rest surface beneath sheet | Same — test added in Wave 3 | PASS |
+| Cancel-sheet dismiss returns to original phase via existing `onDismissCancelSheet` | `useLiveScreenState.ts:611-614` — `setPhase(phaseBeforeCancel)` | PASS |
+
+### Cross-layer shape consistency
+
+| Boundary | Data / Domain | Consumer | Match |
+|---|---|---|---|
+| `nextSessionPlan(currentLift, enabledLifts, currentWeek)` return type | Domain: `{ lift: Lift; week: Week; day: number; topPct: number; topReps: number; amrap: boolean }` (`schemes.ts:134-141`) | Consumer: `SessionCompleteScreen.tsx:216` destructures `nextPlan.lift`, `.topPct`, `.week`, `.day`, `.topReps`, `.amrap` and forwards them as `NextSessionRow` props at lines 631-639 | PASS — every field consumed; `topPct` used to compute `nextLiftDisplayWeight` via `tmRow.value * nextPlan.topPct`. |
+| `NextSessionRow` props ↔ render | Props: `liftLabel: string`, `week: number`, `day: number`, `weight: number | null`, `reps: number`, `amrap: boolean`, `unit: Unit`, `testID?: string` (`NextSessionRow.tsx:27-43`) | SessionCompleteScreen wires: `liftLabel={liftDisplayName(nextPlan.lift)}`, `week={nextPlan.week}`, `day={nextPlan.day}`, `weight={nextLiftDisplayWeight}` (number or null), `reps={nextPlan.topReps}`, `amrap={nextPlan.amrap}`, `unit={renderUnit}` — types match | PASS |
+| `useLatestTms()` → `nextLiftTmRow.value`, `.unit` | `useLatestTms` returns `TrainingMax[]`-shape with `lift`, `value`, `unit`, `updatedAt` (per existing accessor) | `SessionCompleteScreen.tsx:217-225` reads `.value` (number) and `.unit` (Unit). | PASS — type-checked. |
+| `live.loggedWorkingCount` → cancel branch | Hook: `number` (`useLiveScreenState.ts:156, 645-647`) | `LiveScreen.tsx:284` `if (live.loggedWorkingCount === 0)` | PASS |
+| `live.onImmediateCancel` → router replace-home | Hook: `() => Promise<void>` (`useLiveScreenState.ts:158, 595-603`) | `LiveScreen.tsx:286` `void live.onImmediateCancel().then(() => router.replace('/'))` | PASS |
+| `live.postTerminalRest` → BBB summary override | Hook: `boolean` (`useLiveScreenState.ts:167`) | `LiveScreen.tsx:220-226` derives `isPostTerminalRest` from `live.phase === 'rest' && live.postTerminalRest`; gates `nextSet` and `plateInstruction` swap | PASS |
+| `live.phaseBeforeCancel` → underlying surface gate | Hook: `LivePhase` (`useLiveScreenState.ts:176`) | `LiveScreen.tsx:258` reads it to compute `underlyingPhase`; used in 4 places (3 surface gates + CTA selection) | PASS |
+| `SessionTopBar` `RightAction` union ↔ caller | Union: `'none' | 'cancel' | 'cancel-split' | 'complete'` (`SessionTopBar.tsx:24-33`) | `LiveScreen.tsx:383-388` passes `{ kind: 'cancel-split', onTapCancel, onLongPressCancel, onTapOverflow }` matching the variant's field shape exactly | PASS |
+| Today's `SessionTopBar` consumer | Today screen does NOT pass `rightAction` → default `{ kind: 'none' }` | No regression to Today flow | PASS |
+
+### PWA parity
+
+Not applicable per spec line 9: "PWA reference is not available in this environment. The spec is anchored on the current RN code …". Wave 3 work is anchored on the spec text + existing RN code; no PWA comparison required.
+
+### Findings — Wave 3
+
+#### Deviation 1 (accepted) — W3.2 Branch B reuses two-tap CancelConfirmSheet
+
+Self-flagged by frontend. Spec lines 626-634 describe a slimmer single-tap "End this session?" sheet for Branch B (tap X with ≥1 set logged), reserving two-tap for Branch C (long-press / overflow / destructive territory). Wave 3 ships Branch B against the existing `CancelConfirmSheet` two-tap copy; destructive intent is identical, but the UX nuance the spec asked for (lighter Branch B vs. heavier Branch C) collapses into one shape.
+
+**Ruling: ACCEPT as polish-as-follow-up.** Branch A (zero-set immediate cancel, the most common "oops") is correctly wired with no confirm, which is the load-bearing reliability change. Branch B and Branch C both being two-tap is conservative and protects against unintended destruction. The orchestrator's framing (W2.2 breathing pulse was the load-bearing animation; this is copy nuance) holds. A future copy-polish PR can introduce the slimmer single-tap variant — the `handleCancelRequest` seam already encapsulates the branching, so the touch surface is small.
+
+**Severity:** LOW.
+
+#### Deviation 2 (accepted) — W3-A jest mock consolidation partial
+
+Self-flagged by frontend. Shared `jest.setup.ts` is in place at `apps/mobile/jest.setup.ts` and registered via `package.json` `jest.setupFiles`. The new Wave 3 animation tests (HomeScreen swipe wrapper, AmrapLogSheet PR row wrapper, LiveScreen BreathingNextSetCta) inherit it correctly. Four other test suites (`LiftPage.test.tsx`, `LiftPage.crossUnit.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`, `SettingsScreen.queryShell.test.tsx`) keep per-file inline mocks that override the shared one.
+
+**Ruling: ACCEPT.** The hoist achieved its goal (Wave 3 animation tests + future tests inherit the shared mock by default). Per-file `jest.mock` is per-module and a per-file override re-binds resolution cleanly — both shapes work simultaneously. Migrating the 4 other suites is busywork that should land when someone has a reason to touch those files. All 438/438 tests pass; zero functional impact.
+
+**Severity:** LOW (code-org polish).
+
+#### Must-fix items
+
+**None.** Zero blocking findings. All five Wave-3 subsections + all five deferred-animation items + W3-E cancel-sheet polish are spec-compliant. Cross-layer shapes match; boundary audit clean; Metro + ci green.
+
+### Wave 3 verdict
+
+**PASS.** Ship as-is. The two deviations are both accepted polish-as-follow-up items that do not affect the load-bearing reliability or rhythm goals of the three-wave redesign.
+
+---
+
+## Final verdict — Workout / Session Flow Redesign
+
+- Waves shipped: 1, 2, 2-fixup, 3
+- Total tests: 438/438 (Wave-1 baseline 355 → +83 across Waves 2, 2-fixup, and 3)
+- Boundary rule compliance: OK. No new hex/px literals introduced by Wave 3 outside `src/design/`. Domain stays pure (no new helpers added in Wave 3; existing `nextSessionPlan`/`bbbPlanRows`/`plateLoadInstruction` remain sync/React-free/DB-free). Drizzle imports unchanged. No new barrels. Import direction (`app → features → design|data|domain`) verified one-way across all Wave 3 touched files. The pre-existing `paddingHorizontal: 24` / `paddingVertical: 14` literals in `SessionTopBar.tsx` (lines 57/58, 180/181, 212/213) and `TodayBody.tsx` warmup section are unchanged by Wave 3 and predate the strict-token rule.
+- Outstanding deviations carried as follow-ups:
+  - W3.2 Branch B copy polish — swap the existing two-tap `CancelConfirmSheet` for a slimmer single-tap "End this session?" variant per spec lines 626-634. Touch surface is `LiveScreen.handleCancelRequest` + a new sheet variant; the branching seam is already in place.
+  - W3-A jest mock consolidation — migrate `LiftPage.test.tsx`, `LiftPage.crossUnit.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`, `SettingsScreen.queryShell.test.tsx` off their per-file inline Reanimated mocks onto the shared `jest.setup.ts`. Trivial — delete each inline block; tests already pass on either shape.
+  - W2 informational carry-overs from earlier QA rounds (raw padding numerics in `TodayBody.tsx` warmup section; `expo-keep-awake`/`expo-av`-related teardown leak surfacing as the harmless "worker process failed to exit gracefully" warning) — neither affects exit code or test pass count; addressable opportunistically.
+- Verdict: **PASS**
