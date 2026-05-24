@@ -4,6 +4,7 @@ import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { useTheme } from '@/design/theme';
 import type { Settings } from '@/domain/types';
 import { View } from 'react-native';
+import { CycleGridFrame } from '../../session/components/CycleGrid';
 import { deriveCycleProgress } from '../cycleProgress';
 
 export type CycleProgressSectionProps = {
@@ -11,11 +12,15 @@ export type CycleProgressSectionProps = {
 };
 
 /**
- * Read-only "where you are in the cycle" marker on Settings. Renders a
- * single ledger row: `Cycle NN` on the left, `day N of M` on the right,
- * with a "Deload week" or "N weeks until deload" hint as the secondary
- * caption. When the user has rolled into week 4 (deload), an extra
- * contextual nudge appears below the row explaining the lighter loads.
+ * Read-only "where you are in the cycle" marker on Settings.
+ *
+ *   - Ledger row showing `Cycle NN` + day-of-cycle position.
+ *   - Visual 16-cell grid (`CycleGridFrame`) below, mirroring the
+ *     SessionComplete cycle viz so the user sees the same shape in both
+ *     surfaces.
+ *   - Deload-week footnote when on week 4.
+ *
+ * Pure derivation off `settings.week` + `enabledLifts.length`.
  */
 export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
   const { spacing } = useTheme();
@@ -35,6 +40,13 @@ export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
           numeric
         />
       </LedgerRow>
+      <View style={{ marginTop: spacing.md, marginLeft: -24, marginRight: -24 }}>
+        <CycleGridFrame
+          completedThisCycle={progress.dayOfCycle}
+          sessionsInCycle={progress.totalDays}
+          testID="settings-cycle-grid"
+        />
+      </View>
       {isDeload ? (
         <View
           style={{ paddingTop: spacing.sm, paddingHorizontal: spacing.xs }}

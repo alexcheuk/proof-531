@@ -26,7 +26,7 @@ export function ActivitySparkline({ activity }: ActivitySparklineProps) {
         </CapsLabel>
         {streak >= 2 ? (
           <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-activity-streak">
-            {`${streak}-day streak`}
+            {`🔥 ${streak}-day streak`}
           </CapsLabel>
         ) : null}
       </Row>
