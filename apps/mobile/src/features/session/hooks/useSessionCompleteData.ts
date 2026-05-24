@@ -81,7 +81,7 @@ export function useSessionCompleteData(sessionId: number): SessionCompleteData {
   };
 }
 
-function deriveView({
+export function deriveView({
   session,
   setLogsData,
   settingsData,

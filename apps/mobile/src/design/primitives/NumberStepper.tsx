@@ -8,6 +8,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Row } from './Row';
 
 /**
  * Sharp-cornered ink-bordered stepper — two 56×56 paper squares flanking a
@@ -17,10 +19,7 @@ import { useTheme } from '../theme';
  * Visual idiom matches the LEDGER paper-square form: each button is its own
  * outlined square (no shared rail). Silent-clamp at bounds — pressing a
  * boundary button still fires onChange (with the clamped value, equal to
- * the current value) and a light haptic, matching the Live RestPhase feel.
- *
- * The PWA's `allowDirectInput` (typeable center value) is intentionally NOT
- * ported here; mobile direct-entry via RN TextInput can be added later.
+ * the current value) and a light haptic.
  *
  * Unit display follows the PWA mapping: callers pass storage form
  * (`'lbs' | 'kg' | 'reps' | ...`) and the stepper maps `'lbs'` to the
@@ -30,14 +29,8 @@ import { useTheme } from '../theme';
 const STEP_BUTTON_SIZE = 56;
 const STEP_GLYPH_FONT_SIZE = 28;
 const VALUE_FONT_SIZE = 56;
-const VALUE_LETTER_SPACING = -2.24; // -0.04em × 56
-const UNIT_FONT_SIZE = 13;
-const UNIT_LETTER_SPACING = 2.34; // 0.18em × 13
-const LABEL_FONT_SIZE = 10;
-const LABEL_LETTER_SPACING = 2.2; // 0.22em × 10
-const LABEL_MARGIN_BOTTOM = 8;
+const VALUE_LETTER_SPACING = -2.24;
 const CENTER_GAP = 8;
-const ROW_GAP = 8;
 
 export type NumberStepperProps = {
   label?: string;
@@ -83,23 +76,6 @@ export function NumberStepper({
     alignSelf: 'stretch',
   };
 
-  const labelStyle: TextStyle = {
-    fontFamily: 'IBMPlexMono-Medium',
-    fontSize: LABEL_FONT_SIZE,
-    lineHeight: LABEL_FONT_SIZE,
-    letterSpacing: LABEL_LETTER_SPACING,
-    color: colors.ink2,
-    textTransform: 'uppercase',
-    marginBottom: LABEL_MARGIN_BOTTOM,
-  };
-
-  const rowStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: ROW_GAP,
-  };
-
   const stepButtonStyle: ViewStyle = {
     width: STEP_BUTTON_SIZE,
     height: STEP_BUTTON_SIZE,
@@ -117,14 +93,6 @@ export function NumberStepper({
     color: colors.ink0,
   };
 
-  const centerStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'center',
-    gap: CENTER_GAP,
-    flex: 1,
-  };
-
   const valueStyle: TextStyle = {
     fontFamily: 'IBMPlexSans-Medium',
     fontSize: VALUE_FONT_SIZE,
@@ -134,22 +102,13 @@ export function NumberStepper({
     fontVariant: ['tabular-nums', 'lining-nums'],
   };
 
-  const unitStyle: TextStyle = {
-    fontFamily: 'IBMPlexMono-Medium',
-    fontSize: UNIT_FONT_SIZE,
-    lineHeight: UNIT_FONT_SIZE,
-    letterSpacing: UNIT_LETTER_SPACING,
-    color: colors.ink2,
-    textTransform: 'uppercase',
-  };
-
   const minusTestID = testID ? `${testID}-minus` : 'ns-minus';
   const plusTestID = testID ? `${testID}-plus` : 'ns-plus';
 
   return (
     <View testID={testID} style={[containerStyle, style]}>
-      {label ? <RNText style={labelStyle}>{label}</RNText> : null}
-      <View style={rowStyle}>
+      {label ? <CapsLabel style={{ marginBottom: 8 }}>{label}</CapsLabel> : null}
+      <Row justify="space-between" gap="sm">
         <Pressable
           testID={minusTestID}
           accessibilityRole="button"
@@ -159,10 +118,14 @@ export function NumberStepper({
         >
           <RNText style={stepGlyphStyle}>−</RNText>
         </Pressable>
-        <View style={centerStyle}>
+        <Row align="baseline" justify="center" gap="sm" style={{ flex: 1, gap: CENTER_GAP }}>
           <RNText style={valueStyle}>{String(value)}</RNText>
-          {unit ? <RNText style={unitStyle}>{unitDisplay}</RNText> : null}
-        </View>
+          {unit ? (
+            <CapsLabel size="md" style={{ letterSpacing: 2.34 }}>
+              {unitDisplay}
+            </CapsLabel>
+          ) : null}
+        </Row>
         <Pressable
           testID={plusTestID}
           accessibilityRole="button"
@@ -172,7 +135,7 @@ export function NumberStepper({
         >
           <RNText style={stepGlyphStyle}>+</RNText>
         </Pressable>
-      </View>
+      </Row>
     </View>
   );
 }

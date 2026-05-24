@@ -55,8 +55,14 @@ export function RestTimer({
   // ticking past it (free-form rest — the ref has no fixed ceiling either):
   // when `remaining` goes negative, `target - remaining` grows past `target`.
   const elapsed = target - remaining;
-  const label = formatLabel(elapsed);
   const overtime = remaining < 0;
+  const overBySeconds = overtime ? Math.abs(remaining) : 0;
+  // Once the user is meaningfully past target (≥5s) the giant clock switches
+  // to an "over by N:NN" frame so the headline reads as a pacing alert
+  // rather than just a count-up.
+  const PACE_HINT_THRESHOLD_SECONDS = 5;
+  const showOverByHint = overBySeconds >= PACE_HINT_THRESHOLD_SECONDS;
+  const label = showOverByHint ? `+${formatLabel(overBySeconds)}` : formatLabel(elapsed);
   const showControls = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;
 
   const container: ViewStyle = {
@@ -106,7 +112,7 @@ export function RestTimer({
         style={{ marginBottom: 10 }}
         {...(testID ? { testID: `${testID}-header` } : {})}
       >
-        <CapsLabel>Rest timer</CapsLabel>
+        <CapsLabel>{showOverByHint ? 'Over by' : 'Rest timer'}</CapsLabel>
         <CapsLabel color={overtime ? 'amber' : 'ink3'} testID="rest-timer-meta">
           {overtime ? 'OVERTIME' : 'TARGET'}
         </CapsLabel>

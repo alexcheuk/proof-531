@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
-import { Text as RNText, type StyleProp, View, type ViewStyle } from 'react-native';
+import { type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Heading } from './Heading';
+import { Row } from './Row';
 import { SectionBand } from './SectionBand';
 
 /**
@@ -29,7 +32,7 @@ export type StatGridProps = {
 };
 
 export function StatGrid({ cells, divided = true, testID, style }: StatGridProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const bandProps = {
     padding: 'none' as const,
@@ -40,7 +43,7 @@ export function StatGrid({ cells, divided = true, testID, style }: StatGridProps
 
   return (
     <SectionBand {...bandProps}>
-      <View style={{ flexDirection: 'row' }}>
+      <Row>
         {cells.map((c, i) => {
           const cellStyle: ViewStyle = {
             flex: 1,
@@ -61,48 +64,25 @@ export function StatGrid({ cells, divided = true, testID, style }: StatGridProps
               style={cellStyle}
               {...(cellTestID !== undefined ? { testID: cellTestID } : null)}
             >
-              <RNText
-                style={{
-                  fontFamily: `${type.mono}-SemiBold`,
-                  fontSize: 9,
-                  letterSpacing: 1.98,
-                  textTransform: 'uppercase',
-                  color: colors.ink2,
-                }}
-              >
+              <CapsLabel size="xs" weight="semibold">
                 {c.label}
-              </RNText>
+              </CapsLabel>
               {isPrimitiveValue ? (
-                <RNText
-                  style={{
-                    fontFamily: `${type.sans}-Bold`,
-                    fontSize: 22,
-                    lineHeight: 22,
-                    letterSpacing: -0.66,
-                    color: colors.ink0,
-                  }}
-                >
+                <Heading size="s" numeric>
                   {c.value}
-                </RNText>
+                </Heading>
               ) : (
                 <View>{c.value}</View>
               )}
               {c.sub ? (
-                <RNText
-                  style={{
-                    fontFamily: `${type.mono}-Medium`,
-                    fontSize: 10,
-                    letterSpacing: 1.4,
-                    color: colors.ink2,
-                  }}
-                >
+                <CapsLabel size="sm" style={{ letterSpacing: 1.4 }}>
                   {c.sub}
-                </RNText>
+                </CapsLabel>
               ) : null}
             </View>
           );
         })}
-      </View>
+      </Row>
     </SectionBand>
   );
 }

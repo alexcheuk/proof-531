@@ -63,10 +63,16 @@ describe('RestPhase', () => {
     expect(screen.getByTestId('rest-timer-value').props.children).toBe('0:03');
   });
 
-  it('keeps counting past the target when remaining goes negative', () => {
+  it('switches to "+MM:SS over-by" framing when the user runs ≥5s past target', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-30} target={90} />);
-    // 90 - (-30) = 120 → 2:00
-    expect(screen.getByTestId('rest-timer-value').props.children).toBe('2:00');
+    // 30s past target → "+0:30" pacing hint
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('+0:30');
+  });
+
+  it('still shows count-up framing within the pacing-hint threshold (<5s over)', () => {
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-3} target={90} />);
+    // 90 - (-3) = 93 → "1:33"
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:33');
   });
 
   it('exposes rest-phase and rest-timer testIDs', () => {

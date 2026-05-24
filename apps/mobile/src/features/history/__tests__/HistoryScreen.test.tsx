@@ -45,6 +45,26 @@ jest.mock('@/data/queries/useSessionPrIds', () => ({
   }),
 }));
 
+jest.mock('@/data/queries/useSettings', () => ({
+  useSettings: () => ({
+    data: {
+      id: 1,
+      storageUnit: 'lbs',
+      displayUnit: 'lbs',
+      plateSet: 'standard',
+      enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
+      currentCycle: 1,
+      week: 1,
+      day: 1,
+      restTargetSeconds: 90,
+    },
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: jest.fn(),
+  }),
+}));
+
 // Import after mocks.
 import { HistoryScreen } from '../HistoryScreen';
 

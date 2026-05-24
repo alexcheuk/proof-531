@@ -8,15 +8,10 @@
  * Ported from PWA `src/components/ui/seg-rail.tsx`.
  */
 import * as Haptics from 'expo-haptics';
-import {
-  Pressable,
-  Text as RNText,
-  type StyleProp,
-  type TextStyle,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { Pressable, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Row } from './Row';
 
 export interface SegRailOption<T extends string> {
   value: T;
@@ -41,13 +36,8 @@ export function SegRail<T extends string>({
 }: SegRailProps<T>) {
   const { colors } = useTheme();
 
-  const container: ViewStyle = {
-    flexDirection: 'row',
-    width: '100%',
-  };
-
   return (
-    <View testID={testID} style={[container, style]}>
+    <Row style={[{ width: '100%' }, style]} {...(testID !== undefined ? { testID } : {})}>
       {options.map((opt, i) => {
         const active = opt.value === value;
         const disabled = opt.disabled === true;
@@ -70,21 +60,14 @@ export function SegRail<T extends string>({
           borderColor: colors.ink0,
         };
 
-        const labelStyle: TextStyle = {
-          fontFamily: 'IBMPlexMono-SemiBold',
-          fontSize: 11,
-          letterSpacing: 0.22 * 11,
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          color: disabled ? colors.ink4 : active ? colors.bg0 : colors.ink2,
-        };
-
         const handlePress = () => {
           if (disabled) return;
           if (opt.value === value) return;
           Haptics.selectionAsync();
           onChange(opt.value);
         };
+
+        const labelColor = disabled ? 'ink4' : active ? 'bg0' : 'ink2';
 
         return (
           <Pressable
@@ -96,10 +79,17 @@ export function SegRail<T extends string>({
             accessibilityState={{ selected: active, disabled }}
             style={segmentStyle}
           >
-            <RNText style={labelStyle}>{opt.label}</RNText>
+            <CapsLabel
+              size="md"
+              weight="semibold"
+              color={labelColor}
+              style={{ letterSpacing: 2.42, textAlign: 'center' }}
+            >
+              {opt.label}
+            </CapsLabel>
           </Pressable>
         );
       })}
-    </View>
+    </Row>
   );
 }
