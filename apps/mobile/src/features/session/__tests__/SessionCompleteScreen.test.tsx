@@ -16,10 +16,17 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
+const mockBack = jest.fn();
 const mockNotificationAsync = jest.fn();
+const routerCanGoBack = { value: true };
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({
+    replace: mockReplace,
+    push: jest.fn(),
+    back: mockBack,
+    canGoBack: () => routerCanGoBack.value,
+  }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -121,8 +128,8 @@ jest.mock('@/data/queries/useSettings', () => ({
   }),
 }));
 
-jest.mock('@/data/queries/usePrs', () => ({
-  usePrs: () => ({ data: [], isLoading: false, error: null }),
+jest.mock('@/data/queries/usePreviousBestE1RM', () => ({
+  usePreviousBestE1RM: () => ({ data: 0, isLoading: false, error: null }),
 }));
 
 // Import after mocks so the screen sees the stubs.
@@ -168,7 +175,9 @@ const buildLogs = (opts: { isPR: boolean }) => [
 describe('SessionCompleteScreen', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockBack.mockClear();
     mockNotificationAsync.mockClear();
+    routerCanGoBack.value = true;
     setLogsState.rows = [];
   });
 
@@ -269,5 +278,33 @@ describe('SessionCompleteScreen', () => {
     });
 
     expect(mockReplace).toHaveBeenCalledWith('/');
+  });
+
+  describe('origin = "history"', () => {
+    it('renders the "Back to history" CTA instead of close + secondary link', async () => {
+      setLogsState.rows = buildLogs({ isPR: false });
+      const screen = renderScreen(<SessionCompleteScreen sessionId={42} origin="history" />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('session-complete-back-to-history')).toBeTruthy();
+      });
+      expect(screen.queryByTestId('session-complete-close')).toBeNull();
+      expect(screen.queryByTestId('session-complete-history-link')).toBeNull();
+    });
+
+    it('"Back to history" calls router.back() when canGoBack is true', async () => {
+      setLogsState.rows = buildLogs({ isPR: false });
+      const screen = renderScreen(<SessionCompleteScreen sessionId={42} origin="history" />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('session-complete-back-to-history')).toBeTruthy();
+      });
+
+      await act(async () => {
+        fireEvent.press(screen.getByTestId('session-complete-back-to-history'));
+      });
+
+      expect(mockBack).toHaveBeenCalledTimes(1);
+    });
   });
 });

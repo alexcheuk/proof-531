@@ -2,13 +2,15 @@ import { SessionCompleteScreen } from '@/features/session/SessionCompleteScreen'
 import { useLocalSearchParams } from 'expo-router';
 
 /**
- * Thin route shell — parses `sessionId` from the query string and hands it to
- * the feature component. Invalid/missing renders nothing; the Live screen
- * (PE-05) is the only sanctioned entry point.
+ * Thin route shell — parses `sessionId` and the optional `from` origin from
+ * the query string and hands them to the feature component. `from=history`
+ * indicates the user arrived from the History tab to review a past session;
+ * the screen swaps its CTAs accordingly.
  */
 export default function CompleteRoute() {
-  const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
+  const { sessionId, from } = useLocalSearchParams<{ sessionId?: string; from?: string }>();
   const parsed = sessionId ? Number.parseInt(sessionId, 10) : Number.NaN;
   if (Number.isNaN(parsed)) return null;
-  return <SessionCompleteScreen sessionId={parsed} />;
+  const origin: 'live' | 'history' = from === 'history' ? 'history' : 'live';
+  return <SessionCompleteScreen sessionId={parsed} origin={origin} />;
 }

@@ -74,7 +74,7 @@ export function SessionListRow({
 
   const navigate = useCallback(() => {
     if (session.status === 'completed') {
-      goTo.complete(router, session.id);
+      goTo.complete(router, session.id, { from: 'history' });
       return;
     }
     if (session.status === 'in_progress') {

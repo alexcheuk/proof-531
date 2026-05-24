@@ -48,7 +48,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         },
       ],
       settingsData: undefined,
-      prsData: [],
+      prevBestStorage: 0,
     });
     expect(v.hasPR).toBe(true);
     expect(v.showCertificate).toBe(true);
@@ -73,7 +73,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         },
       ],
       settingsData: undefined,
-      prsData: [],
+      prevBestStorage: 0,
     });
     expect(v.hasPR).toBe(false);
     expect(v.showCertificate).toBe(false);
@@ -97,7 +97,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         },
       ],
       settingsData: undefined,
-      prsData: [],
+      prevBestStorage: 0,
     });
     // 200 × (1 + 5/30) = 233.33 → rounds to 233.
     expect(v.e1RMDisplay).toBe(233);
@@ -108,7 +108,7 @@ describe('deriveView (useSessionCompleteData)', () => {
       session: session({ week: 4 }),
       setLogsData: [],
       settingsData: undefined,
-      prsData: [],
+      prevBestStorage: 0,
     });
     expect(v.sessionsInCycle).toBe(16);
     expect(v.completedThisCycle).toBeLessThanOrEqual(16);
@@ -129,7 +129,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         day: 1,
         restTargetSeconds: 90,
       },
-      prsData: [],
+      prevBestStorage: 0,
     });
     expect(v.sessionsInCycle).toBe(8); // 2 lifts × 4 weeks
   });
@@ -152,14 +152,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         },
       ],
       settingsData: undefined,
-      prsData: [
-        {
-          lift: 'squat',
-          bestE1RM: 250,
-          setLogId: 99,
-          achievedAt: 1,
-        },
-      ],
+      prevBestStorage: 250,
     });
     // New = 267 (rounded), prev = 250 → delta = 17.
     expect(v.e1RMDelta).toBe(17);

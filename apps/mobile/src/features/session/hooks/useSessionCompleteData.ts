@@ -1,4 +1,4 @@
-import { usePrs } from '@/data/queries/usePrs';
+import { usePreviousBestE1RM } from '@/data/queries/usePreviousBestE1RM';
 import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -59,18 +59,23 @@ export function useSessionCompleteData(sessionId: number): SessionCompleteData {
   const sessionQuery = useSession(sessionId);
   const setLogsQuery = useSetLogsForSession(sessionId);
   const settingsQuery = useSettings();
-  const prsQuery = usePrs();
-
   const session = sessionQuery.data;
+  const liftForQuery = session ? (session.lift as Lift) : null;
+  // `prs` alone reports the CURRENT best — and `appendSetLog` has already
+  // upserted it to this session's e1RM by the time we mount. Query the
+  // prior best directly (max estimated1RM across other completed-session
+  // AMRAP rows for the same lift) so the certificate can show a real delta.
+  const prevBestQuery = usePreviousBestE1RM(liftForQuery, session?.id ?? null);
+
   const setLogsData = setLogsQuery.data;
   const settingsData = settingsQuery.data;
-  const prsData = prsQuery.data;
+  const prevBestStorage = prevBestQuery.data ?? 0;
 
   const view = useMemo<SessionCompleteView | null>(() => {
     if (!session) return null;
     if (session.status !== 'completed') return null;
-    return deriveView({ session, setLogsData, settingsData, prsData });
-  }, [session, setLogsData, settingsData, prsData]);
+    return deriveView({ session, setLogsData, settingsData, prevBestStorage });
+  }, [session, setLogsData, settingsData, prevBestStorage]);
 
   return {
     ready: !!view,
@@ -85,12 +90,13 @@ export function deriveView({
   session,
   setLogsData,
   settingsData,
-  prsData,
+  prevBestStorage,
 }: {
   session: NonNullable<ReturnType<typeof useSession>['data']>;
   setLogsData: ReturnType<typeof useSetLogsForSession>['data'];
   settingsData: ReturnType<typeof useSettings>['data'];
-  prsData: ReturnType<typeof usePrs>['data'];
+  /** Best e1RM (storage unit) for this lift before this session was logged. */
+  prevBestStorage: number;
 }): SessionCompleteView {
   const lift = session.lift as Lift;
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
@@ -172,12 +178,13 @@ export function deriveView({
     Math.max(1, (session.week - 1) * liftsPerCycle + (liftPos + 1)),
   );
 
-  // PR baseline: the existing PR row for this lift (if any) holds the prior
-  // best e1RM. Convert with same precision policy as the new e1RM so the
-  // cert's delta arithmetic stays internally consistent.
-  const existingPRStorage = prsData?.find((p) => p.lift === lift)?.bestE1RM ?? 0;
-  const prevE1RMDisplay = existingPRStorage
-    ? Math.round(convertWeight(existingPRStorage, storageUnit, renderUnit))
+  // PR baseline: best e1RM observed in OTHER completed sessions for this
+  // lift (the `prs` row has already been overwritten with THIS session's
+  // new best by the time we mount, so we can't read it from there).
+  // Convert with same precision policy as the new e1RM so the cert's delta
+  // arithmetic stays internally consistent.
+  const prevE1RMDisplay = prevBestStorage
+    ? Math.round(convertWeight(prevBestStorage, storageUnit, renderUnit))
     : 0;
   const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
 

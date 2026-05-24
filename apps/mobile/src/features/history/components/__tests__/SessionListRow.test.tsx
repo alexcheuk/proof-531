@@ -69,14 +69,14 @@ describe('SessionListRow', () => {
     expect(screen.getByText('CANCELLED')).toBeTruthy();
   });
 
-  it('navigates to /session/complete when a completed row is pressed', () => {
+  it('navigates to /session/complete with from=history when a completed row is pressed', () => {
     const screen = wrap(<SessionListRow session={makeSession({ id: 7, status: 'completed' })} />);
     fireEvent.press(screen.getByTestId('history-row-7'));
     expect(mockPush).toHaveBeenCalled();
     const [arg] = mockPush.mock.calls[0] ?? [];
     expect(arg).toMatchObject({
       pathname: '/session/complete',
-      params: { sessionId: '7' },
+      params: { sessionId: '7', from: 'history' },
     });
   });
 

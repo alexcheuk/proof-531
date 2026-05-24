@@ -27,9 +27,18 @@ import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
+  /**
+   * Where the user arrived from. Drives which CTAs render in the bottom
+   * bar:
+   *   - `live` (default) — just-finished flow → "Close the day" primary +
+   *     "See full record →" secondary link.
+   *   - `history` — reviewing a past session → single "Back to history"
+   *     primary, no secondary link.
+   */
+  origin?: 'live' | 'history';
 };
 
-export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps) {
+export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCompleteScreenProps) {
   const router = useRouter();
   const { colors, type } = useTheme();
   const data = useSessionCompleteData(sessionId);
@@ -57,6 +66,10 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
   const v = data.view;
   const handleClose = () => goTo.home(router);
   const handleAdjustTm = () => goTo.settings(router);
+  const handleBackToHistory = () => {
+    if (router.canGoBack()) router.back();
+    else goTo.history(router);
+  };
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
   const secondaryLinkStyle: TextStyle = {
@@ -127,17 +140,29 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
         <View style={{ height: 140 }} />
       </ScrollView>
       <CtaBar>
-        <PrimaryPillButton testID="session-complete-close" onPress={handleClose}>
-          Close the day
-        </PrimaryPillButton>
-        <RNText
-          testID="session-complete-history-link"
-          accessibilityRole="button"
-          onPress={() => goTo.history(router)}
-          style={secondaryLinkStyle}
-        >
-          See full record →
-        </RNText>
+        {origin === 'history' ? (
+          <PrimaryPillButton
+            testID="session-complete-back-to-history"
+            glyph="←"
+            onPress={handleBackToHistory}
+          >
+            Back to history
+          </PrimaryPillButton>
+        ) : (
+          <>
+            <PrimaryPillButton testID="session-complete-close" onPress={handleClose}>
+              Close the day
+            </PrimaryPillButton>
+            <RNText
+              testID="session-complete-history-link"
+              accessibilityRole="button"
+              onPress={() => goTo.history(router)}
+              style={secondaryLinkStyle}
+            >
+              See full record →
+            </RNText>
+          </>
+        )}
       </CtaBar>
     </SessionLayout>
   );

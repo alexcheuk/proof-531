@@ -103,3 +103,34 @@ export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
   )) as Array<{ sessionId: number }>;
   return rows.map((r) => r.sessionId);
 }
+
+/**
+ * Return the max `estimated1RM` across all set_logs for a given lift,
+ * excluding rows from `excludingSessionId`. Used by the SessionComplete
+ * PR certificate to render the prior best — the `prs` row alone is
+ * insufficient because `appendSetLog` has already overwritten it with
+ * THIS session's new best by the time the screen mounts.
+ *
+ * Returns `0` when no other completed-session AMRAP rows exist for the
+ * lift (i.e. this is the first PR ever for that lift).
+ */
+export async function getPreviousBestE1RM(
+  db: AnyDb,
+  lift: Lift,
+  excludingSessionId: number,
+): Promise<number> {
+  const rows = (await Promise.resolve(
+    db
+      .select({ estimated1RM: setLogs.estimated1RM })
+      .from(setLogs)
+      .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
+      .where(
+        sql`${sessions.lift} = ${lift} AND ${sessions.status} = 'completed' AND ${setLogs.sessionId} <> ${excludingSessionId} AND ${setLogs.estimated1RM} IS NOT NULL`,
+      ),
+  )) as Array<{ estimated1RM: number | null }>;
+  let max = 0;
+  for (const r of rows) {
+    if (r.estimated1RM !== null && r.estimated1RM > max) max = r.estimated1RM;
+  }
+  return max;
+}

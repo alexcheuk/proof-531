@@ -55,11 +55,14 @@ export const goTo = {
     router.push(href({ pathname: '/session/live', params: { sessionId: String(sessionId) } }));
   },
 
-  complete(router: Router, sessionId: number | string, opts?: { replace?: boolean }): void {
-    const target = href({
-      pathname: '/session/complete',
-      params: { sessionId: String(sessionId) },
-    });
+  complete(
+    router: Router,
+    sessionId: number | string,
+    opts?: { replace?: boolean; from?: 'history' },
+  ): void {
+    const params: Record<string, string> = { sessionId: String(sessionId) };
+    if (opts?.from) params.from = opts.from;
+    const target = href({ pathname: '/session/complete', params });
     if (opts?.replace) router.replace(target);
     else router.push(target);
   },

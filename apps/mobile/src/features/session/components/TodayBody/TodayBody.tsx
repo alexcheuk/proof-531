@@ -84,10 +84,15 @@ export function TodayBody({
       <TitleBlock
         eyebrow={`${dateLabel(new Date())} · ${weekLabel(week)}`}
         title={`${liftDisplayName(lift)}.`}
-        style={{ paddingTop: 20, paddingBottom: 8 }}
+        style={{ paddingTop: 20, paddingBottom: 20 }}
       />
       <View
-        style={{ paddingHorizontal: layout.gutter, paddingBottom: spacing.lg, gap: spacing.xs }}
+        style={{
+          paddingHorizontal: layout.gutter,
+          paddingTop: spacing.md,
+          paddingBottom: spacing.md,
+          gap: spacing.xs,
+        }}
       >
         <CapsLabel size="xs" color="ink2" testID="today-week-intent">
           {weekIntent(week)}
