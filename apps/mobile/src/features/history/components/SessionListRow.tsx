@@ -24,6 +24,16 @@ import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { Pressable, Text as RNText, type TextStyle } from 'react-native';
 
+function isSameLocalDay(a: number, b: number): boolean {
+  const da = new Date(a);
+  const db = new Date(b);
+  return (
+    da.getFullYear() === db.getFullYear() &&
+    da.getMonth() === db.getMonth() &&
+    da.getDate() === db.getDate()
+  );
+}
+
 function statusCaps(status: Session['status']): string {
   switch (status) {
     case 'completed':
@@ -97,6 +107,15 @@ export function SessionListRow({
     color: colors.ink0,
   };
 
+  // Today's row gets a 2px ink left accent so the user can spot the
+  // just-finished session as they swipe past the list. Local-midnight
+  // bucketing matches the History activity sparkline so the visual signal
+  // is consistent across the tab.
+  const isToday = isSameLocalDay(session.startedAt, Date.now());
+  const todayAccentStyle = isToday
+    ? { borderLeftWidth: 2, borderLeftColor: colors.ink0, paddingLeft: 10 }
+    : null;
+
   const prChip = hasPr ? (
     onPressPr ? (
       <Pressable
@@ -125,6 +144,7 @@ export function SessionListRow({
       testID={`history-row-${session.id}`}
       accessibilityLabel={a11yLabel}
       {...(tappable ? { onPress } : {})}
+      {...(todayAccentStyle ? { style: todayAccentStyle } : {})}
     >
       <LedgerRowLabel primary={liftDisplayName(session.lift)} secondary={dateText} />
       <Row gap="sm">

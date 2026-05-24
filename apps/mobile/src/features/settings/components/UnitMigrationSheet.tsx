@@ -5,6 +5,7 @@
  * Preview table lists each enabled lift's current TM and its converted value
  * at the target storage unit, so the user sees what's about to be rewritten.
  */
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Row } from '@/design/primitives/Row';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
@@ -111,15 +112,6 @@ export function UnitMigrationSheet({
     marginLeft: 6,
   };
 
-  const emptyNote: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.26,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-    paddingVertical: 12,
-  };
-
   return (
     <SheetLayout
       open={open}
@@ -180,7 +172,9 @@ export function UnitMigrationSheet({
           })}
         </View>
       ) : (
-        <RNText style={emptyNote}>nothing to convert · settings are still updated</RNText>
+        <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 1.26, paddingVertical: 12 }}>
+          nothing to convert · settings are still updated
+        </CapsLabel>
       )}
     </SheetLayout>
   );

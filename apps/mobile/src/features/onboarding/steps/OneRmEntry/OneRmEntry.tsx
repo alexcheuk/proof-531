@@ -1,7 +1,7 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Card } from '@/design/primitives/Card';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SegRail } from '@/design/primitives/SegRail';
-import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Step 3 — Per-lift 1RM entry. The wizard walks each enabled lift in
@@ -47,7 +47,6 @@ export function OneRmEntry({
   onBack,
   onNext,
 }: OneRmEntryProps) {
-  const { colors } = useTheme();
   const { weightStep, tm, isLast, hintVisible, hintCopy } = useOneRmEntryState({
     data,
     computed,
@@ -89,14 +88,7 @@ export function OneRmEntry({
       <View style={{ paddingHorizontal: 24, paddingTop: 20, flex: 1 }}>
         <InputFrame data={data} unit={unit} weightStep={weightStep} onChange={onChange} />
 
-        <View
-          style={{
-            marginTop: 28,
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderColor: colors.lineStrong,
-          }}
-        >
+        <Card borders="topBottom" tone="strong" style={{ marginTop: 28 }}>
           <ResultRow
             primary="Estimated 1RM"
             secondary={
@@ -114,7 +106,7 @@ export function OneRmEntry({
             unit={unit}
             valueSize={22}
           />
-        </View>
+        </Card>
       </View>
     </OnboardingShell>
   );

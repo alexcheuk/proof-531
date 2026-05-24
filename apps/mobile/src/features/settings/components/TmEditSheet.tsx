@@ -8,15 +8,14 @@ import { useDb } from '@/data/DbProvider';
  */
 import { setTrainingMax } from '@/data/accessors/trainingMax';
 import { TM_KEY } from '@/data/queries/useLatestTm';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
-import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Text as RNText, type TextStyle } from 'react-native';
 import { LIFT_META } from '../lifts';
 
 export interface TmEditSheetProps {
@@ -41,7 +40,6 @@ export function TmEditSheet({
 }: TmEditSheetProps) {
   const db = useDb();
   const queryClient = useQueryClient();
-  const { colors, type } = useTheme();
   const [draft, setDraft] = useState<number>(currentValue);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,30 +65,6 @@ export function TmEditSheet({
       setPending(false);
     }
   }
-
-  const captionStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.26,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-  };
-
-  const deltaStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-    color: isZero ? colors.ink3 : colors.ink1,
-  };
-
-  const errorStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-    color: colors.ink0,
-  };
 
   return (
     <SheetLayout
@@ -129,20 +103,29 @@ export function TmEditSheet({
       />
 
       {captionVisible ? (
-        <RNText style={captionStyle}>
-          editing in {displayUnitGlyph(storageUnit)} · displayed as {displayUnitGlyph(displayUnit)}
-        </RNText>
+        <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 1.26 }}>
+          {`editing in ${displayUnitGlyph(storageUnit)} · displayed as ${displayUnitGlyph(displayUnit)}`}
+        </CapsLabel>
       ) : null}
 
-      <RNText style={deltaStyle} testID="tm-edit-delta">
+      <CapsLabel
+        weight="semibold"
+        color={isZero ? 'ink3' : 'ink1'}
+        style={{ letterSpacing: 1.4 }}
+        testID="tm-edit-delta"
+      >
         {isZero
           ? 'Set a positive training max to continue'
           : isUnchanged
             ? 'No change from current'
             : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)} from current`}
-      </RNText>
+      </CapsLabel>
 
-      {error ? <RNText style={errorStyle}>{error}</RNText> : null}
+      {error ? (
+        <CapsLabel weight="semibold" color="ink0" style={{ letterSpacing: 1.4 }}>
+          {error}
+        </CapsLabel>
+      ) : null}
     </SheetLayout>
   );
 }

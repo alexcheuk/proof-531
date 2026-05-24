@@ -6,8 +6,9 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
+import { prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayWeight } from '@/domain/units';
+import { convertWeight, displayWeight, round as snapWeight } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 /**
@@ -99,6 +100,24 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     settingsQuery.data?.plateSet ?? (storageUnit === 'kg' ? 'kg-standard' : 'standard');
   const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
+
+  // Plate-change hint: when the user is on set 2 or 3, show how much weight
+  // they need to add per side vs the previous set. Pure derivation off
+  // `prescription(week)[setIndex - 1].pct * trainingMaxSnapshot`, snapped
+  // and converted to the display unit.
+  const weekTuple = prescription(session.week as 1 | 2 | 3 | 4);
+  const prevSet = live.setIndex > 0 ? weekTuple[(live.setIndex - 1) as 0 | 1 | 2] : null;
+  const prevWeightStorage = prevSet
+    ? snapWeight(session.trainingMaxSnapshot * prevSet.pct, storageUnit)
+    : null;
+  const perSideDelta =
+    prevWeightStorage !== null
+      ? Math.round(((live.prescribedWeight - prevWeightStorage) / 2) * 10) / 10
+      : null;
+  const plateChangeHint =
+    perSideDelta !== null && perSideDelta !== 0
+      ? `${perSideDelta > 0 ? '+' : ''}${perSideDelta} ${storageUnit === 'kg' ? 'kg' : 'lb'} per side vs set ${live.setIndex}`
+      : null;
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
@@ -195,6 +214,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             pct={live.pct}
             unit={unit}
             perSide={perSide}
+            {...(plateChangeHint ? { plateChangeHint } : {})}
           />
         ) : null}
         <View style={{ height: 120 }} />

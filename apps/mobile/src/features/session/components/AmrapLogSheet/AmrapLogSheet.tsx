@@ -1,5 +1,4 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
-import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { Row } from '@/design/primitives/Row';
 import { Sheet } from '@/design/primitives/Sheet';
@@ -13,12 +12,14 @@ import { displayUnit } from '@/domain/units';
  * Bottom-sheet AMRAP rep logger.
  *
  * Structural port of `~/Development/531-pwa/src/features/session/components/
- * AmrapLogSheet.tsx`. Parent owns the actual `appendSetLog` call — this
- * component only stages reps and surfaces an e1RM caption. Rep/pending state
- * lives in `useAmrapLogState` so the sheet body is pure presentation.
+ * AmrapLogSheet.tsx`. Composition shell — rep/pending state lives in
+ * `useAmrapLogState`, the e1RM caption is `ProjectionChip`, and the
+ * Save/Cancel button pair is `AmrapFooter`.
  */
-import { Pressable, View, type ViewStyle } from 'react-native';
-import { useAmrapLogState } from '../hooks/useAmrapLogState';
+import { View, type ViewStyle } from 'react-native';
+import { useAmrapLogState } from '../../hooks/useAmrapLogState';
+import { AmrapFooter } from './AmrapFooter';
+import { ProjectionChip } from './ProjectionChip';
 
 export type AmrapLogSheetProps = {
   open: boolean;
@@ -49,7 +50,7 @@ export function AmrapLogSheet({
   onSave,
   testID,
 }: AmrapLogSheetProps) {
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
   const { reps, setReps, pending, handleSave, handleCancel } = useAmrapLogState({
     open,
     prescribedReps,
@@ -61,9 +62,8 @@ export function AmrapLogSheet({
   const predictedE1RM = Math.round(predictedE1RMRaw);
   const existingBest = existingBestE1RM ?? 0;
   const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
-  // Real-time delta against the user's current PR — the felt-quality win is
-  // watching "+12" tick up as you crank out another rep on the AMRAP. Only
-  // surfaced when the user has a prior PR.
+  // Real-time delta against the user's current PR. Only surfaced when the
+  // user has a prior PR (no baseline → no delta to brag about).
   const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
 
   const bodyStyle: ViewStyle = {
@@ -71,16 +71,6 @@ export function AmrapLogSheet({
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
   };
-  const button = (variant: 'primary' | 'ghost'): ViewStyle => ({
-    flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: variant === 'primary' ? colors.ink0 : 'transparent',
-    borderWidth: 1,
-    borderColor: colors.ink0,
-    opacity: pending ? 0.6 : 1,
-  });
 
   return (
     <Sheet open={open} onDismiss={handleCancel} {...(testID !== undefined ? { testID } : {})}>
@@ -101,26 +91,14 @@ export function AmrapLogSheet({
           <CapsLabel weight="semibold" style={{ letterSpacing: 1.5 }}>
             How many reps?
           </CapsLabel>
-          <Row gap="sm" align="center" testID="amrap-e1rm-caption">
-            <CapsLabel
-              weight="semibold"
-              color={isPotentialPR ? 'ink0' : 'ink1'}
-              style={{ letterSpacing: 1.4 }}
-            >
-              {`EST. 1RM ${predictedE1RM} ${displayUnit(unit)}`}
-            </CapsLabel>
-            {deltaFromBest !== null && reps > 0 ? (
-              <CapsLabel
-                weight="semibold"
-                color={deltaFromBest >= 0 ? 'ink0' : 'ink3'}
-                style={{ letterSpacing: 1.4 }}
-                testID="amrap-delta-chip"
-              >
-                {`${deltaFromBest >= 0 ? '↑ +' : '↓ '}${Math.abs(deltaFromBest)}`}
-              </CapsLabel>
-            ) : null}
-            {isPotentialPR ? <MonoBadge testID="amrap-pr-badge">PR</MonoBadge> : null}
-          </Row>
+          <ProjectionChip
+            predictedE1RM={predictedE1RM}
+            unit={unit}
+            deltaFromBest={deltaFromBest}
+            reps={reps}
+            isPotentialPR={isPotentialPR}
+            testID="amrap-e1rm-caption"
+          />
         </Row>
 
         <NumberStepper
@@ -134,42 +112,7 @@ export function AmrapLogSheet({
           testID="amrap-reps-stepper"
         />
 
-        <Row gap="md" style={{ marginTop: spacing.lg }}>
-          <Pressable
-            testID="amrap-cancel"
-            accessibilityRole="button"
-            disabled={pending}
-            onPress={handleCancel}
-            style={button('ghost')}
-          >
-            <Text
-              variant="sans"
-              weight="semibold"
-              size={13}
-              color="ink0"
-              style={{ textTransform: 'uppercase', letterSpacing: 0.6 }}
-            >
-              Cancel
-            </Text>
-          </Pressable>
-          <Pressable
-            testID="amrap-save"
-            accessibilityRole="button"
-            disabled={pending}
-            onPress={handleSave}
-            style={button('primary')}
-          >
-            <Text
-              variant="sans"
-              weight="semibold"
-              size={13}
-              color="bg0"
-              style={{ textTransform: 'uppercase', letterSpacing: 0.6 }}
-            >
-              Save
-            </Text>
-          </Pressable>
-        </Row>
+        <AmrapFooter pending={pending} onCancel={handleCancel} onSave={handleSave} />
       </View>
     </Sheet>
   );
