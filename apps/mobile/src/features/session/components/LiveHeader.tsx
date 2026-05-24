@@ -54,8 +54,12 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
   return (
     <View testID={testID} style={container}>
       <Row justify="space-between" align="baseline">
-        <CapsLabel {...(eyebrowTestID ? { testID: eyebrowTestID } : {})}>
-          {`SET ${oneBased} OF 3`}
+        <CapsLabel
+          weight={setIndex === 2 ? 'bold' : 'medium'}
+          color={setIndex === 2 ? 'ink0' : 'ink2'}
+          {...(eyebrowTestID ? { testID: eyebrowTestID } : {})}
+        >
+          {setIndex === 2 ? 'FINAL SET' : `SET ${oneBased} OF 3`}
         </CapsLabel>
         {elapsedSeconds !== undefined ? (
           <CapsLabel

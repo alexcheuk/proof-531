@@ -3,12 +3,11 @@ import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
+import { convertWeight, displayWeight } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 /**
@@ -36,10 +35,10 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
-import { LiveHeader } from './components/LiveHeader';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
+import { SetPhase } from './components/SetPhase';
 import { useElapsedSeconds } from './hooks/useElapsedSeconds';
 import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
 import { useLiveScreenState } from './hooks/useLiveScreenState';
@@ -50,7 +49,7 @@ export type LiveScreenProps = {
 
 export function LiveScreen({ sessionId }: LiveScreenProps) {
   const router = useRouter();
-  const { colors, spacing } = useTheme();
+  const { colors } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
   const settingsQuery = useSettings();
@@ -186,33 +185,17 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             testID="rest-phase"
           />
         ) : showSetSurface || live.phase === 'cancel-confirm' ? (
-          <>
-            <LiveHeader
-              setIndex={live.setIndex}
-              isAmrap={live.isAmrap}
-              testID="live-header"
-              lift={liftDisplayName(lift)}
-              elapsedSeconds={elapsedSeconds}
-            />
-
-            <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
-
-            <View style={{ paddingHorizontal: 24, paddingVertical: spacing.lg }}>
-              <TopSetBlock
-                eyebrow={`On the bar · ${Math.round(live.pct * 100)}% TM`}
-                weight={prescribedDisplay}
-                unitGlyph={displayUnit(unit)}
-                reps={live.prescribedReps}
-                amrap={live.isAmrap}
-                perSide={perSide}
-                plateVariant="full"
-                bordered={false}
-                testID="live-bigweight"
-              />
-            </View>
-
-            <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
-          </>
+          <SetPhase
+            setIndex={live.setIndex}
+            isAmrap={live.isAmrap}
+            liftLabel={liftDisplayName(lift)}
+            elapsedSeconds={elapsedSeconds}
+            weight={prescribedDisplay}
+            reps={live.prescribedReps}
+            pct={live.pct}
+            unit={unit}
+            perSide={perSide}
+          />
         ) : null}
         <View style={{ height: 120 }} />
       </ScrollView>

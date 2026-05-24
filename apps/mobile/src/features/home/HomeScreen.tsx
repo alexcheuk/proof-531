@@ -28,6 +28,8 @@ import { HomeContainer } from './components/HomeContainer';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
+import { StreakBadge } from './components/StreakBadge';
+import { useActivityStreak } from './hooks/useActivityStreak';
 import { useHomeCarouselSync } from './hooks/useHomeCarouselSync';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
@@ -51,6 +53,7 @@ export function HomeScreen() {
   // layout, and momentum-end index calculation stay correct under
   // orientation change.
   const { width: screenWidth } = useWindowDimensions();
+  const { streak } = useActivityStreak();
 
   const { listRef, onMomentumScrollEnd } = useHomeCarouselSync({
     selectedLift,
@@ -90,6 +93,10 @@ export function HomeScreen() {
   const settingsData = settings.data;
   const tmsData = tms.data;
   const prsData = prs.data;
+  const prLifts = useMemo<Set<Lift>>(
+    () => new Set((prsData ?? []).map((p) => p.lift as Lift)),
+    [prsData],
+  );
 
   const renderItem = useCallback<ListRenderItem<Lift>>(
     ({ item: lift }) => {
@@ -147,10 +154,12 @@ export function HomeScreen() {
   return (
     <HomeContainer>
       <Masthead rightSlot={<DateBadge label={dateLabel(new Date())} />} />
+      <StreakBadge streak={streak} />
       <LiftTabs
         enabled={enabledLifts}
         selected={selectedToRender}
         inProgressLift={inProgressLift}
+        prLifts={prLifts}
         onSelect={setSelectedLift}
       />
       <FlatList

@@ -177,6 +177,13 @@ jest.mock('@/data/queries/useActiveSession', () => ({
   ACTIVE_SESSION_KEY: ['activeSession'],
 }));
 
+// HomeScreen now reads useSessions via useActivityStreak; mock with an
+// empty list so the streak badge stays hidden in the existing assertions.
+jest.mock('@/data/queries/useSessions', () => ({
+  useSessions: () => ({ data: [], isLoading: false }),
+  SESSIONS_KEY: ['sessions'],
+}));
+
 // Import after mocks.
 import { HomeScreen } from '../HomeScreen';
 import { __resetHomeScreenStateForTests } from '../hooks/useHomeScreenState';
