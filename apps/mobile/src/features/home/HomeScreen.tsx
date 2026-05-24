@@ -1,12 +1,14 @@
 import { useDb } from '@/data/DbProvider';
 import { createSession } from '@/data/accessors/session';
+import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
+import { ResumeBanner } from '@/design/primitives/ResumeBanner';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { dateLabel } from '@/domain/labels';
+import { dateLabel, liftDisplayName, relativeTimeLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useQueryClient } from '@tanstack/react-query';
@@ -27,9 +29,10 @@ import { useQueryClient } from '@tanstack/react-query';
  * (accessors are explicitly safe to call from features per §3 of the
  * boundary rules — only the raw drizzle handle is forbidden).
  */
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -50,6 +53,7 @@ export function HomeScreen() {
   const prs = usePrs();
   const db = useDb();
   const queryClient = useQueryClient();
+  const activeSession = useActiveSession();
 
   const enabledLifts = useMemo<Lift[]>(
     () => settings.data?.enabledLifts ?? [],
@@ -57,6 +61,22 @@ export function HomeScreen() {
   );
   const firstLift: Lift = enabledLifts[0] ?? 'squat';
   const { selectedLift, setSelectedLift, inProgressLift } = useHomeScreenState(firstLift);
+
+  // Resume banner — session-local dismissal. State resets on every Home mount
+  // (tab switch, app background, app kill), which keeps the recovery surface
+  // present whenever an orphaned in-progress session exists.
+  const [resumeBannerDismissed, setResumeBannerDismissed] = useState(false);
+  const handleResumeBannerPress = useCallback(() => {
+    if (!activeSession.data) return;
+    Haptics.selectionAsync();
+    router.push({
+      pathname: '/session/live',
+      params: { sessionId: String(activeSession.data.id) },
+    } as never);
+  }, [activeSession.data, router]);
+  const handleResumeBannerDismiss = useCallback(() => {
+    setResumeBannerDismissed(true);
+  }, []);
 
   const listRef = useRef<FlatList<Lift>>(null);
   const screenWidth = Dimensions.get('window').width;
@@ -192,6 +212,15 @@ export function HomeScreen() {
   const selectedToRender = enabledLifts.includes(selectedLift) ? selectedLift : firstLift;
   const initialIdx = Math.max(0, enabledLifts.indexOf(selectedToRender));
 
+  const activeSessionRow = activeSession.data;
+  const showResumeBanner = !!activeSessionRow && !resumeBannerDismissed;
+  const resumeBannerLiftLabel = activeSessionRow
+    ? liftDisplayName(activeSessionRow.lift as Lift)
+    : '';
+  const resumeBannerRelative = activeSessionRow
+    ? relativeTimeLabel(activeSessionRow.startedAt, Date.now())
+    : '';
+
   return (
     <Container>
       <Masthead rightSlot={<DateBadge label={dateLabel(new Date())} />} />
@@ -201,6 +230,17 @@ export function HomeScreen() {
         inProgressLift={inProgressLift}
         onSelect={setSelectedLift}
       />
+      {showResumeBanner ? (
+        <ResumeBanner
+          liftLabel={resumeBannerLiftLabel}
+          relativeTime={resumeBannerRelative}
+          onResume={handleResumeBannerPress}
+          onDismiss={handleResumeBannerDismiss}
+          accessibilityLabel={`Resume ${resumeBannerLiftLabel} session, started ${resumeBannerRelative}`}
+          accessibilityHint="Opens the live session screen."
+          testID="home-resume-banner"
+        />
+      ) : null}
       <FlatList
         ref={listRef}
         testID="home-lift-carousel"

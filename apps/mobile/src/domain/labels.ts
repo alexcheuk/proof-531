@@ -82,3 +82,38 @@ export function dateLabel(date: Date): string {
   const day = date.getDate();
   return `${weekday} · ${month} ${day}`;
 }
+
+/**
+ * Human-readable relative time label, used by the Resume banner on Home.
+ *
+ * Returns one of:
+ *   - `"just now"`     for deltas < 60 seconds (or any non-positive delta — a
+ *                      `then` value in the future is clamped to "just now").
+ *   - `"{n} min ago"`  for deltas < 60 minutes.
+ *   - `"{n}h ago"`     for deltas < 24 hours.
+ *   - `"Yesterday"`    for deltas in [24h, 48h).
+ *   - `"{n} days ago"` for deltas >= 48 hours.
+ *
+ * Pure: no Intl, no Date arithmetic beyond integer ms math — the output is
+ * locale-stable and trivially testable via fast-check.
+ */
+export function relativeTimeLabel(thenMs: number, nowMs: number): string {
+  const delta = nowMs - thenMs;
+  if (delta < 60_000) return 'just now';
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (delta < hour) {
+    const mins = Math.floor(delta / minute);
+    return `${mins} min ago`;
+  }
+  if (delta < day) {
+    const hours = Math.floor(delta / hour);
+    return `${hours}h ago`;
+  }
+  if (delta < 2 * day) {
+    return 'Yesterday';
+  }
+  const days = Math.floor(delta / day);
+  return `${days} days ago`;
+}

@@ -5,7 +5,7 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, weekLabel } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
-import { bbbSets, prescription } from '@/domain/schemes';
+import { WARMUPS, bbbSets, prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayUnit, displayWeight, round } from '@/domain/units';
 /**
@@ -18,8 +18,24 @@ import { convertWeight, displayUnit, displayWeight, round } from '@/domain/units
  * Plate visualization lives only in the top-set hero (matching ref). Working
  * sets and BBB show numerics only.
  */
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { SetRow } from './SetRow';
+
+/**
+ * Shape of one warmup ramp row, derived from `WARMUPS` × the lift's TM.
+ *
+ * `negativeIndex` is the storage index used when logging this row
+ * (`-1 - rampIndex`); kept negative so warmup rows sort above working sets
+ * in any future sort-by-index query and do not collide with working-set
+ * indices 0–2.
+ */
+export type WarmupRampRow = {
+  rampIndex: 0 | 1 | 2;
+  negativeIndex: -1 | -2 | -3;
+  pct: number;
+  prescribedWeight: number;
+  prescribedReps: number;
+};
 
 export type TodayBodyProps = {
   lift: Lift;
@@ -39,6 +55,18 @@ export type TodayBodyProps = {
    * no session progress is known.
    */
   nextSetIndex?: 1 | 2 | 3;
+  /**
+   * Stretch path for W1.2 — invoked when a warmup-ramp row is tapped. The
+   * caller is expected to dispatch `appendSetLog(... kind: 'warmup' ...)`
+   * with the row's `negativeIndex`. When `undefined`, the rows render as
+   * plain reference text (MVP form).
+   */
+  onLogWarmup?: (row: WarmupRampRow) => void;
+  /**
+   * Set of `negativeIndex` values that have already been logged for this
+   * session. Used to render the "checked" state on a warmup row.
+   */
+  loggedWarmupIndices?: ReadonlyArray<number>;
 };
 
 export function TodayBody({
@@ -50,6 +78,8 @@ export function TodayBody({
   tm,
   plateSet,
   nextSetIndex = 1,
+  onLogWarmup,
+  loggedWarmupIndices,
 }: TodayBodyProps) {
   const { colors, type } = useTheme();
   const sets = prescription(week);
@@ -76,6 +106,30 @@ export function TodayBody({
   const bbbWeightStorage = round(tm * 0.5, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
   const bbbCount = bbbSets(0.5).length;
+
+  // Warmup ramp — canonical Wendler 5/3/1 warmup (40/50/60 % × 5/5/3).
+  // Computed in storage units then converted to display. Per-side plate
+  // decomposition is rendered as a single inline summary chip below the
+  // row (full `PlateBar` would overpower the top-set hero).
+  const loggedSet = new Set(loggedWarmupIndices ?? []);
+  const warmupRows = WARMUPS.map((w, i) => {
+    const rampIndex = i as 0 | 1 | 2;
+    const negativeIndex = (-1 - rampIndex) as -1 | -2 | -3;
+    const wStorage = round(tm * w.pct, storageUnit);
+    const wDisplay = displayWeight(wStorage, storageUnit, renderUnit);
+    const perSide = decompose(wDisplay, plateSet).perSide;
+    const perSideLabel = perSide.length === 0 ? 'bar only' : `${perSide.join(' + ')} / side`;
+    return {
+      rampIndex,
+      negativeIndex,
+      pct: w.pct,
+      prescribedWeight: wStorage,
+      prescribedReps: w.reps,
+      displayWeight: wDisplay,
+      perSideLabel,
+      logged: loggedSet.has(negativeIndex),
+    };
+  });
 
   const cycleBadgeStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
@@ -138,6 +192,23 @@ export function TodayBody({
     marginTop: 40,
   };
 
+  const warmupSectionStyle: ViewStyle = {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  };
+  const warmupSummaryChipStyle: TextStyle = {
+    fontFamily: `${type.mono}-Medium`,
+    fontSize: 10,
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    color: colors.ink2,
+    paddingLeft: 28,
+    paddingBottom: 8,
+  };
+
   // BBB summary row — caps + giant weight + caps unit.
   const bbbSummaryRow: ViewStyle = {
     flexDirection: 'row',
@@ -182,6 +253,62 @@ export function TodayBody({
         title={`${liftDisplayName(lift)}.`}
         style={{ paddingTop: 20, paddingBottom: 24 }}
       />
+
+      {/* W1.2 Warmup ramp — orthodox 5/3/1 warmup (40/50/60 × 5/5/3). */}
+      <View style={warmupSectionStyle} testID="today-warmup-ramp">
+        <View style={sectionHeaderRow}>
+          <RNText style={capsLabel}>WARMUP</RNText>
+          <RNText style={capsHint}>40 / 50 / 60</RNText>
+        </View>
+        <View>
+          {warmupRows.map((row, i) => {
+            const oneBased = (row.rampIndex + 1) as 1 | 2 | 3;
+            const setRow = (
+              <SetRow
+                index={oneBased}
+                isLast={i === warmupRows.length - 1}
+                weight={row.displayWeight}
+                unit={renderUnit}
+                reps={row.prescribedReps}
+                amrap={false}
+                pct={row.pct}
+                done={row.logged}
+                prefix={`W${oneBased}`}
+                testID={`warmup-row-${row.rampIndex}`}
+              />
+            );
+            const summary = <RNText style={warmupSummaryChipStyle}>{row.perSideLabel}</RNText>;
+            const inner = (
+              <>
+                {setRow}
+                {summary}
+              </>
+            );
+            if (onLogWarmup && !row.logged) {
+              return (
+                <Pressable
+                  key={`warmup-${row.rampIndex}`}
+                  testID={`warmup-row-${row.rampIndex}-pressable`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Warmup ${oneBased} of 3, ${row.displayWeight} ${displayUnit(renderUnit) === 'lb' ? 'pounds' : 'kilograms'}, ${row.prescribedReps} reps, ${Math.round(row.pct * 100)} percent`}
+                  onPress={() => {
+                    onLogWarmup({
+                      rampIndex: row.rampIndex,
+                      negativeIndex: row.negativeIndex,
+                      pct: row.pct,
+                      prescribedWeight: row.prescribedWeight,
+                      prescribedReps: row.prescribedReps,
+                    });
+                  }}
+                >
+                  {inner}
+                </Pressable>
+              );
+            }
+            return <View key={`warmup-${row.rampIndex}`}>{inner}</View>;
+          })}
+        </View>
+      </View>
 
       {/* Top set hero — full PlateBar inside TopSetBlock. */}
       <View style={heroStyle}>

@@ -1,9 +1,15 @@
+import { useDb } from '@/data/DbProvider';
+import { appendSetLog } from '@/data/accessors/setLog';
+import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useLatestTm } from '@/data/queries/useLatestTm';
+import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
+import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
  *
@@ -19,10 +25,11 @@ import type { Lift } from '@/domain/types';
  */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useCallback, useMemo } from 'react';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
-import { TodayBody } from './components/TodayBody';
+import { TodayBody, type WarmupRampRow } from './components/TodayBody';
 import { useTodayScreenState } from './hooks/useTodayScreenState';
 
 export function TodayScreen({ lift }: { lift: Lift }) {
@@ -31,6 +38,44 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const tm = useLatestTm(lift);
   const { starting, start } = useTodayScreenState(lift);
   const { colors } = useTheme();
+  const db = useDb();
+  const queryClient = useQueryClient();
+  const activeSession = useActiveSession();
+  // The warmup-stretch path (W1.2) requires an existing in-progress session
+  // for this lift so the row writes can be addressed. If the user landed on
+  // Today directly (no createSession yet) we render the rows as static
+  // reference text.
+  const activeForLift =
+    activeSession.data && (activeSession.data.lift as Lift) === lift ? activeSession.data : null;
+  const setLogs = useSetLogsForSession(activeForLift?.id ?? null);
+  const loggedWarmupIndices = useMemo<number[]>(
+    () => (setLogs.data ?? []).filter((l) => l.kind === 'warmup').map((l) => l.index),
+    [setLogs.data],
+  );
+
+  const handleLogWarmup = useCallback(
+    async (row: WarmupRampRow) => {
+      if (!activeForLift) return;
+      Haptics.selectionAsync();
+      try {
+        await appendSetLog(db, {
+          sessionId: activeForLift.id,
+          index: row.negativeIndex,
+          kind: 'warmup',
+          prescribedWeight: row.prescribedWeight,
+          prescribedReps: row.prescribedReps,
+          actualReps: row.prescribedReps,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['setLogsForSession', activeForLift.id],
+        });
+      } catch (err) {
+        console.error('TodayScreen.handleLogWarmup failed', err);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    },
+    [activeForLift, db, queryClient],
+  );
 
   // Loading — blank paper canvas, no flicker.
   if (settings.isLoading || tm.isLoading) {
@@ -72,6 +117,8 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           displayUnit={displayUnit}
           tm={tm.data.value}
           plateSet={settings.data.plateSet}
+          {...(activeForLift ? { onLogWarmup: handleLogWarmup } : null)}
+          loggedWarmupIndices={loggedWarmupIndices}
         />
         {/* Reserve room above the sticky CtaBar so the colophon isn't clipped. */}
         <View style={{ height: 120 }} />

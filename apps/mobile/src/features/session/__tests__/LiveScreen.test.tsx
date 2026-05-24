@@ -494,4 +494,53 @@ describe('LiveScreen', () => {
     });
     expect(mockReplace).not.toHaveBeenCalled();
   });
+
+  it('renders the W1.3 split CTA on a non-AMRAP set: primary "Got all N" + secondary "Log actual"', () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    // Week 1, set 0 is non-AMRAP. The split CTA is in place of the single
+    // "Set complete" button. The primary keeps the `cta-log-working` testID
+    // for back-compat; the secondary uses a new `cta-log-working-actual`.
+    expect(screen.getByTestId('cta-log-working')).toBeTruthy();
+    expect(screen.getByTestId('cta-log-working-actual')).toBeTruthy();
+    expect(screen.getByText('Got all 5')).toBeTruthy();
+    expect(screen.getByText('Log actual')).toBeTruthy();
+  });
+
+  it('opens the WorkingSetLogSheet when "Log actual" is tapped', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working-actual'));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('working-set-log-reps-stepper')).toBeTruthy();
+    });
+  });
+
+  it('saves an actual-rep working-set value via the sheet (writes kind: working, actualReps from stepper)', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working-actual'));
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('working-set-log-reps-stepper')).toBeTruthy();
+    });
+    // Decrement reps once: prescribed 5 → actual 4.
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('working-set-log-reps-stepper-minus'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('working-set-log-save'));
+    });
+    await waitFor(() => {
+      expect(mockAppendSetLog).toHaveBeenCalledTimes(1);
+    });
+    const arg = mockAppendSetLog.mock.calls[0]?.[1] as {
+      kind: string;
+      actualReps: number;
+      sessionId: number;
+    };
+    expect(arg.kind).toBe('working');
+    expect(arg.actualReps).toBe(4);
+    expect(arg.sessionId).toBe(7);
+  });
 });

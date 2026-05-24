@@ -258,6 +258,76 @@ describe('HomeScreen', () => {
     expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(false);
   });
 
+  describe('Resume banner', () => {
+    it('does not render the banner when there is no active session', () => {
+      mockActiveSessionState.data = undefined;
+      const screen = renderScreen(<HomeScreen />);
+      expect(screen.queryByTestId('home-resume-banner')).toBeNull();
+    });
+
+    it('renders the banner with the active lift name when a session is in progress', () => {
+      mockActiveSessionState.data = {
+        id: 42,
+        lift: 'bench',
+        cycle: 2,
+        week: 1,
+        startedAt: Date.now() - 14 * 60_000,
+        status: 'in_progress',
+        trainingMaxSnapshot: 245,
+        storageUnitSnapshot: 'lbs',
+        displayUnitSnapshot: 'lbs',
+      };
+      const screen = renderScreen(<HomeScreen />);
+      const banner = screen.getByTestId('home-resume-banner');
+      // Banner shows the lift label in its own subtree (LiftPage also shows
+      // "Bench" — scope to the banner).
+      expect(within(banner).getByText('Bench')).toBeTruthy();
+      expect(within(banner).getByText('· IN PROGRESS')).toBeTruthy();
+    });
+
+    it('routes to /session/live with the active sessionId when the banner is tapped', () => {
+      mockActiveSessionState.data = {
+        id: 99,
+        lift: 'deadlift',
+        cycle: 1,
+        week: 1,
+        startedAt: Date.now() - 60_000,
+        status: 'in_progress',
+        trainingMaxSnapshot: 405,
+        storageUnitSnapshot: 'lbs',
+        displayUnitSnapshot: 'lbs',
+      };
+      const screen = renderScreen(<HomeScreen />);
+      fireEvent.press(screen.getByTestId('home-resume-banner'));
+      expect(mockRouterPush).toHaveBeenCalledTimes(1);
+      const [arg] = mockRouterPush.mock.calls[0] as [
+        { pathname: string; params: { sessionId: string } },
+      ];
+      expect(arg.pathname).toBe('/session/live');
+      expect(arg.params.sessionId).toBe('99');
+    });
+
+    it('hides the banner after the dismiss accessibility action fires', () => {
+      mockActiveSessionState.data = {
+        id: 7,
+        lift: 'squat',
+        cycle: 1,
+        week: 1,
+        startedAt: Date.now() - 60_000,
+        status: 'in_progress',
+        trainingMaxSnapshot: 300,
+        storageUnitSnapshot: 'lbs',
+        displayUnitSnapshot: 'lbs',
+      };
+      const screen = renderScreen(<HomeScreen />);
+      const banner = screen.getByTestId('home-resume-banner');
+      fireEvent(banner, 'accessibilityAction', {
+        nativeEvent: { actionName: 'dismiss' },
+      });
+      expect(screen.queryByTestId('home-resume-banner')).toBeNull();
+    });
+  });
+
   it('cross-lift Begin redirects to the in-progress lift and skips createSession', async () => {
     // Bench is mid-session. Squat tab is active by default.
     mockActiveSessionState.data = {

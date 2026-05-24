@@ -26,6 +26,15 @@ export type SetRowProps = {
   pct: number;
   done?: boolean;
   next?: boolean;
+  /**
+   * Optional left-most label override. When provided, replaces the default
+   * zero-padded index glyph (`01` / `02` / `03`) with this string —
+   * typically `"W1"` / `"W2"` / `"W3"` for warmup-ramp rows.
+   *
+   * Used by Today's warmup ramp block (W1.2) so the same primitive can
+   * render both the canonical working sets and the warmup ramp.
+   */
+  prefix?: string;
   testID?: string;
 };
 
@@ -39,6 +48,7 @@ export function SetRow({
   pct,
   done = false,
   next = false,
+  prefix,
   testID,
 }: SetRowProps) {
   const { colors, type } = useTheme();
@@ -111,7 +121,7 @@ export function SetRow({
 
   return (
     <View testID={testID} style={containerStyle}>
-      <RNText style={indexStyle}>{done ? '✓' : String(index).padStart(2, '0')}</RNText>
+      <RNText style={indexStyle}>{done ? '✓' : (prefix ?? String(index).padStart(2, '0'))}</RNText>
       <View style={middleStyle}>
         <RNText style={weightStyle}>{weight}</RNText>
         <RNText style={capsStyle}>{displayUnit(unit)}</RNText>

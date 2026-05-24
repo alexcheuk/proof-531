@@ -9,11 +9,14 @@
  * jest-expo.
  */
 import { ThemeProvider } from '@/design/theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
 const mockCreateSession = jest.fn();
+const mockAppendSetLog = jest.fn();
+const mockInvalidateQueries = jest.fn(async () => undefined);
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
@@ -22,7 +25,9 @@ jest.mock('expo-router', () => ({
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   selectionAsync: jest.fn(),
+  notificationAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+  NotificationFeedbackType: { Warning: 'warning', Error: 'error', Success: 'success' },
 }));
 
 jest.mock('react-native-safe-area-context', () => ({
@@ -64,15 +69,50 @@ jest.mock('@/data/accessors/session', () => ({
   createSession: (...args: unknown[]) => mockCreateSession(...args),
 }));
 
+jest.mock('@/data/accessors/setLog', () => ({
+  appendSetLog: (...args: unknown[]) => mockAppendSetLog(...args),
+}));
+
+const mockActiveSessionState: { data: unknown; isLoading: boolean; error: unknown } = {
+  data: undefined,
+  isLoading: false,
+  error: null,
+};
+jest.mock('@/data/queries/useActiveSession', () => ({
+  useActiveSession: () => mockActiveSessionState,
+  ACTIVE_SESSION_KEY: ['activeSession'],
+}));
+
+const mockSetLogsState: { data: unknown; isLoading: boolean; error: unknown } = {
+  data: [],
+  isLoading: false,
+  error: null,
+};
+jest.mock('@/data/queries/useSetLogsForSession', () => ({
+  useSetLogsForSession: () => mockSetLogsState,
+}));
+
 // Import after mocks so the module graph picks up the mocked deps.
 import { TodayScreen } from '../TodayScreen';
 
-const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+let queryClient: QueryClient;
+const renderScreen = (ui: ReactElement) =>
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
+  );
 
 describe('TodayScreen', () => {
   beforeEach(() => {
+    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     mockReplace.mockClear();
     mockCreateSession.mockReset();
+    mockAppendSetLog.mockReset();
+    mockAppendSetLog.mockResolvedValue({ id: 1 });
+    mockInvalidateQueries.mockClear();
+    mockActiveSessionState.data = undefined;
+    mockSetLogsState.data = [];
     mockCreateSession.mockResolvedValue({
       id: 42,
       lift: 'squat',
@@ -111,6 +151,86 @@ describe('TodayScreen', () => {
     expect(screen.queryByTestId('set-row-0-plate-bar')).toBeNull();
     expect(screen.queryByTestId('set-row-1-plate-bar')).toBeNull();
     expect(screen.queryByTestId('set-row-2-plate-bar')).toBeNull();
+  });
+
+  describe('Warmup ramp', () => {
+    it('renders three warmup rows with W1/W2/W3 prefixes', () => {
+      const screen = renderScreen(<TodayScreen lift="squat" />);
+      expect(screen.getByTestId('today-warmup-ramp')).toBeTruthy();
+      expect(screen.getByTestId('warmup-row-0')).toBeTruthy();
+      expect(screen.getByTestId('warmup-row-1')).toBeTruthy();
+      expect(screen.getByTestId('warmup-row-2')).toBeTruthy();
+      expect(screen.getByText('WARMUP')).toBeTruthy();
+      expect(screen.getByText('40 / 50 / 60')).toBeTruthy();
+    });
+
+    it('does not render the row as a Pressable when no in-progress session exists for this lift', () => {
+      mockActiveSessionState.data = undefined;
+      const screen = renderScreen(<TodayScreen lift="squat" />);
+      expect(screen.queryByTestId('warmup-row-0-pressable')).toBeNull();
+    });
+
+    it('writes a warmup row via appendSetLog when a ramp row is tapped during an active session', async () => {
+      mockActiveSessionState.data = {
+        id: 42,
+        lift: 'squat',
+        cycle: 1,
+        week: 1,
+        startedAt: 0,
+        status: 'in_progress',
+        trainingMaxSnapshot: 300,
+        storageUnitSnapshot: 'lbs',
+        displayUnitSnapshot: 'lbs',
+      };
+      const screen = renderScreen(<TodayScreen lift="squat" />);
+      await act(async () => {
+        fireEvent.press(screen.getByTestId('warmup-row-0-pressable'));
+      });
+      await waitFor(() => {
+        expect(mockAppendSetLog).toHaveBeenCalledTimes(1);
+      });
+      const arg = mockAppendSetLog.mock.calls[0]?.[1] as {
+        sessionId: number;
+        index: number;
+        kind: string;
+        prescribedReps: number;
+      };
+      expect(arg.sessionId).toBe(42);
+      expect(arg.kind).toBe('warmup');
+      expect(arg.index).toBe(-1); // -1 - 0
+      expect(arg.prescribedReps).toBe(5); // WARMUPS[0].reps
+    });
+
+    it('renders no Pressable for an already-logged warmup row (checked state)', () => {
+      mockActiveSessionState.data = {
+        id: 42,
+        lift: 'squat',
+        cycle: 1,
+        week: 1,
+        startedAt: 0,
+        status: 'in_progress',
+        trainingMaxSnapshot: 300,
+        storageUnitSnapshot: 'lbs',
+        displayUnitSnapshot: 'lbs',
+      };
+      mockSetLogsState.data = [
+        {
+          id: 1,
+          sessionId: 42,
+          index: -1,
+          kind: 'warmup',
+          prescribedWeight: 120,
+          prescribedReps: 5,
+          actualReps: 5,
+          completedAt: 0,
+          isPR: null,
+          estimated1RM: null,
+        },
+      ];
+      const screen = renderScreen(<TodayScreen lift="squat" />);
+      expect(screen.queryByTestId('warmup-row-0-pressable')).toBeNull();
+      expect(screen.getByTestId('warmup-row-1-pressable')).toBeTruthy();
+    });
   });
 
   it('creates a session and routes to /session/live on Start', async () => {

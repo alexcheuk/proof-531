@@ -14,5 +14,6 @@ export { LedgerRow, LedgerRowLabel, LedgerRowValue } from './LedgerRow';
 export { LedgerSection } from './LedgerSection';
 export { Masthead } from './Masthead';
 export { PlateBar, type PlateBarProps } from './PlateBar';
+export { ResumeBanner, type ResumeBannerProps } from './ResumeBanner';
 export { Sheet } from './Sheet';
 export { TopSetBlock, type TopSetBlockProps } from './TopSetBlock';

@@ -5,6 +5,7 @@ import { useSession } from '@/data/queries/useSession';
 import { estimateOneRm } from '@/domain/epley';
 import { type WorkingSetIndex, getWorkingSetByIndex, isAmrapSet } from '@/domain/schemes';
 import { round as snapWeight } from '@/domain/units';
+import { useQueryClient } from '@tanstack/react-query';
 /**
  * Live screen state machine + rest-timer driver.
  *
@@ -31,7 +32,14 @@ import { round as snapWeight } from '@/domain/units';
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
+export type LivePhase =
+  | 'prep'
+  | 'set'
+  | 'amrap-log'
+  | 'working-set-log'
+  | 'rest'
+  | 'complete'
+  | 'cancel-confirm';
 
 /** Default rest duration in seconds. */
 export const REST_SECONDS = 90;
@@ -83,6 +91,12 @@ export type UseLiveScreenStateResult = {
   onOpenAmrapSheet: () => void;
   onSaveAmrap: (reps: number) => Promise<void>;
   onCancelAmrapSheet: () => void;
+  /** W1.3 split-CTA branch — open the actual-rep entry sheet. */
+  onOpenWorkingSetLogSheet: () => void;
+  /** W1.3 split-CTA branch — save the actual-rep value (writes kind: 'working'). */
+  onLogWorkingSetWithActual: (reps: number) => Promise<void>;
+  /** W1.3 split-CTA branch — dismiss the sheet without writing. */
+  onCancelWorkingSetLogSheet: () => void;
   onAdvanceFromRest: () => void;
   onRequestCancel: () => void;
   onConfirmCancelFirstTap: () => void;
@@ -112,6 +126,7 @@ export function useLiveScreenState(
   options: UseLiveScreenStateOptions = {},
 ): UseLiveScreenStateResult {
   const db = useDb();
+  const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
 
@@ -173,6 +188,17 @@ export function useLiveScreenState(
     }
   }, [phase, restRemaining, fireWarningHaptic]);
 
+  // Shared invalidation helper for setLog-writing handlers. The cancel split
+  // (Wave 3) depends on a fresh count of working/AMRAP rows at the moment of
+  // X-tap, so we cannot wait for the complete-effect invalidation in
+  // LiveScreen — every write path bumps this key inline.
+  const invalidateSetLogs = useCallback(() => {
+    if (!session?.id) return Promise.resolve();
+    return queryClient.invalidateQueries({
+      queryKey: ['setLogsForSession', session.id],
+    });
+  }, [queryClient, session?.id]);
+
   const onLogWorkingSet = useCallback(async () => {
     if (!session?.id) return;
     try {
@@ -184,6 +210,7 @@ export function useLiveScreenState(
         prescribedReps,
         actualReps: prescribedReps,
       });
+      void invalidateSetLogs();
       // Snapshot the just-logged set for RestPhase. Non-AMRAP working sets
       // don't carry an estimated 1RM (matches the PWA's `isAmrap` gate on
       // the RestPhase est-1RM column).
@@ -204,7 +231,7 @@ export function useLiveScreenState(
     } catch (err) {
       console.error('useLiveScreenState.onLogWorkingSet failed', err);
     }
-  }, [db, prescribedReps, prescribedWeight, session?.id, setIndex]);
+  }, [db, invalidateSetLogs, prescribedReps, prescribedWeight, session?.id, setIndex]);
 
   const onOpenAmrapSheet = useCallback(() => {
     setPhase('amrap-log');
@@ -226,6 +253,7 @@ export function useLiveScreenState(
           prescribedReps,
           actualReps: reps,
         });
+        void invalidateSetLogs();
         // Snapshot the just-logged AMRAP for RestPhase (even though AMRAP
         // is terminal, the snapshot keeps the contract consistent and lets
         // future flows reuse it without branching).
@@ -242,7 +270,52 @@ export function useLiveScreenState(
         console.error('useLiveScreenState.onSaveAmrap failed', err);
       }
     },
-    [db, prescribedReps, prescribedWeight, session?.id, setIndex],
+    [db, invalidateSetLogs, prescribedReps, prescribedWeight, session?.id, setIndex],
+  );
+
+  // W1.3 split-CTA: open the working-set actual-rep sheet.
+  const onOpenWorkingSetLogSheet = useCallback(() => {
+    setPhase('working-set-log');
+  }, []);
+
+  // W1.3 split-CTA: dismiss the sheet back to the underlying `set` surface.
+  const onCancelWorkingSetLogSheet = useCallback(() => {
+    setPhase('set');
+  }, []);
+
+  // W1.3 split-CTA: save the actual-rep value. Mirrors `onLogWorkingSet`
+  // except `actualReps` comes from the sheet instead of being assumed equal
+  // to `prescribedReps`. Same terminal-set behavior on non-AMRAP weeks.
+  const onLogWorkingSetWithActual = useCallback(
+    async (reps: number) => {
+      if (!session?.id) return;
+      try {
+        await appendSetLog(db, {
+          sessionId: session.id,
+          index: setIndex,
+          kind: 'working',
+          prescribedWeight,
+          prescribedReps,
+          actualReps: reps,
+        });
+        void invalidateSetLogs();
+        setLastLogged({
+          weight: prescribedWeight,
+          reps,
+          estimated1RM: undefined,
+          isAmrap: false,
+        });
+        if (setIndex === 2) {
+          await completeSession(db, session.id);
+          setPhase('complete');
+          return;
+        }
+        setPhase('rest');
+      } catch (err) {
+        console.error('useLiveScreenState.onLogWorkingSetWithActual failed', err);
+      }
+    },
+    [db, invalidateSetLogs, prescribedReps, prescribedWeight, session?.id, setIndex],
   );
 
   const onAdvanceFromRest = useCallback(() => {
@@ -297,6 +370,9 @@ export function useLiveScreenState(
     onOpenAmrapSheet,
     onSaveAmrap,
     onCancelAmrapSheet,
+    onOpenWorkingSetLogSheet,
+    onLogWorkingSetWithActual,
+    onCancelWorkingSetLogSheet,
     onAdvanceFromRest,
     onRequestCancel,
     onConfirmCancelFirstTap,
