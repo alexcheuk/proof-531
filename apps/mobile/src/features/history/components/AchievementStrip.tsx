@@ -2,7 +2,9 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
 import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
+import { liftDisplayName } from '@/domain/labels';
 import { View } from 'react-native';
+import type { BestLift } from '../bestLift';
 import { ActivitySparkline } from './ActivitySparkline';
 
 export type AchievementStripProps = {
@@ -12,6 +14,8 @@ export type AchievementStripProps = {
   prs: number;
   /** Oldest-first activity bitmap, one boolean per day in the lookback window. */
   activity: ReadonlyArray<boolean>;
+  /** Heaviest PR; when present, surfaces as "★ Best · Bench 215 lb" chip. */
+  bestLift?: BestLift | null;
 };
 
 /**
@@ -20,7 +24,7 @@ export type AchievementStripProps = {
  * Renders nothing when the user has no completed sessions yet — the empty
  * state below the strip already speaks to that case.
  */
-export function AchievementStrip({ filed, prs, activity }: AchievementStripProps) {
+export function AchievementStrip({ filed, prs, activity, bestLift }: AchievementStripProps) {
   if (filed === 0) return null;
   return (
     <Card
@@ -37,6 +41,11 @@ export function AchievementStrip({ filed, prs, activity }: AchievementStripProps
           testID="history-achievements-prs"
         />
       </Row>
+      {bestLift ? (
+        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-best-lift">
+          {`★ Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
+        </CapsLabel>
+      ) : null}
       <ActivitySparkline activity={activity} />
     </Card>
   );

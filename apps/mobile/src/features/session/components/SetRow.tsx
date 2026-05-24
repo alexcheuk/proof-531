@@ -1,3 +1,5 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Heading } from '@/design/primitives/Heading';
 import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
@@ -60,24 +62,6 @@ export function SetRow({
     color: next ? colors.ink0 : colors.ink3,
   };
 
-  const weightStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 26,
-    lineHeight: 26,
-    letterSpacing: -0.78,
-    color: colors.ink0,
-    ...(done ? { textDecorationLine: 'line-through' as const } : null),
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
-  const capsStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.62,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-  };
-
   const repsStyle: TextStyle = {
     fontFamily: `${type.sans}-Medium`,
     fontSize: 18,
@@ -98,8 +82,17 @@ export function SetRow({
       <RNText style={indexStyle}>{done ? '✓' : String(index).padStart(2, '0')}</RNText>
       <Row style={{ flex: 1 }} gap="sm" wrap>
         <Row align="baseline" gap="xs">
-          <RNText style={weightStyle}>{weight}</RNText>
-          <RNText style={capsStyle}>{displayUnit(unit)}</RNText>
+          <Heading
+            size="m"
+            lineHeight={26}
+            numeric
+            style={done ? { textDecorationLine: 'line-through' } : undefined}
+          >
+            {weight}
+          </Heading>
+          <CapsLabel size="xs" style={{ letterSpacing: 1.62 }}>
+            {displayUnit(unit)}
+          </CapsLabel>
         </Row>
 
         <RNText style={repsStyle}>

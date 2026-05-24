@@ -10,6 +10,7 @@
  * records completed work.
  */
 import type { Session } from '@/data/accessors/session';
+import { usePrs } from '@/data/queries/usePrs';
 import { useSessionPrIds } from '@/data/queries/useSessionPrIds';
 import { useSessions } from '@/data/queries/useSessions';
 import { useSettings } from '@/data/queries/useSettings';
@@ -24,6 +25,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
 import { recentActivity } from './activity';
+import { pickBestLift } from './bestLift';
 import { AchievementStrip } from './components/AchievementStrip';
 import { CycleSection } from './components/CycleSection';
 import { FilterChips } from './components/FilterChips';
@@ -57,6 +59,7 @@ export function HistoryScreen() {
   const { colors } = useTheme();
   const sessions = useSessions();
   const prIdsQuery = useSessionPrIds();
+  const prsQuery = usePrs();
   const settingsQuery = useSettings();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<HistoryFilter>({ kind: 'all' });
@@ -83,6 +86,11 @@ export function HistoryScreen() {
   // user explores filters.
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
   const activity = useMemo(() => recentActivity(rows), [rows]);
+  const bestLift = useMemo(() => {
+    const storageUnit = settingsQuery.data?.storageUnit ?? 'lbs';
+    const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
+    return pickBestLift(prsQuery.data ?? [], storageUnit, displayUnit);
+  }, [prsQuery.data, settingsQuery.data]);
   const filteredRows = useMemo(
     () => applyHistoryFilter(rows, filter, prIds),
     [rows, filter, prIds],
@@ -123,7 +131,12 @@ export function HistoryScreen() {
         }
       >
         <TitleBlock eyebrow="The record" title="History." />
-        <AchievementStrip filed={stats.filed} prs={stats.prs} activity={activity} />
+        <AchievementStrip
+          filed={stats.filed}
+          prs={stats.prs}
+          activity={activity}
+          bestLift={bestLift}
+        />
         {rows.length > 0 ? (
           <FilterChips
             enabledLifts={enabledLifts}

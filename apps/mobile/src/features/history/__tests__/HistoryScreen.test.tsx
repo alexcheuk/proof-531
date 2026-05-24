@@ -45,6 +45,12 @@ jest.mock('@/data/queries/useSessionPrIds', () => ({
   }),
 }));
 
+// HistoryScreen now reads usePrs to derive the "best lift" badge — stub
+// with an empty list so the badge stays hidden in existing assertions.
+jest.mock('@/data/queries/usePrs', () => ({
+  usePrs: () => ({ data: [], isLoading: false, isError: false, error: null }),
+}));
+
 jest.mock('@/data/queries/useSettings', () => ({
   useSettings: () => ({
     data: {

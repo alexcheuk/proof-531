@@ -1,4 +1,5 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Divider } from '@/design/primitives/Divider';
 import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
@@ -95,7 +96,7 @@ export function RestPhase({
         </RNText>
       </View>
 
-      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+      <Divider />
 
       <RestTimer
         remaining={remaining}
@@ -106,7 +107,7 @@ export function RestPhase({
         testID="rest-timer"
       />
 
-      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+      <Divider />
 
       {nextSet ? (
         <>
@@ -128,7 +129,7 @@ export function RestPhase({
               testID="rest-phase-next-set-block"
             />
           </View>
-          <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+          <Divider />
         </>
       ) : null}
     </View>

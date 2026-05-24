@@ -1,4 +1,5 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { useTheme } from '@/design/theme';
@@ -46,14 +47,6 @@ export function BbbBand({
     letterSpacing: -0.16,
     color: colors.ink1,
   };
-  const weightStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 26,
-    lineHeight: 26,
-    letterSpacing: -0.78,
-    color: colors.ink0,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
 
   return (
     <View style={{ paddingHorizontal: 24, paddingTop: 24 }}>
@@ -69,7 +62,9 @@ export function BbbBand({
         <Row justify="space-between">
           <RNText style={countStyle}>5 sets of 10</RNText>
           <Row align="flex-end" gap="xs">
-            <RNText style={weightStyle}>{bbbWeight}</RNText>
+            <Heading size="m" lineHeight={26} numeric>
+              {bbbWeight}
+            </Heading>
             <CapsLabel>{`${unitGlyph} · 50%`}</CapsLabel>
           </Row>
         </Row>

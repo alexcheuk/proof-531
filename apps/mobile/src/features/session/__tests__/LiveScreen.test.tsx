@@ -95,6 +95,22 @@ jest.mock('@/data/DbProvider', () => ({
   useDb: () => ({ __stub: 'db' }),
 }));
 
+// RestTimer's overtime pulse imports Reanimated; jest can't initialize the
+// Worklets bridge, so stub the surface we use.
+jest.mock('react-native-reanimated', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: { View: RN.View },
+    useSharedValue: (v: unknown) => ({ value: v }),
+    useAnimatedStyle: () => ({}),
+    withRepeat: (v: unknown) => v,
+    withTiming: (v: unknown) => v,
+    cancelAnimation: () => {},
+    Easing: { inOut: () => () => 0, ease: () => 0 },
+  };
+});
+
 type MockSessionState = {
   data: unknown;
   isLoading: boolean;

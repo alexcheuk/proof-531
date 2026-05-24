@@ -19,7 +19,16 @@ import { useTheme } from '@/design/theme';
  * mobile users want fingertip control between sets, so we add them here.
  */
 import * as Haptics from 'expo-haptics';
+import { useEffect } from 'react';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 export type RestTimerProps = {
   /** Seconds remaining in the countdown driver. */
@@ -64,6 +73,25 @@ export function RestTimer({
   const showOverByHint = overBySeconds >= PACE_HINT_THRESHOLD_SECONDS;
   const label = showOverByHint ? `+${formatLabel(overBySeconds)}` : formatLabel(elapsed);
   const showControls = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;
+
+  // Overtime pulse — gentle opacity sway between 1 and 0.7 over ~1.4s while
+  // the user is past target. Reset to 1 the moment they're back inside the
+  // target window so the headline doesn't flash on phase change.
+  const pulse = useSharedValue(1);
+  useEffect(() => {
+    if (!overtime) {
+      cancelAnimation(pulse);
+      pulse.value = 1;
+      return;
+    }
+    pulse.value = 1;
+    pulse.value = withRepeat(
+      withTiming(0.7, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true,
+    );
+  }, [overtime, pulse]);
+  const pulseStyle = useAnimatedStyle(() => ({ opacity: pulse.value }));
 
   const container: ViewStyle = {
     paddingVertical: spacing.lg,
@@ -118,20 +146,22 @@ export function RestTimer({
         </CapsLabel>
       </Row>
 
-      <Text
-        variant="sans"
-        weight="medium"
-        size={96}
-        color={overtime ? 'amber' : 'ink0'}
-        style={{
-          letterSpacing: -3.84,
-          lineHeight: 96,
-          fontVariant: ['tabular-nums', 'lining-nums'],
-        }}
-        testID="rest-timer-value"
-      >
-        {label}
-      </Text>
+      <Animated.View style={pulseStyle}>
+        <Text
+          variant="sans"
+          weight="medium"
+          size={96}
+          color={overtime ? 'amber' : 'ink0'}
+          style={{
+            letterSpacing: -3.84,
+            lineHeight: 96,
+            fontVariant: ['tabular-nums', 'lining-nums'],
+          }}
+          testID="rest-timer-value"
+        >
+          {label}
+        </Text>
+      </Animated.View>
 
       {showControls ? (
         <Row gap="sm" style={{ marginTop: spacing.lg }} testID="rest-timer-controls">

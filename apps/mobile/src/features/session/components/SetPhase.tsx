@@ -1,3 +1,4 @@
+import { Divider } from '@/design/primitives/Divider';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
@@ -36,7 +37,7 @@ export function SetPhase({
   unit,
   perSide,
 }: SetPhaseProps) {
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
 
   return (
     <>
@@ -48,7 +49,7 @@ export function SetPhase({
         elapsedSeconds={elapsedSeconds}
       />
 
-      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+      <Divider />
 
       <View style={{ paddingHorizontal: 24, paddingVertical: spacing.lg }}>
         <TopSetBlock
@@ -64,7 +65,7 @@ export function SetPhase({
         />
       </View>
 
-      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+      <Divider />
     </>
   );
 }

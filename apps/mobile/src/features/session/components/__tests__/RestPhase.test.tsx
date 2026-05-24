@@ -7,6 +7,22 @@
  * TopSetBlock the parent passes via `nextSet`, and the count-up
  * RestTimer.
  */
+// RestTimer uses Reanimated to pulse the count-up clock when in overtime;
+// stub the native bridge so jest doesn't crash on import.
+jest.mock('react-native-reanimated', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: { View: RN.View },
+    useSharedValue: (v: unknown) => ({ value: v }),
+    useAnimatedStyle: () => ({}),
+    withRepeat: (v: unknown) => v,
+    withTiming: (v: unknown) => v,
+    cancelAnimation: () => {},
+    Easing: { inOut: () => () => 0, ease: () => 0 },
+  };
+});
+
 import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
