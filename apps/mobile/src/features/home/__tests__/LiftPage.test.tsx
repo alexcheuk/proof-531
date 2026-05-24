@@ -74,11 +74,17 @@ describe('LiftPage', () => {
     expect(within(cta).getByText('→')).toBeTruthy();
   });
 
-  it('renders the Resume session CTA + ↩ glyph when in progress', () => {
+  it('renders the Resume session CTA + ↩ glyph when in progress with no logged sets', () => {
     const screen = wrap(<LiftPage {...baseProps} isInProgress={true} />);
     const cta = screen.getByTestId('lift-page-squat-cta');
     expect(within(cta).getByText('Resume session')).toBeTruthy();
     expect(within(cta).getByText('↩')).toBeTruthy();
+  });
+
+  it('upgrades the Resume CTA copy to "Resume · set N of 3" once partial progress exists', () => {
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={true} completedCount={1} />);
+    const cta = screen.getByTestId('lift-page-squat-cta');
+    expect(within(cta).getByText('Resume · set 2 of 3')).toBeTruthy();
   });
 
   it('fires onBegin when primary CTA is pressed (not in progress)', () => {

@@ -136,7 +136,7 @@ export function TodayBody({
       <CapsLabel
         size="xs"
         color="ink3"
-        style={{ textAlign: 'center', marginTop: 40, letterSpacing: 2.88 }}
+        style={{ textAlign: 'center', marginTop: spacing.xxxl, letterSpacing: 2.88 }}
       >
         — END OF SESSION —
       </CapsLabel>

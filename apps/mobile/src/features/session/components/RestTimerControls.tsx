@@ -21,13 +21,13 @@ export type RestTimerControlsProps = {
  * when its handler is undefined.
  */
 export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerControlsProps) {
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, type } = useTheme();
   const showAny = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;
   if (!showAny) return null;
 
   const chipBase: ViewStyle = {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -36,7 +36,7 @@ export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerCon
   };
   const chipPrimary: ViewStyle = { ...chipBase, backgroundColor: colors.ink0 };
   const chipLabel: TextStyle = {
-    fontFamily: 'IBMPlexMono-SemiBold',
+    fontFamily: `${type.mono}-SemiBold`,
     fontSize: 11,
     letterSpacing: 1.8,
     textTransform: 'uppercase',

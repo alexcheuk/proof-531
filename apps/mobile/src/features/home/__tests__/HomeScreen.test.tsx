@@ -184,6 +184,14 @@ jest.mock('@/data/queries/useSessions', () => ({
   SESSIONS_KEY: ['sessions'],
 }));
 
+// HomeScreen now reads useSetLogsForSession(activeSessionId) to drive the
+// "Resume · set N of 3" CTA. Mock returns an empty list so the CTA stays
+// at the generic "Resume session" copy in tests that don't opt in.
+jest.mock('@/data/queries/useSetLogsForSession', () => ({
+  useSetLogsForSession: () => ({ data: [], isLoading: false }),
+  SET_LOGS_FOR_SESSION_KEY: (id: number) => ['setLogsForSession', id],
+}));
+
 // Import after mocks.
 import { HomeScreen } from '../HomeScreen';
 import { __resetHomeScreenStateForTests } from '../hooks/useHomeScreenState';

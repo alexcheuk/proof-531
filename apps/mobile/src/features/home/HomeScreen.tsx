@@ -1,6 +1,8 @@
 import { goTo } from '@/app/routes';
+import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
+import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
 import { dateLabel } from '@/domain/labels';
@@ -93,6 +95,20 @@ export function HomeScreen() {
   const settingsData = settings.data;
   const tmsData = tms.data;
   const prsData = prs.data;
+  // Set count for the in-progress session — drives the "Resume · set N of 3"
+  // CTA copy on the LiftPage for the in-progress lift. Query is gated on
+  // the session id so we don't fire it when there's nothing in flight.
+  const activeSession = useActiveSession();
+  const activeSessionId = activeSession.data?.id ?? null;
+  const activeSetLogs = useSetLogsForSession(activeSessionId);
+  const inProgressCompletedCount = useMemo(() => {
+    if (activeSessionId === null) return 0;
+    const logs = activeSetLogs.data ?? [];
+    const completed = new Set(
+      logs.filter((l) => l.kind === 'working' || l.kind === 'amrap').map((l) => l.index),
+    );
+    return completed.size;
+  }, [activeSessionId, activeSetLogs.data]);
   const prLifts = useMemo<Set<Lift>>(
     () => new Set((prsData ?? []).map((p) => p.lift as Lift)),
     [prsData],
@@ -117,6 +133,9 @@ export function HomeScreen() {
             tm={tmRow?.value ?? null}
             bestE1RM={pr?.bestE1RM ?? null}
             isInProgress={lift === inProgressLift}
+            // Surface partial progress on the in-progress lift's CTA so
+            // the user knows exactly which set they're resuming.
+            completedCount={lift === inProgressLift ? inProgressCompletedCount : 0}
             onBegin={() => handleBegin(lift)}
             onResume={() => handleOpenToday(lift)}
             onOpenPlan={() => handleOpenToday(lift)}
@@ -124,7 +143,16 @@ export function HomeScreen() {
         </View>
       );
     },
-    [settingsData, tmsData, prsData, inProgressLift, screenWidth, handleBegin, handleOpenToday],
+    [
+      settingsData,
+      tmsData,
+      prsData,
+      inProgressLift,
+      inProgressCompletedCount,
+      screenWidth,
+      handleBegin,
+      handleOpenToday,
+    ],
   );
 
   const combined = combineQueries(settings, tms, prs);

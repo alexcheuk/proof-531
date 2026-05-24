@@ -36,6 +36,13 @@ type LiftPageProps = {
   tm: number | null;
   bestE1RM: number | null;
   isInProgress: boolean;
+  /**
+   * Number of working/AMRAP sets logged for this lift's active session.
+   * Only consulted when `isInProgress` is true — drives the
+   * "Resume · set N of 3" CTA copy so users see exactly where they are
+   * before tapping in. Defaults to 0.
+   */
+  completedCount?: number;
   onBegin: () => void;
   onResume: () => void;
   onOpenPlan: () => void;
@@ -51,6 +58,7 @@ export function LiftPage({
   tm,
   bestE1RM,
   isInProgress,
+  completedCount = 0,
   onBegin,
   onResume,
   onOpenPlan,
@@ -135,7 +143,11 @@ export function LiftPage({
         glyph={isInProgress ? '↩' : '→'}
         testID={`lift-page-${lift}-cta`}
       >
-        {isInProgress ? 'Resume session' : 'Begin session'}
+        {isInProgress
+          ? completedCount > 0
+            ? `Resume · set ${completedCount + 1} of 3`
+            : 'Resume session'
+          : 'Begin session'}
       </PrimaryPillButton>
 
       <Pressable

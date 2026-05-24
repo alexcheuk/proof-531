@@ -1,10 +1,9 @@
 import { useDb } from '@/data/DbProvider';
 import { updateSettings } from '@/data/accessors/settings';
 import { SETTINGS_KEY } from '@/data/queries/useSettings';
-import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { LabeledSegRail } from '@/design/primitives/LabeledSegRail';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { SegRail } from '@/design/primitives/SegRail';
-import { useTheme } from '@/design/theme';
 import { useQueryClient } from '@tanstack/react-query';
 
 type RestPreset = '60' | '90' | '120' | '180' | '240';
@@ -31,7 +30,6 @@ export type RestTargetSectionProps = {
 export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps) {
   const db = useDb();
   const queryClient = useQueryClient();
-  const { spacing } = useTheme();
   const current = String(restTargetSeconds) as RestPreset;
 
   async function commitRestTarget(next: RestPreset) {
@@ -41,20 +39,17 @@ export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps)
 
   return (
     <LedgerSection title="Rest target" hint="countdown between working sets">
-      <SegRail<RestPreset>
-        testID="settings-rest-target"
-        value={current}
-        options={REST_PRESETS}
-        onChange={(next) => void commitRestTarget(next)}
-      />
-      <CapsLabel
-        size="xs"
-        color="ink3"
-        style={{ marginTop: spacing.sm }}
-        testID="settings-rest-target-preview"
+      <LabeledSegRail
+        label="Default rest"
+        hint={`Currently ${formatRestClock(restTargetSeconds)} per set`}
       >
-        {`Currently ${formatRestClock(restTargetSeconds)} per set`}
-      </CapsLabel>
+        <SegRail<RestPreset>
+          testID="settings-rest-target"
+          value={current}
+          options={REST_PRESETS}
+          onChange={(next) => void commitRestTarget(next)}
+        />
+      </LabeledSegRail>
     </LedgerSection>
   );
 }

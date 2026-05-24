@@ -4,7 +4,7 @@ import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { useTheme } from '@/design/theme';
 import type { Settings } from '@/domain/types';
 import { View } from 'react-native';
-import { CycleGridFrame } from '../../session/components/CycleGrid';
+import { CycleGridFrame } from '../../session/components/CycleGridFrame';
 import { deriveCycleProgress } from '../cycleProgress';
 
 export type CycleProgressSectionProps = {
