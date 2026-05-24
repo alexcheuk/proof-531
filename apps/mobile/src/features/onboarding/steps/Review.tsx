@@ -145,6 +145,19 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
         <CapsLabel size="xs" color="ink3" style={{ marginTop: 8, textAlign: 'right' }}>
           {`all values in ${displayUnit(unit)}`}
         </CapsLabel>
+        <Text
+          variant="sans"
+          weight="regular"
+          size={13}
+          color="ink2"
+          style={{ marginTop: 14, lineHeight: 19, maxWidth: 320 }}
+        >
+          Your training max is{' '}
+          <Text variant="sans" weight="bold" size={13} color="ink0">
+            90% of your 1RM
+          </Text>
+          {` — the working number you build from. Wendler's rule of thumb: train below your max so every cycle adds weight cleanly.`}
+        </Text>
       </View>
     </OnboardingShell>
   );

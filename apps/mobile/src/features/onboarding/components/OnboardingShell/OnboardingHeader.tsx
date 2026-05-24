@@ -2,7 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { Pressable, type ViewStyle } from 'react-native';
 
 export interface OnboardingHeaderProps {
   onBack?: (() => void) | undefined;
@@ -53,14 +53,14 @@ export function OnboardingHeader({ onBack, label, step, total }: OnboardingHeade
           </Text>
         </Pressable>
       ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+        <Row align="baseline">
           <Text variant="mono" weight="bold" size={13} color="ink0" style={{ letterSpacing: 1.82 }}>
             531
           </Text>
           <Text variant="mono" weight="bold" size={13} color="ink3">
             .
           </Text>
-        </View>
+        </Row>
       )}
       {label ? <CapsLabel>{label}</CapsLabel> : null}
       {step != null && total != null ? (

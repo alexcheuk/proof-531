@@ -45,6 +45,12 @@ export type TodayBodyProps = {
    * Defaults to an empty list (preview mode — nothing done yet).
    */
   completedIndices?: ReadonlyArray<0 | 1 | 2>;
+  /**
+   * User's configured rest target between working sets, in seconds. When
+   * provided, shown as a hint chip next to the BBB band so the user can
+   * verify their pace before starting.
+   */
+  restTargetSeconds?: number;
 };
 
 export function TodayBody({
@@ -57,6 +63,7 @@ export function TodayBody({
   plateSet,
   nextSetIndex = 1,
   completedIndices = [],
+  restTargetSeconds,
 }: TodayBodyProps) {
   const { colors, spacing } = useTheme();
   const sets = prescription(week);
@@ -108,7 +115,13 @@ export function TodayBody({
         completedIndices={completedIndices}
       />
 
-      <BbbBand tm={tm} storageUnit={storageUnit} renderUnit={renderUnit} unitGlyph={unitGlyph} />
+      <BbbBand
+        tm={tm}
+        storageUnit={storageUnit}
+        renderUnit={renderUnit}
+        unitGlyph={unitGlyph}
+        {...(restTargetSeconds !== undefined ? { restTargetSeconds } : {})}
+      />
 
       <CapsLabel
         size="xs"

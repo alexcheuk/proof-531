@@ -97,6 +97,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           plateSet={settings.data.plateSet}
           completedIndices={state.completedIndices}
           nextSetIndex={state.nextSetIndex !== null ? ((state.nextSetIndex + 1) as 1 | 2 | 3) : 1}
+          restTargetSeconds={settings.data.restTargetSeconds}
         />
       </ScrollView>
       <CtaBar>

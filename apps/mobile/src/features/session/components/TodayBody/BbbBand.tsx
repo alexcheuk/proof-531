@@ -11,12 +11,31 @@ export type BbbBandProps = {
   storageUnit: Unit;
   renderUnit: Unit;
   unitGlyph: 'lb' | 'kg';
+  /** Optional rest-target hint shown next to the eyebrow ("REST 1:30 BETWEEN SETS"). */
+  restTargetSeconds?: number;
 };
+
+function formatRestHint(seconds: number): string {
+  const safe = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(safe / 60);
+  const s = safe % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
 
 /**
  * "BORING BUT BIG" 5×10 @ 50% TM summary band — read-only, numeric only.
+ *
+ * When `restTargetSeconds` is supplied, the eyebrow row also shows a small
+ * `REST 1:30 BETWEEN SETS` chip on the right so the user sees their
+ * configured pace before starting (and remembers what Settings is set to).
  */
-export function BbbBand({ tm, storageUnit, renderUnit, unitGlyph }: BbbBandProps) {
+export function BbbBand({
+  tm,
+  storageUnit,
+  renderUnit,
+  unitGlyph,
+  restTargetSeconds,
+}: BbbBandProps) {
   const { colors, type } = useTheme();
   const bbbWeightStorage = round(tm * 0.5, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
@@ -38,8 +57,13 @@ export function BbbBand({ tm, storageUnit, renderUnit, unitGlyph }: BbbBandProps
 
   return (
     <View style={{ paddingHorizontal: 24, paddingTop: 24 }}>
-      <Row justify="space-between" style={{ marginBottom: 6 }}>
+      <Row justify="space-between" align="baseline" style={{ marginBottom: 6 }}>
         <CapsLabel>BORING BUT BIG</CapsLabel>
+        {restTargetSeconds !== undefined ? (
+          <CapsLabel size="xs" color="ink3" testID="today-bbb-rest-hint">
+            {`REST ${formatRestHint(restTargetSeconds)} BETWEEN SETS`}
+          </CapsLabel>
+        ) : null}
       </Row>
       <SectionBand padding="tight" testID="today-bbb-band">
         <Row justify="space-between">

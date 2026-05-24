@@ -7,6 +7,7 @@
  * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
  * with a "NO TRAINING MAX SET" strip pointing at onboarding.
  */
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
@@ -72,27 +73,13 @@ export function LiftPage({
   // (only when a session is actively running for this lift).
   const eyebrow = (
     <Row justify="space-between" gap="sm">
-      <Text
-        variant="mono"
-        weight="semibold"
-        size={10}
-        color="ink2"
-        style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
-      >
-        Cycle {cycle} · Day {week}
-      </Text>
+      <CapsLabel weight="semibold">{`Cycle ${cycle} · Day ${week}`}</CapsLabel>
       {isInProgress ? (
         <Row gap="xs" testID={`lift-page-${lift}-in-progress`}>
           <View style={{ width: 6, height: 6, backgroundColor: colors.ink0 }} />
-          <Text
-            variant="mono"
-            weight="bold"
-            size={9}
-            color="ink0"
-            style={{ textTransform: 'uppercase', letterSpacing: 1.98 }}
-          >
+          <CapsLabel size="xs" weight="bold" color="ink0" style={{ letterSpacing: 1.98 }}>
             In progress
-          </Text>
+          </CapsLabel>
         </Row>
       ) : null}
     </Row>
@@ -184,15 +171,9 @@ export function LiftPage({
         accessibilityLabel={`See the full ${liftDisplayName(lift)} session`}
         style={{ paddingVertical: spacing.sm, marginTop: spacing.md, alignItems: 'center' }}
       >
-        <Text
-          variant="mono"
-          weight="semibold"
-          size={10}
-          color="ink2"
-          style={{ textTransform: 'uppercase', letterSpacing: 2.2, textAlign: 'center' }}
-        >
+        <CapsLabel weight="semibold" style={{ textAlign: 'center' }}>
           SEE FULL SESSION →
-        </Text>
+        </CapsLabel>
       </Pressable>
     </Animated.View>
   );

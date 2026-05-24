@@ -21,7 +21,7 @@ import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
 import { recentActivity } from './activity';
 import { AchievementStrip } from './components/AchievementStrip';
@@ -137,8 +137,30 @@ export function HistoryScreen() {
             <CapsLabel style={{ letterSpacing: 1.8 }}>FINISH A SESSION TO SEE IT HERE</CapsLabel>
           </View>
         ) : filteredRows.length === 0 ? (
-          <View style={{ paddingHorizontal: 24, paddingTop: 24 }} testID="history-filter-empty">
+          <View
+            style={{ paddingHorizontal: 24, paddingTop: 24, alignItems: 'flex-start', gap: 12 }}
+            testID="history-filter-empty"
+          >
             <CapsLabel color="ink3">No sessions match this filter.</CapsLabel>
+            <Pressable
+              onPress={() => setFilter({ kind: 'all' })}
+              accessibilityRole="button"
+              accessibilityLabel="Show all sessions"
+              testID="history-filter-empty-show-all"
+              style={({ pressed }) => [
+                {
+                  paddingHorizontal: 14,
+                  paddingVertical: 10,
+                  borderWidth: 1,
+                  borderColor: colors.ink0,
+                },
+                pressed ? { opacity: 0.7 } : null,
+              ]}
+            >
+              <CapsLabel weight="semibold" color="ink0">
+                Show all sessions
+              </CapsLabel>
+            </Pressable>
           </View>
         ) : (
           grouped.map((group) => (
