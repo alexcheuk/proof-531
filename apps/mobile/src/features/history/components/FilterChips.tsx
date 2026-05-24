@@ -28,6 +28,17 @@ const LIFT_LABEL: Record<Lift, string> = {
   press: 'Press',
 };
 
+function filterA11yLabel(filter: HistoryFilter): string {
+  switch (filter.kind) {
+    case 'all':
+      return 'Show all sessions';
+    case 'prs':
+      return 'Show only personal record sessions';
+    case 'lift':
+      return `Filter to ${LIFT_LABEL[filter.lift]} sessions`;
+  }
+}
+
 export function FilterChips({ enabledLifts, active, onChange, hidePrChip }: FilterChipsProps) {
   const { layout } = useTheme();
   const chips: Array<{ filter: HistoryFilter; label: string }> = [
@@ -61,6 +72,7 @@ export function FilterChips({ enabledLifts, active, onChange, hidePrChip }: Filt
             selected={historyFilterKey(active) === historyFilterKey(filter)}
             onPress={() => onChange(filter)}
             testID={`history-filter-${historyFilterKey(filter)}`}
+            accessibilityLabel={filterA11yLabel(filter)}
           />
         ))}
         {isFiltered ? (

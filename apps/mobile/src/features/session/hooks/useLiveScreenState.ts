@@ -246,14 +246,11 @@ export function useLiveScreenState(
 
   const onAdvanceFromRest = useCallback(() => {
     // setIndex was already advanced inside onLogWorkingSet (synchronously
-    // for UI snappiness). Here we just flip the surface back to 'set' so
-    // the user sees the next working set.
-    if (setIndex > 2) {
-      setPhase('complete');
-      return;
-    }
+    // for UI snappiness). The terminal set transitions straight to
+    // 'complete' from there, so by the time the rest phase advances we
+    // are always heading back to a 'set' surface.
     setPhase('set');
-  }, [setIndex]);
+  }, []);
 
   const { disarm: disarmCancel, arm: armCancel } = cancelConfirm;
 

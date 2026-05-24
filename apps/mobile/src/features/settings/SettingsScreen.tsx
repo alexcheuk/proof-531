@@ -36,7 +36,6 @@ export function SettingsScreen() {
   const { colors } = useTheme();
   const screenData = useSettingsScreenData();
   const { settings, tmsByLift, isLoading, isError, error, refetch } = screenData;
-
   const dialogs = useSettingsDialogs(settings?.storageUnit ?? 'lbs');
 
   const containerStyle: ViewStyle = {
@@ -44,20 +43,20 @@ export function SettingsScreen() {
     backgroundColor: colors.bg0,
   };
 
-  if (isLoading || isError) {
+  // Single early-return path: always render the Masthead so the page never
+  // flashes a blank paper canvas. QueryShell handles loading/error; the
+  // missing-settings tail (resolved query, no row) reads as "loading" so
+  // the user sees a stable header instead of an empty page.
+  if (isLoading || isError || !settings) {
+    const query =
+      !settings && !isLoading && !isError
+        ? { isLoading: true, isError: false, error, refetch }
+        : { isLoading, isError, error, refetch };
     return (
       <View style={containerStyle} testID="settings-loading">
         <StatusBar style="dark" />
         <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} />
-        <QueryShell query={{ isLoading, isError, error, refetch }}>{null}</QueryShell>
-      </View>
-    );
-  }
-
-  if (!settings) {
-    return (
-      <View style={containerStyle} testID="settings-loading">
-        <StatusBar style="dark" />
+        <QueryShell query={query}>{null}</QueryShell>
       </View>
     );
   }

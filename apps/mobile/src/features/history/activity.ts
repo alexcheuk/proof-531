@@ -59,6 +59,46 @@ export function currentStreak(activity: ReadonlyArray<boolean>): number {
 }
 
 /**
+ * Total elapsed days from the user's first completed session through `now`.
+ *
+ * Inclusive of the first-session day (a session today reads as "Day 1").
+ * Returns `0` when the user has no completed sessions yet, so callers can
+ * gate rendering on a minimum count.
+ */
+export function daysSinceFirstSession(
+  sessions: ReadonlyArray<Session>,
+  now: number = Date.now(),
+): number {
+  let earliest: number | null = null;
+  for (const s of sessions) {
+    if (s.status !== 'completed') continue;
+    if (earliest === null || s.startedAt < earliest) earliest = s.startedAt;
+  }
+  if (earliest === null) return 0;
+  const start = new Date(earliest);
+  start.setHours(0, 0, 0, 0);
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.round((today.getTime() - start.getTime()) / DAY_MS);
+  return Math.max(1, diff + 1);
+}
+
+/**
+ * Local-date of the user's first completed session, or `null` when none.
+ * Used to render the "Training since <month> <year>" caption in the
+ * achievement strip.
+ */
+export function firstSessionDate(sessions: ReadonlyArray<Session>): Date | null {
+  let earliest: number | null = null;
+  for (const s of sessions) {
+    if (s.status !== 'completed') continue;
+    if (earliest === null || s.startedAt < earliest) earliest = s.startedAt;
+  }
+  if (earliest === null) return null;
+  return new Date(earliest);
+}
+
+/**
  * Longest run of consecutive training days across the user's full history.
  *
  * Scans every `completed` session's local-day bucket and walks the sorted

@@ -1,5 +1,11 @@
 import type { Session } from '@/data/accessors/session';
-import { currentStreak, longestStreakDays, recentActivity } from '../activity';
+import {
+  currentStreak,
+  daysSinceFirstSession,
+  firstSessionDate,
+  longestStreakDays,
+  recentActivity,
+} from '../activity';
 
 function makeSession(startedAt: number, status: Session['status'] = 'completed'): Session {
   return {
@@ -140,5 +146,53 @@ describe('longestStreakDays', () => {
     ];
     // Cancelled day breaks the run; longest is days -1 and 0 → 2.
     expect(longestStreakDays(sessions)).toBe(2);
+  });
+});
+
+describe('daysSinceFirstSession', () => {
+  it('returns 0 when no completed sessions exist', () => {
+    expect(daysSinceFirstSession([], NOW)).toBe(0);
+    expect(daysSinceFirstSession([makeSession(TODAY_MIDNIGHT, 'cancelled')], NOW)).toBe(0);
+  });
+
+  it('returns 1 for a session that happened today', () => {
+    expect(daysSinceFirstSession([makeSession(TODAY_MIDNIGHT)], NOW)).toBe(1);
+  });
+
+  it('counts inclusive day span from earliest completed session', () => {
+    // Window of 60 days back from mid-May avoids the March/November DST
+    // crossings — the helper uses local-midnight setHours bucketing, which
+    // is rounded against MS arithmetic and would otherwise be off by ±1.
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 60 * DAY),
+      makeSession(TODAY_MIDNIGHT - 14 * DAY),
+      makeSession(TODAY_MIDNIGHT),
+    ];
+    expect(daysSinceFirstSession(sessions, NOW)).toBe(61);
+  });
+
+  it('ignores cancelled rows when picking the earliest', () => {
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 100 * DAY, 'cancelled'),
+      makeSession(TODAY_MIDNIGHT - 30 * DAY),
+    ];
+    expect(daysSinceFirstSession(sessions, NOW)).toBe(31);
+  });
+});
+
+describe('firstSessionDate', () => {
+  it('returns null when no completed sessions exist', () => {
+    expect(firstSessionDate([])).toBeNull();
+    expect(firstSessionDate([makeSession(TODAY_MIDNIGHT, 'cancelled')])).toBeNull();
+  });
+
+  it('returns the earliest completed session start', () => {
+    const earliest = TODAY_MIDNIGHT - 200 * DAY;
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 50 * DAY),
+      makeSession(earliest),
+      makeSession(TODAY_MIDNIGHT),
+    ];
+    expect(firstSessionDate(sessions)?.getTime()).toBe(earliest);
   });
 });

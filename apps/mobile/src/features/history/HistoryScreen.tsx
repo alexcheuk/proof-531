@@ -9,7 +9,6 @@
  * "All / PRs / per-lift" filter so the page rewards consistency, not just
  * records completed work.
  */
-import type { Session } from '@/data/accessors/session';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSessionPrIds } from '@/data/queries/useSessionPrIds';
 import { useSessions } from '@/data/queries/useSessions';
@@ -22,41 +21,28 @@ import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
+import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
-import { longestStreakDays, recentActivity } from './activity';
+import {
+  daysSinceFirstSession,
+  firstSessionDate,
+  longestStreakDays,
+  recentActivity,
+} from './activity';
 import { pickBestLift } from './bestLift';
 import { AchievementStrip } from './components/AchievementStrip';
 import { CycleSection } from './components/CycleSection';
 import { FilterChips } from './components/FilterChips';
+import { HistoryEmptyState } from './components/HistoryEmptyState';
+import { HistoryFilterEmptyState } from './components/HistoryFilterEmptyState';
 import { HistorySkeleton } from './components/HistorySkeleton';
 import { type HistoryFilter, applyHistoryFilter } from './filter';
+import { groupByCycle } from './grouping';
 
 const DEFAULT_LIFTS: ReadonlyArray<Lift> = ['squat', 'bench', 'deadlift', 'press'];
 
-function groupByCycle(
-  sessions: ReadonlyArray<Session>,
-): Array<{ cycle: number; sessions: Session[] }> {
-  const order: number[] = [];
-  const byCycle = new Map<number, Session[]>();
-  for (const s of sessions) {
-    const cycle = s.cycle ?? 1;
-    const bucket = byCycle.get(cycle);
-    if (bucket) {
-      bucket.push(s);
-    } else {
-      byCycle.set(cycle, [s]);
-      order.push(cycle);
-    }
-  }
-  return order.map((cycle) => ({
-    cycle,
-    sessions: byCycle.get(cycle) ?? [],
-  }));
-}
-
 export function HistoryScreen() {
-  const { colors, layout } = useTheme();
+  const { colors } = useTheme();
   const sessions = useSessions();
   const prIdsQuery = useSessionPrIds();
   const prsQuery = usePrs();
@@ -94,6 +80,8 @@ export function HistoryScreen() {
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
   const activity = useMemo(() => recentActivity(rows), [rows]);
   const longestStreak = useMemo(() => longestStreakDays(rows), [rows]);
+  const trainingSince = useMemo(() => firstSessionDate(rows), [rows]);
+  const totalTrainingDays = useMemo(() => daysSinceFirstSession(rows), [rows]);
   const bestLift = useMemo(() => {
     const storageUnit = settingsQuery.data?.storageUnit ?? 'lbs';
     const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
@@ -145,6 +133,8 @@ export function HistoryScreen() {
           activity={activity}
           bestLift={bestLift}
           longestStreak={longestStreak}
+          trainingSince={trainingSince}
+          totalTrainingDays={totalTrainingDays}
         />
         {rows.length > 0 ? (
           <FilterChips
@@ -155,40 +145,9 @@ export function HistoryScreen() {
           />
         ) : null}
         {rows.length === 0 ? (
-          <View style={{ paddingHorizontal: layout.gutter, paddingTop: 24 }} testID="history-empty">
-            <CapsLabel style={{ letterSpacing: 1.8 }}>FINISH A SESSION TO SEE IT HERE</CapsLabel>
-          </View>
+          <HistoryEmptyState />
         ) : filteredRows.length === 0 ? (
-          <View
-            style={{
-              paddingHorizontal: layout.gutter,
-              paddingTop: 24,
-              alignItems: 'flex-start',
-              gap: 12,
-            }}
-            testID="history-filter-empty"
-          >
-            <CapsLabel color="ink3">No sessions match this filter.</CapsLabel>
-            <Pressable
-              onPress={() => setFilter({ kind: 'all' })}
-              accessibilityRole="button"
-              accessibilityLabel="Show all sessions"
-              testID="history-filter-empty-show-all"
-              style={({ pressed }) => [
-                {
-                  paddingHorizontal: 14,
-                  paddingVertical: 10,
-                  borderWidth: 1,
-                  borderColor: colors.ink0,
-                },
-                pressed ? { opacity: 0.7 } : null,
-              ]}
-            >
-              <CapsLabel weight="semibold" color="ink0">
-                Show all sessions
-              </CapsLabel>
-            </Pressable>
-          </View>
+          <HistoryFilterEmptyState onClearFilter={() => setFilter({ kind: 'all' })} />
         ) : (
           grouped.map((group) => (
             <CycleSection

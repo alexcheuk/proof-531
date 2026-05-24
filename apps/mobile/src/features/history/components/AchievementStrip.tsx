@@ -18,7 +18,30 @@ export type AchievementStripProps = {
   bestLift?: BestLift | null;
   /** Lifetime longest training streak (days). Surfaces when ≥ 3. */
   longestStreak?: number;
+  /** Date of the user's first completed session — drives the "training since" caption. */
+  trainingSince?: Date | null;
+  /** Total elapsed days since first session. Caption only renders when ≥ 30. */
+  totalTrainingDays?: number;
 };
+
+const MONTH_NAMES = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+function formatTrainingSince(date: Date): string {
+  return `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
+}
 
 /**
  * Lifetime achievement strip rendered under the History title block.
@@ -32,9 +55,12 @@ export function AchievementStrip({
   activity,
   bestLift,
   longestStreak,
+  trainingSince,
+  totalTrainingDays,
 }: AchievementStripProps) {
   if (filed === 0) return null;
   const showLongest = (longestStreak ?? 0) >= 3;
+  const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
   return (
     <Card
       borders="bottom"
@@ -61,6 +87,16 @@ export function AchievementStrip({
         </CapsLabel>
       ) : null}
       <ActivitySparkline activity={activity} />
+      {showTrainingSince && trainingSince ? (
+        <CapsLabel
+          size="xs"
+          color="ink3"
+          style={{ letterSpacing: 1.4 }}
+          testID="history-training-since"
+        >
+          {`Training since ${formatTrainingSince(trainingSince)} · ${totalTrainingDays} days`}
+        </CapsLabel>
+      ) : null}
     </Card>
   );
 }

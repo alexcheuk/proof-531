@@ -46,7 +46,7 @@ export function CtaBar({
     backgroundColor: colors.bg0,
     paddingHorizontal: layout.gutter,
     paddingTop: 16,
-    paddingBottom: safeArea ? Math.max(insets.bottom, 0) + 16 : 16,
+    paddingBottom: safeArea ? insets.bottom + 16 : 16,
   };
 
   return (
