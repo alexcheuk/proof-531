@@ -185,8 +185,34 @@ const renderScreen = (ui: ReactElement) =>
 
 describe('LiveScreen', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    // React 19's act() coordinates state-update batches via the
+    // scheduler, which uses MessageChannel/setImmediate under the hood.
+    // Faking those primitives deadlocks act() inside testing-library's
+    // auto-cleanup. The `doNotFake` list keeps setTimeout/setInterval
+    // (the rest-timer driver) fake while leaving the scheduler's
+    // primitives real so unmount can complete.
+    jest.useFakeTimers({
+      doNotFake: [
+        'nextTick',
+        'queueMicrotask',
+        'setImmediate',
+        'clearImmediate',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'requestIdleCallback',
+        'cancelIdleCallback',
+        'performance',
+      ],
+    });
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: Number.POSITIVE_INFINITY,
+          staleTime: Number.POSITIVE_INFINITY,
+        },
+      },
+    });
     invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
     resetSessionState();
     mockBack.mockClear();
