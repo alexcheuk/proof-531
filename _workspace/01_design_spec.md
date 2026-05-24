@@ -283,50 +283,58 @@ Accessibility:
 
 #### W2.1 Live — Rest phase three-section layout
 
-Restructure `RestPhase.tsx`. Today it shows a headline + `LOGGED` stat + `RestTimer`. New layout has three explicit sections, each visually distinct, with the timer dominant.
+> **Status after 2026-05-24 main merge:** PARTIALLY SHIPPED ON MAIN. Commit `1138c01` rebuilt `RestPhase.tsx` into a four-band layout: headline band (`SET COMPLETED · NEW PERSONAL RECORD` / `Rest.` or `Stronger.`), hairline, `RestTimer`, hairline, and an optional `nextSet` band rendered as a `TopSetBlock` with eyebrow `NEXT SET`. The `nextSet` prop is shaped `{ weight, reps, amrap, pct, perSide, tmDisplay }` and is wired from `LiveScreen` to use the next set's prescription (post-`setIndex` advance). This satisfies the **UP NEXT** intent of this section.
+>
+> **Wave 2 delta:** the LOGGED-set summary row is **still missing**. Main's headline ("Stronger.") signals the moment but does not show `{weight} {unit} × {reps}` for the just-logged set, nor the AMRAP `EST. 1RM` chip in the same row. The redesigned spec below keeps the three-section model but rebases against main's idiom (TopSetBlock + hairline separators), making LOGGED an additive band rather than a teardown of what shipped.
 
-Visual hierarchy (top to bottom):
+Restructure `RestPhase.tsx`. Today (post-merge) it shows a headline band + `RestTimer` + optional `NEXT SET` `TopSetBlock`. Add the LOGGED stat as a fourth band between the headline and the timer.
+
+Visual hierarchy (top to bottom, post-merge baseline + additive LOGGED band):
 
 ```
 ┌──────────────────────────────────────────────┐
-│ LOGGED                                   ⌃   │  ← compact, ink2 caps
-│ ─────────────────────────────────────────    │
-│ 185 lb × 5    EST. 1RM 215 lb · PR           │  ← single row, paper card
+│ SET COMPLETED · NEW PERSONAL RECORD          │  ← main shipped (eyebrow)
+│ Stronger.                                    │  ← main shipped (64pt headline)
+├──────────────────────────────────────────────┤
+│ LOGGED                                       │  ← W2.1 additive band
+│ 185 lb × 5      EST. 1RM 215 lb · PR         │  ← single row, baseline-aligned
 ├──────────────────────────────────────────────┤
 │                                              │
-│              REST                            │  ← caps eyebrow
-│                                              │
-│            1:23                              │  ← 96pt timer (dominant)
-│                                              │
-│       [skip]      [+30s]                     │  ← inline controls
+│              REST                            │  ← main shipped (caps eyebrow + 96pt timer)
+│            1:23                              │
+│       [skip]      [+30s]                     │  ← W2.2 additive controls
 │                                              │
 ├──────────────────────────────────────────────┤
-│ UP NEXT                                      │
-│ ─────────────────────────────────────────    │
-│ 205 lb × 5+      85% TM                      │  ← AMRAP marker if applicable
-│ ── plate bar ──                              │  ← compact PlateBar
-│ load: 25 + 5 / side over 45 bar              │  ← human-readable instruction
+│ NEXT SET    85% TM · TM 245 lb               │  ← main shipped (TopSetBlock w/ eyebrow)
+│ 205 lb × 5+                                  │
+│ ── plate bar ──                              │
+│ load: 25 + 5 / side over 45 bar              │  ← W2.1 additive instruction line
 └──────────────────────────────────────────────┘
                                                   ← CtaBar pinned below, "Next set →"
 ```
 
-Section dominance order — **REST is hierarchically dominant**: 96pt timer label, full vertical space, centered. LOGGED is compact (single row), UP NEXT is moderately weighted (mid-size weight, compact plate bar). Rationale: the lifter is between sets; they're done with the previous one (LOGGED is reference) and they need to load the next bar (UP NEXT is reference plus instruction) — but the *active* moment is the rest itself.
+Section dominance order — **REST is hierarchically dominant**: 96pt timer label, full vertical space, centered (already true on main). LOGGED is compact (single row), NEXT SET is moderately weighted (mid-size weight inside `TopSetBlock`, compact plate bar). Rationale unchanged.
 
 Concrete spacing:
-- Outer container: `paddingHorizontal: spacing.xl`, `paddingTop: spacing.lg`, `paddingBottom: spacing.xxl`.
-- LOGGED section: full-width with `borderBottomWidth: 1, borderBottomColor: colors.line`, `paddingVertical: spacing.lg`. Single row, `flexDirection: 'row'`, `justifyContent: 'space-between'`, `alignItems: 'baseline'`. Left: caps `LOGGED` (size 10) over `{weight} {unit} × {reps}` (size 22, sans medium, tabular-nums). Right: `EST. 1RM {x} {unit}` chip only when `isAmrap`. PR marker is the existing inline `· PR` suffix here — promoted to its own row in the AMRAP sheet (see W2.4).
-- REST section: `flex: 1` (takes the rest of the available vertical), centered content. `marginTop: spacing.xl` / `marginBottom: spacing.xl`. Timer label at 96pt sans medium tabular-nums, mono caps `REST` eyebrow at 10pt above it. Inline controls below the timer label, `marginTop: spacing.lg`.
-- UP NEXT section: `borderTopWidth: 1, borderTopColor: colors.line`, `paddingTop: spacing.lg`, `paddingBottom: spacing.md`. Layout matches LOGGED's row shape inverted — caps `UP NEXT` row at top, weight + reps row below.
+- **Headline band** (main): `paddingHorizontal: spacing.xl`, `paddingTop: spacing.lg`, `paddingBottom: spacing.lg`. **Do not modify.**
+- **LOGGED band (NEW in W2.1)**: insert between the existing headline-band hairline and the `RestTimer`. `paddingHorizontal: spacing.xl`, `paddingVertical: spacing.lg`, followed by a `borderBottomWidth: 1, borderBottomColor: colors.line` hairline (mirrors main's separator idiom). Single row, `flexDirection: 'row'`, `justifyContent: 'space-between'`, `alignItems: 'baseline'`. Left: caps `LOGGED` (size 10, mono semibold, ink2) over `{weight} {unit} × {reps}` (size 22, sans medium, tabular-nums). Right: `EST. 1RM {x} {unit}` chip only when `lastLogged.isAmrap`. PR marker is the inline `· PR` suffix on the right cell here — promoted to its own row in the AMRAP sheet (see W2.3).
+- **RestTimer band** (main): unchanged; W2.2 adds the inline `[skip]`/`[+30s]` controls + tap-to-toggle inside the existing `RestTimer.tsx`.
+- **NEXT SET band** (main): unchanged structurally. W2.1 adds **one additional line** inside the existing `rest-phase-next-set` View, below the `TopSetBlock`, rendering the plate-load instruction string. Style: mono medium, size 10, `letterSpacing: 1.8`, `color: ink2`, uppercase, `marginTop: spacing.sm`, `textAlign: 'center'`.
 
-UP NEXT computation:
-- If `setIndex < 2`: render the next working set — `getWorkingSetByIndex(week, (setIndex + 1) as WorkingSetIndex)`, snap weight via existing math.
-- If `setIndex === 2` AND Wave 2 BBB fork is enabled: render the BBB summary — `5 × 10 @ {bbbWeight}` with the same plate decomposition, **no** `UP NEXT` for set 3 → complete transition. The plate-load instruction reads `unload to 135 — strip the heavy plates`.
-- If `setIndex === 2` AND BBB fork not yet shipped (pre-W2.5): render `SESSION COMPLETE` placeholder text where UP NEXT normally goes (caps `SESSION COMPLETE` over `Tap "Complete session" to file the day`).
+Data wiring for LOGGED:
+- `lastLogged` is already produced by `useLiveScreenState` and forwarded to `RestPhase` via the `loggedWeight`, `loggedReps`, `estimated1RM`, `isAmrap`, `isPR` props (RestPhase currently only consumes `isAmrap`, `estimated1RM`, `isPR`). Add explicit `loggedWeight: number` and `loggedReps: number` props; `LiveScreen` already has the data on `live.lastLogged.weight` / `.reps` and just needs to forward them.
+- The PR suffix should reflect main's `isPR` prop (already plumbed). When `isPR === true && lastLogged.isAmrap === true`, append ` · PR` to the right-cell EST. 1RM string.
 
-UP NEXT plate-load instruction copy pattern:
+NEXT SET computation (clarifications against main):
+- Main already feeds `nextSet` with the next-pending working set's prescription — no change required for `setIndex < 2`. The plate decomposition is computed in `LiveScreen.tsx` and forwarded as `nextSet.perSide`.
+- If `setIndex === 2` AND Wave 2 BBB fork is enabled (W2.4): caller (`LiveScreen`) overrides `nextSet` with the BBB summary — `5 × 10 @ {bbbWeight}` decomposition. The plate-load instruction reads `unload to {bbbWeight} — strip the heavy plates`.
+- If `setIndex === 2` AND BBB fork not yet shipped: caller passes `nextSet = undefined`, and `RestPhase` already renders nothing in that slot. No additional placeholder needed (main's behavior is fine).
+
+Plate-load instruction copy pattern (new helper, see Domain logic `plateLoadInstruction`):
 - `load: {plate1} + {plate2} + ... / side over {bar weight} bar`
 - Examples: `load: 25 + 10 / side over 45 bar` (185 lb), `load: 45 + 5 / side over 45 bar` (145 lb), `load: 45 + 25 + 10 / side over 20 bar` (165 kg metric).
-- When the next set decreases from the prior: prepend `unload to`, e.g. `unload to 135 — strip the heavy plates`. Triggered when `nextWeight < currentWeight`.
+- When the next set decreases from the prior (BBB drop): `unload to {weight} — strip the heavy plates`. Triggered when `nextWeight < currentWeight`.
+- The helper accepts `currentLoad` (the most recently loaded weight, derived from `lastLogged.weight`) so it can decide between `load:` and `unload to`.
 
 Tokens used:
 - `spacing.md`, `spacing.lg`, `spacing.xl`, `spacing.xxl`
@@ -348,7 +356,9 @@ Accessibility:
 
 #### W2.2 Live — Rest timer countdown + breathing animation
 
-Replace the count-up math in `RestTimer.tsx`. Drop `const elapsed = Math.max(0, target - remaining)` and render `remaining` directly. The driver (`useLiveScreenState`) already counts down; this is purely a presentation fix.
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. Main reworked `RestTimer.tsx` but kept the count-UP presentation (`const elapsed = target - remaining; const label = formatLabel(elapsed)`). The header reads `Rest timer / TARGET` (no per-user target seconds rendered yet — see W3.5). No skip/+30s controls exist. No T-0 breathing pulse on the CTA. The haptic ladder still has only T-3s warning + (gone) T-0 chime; T-10s selection haptic and T-0 light impact are not present in `useLiveScreenState`.
+
+Replace the count-up math in `RestTimer.tsx`. Drop `const elapsed = target - remaining` and render `remaining` directly (formatted via the existing `formatLabel`). The driver (`useLiveScreenState`) already counts down; this is purely a presentation fix.
 
 Add inline `[skip]` and `[+30s]` controls below the timer label.
 
@@ -381,10 +391,10 @@ Breathing animation on the "Next set" CTA (T-0 trigger):
 - Applied via `useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }))` on the CTA's `Animated.View` wrapper.
 - The pulse starts at T-0 and continues until the user taps the CTA OR a new rest cycle begins (effect cleanup: `scale.value = withTiming(1, { duration: motion.durationBase })`).
 
-Haptic ladder (no new design, codifying):
-- T-10s: selection haptic (`Haptics.selectionAsync()`). New addition — not in current code. Add a second `useEffect` in `useLiveScreenState` next to the T-3s effect, with its own `tenSecondFiredRef`.
-- T-3s: warning haptic (`Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)`). Already present.
-- T-0: light impact haptic (`Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)`). New addition. Add a `zeroFiredRef` and trigger when `restRemaining === 0` for the first time per rest cycle.
+Haptic ladder (post-merge baseline — main has only T-3s warning):
+- T-10s: selection haptic (`Haptics.selectionAsync()`). New addition. Add a `tenSecondFiredRef` and a second branch inside the existing T-3s `useEffect` in `useLiveScreenState` (or extract a sibling effect with `[phase, restRemaining]` deps); reset alongside `warningFiredRef` at the start of each rest cycle.
+- T-3s: warning haptic (`Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)`). Already present in `useLiveScreenState.ts:244-250`.
+- T-0: light impact haptic (`Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)`). New addition. Add a `zeroFiredRef` and trigger when `restRemaining === 0` for the first time per rest cycle. Reset on rest-cycle start.
 
 Skip control:
 - Tap `SKIP` → `setRestRemaining(0)` in the hook (new exposed handler `onSkipRest`). Immediately runs the T-0 light impact + breathe pulse via the existing T-0 path.
@@ -418,6 +428,8 @@ Accessibility:
   - When true: do not start the `withRepeat` worklet. Instead, swap the CTA's text color/background once: at T-0, set `backgroundColor: colors.ink0, color: colors.bg0` permanently (or invert if already inverted) until the user taps. This communicates "now" without motion.
 
 #### W2.3 Live — AMRAP preset chips
+
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. Main left `AmrapLogSheet.tsx` essentially untouched: header row + secondary `HOW MANY REPS? / EST. 1RM {x} {unit}` row (with inline `· PR` suffix) + `NumberStepper` + footer Cancel/Save. Integration points (the rep-state setter `setReps`, the `predictedE1RM`/`isPotentialPR` derivation, and the surrounding `headerRow` style) are unchanged. The preset chips row and the promoted PR row insert cleanly between the existing second header row and the stepper.
 
 In `AmrapLogSheet.tsx`, add a row of preset chips **above** the existing `NumberStepper`. Tap = populate stepper, user can ± from there.
 
@@ -475,11 +487,15 @@ Accessibility:
 
 #### W2.4 Live — BBB confirm fork phase
 
+> **Status after 2026-05-24 main merge:** STILL REQUIRED, but the integration with `useLiveScreenState` changed shape. Main rewrote bootstrap so `setIndex` is **derived from persisted `set_logs` rows** on first resolve (`computeNextSetIndex` + `bootstrappedRef`), with a self-healing branch that calls `completeSession` and transitions to `phase === 'complete'` when every working/AMRAP slot is already filled (the "stuck session auto-complete" path). The new BBB-confirm phase must coexist with that bootstrap branch — see "Bootstrap interaction" below. Cache invalidation now uses the typed `SET_LOGS_FOR_SESSION_KEY(sessionId)` helper from `useSetLogsForSession.ts`; BBB writes must do the same.
+
 After the third working set (or AMRAP, when it's the terminal set for the week) is logged → rest → "Next set" tap, **instead of** going straight to `complete`, insert a fork:
 
 New phase: **`bbb-confirm`**.
 
 Trigger: in `onAdvanceFromRest`, when `setIndex === 2` (the last main-work set), transition to `bbb-confirm` rather than `complete`. The terminal-complete transition moves into a handler invoked **from** the fork phase.
+
+Bootstrap interaction (new — post-merge): the `setLogs` bootstrap in `useLiveScreenState.ts:192-208` self-heals "every working/AMRAP slot filled" sessions to `phase === 'complete'` (calling `completeSession` to flip the session row). For Wave 2, that auto-complete should **not** fire when the user has main-work fills only and BBB rows would still be writable. Decision: **keep the auto-complete branch unchanged** — BBB is *optional assistance*, and an orphan session where the user logged all three main-work sets and force-quit is correctly considered "done" (BBB-skipped by absence). The BBB-confirm phase is only reachable through the live `onAdvanceFromRest` → `setIndex === 2` path within a foreground session, not on bootstrap. This keeps the spec simple and matches the BBB-as-assistance framing.
 
 Surface:
 - Renders inside `LiveScreen` as a full-surface phase (not a sheet) — mirrors the `set` and `rest` surfaces. The cancel-confirm sheet can still overlay it.
@@ -492,7 +508,7 @@ Surface:
   - Primary "Logged it ✓" (filled `ink0`, `radii.pill`, glyph `✓`). Action: writes 5 BBB rows + advances to `complete`.
   - Secondary "Skip BBB" (outlined, `radii.pill`). Action: advances to `complete` without writing.
 
-What gets written on "Logged it" — **5 individual `SetLog` rows**, one per BBB set, all with `kind: 'bbb'`, `actualReps = 10`, `prescribedReps = 10`, `prescribedWeight = bbbWeightStorage`, `index = 100 + i` for `i in 0..4`.
+What gets written on "Logged it" — **5 individual `SetLog` rows**, one per BBB set, all with `kind: 'bbb'`, `actualReps = 10`, `prescribedReps = 10`, `prescribedWeight = bbbWeightStorage`, `index = 100 + i` for `i in 0..4`. After all 5 writes resolve, invalidate via the typed `SET_LOGS_FOR_SESSION_KEY(sessionId)` from `apps/mobile/src/data/queries/useSetLogsForSession.ts` (matches the pattern main set in `onLogWorkingSet` / `onSaveAmrap` / `onLogWorkingSetWithActual`).
 
 Justification — five rows over one summary:
 - **Consistency with main work.** Working sets and AMRAP write individual rows. A single summary row for BBB would be the only collapsed-set row in the schema; that special case would leak into every downstream consumer (volume math, receipt grouping, future "rebuild session" features).
@@ -530,7 +546,14 @@ Accessibility:
 
 #### W2.5 Live — Cancel split (deferred from Wave 3 in brief — see decision tree)
 
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. Main left `SessionTopBar`'s right action as the single `kind: 'cancel'` pill ("Cancel" text label), wired to `live.onRequestCancel` which opens the existing two-tap `CancelConfirmSheet`. No split-CTA logic, no immediate-cancel branch.
+
 Note: the brief places the cancel split in Wave 3. We move the **decision tree** here in Wave 2 because it interacts with the BBB confirm phase and the working-set-log phase (both new in Waves 1–2), and shipping the decision tree without those phases existing would require re-spec'ing the cancel logic twice. Wave 3 retains the **visual changes** (X glyph, overflow menu); Wave 2 ships the **branching logic**.
+
+Navigation integration (clarification — post-merge `router.push` from Today → Live in `useTodayScreenState.ts:103,120`):
+- Branch A "immediate cancel" with zero working sets logged: call `cancelSession`, then `router.replace('/')` to Home. The push history (home → today → live) is collapsed; we deliberately do **not** `router.back()` to Today, because Today's "Start session" CTA against a freshly-cancelled lift would be ambiguous to a confused user. Replace-to-home is the safe, unambiguous exit.
+- Branch B "single-tap confirm sheet" path: existing `cancelSession` → `setPhase('complete')` → `LiveScreen` complete-effect handles routing (cancelled → Home). No additional routing logic needed.
+- Branch C "long-press / overflow → two-tap destructive sheet": identical to Branch B end state.
 
 See Wave 3 W3.2 for the visual treatment + state diagram.
 
@@ -540,27 +563,30 @@ See Wave 3 W3.2 for the visual treatment + state diagram.
 
 ────────────────────────────────────────────────────────────────────────────────
 
-#### W3.1 Live — Plate leftover surface in LiveBigWeight
+#### W3.1 Live — Plate leftover surface beside the active TopSetBlock
 
-In `LiveBigWeight.tsx`, when the plate decomposition's `leftover > 0.1` (storage units), render a secondary line **below** the main weight row but **above** the plate band.
+> **Status after 2026-05-24 main merge:** RELOCATED. `LiveBigWeight.tsx` was **deleted** by main (`1138c01`). The active-set readout on the Live screen now lives in a `TopSetBlock` rendered inside `LiveScreen.tsx:273-285` with `testID="live-bigweight"` and eyebrow `On the bar · {pct}% TM`. The leftover surface relocates to a **caption rendered just below the `TopSetBlock`** (and above the hairline that follows), inside the same `View` that wraps the live `TopSetBlock` (`LiveScreen.tsx:273`). It does not go into the `TopSetBlock` primitive itself — `TopSetBlock` is shared with Today's hero, where leftover would be premature (the lifter hasn't picked up the bar yet).
 
-Threshold: `leftover > 0.1` in **storage units** (not display units — leftover is reported by `decompose()` in the same unit as the input, and the input is `prescribedDisplay` which is in display units; recompute in storage by calling `decompose(prescribedDisplay, plateSet)` and reading `leftover` directly — the existing call site already does this, just discards the value).
+The leftover caption is a **feature-local sibling** of the live `TopSetBlock`, **not** a primitive change. Rationale for picking this site over an `eyebrow`-suffix approach:
+1. The eyebrow already carries `On the bar · 85% TM` — adding leftover there compresses three semantically distinct concepts (set context, %TM, plate dust) into one row. A separate caption preserves scannability.
+2. The caption sits below the plate bar (which `TopSetBlock` renders), so the user sees "the bar" → "the dust I couldn't load" in physical order — left-to-right, top-to-bottom.
+3. The Today hero (which also uses `TopSetBlock`) does not get the caption — Today is a preview, the user hasn't loaded yet, and "leftover" framing implies "what's already on the bar minus what's prescribed." Only Live earns the caption.
 
-Actually — re-reading the call site in `LiveScreen.tsx:135`: `const perSide = decompose(prescribedDisplay, plateSet).perSide;` — `leftover` is discarded right there. Pipe it through to `LiveBigWeight` as a new prop.
+Threshold: `leftover > 0.1` in **storage units**. `decompose()` returns leftover in the same unit as its input. `LiveScreen.tsx:167` calls `decompose(live.prescribedWeight, plateSet)` — `live.prescribedWeight` is **storage units** (per `useLiveScreenState.ts:217`). Change `LiveScreen.tsx:167` from `decompose(...).perSide` to capture the full result (`const decomposed = decompose(live.prescribedWeight, plateSet); const perSide = decomposed.perSide; const leftover = decomposed.leftover;`) and forward `leftover` as a sibling caption variable, **not** as a new prop on `TopSetBlock`.
 
 Layout:
-- Below the existing `weightRow` in `LiveBigWeight`, `marginTop: spacing.xs`.
-- Single mono caps line: `≈ {prescribedDisplay} (loaded {prescribedDisplay - leftoverInDisplay}) {unit}`.
-- Style: mono medium, size 10, `letterSpacing: 1.8`, `color: ink2`, uppercase.
+- Render a single mono caps line **immediately below** the `TopSetBlock`, **inside** the same wrapper `View` at `LiveScreen.tsx:273`. The wrapper currently has `paddingHorizontal: 24, paddingVertical: spacing.lg`; the caption fits within that padding, with `marginTop: spacing.sm` to separate it from the plate bar.
+- Copy: `≈ {prescribedDisplay} {unit} — loaded {loadedDisplay} {unit} ({leftoverInDisplay} {unit} short)`.
+- Style: mono medium, size 10, `letterSpacing: 1.8`, `color: ink2`, uppercase, `textAlign: 'center'`.
 - Hidden when `leftover` rounds to 0 in display units.
 
 Display calculation:
-- `leftoverInDisplay` is the leftover converted to display unit and snapped to the **display** unit's step (round to nearest 5 lb / 2.5 kg).
+- `leftoverInDisplay` is the leftover converted from storage to display unit and snapped to the **display** unit's step (round to nearest 5 lb / 2.5 kg) via existing `round(value, displayUnit)`.
 - If the rounded leftover is 0 (e.g. 0.1 lb leftover rounds to 0), do not render the line.
-- Round the displayed "loaded" value down to the nearest plate-loadable weight: `loaded = round(prescribedDisplay - leftoverInDisplay, displayUnit)`.
+- `loadedDisplay = round(prescribedDisplay - leftoverInDisplay, displayUnit)`.
 
 Tokens used:
-- `spacing.xs`
+- `spacing.sm`
 - `colors.ink2`
 - `type.mono`
 
@@ -571,17 +597,20 @@ States:
 Interactions: none — read-only stat.
 
 Accessibility:
-- The line participates in the existing `LiveBigWeight` accessibility group. Add to the existing accessibility label: `"Prescribed {prescribed} {unit}, loaded {loaded} {unit} — {leftoverInDisplay} {unit} leftover"`.
+- The caption is its own `RNText` with `accessibilityRole="text"` and `accessibilityLabel="Prescribed {prescribed} {unit}, loaded {loaded} {unit}, {leftoverInDisplay} {unit} short"`.
+- VoiceOver reading order: TopSetBlock (eyebrow → weight → reps → plate bar group) → leftover caption → next section.
 - Reduced-motion: nothing to fall back.
 
 #### W3.2 Live — Cancel split (visual layer)
 
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. `SessionTopBar.tsx` ships a `RightAction` discriminated union with `'none' | 'cancel' | 'complete'`. The `CancelPill` variant (lines 87-117) renders the outlined "Cancel" mono caps pill currently wired by `LiveScreen.tsx:229`. The chip dimensions (28pt min-height, ink-0 1px border, bg-0 fill) are the visual baseline to inherit from.
+
 Visual + state diagram (logic ships in Wave 2 W2.5).
 
-Replace `SessionTopBar`'s right-side "Cancel" pill (currently `kind: 'cancel'`) with a tiny X chip + an overflow `…` chip, both ink-bordered, both 32×32, separated by `spacing.sm`.
+Replace `SessionTopBar`'s right-side "Cancel" pill (currently `kind: 'cancel'`) with a tiny X chip + an overflow `…` chip, both ink-bordered, both 32×32, separated by `spacing.sm`. Extend the `RightAction` union with a new variant `{ kind: 'cancel-split'; onTapCancel: () => void; onLongPressCancel: () => void; onTapOverflow: () => void }` rather than mutating `'cancel'` — keeps the existing Today screen's `SessionTopBar` consumer (no right action) and the (currently unused) `'complete'` branch untouched.
 
 Visual:
-- X chip: same shape as the existing back chip (32×32, `borderWidth: 1, borderColor: colors.ink0, backgroundColor: colors.bg0`), label glyph `×` (mono semibold, size 13, `color: ink0`).
+- X chip: same shape as the existing back chip (32×32, `borderWidth: 1, borderColor: colors.ink0, backgroundColor: colors.bg0`), label glyph `×` (mono semibold, size 13, `color: ink0`). Reuse the `backStyle`/`backGlyphStyle` pattern at `SessionTopBar.tsx:53-68`.
 - Overflow `…` chip: same shape, label glyph `⋯` (mono semibold, size 13, `color: ink0`).
 
 Decision tree — three branches:
@@ -654,7 +683,11 @@ Accessibility:
 
 #### W3.3 Complete — "Next session" handoff row
 
-Append to `SessionCompleteScreen`, between the cycle grid and the sticky `CtaBar` (currently a `<View style={{ height: 140 }} />` spacer — replaced by this row).
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. `SessionCompleteScreen.tsx:502` still ends with `<View style={{ height: 140 }} />` immediately before the sticky `CtaBar` — exactly the insertion site this spec assumed. The cycle grid (lines 452-499) was not restructured by main; the only visual changes in `SessionCompleteScreen` since `5fa15c6` were headline copy ("In the / book") and the optional `topArcLabel="★ NEW RECORD ★"` on `DateStamp` when `showCertificate`. Neither affects this row.
+>
+> The `nextSessionPlan` domain helper named in `## Domain logic` was not shipped (Wave 2 was discarded pre-merge) — it remains required for this row.
+
+Append to `SessionCompleteScreen`, between the cycle grid and the sticky `CtaBar` (currently a `<View style={{ height: 140 }} />` spacer — replaced by this row, with a slimmer `height: 24` trailing spacer below the row to preserve scroll clearance over the CtaBar).
 
 Layout:
 - Full-width section with `paddingHorizontal: spacing.xl`, `paddingTop: spacing.xl`, `paddingBottom: spacing.md`.
@@ -695,7 +728,9 @@ Accessibility:
 
 #### W3.4 Complete — Cycle grid responsive breakpoint
 
-In `SessionCompleteScreen`'s cycle grid (current code: `apps/mobile/src/features/session/SessionCompleteScreen.tsx:395-443`), switch the 4×N grid to a horizontally-scrollable single-row-per-week layout when `Dimensions.get('window').width < 360`.
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. The cycle grid in `SessionCompleteScreen.tsx` is now at **lines 452-499** (shifted from the pre-merge `395-443` range). The grid itself is unchanged: `cycleGridFrame` (line 459) wraps a single `cycleGridRow` (`testID="cycle-grid"`, line 460) with `sessionsInCycle` cells, followed by a fixed `W1/W2/W3/W4` labels row (lines 492-497). The `cycleCellBase` style still pins `flex: 1, height: 16`. All math (`sessionsInCycle`, `completedThisCycle`, `liftPos`, `justNow` highlight) is unchanged. The responsive switch inserts at line 460 (gate the single `cycleGridRow` vs the new stacked-rows + ScrollView layout on `Dimensions.get('window').width < 360`).
+
+In `SessionCompleteScreen`'s cycle grid (current code: `apps/mobile/src/features/session/SessionCompleteScreen.tsx:452-499`), switch the 4×N grid to a horizontally-scrollable single-row-per-week layout when `Dimensions.get('window').width < 360`.
 
 Width threshold: **< 360 pt**. Justification:
 - `Dimensions.get('window').width` returns the window width (logical pixels). 360pt is the boundary between "small" Android phones (e.g. some compact models report 360) and iPhone SE 1st gen (320pt). Anything < 360pt cannot fit a 16-cell row (4 lifts × 4 weeks) with the current 4pt gaps without each cell collapsing below the 4pt-thick fill-line visual.
@@ -740,9 +775,11 @@ Reduced-motion: scroll is system-default; cells have no animation.
 
 #### W3.5 Tenth issue — Settings rest-target visibility
 
-**Friction (P3):** The rest target is per-user-configurable in Settings (`Settings.restTargetSeconds`, default 90s, consumed via `useSettings().data.restTargetSeconds`), but on the Live screen there is no surface that tells the user what their configured target is — only the elapsed (now count-down) value. A user who set rest to 180s and another who set it to 60s see the same screen with different paces, and neither has visual confirmation that "this is what I asked for."
+> **Status after 2026-05-24 main merge:** STILL REQUIRED. Main's `RestTimer.tsx` already has a header row with `Rest timer` on the left and the literal string `TARGET` (no value) on the right (`RestTimer.tsx:81`). The slot is built; the value just isn't rendered yet. The W2.2 count-down conversion + the W3.5 target-value rendering touch the same lines and should ship in the same revision.
 
-Recommendation: in the REST section eyebrow (W2.1), append the target after `REST` — `REST · target 1:30`. Mono caps size 10, `color: ink3`, prepended by ` · ` separator. One line, no additional layout. This is a 2-token, 1-line change to `RestTimer.tsx` that closes the loop on a settings value the user actively edits.
+**Friction (P3):** The rest target is per-user-configurable in Settings (`Settings.restTargetSeconds`, default 90s, consumed via `useSettings().data.restTargetSeconds` and forwarded to `useLiveScreenState` at `LiveScreen.tsx:63`), but on the Live screen the right-side header label currently just reads `TARGET` with no value. A user who set rest to 180s and another who set it to 60s see the same screen with different paces, and neither has visual confirmation that "this is what I asked for."
+
+Recommendation: replace the literal `TARGET` in `RestTimer.tsx:81` with `TARGET {formatLabel(target)}` (e.g. `TARGET 1:30`). Style unchanged — mono medium, size 10, `letterSpacing: 1.8`, `color: ink3`. `target` is already a prop on `RestTimer` (passed from `RestPhase`, passed from `LiveScreen` as `live.restTarget`). This is a 1-token, 0-line-net change.
 
 Why P3: it's a clarity gap, not a defect. The current code is correct; it just doesn't surface a setting that the user can already verify by visiting Settings. Ships in Wave 3 as part of the rest-phase polish work.
 
@@ -759,47 +796,49 @@ New accessor signatures (in `apps/mobile/src/data/accessors/setLog.ts` and `sess
 New TanStack Query hooks:
 - None. Existing hooks suffice:
   - `useActiveSession()` — Resume banner consumer. Cache key `['activeSession']`. Invalidated already by `createSession` / `completeSession` / `cancelSession` callers.
-  - `useSetLogsForSession(sessionId)` — used in Wave 3 cancel decision tree to count working sets. Cache key `['setLogs', sessionId]`. Already invalidated by `appendSetLog` flow (`LiveScreen.tsx:80` invalidates `['session', sessionId]`; we add `['setLogs', sessionId]` invalidation in the relevant call sites for accuracy, see below).
+  - `useSetLogsForSession(sessionId)` — used in Wave 3 cancel decision tree to count working sets. Cache key `['setLogsForSession', sessionId]` (typed factory `SET_LOGS_FOR_SESSION_KEY(sessionId)` exported from `apps/mobile/src/data/queries/useSetLogsForSession.ts:15`). Post-merge, `useLiveScreenState.onLogWorkingSet` / `onSaveAmrap` / `onLogWorkingSetWithActual` already invalidate this key. Wave 2/3 additions inherit the same pattern.
 
 Cache invalidation gaps to close (small adjustments, not new hooks):
-- `useLiveScreenState.onLogWorkingSet`, `onSaveAmrap`, `onLogWorkingSetWithActual` (new), and the BBB 5-row writer must each invalidate `['setLogs', sessionId]` in addition to existing keys. Today these handlers don't invalidate — the queries refresh on `LiveScreen`'s `phase === 'complete'` effect. The cancel decision tree depends on **fresh** working-set counts at the moment of X-tap, so it cannot wait for the complete-effect invalidation. Add an inline `queryClient.invalidateQueries({ queryKey: ['setLogs', sessionId] })` in each handler after the `appendSetLog` resolves.
+- **Post-merge baseline:** `useLiveScreenState.onLogWorkingSet` (`useLiveScreenState.ts:266`), `onSaveAmrap` (`useLiveScreenState.ts:316`), and `onLogWorkingSetWithActual` (`useLiveScreenState.ts:366`) already invalidate `SET_LOGS_FOR_SESSION_KEY(session.id)` after each `appendSetLog`. No fix required for these three handlers.
+- **Wave 2 BBB 5-row writer (W2.4):** must call `queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(session.id) })` after the 5 writes resolve (mirror the existing handlers).
+- **Wave 1 warmup writer (`TodayScreen.handleLogWarmup` in `TodayScreen.tsx:56-78`):** already invalidates `['setLogsForSession', activeForLift.id]` inline. Matches the typed key. No fix.
+- The Wave 3 cancel decision tree reads the same key — no further plumbing.
 
 Optimistic mutations:
-- **Warmup row write** (W1.2 stretch): optimistic. `onMutate`: prepend a placeholder `SetLog` row with `id: -Date.now()` to `['setLogs', sessionId]`. `onError`: rollback. `onSettled`: refetch.
-- **Working set write** (W1.3 split CTA, both branches): optimistic with same pattern. The Live screen visually advances to `rest` before the DB confirms, which already happens today — making it optimistic just keeps `useSetLogsForSession` in sync.
+- **Warmup row write** (W1.2 stretch): SHIPPED on `c1044a7` without optimistic plumbing — current implementation does the invalidation after the write resolves, which is fine for the warmup use case (the next render shows the row checked). No change required.
+- **Working set write** (W1.3 split CTA, both branches): SHIPPED on `c1044a7`. Same as warmup — invalidate-after-write is the current path. The visual advance to `rest` already happens synchronously via `setPhase('rest')` independent of the DB. No follow-up needed.
 - **BBB 5-row write** (W2.4): NOT optimistic. The 5 rows are written before transitioning to `complete`; if they fail, the failure is logged and the transition still happens. Optimistic write would imply rollback-on-error, but for BBB partial-success is acceptable (per W2.4 error state) — rollback would erase rows that DID write.
 - **Cancel** (W3.2 all branches): NOT optimistic. The session status flip is the source of truth for the `useActiveSession` query the Resume banner depends on. A failed optimistic cancel would re-show the banner mid-route-transition, which is worse than a 100ms wait.
 
 Rollback strategy:
-- For optimistic writes, on `onError` restore the previous cache value via the standard TanStack `onMutate` → `context.previousData` → `onError` rollback pattern.
+- N/A for Wave 2/3 — no optimistic writes remain. Wave 1's writes are invalidate-after-resolve (no rollback to do); BBB partial-success is accepted by design (per W2.4 error state); cancel writes are non-optimistic.
 
 ## Domain logic
 
 New pure functions, all in `apps/mobile/src/domain/`:
 
-1. **`nextSessionPlan(currentLift: Lift, enabledLifts: Lift[], currentWeek: Week): { lift: Lift, week: Week, day: number, topPct: number, topReps: number, amrap: boolean }`**
+1. **`nextSessionPlan(currentLift: Lift, enabledLifts: Lift[], currentWeek: Week): { lift: Lift, week: Week, day: number, topPct: number, topReps: number, amrap: boolean }`** — *Wave 2 (W3.3 consumer). NOT SHIPPED.*
    Location: `apps/mobile/src/domain/schemes.ts` (extends existing module).
    Computes the next session after the current one. Wraps lift order within a week, wraps week within a cycle.
    Property to test (fast-check): for any `(lift, enabledLifts.length ∈ {1..4}, week)`, repeated application of `nextSessionPlan` for `enabledLifts.length * 4` iterations returns to `(lift, week)`. (Cycle invariant.)
 
-2. **`relativeTimeLabel(thenMs: number, nowMs: number): string`**
-   Location: `apps/mobile/src/domain/labels.ts` (extends existing module).
+2. **`relativeTimeLabel(thenMs: number, nowMs: number): string`** — **SHIPPED in Wave 1** (`c1044a7`), lives in `apps/mobile/src/domain/labels.ts`. Existing implementation covers all wave-2/3 consumers; no further work.
    Returns one of: `"just now"`, `"{n} min ago"`, `"{n}h ago"`, `"Yesterday"`, `"{n} days ago"`.
-   Property to test (fast-check): for any `delta ∈ [0, 7*24*60*60*1000]`, output is non-empty and matches one of the known patterns; for `delta < 60_000`, returns `"just now"`.
+   Property test already in place; no re-spec needed.
 
-3. **`bbbPlanRows(sessionId: number, tmStorage: number, storageUnit: Unit, pct = 0.5): AppendSetLogInput[]`**
+3. **`bbbPlanRows(sessionId: number, tmStorage: number, storageUnit: Unit, pct = 0.5): AppendSetLogInput[]`** — *Wave 2 (W2.4 consumer). NOT SHIPPED.*
    Location: `apps/mobile/src/domain/schemes.ts`.
    Returns 5 `AppendSetLogInput`-shaped objects ready to feed `appendSetLog`. Uses `index = 100 + i`. Uses `round(tmStorage * pct, storageUnit)` for the snapped weight.
    Property to test: returns exactly 5 rows; all rows share the same `prescribedWeight`; indices are `100, 101, 102, 103, 104`.
 
-4. **`plateLoadInstruction(perSide: readonly number[], barWeight: number, currentLoad: number, unit: Unit): string`**
+4. **`plateLoadInstruction(perSide: readonly number[], barWeight: number, currentLoad: number, unit: Unit): string`** — *Wave 2 (W2.1 consumer). NOT SHIPPED.*
    Location: `apps/mobile/src/domain/plates.ts` (extends existing module).
    Returns the UP NEXT instruction string. Pattern: `load: {plates} / side over {bar} bar` OR `unload to {weight} — strip the heavy plates` when `currentLoad > nextLoad` (this branch needs the caller to pass `currentLoad`; if `currentLoad <= nextLoad`, returns the load pattern).
    Property to test: for any `perSide`, the instruction string contains all plate values in descending order separated by `+`.
 
-5. **`isOrphanedActiveSession(session: Session | null, nowMs: number, staleAfterMs = 24 * 60 * 60 * 1000): boolean`**
+5. **`isOrphanedActiveSession(session: Session | null, nowMs: number, staleAfterMs = 24 * 60 * 60 * 1000): boolean`** — *OPTIONAL. NOT SHIPPED.*
    Location: `apps/mobile/src/domain/schemes.ts`.
-   Reserved for a possible future "this session was started over 24h ago — clean it up?" prompt. Not used in Wave 1 (the resume banner does not gate on age — the brief explicitly chose the resume-then-decide path over a stale-session-cleanup prompt). Included here as a documented hook for the post-redesign cleanup discussion.
+   Reserved for a possible future "this session was started over 24h ago — clean it up?" prompt. Not used in Wave 1 (the resume banner does not gate on age — the brief explicitly chose the resume-then-decide path over a stale-session-cleanup prompt). The post-merge bootstrap path in `useLiveScreenState.ts:192-208` already self-heals "every slot filled" sessions to `complete`; this helper would address the orthogonal "started but never logged" case. Still optional.
    Property to test: returns false for null, false for sessions with `startedAt > nowMs - staleAfterMs`, true otherwise.
 
 The remaining work is presentation logic and belongs in `features/session/` or `features/home/`. No additional pure-domain math is required.
@@ -865,3 +904,67 @@ None — ready for implementation.
 - [x] What does VoiceOver/TalkBack read for each element? — `Accessibility` block per screen enumerates labels, roles, and focus order.
 - [x] What is the reduced-motion fallback? — Each animated element explicitly states its `useReducedMotion()` fallback.
 - [x] What is explicitly out of scope? — See `Out of scope`.
+
+### Wave 1 — frozen at QA-pass (`bd01a29`)
+
+- [x] W1.1 Resume banner — shipped (`c1044a7`).
+- [x] W1.2 Today warmup ramp — shipped (`c1044a7`).
+- [x] W1.3 Live working-set split CTA + `WorkingSetLogSheet` — shipped (`c1044a7`).
+- [x] W1.4 Session-not-found shells — shipped (`c1044a7`).
+
+### Wave 2 — required after 2026-05-24 main merge
+
+- [ ] W2.1 Rest phase three-section layout — partially shipped on main (`1138c01`); LOGGED band + plate-load instruction line are the delta.
+- [ ] W2.2 Rest timer countdown + skip/+30s + breathe pulse + T-10s/T-0 haptics — required.
+- [ ] W2.3 AMRAP preset chips + promoted PR row — required.
+- [ ] W2.4 BBB confirm fork phase + 5 BBB rows + typed-key invalidation — required (re-anchored against the new bootstrap path).
+- [ ] W2.5 Cancel split branching logic (A immediate / B single-tap / C two-tap) — required.
+
+### Wave 3 — required after 2026-05-24 main merge
+
+- [ ] W3.1 Plate leftover caption beside the live `TopSetBlock` — required (relocated from deleted `LiveBigWeight`).
+- [ ] W3.2 Cancel split visual (X chip + overflow `…` chip; new `RightAction` variant) — required.
+- [ ] W3.3 Next-session handoff row on SessionCompleteScreen — required.
+- [ ] W3.4 Cycle grid responsive breakpoint (< 360pt) — required.
+- [ ] W3.5 RestTimer target value rendered (replace literal `TARGET` with `TARGET m:ss`) — required.
+
+---
+
+## Revision 2026-05-24
+
+**Why:** between Wave 1 shipping (`c1044a7`) and Wave 2 starting, main shipped four commits that independently reworked the Today/Live flow (`1138c01` + `aa866bd` + `ebc34b2` + `c28b655`), renamed the workspace package from `@proof-531/mobile` to `@fivethreeone/mobile`, and deleted `LiveBigWeight`. Some Wave 2 work has been partially absorbed by main in a different shape; some Wave 3 anchor files no longer exist. This revision re-anchors Waves 2 and 3 only — Wave 1 is frozen.
+
+**Sections changed:**
+
+| Section | Change | Reason |
+|---|---|---|
+| W2.1 (Rest three-section layout) | Re-spec as **delta against main's shipped RestPhase**. Main already added the `NEXT SET` `TopSetBlock` band and the `Stronger.` / `Rest.` headline. Wave 2 adds (a) the LOGGED band between headline and timer, (b) the plate-load instruction line below the existing NEXT SET. ASCII hierarchy redrawn to show main's bands + Wave 2 additions. | Main shipped a four-band layout in `1138c01`; the original three-section spec would have asked frontend to tear down working code. |
+| W2.2 (Rest timer countdown + controls + breathe pulse + haptic ladder) | Status note added — main's `RestTimer.tsx` still counts UP and has no skip/+30s. Haptic ladder description re-anchored against the existing `warningFiredRef` pattern in `useLiveScreenState.ts:244-250`. | Codify the post-merge baseline so frontend doesn't re-investigate. |
+| W2.3 (AMRAP preset chips + promoted PR row) | Status note added — `AmrapLogSheet.tsx` essentially untouched by main; integration points (header rows + `setReps` + `isPotentialPR`) confirmed stable. Body of spec unchanged. | Reassure the frontend that the chip + PR-row insertion site is the same as originally designed. |
+| W2.4 (BBB confirm fork phase) | Status note added describing main's `setLogs`-bootstrap path in `useLiveScreenState.ts:192-208`. New "Bootstrap interaction" paragraph clarifies that BBB-confirm is *only* reachable through the live `onAdvanceFromRest` path (never through bootstrap), so the auto-complete branch can stay unchanged. "What gets written" paragraph updated to call out the typed `SET_LOGS_FOR_SESSION_KEY(sessionId)` factory for invalidation. | Main's new bootstrap path could deadlock the BBB fork if not addressed; this resolves the ambiguity. |
+| W2.5 (Cancel split logic) | Status note added. New "Navigation integration" paragraph documents that Today → Live is `router.push` (`useTodayScreenState.ts:103,120`), so Back from Live returns to Today; Branch A (immediate cancel) deliberately `router.replace('/')`-s home to collapse the history rather than `router.back()`-ing to Today's "Start session" CTA against a freshly-cancelled lift. | The brief flagged navigation pattern as a new constraint; the cancel logic now matches it. |
+| W3.1 (Plate leftover surface) | Rewritten end-to-end. **Relocated** from the deleted `LiveBigWeight.tsx` to a feature-local caption below the live `TopSetBlock` (`LiveScreen.tsx:273-285`). New rationale paragraph justifies the caption-below-plate-bar site over an eyebrow-suffix approach. Storage-units threshold + decompose call site updated to point at `LiveScreen.tsx:167`. Decision: do **not** add the leftover as a prop on `TopSetBlock` — it's a feature-local sibling so Today's hero (also `TopSetBlock`) doesn't inherit a Live-only caption. | `LiveBigWeight` was deleted by `1138c01`; W3.1 had no home. |
+| W3.2 (Cancel split visual) | Status note added. New extension-by-discriminated-union plan: add `RightAction = ... | { kind: 'cancel-split'; ... }` rather than mutating the existing `'cancel'` variant — preserves the Today screen's existing `SessionTopBar` usage (no right action) and the unused `'complete'` branch. | `SessionTopBar` is shared with Today; extending the union prevents accidental regressions outside Live. |
+| W3.3 (Next-session row) | Status note added. Line numbers re-anchored — main didn't touch this spacer. `nextSessionPlan` explicitly called out as still-required because Wave 2 (which would have shipped it) was discarded pre-merge. | Reassure that the insertion site is unchanged. |
+| W3.4 (Cycle grid responsive) | Status note added. Line numbers updated from `395-443` → `452-499` (shift due to main's edits earlier in the file). Grid math + week-labels structure confirmed unchanged. | Stale line-number references would have wasted frontend time. |
+| W3.5 (RestTimer target visibility) | Status note added. Approach changed from "append `· target 1:30` to the REST eyebrow in `RestPhase`" → "replace the literal `TARGET` string in `RestTimer.tsx:81` with `TARGET {formatLabel(target)}`" — main already built the empty slot, so the change is a 1-token edit. | Main shipped a `Rest timer / TARGET` header row but never wired the value through; the simplest fix is to use the slot that exists. |
+| `## Domain logic` | Marked each helper with shipped status: `relativeTimeLabel` → **SHIPPED Wave 1**; `nextSessionPlan`, `bbbPlanRows`, `plateLoadInstruction` → *Wave 2, NOT SHIPPED* (Wave 2 was discarded pre-merge, helpers come back with the new Wave 2 implementation); `isOrphanedActiveSession` → *OPTIONAL, NOT SHIPPED* (with a note that main's bootstrap path already covers the orthogonal "every slot filled" case). | Disambiguate which helpers the frontend needs to write vs. import. |
+| `## Data contract` → New TanStack Query hooks | Cache-key string corrected from `['setLogs', sessionId]` → `['setLogsForSession', sessionId]` (typed `SET_LOGS_FOR_SESSION_KEY` factory). Removed the "invalidation gaps to close" recommendation for the three Live handlers — main already invalidates correctly. BBB writer's invalidation responsibility re-stated explicitly. | The original key was wrong (would have shipped a no-op invalidation). |
+| `## Data contract` → Optimistic mutations / Rollback strategy | Marked warmup write + working-set write as **SHIPPED on Wave 1** without optimistic plumbing — current invalidate-after-write path is acceptable. Rollback section reduced to "N/A — no optimistic writes remain in Wave 2/3". | Reflect the pragmatic choice the Wave 1 frontend made; do not re-introduce optimistic patterns gratuitously. |
+| Coverage checklist | Replaced the single-section flat list with a **wave-by-wave status table** (W1 frozen, W2 + W3 itemized with checkboxes). | Make it obvious at a glance which sections are still open work vs. shipped. |
+
+**Sections NOT touched (still authoritative):**
+
+- `## Intent` — unchanged; the three-category framing (silent loss / poor rhythm / polish gaps) still holds.
+- `## PWA reference` — unchanged.
+- `## Screens & flow` — unchanged; the phase machine flow (incl. `working-set-log` and `bbb-confirm` phases) still describes the destination state.
+- Wave 1 sub-sections (W1.1, W1.2, W1.3, W1.4) — **frozen** at QA-pass commit `bd01a29`.
+- `## New primitives` — unchanged; the list still correctly identifies what needs to be built vs. extended. (Note: the Wave 1 primitives `ResumeBanner` and `SessionNotFound` and the `SetRow` `prefix` extension have all shipped.)
+- `## Out of scope` — unchanged.
+- `## Open questions` — unchanged (none).
+
+**No new open questions surfaced by the merge.** The bootstrap-vs-BBB interaction was the only ambiguity, and it has a clear "keep auto-complete as-is" resolution (documented inline in W2.4).
+
+**Package-name update:** the spec body does not reference `@proof-531/mobile` directly; references in adjacent workspace files (`_workspace/02_implementation_log.md:225`, `_workspace/03_qa_report.md:33`) are historical artefacts of the Wave 1 run and do not need editing for the Wave 2 spec to be actionable. Frontend should use `@fivethreeone/mobile` for any new pnpm-filter invocations.
+
+**Test baseline update:** the original spec did not explicitly call out "3 pre-existing LiveScreen.test.tsx failures"; the closest reference was implicit in the Wave 1 verification expectations. Post-`ebc34b2`, the `LiveScreen.test.tsx` suite is green under React 19 + fake timers — Wave 2/3 implementations should expect a clean baseline and not preserve any skipped tests.
