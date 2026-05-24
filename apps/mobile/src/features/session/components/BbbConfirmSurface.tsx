@@ -41,7 +41,7 @@ export function BbbConfirmSurface({
   onSkip,
   testID,
 }: BbbConfirmSurfaceProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, radii, spacing, type } = useTheme();
   const unitGlyph = displayUnit(unit);
 
   const headerWrap: ViewStyle = {
@@ -88,7 +88,7 @@ export function BbbConfirmSurface({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xl,
     backgroundColor: colors.ink0,
-    borderRadius: 999,
+    borderRadius: radii.pill,
   };
   const secondaryButtonStyle: ViewStyle = {
     flex: 1,
@@ -100,7 +100,7 @@ export function BbbConfirmSurface({
     backgroundColor: colors.bg0,
     borderWidth: 1,
     borderColor: colors.ink0,
-    borderRadius: 999,
+    borderRadius: radii.pill,
   };
 
   const accessibilityConfirm = `Log Boring But Big, 5 sets of 10 reps at ${bbbWeight} ${unitGlyph}`;

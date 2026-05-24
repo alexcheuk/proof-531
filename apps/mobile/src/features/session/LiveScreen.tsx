@@ -180,7 +180,23 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // 45 lb / 20 kg keyed off the plate set.
   const barWeight = plateSet === 'kg-standard' ? 20 : 45;
   const lastLoadedStorage = live.lastLogged?.weight ?? 0;
-  const plateInstruction = plateLoadInstruction(perSide, barWeight, lastLoadedStorage, storageUnit);
+  // During post-terminal rest the hook deliberately keeps `setIndex === 2` so
+  // `onAdvanceFromRest` can fork into `bbb-confirm`. That means
+  // `live.prescribedWeight` / `.pct` / `.prescribedReps` still describe the
+  // just-completed top set, NOT the upcoming BBB. Spec W2.1 lines 330-332
+  // require the NEXT SET band (and its plate-load instruction) to be
+  // overridden with the BBB summary in that window so the lifter starts
+  // stripping plates immediately. `bbbPerSide` is always lighter than the
+  // top set's `perSide` in 5/3/1, which triggers the `unload to` branch of
+  // `plateLoadInstruction`.
+  const isPostTerminalRest = live.phase === 'rest' && live.postTerminalRest;
+  const nextSetPerSide = isPostTerminalRest ? bbbPerSide : perSide;
+  const plateInstruction = plateLoadInstruction(
+    nextSetPerSide,
+    barWeight,
+    lastLoadedStorage,
+    storageUnit,
+  );
 
   // W2.1 — LOGGED band props. Convert `lastLogged.weight` (storage units) to
   // the display currency the user picked.
@@ -308,18 +324,38 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             target={live.restTarget}
             onSkipRest={live.onSkipRest}
             onAddRest={live.onAddRest}
-            // During rest, useLiveScreenState has already advanced setIndex
-            // to the next set, so live.prescribedWeight / .pct / .isAmrap /
-            // .prescribedReps describe that set. The PlateBar perSide is
-            // already computed off the same prescribed weight above.
-            nextSet={{
-              weight: prescribedDisplay,
-              reps: live.prescribedReps,
-              amrap: live.isAmrap,
-              pct: live.pct,
-              perSide,
-              tmDisplay: Math.round(convertWeight(session.trainingMaxSnapshot, storageUnit, unit)),
-            }}
+            // During a non-terminal rest, useLiveScreenState has already
+            // advanced setIndex to the next set, so live.prescribedWeight /
+            // .pct / .isAmrap / .prescribedReps describe that next set. The
+            // PlateBar perSide is computed off that same prescribed weight.
+            // During post-terminal rest (W2.1 fixup) the hook deliberately
+            // does NOT advance setIndex — instead it sets `postTerminalRest`
+            // so `onAdvanceFromRest` can fork into `bbb-confirm`. In that
+            // window we override the NEXT SET band with the BBB summary
+            // (5 × 10 @ bbbWeight) per spec lines 330-332.
+            nextSet={
+              isPostTerminalRest
+                ? {
+                    weight: bbbDisplayWeight,
+                    reps: 10,
+                    amrap: false,
+                    pct: 0.5,
+                    perSide: bbbPerSide,
+                    tmDisplay: Math.round(
+                      convertWeight(session.trainingMaxSnapshot, storageUnit, unit),
+                    ),
+                  }
+                : {
+                    weight: prescribedDisplay,
+                    reps: live.prescribedReps,
+                    amrap: live.isAmrap,
+                    pct: live.pct,
+                    perSide,
+                    tmDisplay: Math.round(
+                      convertWeight(session.trainingMaxSnapshot, storageUnit, unit),
+                    ),
+                  }
+            }
             plateInstruction={plateInstruction}
             testID="rest-phase"
           />

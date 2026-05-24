@@ -864,6 +864,63 @@ describe('LiveScreen', () => {
     expect(screen.getByTestId('rest-phase-plate-instruction')).toBeTruthy();
   });
 
+  it('W2.1 fixup: post-terminal rest NEXT SET band shows BBB summary (5 × 10 @ bbbWeight), not the just-completed top set', async () => {
+    // Resume directly into "two working sets done", then save AMRAP on set 2.
+    // Hook routes through `rest` with `postTerminalRest = true` and
+    // setIndex still === 2. The NEXT SET band must show the BBB plan
+    // (150 lb @ 5 × 10, with TM 300), not the just-logged top set
+    // (week 1 top set 2 = 85% × 5 AMRAP = 255 × 5+).
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    // NEXT SET shows the BBB plan, not the just-completed top set.
+    // BBB weight = 50% × 300 TM = 150 lb; BBB reps = 10.
+    const weightNode = screen.getByTestId('rest-phase-next-set-block-weight');
+    expect(weightNode.props.children).toBe(150);
+    const repsNode = screen.getByTestId('rest-phase-next-set-block-reps');
+    // TopSetBlock renders reps as `× {n}{amrap?'+':''}` — children is an array
+    // of literal strings + the reps number. amrap === false for BBB so the
+    // suffix is an empty string.
+    expect(repsNode.props.children).toEqual(['× ', 10, '']);
+  });
+
+  it('W2.1 fixup: post-terminal rest plate-load instruction starts with "unload to" (BBB drop is always lighter than the top set)', async () => {
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    const instructionNode = screen.getByTestId('rest-phase-plate-instruction');
+    const instruction = instructionNode.props.children as string;
+    expect(instruction).toMatch(/^unload to /);
+    // 50% × 300 lb TM = 150 lb BBB target.
+    expect(instruction).toContain('150');
+  });
+
   it('resume regression: bootstrap with all 3 logs auto-completes the session', async () => {
     // Edge case — session left in_progress with all three slots filled
     // (e.g. completeSession write was interrupted). Resume should call

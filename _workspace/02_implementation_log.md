@@ -628,3 +628,108 @@ Metro resolved every import. No missing transitive dependencies.
     `withRepeat(withTiming(1.04, ...), -1, true)` on the CTA at T-0.
     The haptic ladder + SKIP control are in place to signal T-0
     without the animation, so this is purely visual polish for Wave 3.
+
+---
+
+## Wave 2 fixup
+
+Owner: `rn-frontend`
+Scope: QA report (`_workspace/03_qa_report.md` Wave 2) Findings 1 (must-fix
+MEDIUM) and 3 (informational raw `999` literal). Two-file fixup commit, no
+new components, no new domain helpers, no spec deviation.
+
+### Fix 1 — W2.1 NEXT SET band shows the BBB summary during post-terminal rest
+
+The post-terminal rest cycle (between the AMRAP / set-3 log and the BBB
+confirm fork) was rendering the NEXT SET band with the just-completed top
+set's prescription because `useLiveScreenState` deliberately keeps
+`setIndex === 2` so `onAdvanceFromRest` can branch on `postTerminalRest`.
+The hook now publishes that flag on its result shape (was previously
+internal local state); `LiveScreen` reads it and swaps both the `nextSet`
+prop and the `plateInstruction` arguments when true.
+
+- `apps/mobile/src/features/session/hooks/useLiveScreenState.ts` — added
+  `postTerminalRest: boolean` to `UseLiveScreenStateResult` and
+  the returned object. **Now publicly exposed** for Wave 3 (per QA Wave 3
+  risk note 1, this was the recommended exposure pattern; landing it
+  here removes that risk-note item).
+- `apps/mobile/src/features/session/LiveScreen.tsx` — derived
+  `isPostTerminalRest = live.phase === 'rest' && live.postTerminalRest`.
+  When true: `plateInstruction` is computed against `bbbPerSide` (already
+  decomposed at line 175) so `plateLoadInstruction` hits its `unload to`
+  branch (BBB weight < top-set weight in all weeks of 5/3/1). The
+  `nextSet` prop on `RestPhase` is overridden to
+  `{ weight: bbbDisplayWeight, reps: 10, amrap: false, pct: 0.5,
+  perSide: bbbPerSide, tmDisplay }`. The pre-existing non-terminal branch
+  is unchanged.
+- `apps/mobile/src/features/session/__tests__/LiveScreen.test.tsx` — two
+  new tests:
+  - `W2.1 fixup: post-terminal rest NEXT SET band shows BBB summary…` —
+    drives the screen through the AMRAP save → rest, then asserts the
+    `rest-phase-next-set-block-weight` testID renders `150` (50% × 300
+    TM) and the `-reps` testID renders `× 10`.
+  - `W2.1 fixup: post-terminal rest plate-load instruction starts with
+    "unload to"…` — asserts the `rest-phase-plate-instruction` text
+    matches `/^unload to /` and contains the 150 lb BBB target.
+
+  Switched from `JSON.stringify(node.props)` (which throws on the
+  React tree's circular `Provider` reference) to direct `-weight` /
+  `-reps` testID assertions, which is the canonical pattern used by
+  the surrounding W2.1 tests.
+
+No `RestPhase.tsx` change needed — it already accepts the `nextSet` and
+`plateInstruction` props.
+
+### Fix 2 — `radii.pill` in BbbConfirmSurface
+
+- `apps/mobile/src/features/session/components/BbbConfirmSurface.tsx` —
+  pulled `radii` from `useTheme()` (already had `colors`, `spacing`,
+  `type`) and replaced both `borderRadius: 999` literals at lines 91 and
+  103 with `radii.pill`. Matches the W1.3 `SplitWorkingSetCta` pattern.
+
+### Verification
+
+```
+$ pnpm typecheck
+> 531@0.0.0 typecheck /home/user/proof-531
+> pnpm -r --parallel typecheck
+apps/mobile typecheck: Done                                # exit 0
+
+$ pnpm lint
+> 531@0.0.0 lint /home/user/proof-531
+> biome check .
+Checked 184 files in 208ms. No fixes applied.              # exit 0
+
+$ pnpm test
+Test Suites: 59 passed, 59 total
+Tests:       410 passed, 410 total                          # exit 0
+```
+
+Test delta vs Wave 2 baseline: 408 → 410 (+2, both new W2.1-fixup tests).
+Zero regressions.
+
+```
+$ pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
+    --output-dir /tmp/expo-bundle-wave2-fixup \
+    --dump-sourcemap=false --dump-assetmap=false
+...
+› ios bundles (2):
+_expo/static/js/ios/entry-…hbc (3.2MB)
+...
+Exported: /tmp/expo-bundle-wave2-fixup                      # exit 0
+```
+
+Metro resolved every import. No new npm deps.
+
+### Notes for Wave 3
+
+- `live.postTerminalRest` is now part of `UseLiveScreenStateResult` —
+  Wave 3 visuals that need to distinguish the post-terminal rest cycle
+  (e.g. the X-chip cancel split, the bbb-confirm-anchored cancel sheet
+  underlying-surface fix) can read it directly without re-deriving from
+  `setIndex === 2 && phase === 'rest'`.
+- QA Wave 3 risk-note 1 (`postTerminalRest` exposure) is satisfied;
+  risk-note 4 (`BbbConfirmSurface` `999` literal) is satisfied. The
+  remaining open Wave 3 items (Reanimated bundle, cancel-sheet underlying
+  surface, swipe-left on ResumeBanner, plate leftover caption, next-
+  session row, RestTimer target value) are untouched.

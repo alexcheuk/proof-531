@@ -156,6 +156,15 @@ export type UseLiveScreenStateResult = {
   loggedWorkingCount: number;
   /** W2.5 — immediate cancel (Branch A). Resolves to `phase === 'complete'`. */
   onImmediateCancel: () => Promise<void>;
+  /**
+   * W2.1 fixup — true while the rest currently in progress follows the
+   * terminal main-work set (working idx 2 deload OR AMRAP on weeks 1–3).
+   * Surfaced so the screen layer can override the NEXT SET band with the
+   * BBB summary instead of re-showing the just-completed prescription.
+   * Reset on the next non-terminal log / phase transition out of the
+   * post-terminal rest cycle.
+   */
+  postTerminalRest: boolean;
 };
 
 /**
@@ -655,5 +664,6 @@ export function useLiveScreenState(
     bbbPrescribedWeight,
     loggedWorkingCount,
     onImmediateCancel,
+    postTerminalRest,
   };
 }
