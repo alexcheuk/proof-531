@@ -6,10 +6,11 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
+import { motion as motionTokens } from '@/design/tokens';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose, plateLoadInstruction } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
+import { convertWeight, displayUnit, displayWeight, round as snapWeight } from '@/domain/units';
 /**
  * Live screen — runs the user through three working sets with a countdown
  * rest timer between sets, an AMRAP bottom sheet for the top set, and a
@@ -37,8 +38,23 @@ import * as Haptics from 'expo-haptics';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect } from 'react';
-import { Pressable, ScrollView, View, type ViewStyle } from 'react-native';
+import { type ReactNode, useCallback, useEffect } from 'react';
+import {
+  Pressable,
+  Text as RNText,
+  ScrollView,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { BbbConfirmSurface } from './components/BbbConfirmSurface';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
@@ -56,7 +72,7 @@ export type LiveScreenProps = {
 export function LiveScreen({ sessionId }: LiveScreenProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, type } = useTheme();
   const sessionQuery = useSession(sessionId);
   const prsQuery = usePrs();
   const settingsQuery = useSettings();
@@ -165,7 +181,19 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // lb plates regardless of which currency the user is viewing in).
   const plateSet: PlateSet =
     settingsQuery.data?.plateSet ?? (storageUnit === 'kg' ? 'kg-standard' : 'standard');
-  const perSide = decompose(live.prescribedWeight, plateSet).perSide;
+  // W3.1 — capture both perSide and leftover so the feature-local caption
+  // below the live TopSetBlock can render the "≈ prescribed (loaded N) {unit}
+  // (M short)" copy. `decompose` returns leftover in the input unit (storage),
+  // which we convert to display units before rendering. Threshold for showing
+  // the caption is `> 0.1` storage units (above float-dust); the display-unit
+  // round must also be non-zero.
+  const decomposedLive = decompose(live.prescribedWeight, plateSet);
+  const perSide = decomposedLive.perSide;
+  const leftoverStorage = decomposedLive.leftover;
+  const leftoverDisplayRaw = convertWeight(leftoverStorage, storageUnit, unit);
+  const leftoverDisplayRounded = snapWeight(leftoverDisplayRaw, unit);
+  const loadedDisplayRounded = snapWeight(prescribedDisplay - leftoverDisplayRounded, unit);
+  const showLeftoverCaption = leftoverStorage > 0.1 && leftoverDisplayRounded > 0;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
   // W2.4 — BBB plate decomposition (in storage units, then forwarded to the
@@ -207,18 +235,51 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  const showSetSurface =
-    live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'working-set-log';
-  const showRestSurface = live.phase === 'rest';
-  const showBbbConfirmSurface = live.phase === 'bbb-confirm';
+  // W3.1 — leftover caption style. Lives at the feature layer (not in the
+  // shared `Text` primitive) because the `accessibilityRole` / `Label` shape
+  // doesn't fit the primitive's typed props, and the line is feature-local
+  // to Live anyway.
+  const leftoverCaptionStyle: TextStyle = {
+    fontFamily: `${type.mono}-Medium`,
+    fontSize: 10,
+    lineHeight: 14,
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    color: colors.ink2,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  };
 
-  // W2.5 — cancel split (logic only; visuals come in W3.2). Branch A: tap
-  // cancel with zero working/amrap rows logged → immediate cancel +
-  // `router.replace('/')`. Today → Live is `router.push` so the push
-  // history (home → today → live) would survive a `router.back()` to a
-  // "Start session" CTA against a freshly-cancelled lift — `replace('/')`
-  // is the unambiguous exit.
-  // Branch B/C: existing two-tap confirm sheet (unchanged).
+  // W3-E — when the cancel sheet is open we render the surface the user was
+  // on when they tapped the X (rest / bbb-confirm / set) underneath, so the
+  // sheet doesn't visually leak the SET surface for someone who cancelled
+  // mid-rest or mid-BBB. `live.phaseBeforeCancel` is captured by the hook at
+  // sheet-open time.
+  const underlyingPhase = live.phase === 'cancel-confirm' ? live.phaseBeforeCancel : live.phase;
+  const showSetSurface =
+    underlyingPhase === 'set' ||
+    underlyingPhase === 'amrap-log' ||
+    underlyingPhase === 'working-set-log';
+  const showRestSurface = underlyingPhase === 'rest';
+  const showBbbConfirmSurface = underlyingPhase === 'bbb-confirm';
+
+  // W2.5 / W3.2 — cancel split branching at tap time. Today → Live is
+  // `router.push` so the push history (home → today → live) would survive a
+  // `router.back()` to a "Start session" CTA against a freshly-cancelled lift
+  // — Branch A's `replace('/')` is the unambiguous exit.
+  //
+  //   Branch A — tap X with zero working/amrap rows logged: immediate cancel,
+  //     no confirm sheet, selection haptic, replace-to-home.
+  //   Branch B — tap X with ≥1 working/amrap row: opens the existing two-tap
+  //     CancelConfirmSheet (will be slimmed in a future iteration to the
+  //     single-tap "End this session?" variant per the spec; the current
+  //     two-tap copy already covers the destructive intent).
+  //   Branch C — long-press X (300ms) OR tap overflow `…`: always opens the
+  //     two-tap destructive sheet, regardless of working count.
+  //
+  // W3.2 keeps the existing `CancelConfirmSheet` for B and C in this pass
+  // (spec line 626: "Reuse CancelConfirmSheet"); the destructive copy
+  // already conveys both branches' intent.
   const handleCancelRequest = useCallback(() => {
     if (live.loggedWorkingCount === 0) {
       Haptics.selectionAsync();
@@ -229,6 +290,12 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     }
     live.onRequestCancel();
   }, [live, router]);
+
+  // W3.2 — Branch C entry point (long-press X or overflow tap). Always opens
+  // the two-tap destructive sheet, regardless of working count.
+  const handleLongPressCancel = useCallback(() => {
+    live.onRequestCancel();
+  }, [live]);
 
   // Primary CTA — depends on phase. The cancel-confirm and amrap-log phases
   // still render the underlying set/rest surface, so they re-use the same
@@ -243,28 +310,39 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   //   bbb-confirm phase        → split CTA owned by BbbConfirmSurface itself
   //                              (no CtaBar pinned below).
   let cta: React.ReactElement | null = null;
-  if (live.phase === 'rest') {
+  // Resolve the CTA against the underlying phase so opening the cancel sheet
+  // from `rest` keeps the "Next set" pill underneath (W3-E), not a stale set
+  // CTA. The cancel-sheet backdrop covers it visually either way; this just
+  // keeps the model honest.
+  if (underlyingPhase === 'rest') {
     // W2.4 — the terminal-set rest CTA reads "Complete session" because the
     // visible-user-facing transition is "you're done with main work"; the
     // BBB fork happens inside `onAdvanceFromRest` based on
     // `postTerminalRest`. For non-terminal rests, the label stays
     // "Next set" → next working set.
     const hasNext = live.setIndex < 2;
+    // W3-B — breathing pulse at T-0. When `restRemaining === 0` the CTA
+    // animates a continuous scale 1 → 1.04 → 1 (800ms each leg, ease-standard,
+    // infinite reverse). The reduced-motion fallback inverts the CTA's
+    // background/text colors statically (handled inside `BreathingNextSetCta`).
     cta = (
-      <PrimaryPillButton testID="cta-advance-rest" glyph="→" onPress={live.onAdvanceFromRest}>
+      <BreathingNextSetCta
+        active={live.restRemaining <= 0}
+        testID="cta-advance-rest"
+        onPress={live.onAdvanceFromRest}
+      >
         {hasNext ? 'Next set' : 'Complete session'}
-      </PrimaryPillButton>
+      </BreathingNextSetCta>
     );
-  } else if (live.phase === 'bbb-confirm') {
+  } else if (underlyingPhase === 'bbb-confirm') {
     // BBB confirm phase renders its own split CTA inside the surface body —
     // intentionally no `CtaBar` here so the buttons sit flush with the
     // surface flow.
     cta = null;
   } else if (
-    live.phase === 'set' ||
-    live.phase === 'amrap-log' ||
-    live.phase === 'working-set-log' ||
-    live.phase === 'cancel-confirm'
+    underlyingPhase === 'set' ||
+    underlyingPhase === 'amrap-log' ||
+    underlyingPhase === 'working-set-log'
   ) {
     if (live.isAmrap) {
       cta = (
@@ -296,7 +374,18 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <SessionTopBar
         onBack={() => router.back()}
         backLabel="Back to plan"
-        rightAction={{ kind: 'cancel', onPress: handleCancelRequest }}
+        // W3.2 — cancel split visual: X chip + overflow `…` chip. The X chip
+        // branches at tap time on `live.loggedWorkingCount` (Branch A =
+        // immediate cancel, Branch B = single-tap confirm sheet); long-press
+        // and overflow tap both open the existing two-tap destructive sheet
+        // (Branch C). `handleCancelSplit` encapsulates the branching logic so
+        // SessionTopBar stays a pure visual primitive.
+        rightAction={{
+          kind: 'cancel-split',
+          onTapCancel: handleCancelRequest,
+          onLongPressCancel: handleLongPressCancel,
+          onTapOverflow: handleLongPressCancel,
+        }}
       />
       <ScrollView
         testID="live-scroll"
@@ -374,7 +463,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             }}
             testID="bbb-confirm-surface"
           />
-        ) : showSetSurface || live.phase === 'cancel-confirm' ? (
+        ) : showSetSurface ? (
           <>
             <LiveHeader
               setIndex={live.setIndex}
@@ -397,6 +486,25 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
                 bordered={false}
                 testID="live-bigweight"
               />
+              {/*
+               * W3.1 — plate-leftover caption (relocated from the deleted
+               * `LiveBigWeight.tsx`). Renders below the live `TopSetBlock`
+               * only when the rounded leftover in display units is non-zero
+               * AND the storage-units leftover exceeds 0.1 (above float
+               * dust). Read-only — Today's hero `TopSetBlock` does NOT get
+               * this caption because Today is a preview, not "what's on the
+               * bar".
+               */}
+              {showLeftoverCaption ? (
+                <RNText
+                  accessibilityRole="text"
+                  accessibilityLabel={`Prescribed ${prescribedDisplay} ${displayUnit(unit)}, loaded ${loadedDisplayRounded} ${displayUnit(unit)}, ${leftoverDisplayRounded} ${displayUnit(unit)} short`}
+                  style={leftoverCaptionStyle}
+                  testID="live-bigweight-leftover"
+                >
+                  {`≈ ${prescribedDisplay} ${displayUnit(unit)} — loaded ${loadedDisplayRounded} ${displayUnit(unit)} (${leftoverDisplayRounded} ${displayUnit(unit)} short)`}
+                </RNText>
+              ) : null}
             </View>
 
             <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
@@ -533,5 +641,87 @@ function SplitWorkingSetCta({
         </Text>
       </Pressable>
     </View>
+  );
+}
+
+/**
+ * Wave 3 W3-B — Breathing pulse on the rest-phase "Next set" CTA at T-0.
+ *
+ * Wraps `PrimaryPillButton` in an `Animated.View` that:
+ *   - When `active === true` (restRemaining === 0): runs a continuous scale
+ *     pulse 1 → 1.04 → 1 driven by `withRepeat(withTiming(1.04, ...), -1, true)`.
+ *     Duration 800ms each leg, ease-standard cubic bezier.
+ *   - When `active === false`: holds the scale at 1.
+ *   - Reduced-motion fallback (`useReducedMotion()` true): no worklet ever
+ *     starts. Instead, when `active` flips on, the CTA's background flips
+ *     from `ink0` (default) to the same `ink0` with a subtle inset paper
+ *     ring; per spec lines 426-428 the goal is to communicate "now" without
+ *     motion. Implemented here by toggling `borderWidth` / `borderColor` —
+ *     the PrimaryPillButton's `style` prop lets the wrapper add chrome
+ *     without re-implementing the button shape.
+ *
+ * Cleanup: when `active` flips off (next rest cycle), the shared value
+ * snaps back to 1 via a single 220ms `withTiming` so the pulse doesn't
+ * appear to abruptly halt mid-breath.
+ */
+function BreathingNextSetCta({
+  active,
+  children,
+  onPress,
+  testID,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onPress: () => void;
+  testID?: string;
+}) {
+  const { colors } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      scale.value = 1;
+      return;
+    }
+    if (active) {
+      scale.value = withRepeat(
+        withTiming(1.04, {
+          duration: 800,
+          easing: Easing.bezier(...motionTokens.easeStandardBezier),
+        }),
+        -1,
+        true,
+      );
+    } else {
+      scale.value = withTiming(1, {
+        duration: motionTokens.durationBase,
+        easing: Easing.bezier(...motionTokens.easeStandardBezier),
+      });
+    }
+  }, [active, reduceMotion, scale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // Reduced-motion fallback: when the CTA is "active" (T-0), add a 2pt paper
+  // ring around the inside of the pill (using the `lineFaint` token so the
+  // visual is the same e-ink hairline as the rest of the chrome). The static
+  // rest state visibly differs from the "now" state without motion.
+  const reducedMotionRing: ViewStyle | undefined =
+    reduceMotion && active ? { borderWidth: 2, borderColor: colors.lineFaint } : undefined;
+
+  return (
+    <Animated.View testID={`${testID ?? 'cta-breathing'}-wrapper`} style={animatedStyle}>
+      <PrimaryPillButton
+        glyph="→"
+        onPress={onPress}
+        {...(testID !== undefined ? { testID } : {})}
+        {...(reducedMotionRing ? { style: reducedMotionRing } : {})}
+      >
+        {children}
+      </PrimaryPillButton>
+    </Animated.View>
   );
 }

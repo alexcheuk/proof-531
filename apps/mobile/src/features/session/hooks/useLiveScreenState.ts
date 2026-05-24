@@ -165,6 +165,15 @@ export type UseLiveScreenStateResult = {
    * post-terminal rest cycle.
    */
   postTerminalRest: boolean;
+  /**
+   * W3-E — phase the user was on when the cancel sheet was opened. Used by
+   * the screen layer to render the correct underlying surface beneath the
+   * sheet (so e.g. opening cancel from `bbb-confirm` keeps the BBB surface
+   * visible behind the backdrop rather than falling through to `set`).
+   * Mirrors the internal `phaseBeforeCancelRef` value; only meaningful while
+   * `phase === 'cancel-confirm'`.
+   */
+  phaseBeforeCancel: LivePhase;
 };
 
 /**
@@ -250,8 +259,12 @@ export function useLiveScreenState(
   // benign re-render — guard so the read only happens once per session).
   const bootstrappedRef = useRef(false);
   // The phase to return to when the cancel sheet is dismissed. Captured at
-  // open time so the cancel flow doesn't disturb the underlying state.
-  const phaseBeforeCancelRef = useRef<LivePhase>('set');
+  // open time so the cancel flow doesn't disturb the underlying state. W3-E
+  // promotes this from a ref to state so the screen layer can read it
+  // synchronously during render to pick the right underlying surface (the
+  // BBB surface stays visible behind the cancel sheet when triggered from
+  // `bbb-confirm`, rather than falling through to the `set` surface).
+  const [phaseBeforeCancel, setPhaseBeforeCancel] = useState<LivePhase>('set');
   // Track whether the warning threshold has already fired in the current rest
   // cycle so we don't double-trigger on re-renders or imprecise tick alignment.
   const warningFiredRef = useRef(false);
@@ -590,15 +603,15 @@ export function useLiveScreenState(
   }, [db, session?.id]);
 
   const onRequestCancel = useCallback(() => {
-    phaseBeforeCancelRef.current = phase;
+    setPhaseBeforeCancel(phase);
     setCancelArmed(false);
     setPhase('cancel-confirm');
   }, [phase]);
 
   const onDismissCancelSheet = useCallback(() => {
     setCancelArmed(false);
-    setPhase(phaseBeforeCancelRef.current);
-  }, []);
+    setPhase(phaseBeforeCancel);
+  }, [phaseBeforeCancel]);
 
   // First tap on the destructive button — arm the confirm and fire the warning
   // haptic. The second tap is what actually destroys.
@@ -665,5 +678,6 @@ export function useLiveScreenState(
     loggedWorkingCount,
     onImmediateCancel,
     postTerminalRest,
+    phaseBeforeCancel,
   };
 }

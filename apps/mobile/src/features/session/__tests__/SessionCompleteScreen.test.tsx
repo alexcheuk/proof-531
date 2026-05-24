@@ -110,6 +110,24 @@ jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => ({ data: [], isLoading: false, error: null }),
 }));
 
+// Wave 3 W3.3 — `SessionCompleteScreen` now reads the next-lift TM for the
+// NextSessionRow. Default to a populated set so the row shows a real weight;
+// individual tests can override via `latestTmsState.data = …`.
+const latestTmsState: { data: unknown; isLoading: boolean; error: unknown } = {
+  data: [
+    { id: 1, lift: 'squat', value: 300, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 2, lift: 'bench', value: 200, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 3, lift: 'deadlift', value: 400, unit: 'lbs', updatedAt: 1, note: null },
+    { id: 4, lift: 'press', value: 150, unit: 'lbs', updatedAt: 1, note: null },
+  ],
+  isLoading: false,
+  error: null,
+};
+jest.mock('@/data/queries/useLatestTm', () => ({
+  useLatestTms: () => latestTmsState,
+  TM_KEY: ['trainingMaxes'],
+}));
+
 // Import after mocks so the screen sees the stubs.
 import { SessionCompleteScreen } from '../SessionCompleteScreen';
 
@@ -227,5 +245,78 @@ describe('SessionCompleteScreen', () => {
     });
 
     expect(mockReplace).toHaveBeenCalledWith('/');
+  });
+
+  // ── Wave 3 ──────────────────────────────────────────────────────────────
+
+  it('W3.3: NextSessionRow renders with the next lift, week/day, and weight × reps', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-complete-next-session')).toBeTruthy();
+    });
+    // Current lift is `squat` (index 0 in enabled), week 1. Next session
+    // wraps to `bench` (index 1), week stays at 1. Bench TM = 200.
+    // Top set on week 1 is 85% × 5 (AMRAP) → 170 × 5+.
+    expect(screen.getByTestId('next-session-row-lift').props.children).toBe('Bench');
+    const weekDay = screen.getByTestId('next-session-row-week-day');
+    expect(weekDay.props.children).toEqual(['Week ', 1, ' · Day ', 2]);
+    expect(screen.getByTestId('next-session-row-weight').props.children).toBe('170 lb × 5+');
+  });
+
+  it('W3.3: NextSessionRow shows "Set a training max first" when the next lift has no TM', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    latestTmsState.data = [
+      // Only squat — bench/deadlift/press have no row.
+      { id: 1, lift: 'squat', value: 300, unit: 'lbs', updatedAt: 1, note: null },
+    ];
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('next-session-row-no-tm')).toBeTruthy();
+    });
+    // Reset for the next test.
+    latestTmsState.data = [
+      { id: 1, lift: 'squat', value: 300, unit: 'lbs', updatedAt: 1, note: null },
+      { id: 2, lift: 'bench', value: 200, unit: 'lbs', updatedAt: 1, note: null },
+      { id: 3, lift: 'deadlift', value: 400, unit: 'lbs', updatedAt: 1, note: null },
+      { id: 4, lift: 'press', value: 150, unit: 'lbs', updatedAt: 1, note: null },
+    ];
+  });
+
+  it('W3.4: cycle grid at standard width renders the flat 16-cell row (`cycle-grid` testID)', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('cycle-grid')).toBeTruthy();
+    });
+    // 16 cells in the flat layout.
+    expect(screen.getAllByTestId('cycle-cell')).toHaveLength(16);
+    // The narrow-layout week labels are NOT present.
+    expect(screen.queryByTestId('cycle-grid-week-1')).toBeNull();
+  });
+
+  it('W3.4: cycle grid at narrow width (<360pt) renders 4 stacked week rows with labels', async () => {
+    // Swap Dimensions.get to return a narrow window for this test only.
+    const originalGet = require('react-native').Dimensions.get;
+    require('react-native').Dimensions.get = (which: string) =>
+      which === 'window' ? { width: 320, height: 568 } : originalGet(which);
+
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('cycle-grid-week-1')).toBeTruthy();
+    });
+    expect(screen.getByTestId('cycle-grid-week-2')).toBeTruthy();
+    expect(screen.getByTestId('cycle-grid-week-3')).toBeTruthy();
+    expect(screen.getByTestId('cycle-grid-week-4')).toBeTruthy();
+    // Each week row carries a leading W{n} label.
+    expect(screen.getByTestId('cycle-grid-week-label-1').props.children).toEqual(['W', 1]);
+
+    // Reset Dimensions for subsequent tests.
+    require('react-native').Dimensions.get = originalGet;
   });
 });

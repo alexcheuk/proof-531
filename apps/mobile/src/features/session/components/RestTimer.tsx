@@ -115,7 +115,9 @@ export function RestTimer({ remaining, target, onSkipRest, onAddRest, testID }: 
           {countUp ? 'Over rest' : 'Rest timer'}
         </RNText>
 
-        <RNText style={metaStyle}>TARGET</RNText>
+        <RNText style={metaStyle} testID="rest-timer-target">
+          TARGET {formatLabel(target)}
+        </RNText>
       </View>
 
       <Pressable

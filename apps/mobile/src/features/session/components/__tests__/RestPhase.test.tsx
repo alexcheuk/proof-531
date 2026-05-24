@@ -156,4 +156,16 @@ describe('RestPhase', () => {
     expect(screen.getByTestId('rest-timer-skip')).toBeTruthy();
     expect(screen.getByTestId('rest-timer-add')).toBeTruthy();
   });
+
+  it('W3.5: RestTimer header shows TARGET {m:ss} for the configured rest target', () => {
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} target={90} />);
+    const targetLabel = screen.getByTestId('rest-timer-target');
+    expect(targetLabel.props.children).toEqual(['TARGET ', '1:30']);
+  });
+
+  it('W3.5: RestTimer header shows TARGET 3:00 when configured rest target is 180s', () => {
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={180} target={180} />);
+    const targetLabel = screen.getByTestId('rest-timer-target');
+    expect(targetLabel.props.children).toEqual(['TARGET ', '3:00']);
+  });
 });

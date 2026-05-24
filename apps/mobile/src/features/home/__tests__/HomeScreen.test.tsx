@@ -17,22 +17,10 @@ import { ThemeProvider } from '@/design/theme';
 import { fireEvent, render, within } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
-// Reanimated 4 boots `react-native-worklets` at module load — that native
-// init never lands under jest, so any `import 'react-native-reanimated'`
-// throws. The shipping `mock.js` also pulls worklets, so we substitute a
-// minimal inline mock: `Animated.View` falls through to a plain RN View
-// and `LinearTransition` becomes an opaque object — exactly what the
-// behavioral test for lift-switch needs.
-jest.mock('react-native-reanimated', () => {
-  const RN = jest.requireActual('react-native');
-  return {
-    __esModule: true,
-    default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
-    LinearTransition: { duration: () => ({}) },
-    FadeIn: { duration: () => ({}) },
-    FadeOut: { duration: () => ({}) },
-  };
-});
+// Reanimated mocked in `apps/mobile/jest.setup.ts` — shared across all suites
+// (W3-A consolidation). HomeScreen pulls in `useSharedValue` / `useAnimatedStyle`
+// / `useReducedMotion` via the Wave 3 swipe-dismiss wrapper, so the shared
+// mock is the source of truth.
 
 const mockRouterPush = jest.fn();
 const mockRouterReplace = jest.fn();

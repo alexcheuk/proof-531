@@ -120,4 +120,22 @@ describe('AmrapLogSheet (W2.3)', () => {
     const flat = (caption.props.children as unknown[]).join('');
     expect(flat.includes('PR')).toBe(false);
   });
+
+  // ── Wave 3 W3-C: PR row height tween ──────────────────────────────────
+
+  it('W3-C: PR row outer wrapper is always present in the tree (so the Reanimated height tween has a stable target)', () => {
+    const screen = renderWithTheme(<AmrapLogSheet {...baseProps} />);
+    // Hidden initial state (reps default = 5, below PR threshold for 250 e1RM).
+    expect(screen.getByTestId('amrap-pr-row-wrapper-hidden')).toBeTruthy();
+    expect(screen.queryByTestId('amrap-pr-row')).toBeNull();
+  });
+
+  it('W3-C: PR row wrapper switches testID once `showPRRow` is true (cross-into-PR)', () => {
+    const screen = renderWithTheme(<AmrapLogSheet {...baseProps} />);
+    fireEvent.press(screen.getByTestId('amrap-chip-10'));
+    // Wrapper testID switches to the "visible" variant; the inner PR row
+    // node also resolves.
+    expect(screen.getByTestId('amrap-pr-row-wrapper')).toBeTruthy();
+    expect(screen.getByTestId('amrap-pr-row')).toBeTruthy();
+  });
 });

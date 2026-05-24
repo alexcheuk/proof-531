@@ -1,3 +1,4 @@
+import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
@@ -9,9 +10,11 @@ import { SectionBand } from '@/design/primitives/SectionBand';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { estimateOneRm } from '@/domain/epley';
+import { liftDisplayName } from '@/domain/labels';
+import { nextSessionPlan } from '@/domain/schemes';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
-import type { Lift, SetLog, Unit } from '@/domain/types';
-import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
+import type { Lift, SetLog, Unit, Week } from '@/domain/types';
+import { convertWeight, displayUnit, displayWeight, round as snapWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -33,8 +36,16 @@ import { StatusBar } from 'expo-status-bar';
  * we fire `Haptics.notificationAsync('success')` exactly once.
  */
 import { useEffect, useRef } from 'react';
-import { Text as RNText, ScrollView, type TextStyle, View, type ViewStyle } from 'react-native';
+import {
+  Dimensions,
+  Text as RNText,
+  ScrollView,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { DateStamp } from './components/DateStamp';
+import { NextSessionRow } from './components/NextSessionRow';
 import { PRCertificate } from './components/PRCertificate';
 import { ReceiptRow } from './components/ReceiptRow';
 import { SessionLayout } from './components/SessionLayout';
@@ -194,6 +205,51 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
     ? Math.round(convertWeight(existingPRStorage, storageUnit, renderUnit))
     : 0;
   const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
+
+  // W3.3 — Next-session handoff row data. Use the shipped `nextSessionPlan`
+  // domain helper to compute (lift, week, day, topPct, topReps, amrap) for
+  // the session that follows this one (lift order wraps within enabledLifts;
+  // week wraps from 4 to 1). TM lookup is from `useLatestTms` so the row's
+  // weight column reflects the most recently committed TM (which may have
+  // just been bumped by `advanceDay` on completion).
+  const tmsQuery = useLatestTms();
+  const nextPlan = nextSessionPlan(lift, enabledLifts, session.week as Week);
+  const nextLiftTmRow = tmsQuery.data?.find((t) => t.lift === nextPlan.lift);
+  const nextLiftStorageUnit = nextLiftTmRow?.unit ?? storageUnit;
+  const nextLiftDisplayWeight =
+    nextLiftTmRow !== undefined
+      ? snapWeight(
+          convertWeight(nextLiftTmRow.value * nextPlan.topPct, nextLiftStorageUnit, renderUnit),
+          renderUnit,
+        )
+      : null;
+
+  // W3.4 — Cycle grid responsive breakpoint. < 360pt collapses to a stacked
+  // single-row-per-week layout that's horizontally scrollable in case of an
+  // unusually wide `enabledLifts.length`. ≥ 360pt keeps the existing 4×N
+  // grid. `Dimensions.get('window').width` is captured once at render time;
+  // we don't reflow on rotation because the SessionCompleteScreen is the
+  // terminal page of a session and the user is typically not rotating
+  // mid-receipt.
+  const windowWidth = Dimensions.get('window').width;
+  const isNarrowScreen = windowWidth < 360;
+
+  // W3.4 helper — split the flat 16-cell array (4 weeks × N lifts) into 4
+  // week-row arrays of N cells. Mirrors what the standard wide layout does
+  // implicitly via flex wrap; here we materialize the rows explicitly so
+  // the stacked layout can render them as separate horizontal rows.
+  const cellsByWeek: {
+    week: 1 | 2 | 3 | 4;
+    cells: { index: number; done: boolean; justNow: boolean }[];
+  }[] = [1, 2, 3, 4].map((w) => ({
+    week: w as 1 | 2 | 3 | 4,
+    cells: Array.from({ length: liftsPerCycle }).map((_, liftI) => {
+      const index = (w - 1) * liftsPerCycle + liftI;
+      const done = index < completedThisCycle;
+      const justNow = index === completedThisCycle - 1;
+      return { index, done, justNow };
+    }),
+  }));
 
   const handleClose = () => {
     router.replace('/');
@@ -457,49 +513,134 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
             <RNText style={cycleHeaderHint}>{`${completedThisCycle} of ${sessionsInCycle}`}</RNText>
           </View>
           <View style={cycleGridFrame}>
-            <View style={cycleGridRow} testID="cycle-grid">
-              {Array.from({ length: sessionsInCycle }).map((_, i) => {
-                const done = i < completedThisCycle;
-                const justNow = i === completedThisCycle - 1;
-                const fillStyle: ViewStyle = done
-                  ? { backgroundColor: colors.ink0 }
-                  : { borderWidth: 1, borderColor: colors.line };
-                return (
-                  <View
-                    // biome-ignore lint/suspicious/noArrayIndexKey: positional grid cell
-                    key={`cell-${i}`}
-                    style={[cycleCellBase, fillStyle, justNow ? { position: 'relative' } : null]}
-                    testID="cycle-cell"
-                  >
-                    {justNow ? (
+            {isNarrowScreen ? (
+              // W3.4 — narrow-screen stacked layout: each week is its own
+              // horizontal row, with the W{n} label as the leading cell.
+              // The outer ScrollView is horizontal in case of unusually wide
+              // `enabledLifts.length` (current product caps at 4 — rows fit
+              // without scrolling). Each row is independently scrollable so
+              // overflow doesn't bleed into adjacent rows.
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} testID="cycle-grid">
+                <View>
+                  {cellsByWeek.map((row) => (
+                    <View
+                      key={`week-${row.week}`}
+                      style={{
+                        flexDirection: 'row',
+                        gap: 4,
+                        alignItems: 'center',
+                        marginBottom: row.week === 4 ? 0 : 6,
+                      }}
+                      accessibilityRole="list"
+                      accessibilityLabel={`Week ${row.week} progress`}
+                      testID={`cycle-grid-week-${row.week}`}
+                    >
+                      <RNText
+                        style={[cycleWeekLabel, { width: 24, paddingRight: 8 }]}
+                        testID={`cycle-grid-week-label-${row.week}`}
+                      >
+                        W{row.week}
+                      </RNText>
+                      {row.cells.map((cell) => {
+                        const fillStyle: ViewStyle = cell.done
+                          ? { backgroundColor: colors.ink0 }
+                          : { borderWidth: 1, borderColor: colors.line };
+                        return (
+                          <View
+                            key={`cell-${cell.index}`}
+                            style={[
+                              { width: 32, height: 16 },
+                              fillStyle,
+                              cell.justNow ? { position: 'relative' } : null,
+                            ]}
+                            testID="cycle-cell"
+                            accessibilityRole="text"
+                            accessibilityLabel={`Session ${cell.index + 1}, ${cell.done ? 'completed' : 'not yet'}`}
+                          >
+                            {cell.justNow ? (
+                              <View
+                                pointerEvents="none"
+                                style={{
+                                  position: 'absolute',
+                                  top: -3,
+                                  left: -3,
+                                  right: -3,
+                                  bottom: -3,
+                                  borderWidth: 1,
+                                  borderColor: colors.ink0,
+                                }}
+                              />
+                            ) : null}
+                          </View>
+                        );
+                      })}
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
+            ) : (
+              <>
+                <View style={cycleGridRow} testID="cycle-grid">
+                  {Array.from({ length: sessionsInCycle }).map((_, i) => {
+                    const done = i < completedThisCycle;
+                    const justNow = i === completedThisCycle - 1;
+                    const fillStyle: ViewStyle = done
+                      ? { backgroundColor: colors.ink0 }
+                      : { borderWidth: 1, borderColor: colors.line };
+                    return (
                       <View
-                        pointerEvents="none"
-                        style={{
-                          position: 'absolute',
-                          top: -3,
-                          left: -3,
-                          right: -3,
-                          bottom: -3,
-                          borderWidth: 1,
-                          borderColor: colors.ink0,
-                        }}
-                      />
-                    ) : null}
-                  </View>
-                );
-              })}
-            </View>
-            <View style={cycleWeekLabelsRow}>
-              <RNText style={cycleWeekLabel}>W1</RNText>
-              <RNText style={cycleWeekLabel}>W2</RNText>
-              <RNText style={cycleWeekLabel}>W3</RNText>
-              <RNText style={cycleWeekLabel}>W4</RNText>
-            </View>
+                        // biome-ignore lint/suspicious/noArrayIndexKey: positional grid cell
+                        key={`cell-${i}`}
+                        style={[
+                          cycleCellBase,
+                          fillStyle,
+                          justNow ? { position: 'relative' } : null,
+                        ]}
+                        testID="cycle-cell"
+                      >
+                        {justNow ? (
+                          <View
+                            pointerEvents="none"
+                            style={{
+                              position: 'absolute',
+                              top: -3,
+                              left: -3,
+                              right: -3,
+                              bottom: -3,
+                              borderWidth: 1,
+                              borderColor: colors.ink0,
+                            }}
+                          />
+                        ) : null}
+                      </View>
+                    );
+                  })}
+                </View>
+                <View style={cycleWeekLabelsRow}>
+                  <RNText style={cycleWeekLabel}>W1</RNText>
+                  <RNText style={cycleWeekLabel}>W2</RNText>
+                  <RNText style={cycleWeekLabel}>W3</RNText>
+                  <RNText style={cycleWeekLabel}>W4</RNText>
+                </View>
+              </>
+            )}
           </View>
         </View>
 
+        {/* W3.3 — Next-session handoff row */}
+        <NextSessionRow
+          liftLabel={liftDisplayName(nextPlan.lift)}
+          week={nextPlan.week}
+          day={nextPlan.day}
+          weight={nextLiftDisplayWeight}
+          reps={nextPlan.topReps}
+          amrap={nextPlan.amrap}
+          unit={renderUnit}
+          testID="session-complete-next-session"
+        />
+
         {/* Reserve room above the sticky CtaBar so receipt isn't clipped. */}
-        <View style={{ height: 140 }} />
+        <View style={{ height: 24 }} />
       </ScrollView>
       <CtaBar>
         <PrimaryPillButton testID="session-complete-close" onPress={handleClose}>

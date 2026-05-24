@@ -6,9 +6,6 @@ import { Masthead } from '@/design/primitives/Masthead';
 import { ResumeBanner } from '@/design/primitives/ResumeBanner';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { dateLabel, liftDisplayName, relativeTimeLabel } from '@/domain/labels';
-import type { Lift } from '@/domain/types';
-import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 /**
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
@@ -25,11 +22,16 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
  * Session creation lives in TodayScreen so that an unrelated tap-back
  * here doesn't leave an orphaned session row behind.
  */
+import { motion as motionTokens } from '@/design/tokens';
+import { dateLabel, liftDisplayName, relativeTimeLabel } from '@/domain/labels';
+import type { Lift } from '@/domain/types';
+import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   type ListRenderItem,
   type NativeScrollEvent,
@@ -38,6 +40,15 @@ import {
   type ViewStyle,
   useWindowDimensions,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
@@ -220,14 +231,11 @@ export function HomeScreen() {
         onSelect={setSelectedLift}
       />
       {showResumeBanner ? (
-        <ResumeBanner
+        <SwipeDismissibleResumeBanner
+          onDismiss={handleResumeBannerDismiss}
           liftLabel={resumeBannerLiftLabel}
           relativeTime={resumeBannerRelative}
           onResume={handleResumeBannerPress}
-          onDismiss={handleResumeBannerDismiss}
-          accessibilityLabel={`Resume ${resumeBannerLiftLabel} session, started ${resumeBannerRelative}`}
-          accessibilityHint="Opens the live session screen."
-          testID="home-resume-banner"
         />
       ) : null}
       <FlatList
@@ -278,5 +286,111 @@ function DateBadge({ label }: { label: string }) {
     >
       {label}
     </Text>
+  );
+}
+
+/**
+ * Wave 3 W3-D — swipe-left dismiss gesture wrapper for the Resume banner.
+ *
+ * Wraps the `ResumeBanner` primitive with a Reanimated `Gesture.Pan` so the
+ * user can swipe left to dismiss without taking the accessibility-action
+ * path. The primitive itself stays render-only — the swipe lives at the
+ * feature layer so the primitive can be reused elsewhere without the
+ * gesture entanglement.
+ *
+ * Behavior per spec W1.1 "Dismissal model":
+ *   - 250ms grace period after mount during which the gesture is disabled
+ *     (prevents accidental swipe-down-on-list events from being routed to
+ *     the band on initial mount).
+ *   - Threshold: translation > 80pt OR velocity > 800pt/s left.
+ *   - Snap: `translateX = -screenWidth` with `withTiming(durationBase,
+ *     Easing.bezier(...easeStandardBezier))`, then `onDismiss` fires via
+ *     `runOnJS`.
+ *   - Below-threshold release: snap back to 0 with the same easing.
+ *   - Reduced-motion fallback (`useReducedMotion()`): the gesture is
+ *     replaced by an immediate `onDismiss` call with no translate tween;
+ *     the `accessibilityActions: dismiss` route inside the primitive
+ *     remains the canonical assistive path.
+ */
+function SwipeDismissibleResumeBanner({
+  onDismiss,
+  liftLabel,
+  relativeTime,
+  onResume,
+}: {
+  onDismiss: () => void;
+  liftLabel: string;
+  relativeTime: string;
+  onResume: () => void;
+}) {
+  const translateX = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
+  const screenWidth = Dimensions.get('window').width;
+  const [graceElapsed, setGraceElapsed] = useState(false);
+
+  useEffect(() => {
+    // 250ms grace period — prevents the gesture from firing on mount.
+    const id = setTimeout(() => setGraceElapsed(true), 250);
+    return () => clearTimeout(id);
+  }, []);
+
+  const completeDismiss = useCallback(() => {
+    onDismiss();
+  }, [onDismiss]);
+
+  // Build the gesture once. Reanimated worklets reference shared values
+  // directly; `runOnJS` bridges back to the JS thread for the dismiss
+  // callback. The gesture is `.enabled(graceElapsed && !reduceMotion)` so
+  // (a) the initial 250ms window swallows accidental flicks and (b)
+  // reduced-motion users fall back to the in-primitive accessibility
+  // action.
+  const gesture = Gesture.Pan()
+    .enabled(graceElapsed && !reduceMotion)
+    .activeOffsetX([-12, 12])
+    .onUpdate((e: { translationX: number }) => {
+      'worklet';
+      if (e.translationX < 0) translateX.value = e.translationX;
+    })
+    .onEnd((e: { translationX: number; velocityX: number }) => {
+      'worklet';
+      const past80 = e.translationX < -80;
+      const fastLeft = e.velocityX < -800;
+      if (past80 || fastLeft) {
+        translateX.value = withTiming(
+          -screenWidth,
+          {
+            duration: motionTokens.durationBase,
+            easing: Easing.bezier(...motionTokens.easeStandardBezier),
+          },
+          () => {
+            runOnJS(completeDismiss)();
+          },
+        );
+      } else {
+        translateX.value = withTiming(0, {
+          duration: motionTokens.durationBase,
+          easing: Easing.bezier(...motionTokens.easeStandardBezier),
+        });
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  return (
+    <GestureDetector gesture={gesture}>
+      <Animated.View style={animatedStyle}>
+        <ResumeBanner
+          liftLabel={liftLabel}
+          relativeTime={relativeTime}
+          onResume={onResume}
+          onDismiss={onDismiss}
+          accessibilityLabel={`Resume ${liftLabel} session, started ${relativeTime}`}
+          accessibilityHint="Opens the live session screen."
+          testID="home-resume-banner"
+        />
+      </Animated.View>
+    </GestureDetector>
   );
 }

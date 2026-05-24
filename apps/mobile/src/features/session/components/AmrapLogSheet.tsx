@@ -2,10 +2,6 @@ import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { Sheet } from '@/design/primitives/Sheet';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { estimateOneRm } from '@/domain/epley';
-import { liftDisplayName } from '@/domain/labels';
-import type { Lift, Unit } from '@/domain/types';
-import { displayUnit } from '@/domain/units';
 /**
  * Bottom-sheet AMRAP rep logger.
  *
@@ -18,8 +14,13 @@ import { displayUnit } from '@/domain/units';
  * Parent owns the actual `appendSetLog` call — this component only stages reps
  * and surfaces an e1RM caption.
  */
+import { motion as motionTokens } from '@/design/tokens';
+import { estimateOneRm } from '@/domain/epley';
+import { liftDisplayName } from '@/domain/labels';
+import type { Lift, Unit } from '@/domain/types';
+import { displayUnit } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dimensions,
   Pressable,
@@ -28,6 +29,13 @@ import {
   View,
   type ViewStyle,
 } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 export type AmrapLogSheetProps = {
   open: boolean;
@@ -91,6 +99,30 @@ export function AmrapLogSheet({
   const isPotentialPR = predictedE1RMRaw > (existingBestE1RM ?? 0);
   const showPRRow = isPotentialPR && reps > 0;
 
+  // W3-C — PR row height tween. Spec calls for `prRowHeight = useSharedValue(0)`
+  // tweened to 40 on cross-into-PR (via stepper or chip), back to 0 on
+  // cross-out. The reduced-motion fallback (`useReducedMotion()`) is the
+  // existing instant show/hide — preserved by snapping the shared value to
+  // the target without `withTiming`. The wrapper has `overflow: 'hidden'` so
+  // clipped content during the tween doesn't leak beyond the band.
+  const prRowHeight = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
+  useEffect(() => {
+    const target = showPRRow ? 40 : 0;
+    if (reduceMotion) {
+      prRowHeight.value = target;
+      return;
+    }
+    prRowHeight.value = withTiming(target, {
+      duration: motionTokens.durationBase,
+      easing: Easing.bezier(...motionTokens.easeStandardBezier),
+    });
+  }, [showPRRow, reduceMotion, prRowHeight]);
+  const prAnimatedStyle = useAnimatedStyle(() => ({
+    height: prRowHeight.value,
+    overflow: 'hidden',
+  }));
+
   // Width detection — static per sheet mount per spec. iPhone SE 1st gen is
   // 320pt; anything < 360 collapses to the 5-chip layout.
   const screenWidth = Dimensions.get('window').width;
@@ -145,7 +177,13 @@ export function AmrapLogSheet({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.ink0,
     marginHorizontal: -spacing.xl,
-    marginBottom: spacing.lg,
+    height: '100%',
+  };
+  // W3-C — outer wrapper takes the animated height (0..40 via withTiming).
+  // marginBottom is gated on `showPRRow` so the band's natural rhythm
+  // collapses when the PR row is fully hidden.
+  const prRowOuterStyle: ViewStyle = {
+    marginBottom: showPRRow ? spacing.lg : 0,
   };
   const prLeftStyle: TextStyle = {
     fontFamily: `${type.mono}-Bold`,
@@ -246,19 +284,33 @@ export function AmrapLogSheet({
           })}
         </View>
 
-        {showPRRow ? (
-          <View
-            style={prRow}
-            accessibilityRole="alert"
-            accessibilityLabel={`Personal record, estimated 1 rep max ${predictedE1RM} ${displayUnit(unit)}`}
-            testID="amrap-pr-row"
-          >
-            <RNText style={prLeftStyle}>★ NEW PERSONAL RECORD</RNText>
-            <RNText style={prRightStyle}>
-              EST. 1RM {predictedE1RM} {displayUnit(unit)}
-            </RNText>
-          </View>
-        ) : null}
+        <Animated.View
+          style={[prAnimatedStyle, prRowOuterStyle]}
+          // The Animated.View carries the testID so existing tests that
+          // assert presence with `queryByTestId('amrap-pr-row')` see "present"
+          // only when `showPRRow` (height > 0). When hidden the height is 0,
+          // overflow:'hidden' clips child content, and the testID resolves
+          // to a node with no visible content — which still resolves to
+          // truthy in the registry. Wave 2's tests therefore key off
+          // `showPRRow` semantics; we keep the testID on the inner View when
+          // the PR is genuinely active, gated on `showPRRow`, so the
+          // existing assertions stay correct.
+          testID={showPRRow ? 'amrap-pr-row-wrapper' : 'amrap-pr-row-wrapper-hidden'}
+        >
+          {showPRRow ? (
+            <View
+              style={prRow}
+              accessibilityRole="alert"
+              accessibilityLabel={`Personal record, estimated 1 rep max ${predictedE1RM} ${displayUnit(unit)}`}
+              testID="amrap-pr-row"
+            >
+              <RNText style={prLeftStyle}>★ NEW PERSONAL RECORD</RNText>
+              <RNText style={prRightStyle}>
+                EST. 1RM {predictedE1RM} {displayUnit(unit)}
+              </RNText>
+            </View>
+          ) : null}
+        </Animated.View>
 
         <NumberStepper
           value={reps}

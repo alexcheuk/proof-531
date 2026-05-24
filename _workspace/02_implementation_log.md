@@ -733,3 +733,379 @@ Metro resolved every import. No new npm deps.
   remaining open Wave 3 items (Reanimated bundle, cancel-sheet underlying
   surface, swipe-left on ResumeBanner, plate leftover caption, next-
   session row, RestTimer target value) are untouched.
+
+---
+
+## Wave 3
+
+Owner: `rn-frontend`
+Wave: 3 of 3 (Polish / P2)
+Spec: `_workspace/01_design_spec.md` Wave-3 sub-sections (W3.1–W3.5) +
+deferred-animation items from QA Wave 1 + Wave 2 reports (W3-A through
+W3-D) + the cancel-sheet underlying-surface polish (W3-E).
+Branch: `claude/workout-session-flow-audit-NMDoN`, HEAD `49c9e12`.
+Baseline post Wave 2 fixup: 410/410 tests green.
+
+### Scope handled this run
+
+- **W3.1 — Plate leftover caption** below the live `TopSetBlock`. Threshold:
+  `leftover > 0.1` storage units AND `round(leftoverDisplay, displayUnit) > 0`.
+  Copy: `≈ {prescribed} {unit} — loaded {loaded} {unit} ({short} {unit} short)`.
+  Hidden when the rounded leftover is 0 (the common case on lb plates).
+- **W3.2 — Cancel split visual.** New `RightAction = 'cancel-split'`
+  variant on `SessionTopBar` (extended discriminated union, not a mutation
+  of `'cancel'`). Two 32×32 chips: X (tap = branch on
+  `loggedWorkingCount`; long-press = open destructive sheet) and `…` (tap
+  = open destructive sheet). Hit targets ≥ 44pt via `hitSlop`. The
+  legacy `Cancel` pill variant is preserved for any future caller that
+  needs it; Today screen does not pass a `rightAction` so no regression
+  there. Logic was wired in Wave 2 (W2.5 `handleCancelRequest`); Wave 3
+  adds the visuals + `handleLongPressCancel` for Branch C.
+- **W3.3 — Next-session handoff row.** New `NextSessionRow` feature
+  component at `apps/mobile/src/features/session/components/NextSessionRow.tsx`.
+  Computes lift / week / day / weight × reps via the
+  `nextSessionPlan(currentLift, enabledLifts, week)` domain helper
+  shipped in Wave 2. TM lookup via `useLatestTms()`; missing-TM
+  branch shows "Set a training max first" sub-line per spec. "Schedule
+  reminder" button is a stub — fires a selection haptic + shows a
+  2-second inline "Reminders coming soon." caption then auto-hides.
+  Replaces the pre-existing `<View style={{ height: 140 }} />` spacer
+  before the sticky CtaBar with the new row + a slim `height: 24`
+  trailing spacer.
+- **W3.4 — Cycle grid responsive breakpoint.** `Dimensions.get('window').width
+  < 360` switches to a stacked single-row-per-week layout inside a
+  horizontal `ScrollView`. Each week row carries the `W{n}` label as the
+  leading element; cells stay 32×16 inside each row. Standard width (≥
+  360pt) renders the existing 4×N flat grid unchanged. The `cycle-grid`
+  testID is preserved on the standard-width row OR the narrow-width
+  scroll container so existing tests keep passing.
+- **W3.5 — RestTimer target value.** `RestTimer.tsx`'s header right cell
+  now reads `TARGET {formatLabel(target)}` (e.g. `TARGET 1:30`) instead
+  of the literal `TARGET`. 1-line edit; the slot was already in place.
+
+### Deferred animation work (W3-A through W3-D)
+
+- **W3-A — Shared Reanimated jest mock.** Created
+  `apps/mobile/jest.setup.ts` and registered it via `package.json`'s
+  `jest.setupFiles`. The shared mock covers `default.View` /
+  `default.Text` / `default.ScrollView` for `Animated.X` fallthrough,
+  the layout-animation primitives (`LinearTransition`, `FadeIn`,
+  `FadeOut`), the worklet runtime hooks (`useSharedValue`,
+  `useAnimatedStyle`, `useReducedMotion`, `withTiming`, `withRepeat`,
+  `withSpring`, `runOnJS`), and the `Easing` builders. A companion
+  `react-native-gesture-handler` mock covers the composable
+  `Gesture.Pan() / Tap() / LongPress()` chainable factories used by
+  W3-D's swipe wrapper. Removed the inline
+  `jest.mock('react-native-reanimated', ...)` block from
+  `HomeScreen.test.tsx` (the only test that explicitly relied on the
+  inline shape, since it pulls in the swipe wrapper); other test files
+  with locally-inlined mocks (`LiftPage.test.tsx`,
+  `LiftPage.crossUnit.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`,
+  `SettingsScreen.queryShell.test.tsx`) continue to work because
+  `jest.mock` is per-module and a per-file override re-binds the
+  resolution.
+- **W3-B — Breathing pulse on "Next set" CTA.** New `BreathingNextSetCta`
+  inline component in `LiveScreen.tsx`. Drives a `useSharedValue(1)`
+  scale via `withRepeat(withTiming(1.04, { duration: 800,
+  easing: Easing.bezier(...easeStandardBezier) }), -1, true)` keyed
+  off `restRemaining <= 0`. On the negative edge (next rest cycle), a
+  single `withTiming(1, { duration: motion.durationBase })` lets the
+  scale snap back without an abrupt halt mid-breath. Reduced-motion
+  fallback (`useReducedMotion()` true) skips the worklet entirely and
+  applies a 2pt `lineFaint` paper-ring border to the active CTA so the
+  static "now" state is still visibly different.
+- **W3-C — PR row height tween in AmrapLogSheet.** New `prRowHeight =
+  useSharedValue(0)` tweened to 40 on cross-into-PR, back to 0 on
+  cross-out, via `withTiming(motion.durationBase,
+  Easing.bezier(...easeStandardBezier))`. The PR row's content stays
+  conditionally rendered (so `accessibilityRole="alert"` doesn't fire
+  on hidden rows) but the `Animated.View` wrapper is always in the
+  tree so the height can tween cleanly. Reduced-motion fallback snaps
+  `prRowHeight.value` to the target without a tween — matches the spec
+  reduced-motion fallback exactly.
+- **W3-D — Reanimated swipe-dismiss on ResumeBanner.** New
+  `SwipeDismissibleResumeBanner` inline wrapper in `HomeScreen.tsx`.
+  Composes a `Gesture.Pan().activeOffsetX([-12, 12]).onUpdate(...).onEnd(...)`
+  with translation > 80pt OR velocity > 800pt/s left as the snap-out
+  threshold. Snap-out runs `withTiming(-screenWidth, { duration:
+  durationBase })` followed by `runOnJS(onDismiss)`. Below-threshold
+  release snaps back to 0. A 250ms post-mount grace period
+  (`graceElapsed` state) keeps the gesture disabled during the
+  initial mount so accidental swipe-down-on-list events on the
+  carousel below don't route to the banner. Reduced-motion
+  (`useReducedMotion()` true) disables the gesture entirely; the
+  primitive's in-built `accessibilityActions: dismiss` remains the
+  canonical assistive path.
+
+### Cancel sheet polish (W3-E)
+
+- **Underlying surface during `cancel-confirm`.** Promoted
+  `phaseBeforeCancelRef` (internal) to `phaseBeforeCancel` state in
+  `useLiveScreenState`, and exposed it on `UseLiveScreenStateResult`.
+  `LiveScreen` now derives `underlyingPhase = phase === 'cancel-confirm'
+  ? phaseBeforeCancel : phase` and uses it to gate `showSetSurface` /
+  `showRestSurface` / `showBbbConfirmSurface`. When the user opens the
+  cancel sheet from `bbb-confirm`, the BBB surface stays visible
+  underneath the sheet backdrop (previously the SET surface leaked
+  through); same fix applies symmetrically to `rest` and the
+  `working-set-log` / `amrap-log` overlays. The CTA selection (`Next
+  set` vs `Got all N` vs `Log AMRAP` vs split CTA) now keys off the
+  same `underlyingPhase` value so the cta layer matches the visible
+  surface.
+
+### Domain helpers added
+
+None — Wave 3 consumes domain helpers shipped in Wave 2
+(`nextSessionPlan`, `plateLoadInstruction`) and uses `decompose` from
+`@/domain/plates` for the leftover caption. No new pure-domain math.
+
+### Files touched
+
+Created:
+
+- `apps/mobile/jest.setup.ts` — shared Reanimated + Gesture Handler
+  jest mock (W3-A). Registered via `apps/mobile/package.json` jest
+  `setupFiles`.
+- `apps/mobile/src/features/session/components/NextSessionRow.tsx` —
+  new W3.3 feature component.
+- `apps/mobile/src/features/session/components/__tests__/NextSessionRow.test.tsx`
+  — 5 behavior tests covering copy, no-TM fallback, stub-button haptic
+  + caption + auto-hide, and accessibility shape.
+- `apps/mobile/src/features/session/components/__tests__/SessionTopBar.test.tsx`
+  — 6 behavior tests covering the legacy `cancel` / `complete` variants
+  AND the new `cancel-split` X + overflow chips with tap / long-press /
+  accessibility-action routing.
+
+Modified:
+
+- `apps/mobile/package.json` — registered `jest.setup.ts` via `setupFiles`.
+- `apps/mobile/src/design/primitives/ResumeBanner.tsx` — unchanged
+  (W3-D's swipe gesture lives in the feature wrapper, per the
+  primitive's explicit "render-only" contract).
+- `apps/mobile/src/features/session/components/SessionTopBar.tsx` —
+  added the `'cancel-split'` discriminated-union variant + the
+  `CancelSplit` chip pair (X + overflow `…`). Legacy `'cancel'` and
+  `'complete'` branches untouched.
+- `apps/mobile/src/features/session/components/RestTimer.tsx` — W3.5
+  one-line edit: the header right cell now renders `TARGET
+  {formatLabel(target)}` with `testID="rest-timer-target"`.
+- `apps/mobile/src/features/session/components/AmrapLogSheet.tsx` —
+  W3-C wrapped the PR row in an `Animated.View` driven by
+  `prRowHeight = useSharedValue(0)` + `withTiming(40, ...)` /
+  `withTiming(0, ...)`. Reduced-motion path snaps without a tween.
+  Outer wrapper carries a `amrap-pr-row-wrapper(-hidden)?` testID so
+  tests can assert the cross-into-PR transition without depending on
+  worklet execution.
+- `apps/mobile/src/features/session/hooks/useLiveScreenState.ts` —
+  W3-E: promoted `phaseBeforeCancelRef` (`useRef`) to
+  `phaseBeforeCancel` (`useState`) so consumers can read it during
+  render. Exposed it on `UseLiveScreenStateResult`.
+- `apps/mobile/src/features/session/LiveScreen.tsx` — wired:
+  - W3.1 leftover caption (sibling of `TopSetBlock`, `testID="live-bigweight-leftover"`).
+  - W3.2 cancel-split right-action variant; new
+    `handleLongPressCancel` for Branch C.
+  - W3-B `BreathingNextSetCta` wrapping the rest-phase advance CTA.
+  - W3-E `underlyingPhase` derivation gating surface + CTA selection.
+- `apps/mobile/src/features/session/SessionCompleteScreen.tsx` — wired:
+  - W3.3 `<NextSessionRow>` inserted between the cycle grid and the
+    sticky CtaBar; spacer slimmed from 140pt to 24pt.
+  - W3.4 responsive cycle-grid layout (`Dimensions.get('window').width
+    < 360` switches to a stacked-rows ScrollView with W{n} labels).
+  - `useLatestTms` consumed for the next-lift TM lookup.
+- `apps/mobile/src/features/home/HomeScreen.tsx` — wrapped the
+  `<ResumeBanner>` call site in `SwipeDismissibleResumeBanner` (W3-D).
+  The wrapper composes the Pan gesture + the 250ms grace period +
+  reduced-motion fallback.
+- `apps/mobile/src/features/session/__tests__/LiveScreen.test.tsx` —
+  +8 new tests covering W3.1 (leftover hidden on clean lb decomp +
+  surface renders under unit mismatch), W3.2 (cancel-split visuals;
+  overflow tap → sheet; long-press X with zero rows → sheet),
+  W3.5 (TARGET 1:30 label), W3-E (cancel from `bbb-confirm` →
+  BBB surface stays; cancel from `rest` → rest surface stays),
+  W3-B (breathing wrapper is in the tree).
+- `apps/mobile/src/features/session/components/__tests__/RestPhase.test.tsx`
+  — +2 new tests for W3.5 (TARGET 1:30 / TARGET 3:00).
+- `apps/mobile/src/features/session/components/__tests__/AmrapLogSheet.test.tsx`
+  — +2 new tests for W3-C (PR row wrapper testID flips on
+  cross-into-PR; wrapper always in the tree).
+- `apps/mobile/src/features/session/__tests__/SessionCompleteScreen.test.tsx`
+  — added the `useLatestTms` mock; +4 new tests for W3.3
+  (NextSessionRow rendering; no-TM fallback) and W3.4 (standard
+  layout vs narrow-width stacked layout via `Dimensions.get` override).
+- `apps/mobile/src/features/home/__tests__/HomeScreen.test.tsx` —
+  removed the inline `jest.mock('react-native-reanimated', ...)`
+  block now that the shared `jest.setup.ts` covers it (the swipe
+  wrapper needs `useSharedValue` + `useAnimatedStyle` +
+  `useReducedMotion`, which the old inline shape didn't expose).
+
+### Decisions, spec interpretations, and resolved ambiguities
+
+1. **`underlyingPhase` derivation, not phase coalescing.** W3-E could
+   have been implemented either (a) by `setPhase(phaseBeforeCancel)` on
+   cancel-sheet open + a parallel "isCancelOpen" flag, or (b) by
+   keeping the `cancel-confirm` phase tag and deriving the underlying
+   surface from `phaseBeforeCancel`. Picked (b) because the existing
+   `CancelConfirmSheet` already keys on `phase === 'cancel-confirm'`
+   for its `open` prop; changing that contract would have cascaded.
+   The derivation is also simpler to reason about for the screen layer
+   — one read at the top of `LiveScreen`, applied uniformly to surface
+   gating + CTA selection.
+2. **Cancel-split branch B reuses the existing two-tap sheet.** Spec
+   lines 626–634 describe a slimmer single-tap "End this session?"
+   sheet for Branch B (≥1 working row) and reserve the two-tap for
+   Branch C (long-press / overflow). Wave 3 ships Branch B against the
+   existing `CancelConfirmSheet`'s two-tap copy; the destructive intent
+   is identical and the divergent copy is a polish iteration. The
+   `handleCancelRequest` branching is in place so a future iteration
+   can introduce a slimmer single-tap variant without touching the
+   wiring. Noted in the spec deviation column below.
+3. **`handleLongPressCancel` shares `live.onRequestCancel`.** Branch B
+   and Branch C both call into the existing destructive sheet — the
+   distinction is purely visual (where the user tapped to open it).
+   Both paths therefore use the same hook handler. The spec's
+   "Branch C copy emphasises 'Sets are kept · The session is closed.'"
+   maps to the existing sheet's `"Sets already completed are kept in
+   history. The session is closed — pick it up tomorrow."` — close
+   enough; a future polish pass can refine the copy.
+4. **`useLatestTms` invalidation timing.** The next-session row reads
+   from `useLatestTms()`, which is invalidated by `completeSession`'s
+   downstream `advanceDay` call (existing behavior). For sessions
+   completed via `cancelSession` (which doesn't run `advanceDay`),
+   the screen never shows; for completed sessions the TM row reflects
+   the latest committed bump. No additional invalidation needed.
+5. **W3.2 long-press timing.** Spec says 300ms; RN's default
+   `delayLongPress` is 500ms. Set `delayLongPress={300}` on the X chip
+   so the destructive-territory hold-completion matches the spec.
+6. **Cycle grid narrow-layout cells.** Spec says cells are 32pt wide
+   × 16pt tall with `gap: 4` in the narrow layout. The flat-grid
+   layout uses `flex: 1` (variable width) + `height: 16`. The narrow
+   layout pins width to 32pt explicitly so the per-row width is
+   deterministic (4 weeks × 4 lifts × 32pt + gaps ≈ 140pt; well under
+   the 320pt iPhone SE viewport with horizontal-scroll fallback).
+7. **W3-A shared mock vs jest-expo's RN mocks.** `react-native` itself
+   is mocked by jest-expo. The shared `jest.setup.ts` only mocks
+   `react-native-reanimated` and `react-native-gesture-handler` —
+   neither is covered by jest-expo. No conflict with the upstream
+   preset.
+8. **W3-D gesture mock fidelity.** The shared mock returns chainable
+   no-op objects for `Gesture.Pan().onUpdate().onEnd()` so the wrapper
+   doesn't throw at module load. The actual gesture isn't exercised
+   in jest (no native UI thread); the swipe behavior is covered by
+   visual QA on device. The `onDismiss` callback path remains
+   testable via the primitive's `accessibilityActions: dismiss` route
+   (already in Wave 1's tests).
+9. **`useState` for `phaseBeforeCancel`, not `useRef`.** The previous
+   ref-based implementation worked for the cancel-dismiss return path
+   (no re-render needed there). W3-E requires the screen render
+   layer to read `phaseBeforeCancel` synchronously to pick the
+   correct surface — that needs `useState`. The handler in
+   `onRequestCancel` now sets both the cancel-sheet phase AND the
+   pre-cancel snapshot in the same React render cycle.
+
+### Deviations from spec
+
+1. **W3.2 Branch B reuses the existing two-tap sheet.** Decision (2)
+   above. The spec's slimmer single-tap variant for Branch B is queued
+   for a future copy-polish PR; the destructive flow is functional.
+2. **W3-A consolidation scope.** Hoisted the Reanimated mock once,
+   but did NOT migrate the other 4 test files (`LiftPage.test.tsx`,
+   `LiftPage.crossUnit.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`,
+   `SettingsScreen.queryShell.test.tsx`) that maintain their own
+   inline mocks. Those files' inline mocks override the shared one
+   for their suite — both work fine; consolidating them would expand
+   the change surface beyond the W3 boundary. Wave 4 polish can
+   migrate them when convenient. Spec acceptance criterion was
+   "confirm by running tests that everything previously mocking
+   locally still works" — confirmed (438/438 green).
+
+(No other deviations.)
+
+### Verification
+
+```
+$ pnpm typecheck
+> 531@0.0.0 typecheck /home/user/proof-531
+> pnpm -r --parallel typecheck
+apps/mobile typecheck: Done                                # exit 0
+
+$ pnpm lint
+> 531@0.0.0 lint /home/user/proof-531
+> biome check .
+Checked 188 files in 228ms. No fixes applied.              # exit 0
+
+$ pnpm test
+Test Suites: 61 passed, 61 total
+Tests:       438 passed, 438 total                          # exit 0
+```
+
+Test delta vs Wave 2 fixup baseline: 410 → 438 (+28). Zero regressions.
+New tests cover:
+
+- W3.1 leftover caption (hide on clean decomposition, surface still
+  renders under unit-mismatch context).
+- W3.2 cancel-split visuals (X + overflow chips render; overflow opens
+  sheet; long-press with zero rows still opens sheet).
+- W3.3 NextSessionRow (lift name + week/day + weight × reps;
+  no-TM fallback; non-AMRAP suffix; stub-button haptic + caption +
+  auto-hide; accessibility shape).
+- W3.4 cycle grid responsive (standard 16-cell layout at ≥360pt;
+  4 stacked week rows with W{n} labels at <360pt).
+- W3.5 RestTimer TARGET {m:ss} value (90s → 1:30; 180s → 3:00).
+- W3-B BreathingNextSetCta wrapper renders.
+- W3-C PR row wrapper testID flips on cross-into-PR.
+- W3-E cancel sheet from `bbb-confirm` shows BBB surface underneath;
+  cancel sheet from `rest` shows rest surface underneath.
+- SessionTopBar `cancel-split` variant tap / long-press / overflow
+  routing + accessibility action.
+
+```
+$ pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
+    --output-dir /tmp/expo-bundle-wave3 \
+    --dump-sourcemap=false --dump-assetmap=false
+...
+› ios bundles (2):
+_expo/static/js/ios/entry-…hbc (3.2MB)
+...
+Exported: /tmp/expo-bundle-wave3                            # exit 0
+```
+
+Metro resolved every import. No new npm deps were added (Reanimated +
+Gesture Handler were already in the dependency graph; this wave only
+introduces new import sites).
+
+### Notes for post-Wave-3 review
+
+1. **Spec deviation 1 (Branch B copy)** — the Wave-3 work reuses the
+   two-tap sheet copy for Branch B. A copy-polish PR can swap in the
+   "End this session?" single-tap variant the spec describes; the
+   `handleCancelRequest` seam already encapsulates the branching.
+2. **Spec deviation 2 (W3-A scope)** — four test files still inline
+   their own Reanimated mocks (`LiftPage.test.tsx`,
+   `LiftPage.crossUnit.test.tsx`, `LiftPage.setDisplayUnit.test.tsx`,
+   `SettingsScreen.queryShell.test.tsx`). They override the shared
+   mock for their suite. Migration is trivial — delete the inline
+   block — but is out of W3 scope.
+3. **W3-B breathing pulse on the post-terminal rest CTA**: the CTA
+   label reads "Complete session" in that window (not "Next set");
+   the breathing pulse still fires at T-0 because `live.restRemaining`
+   ticks identically. This is the intended behavior — T-0 is "now
+   you can advance", regardless of whether the advance is to the next
+   set or to the BBB-confirm fork.
+4. **P4 candidate (out of W3 scope, do not implement):** the AMRAP
+   sheet's preset chip row at iPhone-SE width (<360pt) still drops
+   the `[3]` chip per Wave 2 spec — but with the W3.4 narrow-screen
+   handling now applied to the cycle grid, a future iteration could
+   apply the same `Dimensions.get` snapshot pattern to other
+   responsive surfaces (Today's warmup ramp row, the receipt's
+   volume row at very narrow widths). No user-reported issue; flagged
+   only for thinking-ahead.
+5. **`live.phaseBeforeCancel` exposure is the canonical "the cancel
+   sheet is open, where did we come from" signal.** Future surfaces
+   (e.g. an in-app history of "you opened cancel from rest at T-12s")
+   should read it rather than re-deriving from `phase ===
+   'cancel-confirm'`.
+6. **PR row animation now lives in `AmrapLogSheet.tsx` and the
+   breathing pulse in `LiveScreen.tsx`'s `BreathingNextSetCta`.**
+   Both could be promoted to design primitives if a second call site
+   appears. For now they're feature-local because Live and the AMRAP
+   sheet are the only consumers.
