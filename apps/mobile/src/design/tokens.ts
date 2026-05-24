@@ -50,6 +50,7 @@ export const colors = {
   // Paper aliases
   paper: '#E7E3D6', // = bg0
   paperDim: '#D2CEC0', // = bg2
+  paperMuted: 'rgba(231, 227, 214, 0.6)', // bg0 @ 60% — for ink-on-paper-inverted eyebrows
 
   // shadcn aliases — kept verbatim so primitives ported from the PWA
   // map 1:1. All resolved to underlying hex/rgba.
@@ -109,6 +110,16 @@ export const spacing = {
   xxl: 32,
   xxxl: 48,
 } as const;
+
+// ── Layout ──────────────────────────────────────────────────────────────
+// Named layout aliases on top of the spacing scale — communicate intent
+// at the call site. `gutter` is the horizontal page gutter applied to
+// screens, mastheads, top bars, ledgers, and onboarding shells.
+export const layout = {
+  gutter: spacing.xl,
+} as const;
+export type Layout = typeof layout;
+export type LayoutToken = keyof Layout;
 
 // ── Motion ──────────────────────────────────────────────────────────────
 // Source: globals.css `--ease-standard` and `--duration-base`.

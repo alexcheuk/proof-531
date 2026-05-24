@@ -56,7 +56,7 @@ function groupByCycle(
 }
 
 export function HistoryScreen() {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
   const sessions = useSessions();
   const prIdsQuery = useSessionPrIds();
   const prsQuery = usePrs();
@@ -146,12 +146,17 @@ export function HistoryScreen() {
           />
         ) : null}
         {rows.length === 0 ? (
-          <View style={{ paddingHorizontal: 24, paddingTop: 24 }} testID="history-empty">
+          <View style={{ paddingHorizontal: layout.gutter, paddingTop: 24 }} testID="history-empty">
             <CapsLabel style={{ letterSpacing: 1.8 }}>FINISH A SESSION TO SEE IT HERE</CapsLabel>
           </View>
         ) : filteredRows.length === 0 ? (
           <View
-            style={{ paddingHorizontal: 24, paddingTop: 24, alignItems: 'flex-start', gap: 12 }}
+            style={{
+              paddingHorizontal: layout.gutter,
+              paddingTop: 24,
+              alignItems: 'flex-start',
+              gap: 12,
+            }}
             testID="history-filter-empty"
           >
             <CapsLabel color="ink3">No sessions match this filter.</CapsLabel>

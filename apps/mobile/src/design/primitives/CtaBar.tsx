@@ -39,12 +39,12 @@ export function CtaBar({
   testID,
   style,
 }: CtaBarProps) {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
   const insets = useSafeAreaInsets();
 
   const resolved: ViewStyle = {
     backgroundColor: colors.bg0,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingTop: 16,
     paddingBottom: safeArea ? Math.max(insets.bottom, 0) + 16 : 16,
   };

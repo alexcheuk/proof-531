@@ -14,9 +14,9 @@ export type StepProgressProps = {
  * filled up to the current step.
  */
 export function StepProgress({ step, total }: StepProgressProps) {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
   return (
-    <Row gap="xs" style={{ paddingHorizontal: 24, paddingTop: 14 }}>
+    <Row gap="xs" style={{ paddingHorizontal: layout.gutter, paddingTop: 14 }}>
       {Array.from({ length: total }).map((_, i) => (
         <View
           // biome-ignore lint/suspicious/noArrayIndexKey: positional progress tick

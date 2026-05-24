@@ -33,6 +33,10 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 
+jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
+  useLastCompletedSessionForLift: () => ({ startedAt: null, isLoading: false }),
+}));
+
 import { LiftPage } from '../components/LiftPage';
 
 const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);

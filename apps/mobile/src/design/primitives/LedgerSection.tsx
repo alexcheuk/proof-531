@@ -24,11 +24,11 @@ export type LedgerSectionProps = {
 };
 
 export function LedgerSection({ title, hint, children, testID, style }: LedgerSectionProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const containerStyle: ViewStyle = {
     paddingTop: 24,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
   };
 
   const headerStyle: ViewStyle = {

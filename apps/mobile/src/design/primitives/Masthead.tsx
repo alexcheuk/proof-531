@@ -25,14 +25,14 @@ type MastheadProps = {
  * wordmark cluster uses `'center'` instead.
  */
 export function Masthead({ rightSlot, underline = 'none', testID, style }: MastheadProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingTop: 12,
     ...(underline === 'hairline' ? { borderBottomWidth: 1, borderBottomColor: colors.line } : null),
   };

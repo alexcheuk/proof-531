@@ -1,4 +1,4 @@
-import { Sheet } from '@/design/primitives/Sheet';
+import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
@@ -9,13 +9,13 @@ import { useTheme } from '@/design/theme';
  * CancelConfirmSheet.tsx`. The destructive button uses a two-tap pattern:
  *   1. First tap → fires `Haptics.notificationAsync(Warning)` via the parent's
  *      `onConfirmFirstTap` and arms the destructive state.
- *   2. Second tap (button now labeled "Tap again to cancel") → invokes
+ *   2. Second tap (button now labeled "Tap again to discard") → invokes
  *      `onConfirmSecondTap`, which actually closes the session.
  *
  * `armed` is owned by the parent (`useLiveScreenState.cancelArmed`) so the
  * armed state survives unmount/remount of the sheet body.
  */
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { Pressable, type ViewStyle } from 'react-native';
 
 export type CancelConfirmSheetProps = {
   open: boolean;
@@ -34,59 +34,23 @@ export function CancelConfirmSheet({
   onDismiss,
   testID,
 }: CancelConfirmSheetProps) {
-  const { colors, spacing } = useTheme();
+  const { colors } = useTheme();
 
-  const body: ViewStyle = {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.lg,
-  };
-  const confirmButton: ViewStyle = {
+  const destructiveStyle: ViewStyle = {
     paddingVertical: 14,
-    paddingHorizontal: 18,
     backgroundColor: colors.ink0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing.lg,
-  };
-  const dismissButton: ViewStyle = {
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderColor: colors.ink0,
     alignItems: 'center',
     justifyContent: 'center',
   };
 
   return (
-    <Sheet open={open} onDismiss={onDismiss} {...(testID !== undefined ? { testID } : {})}>
-      <View style={body}>
-        <Text
-          variant="mono"
-          weight="semibold"
-          size={10}
-          color="ink2"
-          style={{ textTransform: 'uppercase', letterSpacing: 2.2, marginBottom: 8 }}
-        >
-          CONFIRM
-        </Text>
-        <Text variant="sans" weight="medium" size={24} color="ink0">
-          Cancel this session?
-        </Text>
-        <Text
-          variant="sans"
-          weight="regular"
-          size={13}
-          color="ink2"
-          style={{ marginTop: 10, marginBottom: 4 }}
-        >
-          {armed
-            ? 'Tap the dark button once more to cancel. Sets already logged stay in your history.'
-            : 'Sets already completed are kept in history. The session is closed — pick it up tomorrow.'}
-        </Text>
-
+    <SheetLayout
+      open={open}
+      onDismiss={onDismiss}
+      {...(testID !== undefined ? { testID } : {})}
+      eyebrow="CONFIRM"
+      title="Cancel this session?"
+      primary={
         <Pressable
           testID="cancel-confirm-destructive"
           accessibilityRole="button"
@@ -96,7 +60,7 @@ export function CancelConfirmSheet({
               : 'Cancel session and return to Home'
           }
           onPress={armed ? onConfirmSecondTap : onConfirmFirstTap}
-          style={confirmButton}
+          style={destructiveStyle}
         >
           <Text
             variant="sans"
@@ -108,25 +72,20 @@ export function CancelConfirmSheet({
             {armed ? 'Tap again to discard' : 'Cancel session'}
           </Text>
         </Pressable>
-
-        <Pressable
-          testID="cancel-confirm-dismiss"
-          accessibilityRole="button"
-          accessibilityLabel="Keep training"
-          onPress={onDismiss}
-          style={dismissButton}
-        >
-          <Text
-            variant="sans"
-            weight="medium"
-            size={14}
-            color="ink0"
-            style={{ textTransform: 'uppercase', letterSpacing: 0.4 }}
-          >
-            Keep training
-          </Text>
-        </Pressable>
-      </View>
-    </Sheet>
+      }
+      cancel={{
+        label: 'Keep training',
+        onPress: onDismiss,
+        variant: 'outlined',
+        testID: 'cancel-confirm-dismiss',
+        accessibilityLabel: 'Keep training',
+      }}
+    >
+      <Text variant="sans" weight="regular" size={13} color="ink2">
+        {armed
+          ? 'Tap the dark button once more to cancel. Sets already logged stay in your history.'
+          : 'Sets already completed are kept in history. The session is closed — pick it up tomorrow.'}
+      </Text>
+    </SheetLayout>
   );
 }

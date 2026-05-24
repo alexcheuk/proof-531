@@ -152,11 +152,8 @@ export function RestTimer({
           weight="medium"
           size={96}
           color={overtime ? 'amber' : 'ink0'}
-          style={{
-            letterSpacing: -3.84,
-            lineHeight: 96,
-            fontVariant: ['tabular-nums', 'lining-nums'],
-          }}
+          numeric
+          style={{ letterSpacing: -3.84, lineHeight: 96 }}
           testID="rest-timer-value"
         >
           {label}

@@ -2,6 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Heading } from '@/design/primitives/Heading';
 import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { Row } from '@/design/primitives/Row';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
@@ -62,14 +63,6 @@ export function SetRow({
     color: next ? colors.ink0 : colors.ink3,
   };
 
-  const repsStyle: TextStyle = {
-    fontFamily: `${type.sans}-Medium`,
-    fontSize: 18,
-    letterSpacing: -0.36,
-    color: colors.ink1,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
   const pctStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
     fontSize: 11,
@@ -95,10 +88,17 @@ export function SetRow({
           </CapsLabel>
         </Row>
 
-        <RNText style={repsStyle}>
+        <Text
+          variant="sans"
+          weight="medium"
+          size={18}
+          color="ink1"
+          numeric
+          style={{ letterSpacing: -0.36 }}
+        >
           × {reps}
           {amrap ? '+' : ''}
-        </RNText>
+        </Text>
         {amrap ? <MonoBadge>AMRAP</MonoBadge> : null}
       </Row>
 

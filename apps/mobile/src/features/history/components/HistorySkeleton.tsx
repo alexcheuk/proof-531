@@ -1,4 +1,5 @@
 import { Skeleton } from '@/design/primitives/Skeleton';
+import { useTheme } from '@/design/theme';
 import { View } from 'react-native';
 
 /**
@@ -6,9 +7,10 @@ import { View } from 'react-native';
  * `HomeSkeleton`: caps eyebrow + title + a few row blocks.
  */
 export function HistorySkeleton() {
+  const { layout } = useTheme();
   return (
     <View
-      style={{ flex: 1, paddingHorizontal: 24, paddingTop: 24, gap: 14 }}
+      style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: 24, gap: 14 }}
       testID="history-skeleton"
     >
       <Skeleton width={84} height={10} />

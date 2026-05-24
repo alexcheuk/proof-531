@@ -13,14 +13,14 @@ type TitleBlockProps = {
  * title vocabulary used by History, Settings, and Today (workout view).
  *
  * Ported from the PWA `title-block.tsx`. Default padding is
- * `paddingHorizontal: 24, paddingTop: 24, paddingBottom: 20`. Override via
- * `style` if a screen needs a different rhythm.
+ * `paddingHorizontal: layout.gutter, paddingTop: 24, paddingBottom: 20`.
+ * Override via `style` if a screen needs a different rhythm.
  */
 export function TitleBlock({ eyebrow, title, style, testID }: TitleBlockProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const containerStyle: ViewStyle = {
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingTop: 24,
     paddingBottom: 20,
     borderBottomWidth: 1,

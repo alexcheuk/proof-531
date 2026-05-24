@@ -30,6 +30,14 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 
+const mockLastTrained: { startedAt: number | null } = { startedAt: null };
+jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
+  useLastCompletedSessionForLift: () => ({
+    startedAt: mockLastTrained.startedAt,
+    isLoading: false,
+  }),
+}));
+
 import { colors } from '@/design/tokens';
 // Import after mocks.
 import { LiftPage } from '../components/LiftPage';
@@ -56,6 +64,7 @@ const baseProps: RequiredProps = {
 describe('LiftPage', () => {
   beforeEach(() => {
     mockRouterPush.mockClear();
+    mockLastTrained.startedAt = null;
   });
 
   it('renders the Begin session CTA when not in progress', () => {
@@ -130,6 +139,26 @@ describe('LiftPage', () => {
     const on = wrap(<LiftPage {...baseProps} isInProgress={true} />);
     expect(on.getByTestId('lift-page-squat-in-progress')).toBeTruthy();
     expect(on.getByText('In progress')).toBeTruthy();
+  });
+
+  it('renders a "LAST TRAINED …" hint when the lift has prior completed sessions', () => {
+    mockLastTrained.startedAt = Date.now() - 3 * 24 * 60 * 60 * 1000; // 3 days ago
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={false} />);
+    const hint = screen.getByTestId('lift-page-squat-last-trained');
+    expect(hint).toBeTruthy();
+    expect((hint.props.children as string).startsWith('LAST TRAINED')).toBe(true);
+  });
+
+  it('hides the LAST TRAINED hint when in progress', () => {
+    mockLastTrained.startedAt = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={true} />);
+    expect(screen.queryByTestId('lift-page-squat-last-trained')).toBeNull();
+  });
+
+  it('hides the LAST TRAINED hint when no prior completed session exists', () => {
+    mockLastTrained.startedAt = null;
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={false} />);
+    expect(screen.queryByTestId('lift-page-squat-last-trained')).toBeNull();
   });
 
   it('renders the empty state (NO TRAINING MAX SET) when tm is null', () => {

@@ -23,7 +23,7 @@ export interface ReviewProps {
 }
 
 export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishing }: ReviewProps) {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
 
   const tableStyle: ViewStyle = {
     borderWidth: 1,
@@ -52,7 +52,7 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
         </PrimaryPillButton>
       }
     >
-      <View style={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 12 }}>
+      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 28, paddingBottom: 12 }}>
         <CapsLabel style={{ marginBottom: 6 }}>Your numbers</CapsLabel>
         <Text
           variant="sans"
@@ -78,7 +78,7 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
         </Text>
       </View>
 
-      <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
+      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 12 }}>
         <CapsLabel style={{ marginBottom: 8 }}>Training maxes</CapsLabel>
         <View style={tableStyle}>
           <Row style={headerStyle}>

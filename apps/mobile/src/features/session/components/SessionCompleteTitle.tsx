@@ -32,11 +32,11 @@ export function SessionCompleteTitle({
   liftLower,
   week,
 }: SessionCompleteTitleProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const titleSection: ViewStyle = {
     paddingTop: 18,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingBottom: 26,
     borderBottomWidth: 1,
     borderBottomColor: colors.lineStrong,

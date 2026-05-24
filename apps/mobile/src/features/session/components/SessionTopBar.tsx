@@ -37,13 +37,13 @@ export function SessionTopBar({
   rightAction = { kind: 'none' },
   testID,
 }: SessionTopBarProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingVertical: 14,
     backgroundColor: colors.bg0,
     borderBottomWidth: 1,

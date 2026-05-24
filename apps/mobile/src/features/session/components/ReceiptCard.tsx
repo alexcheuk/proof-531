@@ -29,7 +29,7 @@ export function ReceiptCard({
   elapsedValue,
   unitGlyph,
 }: ReceiptCardProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
   const sectionHeader: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
     fontSize: 10,
@@ -40,7 +40,7 @@ export function ReceiptCard({
   };
 
   return (
-    <View style={{ paddingTop: 24, paddingHorizontal: 24 }}>
+    <View style={{ paddingTop: 24, paddingHorizontal: layout.gutter }}>
       <RNText style={sectionHeader}>The record</RNText>
 
       <SectionBand testID="session-complete-receipt" tone="strong" padding="none">

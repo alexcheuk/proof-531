@@ -7,6 +7,7 @@
  * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
  * with a "NO TRAINING MAX SET" strip pointing at onboarding.
  */
+import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Row } from '@/design/primitives/Row';
@@ -14,6 +15,7 @@ import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
+import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 import { Pressable, View, type ViewStyle } from 'react-native';
@@ -61,6 +63,11 @@ export function LiftPage({
 }: LiftPageProps) {
   const { colors, spacing } = useTheme();
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
+  const lastTrained = useLastCompletedSessionForLift(lift);
+  const lastTrainedHint =
+    !isInProgress && lastTrained.startedAt !== null
+      ? `LAST TRAINED ${formatRelativeTime(lastTrained.startedAt).toUpperCase()}`
+      : null;
 
   const pageStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -128,6 +135,16 @@ export function LiftPage({
     >
       {eyebrow}
       {title}
+      {lastTrainedHint ? (
+        <CapsLabel
+          size="xs"
+          color="ink3"
+          style={{ marginTop: spacing.sm, letterSpacing: 1.62 }}
+          testID={`lift-page-${lift}-last-trained`}
+        >
+          {lastTrainedHint}
+        </CapsLabel>
+      ) : null}
 
       <View style={{ marginTop: spacing.lg }}>
         <TopSetBlock

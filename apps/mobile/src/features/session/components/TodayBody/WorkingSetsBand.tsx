@@ -1,5 +1,6 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
+import { useTheme } from '@/design/theme';
 import type { WorkingSet } from '@/domain/schemes';
 import type { Unit } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
@@ -31,9 +32,10 @@ export function WorkingSetsBand({
   nextSetIndex,
   completedIndices,
 }: WorkingSetsBandProps) {
+  const { layout } = useTheme();
   const doneCount = completedIndices.length;
   return (
-    <View style={{ paddingHorizontal: 24, paddingTop: 20 }}>
+    <View style={{ paddingHorizontal: layout.gutter, paddingTop: 20 }}>
       <Row justify="space-between" style={{ marginBottom: 6 }}>
         <CapsLabel>
           {doneCount > 0 ? `WORKING SETS  ·  ${doneCount} OF ${sets.length} DONE` : 'WORKING SETS'}

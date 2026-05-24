@@ -47,10 +47,6 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
             position: 'relative',
           };
 
-          // CapsLabel's color tokens don't include `bg0`-with-alpha, so use a
-          // raw RNText for the inverted-cell eyebrow only; everything else is
-          // CapsLabel.
-          const eyebrowColorActive = 'rgba(231, 227, 214, 0.6)';
           const schemeColor = active ? colors.bg0 : done ? colors.ink1 : colors.ink3;
 
           return (
@@ -62,7 +58,7 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
                     fontSize: 9,
                     letterSpacing: 1.98,
                     textTransform: 'uppercase',
-                    color: eyebrowColorActive,
+                    color: colors.paperMuted,
                   }}
                 >
                   D{c.w}

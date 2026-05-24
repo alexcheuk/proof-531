@@ -10,11 +10,11 @@ import { Text as RNText, type TextStyle, type ViewStyle } from 'react-native';
  * needs slightly tighter spacing.
  */
 export function SessionCompleteMasthead() {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const wrap: ViewStyle = {
     paddingTop: 54,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingBottom: 14,
   };
 

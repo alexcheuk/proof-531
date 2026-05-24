@@ -2,10 +2,10 @@ import { useTheme } from '@/design/theme';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 
 export function Colophon() {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
   const wrap: ViewStyle = {
     paddingTop: 36,
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     alignItems: 'center',
   };
   const label: TextStyle = {

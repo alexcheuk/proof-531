@@ -1,5 +1,6 @@
 import { Row } from '@/design/primitives/Row';
 import { Skeleton } from '@/design/primitives/Skeleton';
+import { useTheme } from '@/design/theme';
 import { View } from 'react-native';
 
 /**
@@ -7,9 +8,10 @@ import { View } from 'react-native';
  * rhythm as the populated screen so the first paint feels intentional.
  */
 export function HomeSkeleton() {
+  const { layout } = useTheme();
   return (
     <View
-      style={{ flex: 1, paddingHorizontal: 24, paddingTop: 24, gap: 14 }}
+      style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: 24, gap: 14 }}
       testID="home-skeleton"
     >
       <Skeleton width={84} height={10} />

@@ -1,3 +1,4 @@
+import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 /**
  * Today screen body — masthead + title block + top-set hero + working-sets band
  * + BBB band + colophon. Composition shell over four sub-components.
@@ -18,7 +19,6 @@ import { prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayUnit } from '@/domain/units';
 import { View } from 'react-native';
-import { useLastCompletedSessionForLift } from '../../hooks/useLastCompletedSessionForLift';
 import { BbbBand } from './BbbBand';
 import { TopSetHero } from './TopSetHero';
 import { WorkingSetsBand } from './WorkingSetsBand';
@@ -65,7 +65,7 @@ export function TodayBody({
   completedIndices = [],
   restTargetSeconds,
 }: TodayBodyProps) {
-  const { colors, spacing } = useTheme();
+  const { colors, layout, spacing } = useTheme();
   const sets = prescription(week);
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
@@ -87,7 +87,7 @@ export function TodayBody({
         style={{ paddingTop: 20, paddingBottom: lastTrained.startedAt ? 8 : 24 }}
       />
       {lastTrained.startedAt ? (
-        <View style={{ paddingHorizontal: 24, paddingBottom: spacing.lg }}>
+        <View style={{ paddingHorizontal: layout.gutter, paddingBottom: spacing.lg }}>
           <CapsLabel size="xs" color="ink3" testID="today-last-trained">
             {`Last ${liftDisplayName(lift).toLowerCase()} day · ${formatRelativeTime(lastTrained.startedAt)}`}
           </CapsLabel>

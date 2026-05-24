@@ -17,10 +17,10 @@ export interface OnboardingHeaderProps {
  * the right.
  */
 export function OnboardingHeader({ onBack, label, step, total }: OnboardingHeaderProps) {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
 
   const headerStyle: ViewStyle = {
-    paddingHorizontal: 24,
+    paddingHorizontal: layout.gutter,
     paddingTop: 16,
     paddingBottom: 16,
     borderBottomWidth: 1,

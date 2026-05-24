@@ -2,6 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
+import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Step 2 — Pick the lifts you want to train. Ported from
@@ -21,6 +22,7 @@ export interface PickLiftsProps {
 }
 
 export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLiftsProps) {
+  const { layout } = useTheme();
   const count = enabled.length;
   const calloutCopy =
     count === 1
@@ -42,7 +44,7 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
         </PrimaryPillButton>
       }
     >
-      <View style={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 16 }}>
+      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 28, paddingBottom: 16 }}>
         <Text
           variant="sans"
           weight="bold"
@@ -67,7 +69,7 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
         </Text>
       </View>
 
-      <View style={{ paddingHorizontal: 24, paddingTop: 8, flex: 1 }}>
+      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 8, flex: 1 }}>
         {LIFT_ORDER.map((lift, i) => (
           <LiftToggleRow
             key={lift}

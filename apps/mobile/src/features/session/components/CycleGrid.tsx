@@ -19,7 +19,7 @@ const WEEK_LABELS = ['W1', 'W2', 'W3', 'W4'] as const;
  * `Cycle № NN · N of M` header row.
  */
 export function CycleGrid({ cycle, completedThisCycle, sessionsInCycle }: CycleGridProps) {
-  const { colors, type } = useTheme();
+  const { colors, layout, type } = useTheme();
 
   const headerLabel: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
@@ -38,7 +38,7 @@ export function CycleGrid({ cycle, completedThisCycle, sessionsInCycle }: CycleG
 
   return (
     <View style={{ paddingTop: 24 }}>
-      <Row justify="space-between" style={{ marginBottom: 8, paddingHorizontal: 24 }}>
+      <Row justify="space-between" style={{ marginBottom: 8, paddingHorizontal: layout.gutter }}>
         <RNText style={headerLabel}>{`Cycle № ${String(cycle ?? 1).padStart(2, '0')}`}</RNText>
         <RNText style={headerHint}>{`${completedThisCycle} of ${sessionsInCycle}`}</RNText>
       </Row>

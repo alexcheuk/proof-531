@@ -1,7 +1,7 @@
 import { render, renderHook } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { ThemeProvider, useTheme } from './theme';
-import { colors, motion, radii, spacing, type } from './tokens';
+import { colors, layout, motion, radii, spacing, type } from './tokens';
 
 describe('ThemeProvider + useTheme', () => {
   it('returns the full token set when used inside ThemeProvider', () => {
@@ -14,6 +14,7 @@ describe('ThemeProvider + useTheme', () => {
       type,
       radii,
       spacing,
+      layout,
       motion,
     });
   });
@@ -27,6 +28,7 @@ describe('ThemeProvider + useTheme', () => {
     expect(result.current.type).toBe(type);
     expect(result.current.radii).toBe(radii);
     expect(result.current.spacing).toBe(spacing);
+    expect(result.current.layout).toBe(layout);
     expect(result.current.motion).toBe(motion);
   });
 

@@ -24,6 +24,7 @@ const UNIT_OPTIONS = [
 ];
 
 export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
+  const { layout } = useTheme();
   return (
     <OnboardingShell
       footer={
@@ -32,7 +33,7 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
         </PrimaryPillButton>
       }
     >
-      <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 36 }}>
+      <View style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: 36 }}>
         <CapsLabel style={{ marginBottom: 14 }}>A program by Jim Wendler</CapsLabel>
 
         <Text

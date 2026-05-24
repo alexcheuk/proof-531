@@ -1,11 +1,12 @@
 import { type ReactNode, createContext, createElement, useContext } from 'react';
-import { colors, motion, radii, spacing, type } from './tokens';
+import { colors, layout, motion, radii, spacing, type } from './tokens';
 
 export type Theme = {
   colors: typeof colors;
   type: typeof type;
   radii: typeof radii;
   spacing: typeof spacing;
+  layout: typeof layout;
   motion: typeof motion;
 };
 
@@ -14,6 +15,7 @@ const themeValue: Theme = Object.freeze({
   type,
   radii,
   spacing,
+  layout,
   motion,
 });
 

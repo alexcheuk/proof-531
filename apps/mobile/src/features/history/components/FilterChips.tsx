@@ -1,5 +1,6 @@
 import { PillChip } from '@/design/primitives/PillChip';
 import { Row } from '@/design/primitives/Row';
+import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
 import { ScrollView } from 'react-native';
 import { type HistoryFilter, historyFilterKey } from '../filter';
@@ -28,6 +29,7 @@ const LIFT_LABEL: Record<Lift, string> = {
 };
 
 export function FilterChips({ enabledLifts, active, onChange, hidePrChip }: FilterChipsProps) {
+  const { layout } = useTheme();
   const chips: Array<{ filter: HistoryFilter; label: string }> = [
     { filter: { kind: 'all' }, label: 'All' },
   ];
@@ -44,7 +46,11 @@ export function FilterChips({ enabledLifts, active, onChange, hidePrChip }: Filt
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4 }}
+      contentContainerStyle={{
+        paddingHorizontal: layout.gutter,
+        paddingTop: 16,
+        paddingBottom: 4,
+      }}
       testID="history-filter-chips"
     >
       <Row gap="sm">
