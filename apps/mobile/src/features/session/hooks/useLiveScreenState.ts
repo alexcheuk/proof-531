@@ -1,15 +1,8 @@
 import { useDb } from '@/data/DbProvider';
 import { cancelSession, completeSession } from '@/data/accessors/session';
-import { appendSetLog } from '@/data/accessors/setLog';
-import { PRS_KEY } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
-import { SESSION_PR_IDS_KEY } from '@/data/queries/useSessionPrIds';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
-import {
-  SET_LOGS_FOR_SESSION_KEY,
-  useSetLogsForSession,
-} from '@/data/queries/useSetLogsForSession';
-import { estimateOneRm } from '@/domain/epley';
+import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import {
   type WorkingSetIndex,
   getWorkingSetByIndex,
@@ -51,6 +44,7 @@ import { round as snapWeight } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCancelConfirm } from './useCancelConfirm';
+import { useLogWorkingSets } from './useLogWorkingSets';
 import { useRestTimer } from './useRestTimer';
 
 export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
@@ -232,49 +226,15 @@ export function useLiveScreenState(
   const pct = workingSet.pct;
   const isAmrap = isAmrapSet(week, setIndex);
 
-  const onLogWorkingSet = useCallback(async () => {
-    if (!session?.id) return;
-    const loggedIndex = setIndex; // capture pre-advance index
-    try {
-      await appendSetLog(db, {
-        sessionId: session.id,
-        index: loggedIndex,
-        kind: 'working',
-        prescribedWeight,
-        prescribedReps,
-        actualReps: prescribedReps,
-      });
-      // Invalidate the per-session set-logs cache so Today's "Resume working
-      // set N" CTA / SessionComplete's receipt see the new row immediately.
-      await queryClient.invalidateQueries({
-        queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
-      });
-      // Snapshot the just-logged set for RestPhase. Non-AMRAP working sets
-      // don't carry an estimated 1RM (matches the PWA's `isAmrap` gate on
-      // the RestPhase est-1RM column).
-      setLastLogged({
-        weight: prescribedWeight,
-        reps: prescribedReps,
-        estimated1RM: undefined,
-        isAmrap: false,
-      });
-      // Terminal on the deload week (no AMRAP at index 2); AMRAP weeks
-      // come in through onSaveAmrap.
-      if (loggedIndex === 2) {
-        await completeSession(db, session.id);
-        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        setPhase('complete');
-        return;
-      }
-      // Advance setIndex locally — the query refetch above will eventually
-      // confirm the same value, but local advance keeps the transition
-      // synchronous and the UI in step with the user's tap.
-      setSetIndex((loggedIndex + 1) as WorkingSetIndex);
-      setPhase('rest');
-    } catch (err) {
-      console.error('useLiveScreenState.onLogWorkingSet failed', err);
-    }
-  }, [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex]);
+  const { onLogWorkingSet, onSaveAmrap } = useLogWorkingSets({
+    sessionId: session?.id ?? null,
+    setIndex,
+    prescribedWeight,
+    prescribedReps,
+    setLastLogged,
+    setSetIndex,
+    setPhase,
+  });
 
   const onOpenAmrapSheet = useCallback(() => {
     setPhase('amrap-log');
@@ -283,49 +243,6 @@ export function useLiveScreenState(
   const onCancelAmrapSheet = useCallback(() => {
     setPhase('set');
   }, []);
-
-  const onSaveAmrap = useCallback(
-    async (reps: number) => {
-      if (!session?.id) return;
-      const loggedIndex = setIndex;
-      try {
-        await appendSetLog(db, {
-          sessionId: session.id,
-          index: loggedIndex,
-          kind: 'amrap',
-          prescribedWeight,
-          prescribedReps,
-          actualReps: reps,
-        });
-        await queryClient.invalidateQueries({
-          queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
-        });
-        // AMRAP can flip the PR table (and therefore the History tab's
-        // PR-marker query). Invalidate both so the next time the user lands
-        // on History the row shows its star without a manual refresh.
-        await queryClient.invalidateQueries({ queryKey: PRS_KEY });
-        await queryClient.invalidateQueries({ queryKey: SESSION_PR_IDS_KEY });
-        // Snapshot the just-logged AMRAP for RestPhase (even though AMRAP
-        // is terminal, the snapshot keeps the contract consistent and lets
-        // future flows reuse it without branching).
-        setLastLogged({
-          weight: prescribedWeight,
-          reps,
-          estimated1RM: estimateOneRm(prescribedWeight, reps),
-          isAmrap: true,
-        });
-        // AMRAP is always terminal — go straight to complete.
-        await completeSession(db, session.id);
-        // Session row's status flipped to 'completed' — the History list
-        // shouldn't carry a stale 'in_progress' row.
-        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        setPhase('complete');
-      } catch (err) {
-        console.error('useLiveScreenState.onSaveAmrap failed', err);
-      }
-    },
-    [db, prescribedReps, prescribedWeight, queryClient, session?.id, setIndex],
-  );
 
   const onAdvanceFromRest = useCallback(() => {
     // setIndex was already advanced inside onLogWorkingSet (synchronously

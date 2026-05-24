@@ -147,6 +147,7 @@ export function HistoryScreen() {
               cycle={group.cycle}
               sessions={group.sessions}
               prSessionIds={prIds}
+              onPressPr={(lift) => setFilter({ kind: 'lift', lift })}
             />
           ))
         )}

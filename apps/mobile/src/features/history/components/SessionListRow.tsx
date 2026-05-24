@@ -6,8 +6,10 @@
  *   - cancelled → no-op (no detail surface yet)
  *
  * Left column: lift name (primary) + dated/status caption (secondary).
- * Right column: a small PR star (when this session set a PR) + cycle/week
- * glyph (value) + status (sub).
+ * Right column: a small tappable PR star (when this session set a PR) +
+ * cycle/week glyph (value) + status (sub). The PR star is its own press
+ * target so users can jump straight to a per-lift filter on tap; tapping
+ * the rest of the row still navigates to the session surface.
  */
 import { goTo } from '@/app/routes';
 import type { Session } from '@/data/accessors/session';
@@ -17,9 +19,10 @@ import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName } from '@/domain/labels';
 import type { Lift, Week } from '@/domain/types';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { Text as RNText, type TextStyle } from 'react-native';
+import { Pressable, Text as RNText, type TextStyle } from 'react-native';
 
 function statusCaps(status: Session['status']): string {
   switch (status) {
@@ -37,9 +40,21 @@ export type SessionListRowProps = {
   first?: boolean;
   /** True when this session produced at least one PR set log. */
   hasPr?: boolean;
+  /**
+   * Optional handler fired when the user taps the `★ PR` chip. When
+   * provided, the chip becomes its own press target (the surrounding row
+   * still navigates to the session surface). Receives the row's lift so
+   * the parent can activate a per-lift filter.
+   */
+  onPressPr?: (lift: Lift) => void;
 };
 
-export function SessionListRow({ session, first = false, hasPr = false }: SessionListRowProps) {
+export function SessionListRow({
+  session,
+  first = false,
+  hasPr = false,
+  onPressPr,
+}: SessionListRowProps) {
   const router = useRouter();
   const { colors, type } = useTheme();
   const date = new Date(session.startedAt);
@@ -58,9 +73,13 @@ export function SessionListRow({ session, first = false, hasPr = false }: Sessio
   }, [router, session.id, session.status, lift]);
 
   const tappable = session.status === 'completed' || session.status === 'in_progress';
-  // Debounce so a rapid double-tap can't push the same route twice (the
-  // resulting back-stack of two identical screens is confusing).
   const onPress = useDebouncedPress(navigate, { disabled: !tappable });
+
+  const handlePrTap = useCallback(() => {
+    if (!onPressPr) return;
+    void Haptics.selectionAsync();
+    onPressPr(lift);
+  }, [lift, onPressPr]);
 
   const a11yLabel = [
     liftDisplayName(session.lift),
@@ -78,6 +97,28 @@ export function SessionListRow({ session, first = false, hasPr = false }: Sessio
     color: colors.ink0,
   };
 
+  const prChip = hasPr ? (
+    onPressPr ? (
+      <Pressable
+        onPress={handlePrTap}
+        accessibilityRole="button"
+        accessibilityLabel={`Show only ${liftDisplayName(session.lift)} sessions`}
+        accessibilityHint="Filters the History list to this lift"
+        testID={`history-row-${session.id}-pr`}
+        style={({ pressed }) => [
+          { paddingVertical: 2, paddingHorizontal: 4 },
+          pressed ? { opacity: 0.5 } : null,
+        ]}
+      >
+        <RNText style={starStyle}>★ PR</RNText>
+      </Pressable>
+    ) : (
+      <RNText style={starStyle} testID={`history-row-${session.id}-pr`}>
+        ★ PR
+      </RNText>
+    )
+  ) : null;
+
   return (
     <LedgerRow
       first={first}
@@ -87,11 +128,7 @@ export function SessionListRow({ session, first = false, hasPr = false }: Sessio
     >
       <LedgerRowLabel primary={liftDisplayName(session.lift)} secondary={dateText} />
       <Row gap="sm">
-        {hasPr ? (
-          <RNText style={starStyle} testID={`history-row-${session.id}-pr`}>
-            ★ PR
-          </RNText>
-        ) : null}
+        {prChip}
         <LedgerRowValue
           value={`C${session.cycle} · W${week}`}
           sub={statusCaps(session.status)}
