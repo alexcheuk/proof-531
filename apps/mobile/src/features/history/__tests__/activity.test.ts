@@ -1,6 +1,7 @@
 import type { Session } from '@/data/accessors/session';
 import {
   currentStreak,
+  currentStreakDays,
   daysSinceFirstSession,
   firstSessionDate,
   longestStreakDays,
@@ -177,6 +178,52 @@ describe('daysSinceFirstSession', () => {
       makeSession(TODAY_MIDNIGHT - 30 * DAY),
     ];
     expect(daysSinceFirstSession(sessions, NOW)).toBe(31);
+  });
+});
+
+describe('currentStreakDays', () => {
+  it('returns 0 when today is not a training day', () => {
+    const sessions = [makeSession(TODAY_MIDNIGHT - 1 * DAY)];
+    expect(currentStreakDays(sessions, NOW)).toBe(0);
+  });
+
+  it('returns 1 when only today is a training day', () => {
+    expect(currentStreakDays([makeSession(TODAY_MIDNIGHT)], NOW)).toBe(1);
+  });
+
+  it('walks back through consecutive prior days', () => {
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 4 * DAY),
+      makeSession(TODAY_MIDNIGHT - 3 * DAY),
+      makeSession(TODAY_MIDNIGHT - 2 * DAY),
+      makeSession(TODAY_MIDNIGHT - 1 * DAY),
+      makeSession(TODAY_MIDNIGHT),
+    ];
+    expect(currentStreakDays(sessions, NOW)).toBe(5);
+  });
+
+  it('stops the count when a day in the run is empty', () => {
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 4 * DAY),
+      // gap on day -3
+      makeSession(TODAY_MIDNIGHT - 2 * DAY),
+      makeSession(TODAY_MIDNIGHT - 1 * DAY),
+      makeSession(TODAY_MIDNIGHT),
+    ];
+    expect(currentStreakDays(sessions, NOW)).toBe(3);
+  });
+
+  it('counts beyond the 14-day window that the recent-activity helper caps at', () => {
+    const sessions = Array.from({ length: 20 }, (_, i) => makeSession(TODAY_MIDNIGHT - i * DAY));
+    expect(currentStreakDays(sessions, NOW)).toBe(20);
+  });
+
+  it('ignores cancelled and in-progress rows', () => {
+    const sessions = [
+      makeSession(TODAY_MIDNIGHT - 1 * DAY),
+      makeSession(TODAY_MIDNIGHT, 'cancelled'),
+    ];
+    expect(currentStreakDays(sessions, NOW)).toBe(0);
   });
 });
 

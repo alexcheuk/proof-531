@@ -59,6 +59,43 @@ export function currentStreak(activity: ReadonlyArray<boolean>): number {
 }
 
 /**
+ * Real-world consecutive-day streak ending at `now`. Walks back from
+ * today's local-midnight bucket through every prior day that contains at
+ * least one completed session and returns the run length.
+ *
+ * Distinct from `currentStreak(activity)` which only sees the trailing
+ * 14-day window — that helper saturates at 14 even when the actual streak
+ * is longer. This one consults the full session list so it can be
+ * meaningfully compared with `longestStreakDays(sessions)`.
+ *
+ * Returns `0` when today is not a training day (i.e. the streak is
+ * broken — the user must hit today to keep the count alive).
+ */
+export function currentStreakDays(
+  sessions: ReadonlyArray<Session>,
+  now: number = Date.now(),
+): number {
+  const dayBuckets = new Set<number>();
+  for (const s of sessions) {
+    if (s.status !== 'completed') continue;
+    const ts = new Date(s.startedAt);
+    ts.setHours(0, 0, 0, 0);
+    dayBuckets.add(ts.getTime());
+  }
+  if (dayBuckets.size === 0) return 0;
+
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  let cursor = today.getTime();
+  let streak = 0;
+  while (dayBuckets.has(cursor)) {
+    streak += 1;
+    cursor -= DAY_MS;
+  }
+  return streak;
+}
+
+/**
  * Total elapsed days from the user's first completed session through `now`.
  *
  * Inclusive of the first-session day (a session today reads as "Day 1").

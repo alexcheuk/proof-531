@@ -24,6 +24,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
 import {
+  currentStreakDays,
   daysSinceFirstSession,
   firstSessionDate,
   longestStreakDays,
@@ -80,6 +81,7 @@ export function HistoryScreen() {
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
   const activity = useMemo(() => recentActivity(rows), [rows]);
   const longestStreak = useMemo(() => longestStreakDays(rows), [rows]);
+  const currentStreak = useMemo(() => currentStreakDays(rows), [rows]);
   const trainingSince = useMemo(() => firstSessionDate(rows), [rows]);
   const totalTrainingDays = useMemo(() => daysSinceFirstSession(rows), [rows]);
   const bestLift = useMemo(() => {
@@ -133,6 +135,7 @@ export function HistoryScreen() {
           activity={activity}
           bestLift={bestLift}
           longestStreak={longestStreak}
+          currentStreak={currentStreak}
           trainingSince={trainingSince}
           totalTrainingDays={totalTrainingDays}
         />

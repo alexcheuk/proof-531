@@ -30,11 +30,11 @@ export function TopSetHero({
   tmInDisplay,
   plateSet,
 }: TopSetHeroProps) {
-  const { colors, layout } = useTheme();
+  const { colors, layout, spacing } = useTheme();
   const heroStyle: ViewStyle = {
     paddingHorizontal: layout.gutter,
-    paddingTop: 20,
-    paddingBottom: 24,
+    paddingTop: spacing.lg + 4,
+    paddingBottom: spacing.xl,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   };

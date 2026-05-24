@@ -79,4 +79,33 @@ describe('AchievementStrip', () => {
     );
     expect(queryByTestId('history-longest-streak')).toBeNull();
   });
+
+  it('tags the Best streak chip with "MATCHING NOW" when current === longest', () => {
+    const { getByTestId } = renderStrip(
+      <AchievementStrip
+        filed={5}
+        prs={1}
+        activity={ACTIVITY}
+        longestStreak={5}
+        currentStreak={5}
+      />,
+    );
+    const chip = getByTestId('history-longest-streak');
+    expect(chip.props.children).toContain('MATCHING NOW');
+    expect(chip.props.children).toContain('5 days');
+  });
+
+  it('omits the MATCHING NOW tag when current < longest', () => {
+    const { getByTestId } = renderStrip(
+      <AchievementStrip
+        filed={5}
+        prs={1}
+        activity={ACTIVITY}
+        longestStreak={7}
+        currentStreak={2}
+      />,
+    );
+    const chip = getByTestId('history-longest-streak');
+    expect(chip.props.children).not.toContain('MATCHING NOW');
+  });
 });

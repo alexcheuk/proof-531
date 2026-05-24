@@ -27,11 +27,12 @@ describe('LiveCtaButton', () => {
     expect(handlers.onAdvanceFromRest).toHaveBeenCalledTimes(1);
   });
 
-  it('rest + last set → "Complete session"', () => {
+  it('rest + final set ahead → "Final set" (the prior "Complete session" copy was a UX bug — pressing it advances to set 3, not the receipt)', () => {
     const screen = renderCta(
       <LiveCtaButton phase="rest" setIndex={2} isAmrap={false} {...handlers} />,
     );
-    expect(screen.getByText('Complete session')).toBeTruthy();
+    expect(screen.getByText('Final set')).toBeTruthy();
+    expect(screen.queryByText('Complete session')).toBeNull();
   });
 
   it('set + AMRAP → "Log AMRAP"', () => {

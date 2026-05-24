@@ -46,6 +46,9 @@ export function OnboardingHeader({ onBack, label, step, total }: OnboardingHeade
           testID="onboarding-back"
           accessibilityRole="button"
           accessibilityLabel="Back"
+          // Expand the 28×28 visual chip to a ≥44pt tap surface (Apple's
+          // minimum) without changing its visual mass.
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           style={backButtonStyle}
         >
           <Text variant="mono" weight="bold" size={12} color="ink0">

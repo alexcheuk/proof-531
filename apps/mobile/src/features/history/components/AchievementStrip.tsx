@@ -19,6 +19,12 @@ export type AchievementStripProps = {
   bestLift?: BestLift | null;
   /** Lifetime longest training streak (days). Surfaces when ≥ 3. */
   longestStreak?: number;
+  /**
+   * Real-world current streak (days). When equal to `longestStreak` and
+   * ≥ 3, the Best streak chip is tagged "MATCHING NOW" to celebrate the
+   * user being on their longest run ever.
+   */
+  currentStreak?: number;
   /** Date of the user's first completed session — drives the "training since" caption. */
   trainingSince?: Date | null;
   /** Total elapsed days since first session. Caption only renders when ≥ 30. */
@@ -56,6 +62,7 @@ export function AchievementStrip({
   activity,
   bestLift,
   longestStreak,
+  currentStreak,
   trainingSince,
   totalTrainingDays,
 }: AchievementStripProps) {
@@ -63,6 +70,8 @@ export function AchievementStrip({
   if (filed === 0) return null;
   const showLongest = (longestStreak ?? 0) >= 3;
   const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
+  const isMatchingBest =
+    showLongest && (currentStreak ?? 0) >= 3 && currentStreak === longestStreak;
   return (
     <Card
       borders="bottom"
@@ -85,7 +94,9 @@ export function AchievementStrip({
       ) : null}
       {showLongest ? (
         <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-longest-streak">
-          {`★ Best streak · ${longestStreak} days`}
+          {isMatchingBest
+            ? `★ Best streak · ${longestStreak} days · MATCHING NOW`
+            : `★ Best streak · ${longestStreak} days`}
         </CapsLabel>
       ) : null}
       <ActivitySparkline activity={activity} />

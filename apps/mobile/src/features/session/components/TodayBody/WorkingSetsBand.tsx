@@ -32,10 +32,10 @@ export function WorkingSetsBand({
   nextSetIndex,
   completedIndices,
 }: WorkingSetsBandProps) {
-  const { layout } = useTheme();
+  const { layout, spacing } = useTheme();
   const doneCount = completedIndices.length;
   return (
-    <View style={{ paddingHorizontal: layout.gutter, paddingTop: 20 }}>
+    <View style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.lg + 4 }}>
       <Row justify="space-between" style={{ marginBottom: 6 }}>
         <CapsLabel>
           {doneCount > 0 ? `WORKING SETS  ·  ${doneCount} OF ${sets.length} DONE` : 'WORKING SETS'}

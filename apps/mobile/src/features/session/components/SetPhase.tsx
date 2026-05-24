@@ -47,7 +47,7 @@ export function SetPhase({
   perSide,
   plateChangeHint,
 }: SetPhaseProps) {
-  const { spacing } = useTheme();
+  const { spacing, layout } = useTheme();
 
   return (
     <>
@@ -61,7 +61,7 @@ export function SetPhase({
 
       <Divider />
 
-      <View style={{ paddingHorizontal: 24, paddingVertical: spacing.lg }}>
+      <View style={{ paddingHorizontal: layout.gutter, paddingVertical: spacing.lg }}>
         <TopSetBlock
           eyebrow={`On the bar · ${Math.round(pct * 100)}% TM`}
           weight={weight}

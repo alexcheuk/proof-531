@@ -14,10 +14,15 @@ export type LiveCtaButtonProps = {
  * The single primary CTA on the LiveScreen. Its label + glyph depends on
  * which phase the screen is in:
  *
- *   rest, set 1/2  → "Next set"          (→)
- *   rest, set 3    → "Complete session"  (→)
- *   set, AMRAP     → "Log AMRAP"         (→)
- *   set, working   → "Set complete"      (✓)
+ *   rest, before set 3   → "Next set"      (→)
+ *   rest, before final   → "Final set"     (→)
+ *   set, AMRAP           → "Log AMRAP"     (→)
+ *   set, working         → "Set complete"  (✓)
+ *
+ * The rest CTA advances to the next set surface — it does NOT complete the
+ * session (the working/AMRAP CTAs on the set surface do). Earlier copy of
+ * "Complete session" on `setIndex === 2` was misleading: pressing it took
+ * the user to their FINAL set, not to the receipt.
  *
  * Cancel-confirm and amrap-log phases re-use the CTA from the phase they
  * popped out of, so the same selection rules apply.
@@ -31,10 +36,10 @@ export function LiveCtaButton({
   onLogWorkingSet,
 }: LiveCtaButtonProps) {
   if (phase === 'rest') {
-    const hasNext = setIndex < 2;
+    const isHeadingIntoFinal = setIndex === 2;
     return (
       <PrimaryPillButton testID="cta-advance-rest" glyph="→" onPress={onAdvanceFromRest}>
-        {hasNext ? 'Next set' : 'Complete session'}
+        {isHeadingIntoFinal ? 'Final set' : 'Next set'}
       </PrimaryPillButton>
     );
   }

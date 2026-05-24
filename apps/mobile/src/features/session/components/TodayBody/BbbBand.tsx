@@ -37,7 +37,7 @@ export function BbbBand({
   unitGlyph,
   restTargetSeconds,
 }: BbbBandProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout, spacing, type } = useTheme();
   const bbbWeightStorage = round(tm * 0.5, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
 
@@ -49,7 +49,7 @@ export function BbbBand({
   };
 
   return (
-    <View style={{ paddingHorizontal: layout.gutter, paddingTop: 24 }}>
+    <View style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.xl }}>
       <Row justify="space-between" align="baseline" style={{ marginBottom: 6 }}>
         <CapsLabel>BORING BUT BIG</CapsLabel>
         {restTargetSeconds !== undefined ? (
