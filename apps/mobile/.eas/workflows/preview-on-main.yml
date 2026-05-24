@@ -1,4 +1,12 @@
-name: Preview Builds (main)
+name: Preview (main) — OTA or build
+
+# On every push to main:
+#   1. Compute the Android native fingerprint.
+#   2. Look up an existing `preview`-profile APK with the same fingerprint.
+#   3. If none exists → build a new APK (native layer changed).
+#   4. Always publish an EAS Update to the `preview` channel — JS-only
+#      changes ship to the existing APK instantly; new builds pick up the
+#      same JS bundle on first launch.
 
 on:
   push:
@@ -6,9 +14,36 @@ on:
       - main
 
 jobs:
+  fingerprint:
+    name: Fingerprint native layer
+    type: fingerprint
+    environment: preview
+
+  find_existing_build:
+    name: Look up existing APK with matching fingerprint
+    needs: [fingerprint]
+    type: get-build
+    params:
+      platform: android
+      profile: preview
+      distribution: internal
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+
   build_android:
-    name: Build Android (preview)
+    name: Build Android (preview) — native changed
+    needs: [find_existing_build]
+    if: ${{ needs.find_existing_build.outputs.build_id == '' }}
     type: build
     params:
       platform: android
       profile: preview
+
+  publish_update:
+    name: Publish OTA update to preview channel
+    needs: [fingerprint]
+    type: update
+    params:
+      platform: android
+      branch: main
+      channel: preview
+      message: ${{ github.event.head_commit.message }}
