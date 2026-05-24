@@ -70,4 +70,45 @@ describe('computeCycleHint', () => {
   it('pluralises session singular', () => {
     expect(computeCycleHint([makeSession(1, 'completed')], new Set([1]))).toBe('1 session · 1 PR');
   });
+
+  it('appends the cycle date span when finished and >1 day wide', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const start = new Date(2026, 4, 1).getTime();
+    const sessions: Session[] = [
+      { ...makeSession(1, 'completed'), startedAt: start },
+      { ...makeSession(2, 'completed'), startedAt: start + 4 * DAY },
+      { ...makeSession(3, 'completed'), startedAt: start + 11 * DAY },
+    ];
+    expect(computeCycleHint(sessions, new Set())).toBe('3 sessions · 12 days');
+  });
+
+  it('omits the span clause when sessions all land on the same local day', () => {
+    const sessions: Session[] = [
+      { ...makeSession(1, 'completed'), startedAt: 1_700_000_000_000 },
+      { ...makeSession(2, 'completed'), startedAt: 1_700_000_000_000 + 60_000 },
+    ];
+    expect(computeCycleHint(sessions, new Set())).toBe('2 sessions');
+  });
+
+  it('omits the span clause on an in-progress cycle', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const start = new Date(2026, 4, 1).getTime();
+    const sessions: Session[] = [
+      { ...makeSession(1, 'completed'), startedAt: start },
+      { ...makeSession(2, 'in_progress'), startedAt: start + 4 * DAY },
+    ];
+    expect(computeCycleHint(sessions, new Set())).toBe('1 of 2 done');
+  });
+
+  it('combines all three clauses: total · PRs · span', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const start = new Date(2026, 4, 1).getTime();
+    const sessions: Session[] = [
+      { ...makeSession(1, 'completed'), startedAt: start },
+      { ...makeSession(2, 'completed'), startedAt: start + 3 * DAY },
+      { ...makeSession(3, 'completed'), startedAt: start + 6 * DAY },
+      { ...makeSession(4, 'completed'), startedAt: start + 9 * DAY },
+    ];
+    expect(computeCycleHint(sessions, new Set([2, 4]))).toBe('4 sessions · 2 PRs · 10 days');
+  });
 });

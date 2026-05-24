@@ -1,6 +1,7 @@
 import type { Session } from '@/data/accessors/session';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
+import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
 import { View } from 'react-native';
 import { computeCycleHint } from '../achievements';
@@ -19,9 +20,13 @@ export type CycleSectionProps = {
  * a hint summarising completion + PRs (e.g. `3 of 4 done · 1 PR`).
  */
 export function CycleSection({ cycle, sessions, prSessionIds, onPressPr }: CycleSectionProps) {
+  const { layout } = useTheme();
   const hint = computeCycleHint(sessions, prSessionIds);
   return (
-    <View style={{ paddingHorizontal: 24, paddingTop: 24 }} testID={`history-cycle-${cycle}`}>
+    <View
+      style={{ paddingHorizontal: layout.gutter, paddingTop: 24 }}
+      testID={`history-cycle-${cycle}`}
+    >
       <Row justify="space-between" align="baseline" style={{ marginBottom: 4 }}>
         <CapsLabel weight="semibold" color="ink1">
           {`Cycle ${String(cycle).padStart(2, '0')}`}
