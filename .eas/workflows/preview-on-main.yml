@@ -1,0 +1,14 @@
+name: Preview Builds (main)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_android:
+    type: build
+    working_directory: apps/mobile
+    params:
+      platform: android
+      profile: preview
