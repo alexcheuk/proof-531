@@ -13,14 +13,9 @@ import { useTheme } from '@/design/theme';
  * The right-side meta caption flips to "OVERTIME" (amber) once `remaining`
  * goes negative — useful at-a-glance signal during longer rests so the user
  * knows they're past target without having to do the math.
- *
- * The ±30s / Skip controls are optional — supplied by the caller via
- * `onAddRest` / `onSubRest` / `onSkip`. The PWA does not ship them, but
- * mobile users want fingertip control between sets, so we add them here.
  */
-import * as Haptics from 'expo-haptics';
 import { useEffect } from 'react';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -29,6 +24,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import { RestTimerControls } from './RestTimerControls';
 
 export type RestTimerProps = {
   /** Seconds remaining in the countdown driver. */
@@ -51,6 +47,11 @@ function formatLabel(totalSeconds: number): string {
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
+// Once the user is meaningfully past target (≥ this many seconds) the giant
+// clock switches to an "over by N:NN" frame so the headline reads as a
+// pacing alert rather than just a count-up.
+const PACE_HINT_THRESHOLD_SECONDS = 5;
+
 export function RestTimer({
   remaining,
   target,
@@ -59,20 +60,12 @@ export function RestTimer({
   onSkip,
   testID,
 }: RestTimerProps) {
-  const { spacing, colors } = useTheme();
-  // Count UP from 0 to match the reference. After the target elapses we keep
-  // ticking past it (free-form rest — the ref has no fixed ceiling either):
-  // when `remaining` goes negative, `target - remaining` grows past `target`.
+  const { spacing } = useTheme();
   const elapsed = target - remaining;
   const overtime = remaining < 0;
   const overBySeconds = overtime ? Math.abs(remaining) : 0;
-  // Once the user is meaningfully past target (≥5s) the giant clock switches
-  // to an "over by N:NN" frame so the headline reads as a pacing alert
-  // rather than just a count-up.
-  const PACE_HINT_THRESHOLD_SECONDS = 5;
   const showOverByHint = overBySeconds >= PACE_HINT_THRESHOLD_SECONDS;
   const label = showOverByHint ? `+${formatLabel(overBySeconds)}` : formatLabel(elapsed);
-  const showControls = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;
 
   // Overtime pulse — gentle opacity sway between 1 and 0.7 over ~1.4s while
   // the user is past target. Reset to 1 the moment they're back inside the
@@ -97,36 +90,6 @@ export function RestTimer({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xl,
   };
-
-  const chipBase: ViewStyle = {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.ink0,
-    backgroundColor: colors.bg0,
-  };
-  const chipPrimary: ViewStyle = {
-    ...chipBase,
-    backgroundColor: colors.ink0,
-  };
-  const chipLabel: TextStyle = {
-    fontFamily: 'IBMPlexMono-SemiBold',
-    fontSize: 11,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: colors.ink0,
-  };
-  const chipLabelInverted: TextStyle = { ...chipLabel, color: colors.bg0 };
-
-  function withHaptic(fn?: () => void) {
-    return () => {
-      if (!fn) return;
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      fn();
-    };
-  }
 
   return (
     <View
@@ -160,43 +123,7 @@ export function RestTimer({
         </Text>
       </Animated.View>
 
-      {showControls ? (
-        <Row gap="sm" style={{ marginTop: spacing.lg }} testID="rest-timer-controls">
-          {onSubRest ? (
-            <Pressable
-              testID="rest-timer-sub"
-              accessibilityRole="button"
-              accessibilityLabel="Subtract 30 seconds"
-              onPress={withHaptic(onSubRest)}
-              style={chipBase}
-            >
-              <RNText style={chipLabel}>−30s</RNText>
-            </Pressable>
-          ) : null}
-          {onAddRest ? (
-            <Pressable
-              testID="rest-timer-add"
-              accessibilityRole="button"
-              accessibilityLabel="Add 30 seconds"
-              onPress={withHaptic(onAddRest)}
-              style={chipBase}
-            >
-              <RNText style={chipLabel}>+30s</RNText>
-            </Pressable>
-          ) : null}
-          {onSkip ? (
-            <Pressable
-              testID="rest-timer-skip"
-              accessibilityRole="button"
-              accessibilityLabel="Skip rest and start the next set"
-              onPress={withHaptic(onSkip)}
-              style={chipPrimary}
-            >
-              <RNText style={chipLabelInverted}>Skip ›</RNText>
-            </Pressable>
-          ) : null}
-        </Row>
-      ) : null}
+      <RestTimerControls onAddRest={onAddRest} onSubRest={onSubRest} onSkip={onSkip} />
     </View>
   );
 }

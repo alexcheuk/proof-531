@@ -58,9 +58,14 @@ describe('LiveCtaButton', () => {
   });
 
   it('renders null on an unrecognised phase', () => {
-    // @ts-expect-error narrowing — passing a phase the union doesn't cover
     const screen = renderCta(
-      <LiveCtaButton phase="bogus" setIndex={0} isAmrap={false} {...handlers} />,
+      <LiveCtaButton
+        // @ts-expect-error — phase "bogus" is intentionally outside the union
+        phase="bogus"
+        setIndex={0}
+        isAmrap={false}
+        {...handlers}
+      />,
     );
     expect(screen.queryByTestId('cta-log-working')).toBeNull();
     expect(screen.queryByTestId('cta-log-amrap')).toBeNull();

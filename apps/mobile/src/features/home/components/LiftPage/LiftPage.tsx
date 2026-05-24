@@ -10,8 +10,6 @@
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { Row } from '@/design/primitives/Row';
-import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
@@ -24,6 +22,8 @@ import { useLiftPageState } from '../../hooks/useLiftPageState';
 import { CycleStrip } from '../CycleStrip';
 import { LiftStats } from '../LiftStats';
 import { LiftPageEmpty } from './LiftPageEmpty';
+import { LiftPageEyebrow } from './LiftPageEyebrow';
+import { LiftPageTitle } from './LiftPageTitle';
 
 type LiftPageProps = {
   lift: Lift;
@@ -40,13 +40,6 @@ type LiftPageProps = {
   onOpenPlan: () => void;
 };
 
-const TITLE_SIZE = 64;
-// PWA `tracking-[-0.04em]` × 64px = -2.56 letter spacing.
-const TITLE_LETTER_SPACING = -2.56;
-// PWA `leading-[0.92]` ≈ 0.92 * 64 ≈ 58.88; RN clips descenders on tight
-// line heights, so we bump to 74 (matches the spec note in the plan).
-const TITLE_LINE_HEIGHT = 74;
-
 export function LiftPage({
   lift,
   week,
@@ -61,7 +54,7 @@ export function LiftPage({
   onResume,
   onOpenPlan,
 }: LiftPageProps) {
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
   const lastTrained = useLastCompletedSessionForLift(lift);
   const lastTrainedHint =
@@ -76,41 +69,6 @@ export function LiftPage({
     flex: 1,
   };
 
-  // Eyebrow — "Cycle N · Day W" on the left, "In progress" on the right
-  // (only when a session is actively running for this lift).
-  const eyebrow = (
-    <Row justify="space-between" gap="sm">
-      <CapsLabel weight="semibold">{`Cycle ${cycle} · Day ${week}`}</CapsLabel>
-      {isInProgress ? (
-        <Row gap="xs" testID={`lift-page-${lift}-in-progress`}>
-          <View style={{ width: 6, height: 6, backgroundColor: colors.ink0 }} />
-          <CapsLabel size="xs" weight="bold" color="ink0" style={{ letterSpacing: 1.98 }}>
-            In progress
-          </CapsLabel>
-        </Row>
-      ) : null}
-    </Row>
-  );
-
-  const title = (
-    <Text
-      variant="sans"
-      weight="bold"
-      size={TITLE_SIZE}
-      color="ink0"
-      style={{
-        lineHeight: TITLE_LINE_HEIGHT,
-        letterSpacing: TITLE_LETTER_SPACING,
-        marginTop: spacing.md,
-      }}
-    >
-      {liftDisplayName(lift)}
-      <Text variant="sans" weight="bold" size={64} color="amber" style={{ lineHeight: 74 }}>
-        .
-      </Text>
-    </Text>
-  );
-
   if (state.empty) {
     return (
       <Animated.View
@@ -119,8 +77,8 @@ export function LiftPage({
         style={pageStyle}
         testID={`lift-page-${lift}`}
       >
-        {eyebrow}
-        {title}
+        <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
+        <LiftPageTitle lift={lift} />
         <LiftPageEmpty testIDPrefix={`lift-page-${lift}`} />
       </Animated.View>
     );
@@ -133,8 +91,18 @@ export function LiftPage({
       style={pageStyle}
       testID={`lift-page-${lift}`}
     >
-      {eyebrow}
-      {title}
+      <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
+      <LiftPageTitle lift={lift} />
+      {week === 4 ? (
+        <CapsLabel
+          size="xs"
+          color="ink3"
+          style={{ marginTop: spacing.sm, letterSpacing: 1.62 }}
+          testID={`lift-page-${lift}-deload-callout`}
+        >
+          DELOAD WEEK · EASE OFF, BUILD THE NEXT CYCLE
+        </CapsLabel>
+      ) : null}
       {lastTrainedHint ? (
         <CapsLabel
           size="xs"
