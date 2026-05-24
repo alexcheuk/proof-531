@@ -72,6 +72,7 @@ export function LiftToggleRow({
       onPress={onToggle}
       accessibilityRole="button"
       accessibilityState={{ selected }}
+      accessibilityLabel={`${meta.label}, ${description}${selected ? ', selected' : ''}`}
       testID={testID ?? `lift-toggle-${lift}`}
       style={rowStyle}
     >

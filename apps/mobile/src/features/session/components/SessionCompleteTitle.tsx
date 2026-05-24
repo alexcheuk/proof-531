@@ -1,3 +1,5 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Heading } from '@/design/primitives/Heading';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
@@ -39,27 +41,11 @@ export function SessionCompleteTitle({
     borderBottomWidth: 1,
     borderBottomColor: colors.lineStrong,
   };
-  const titleEyebrow: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginBottom: 10,
-  };
   const titleRow: ViewStyle = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: 12,
-  };
-  const titleHeadline: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 64,
-    lineHeight: 60,
-    letterSpacing: -2.88,
-    color: colors.ink0,
-    flex: 1,
   };
   const titleSubtext: TextStyle = {
     fontFamily: `${type.sans}-Medium`,
@@ -76,16 +62,16 @@ export function SessionCompleteTitle({
 
   return (
     <View style={titleSection}>
-      <RNText style={titleEyebrow}>
+      <CapsLabel weight="semibold" style={{ marginBottom: 10 }}>
         {`Session № ${String(completedThisCycle).padStart(2, '0')} · ${eyebrowDate}`}
-      </RNText>
+      </CapsLabel>
       <View style={titleRow}>
-        <RNText style={titleHeadline} testID="session-complete-title">
+        <Heading size="xl" style={{ flex: 1 }} testID="session-complete-title">
           {'In the\nbook'}
           <Text variant="sans" weight="bold" size={64} color="amber" style={{ lineHeight: 74 }}>
             .
           </Text>
-        </RNText>
+        </Heading>
         <DateStamp
           testID="session-complete-stamp"
           weekday={weekday}

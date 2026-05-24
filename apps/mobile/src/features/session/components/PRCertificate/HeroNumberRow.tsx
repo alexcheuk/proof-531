@@ -1,3 +1,4 @@
+import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, View } from 'react-native';
@@ -18,18 +19,9 @@ export function HeroNumberRow({ e1RM, unit, testID }: HeroNumberRowProps) {
       gap="md"
       style={{ paddingTop: 14, borderTopWidth: 1, borderTopColor: PAPER_28 }}
     >
-      <RNText
-        testID={testID}
-        style={{
-          fontFamily: `${type.display}-Bold`,
-          fontSize: 92,
-          lineHeight: 90,
-          color: colors.bg0,
-          letterSpacing: -4.6,
-        }}
-      >
+      <Heading size="huge" color="bg0" numeric {...(testID !== undefined ? { testID } : {})}>
         {e1RM}
-      </RNText>
+      </Heading>
       <View style={{ gap: 4 }}>
         <RNText
           style={{

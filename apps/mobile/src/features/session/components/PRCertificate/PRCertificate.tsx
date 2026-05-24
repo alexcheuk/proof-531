@@ -5,12 +5,15 @@ import { useTheme } from '@/design/theme';
  *
  * Composition shell. The panel chrome lives here; the four interior bands
  * (eyebrow + hero title, hero number row, comparison row, sign-off row) each
- * live in their own files inside this directory.
+ * live in their own files inside this directory. The panel itself fades in
+ * + slides up on mount via Reanimated so the user gets a small celebratory
+ * beat when the receipt resolves.
  *
  * Render gate lives in the parent (see SessionCompleteScreen). This component
  * trusts its props.
  */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ComparisonRow } from './ComparisonRow';
 import { CornerTicks } from './CornerTicks';
 import { HeroNumberRow } from './HeroNumberRow';
@@ -51,7 +54,8 @@ export function PRCertificate({
   };
 
   return (
-    <View
+    <Animated.View
+      entering={FadeInDown.duration(420).springify().damping(18)}
       testID={testID}
       style={panelStyle}
       accessibilityRole="summary"
@@ -107,6 +111,6 @@ export function PRCertificate({
         {...(testID ? { testID: `${testID}-delta` } : {})}
       />
       <SignOffRow liftLabel={liftLabel} />
-    </View>
+    </Animated.View>
   );
 }

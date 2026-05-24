@@ -37,6 +37,21 @@ jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: ({ children }: any) => children,
 }));
 
+// PRCertificate uses Reanimated's FadeInDown for its mount animation; under
+// jest the Worklets native module is absent, so swap Animated.View for a
+// plain RN View.
+jest.mock('react-native-reanimated', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
+    FadeInDown: { duration: () => ({ springify: () => ({ damping: () => ({}) }) }) },
+    FadeIn: { duration: () => ({}) },
+    FadeOut: { duration: () => ({}) },
+    LinearTransition: { duration: () => ({}) },
+  };
+});
+
 jest.mock('@/data/DbProvider', () => ({
   useDb: () => ({ __stub: 'db' }),
 }));

@@ -2,10 +2,7 @@ import { goTo } from '@/app/routes';
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
-import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
-import { Skeleton } from '@/design/primitives/Skeleton';
-import { useTheme } from '@/design/theme';
 import { dateLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
@@ -22,20 +19,13 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
  *
  * Boundary: this file lives under `features/` and composes design
  * primitives + data queries — it never imports drizzle hex directly.
- * The single `createSession` call below is the one allowed exception
- * (accessors are explicitly safe to call from features per §3 of the
- * boundary rules — only the raw drizzle handle is forbidden).
  */
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo } from 'react';
-import {
-  FlatList,
-  type ListRenderItem,
-  View,
-  type ViewStyle,
-  useWindowDimensions,
-} from 'react-native';
+import { FlatList, type ListRenderItem, View, useWindowDimensions } from 'react-native';
+import { DateBadge } from './components/DateBadge';
+import { HomeContainer } from './components/HomeContainer';
+import { HomeSkeleton } from './components/HomeSkeleton';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
 import { useHomeCarouselSync } from './hooks/useHomeCarouselSync';
@@ -136,16 +126,16 @@ export function HomeScreen() {
   // first paint feels intentional instead of flashing blank.
   if (combined.isError) {
     return (
-      <Container>
+      <HomeContainer>
         <QueryShell query={combined}>{null}</QueryShell>
-      </Container>
+      </HomeContainer>
     );
   }
   if (combined.isLoading || !settings.data || enabledLifts.length === 0) {
     return (
-      <Container>
+      <HomeContainer>
         <HomeSkeleton />
-      </Container>
+      </HomeContainer>
     );
   }
 
@@ -155,7 +145,7 @@ export function HomeScreen() {
   const initialIdx = Math.max(0, enabledLifts.indexOf(selectedToRender));
 
   return (
-    <Container>
+    <HomeContainer>
       <Masthead rightSlot={<DateBadge label={dateLabel(new Date())} />} />
       <LiftTabs
         enabled={enabledLifts}
@@ -182,47 +172,6 @@ export function HomeScreen() {
         initialNumToRender={enabledLifts.length}
         windowSize={enabledLifts.length || 1}
       />
-    </Container>
+    </HomeContainer>
   );
-}
-
-function Container({ children }: { children: React.ReactNode }) {
-  const { colors } = useTheme();
-  const style: ViewStyle = {
-    flex: 1,
-    backgroundColor: colors.bg0,
-  };
-  return (
-    <View style={style}>
-      <StatusBar style="dark" />
-      {children}
-    </View>
-  );
-}
-
-function HomeSkeleton() {
-  return (
-    <View
-      style={{ flex: 1, paddingHorizontal: 24, paddingTop: 24, gap: 14 }}
-      testID="home-skeleton"
-    >
-      <Skeleton width={84} height={10} />
-      <Skeleton width="60%" height={42} tone="lineStrong" />
-      <View style={{ flexDirection: 'row', gap: 14, marginTop: 18 }}>
-        <Skeleton width={44} height={10} />
-        <Skeleton width={44} height={10} />
-        <Skeleton width={44} height={10} />
-        <Skeleton width={44} height={10} />
-      </View>
-      <Skeleton width="100%" height={120} style={{ marginTop: 18 }} />
-      <Skeleton width="100%" height={56} style={{ marginTop: 18 }} />
-      <Skeleton width="100%" height={56} />
-    </View>
-  );
-}
-
-function DateBadge({ label }: { label: string }) {
-  // Slightly tighter letter-spacing than the default 2.2 to match the PWA's
-  // 0.18em-on-10px right-slot caps treatment for dates specifically.
-  return <CapsLabel style={{ letterSpacing: 1.8 }}>{label}</CapsLabel>;
 }

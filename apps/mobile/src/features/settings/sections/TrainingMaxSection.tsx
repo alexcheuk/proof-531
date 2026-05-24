@@ -1,5 +1,6 @@
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
+import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, Settings, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import type { useSettingsScreenData } from '../hooks/useSettingsScreenData';
@@ -23,6 +24,9 @@ export function TrainingMaxSection({ settings, tmsByLift, onEdit }: TrainingMaxS
         // the historical write's interpretation is preserved across a
         // display-unit flip.
         const tmUnit: Unit = tm?.unit ?? settings.storageUnit;
+        const updatedLabel = tm?.updatedAt
+          ? `updated ${formatRelativeTime(tm.updatedAt)}`
+          : 'not set';
         return (
           <LedgerRow
             key={lift}
@@ -30,7 +34,7 @@ export function TrainingMaxSection({ settings, tmsByLift, onEdit }: TrainingMaxS
             onPress={() => onEdit(lift)}
             testID={`settings-tm-row-${lift}`}
           >
-            <LedgerRowLabel primary={LIFT_META[lift].label} />
+            <LedgerRowLabel primary={LIFT_META[lift].label} secondary={updatedLabel} />
             <LedgerRowValue value={`${value} ${displayUnitGlyph(tmUnit)}  ›`} numeric />
           </LedgerRow>
         );

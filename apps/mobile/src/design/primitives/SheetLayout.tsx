@@ -8,6 +8,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Heading } from './Heading';
 import { Sheet } from './Sheet';
 
 /**
@@ -66,7 +68,7 @@ export function SheetLayout({
   cancel,
   pending = false,
 }: SheetLayoutProps) {
-  const { colors, type, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
 
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -76,36 +78,13 @@ export function SheetLayout({
     gap: titleVariant === 'compact' ? spacing.lg : spacing.md,
   };
 
-  const eyebrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginBottom: 6,
-  };
-
-  const displayTitleStyle: TextStyle = {
-    fontFamily: `${type.sans}-Medium`,
-    fontSize: 26,
-    letterSpacing: -0.52,
-    color: colors.ink0,
-  };
-
-  const compactTitleStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 22,
-    letterSpacing: -0.66,
-    color: colors.ink0,
-  };
-
-  const titleStyle = titleVariant === 'compact' ? compactTitleStyle : displayTitleStyle;
-
   const body = (
     <Fragment>
       <View>
-        {eyebrow ? <RNText style={eyebrowStyle}>{eyebrow}</RNText> : null}
-        <RNText style={titleStyle}>{title}</RNText>
+        {eyebrow ? <CapsLabel style={{ marginBottom: 6 }}>{eyebrow}</CapsLabel> : null}
+        <Heading size={titleVariant === 'compact' ? 's' : 'm'} weight="bold">
+          {title}
+        </Heading>
       </View>
       {renderChildren(children)}
       {primary}
