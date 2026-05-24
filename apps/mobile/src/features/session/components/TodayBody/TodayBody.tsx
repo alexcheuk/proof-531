@@ -13,7 +13,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
-import { dateLabel, liftDisplayName, weekLabel } from '@/domain/labels';
+import { dateLabel, liftDisplayName, weekIntent, weekLabel } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
@@ -84,15 +84,20 @@ export function TodayBody({
       <TitleBlock
         eyebrow={`${dateLabel(new Date())} · ${weekLabel(week)}`}
         title={`${liftDisplayName(lift)}.`}
-        style={{ paddingTop: 20, paddingBottom: lastTrained.startedAt ? 8 : 24 }}
+        style={{ paddingTop: 20, paddingBottom: 8 }}
       />
-      {lastTrained.startedAt ? (
-        <View style={{ paddingHorizontal: layout.gutter, paddingBottom: spacing.lg }}>
+      <View
+        style={{ paddingHorizontal: layout.gutter, paddingBottom: spacing.lg, gap: spacing.xs }}
+      >
+        <CapsLabel size="xs" color="ink2" testID="today-week-intent">
+          {weekIntent(week)}
+        </CapsLabel>
+        {lastTrained.startedAt ? (
           <CapsLabel size="xs" color="ink3" testID="today-last-trained">
             {`Last ${liftDisplayName(lift).toLowerCase()} day · ${formatRelativeTime(lastTrained.startedAt)}`}
           </CapsLabel>
-        </View>
-      ) : null}
+        ) : null}
+      </View>
 
       <TopSetHero
         set={heroSet}

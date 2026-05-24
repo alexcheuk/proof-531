@@ -1,4 +1,4 @@
-import { LIFTS, dateLabel, isLift, liftDisplayName, weekLabel } from '../labels';
+import { LIFTS, dateLabel, isLift, liftDisplayName, weekIntent, weekLabel } from '../labels';
 
 describe('LIFTS', () => {
   it('contains 4 lifts in canonical order', () => {
@@ -32,6 +32,15 @@ describe('weekLabel', () => {
     expect(weekLabel(2)).toBe('3/3/3+');
     expect(weekLabel(3)).toBe('5/3/1+');
     expect(weekLabel(4)).toBe('DELOAD');
+  });
+});
+
+describe('weekIntent', () => {
+  it('returns a per-week intent phrase', () => {
+    expect(weekIntent(1)).toBe('Easy 5s · build the groove');
+    expect(weekIntent(2)).toBe('Heavy 3s · trust the system');
+    expect(weekIntent(3)).toBe('Top single · grind the +');
+    expect(weekIntent(4)).toBe('Deload · stay sharp, recover');
   });
 });
 

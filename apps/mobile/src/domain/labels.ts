@@ -54,6 +54,24 @@ export function weekLabel(week: Week): string {
   }
 }
 
+/**
+ * Short caps-mono intent line for Today/Live — one phrase per 5/3/1 week.
+ * Surfaces the *why* of the week's rep scheme so the user understands the
+ * arc of the cycle without reading a programming primer.
+ */
+export function weekIntent(week: Week): string {
+  switch (week) {
+    case 1:
+      return 'Easy 5s · build the groove';
+    case 2:
+      return 'Heavy 3s · trust the system';
+    case 3:
+      return 'Top single · grind the +';
+    case 4:
+      return 'Deload · stay sharp, recover';
+  }
+}
+
 const WEEKDAY_ABBR = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 const MONTH_ABBR = [
   'JAN',

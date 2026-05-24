@@ -2,13 +2,11 @@ import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
-import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
-import { prescription } from '@/domain/schemes';
-import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayWeight, round as snapWeight } from '@/domain/units';
+import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
+import { convertWeight, displayWeight } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 /**
@@ -36,6 +34,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
+import { LiveCtaButton } from './components/LiveCtaButton';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
@@ -43,6 +42,7 @@ import { SetPhase } from './components/SetPhase';
 import { useElapsedSeconds } from './hooks/useElapsedSeconds';
 import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
 import { useLiveScreenState } from './hooks/useLiveScreenState';
+import { derivePlateChangeHint } from './livePlateHint';
 
 export type LiveScreenProps = {
   sessionId: number;
@@ -101,65 +101,18 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
-  // Plate-change hint: when the user is on set 2 or 3, show how much weight
-  // they need to add per side vs the previous set. Pure derivation off
-  // `prescription(week)[setIndex - 1].pct * trainingMaxSnapshot`, snapped
-  // and converted to the display unit.
-  const weekTuple = prescription(session.week as 1 | 2 | 3 | 4);
-  const prevSet = live.setIndex > 0 ? weekTuple[(live.setIndex - 1) as 0 | 1 | 2] : null;
-  const prevWeightStorage = prevSet
-    ? snapWeight(session.trainingMaxSnapshot * prevSet.pct, storageUnit)
-    : null;
-  const perSideDelta =
-    prevWeightStorage !== null
-      ? Math.round(((live.prescribedWeight - prevWeightStorage) / 2) * 10) / 10
-      : null;
-  const plateChangeHint =
-    perSideDelta !== null && perSideDelta !== 0
-      ? `${perSideDelta > 0 ? '+' : ''}${perSideDelta} ${storageUnit === 'kg' ? 'kg' : 'lb'} per side vs set ${live.setIndex}`
-      : null;
+  const plateChangeHint = derivePlateChangeHint({
+    week: session.week as Week,
+    setIndex: live.setIndex,
+    trainingMaxSnapshot: session.trainingMaxSnapshot,
+    storageUnit,
+    prescribedWeight: live.prescribedWeight,
+  });
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
   const showSetSurface = live.phase === 'set' || live.phase === 'amrap-log';
   const showRestSurface = live.phase === 'rest';
-
-  // Primary CTA — depends on phase. The cancel-confirm and amrap-log phases
-  // still render the underlying set/rest surface, so they re-use the same
-  // CTA from the phase they popped out of (handled implicitly by
-  // useLiveScreenState's phaseBeforeCancelRef).
-  // CTA labels mirror the ref's `LiveScreen` logic exactly:
-  //   ready phase, working set → "Set complete" (✓)
-  //   ready phase, AMRAP set   → "Log AMRAP"   (→)
-  //   rest phase, has next set → "Next set"    (→)
-  //   rest phase, terminal     → "Complete session" (→)
-  let cta: React.ReactElement | null = null;
-  if (live.phase === 'rest') {
-    const hasNext = live.setIndex < 2;
-    cta = (
-      <PrimaryPillButton testID="cta-advance-rest" glyph="→" onPress={live.onAdvanceFromRest}>
-        {hasNext ? 'Next set' : 'Complete session'}
-      </PrimaryPillButton>
-    );
-  } else if (
-    live.phase === 'set' ||
-    live.phase === 'amrap-log' ||
-    live.phase === 'cancel-confirm'
-  ) {
-    if (live.isAmrap) {
-      cta = (
-        <PrimaryPillButton testID="cta-log-amrap" glyph="→" onPress={live.onOpenAmrapSheet}>
-          Log AMRAP
-        </PrimaryPillButton>
-      );
-    } else {
-      cta = (
-        <PrimaryPillButton testID="cta-log-working" glyph="✓" onPress={live.onLogWorkingSet}>
-          Set complete
-        </PrimaryPillButton>
-      );
-    }
-  }
 
   return (
     <SessionLayout>
@@ -219,7 +172,16 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         ) : null}
         <View style={{ height: 120 }} />
       </ScrollView>
-      {cta ? <CtaBar>{cta}</CtaBar> : null}
+      <CtaBar>
+        <LiveCtaButton
+          phase={live.phase}
+          setIndex={live.setIndex}
+          isAmrap={live.isAmrap}
+          onAdvanceFromRest={live.onAdvanceFromRest}
+          onOpenAmrapSheet={live.onOpenAmrapSheet}
+          onLogWorkingSet={live.onLogWorkingSet}
+        />
+      </CtaBar>
 
       <AmrapLogSheet
         open={live.phase === 'amrap-log'}
