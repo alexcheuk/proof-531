@@ -7,8 +7,8 @@ on:
 
 jobs:
   build_android:
+    name: Build Android (preview)
     type: build
-    working_directory: apps/mobile
     params:
       platform: android
       profile: preview
