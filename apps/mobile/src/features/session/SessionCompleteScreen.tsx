@@ -15,17 +15,12 @@ import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect } from 'react';
-import {
-  BackHandler,
-  Text as RNText,
-  ScrollView,
-  type TextStyle,
-  type ViewStyle,
-} from 'react-native';
+import { BackHandler, ScrollView, type ViewStyle } from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
+import { SeeFullRecordLink } from './components/SeeFullRecordLink';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
@@ -47,7 +42,7 @@ export type SessionCompleteScreenProps = {
 
 export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCompleteScreenProps) {
   const router = useRouter();
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
   const data = useSessionCompleteData(sessionId);
 
   usePrSuccessHaptic(data.view?.hasPR ?? false);
@@ -95,16 +90,6 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   }, [origin, handleBackToHistory]);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
-  const secondaryLinkStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    textAlign: 'center',
-    paddingTop: 12,
-    paddingBottom: 4,
-  };
 
   return (
     <SessionLayout>
@@ -175,14 +160,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
             <PrimaryPillButton testID="session-complete-close" onPress={handleClose}>
               Close the day
             </PrimaryPillButton>
-            <RNText
-              testID="session-complete-history-link"
-              accessibilityRole="button"
-              onPress={() => goTo.history(router)}
-              style={secondaryLinkStyle}
-            >
-              See full record →
-            </RNText>
+            <SeeFullRecordLink onPress={() => goTo.history(router)} />
           </>
         )}
       </CtaBar>

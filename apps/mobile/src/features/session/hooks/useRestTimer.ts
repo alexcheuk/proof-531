@@ -78,8 +78,18 @@ export function useRestTimer({
 
   const addTime = useCallback(() => {
     if (!active) return;
-    setRemaining((prev) => prev + STEP_SECONDS);
-  }, [active]);
+    setRemaining((prev) => {
+      const next = prev + STEP_SECONDS;
+      // Re-arm the warning latch so the haptic fires again the next time
+      // the user drifts back down through the threshold. Without this the
+      // first T-3s pass disables the haptic for the rest of the session,
+      // which is the opposite of the contract stated in the docstring.
+      if (next > warningThresholdSeconds) {
+        warningFiredRef.current = false;
+      }
+      return next;
+    });
+  }, [active, warningThresholdSeconds]);
 
   const subtractTime = useCallback(() => {
     if (!active) return;

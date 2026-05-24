@@ -99,19 +99,15 @@ describe('useRestTimer', () => {
     });
     expect(haptic).toHaveBeenCalledTimes(1);
 
+    // User taps +30s after hearing the warning — extends rest to 32s.
+    // The latch must re-arm so the second pass through T-2s fires again.
     act(() => {
-      result.current.addTime(); // remaining=32 (re-arms latch via subtract path)
+      result.current.addTime();
     });
-    // We use subtract to drop back through threshold and verify re-arm.
     act(() => {
       jest.advanceTimersByTime(30000); // 32 → 2
     });
-    // Haptic only re-fires if subtract reset the latch. addTime alone does
-    // not reset the latch (intentional — only the subtract path resets), but
-    // a future addTime past threshold then drift back down will not re-fire
-    // unless subtract intervenes. This assertion documents the contract:
-    // addTime is not a re-arm trigger.
-    expect(haptic).toHaveBeenCalledTimes(1);
+    expect(haptic).toHaveBeenCalledTimes(2);
   });
 
   it('subtractTime resets the warning latch when remaining stays above threshold', () => {

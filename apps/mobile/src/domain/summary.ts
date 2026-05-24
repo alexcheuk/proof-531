@@ -71,6 +71,26 @@ export function formatElapsed(startedAt: number, endedAt: number): string {
 }
 
 /**
+ * Compact human-readable elapsed time for at-a-glance history rows. Returns:
+ *   - `45m` when the span is < 60 minutes
+ *   - `1h 5m` for ≥ 60 minutes
+ *   - `1m` when the span is positive but rounds to 0 minutes — the row
+ *     still ran and the user should see *something* rather than `0m`
+ *
+ * Designed for tight slots (e.g. LedgerRow sub captions). For the
+ * receipt's `mm:ss` / `H:MM` display, use `formatElapsed`.
+ */
+export function formatElapsedCompact(startedAt: number, endedAt: number): string {
+  const totalSec = Math.max(0, Math.floor((endedAt - startedAt) / 1000));
+  const totalMin = Math.floor(totalSec / 60);
+  if (totalMin === 0) return totalSec > 0 ? '1m' : '0m';
+  if (totalMin < 60) return `${totalMin}m`;
+  const hr = Math.floor(totalMin / 60);
+  const min = totalMin % 60;
+  return min === 0 ? `${hr}h` : `${hr}h ${min}m`;
+}
+
+/**
  * Sum of `prescribedWeight × actualReps` across the three working SetLog rows.
  * Accepts a heterogeneous list (warmups, bbb, etc.) and filters down to
  * `kind === 'working' | 'amrap'` itself so the caller doesn't have to.

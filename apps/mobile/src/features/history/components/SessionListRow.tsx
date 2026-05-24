@@ -18,6 +18,7 @@ import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/L
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName } from '@/domain/labels';
+import { formatElapsedCompact } from '@/domain/summary';
 import type { Lift, Week } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -33,6 +34,19 @@ function statusCaps(status: Session['status']): string {
     case 'in_progress':
       return 'IN PROGRESS';
   }
+}
+
+/**
+ * Caption for the right-hand sub line. Completed rows show the elapsed
+ * session duration (`47m`, `1h 5m`) — a more useful at-a-glance signal
+ * than the redundant `COMPLETED` token. Non-terminal rows keep the
+ * status caps so the user still sees `IN PROGRESS` / `CANCELLED`.
+ */
+function rowSubCaption(session: Session): string {
+  if (session.status === 'completed' && session.endedAt) {
+    return formatElapsedCompact(session.startedAt, session.endedAt);
+  }
+  return statusCaps(session.status);
 }
 
 export type SessionListRowProps = {
@@ -131,7 +145,7 @@ export function SessionListRow({
         {prChip}
         <LedgerRowValue
           value={`C${session.cycle} · W${week}`}
-          sub={statusCaps(session.status)}
+          sub={rowSubCaption(session)}
           numeric
         />
       </Row>

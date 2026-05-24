@@ -50,12 +50,15 @@ describe('SessionListRow', () => {
     mockReplace.mockClear();
   });
 
-  it('renders the lift label, dated caption, cycle/week glyph, and COMPLETED status', () => {
+  it('renders the lift label, dated caption, cycle/week glyph, and elapsed-duration sub', () => {
     const screen = wrap(<SessionListRow session={makeSession()} />);
     expect(screen.getByText('Squat')).toBeTruthy();
     expect(screen.getByText('FRI · MAY 1')).toBeTruthy();
     expect(screen.getByText('C2 · W3')).toBeTruthy();
-    expect(screen.getByText('COMPLETED')).toBeTruthy();
+    // 60_000 ms span → "1m" — completed rows surface duration instead of
+    // the redundant "COMPLETED" status caption.
+    expect(screen.getByText('1m')).toBeTruthy();
+    expect(screen.queryByText('COMPLETED')).toBeNull();
   });
 
   it('renders the IN PROGRESS status caps for in-progress sessions', () => {

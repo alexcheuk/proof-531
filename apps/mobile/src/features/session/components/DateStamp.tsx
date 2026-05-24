@@ -18,7 +18,7 @@ import { useTheme } from '@/design/theme';
  * components (the hex-only rule in CLAUDE.md is enforced strictly for
  * colors; layout numerics are part of the per-component composition).
  */
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 
 export type DateStampProps = {
   /** Uppercased short weekday — `WED`, `TODAY` for the fallback. */
@@ -35,6 +35,22 @@ export type DateStampProps = {
   testID?: string;
 };
 
+const SIZE = 86;
+const INNER_OFFSET = 12;
+const STROKE_OUTER = 1.4;
+const STROKE_INNER = 0.6;
+const INNER_OPACITY = 0.5;
+const STAMP_OPACITY = 0.88;
+const ROTATION_DEG = -7;
+
+type StampLabelStyle = {
+  family: 'bold' | 'semibold';
+  fontSize: number;
+  letterSpacing: number;
+  /** Optional opacity for the label (0..1). Defaults to 1. */
+  opacity?: number;
+};
+
 export function DateStamp({
   weekday,
   dateLine,
@@ -42,15 +58,13 @@ export function DateStamp({
   topArcLabel = '531 · ENTERED',
   testID,
 }: DateStampProps) {
-  const { colors, type } = useTheme();
-
-  const SIZE = 86;
+  const { colors } = useTheme();
 
   const wrapperStyle: ViewStyle = {
     width: SIZE,
     height: SIZE,
-    transform: [{ rotate: '-7deg' }],
-    opacity: 0.88,
+    transform: [{ rotate: `${ROTATION_DEG}deg` }],
+    opacity: STAMP_OPACITY,
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
@@ -61,80 +75,73 @@ export function DateStamp({
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    borderWidth: 1.4,
+    borderWidth: STROKE_OUTER,
     borderColor: colors.ink0,
   };
 
   const innerRingStyle: ViewStyle = {
     position: 'absolute',
-    width: SIZE - 12,
-    height: SIZE - 12,
-    borderRadius: (SIZE - 12) / 2,
-    borderWidth: 0.6,
+    width: SIZE - INNER_OFFSET,
+    height: SIZE - INNER_OFFSET,
+    borderRadius: (SIZE - INNER_OFFSET) / 2,
+    borderWidth: STROKE_INNER,
     borderColor: colors.ink0,
-    opacity: 0.5,
+    opacity: INNER_OPACITY,
   };
 
   return (
     <View testID={testID} style={wrapperStyle}>
       <View style={outerRingStyle} />
       <View style={innerRingStyle} />
-      {/* Top label — `531 · ENTERED` or PR substitution. */}
-      <RNText
-        testID={testID ? `${testID}-top` : undefined}
-        style={{
-          position: 'absolute',
-          top: 12,
-          fontFamily: `${type.mono}-Bold`,
-          fontSize: 7,
-          letterSpacing: 1.8,
-          color: colors.ink0,
-          textTransform: 'uppercase',
-        }}
-      >
-        {topArcLabel}
-      </RNText>
-      {/* Center: weekday + dateLine. */}
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 8,
-          letterSpacing: 2.4,
-          color: colors.ink0,
-          opacity: 0.7,
-          textTransform: 'uppercase',
-          marginBottom: 2,
-        }}
-      >
-        {weekday}
-      </RNText>
+      <StampLabel
+        text={topArcLabel}
+        style={{ family: 'bold', fontSize: 7, letterSpacing: 1.8 }}
+        position={{ top: 12 }}
+        {...(testID ? { testID: `${testID}-top` } : {})}
+      />
+      <StampLabel
+        text={weekday}
+        style={{ family: 'semibold', fontSize: 8, letterSpacing: 2.4, opacity: 0.7 }}
+        spacingBelow={2}
+      />
       {dateLine ? (
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 11,
-            letterSpacing: 1.5,
-            color: colors.ink0,
-            textTransform: 'uppercase',
-          }}
-        >
-          {dateLine}
-        </RNText>
+        <StampLabel text={dateLine} style={{ family: 'bold', fontSize: 11, letterSpacing: 1.5 }} />
       ) : null}
-      {/* Bottom label — ★ year ★. */}
-      <RNText
-        style={{
-          position: 'absolute',
-          bottom: 12,
-          fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 7,
-          letterSpacing: 3,
-          color: colors.ink0,
-          opacity: 0.7,
-        }}
-      >
-        {`★  ${year}  ★`}
-      </RNText>
+      <StampLabel
+        text={`★  ${year}  ★`}
+        style={{ family: 'semibold', fontSize: 7, letterSpacing: 3, opacity: 0.7 }}
+        position={{ bottom: 12 }}
+      />
     </View>
+  );
+}
+
+type StampLabelProps = {
+  text: string;
+  style: StampLabelStyle;
+  /** Absolute positioning slot (top or bottom). Undefined leaves the label in flow. */
+  position?: { top?: number; bottom?: number };
+  /** Adds marginBottom in flow layout — useful for the weekday + date stack. */
+  spacingBelow?: number;
+  testID?: string;
+};
+
+function StampLabel({ text, style, position, spacingBelow, testID }: StampLabelProps) {
+  const { colors, type } = useTheme();
+  const family = style.family === 'bold' ? `${type.mono}-Bold` : `${type.mono}-SemiBold`;
+  const textStyle: TextStyle = {
+    fontFamily: family,
+    fontSize: style.fontSize,
+    letterSpacing: style.letterSpacing,
+    color: colors.ink0,
+    textTransform: 'uppercase',
+    ...(style.opacity !== undefined ? { opacity: style.opacity } : null),
+    ...(position ? { position: 'absolute', ...position } : null),
+    ...(spacingBelow !== undefined ? { marginBottom: spacingBelow } : null),
+  };
+  return (
+    <RNText style={textStyle} {...(testID !== undefined ? { testID } : {})}>
+      {text}
+    </RNText>
   );
 }

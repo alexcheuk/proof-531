@@ -1,4 +1,9 @@
-import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '../summary';
+import {
+  formatDateLabel,
+  formatElapsed,
+  formatElapsedCompact,
+  volumeOfWorkingSets,
+} from '../summary';
 import type { SetLog } from '../types';
 
 describe('formatDateLabel', () => {
@@ -25,6 +30,26 @@ describe('formatElapsed', () => {
   it('negative or zero → 0:00', () => {
     expect(formatElapsed(t0, t0)).toBe('0:00');
     expect(formatElapsed(t0 + 1000, t0)).toBe('0:00');
+  });
+});
+
+describe('formatElapsedCompact', () => {
+  const t0 = 1_700_000_000_000;
+  it('renders "Nm" under 60 minutes', () => {
+    expect(formatElapsedCompact(t0, t0 + 47 * 60 * 1000)).toBe('47m');
+    expect(formatElapsedCompact(t0, t0 + 5 * 60 * 1000)).toBe('5m');
+  });
+  it('rounds positive sub-minute spans up to 1m so the row never reads 0m', () => {
+    expect(formatElapsedCompact(t0, t0 + 30 * 1000)).toBe('1m');
+  });
+  it('returns 0m for a zero or negative span', () => {
+    expect(formatElapsedCompact(t0, t0)).toBe('0m');
+    expect(formatElapsedCompact(t0 + 1000, t0)).toBe('0m');
+  });
+  it('renders "Nh Mm" past 60 minutes, dropping the minutes when 0', () => {
+    expect(formatElapsedCompact(t0, t0 + (61 * 60 + 30) * 1000)).toBe('1h 1m');
+    expect(formatElapsedCompact(t0, t0 + 90 * 60 * 1000)).toBe('1h 30m');
+    expect(formatElapsedCompact(t0, t0 + 2 * 3600 * 1000)).toBe('2h');
   });
 });
 
