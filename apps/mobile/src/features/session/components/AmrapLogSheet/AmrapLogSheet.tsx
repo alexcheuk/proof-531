@@ -65,6 +65,9 @@ export function AmrapLogSheet({
   // Real-time delta against the user's current PR. Only surfaced when the
   // user has a prior PR (no baseline → no delta to brag about).
   const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
+  // Felt-quality affirmation as the user dials in reps well above the
+  // prescribed minimum (the "+" of 5+/3+/1+). +3 over feels like a big set.
+  const showBigSetCaption = reps >= prescribedReps + 3;
 
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -111,6 +114,17 @@ export function AmrapLogSheet({
           accessibilityLabelIncrement="Increase reps"
           testID="amrap-reps-stepper"
         />
+
+        {showBigSetCaption ? (
+          <CapsLabel
+            weight="bold"
+            color="ink0"
+            style={{ marginTop: spacing.sm, letterSpacing: 1.4, textAlign: 'center' }}
+            testID="amrap-big-set"
+          >
+            BIG SET.
+          </CapsLabel>
+        ) : null}
 
         <AmrapFooter pending={pending} onCancel={handleCancel} onSave={handleSave} />
       </View>
