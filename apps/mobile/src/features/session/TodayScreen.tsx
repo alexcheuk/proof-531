@@ -64,7 +64,9 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   // (`531-pwa/src/features/session/TodayScreen.tsx`):
   //   preview                → "Begin session"
   //   active (no logs yet)   → "Start session"
-  //   active (>=1 log)       → "Resume session"
+  //   active (>=1 log)       → "Resume · set N of 3" (surfaces partial
+  //                             progress at the CTA so the user knows
+  //                             exactly where they're picking up).
   //   preview-other-active   → "Open <other lift> →"
   const ctaLabel =
     state.mode === 'preview'
@@ -73,7 +75,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
         ? `Open ${state.otherLift} →`
         : state.completedCount === 0
           ? 'Start session'
-          : 'Resume session';
+          : `Resume · set ${state.completedCount + 1} of 3`;
   const ctaGlyph = state.mode === 'active' && state.completedCount > 0 ? '↩' : '→';
 
   return (

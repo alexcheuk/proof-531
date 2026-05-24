@@ -201,7 +201,7 @@ describe('TodayScreen', () => {
     });
   });
 
-  it('active mode with logged sets: CTA copy reads "Resume session"', () => {
+  it('active mode with logged sets: CTA copy surfaces partial progress', () => {
     mockActiveSessionState.data = {
       id: 88,
       lift: 'squat',
@@ -228,7 +228,9 @@ describe('TodayScreen', () => {
       },
     ];
     const screen = renderScreen(<TodayScreen lift="squat" />);
-    expect(screen.getByText('Resume session')).toBeTruthy();
+    // After one logged working set the CTA tells the user which set
+    // they're picking up at, not just "Resume".
+    expect(screen.getByText('Resume · set 2 of 3')).toBeTruthy();
   });
 
   it('active mode renders completed set rows with the done checkmark + strikethrough', () => {

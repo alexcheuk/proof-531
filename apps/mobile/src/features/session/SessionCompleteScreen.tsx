@@ -9,6 +9,7 @@
  */
 import { goTo } from '@/app/routes';
 import { CtaBar } from '@/design/primitives/CtaBar';
+import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
@@ -19,7 +20,6 @@ import {
   Text as RNText,
   ScrollView,
   type TextStyle,
-  View,
   type ViewStyle,
 } from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
@@ -159,8 +159,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
           sessionsInCycle={v.sessionsInCycle}
         />
 
-        {/* Reserve room above the sticky CtaBar so receipt isn't clipped. */}
-        <View style={{ height: 140 }} />
+        <CtaBarReserve size="dense" />
       </ScrollView>
       <CtaBar>
         {origin === 'history' ? (

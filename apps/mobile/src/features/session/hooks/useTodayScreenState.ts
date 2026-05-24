@@ -118,6 +118,11 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
       goTo.live(router, session.id);
     } catch (err) {
       console.error('TodayScreen.onPressCta createSession failed', err);
+    } finally {
+      // Reset starting on BOTH success and failure paths. The success-only
+      // reset previously relied on the screen unmounting; when the user
+      // taps Back from Live, this screen stays mounted (stack pop) and the
+      // CTA would otherwise stay disabled.
       setStarting(false);
     }
   };

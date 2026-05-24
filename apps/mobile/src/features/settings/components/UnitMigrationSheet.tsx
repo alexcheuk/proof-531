@@ -7,14 +7,12 @@
  */
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { Row } from '@/design/primitives/Row';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
-import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
-import { LIFT_META } from '../lifts';
+import { TmPreviewRow } from './TmPreviewRow';
 
 export interface TmPreview {
   lift: Lift;
@@ -64,39 +62,6 @@ export function UnitMigrationSheet({
     marginBottom: spacing.md,
   };
 
-  const previewLiftLabel: TextStyle = {
-    flex: 1,
-    fontFamily: `${type.sans}-SemiBold`,
-    fontSize: 14,
-    letterSpacing: -0.21,
-    color: colors.ink0,
-  };
-
-  const previewGlyphSmall: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 9,
-    letterSpacing: 1.26,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-    marginLeft: 6,
-  };
-
-  const previewArrow: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 12,
-    color: colors.ink3,
-    marginHorizontal: spacing.sm,
-  };
-
-  const previewGlyphStrong: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 9,
-    letterSpacing: 1.26,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginLeft: 6,
-  };
-
   return (
     <SheetLayout
       open={open}
@@ -133,42 +98,17 @@ export function UnitMigrationSheet({
 
       {tmPreviews.length > 0 ? (
         <View style={previewBox}>
-          {tmPreviews.map((p, i) => {
-            const oldGlyph = displayUnitGlyph(p.oldUnit);
-            const rowStyle: ViewStyle = {
-              paddingVertical: 10,
-              borderTopWidth: i === 0 ? 0 : 1,
-              borderTopColor: colors.line,
-            };
-            return (
-              <Row key={p.lift} style={rowStyle} testID={`unit-migration-row-${p.lift}`}>
-                <RNText style={previewLiftLabel}>{LIFT_META[p.lift].label}</RNText>
-                <Text
-                  variant="sans"
-                  weight="semibold"
-                  size={15}
-                  color="ink2"
-                  numeric
-                  style={{ letterSpacing: -0.15 }}
-                >
-                  {p.oldValue}
-                  <RNText style={previewGlyphSmall}> {oldGlyph}</RNText>
-                </Text>
-                <RNText style={previewArrow}>{'→'}</RNText>
-                <Text
-                  variant="sans"
-                  weight="bold"
-                  size={16}
-                  color="ink0"
-                  numeric
-                  style={{ letterSpacing: -0.32 }}
-                >
-                  {p.newValue}
-                  <RNText style={previewGlyphStrong}> {targetGlyph}</RNText>
-                </Text>
-              </Row>
-            );
-          })}
+          {tmPreviews.map((p, i) => (
+            <TmPreviewRow
+              key={p.lift}
+              index={i}
+              lift={p.lift}
+              oldValue={p.oldValue}
+              oldUnit={p.oldUnit}
+              newValue={p.newValue}
+              targetUnit={targetUnit}
+            />
+          ))}
         </View>
       ) : (
         <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 1.26, paddingVertical: 12 }}>

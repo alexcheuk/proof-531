@@ -2,6 +2,7 @@ import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
+import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose } from '@/domain/plates';
@@ -31,7 +32,7 @@ import { StatusBar } from 'expo-status-bar';
  * Boundary: composes design primitives + feature-local hook + data accessors.
  * No hex/px literals; no direct drizzle imports.
  */
-import { ScrollView, View, type ViewStyle } from 'react-native';
+import { ScrollView, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { LiveCtaButton } from './components/LiveCtaButton';
@@ -170,7 +171,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             {...(plateChangeHint ? { plateChangeHint } : {})}
           />
         ) : null}
-        <View style={{ height: 120 }} />
+        <CtaBarReserve />
       </ScrollView>
       <CtaBar>
         <LiveCtaButton

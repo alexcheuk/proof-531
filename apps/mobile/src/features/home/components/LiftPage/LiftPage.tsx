@@ -23,6 +23,7 @@ import { CycleStrip } from '../CycleStrip';
 import { LiftStats } from '../LiftStats';
 import { LiftPageEmpty } from './LiftPageEmpty';
 import { LiftPageEyebrow } from './LiftPageEyebrow';
+import { LiftPageHint } from './LiftPageHint';
 import { LiftPageTitle } from './LiftPageTitle';
 
 type LiftPageProps = {
@@ -94,24 +95,12 @@ export function LiftPage({
       <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
       <LiftPageTitle lift={lift} />
       {week === 4 ? (
-        <CapsLabel
-          size="xs"
-          color="ink3"
-          style={{ marginTop: spacing.sm, letterSpacing: 1.62 }}
-          testID={`lift-page-${lift}-deload-callout`}
-        >
+        <LiftPageHint testID={`lift-page-${lift}-deload-callout`}>
           DELOAD WEEK · EASE OFF, BUILD THE NEXT CYCLE
-        </CapsLabel>
+        </LiftPageHint>
       ) : null}
       {lastTrainedHint ? (
-        <CapsLabel
-          size="xs"
-          color="ink3"
-          style={{ marginTop: spacing.sm, letterSpacing: 1.62 }}
-          testID={`lift-page-${lift}-last-trained`}
-        >
-          {lastTrainedHint}
-        </CapsLabel>
+        <LiftPageHint testID={`lift-page-${lift}-last-trained`}>{lastTrainedHint}</LiftPageHint>
       ) : null}
 
       <View style={{ marginTop: spacing.lg }}>
