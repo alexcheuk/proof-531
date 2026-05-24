@@ -1,13 +1,13 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Card } from '@/design/primitives/Card';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
-import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Step 2 — Pick the lifts you want to train. Ported from
  * `~/Development/531-pwa/src/features/onboarding/steps/PickLifts.tsx`.
  */
-import { View, type ViewStyle } from 'react-native';
+import { View } from 'react-native';
 import { LiftToggleRow } from '../components/LiftToggleRow';
 import { OnboardingShell } from '../components/OnboardingShell';
 import { LIFT_ORDER } from '../lifts';
@@ -21,22 +21,12 @@ export interface PickLiftsProps {
 }
 
 export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLiftsProps) {
-  const { colors } = useTheme();
   const count = enabled.length;
   const calloutCopy =
     count === 1
       ? 'Single-lift focus · 4 sessions per cycle'
       : `${count} lifts · ${count * 4} sessions per cycle`;
   const ctaCopy = `Continue · ${count} ${count === 1 ? 'lift' : 'lifts'}`;
-
-  const calloutStyle: ViewStyle = {
-    marginTop: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: colors.lineStrong,
-  };
 
   return (
     <OnboardingShell
@@ -91,11 +81,11 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
           />
         ))}
 
-        <View style={calloutStyle}>
+        <Card tone="dashed" py="md" px="md" style={{ marginTop: 16 }}>
           <CapsLabel color="ink1" style={{ lineHeight: 16 }}>
             {calloutCopy}
           </CapsLabel>
-        </View>
+        </Card>
       </View>
     </OnboardingShell>
   );

@@ -1,3 +1,5 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { Row } from '@/design/primitives/Row';
 import { Sheet } from '@/design/primitives/Sheet';
@@ -85,54 +87,40 @@ export function AmrapLogSheet({
       <View style={bodyStyle}>
         <Row justify="space-between" align="baseline" style={{ marginBottom: spacing.md }}>
           <View>
-            <Text
-              variant="mono"
-              weight="semibold"
-              size={10}
-              color="ink2"
-              style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
-            >
-              LOG AMRAP
-            </Text>
+            <CapsLabel weight="semibold">LOG AMRAP</CapsLabel>
             <Text variant="sans" weight="medium" size={24} color="ink0">
               {liftDisplayName(lift)}
             </Text>
           </View>
-          <Text
-            variant="mono"
-            weight="semibold"
-            size={11}
-            color="ink2"
-            style={{ textTransform: 'uppercase', letterSpacing: 1.8 }}
-          >
-            {prescribedWeight} {displayUnit(unit)}
-          </Text>
+          <CapsLabel size="md" weight="semibold" style={{ letterSpacing: 1.8 }}>
+            {`${prescribedWeight} ${displayUnit(unit)}`}
+          </CapsLabel>
         </Row>
 
-        <Row justify="space-between" align="baseline" style={{ marginBottom: spacing.md }}>
-          <Text
-            variant="mono"
-            weight="semibold"
-            size={10}
-            color="ink2"
-            style={{ textTransform: 'uppercase', letterSpacing: 1.5 }}
-          >
-            HOW MANY REPS?
-          </Text>
-          <Text
-            variant="mono"
-            weight="semibold"
-            size={10}
-            color={isPotentialPR ? 'ink0' : 'ink1'}
-            style={{ textTransform: 'uppercase', letterSpacing: 1.4 }}
-            testID="amrap-e1rm-caption"
-          >
-            EST. 1RM {predictedE1RM} {displayUnit(unit)}
-            {deltaFromBest !== null && reps > 0
-              ? ` · ${deltaFromBest >= 0 ? '+' : ''}${deltaFromBest} from best`
-              : ''}
-            {isPotentialPR ? ' · PR' : ''}
-          </Text>
+        <Row justify="space-between" align="center" style={{ marginBottom: spacing.md }}>
+          <CapsLabel weight="semibold" style={{ letterSpacing: 1.5 }}>
+            How many reps?
+          </CapsLabel>
+          <Row gap="sm" align="center" testID="amrap-e1rm-caption">
+            <CapsLabel
+              weight="semibold"
+              color={isPotentialPR ? 'ink0' : 'ink1'}
+              style={{ letterSpacing: 1.4 }}
+            >
+              {`EST. 1RM ${predictedE1RM} ${displayUnit(unit)}`}
+            </CapsLabel>
+            {deltaFromBest !== null && reps > 0 ? (
+              <CapsLabel
+                weight="semibold"
+                color={deltaFromBest >= 0 ? 'ink0' : 'ink3'}
+                style={{ letterSpacing: 1.4 }}
+                testID="amrap-delta-chip"
+              >
+                {`${deltaFromBest >= 0 ? '↑ +' : '↓ '}${Math.abs(deltaFromBest)}`}
+              </CapsLabel>
+            ) : null}
+            {isPotentialPR ? <MonoBadge testID="amrap-pr-badge">PR</MonoBadge> : null}
+          </Row>
         </Row>
 
         <NumberStepper

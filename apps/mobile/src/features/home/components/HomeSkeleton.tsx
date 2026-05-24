@@ -1,3 +1,4 @@
+import { Row } from '@/design/primitives/Row';
 import { Skeleton } from '@/design/primitives/Skeleton';
 import { View } from 'react-native';
 
@@ -13,12 +14,12 @@ export function HomeSkeleton() {
     >
       <Skeleton width={84} height={10} />
       <Skeleton width="60%" height={42} tone="lineStrong" />
-      <View style={{ flexDirection: 'row', gap: 14, marginTop: 18 }}>
+      <Row gap="md" style={{ marginTop: 18, gap: 14 }}>
         <Skeleton width={44} height={10} />
         <Skeleton width={44} height={10} />
         <Skeleton width={44} height={10} />
         <Skeleton width={44} height={10} />
-      </View>
+      </Row>
       <Skeleton width="100%" height={120} style={{ marginTop: 18 }} />
       <Skeleton width="100%" height={56} style={{ marginTop: 18 }} />
       <Skeleton width="100%" height={56} />

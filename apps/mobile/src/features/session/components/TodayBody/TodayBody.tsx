@@ -13,10 +13,12 @@ import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, weekLabel } from '@/domain/labels';
+import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayUnit } from '@/domain/units';
 import { View } from 'react-native';
+import { useLastCompletedSessionForLift } from '../../hooks/useLastCompletedSessionForLift';
 import { BbbBand } from './BbbBand';
 import { TopSetHero } from './TopSetHero';
 import { WorkingSetsBand } from './WorkingSetsBand';
@@ -56,11 +58,12 @@ export function TodayBody({
   nextSetIndex = 1,
   completedIndices = [],
 }: TodayBodyProps) {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
   const sets = prescription(week);
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
   const tmInDisplay = Math.round(convertWeight(tm, storageUnit, renderUnit));
+  const lastTrained = useLastCompletedSessionForLift(lift);
 
   // Hero shows the NEXT SET to work on. `prescription(week)` always returns a
   // 3-tuple; we still narrow via a runtime guard to satisfy strict-null types.
@@ -74,8 +77,15 @@ export function TodayBody({
       <TitleBlock
         eyebrow={`${dateLabel(new Date())} · ${weekLabel(week)}`}
         title={`${liftDisplayName(lift)}.`}
-        style={{ paddingTop: 20, paddingBottom: 24 }}
+        style={{ paddingTop: 20, paddingBottom: lastTrained.startedAt ? 8 : 24 }}
       />
+      {lastTrained.startedAt ? (
+        <View style={{ paddingHorizontal: 24, paddingBottom: spacing.lg }}>
+          <CapsLabel size="xs" color="ink3" testID="today-last-trained">
+            {`Last ${liftDisplayName(lift).toLowerCase()} day · ${formatRelativeTime(lastTrained.startedAt)}`}
+          </CapsLabel>
+        </View>
+      ) : null}
 
       <TopSetHero
         set={heroSet}

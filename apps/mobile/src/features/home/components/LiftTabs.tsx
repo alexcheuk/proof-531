@@ -13,6 +13,7 @@
  * the typography metrics (caps mono 11/0.22em) and the 5×5 dot — both are
  * direct ports of the PWA reference and would be lost by tokenization.
  */
+import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
@@ -38,14 +39,14 @@ export function LiftTabs({ enabled, selected, inProgressLift, onSelect }: LiftTa
     backgroundColor: colors.bg0,
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg + spacing.xs, // 20 = 16 + 4
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xl + spacing.xs, // 28 = 24 + 4
   };
 
   return (
-    <View style={wrapperStyle} testID="lift-tabs">
+    <Row
+      justify="center"
+      style={[wrapperStyle, { gap: spacing.xl + spacing.xs }]}
+      testID="lift-tabs"
+    >
       {enabled.map((lift) => {
         const active = lift === selected;
         const inProg = lift === inProgressLift;
@@ -56,12 +57,6 @@ export function LiftTabs({ enabled, selected, inProgressLift, onSelect }: LiftTa
           alignItems: 'center',
           gap: spacing.xs + 2, // 6 = gap-1.5
           minHeight: 44,
-        };
-
-        const labelRowStyle: ViewStyle = {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.xs + 2, // 6 = gap-1.5
         };
 
         const labelStyle: TextStyle = {
@@ -100,14 +95,14 @@ export function LiftTabs({ enabled, selected, inProgressLift, onSelect }: LiftTa
             accessibilityState={{ selected: active }}
             style={buttonStyle}
           >
-            <View style={labelRowStyle}>
+            <Row gap="xs" style={{ gap: spacing.xs + 2 }}>
               <RNText style={labelStyle}>{shortName(lift)}</RNText>
               {inProg ? <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} /> : null}
-            </View>
+            </Row>
             <View style={underlineStyle} />
           </Pressable>
         );
       })}
-    </View>
+    </Row>
   );
 }

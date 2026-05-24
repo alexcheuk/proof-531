@@ -86,6 +86,14 @@ jest.mock('@/data/queries/useSetLogsForSession', () => ({
   SET_LOGS_FOR_SESSION_KEY: (id: number | null) => ['setLogsForSession', id],
 }));
 
+// TodayBody now consumes useSessions via useLastCompletedSessionForLift to
+// render the "Last X day · N days ago" stamp. The default empty array means
+// the stamp is hidden and pre-existing assertions stay valid.
+jest.mock('@/data/queries/useSessions', () => ({
+  useSessions: () => ({ data: [], isLoading: false }),
+  SESSIONS_KEY: ['sessions'],
+}));
+
 // Import after mocks so the module graph picks up the mocked deps.
 import { TodayScreen } from '../TodayScreen';
 

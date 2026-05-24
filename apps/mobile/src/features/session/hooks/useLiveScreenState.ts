@@ -50,6 +50,7 @@ import { round as snapWeight } from '@/domain/units';
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCancelConfirm } from './useCancelConfirm';
 import { useRestTimer } from './useRestTimer';
 
 export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
@@ -170,8 +171,12 @@ export function useLiveScreenState(
 
   const [phase, setPhase] = useState<LivePhase>('set');
   const [setIndex, setSetIndex] = useState<WorkingSetIndex>(0);
-  const [cancelArmed, setCancelArmed] = useState(false);
   const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
+  // Two-tap arm/disarm + auto-disarm for the destructive cancel button.
+  const cancelConfirm = useCancelConfirm({
+    timeoutMs: CANCEL_ARM_TIMEOUT_MS,
+    onArmHaptic: fireWarningHaptic,
+  });
   // Bootstrap-once gate: keeps the first non-undefined setLogs read from
   // overwriting subsequent local advances (after we manually setSetIndex on
   // log-and-advance, the query refetches and arrives with one MORE row,
@@ -333,37 +338,24 @@ export function useLiveScreenState(
     setPhase('set');
   }, [setIndex]);
 
+  const { disarm: disarmCancel, arm: armCancel } = cancelConfirm;
+
   const onRequestCancel = useCallback(() => {
     phaseBeforeCancelRef.current = phase;
-    setCancelArmed(false);
+    disarmCancel();
     setPhase('cancel-confirm');
-  }, [phase]);
+  }, [phase, disarmCancel]);
 
   const onDismissCancelSheet = useCallback(() => {
-    setCancelArmed(false);
+    disarmCancel();
     setPhase(phaseBeforeCancelRef.current);
-  }, []);
+  }, [disarmCancel]);
 
   // First tap on the destructive button — arm the confirm and fire the warning
-  // haptic. The second tap is what actually destroys.
+  // haptic via useCancelConfirm. The second tap is what actually destroys.
   const onConfirmCancelFirstTap = useCallback(() => {
-    setCancelArmed(true);
-    fireWarningHaptic();
-  }, [fireWarningHaptic]);
-
-  // Auto-disarm: when the destructive button has been armed for
-  // CANCEL_ARM_TIMEOUT_MS without a second tap, silently revert to the unarmed
-  // state. The user must tap once more to re-arm. Without this, the armed
-  // state could persist for an entire workout — a real footgun.
-  useEffect(() => {
-    if (!cancelArmed) return;
-    const id = setTimeout(() => {
-      setCancelArmed(false);
-    }, CANCEL_ARM_TIMEOUT_MS);
-    return () => {
-      clearTimeout(id);
-    };
-  }, [cancelArmed]);
+    armCancel();
+  }, [armCancel]);
 
   const onConfirmCancelSecondTap = useCallback(async () => {
     if (!session?.id) return;
@@ -398,6 +390,6 @@ export function useLiveScreenState(
     onConfirmCancelFirstTap,
     onConfirmCancelSecondTap,
     onDismissCancelSheet,
-    cancelArmed,
+    cancelArmed: cancelConfirm.armed,
   };
 }
