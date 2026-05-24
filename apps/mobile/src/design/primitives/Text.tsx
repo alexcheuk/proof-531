@@ -21,6 +21,8 @@ type TextProps = {
   weight: 'regular' | 'medium' | 'semibold' | 'bold';
   size: number;
   color?: ColorToken;
+  /** Apply tabular + lining numerals — for weight / clock readouts. */
+  numeric?: boolean;
   style?: StyleProp<TextStyle>;
   children?: ReactNode;
   testID?: string;
@@ -32,6 +34,7 @@ export function Text({
   weight,
   size,
   color,
+  numeric,
   style,
   children,
   testID,
@@ -45,6 +48,9 @@ export function Text({
     fontSize: size,
     color: colors[color ?? 'ink0'],
   };
+  if (numeric) {
+    resolved.fontVariant = ['tabular-nums', 'lining-nums'];
+  }
   return (
     <RNText testID={testID} numberOfLines={numberOfLines} style={[resolved, style]}>
       {children}

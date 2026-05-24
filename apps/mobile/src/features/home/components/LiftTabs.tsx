@@ -15,6 +15,7 @@ import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 type LiftTabsProps = {
   enabled: readonly Lift[];
@@ -111,9 +112,13 @@ export function LiftTabs({ enabled, selected, inProgressLift, prLifts, onSelect 
             <Row gap="xs" style={{ gap: spacing.xs + 2 }}>
               <RNText style={labelStyle}>{shortName(lift)}</RNText>
               {hasPr ? (
-                <RNText style={starStyle} testID={`lift-tab-${lift}-pr-star`}>
+                <Animated.Text
+                  style={starStyle}
+                  testID={`lift-tab-${lift}-pr-star`}
+                  entering={FadeIn.duration(280)}
+                >
                   ★
-                </RNText>
+                </Animated.Text>
               ) : null}
               {inProg ? <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} /> : null}
             </Row>

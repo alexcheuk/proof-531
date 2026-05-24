@@ -59,7 +59,11 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
           color={setIndex === 2 ? 'ink0' : 'ink2'}
           {...(eyebrowTestID ? { testID: eyebrowTestID } : {})}
         >
-          {setIndex === 2 ? 'FINAL SET' : `SET ${oneBased} OF 3`}
+          {setIndex === 2
+            ? 'FINAL SET · 66% done'
+            : setIndex === 1
+              ? 'SET 2 OF 3 · 33% done'
+              : `SET ${oneBased} OF 3`}
         </CapsLabel>
         {elapsedSeconds !== undefined ? (
           <CapsLabel

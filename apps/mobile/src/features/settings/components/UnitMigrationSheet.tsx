@@ -9,6 +9,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Row } from '@/design/primitives/Row';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
@@ -71,14 +72,6 @@ export function UnitMigrationSheet({
     color: colors.ink0,
   };
 
-  const previewOldValue: TextStyle = {
-    fontFamily: `${type.sans}-SemiBold`,
-    fontSize: 15,
-    letterSpacing: -0.15,
-    color: colors.ink2,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
   const previewGlyphSmall: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
     fontSize: 9,
@@ -93,14 +86,6 @@ export function UnitMigrationSheet({
     fontSize: 12,
     color: colors.ink3,
     marginHorizontal: spacing.sm,
-  };
-
-  const previewNewValue: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 16,
-    letterSpacing: -0.32,
-    color: colors.ink0,
-    fontVariant: ['tabular-nums', 'lining-nums'],
   };
 
   const previewGlyphStrong: TextStyle = {
@@ -158,15 +143,29 @@ export function UnitMigrationSheet({
             return (
               <Row key={p.lift} style={rowStyle} testID={`unit-migration-row-${p.lift}`}>
                 <RNText style={previewLiftLabel}>{LIFT_META[p.lift].label}</RNText>
-                <RNText style={previewOldValue}>
+                <Text
+                  variant="sans"
+                  weight="semibold"
+                  size={15}
+                  color="ink2"
+                  numeric
+                  style={{ letterSpacing: -0.15 }}
+                >
                   {p.oldValue}
                   <RNText style={previewGlyphSmall}> {oldGlyph}</RNText>
-                </RNText>
+                </Text>
                 <RNText style={previewArrow}>{'→'}</RNText>
-                <RNText style={previewNewValue}>
+                <Text
+                  variant="sans"
+                  weight="bold"
+                  size={16}
+                  color="ink0"
+                  numeric
+                  style={{ letterSpacing: -0.32 }}
+                >
                   {p.newValue}
                   <RNText style={previewGlyphStrong}> {targetGlyph}</RNText>
-                </RNText>
+                </Text>
               </Row>
             );
           })}
