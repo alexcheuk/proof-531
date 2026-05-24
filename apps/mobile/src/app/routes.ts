@@ -41,6 +41,10 @@ export const goTo = {
     router.push(href('/(tabs)/settings'));
   },
 
+  history(router: Router): void {
+    router.push(href('/(tabs)/history'));
+  },
+
   today(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
     const target = href({ pathname: '/session/today', params: { lift } });
     if (opts?.replace) router.replace(target);

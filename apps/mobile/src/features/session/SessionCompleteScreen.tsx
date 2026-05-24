@@ -14,14 +14,8 @@ import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import {
-  Pressable,
-  Text as RNText,
-  ScrollView,
-  type TextStyle,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { Text as RNText, ScrollView, type TextStyle, View, type ViewStyle } from 'react-native';
+import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
@@ -75,37 +69,6 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
     paddingTop: 12,
     paddingBottom: 4,
   };
-  const tmCtaStyle: ViewStyle = {
-    marginHorizontal: 24,
-    marginTop: 18,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: colors.lineStrong,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  };
-  const tmCtaLabel: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 11,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: colors.ink0,
-  };
-  const tmCtaSub: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.62,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-    marginTop: 2,
-  };
-  const tmCtaChevron: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 16,
-    color: colors.ink0,
-  };
 
   return (
     <SessionLayout>
@@ -139,22 +102,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
               unit={v.unitGlyph}
               liftLabel={v.liftLower}
             />
-            <Pressable
-              testID="session-complete-adjust-tm"
-              accessibilityRole="button"
-              accessibilityLabel="Adjust training max in settings"
-              accessibilityHint="Opens settings on the training max section"
-              onPress={handleAdjustTm}
-              style={({ pressed }) => [tmCtaStyle, pressed ? { opacity: 0.6 } : null]}
-            >
-              <View>
-                <RNText style={tmCtaLabel}>Adjust training max</RNText>
-                <RNText style={tmCtaSub}>
-                  e1rm jumped {v.e1RMDelta} {v.unitGlyph} — consider a bump
-                </RNText>
-              </View>
-              <RNText style={tmCtaChevron}>›</RNText>
-            </Pressable>
+            <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={handleAdjustTm} />
           </>
         ) : null}
 
@@ -185,7 +133,7 @@ export function SessionCompleteScreen({ sessionId }: SessionCompleteScreenProps)
         <RNText
           testID="session-complete-history-link"
           accessibilityRole="button"
-          onPress={() => goTo.home(router)}
+          onPress={() => goTo.history(router)}
           style={secondaryLinkStyle}
         >
           See full record →
