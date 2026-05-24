@@ -23,9 +23,12 @@ export type CycleProgressSectionProps = {
  * Pure derivation off `settings.week` + `enabledLifts.length`.
  */
 export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
-  const { spacing } = useTheme();
+  const { spacing, layout } = useTheme();
   const progress = deriveCycleProgress(settings.week, settings.enabledLifts.length);
   const isDeload = settings.week === 4;
+  // Bleed the grid into the page gutter so the cells line up with the
+  // section's outer edge — tracks `layout.gutter` rather than a hard 24.
+  const gridBleed = -layout.gutter;
 
   return (
     <LedgerSection title="Cycle progress" hint={`week ${settings.week} of 4`}>
@@ -40,7 +43,7 @@ export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
           numeric
         />
       </LedgerRow>
-      <View style={{ marginTop: spacing.md, marginLeft: -24, marginRight: -24 }}>
+      <View style={{ marginTop: spacing.md, marginLeft: gridBleed, marginRight: gridBleed }}>
         <CycleGridFrame
           completedThisCycle={progress.dayOfCycle}
           sessionsInCycle={progress.totalDays}

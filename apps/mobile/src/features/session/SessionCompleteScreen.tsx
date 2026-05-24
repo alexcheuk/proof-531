@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect } from 'react';
 import { ScrollView, type ViewStyle } from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
+import { CycleCompleteBand } from './components/CycleCompleteBand';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
@@ -103,6 +104,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
           liftLower={v.liftLower}
           week={v.session.week}
         />
+
+        {v.isCycleComplete ? <CycleCompleteBand cycle={v.session.cycle ?? 1} /> : null}
 
         {v.showCertificate ? (
           <>

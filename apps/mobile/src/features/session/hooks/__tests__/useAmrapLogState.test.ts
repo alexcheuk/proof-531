@@ -37,7 +37,7 @@ describe('useAmrapLogState', () => {
     expect(result.current.pending).toBe(false);
   });
 
-  it('handleSave awaits async onSave and stays pending on success', async () => {
+  it('handleSave awaits async onSave and clears pending on success', async () => {
     const onSave = jest.fn().mockResolvedValue(undefined);
     const { result } = renderHook(() =>
       useAmrapLogState({ open: true, prescribedReps: 5, onSave, onCancel: jest.fn() }),
@@ -48,8 +48,10 @@ describe('useAmrapLogState', () => {
     });
 
     expect(onSave).toHaveBeenCalledWith(5);
-    // Parent is expected to unmount the sheet; pending stays true on success.
-    expect(result.current.pending).toBe(true);
+    // Pending must reset on both paths so a delayed navigation can't leave
+    // the Save button stuck. The mountedRef guard already prevents
+    // setState-on-unmounted warnings when the parent unmounts first.
+    expect(result.current.pending).toBe(false);
   });
 
   it('handleSave clears pending when onSave throws', async () => {

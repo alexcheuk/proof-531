@@ -40,6 +40,8 @@ export type SessionCompleteView = {
   sessionsInCycle: number;
   eyebrowDate: string;
   stampParts: ReturnType<typeof formatDateLabel>;
+  /** True when this session is the terminal session of its cycle (completedThisCycle === sessionsInCycle). */
+  isCycleComplete: boolean;
   // PR / certificate
   hasPR: boolean;
   showCertificate: boolean;
@@ -177,6 +179,7 @@ export function deriveView({
     sessionsInCycle,
     Math.max(1, (session.week - 1) * liftsPerCycle + (liftPos + 1)),
   );
+  const isCycleComplete = completedThisCycle === sessionsInCycle;
 
   // PR baseline: best e1RM observed in OTHER completed sessions for this
   // lift (the `prs` row has already been overwritten with THIS session's
@@ -197,6 +200,7 @@ export function deriveView({
     unitGlyph,
     completedThisCycle,
     sessionsInCycle,
+    isCycleComplete,
     eyebrowDate,
     stampParts,
     hasPR,

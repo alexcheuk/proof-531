@@ -66,6 +66,12 @@ export function useAmrapLogState({
       await Promise.resolve(onSave(reps));
     } catch (err) {
       console.error('useAmrapLogState.handleSave failed', err);
+    } finally {
+      // Reset pending on BOTH success and failure paths. The success path
+      // previously relied on the parent unmounting this sheet (the
+      // mountedRef guard suppresses the warning), which left the button
+      // stuck if navigation was delayed for any reason. The guard still
+      // prevents a setState on an unmounted parent.
       if (mountedRef.current) setPending(false);
     }
   }, [onSave, pending, reps]);
