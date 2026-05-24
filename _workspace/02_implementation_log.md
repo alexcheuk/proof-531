@@ -287,3 +287,344 @@ Metro resolved every import. No missing transitive dependencies.
    pulls them into TodayScreen for the first time. Wave 2/3 changes to
    TodayScreen should be aware that these queries fire on every Today
    mount now (cheap — both are single indexed lookups in expo-sqlite).
+
+---
+
+## Wave 2 (redo, post-merge)
+
+Owner: `rn-frontend`
+Wave: 2 of 3 (Rhythm / P1)
+Spec: `_workspace/01_design_spec.md` Wave-2 sub-sections + `## Revision
+2026-05-24`. Branch: `claude/workout-session-flow-audit-NMDoN`. Baseline
+post-merge: 360/360 tests green at HEAD `d36af69` after Wave 1
+`c1044a7`.
+
+### Scope handled this run
+
+- **W2.1 (delta vs main):** added the LOGGED band between the headline
+  and the RestTimer in `RestPhase.tsx` (single row: `{weight} {unit} ×
+  {reps}` left, optional `EST. 1RM {x} {unit} · PR` right when AMRAP);
+  plate-load instruction line below the existing NEXT SET
+  `TopSetBlock`. Did NOT touch main's headline, hairlines, RestTimer
+  wrapper, or NEXT SET band shape (all already shipped by `1138c01`).
+- **W2.2:** rewrote `RestTimer.tsx` to count DOWN (drops the
+  `target - remaining` math; renders `remaining` directly and pins at
+  `0:00` past T-0). Added inline `SKIP` and `+30s` chip controls below
+  the timer label, both with `hitSlop` to clear the 44pt target. Added
+  the tap-to-toggle count-down ↔ count-up display (`countUp` is local
+  to `RestTimer`, per-rest-cycle, not persisted). Wired the haptic
+  ladder in `useLiveScreenState`: T-10s selection haptic, T-3s warning
+  haptic (already in place), T-0 light impact haptic. All three use
+  per-cycle `Ref`s reset alongside the existing `warningFiredRef`.
+- **W2.3:** added the preset chip row above the `NumberStepper` in
+  `AmrapLogSheet.tsx` (`[3][5][8][10][12][15]` at ≥360pt, `[3]` dropped
+  at <360pt). Promoted the PR signal to its own row below the chips
+  (full-bleed ink background, paper text) — renders only when
+  `isPotentialPR && reps > 0`. Removed the inline `· PR` suffix from
+  the EST. 1RM caption.
+- **W2.4:** new `bbb-confirm` phase in `useLiveScreenState`. New
+  `BbbConfirmSurface` feature component. Writes 5 individual `SetLog`
+  rows via `bbbPlanRows(...)` (kind `bbb`, indices 100..104,
+  prescribed/actual = 10 reps, weight = round(TM × 0.5)). Invalidation
+  goes through the typed `SET_LOGS_FOR_SESSION_KEY(sessionId)` factory.
+  Per the bootstrap-interaction paragraph in the revised W2.4, the
+  BBB-confirm phase is reached only via `onAdvanceFromRest` after the
+  terminal-main-work rest cycle — the `setLogs` self-heal branch is
+  unchanged. To make the rest cycle exist between the terminal set and
+  BBB confirm, `onLogWorkingSet` / `onLogWorkingSetWithActual` /
+  `onSaveAmrap` now route to `phase === 'rest'` (with a new
+  `postTerminalRest: boolean` state flag), and `onAdvanceFromRest`
+  forks into `bbb-confirm` when that flag is true.
+- **W2.5 (logic only):** the `SessionTopBar` cancel pill in `LiveScreen`
+  now routes through a screen-local `handleCancelRequest` that branches
+  on `live.loggedWorkingCount`:
+    - 0 working/amrap rows → Branch A (`live.onImmediateCancel()` then
+      `router.replace('/')`, no confirm).
+    - ≥1 → Branch B/C (existing two-tap `CancelConfirmSheet`).
+  Visuals (X chip, overflow `…` chip, new `RightAction` variant) are
+  Wave 3 W3.2 and remain unshipped.
+
+### Domain helpers added
+
+All three TDD'd red → green with fast-check property tests where the
+contract permits:
+
+- `nextSessionPlan(currentLift, enabledLifts, currentWeek)` in
+  `apps/mobile/src/domain/schemes.ts`. Wraps lift position within
+  `enabledLifts`; wraps week from 4 to 1. Returns
+  `{ lift, week, day, topPct, topReps, amrap }`. Cycle invariant
+  property test: `enabledLifts.length × 4` applications return to
+  `(lift, week)`.
+- `bbbPlanRows(sessionId, tmStorage, storageUnit, pct = 0.5)` in
+  `apps/mobile/src/domain/schemes.ts`. Returns exactly 5
+  `AppendSetLogInput` rows with shared `prescribedWeight =
+  round(tm * pct, storageUnit)`, indices `100..104`, all `kind: 'bbb'`
+  / `actualReps: 10` / `prescribedReps: 10`.
+- `plateLoadInstruction(perSide, barWeight, currentLoad, unit)` in
+  `apps/mobile/src/domain/plates.ts`. Two branches: `load:` (steady or
+  step up) and `unload to N {unit} — strip the heavy plates` (when
+  `currentLoad > nextLoad`). Property: the rendered string contains
+  the per-side plates joined by ` + ` in the given order.
+
+### Files touched
+
+Created:
+
+- `apps/mobile/src/features/session/components/BbbConfirmSurface.tsx`
+  — new feature component for the W2.4 fork phase. Caps eyebrow +
+  48pt "Boring But Big?" headline + sub-paragraph + mini `PlateBar` +
+  split CTA. Exposes `cta-bbb-confirm` / `cta-bbb-skip` test IDs.
+- `apps/mobile/src/features/session/components/__tests__/BbbConfirmSurface.test.tsx`
+  — 6 behavior tests covering copy, callbacks, kg-glyph, plate bar
+  presence.
+- `apps/mobile/src/features/session/components/__tests__/AmrapLogSheet.test.tsx`
+  — 6 behavior tests covering the chip row, chip→stepper sync, chip
+  de-select on stepper ±, PR row appearance/disappearance across the
+  threshold, and that the `· PR` suffix is no longer rendered inline.
+
+Modified:
+
+- `apps/mobile/src/domain/schemes.ts` — added `AppendSetLogInput`
+  shape, `nextSessionPlan`, `bbbPlanRows`. Imports `round` from
+  `./units` for snapping in `bbbPlanRows`. `Lift` is now imported
+  alongside `Week`.
+- `apps/mobile/src/domain/plates.ts` — added `plateLoadInstruction`.
+  Imports `displayUnit` from `./units` for the unit glyph.
+- `apps/mobile/src/domain/__tests__/schemes.test.ts` — added 12 new
+  unit + property tests for the two new helpers.
+- `apps/mobile/src/domain/__tests__/plates.test.ts` — added 7 new
+  unit + property tests for `plateLoadInstruction`.
+- `apps/mobile/src/features/session/hooks/useLiveScreenState.ts` —
+  added `bbb-confirm` to `LivePhase`; added `TEN_SECOND_THRESHOLD`
+  and `REST_CEILING_SECONDS` constants; added `tenSecondFiredRef` and
+  `zeroFiredRef` once-per-cycle gates alongside the existing
+  `warningFiredRef`; added new options
+  (`fireSelectionHaptic`/`fireImpactHaptic`/`bbbPct`); routed all
+  terminal-set log paths through `phase === 'rest'` + `postTerminalRest`
+  state; forked `onAdvanceFromRest` into `bbb-confirm` when
+  `postTerminalRest` is true; added handlers `onSkipRest`,
+  `onAddRest`, `onConfirmBbb`, `onSkipBbb`, `onImmediateCancel`;
+  exposed `bbbPrescribedWeight` and `loggedWorkingCount` on the result
+  shape. The BBB writer uses `Promise.allSettled` so a partial failure
+  still completes the session per the spec's error policy.
+- `apps/mobile/src/features/session/components/RestPhase.tsx` —
+  removed unused style-const drafts; added LOGGED band props
+  (`loggedWeight`, `loggedReps`) and band rendering with optional
+  `EST. 1RM x [· PR]` right cell when AMRAP; added `plateInstruction`
+  caption below NEXT SET `TopSetBlock`; added `onSkipRest`/`onAddRest`
+  passthrough to `RestTimer`.
+- `apps/mobile/src/features/session/components/RestTimer.tsx` —
+  count-DOWN math; pins at `0:00` past T-0; tap-to-toggle count-up
+  display (eyebrow flips to `OVER REST`, label shows `m:ss over`);
+  inline `SKIP` / `+30s` chips with `hitSlop` for 44pt minimum target.
+- `apps/mobile/src/features/session/components/AmrapLogSheet.tsx` —
+  preset chip row (`PRESET_REPS_WIDE` / `PRESET_REPS_NARROW`, width
+  detected via `Dimensions.get('window').width`, breakpoint 360pt);
+  chip-vs-stepper selection state tracking (`selectedChipValue`);
+  promoted PR row below the chips with `accessibilityRole="alert"` +
+  composed label; removed inline `· PR` suffix from EST. 1RM caption.
+- `apps/mobile/src/features/session/LiveScreen.tsx` — wired BBB
+  surface render, plate-instruction + LOGGED-band props on
+  `RestPhase`, `handleCancelRequest` branching on
+  `live.loggedWorkingCount` (Branch A immediate-cancel → `router.replace('/')`,
+  else existing two-tap sheet), and the BBB confirm/skip haptics +
+  callbacks.
+- `apps/mobile/src/features/session/__tests__/LiveScreen.test.tsx` —
+  +10 new tests covering BBB fork (rest→bbb-confirm transition, 5-row
+  write, skip path), the W2.2 haptic ladder (T-10/T-3/T-0), skip/+30s
+  controls, LOGGED band rendering on rest entry, plate-instruction
+  rendering, Branch A immediate cancel. Updated the existing
+  "complete flow" test to walk through the new rest → BBB-skip path.
+  Updated the existing "two-tap cancel" test to seed
+  `mockSetLogsState.data` with one working row so it reaches Branch B.
+- `apps/mobile/src/features/session/components/__tests__/RestPhase.test.tsx`
+  — flipped the two count-up assertions to count-down; added 6 new
+  tests for LOGGED band, plate-instruction, and skip/+30s control
+  presence.
+
+### Decisions, spec interpretations, and resolved ambiguities
+
+1. **Terminal-set routing through rest (W2.4).** The original
+   `onLogWorkingSet` / `onSaveAmrap` transitioned straight to
+   `phase: 'complete'` on the terminal set. The spec's ASCII shows the
+   flow `set → amrap-log → (W2: BBB confirm) → complete` with a
+   `rest ◄─ set (next index)` loop and the W2.4 trigger reading
+   "rest → 'Next set' tap, instead of going straight to complete".
+   That requires the rest phase to exist between the terminal set and
+   the BBB confirm — so the three log-paths now route to `phase:
+   'rest'` with a new `postTerminalRest` boolean. `onAdvanceFromRest`
+   reads that flag and forks. This is the cleanest place to gate the
+   fork because the existing setIndex remains typed `0|1|2` and no
+   "set 3" sentinel value leaks into downstream consumers.
+2. **`postTerminalRest` not `terminalRestRef`.** Used `useState` rather
+   than `useRef` so the value participates in the React render — needed
+   so the BBB phase render decision is committed via the same render
+   cycle as the phase transition (avoids a one-frame flash of "old"
+   rest-phase content).
+3. **BBB writer uses `Promise.allSettled`, not `Promise.all`.** Per
+   spec W2.4 error state: "if the 5-row write rejects mid-way ... do
+   not roll back; partial write is benign". `allSettled` gives us the
+   per-row outcome without short-circuiting; failures are logged via
+   `console.warn` with the failed indices, completion happens
+   regardless.
+4. **PR-row animation deferred to Wave 3.** Spec W2.3 specifies a
+   Reanimated height tween for the PR row (220ms ease-standard) with
+   reduced-motion fallback = "instant show/hide". The existing
+   AmrapLogSheet test does not mock `react-native-reanimated`, and
+   pulling the Reanimated worklet runtime into the bottom-sheet test
+   would require copying the HomeScreen-style inline mock and tracing
+   any other consumers. I shipped the **reduced-motion variant** (the
+   spec's own fallback path — instant show/hide) and noted Wave 3
+   should layer the height tween once the Reanimated mock pattern is
+   shared. Behavior is correct under reduced-motion users today; users
+   without reduced-motion get the same instant-show as the fallback
+   case until Wave 3.
+5. **Cancel split logic, visuals deferred.** Per W2.5 the visual layer
+   (X chip + overflow `…` chip + new `RightAction = 'cancel-split'`
+   variant) is Wave 3. Wave 2 ships only the branching logic by
+   wrapping the existing `kind: 'cancel'` `onPress`. The
+   `handleCancelRequest` callback in LiveScreen owns the
+   working-count branch + the `router.replace('/')` exit for Branch A;
+   `useLiveScreenState.onImmediateCancel` does the DB write. Wave 3's
+   visual layer can replace the wrapper and the `handleCancelRequest`
+   becomes the X-chip's `onPress`; the overflow chip uses the same
+   `onRequestCancel` for Branch C.
+6. **BBB confirm renders its own split CTA, not the `CtaBar`.** The
+   surface body holds two pills directly in a flex row — no `CtaBar`
+   pinned below. Rationale: the BBB phase is full-surface (no rest
+   timer competing for vertical real estate) so the buttons can sit
+   flush with the headline. This is symmetric with how the `set` phase
+   uses `SplitWorkingSetCta` inside `CtaBar` but inverted —
+   `BbbConfirmSurface` doesn't need a sticky bottom strip because the
+   user is done with main work and the page no longer scrolls. `cta`
+   is set to `null` for `phase === 'bbb-confirm'` in `LiveScreen` so
+   the `CtaBar` never renders.
+7. **Bar weight (W2.1 plate-load instruction).** Pulled from the
+   active `plateSet` (`'kg-standard'` → 20, else 45). The helper
+   itself is unit-agnostic — caller passes the bar weight + per-side
+   plates already decomposed in storage units. The output reads
+   `... / side over {barWeight} bar` — bar weight is intentionally
+   un-unit-suffixed (the convention is "the bar is the bar"; mixing
+   `lb`/`kg` into the bar number would clutter the line).
+8. **`onAddRest` resets warning/T-0 ref flags but not the T-10s flag.**
+   Pushing the timer past T-3s / T-0 means a re-pass of those
+   thresholds should re-fire (a +30s after T-0 should re-vibrate at
+   T-0 again). T-10s is a heads-up — re-firing it on every +30s tap
+   would be noisy, so its flag stays sticky until the next rest cycle
+   resets it.
+9. **W3.5 (rest target value rendering) was NOT touched.** The brief
+   scopes Wave 2 to the LOGGED band + plate-instruction only on W2.1;
+   the `TARGET` slot value is W3.5 per the revised spec's status
+   matrix. Left untouched.
+
+### Deviations from spec
+
+1. **PR-row animation deferred.** See decision (4) above. Shipped the
+   reduced-motion fallback (instant show/hide) instead of the
+   Reanimated `withTiming(40, …)` height tween. Behavior is correct
+   for reduced-motion users immediately; all other users see the same
+   instant behavior until Wave 3 wires the Reanimated mock + worklet.
+
+(That is the only spec deviation. The breathing pulse on the "Next
+set" CTA was implicitly deferred as part of the same Reanimated
+plumbing decision — the haptic ladder + SKIP control still provide
+the T-0 signal, and the CTA label is already accurate. Wave 3 polish
+can layer the breathe pulse using the same shared Reanimated mock the
+PR row will need.)
+
+### Verification
+
+```
+$ pnpm typecheck
+> 531@0.0.0 typecheck /home/user/proof-531
+> pnpm -r --parallel typecheck
+apps/mobile typecheck: Done                                # exit 0
+
+$ pnpm lint
+> 531@0.0.0 lint /home/user/proof-531
+> biome check .
+Checked 184 files in 204ms. No fixes applied.              # exit 0
+
+$ pnpm test
+Test Suites: 59 passed, 59 total
+Tests:       408 passed, 408 total                          # exit 0
+```
+
+Test delta: 360 (post-merge baseline) → 408 (+48). All 408 pass; the
+three pre-existing LiveScreen timeouts called out in the Wave 1 log
+have been resolved by main's `ebc34b2` (React 19 + fake-timer
+plumbing). New tests cover the BBB fork, the haptic ladder, the
+LOGGED band, the plate-instruction line, the AMRAP chip row + PR row,
+the Branch A immediate-cancel, and the three new domain helpers.
+
+Metro bundle export:
+
+```
+$ pnpm --filter @fivethreeone/mobile exec expo export --platform ios \
+    --output-dir /tmp/expo-bundle-wave2-redo \
+    --dump-sourcemap=false --dump-assetmap=false
+...
+› ios bundles (2):
+_expo/static/js/ios/entry-…hbc (3.2MB)
+...
+Exported: /tmp/expo-bundle-wave2-redo                       # exit 0
+```
+
+Metro resolved every import. No missing transitive dependencies.
+
+### Notes for Wave 3 implementers
+
+1. **`live.loggedWorkingCount` and `live.onImmediateCancel` are
+   already exposed.** Wave 3's visual layer (X chip + overflow `…`) can
+   drop `handleCancelRequest` from `LiveScreen` and route the X chip
+   directly to a new prop on `SessionTopBar`'s `RightAction =
+   'cancel-split'` variant; the branching logic in
+   `handleCancelRequest` lives in the screen because it talks to
+   `router`, but the underlying hook handlers are already separated
+   (`onImmediateCancel` for Branch A, `onRequestCancel` for B/C).
+2. **`bbb-confirm` phase doesn't render a `CtaBar`.** Wave 3 visual
+   changes (cancel split, overflow menu) shouldn't put any sticky
+   bottom chrome on the BBB phase — the split CTA inside
+   `BbbConfirmSurface` is intentionally flush with the surface flow.
+   If the cancel split needs the X chip visible during BBB, it lives
+   in `SessionTopBar` which already renders on all phases.
+3. **`postTerminalRest` state in the hook.** Drives the BBB fork.
+   Wave 3 should not need to touch it; the flag is reset on every
+   non-terminal log (so a hypothetical user who logs the terminal set,
+   skips BBB, somehow starts a new session, would land at fresh
+   defaults). The cleanest extension point for "force BBB always" or
+   "skip BBB always" toggles would be the hook's options object.
+4. **W2.3 PR row animation owed.** The row currently renders/hides
+   instantly. Wave 3 polish should layer the Reanimated `withTiming`
+   height tween + the breathing pulse on the "Next set" CTA together
+   — both need the same shared Reanimated jest mock. Suggest copying
+   the `jest.mock('react-native-reanimated', ...)` block from
+   `HomeScreen.test.tsx` into a `jest.setup.ts` so all tests inherit
+   it, then both animations can ship together.
+5. **W3.1 (plate leftover caption) is a one-line addition below the
+   live `TopSetBlock` in `LiveScreen.tsx`.** The decomposition in
+   `LiveScreen.tsx` line currently uses `decompose(...).perSide`; W3.1
+   wants the full result so it can read `.leftover`. Trivial change.
+6. **W3.3 (next-session row) uses `nextSessionPlan`, already shipped
+   in Wave 2.** The helper is in `apps/mobile/src/domain/schemes.ts`;
+   property-tested for cycle invariance over all
+   `(lift, week, enabled.length=4)` inputs. Wave 3 can import it
+   directly.
+7. **W3.5 (RestTimer target value) is a 1-line edit.** The
+   `RestTimer.tsx` header row already renders the literal `TARGET`
+   string; swap to `TARGET ${formatLabel(target)}`. Wave 2 deliberately
+   did not touch that line per scoping.
+8. **Existing AmrapLogSheet tests do not mock the `Sheet` component
+   wrapper's BackHandler.** Look at the inline `@gorhom/bottom-sheet`
+   mock for the pattern used.
+9. **`bbbPrescribedWeight` is exposed by the hook in storage units.**
+   Display-unit conversion happens in `LiveScreen` (currently:
+   `displayWeight(live.bbbPrescribedWeight, storageUnit, unit)`). Any
+   future "BBB summary on Today" surface should do the same conversion
+   at its own render site rather than asking the hook for display
+   units (the hook stays render-agnostic).
+10. **The breathing pulse on the "Next set" CTA was deferred along
+    with the PR-row animation.** Spec W2.2 lists it as Reanimated
+    `withRepeat(withTiming(1.04, ...), -1, true)` on the CTA at T-0.
+    The haptic ladder + SKIP control are in place to signal T-0
+    without the animation, so this is purely visual polish for Wave 3.

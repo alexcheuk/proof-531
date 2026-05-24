@@ -7,7 +7,7 @@ import { Text } from '@/design/primitives/Text';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
-import { decompose } from '@/domain/plates';
+import { decompose, plateLoadInstruction } from '@/domain/plates';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
 /**
@@ -37,9 +37,10 @@ import * as Haptics from 'expo-haptics';
 import * as KeepAwake from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Pressable, ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
+import { BbbConfirmSurface } from './components/BbbConfirmSurface';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { LiveHeader } from './components/LiveHeader';
 import { RestPhase } from './components/RestPhase';
@@ -167,11 +168,51 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 
+  // W2.4 — BBB plate decomposition (in storage units, then forwarded to the
+  // BBB confirm surface in display currency). Same plateSet selection as the
+  // main-work decomposition above.
+  const bbbDisplayWeight = displayWeight(live.bbbPrescribedWeight, storageUnit, unit);
+  const bbbPerSide = decompose(live.bbbPrescribedWeight, plateSet).perSide;
+
+  // W2.1 — plate-load instruction for the NEXT SET band. Uses the just-
+  // decomposed `perSide` (next set in storage units) and `lastLogged.weight`
+  // (also storage units — captured in the hook at write time). Bar weight is
+  // 45 lb / 20 kg keyed off the plate set.
+  const barWeight = plateSet === 'kg-standard' ? 20 : 45;
+  const lastLoadedStorage = live.lastLogged?.weight ?? 0;
+  const plateInstruction = plateLoadInstruction(perSide, barWeight, lastLoadedStorage, storageUnit);
+
+  // W2.1 — LOGGED band props. Convert `lastLogged.weight` (storage units) to
+  // the display currency the user picked.
+  const loggedWeightDisplay = live.lastLogged
+    ? Math.round(convertWeight(live.lastLogged.weight, storageUnit, unit))
+    : undefined;
+  const loggedRepsDisplay = live.lastLogged?.reps;
+
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
   const showSetSurface =
     live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'working-set-log';
   const showRestSurface = live.phase === 'rest';
+  const showBbbConfirmSurface = live.phase === 'bbb-confirm';
+
+  // W2.5 — cancel split (logic only; visuals come in W3.2). Branch A: tap
+  // cancel with zero working/amrap rows logged → immediate cancel +
+  // `router.replace('/')`. Today → Live is `router.push` so the push
+  // history (home → today → live) would survive a `router.back()` to a
+  // "Start session" CTA against a freshly-cancelled lift — `replace('/')`
+  // is the unambiguous exit.
+  // Branch B/C: existing two-tap confirm sheet (unchanged).
+  const handleCancelRequest = useCallback(() => {
+    if (live.loggedWorkingCount === 0) {
+      Haptics.selectionAsync();
+      void live.onImmediateCancel().then(() => {
+        router.replace('/' as never);
+      });
+      return;
+    }
+    live.onRequestCancel();
+  }, [live, router]);
 
   // Primary CTA — depends on phase. The cancel-confirm and amrap-log phases
   // still render the underlying set/rest surface, so they re-use the same
@@ -181,15 +222,28 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   //   ready phase, working set → "Set complete" (✓)
   //   ready phase, AMRAP set   → "Log AMRAP"   (→)
   //   rest phase, has next set → "Next set"    (→)
-  //   rest phase, terminal     → "Complete session" (→)
+  //   rest phase, terminal     → "Complete session" (→) — actually a fork
+  //                              into the BBB confirm phase (W2.4).
+  //   bbb-confirm phase        → split CTA owned by BbbConfirmSurface itself
+  //                              (no CtaBar pinned below).
   let cta: React.ReactElement | null = null;
   if (live.phase === 'rest') {
+    // W2.4 — the terminal-set rest CTA reads "Complete session" because the
+    // visible-user-facing transition is "you're done with main work"; the
+    // BBB fork happens inside `onAdvanceFromRest` based on
+    // `postTerminalRest`. For non-terminal rests, the label stays
+    // "Next set" → next working set.
     const hasNext = live.setIndex < 2;
     cta = (
       <PrimaryPillButton testID="cta-advance-rest" glyph="→" onPress={live.onAdvanceFromRest}>
         {hasNext ? 'Next set' : 'Complete session'}
       </PrimaryPillButton>
     );
+  } else if (live.phase === 'bbb-confirm') {
+    // BBB confirm phase renders its own split CTA inside the surface body —
+    // intentionally no `CtaBar` here so the buttons sit flush with the
+    // surface flow.
+    cta = null;
   } else if (
     live.phase === 'set' ||
     live.phase === 'amrap-log' ||
@@ -226,7 +280,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <SessionTopBar
         onBack={() => router.back()}
         backLabel="Back to plan"
-        rightAction={{ kind: 'cancel', onPress: live.onRequestCancel }}
+        rightAction={{ kind: 'cancel', onPress: handleCancelRequest }}
       />
       <ScrollView
         testID="live-scroll"
@@ -243,8 +297,17 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
                 ? Math.round(convertWeight(live.lastLogged.estimated1RM, storageUnit, unit))
                 : undefined
             }
+            isPR={
+              live.lastLogged?.isAmrap === true &&
+              live.lastLogged.estimated1RM !== undefined &&
+              live.lastLogged.estimated1RM > (existingPR?.bestE1RM ?? 0)
+            }
+            {...(loggedWeightDisplay !== undefined ? { loggedWeight: loggedWeightDisplay } : {})}
+            {...(loggedRepsDisplay !== undefined ? { loggedReps: loggedRepsDisplay } : {})}
             remaining={live.restRemaining}
             target={live.restTarget}
+            onSkipRest={live.onSkipRest}
+            onAddRest={live.onAddRest}
             // During rest, useLiveScreenState has already advanced setIndex
             // to the next set, so live.prescribedWeight / .pct / .isAmrap /
             // .prescribedReps describe that set. The PlateBar perSide is
@@ -257,7 +320,23 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
               perSide,
               tmDisplay: Math.round(convertWeight(session.trainingMaxSnapshot, storageUnit, unit)),
             }}
+            plateInstruction={plateInstruction}
             testID="rest-phase"
+          />
+        ) : showBbbConfirmSurface ? (
+          <BbbConfirmSurface
+            bbbWeight={bbbDisplayWeight}
+            unit={unit}
+            perSide={bbbPerSide}
+            onConfirm={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              void live.onConfirmBbb();
+            }}
+            onSkip={() => {
+              Haptics.selectionAsync();
+              void live.onSkipBbb();
+            }}
+            testID="bbb-confirm-surface"
           />
         ) : showSetSurface || live.phase === 'cancel-confirm' ? (
           <>

@@ -6,11 +6,12 @@ import { displayUnit } from '@/domain/units';
 /**
  * Full-body rendering of the Live screen's `rest` phase.
  *
- * Structural port of `~/Development/531-pwa/src/features/session/components/
- * RestPhase.tsx`. Layout: caps eyebrow ("LOGGED · REST NOW" / "NEW PERSONAL
- * RECORD"), display headline ("Breathe." / "Stronger."), SectionBand row with
- * LOGGED stat on the left and optional EST. 1RM stat on the right (AMRAP
- * only), and the count-up RestTimer below.
+ * Layout (post W2.1 merge):
+ *   1. Headline band — caps eyebrow + 64pt "Stronger." / "Rest." (main).
+ *   2. LOGGED band   — single row: "{weight} {unit} × {reps}" left,
+ *                       "EST. 1RM {x} {unit}[ · PR]" right (Wave 2 W2.1).
+ *   3. RestTimer     — 96pt countdown + optional skip / +30s controls.
+ *   4. NEXT SET band — TopSetBlock + plate-load instruction caption (W2.1).
  */
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
@@ -24,6 +25,10 @@ export type RestPhaseProps = {
   isAmrap?: boolean;
   /** True if the just-logged set is a PR (drives celebratory copy). */
   isPR?: boolean;
+  /** Just-logged display weight — drives the LOGGED band (W2.1). */
+  loggedWeight?: number;
+  /** Just-logged actual reps — drives the LOGGED band (W2.1). */
+  loggedReps?: number;
   /** Seconds remaining in the countdown (forwarded to RestTimer). */
   remaining: number;
   /** Total configured rest target — forwarded to RestTimer for the count-up math. */
@@ -45,6 +50,16 @@ export type RestPhaseProps = {
     /** TM in display unit, for the "TM 245 lb" caption. */
     tmDisplay: number;
   };
+  /**
+   * Optional plate-load instruction line, rendered below the NEXT SET
+   * `TopSetBlock` (W2.1). Pre-formatted by the caller via
+   * `plateLoadInstruction(...)`.
+   */
+  plateInstruction?: string;
+  /** W2.2 — skip the rest (forces restRemaining to 0). */
+  onSkipRest?: () => void;
+  /** W2.2 — add 30 seconds to the rest. */
+  onAddRest?: () => void;
   testID?: string;
 };
 
@@ -53,26 +68,24 @@ export function RestPhase({
   estimated1RM,
   isAmrap = false,
   isPR = false,
+  loggedWeight,
+  loggedReps,
   remaining,
   target,
   nextSet,
+  plateInstruction,
+  onSkipRest,
+  onAddRest,
   testID,
 }: RestPhaseProps) {
   const { colors, type, spacing } = useTheme();
   const unitLabel = displayUnit(loggedUnit);
+  const showLogged = loggedWeight !== undefined && loggedReps !== undefined;
 
   const headerWrap: ViewStyle = {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-  };
-  const _sectionBandWrap: ViewStyle = {
-    marginHorizontal: spacing.xl,
-    paddingVertical: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    gap: 12,
   };
   const headlineStyle: TextStyle = {
     fontFamily: `${type.sans}-Bold`,
@@ -81,31 +94,43 @@ export function RestPhase({
     letterSpacing: -1.92,
     color: colors.ink0,
   };
-  const _statLabelStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginBottom: 6,
+
+  const loggedBandWrap: ViewStyle = {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
   };
-  const _statCapsStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-  };
-  const _e1rmBigStyle: TextStyle = {
+  const loggedValueStyle: TextStyle = {
     fontFamily: `${type.sans}-Medium`,
-    fontSize: 26,
-    lineHeight: 26,
-    letterSpacing: -0.78,
+    fontSize: 22,
+    lineHeight: 22,
     color: colors.ink0,
     fontVariant: ['tabular-nums', 'lining-nums'],
+    marginTop: 4,
+  };
+  const e1rmStyle: TextStyle = {
+    fontFamily: `${type.mono}-SemiBold`,
+    fontSize: 12,
+    lineHeight: 14,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    color: colors.ink1,
   };
 
-  const _showE1RM = isAmrap && estimated1RM !== undefined;
+  const plateInstructionStyle: TextStyle = {
+    fontFamily: `${type.mono}-Medium`,
+    fontSize: 10,
+    lineHeight: 14,
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    color: colors.ink2,
+    marginTop: spacing.sm,
+    textAlign: 'center',
+  };
+
+  const showE1RM = isAmrap && estimated1RM !== undefined;
 
   return (
     <View testID={testID ?? 'rest-phase'}>
@@ -139,7 +164,41 @@ export function RestPhase({
 
       <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
 
-      <RestTimer remaining={remaining} target={target} testID="rest-timer" />
+      {showLogged ? (
+        <>
+          <View style={loggedBandWrap} testID="rest-phase-logged" accessibilityLabel="Logged set">
+            <View>
+              <Text
+                variant="mono"
+                weight="semibold"
+                size={10}
+                color="ink2"
+                style={{ textTransform: 'uppercase', letterSpacing: 2.2 }}
+              >
+                LOGGED
+              </Text>
+              <RNText style={loggedValueStyle} testID="rest-phase-logged-value">
+                {loggedWeight} {unitLabel} × {loggedReps}
+              </RNText>
+            </View>
+            {showE1RM ? (
+              <RNText style={e1rmStyle} testID="rest-phase-logged-e1rm">
+                EST. 1RM {estimated1RM} {unitLabel}
+                {isPR ? ' · PR' : ''}
+              </RNText>
+            ) : null}
+          </View>
+          <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
+        </>
+      ) : null}
+
+      <RestTimer
+        remaining={remaining}
+        target={target}
+        testID="rest-timer"
+        {...(onSkipRest !== undefined ? { onSkipRest } : {})}
+        {...(onAddRest !== undefined ? { onAddRest } : {})}
+      />
 
       <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
 
@@ -165,6 +224,11 @@ export function RestPhase({
               bordered={false}
               testID="rest-phase-next-set-block"
             />
+            {plateInstruction ? (
+              <RNText style={plateInstructionStyle} testID="rest-phase-plate-instruction">
+                {plateInstruction}
+              </RNText>
+            ) : null}
           </View>
           <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }} />
         </>

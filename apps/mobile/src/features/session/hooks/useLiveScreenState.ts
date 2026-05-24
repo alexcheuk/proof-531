@@ -9,6 +9,7 @@ import {
 import { estimateOneRm } from '@/domain/epley';
 import {
   type WorkingSetIndex,
+  bbbPlanRows,
   getWorkingSetByIndex,
   isAmrapSet,
   nextWorkingSetIndex,
@@ -54,6 +55,7 @@ export type LivePhase =
   | 'amrap-log'
   | 'working-set-log'
   | 'rest'
+  | 'bbb-confirm'
   | 'complete'
   | 'cancel-confirm';
 
@@ -61,6 +63,10 @@ export type LivePhase =
 export const REST_SECONDS = 90;
 /** Seconds-remaining at which the warning haptic fires. */
 export const WARNING_THRESHOLD = 3;
+/** Seconds-remaining at which the T-10s "selection" haptic fires. */
+export const TEN_SECOND_THRESHOLD = 10;
+/** Hard ceiling on the rest timer when adding +30s — prevents runaway timers. */
+export const REST_CEILING_SECONDS = 600;
 
 export type UseLiveScreenStateOptions = {
   /** Defaults to REST_SECONDS — overridable so tests can assert on a shorter timeline. */
@@ -70,6 +76,18 @@ export type UseLiveScreenStateOptions = {
    * Defaults to expo-haptics' `notificationAsync(Warning)` — injectable for tests.
    */
   fireWarningHaptic?: () => void;
+  /**
+   * Fires the selection haptic at T-10s (heads-up).
+   * Defaults to expo-haptics' `selectionAsync()` — injectable for tests.
+   */
+  fireSelectionHaptic?: () => void;
+  /**
+   * Fires the light-impact haptic at T-0 (rest finished).
+   * Defaults to expo-haptics' `impactAsync(Light)` — injectable for tests.
+   */
+  fireImpactHaptic?: () => void;
+  /** BBB working percentage (defaults to 0.5). Surfaced for the BBB confirm phase. */
+  bbbPct?: number;
 };
 
 /**
@@ -120,6 +138,24 @@ export type UseLiveScreenStateResult = {
   onDismissCancelSheet: () => void;
   /** True once the user has tapped the destructive button once. */
   cancelArmed: boolean;
+  /** W2.2 — skip the rest immediately (forces `restRemaining` to 0). */
+  onSkipRest: () => void;
+  /** W2.2 — add 30 seconds to the rest, capped at REST_CEILING_SECONDS. */
+  onAddRest: () => void;
+  /** W2.4 — log the 5 BBB rows then transition to `complete`. */
+  onConfirmBbb: () => Promise<void>;
+  /** W2.4 — skip BBB and transition to `complete` without writing. */
+  onSkipBbb: () => Promise<void>;
+  /** W2.4 — surfaced storage-unit weight for BBB confirm + LOGGED↔NEXT band wiring. */
+  bbbPrescribedWeight: number;
+  /**
+   * W2.5 — request cancel with the count of working+amrap rows already logged.
+   * Branch A (zero working) triggers immediate cancel + `router.replace('/')` at
+   * the screen layer; the hook just exposes the count so the caller can decide.
+   */
+  loggedWorkingCount: number;
+  /** W2.5 — immediate cancel (Branch A). Resolves to `phase === 'complete'`. */
+  onImmediateCancel: () => Promise<void>;
 };
 
 /**
@@ -134,6 +170,26 @@ function defaultFireWarningHaptic() {
   } catch (err) {
     // No-op — haptics are best-effort.
     console.warn('useLiveScreenState: warning haptic unavailable', err);
+  }
+}
+
+function defaultFireSelectionHaptic() {
+  try {
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
+    const Haptics = require('expo-haptics') as any;
+    Haptics.selectionAsync?.();
+  } catch (err) {
+    console.warn('useLiveScreenState: selection haptic unavailable', err);
+  }
+}
+
+function defaultFireImpactHaptic() {
+  try {
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
+    const Haptics = require('expo-haptics') as any;
+    Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle?.Light ?? 'light');
+  } catch (err) {
+    console.warn('useLiveScreenState: impact haptic unavailable', err);
   }
 }
 
@@ -156,6 +212,9 @@ export function useLiveScreenState(
   const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
+  const fireSelectionHaptic = options.fireSelectionHaptic ?? defaultFireSelectionHaptic;
+  const fireImpactHaptic = options.fireImpactHaptic ?? defaultFireImpactHaptic;
+  const bbbPct = options.bbbPct ?? 0.5;
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;
@@ -171,6 +230,10 @@ export function useLiveScreenState(
   const [restRemaining, setRestRemaining] = useState(0);
   const [cancelArmed, setCancelArmed] = useState(false);
   const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
+  // True when the rest currently in progress follows the terminal main-work
+  // set (working set 2 on a deload week, or AMRAP on weeks 1–3). Drives the
+  // BBB fork in `onAdvanceFromRest` (W2.4). Reset on each new rest cycle.
+  const [postTerminalRest, setPostTerminalRest] = useState(false);
   // Bootstrap-once gate: keeps the first non-undefined setLogs read from
   // overwriting subsequent local advances (after we manually setSetIndex on
   // log-and-advance, the query refetches and arrives with one MORE row,
@@ -183,6 +246,10 @@ export function useLiveScreenState(
   // Track whether the warning threshold has already fired in the current rest
   // cycle so we don't double-trigger on re-renders or imprecise tick alignment.
   const warningFiredRef = useRef(false);
+  // Same once-per-cycle gates for the T-10s heads-up haptic and the T-0 light
+  // impact haptic. All three reset together when a new rest cycle starts.
+  const tenSecondFiredRef = useRef(false);
+  const zeroFiredRef = useRef(false);
 
   // Bootstrap setIndex (and possibly phase) from persisted set_logs the
   // first time the query resolves. If every working/AMRAP slot is already
@@ -221,11 +288,13 @@ export function useLiveScreenState(
   const isAmrap = isAmrapSet(week, setIndex);
 
   // Rest-timer driver. Runs only when phase === 'rest'. Lets `remaining`
-  // go negative past T-0 so the count-up label in RestTimer keeps ticking
+  // go negative past T-0 so the count-down label in RestTimer keeps ticking
   // past the configured target — rest is free-form per the PWA reference.
   useEffect(() => {
     if (phase !== 'rest') return;
     warningFiredRef.current = false;
+    tenSecondFiredRef.current = false;
+    zeroFiredRef.current = false;
     setRestRemaining(restSeconds);
     const id = setInterval(() => {
       setRestRemaining((prev) => prev - 1);
@@ -241,13 +310,26 @@ export function useLiveScreenState(
   // and would double-fire the side effect). The T-0 audio cue was removed
   // when expo-av was dropped — Expo Go on SDK 55 no longer ships the
   // ExponentAV native module.
+  //
+  // Three rungs on the haptic ladder (W2.2):
+  //   T-10s  → selection haptic (heads-up).
+  //   T-3s   → warning haptic   (warning).
+  //   T-0s   → light impact     (the moment).
   useEffect(() => {
     if (phase !== 'rest') return;
+    if (restRemaining === TEN_SECOND_THRESHOLD && !tenSecondFiredRef.current) {
+      tenSecondFiredRef.current = true;
+      fireSelectionHaptic();
+    }
     if (restRemaining === WARNING_THRESHOLD && !warningFiredRef.current) {
       warningFiredRef.current = true;
       fireWarningHaptic();
     }
-  }, [phase, restRemaining, fireWarningHaptic]);
+    if (restRemaining === 0 && !zeroFiredRef.current) {
+      zeroFiredRef.current = true;
+      fireImpactHaptic();
+    }
+  }, [phase, restRemaining, fireWarningHaptic, fireSelectionHaptic, fireImpactHaptic]);
 
   const onLogWorkingSet = useCallback(async () => {
     if (!session?.id) return;
@@ -276,16 +358,18 @@ export function useLiveScreenState(
         isAmrap: false,
       });
       // Terminal on the deload week (no AMRAP at index 2); AMRAP weeks
-      // come in through onSaveAmrap.
+      // come in through onSaveAmrap. W2.4: route through `rest` so the
+      // user can hit "Complete session" and we fork into `bbb-confirm`.
       if (loggedIndex === 2) {
-        await completeSession(db, session.id);
-        setPhase('complete');
+        setPostTerminalRest(true);
+        setPhase('rest');
         return;
       }
       // Advance setIndex locally — the query refetch above will eventually
       // confirm the same value, but local advance keeps the transition
       // synchronous and the UI in step with the user's tap.
       setSetIndex((loggedIndex + 1) as WorkingSetIndex);
+      setPostTerminalRest(false);
       setPhase('rest');
     } catch (err) {
       console.error('useLiveScreenState.onLogWorkingSet failed', err);
@@ -325,9 +409,10 @@ export function useLiveScreenState(
           estimated1RM: estimateOneRm(prescribedWeight, reps),
           isAmrap: true,
         });
-        // AMRAP is always terminal — go straight to complete.
-        await completeSession(db, session.id);
-        setPhase('complete');
+        // AMRAP is always terminal. W2.4: route through `rest` so the user
+        // can hit "Complete session" and we fork into `bbb-confirm`.
+        setPostTerminalRest(true);
+        setPhase('rest');
       } catch (err) {
         console.error('useLiveScreenState.onSaveAmrap failed', err);
       }
@@ -373,11 +458,13 @@ export function useLiveScreenState(
           isAmrap: false,
         });
         if (loggedIndex === 2) {
-          await completeSession(db, session.id);
-          setPhase('complete');
+          // W2.4: route through `rest` then bbb-confirm fork.
+          setPostTerminalRest(true);
+          setPhase('rest');
           return;
         }
         setSetIndex((loggedIndex + 1) as WorkingSetIndex);
+        setPostTerminalRest(false);
         setPhase('rest');
       } catch (err) {
         console.error('useLiveScreenState.onLogWorkingSetWithActual failed', err);
@@ -387,6 +474,17 @@ export function useLiveScreenState(
   );
 
   const onAdvanceFromRest = useCallback(() => {
+    // W2.4: when the just-finished rest follows the terminal main-work set
+    // (working idx 2 on deload, or AMRAP on weeks 1–3), fork into the
+    // bbb-confirm phase instead of completing immediately. The bootstrap
+    // self-heal path in the effect above is unchanged — it still routes
+    // straight to `complete` for sessions where every slot is already
+    // filled at mount, since BBB-skipped-by-absence is the intended
+    // interpretation of a force-quit "all main work logged" session.
+    if (postTerminalRest) {
+      setPhase('bbb-confirm');
+      return;
+    }
     // setIndex was already advanced inside onLogWorkingSet (synchronously
     // for UI snappiness). Here we just flip the surface back to 'set' so
     // the user sees the next working set.
@@ -395,7 +493,92 @@ export function useLiveScreenState(
       return;
     }
     setPhase('set');
-  }, [setIndex]);
+  }, [setIndex, postTerminalRest]);
+
+  // W2.2 — skip the rest immediately. Force `restRemaining` to 0 which
+  // triggers the T-0 light-impact haptic via the effect bus and lets the
+  // CTA's breathe pulse start (the screen-layer wrapper watches the same
+  // value). No confirm — skipping is benign.
+  const onSkipRest = useCallback(() => {
+    if (phase !== 'rest') return;
+    setRestRemaining(0);
+  }, [phase]);
+
+  // W2.2 — add 30 seconds to the rest. Capped at REST_CEILING_SECONDS to
+  // prevent runaway timers. Resets `warningFiredRef` / `zeroFiredRef` so a
+  // re-entry through T-3s / T-0 still fires the haptic exactly once.
+  const onAddRest = useCallback(() => {
+    if (phase !== 'rest') return;
+    setRestRemaining((prev) => {
+      const next = prev + 30;
+      if (next > REST_CEILING_SECONDS) {
+        fireWarningHaptic();
+        return prev;
+      }
+      // Pushing the timer past T-3s / T-0 means the next pass should re-fire
+      // those haptics. T-10s is allowed to skip — it's a heads-up, not a
+      // payoff, and re-firing it on every +30s tap would be noisy.
+      if (next > WARNING_THRESHOLD) warningFiredRef.current = false;
+      if (next > 0) zeroFiredRef.current = false;
+      return next;
+    });
+  }, [phase, fireWarningHaptic]);
+
+  // W2.4 — BBB confirm: write 5 BBB rows then transition to complete.
+  // Partial-write failures are logged but the transition still happens (per
+  // spec error-state policy: BBB rows that wrote, wrote; the session still
+  // closes). The 5-row batch invalidates the typed per-session cache key
+  // exactly once at the end.
+  const onConfirmBbb = useCallback(async () => {
+    if (!session?.id) return;
+    const tmStorage = session.trainingMaxSnapshot;
+    const rows = bbbPlanRows(session.id, tmStorage, storageUnit, bbbPct);
+    const settled = await Promise.allSettled(rows.map((row) => appendSetLog(db, row)));
+    const failedIndices = settled
+      .map((r, i) => (r.status === 'rejected' ? (rows[i]?.index ?? -1) : null))
+      .filter((i): i is number => i !== null);
+    if (failedIndices.length > 0) {
+      console.warn(
+        'useLiveScreenState.onConfirmBbb: partial BBB write failed at indices',
+        failedIndices,
+      );
+    }
+    try {
+      await queryClient.invalidateQueries({
+        queryKey: SET_LOGS_FOR_SESSION_KEY(session.id),
+      });
+      await completeSession(db, session.id);
+      setPhase('complete');
+    } catch (err) {
+      console.error('useLiveScreenState.onConfirmBbb post-write failed', err);
+      // Best-effort: still try to transition so the user is not stranded.
+      setPhase('complete');
+    }
+  }, [db, queryClient, session?.id, session?.trainingMaxSnapshot, storageUnit, bbbPct]);
+
+  // W2.4 — skip BBB: no writes, just complete the session.
+  const onSkipBbb = useCallback(async () => {
+    if (!session?.id) return;
+    try {
+      await completeSession(db, session.id);
+      setPhase('complete');
+    } catch (err) {
+      console.error('useLiveScreenState.onSkipBbb failed', err);
+      setPhase('complete');
+    }
+  }, [db, session?.id]);
+
+  // W2.5 — immediate cancel (Branch A: zero working sets logged). No confirm
+  // sheet, no haptic noise. Caller (LiveScreen) does the route-replace.
+  const onImmediateCancel = useCallback(async () => {
+    if (!session?.id) return;
+    try {
+      await cancelSession(db, session.id);
+      setPhase('complete');
+    } catch (err) {
+      console.error('useLiveScreenState.onImmediateCancel failed', err);
+    }
+  }, [db, session?.id]);
 
   const onRequestCancel = useCallback(() => {
     phaseBeforeCancelRef.current = phase;
@@ -425,6 +608,22 @@ export function useLiveScreenState(
     }
   }, [db, session?.id]);
 
+  // W2.4 BBB weight snapped to storage step — used both by the BBB confirm
+  // surface (for the headline copy) and by the rest-phase NEXT band when the
+  // user is on the post-terminal rest (the next "set" is the BBB plan, not
+  // an out-of-range main-work row).
+  const bbbPrescribedWeight = session
+    ? snapWeight(session.trainingMaxSnapshot * bbbPct, storageUnit)
+    : 0;
+
+  // W2.5 — count of working/amrap rows already persisted for this session.
+  // Drives the cancel branching (immediate vs. confirm sheet) at the screen
+  // layer. Reads from the same `setLogsData` the bootstrap effect already
+  // consumes, so no extra query is needed.
+  const loggedWorkingCount = (setLogsData ?? []).filter(
+    (l) => l.kind === 'working' || l.kind === 'amrap',
+  ).length;
+
   return {
     phase,
     setIndex,
@@ -449,5 +648,12 @@ export function useLiveScreenState(
     onConfirmCancelSecondTap,
     onDismissCancelSheet,
     cancelArmed,
+    onSkipRest,
+    onAddRest,
+    onConfirmBbb,
+    onSkipBbb,
+    bbbPrescribedWeight,
+    loggedWorkingCount,
+    onImmediateCancel,
   };
 }

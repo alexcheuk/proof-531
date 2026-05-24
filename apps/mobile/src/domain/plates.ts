@@ -8,7 +8,8 @@
  * This module is part of `src/domain/` — pure. No React, no async, no DB.
  */
 
-import type { PlateSet } from './types';
+import type { PlateSet, Unit } from './types';
+import { displayUnit } from './units';
 
 export const PLATES_LBS = [45, 35, 25, 10, 5, 2.5] as const;
 export const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;
@@ -55,4 +56,34 @@ export function calcPlates(target: number, bar: number, plates: readonly number[
   const leftover = perSideRemaining * 2;
   // Clamp tiny float dust to 0.
   return { perSide, leftover: Math.abs(leftover) < 1e-6 ? 0 : leftover };
+}
+
+/**
+ * Rest-phase "UP NEXT" plate-load instruction line.
+ *
+ * Two branches:
+ *   - `load: {plates} / side over {bar} bar` when stepping up (or first load).
+ *   - `unload to {weight} {unit} — strip the heavy plates` when the next load
+ *     is lighter than `currentLoad` (BBB drop, deload row, etc).
+ *
+ * `perSide` is rendered in the order given (callers pre-sort descending via
+ * `decompose`). The reconstructed "next load" weight is `bar + 2 × Σperside`.
+ *
+ * Pure: no React, no async, no DB.
+ */
+export function plateLoadInstruction(
+  perSide: readonly number[],
+  barWeight: number,
+  currentLoad: number,
+  unit: Unit,
+): string {
+  const sumPerSide = perSide.reduce((a, b) => a + b, 0);
+  const nextLoad = barWeight + sumPerSide * 2;
+  if (currentLoad > nextLoad) {
+    return `unload to ${nextLoad} ${displayUnit(unit)} — strip the heavy plates`;
+  }
+  if (perSide.length === 0) {
+    return `load: bar only — ${barWeight} ${displayUnit(unit)}`;
+  }
+  return `load: ${perSide.join(' + ')} / side over ${barWeight} bar`;
 }

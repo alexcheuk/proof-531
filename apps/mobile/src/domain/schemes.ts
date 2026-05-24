@@ -5,7 +5,22 @@
  * Ported from `~/Development/531-pwa/src/features/session/domain/schemes.ts`.
  */
 
-import type { Week } from './types';
+import type { Lift, Unit, Week } from './types';
+import { round } from './units';
+
+/**
+ * Shape of a row queued for `appendSetLog` — the subset of fields a pure
+ * domain helper can populate. `completedAt`, `isPR`, `estimated1RM`, and the
+ * row id are added by the data layer.
+ */
+export type AppendSetLogInput = {
+  sessionId: number;
+  index: number;
+  kind: SetKind;
+  prescribedWeight: number;
+  prescribedReps: number;
+  actualReps: number;
+};
 
 export type SetKind = 'warmup' | 'working' | 'amrap' | 'bbb' | 'assistance';
 
@@ -100,4 +115,76 @@ export function isAmrapSet(week: Week, setIndex: WorkingSetIndex): boolean {
 /** Boring But Big: 5×10 at `pct` of training max (default 50%). */
 export function bbbSets(pct = 0.5): WorkingSet[] {
   return Array.from({ length: 5 }, () => ({ pct, reps: 10, kind: 'bbb' as const }));
+}
+
+/**
+ * Plan for the session that comes after the one the user just finished.
+ *
+ * Lift order wraps within `enabledLifts`; week wraps from 4 to 1. The `day`
+ * field is the 1-based position of `lift` within the cycle (1..enabledLifts.length).
+ *
+ * If `currentLift` is not in `enabledLifts` (defensive — the user could have
+ * disabled it mid-cycle), `liftPos` falls back to 0 so the next position is
+ * `enabledLifts[1] ?? enabledLifts[0]` without crashing.
+ */
+export function nextSessionPlan(
+  currentLift: Lift,
+  enabledLifts: readonly Lift[],
+  currentWeek: Week,
+): {
+  lift: Lift;
+  week: Week;
+  day: number;
+  topPct: number;
+  topReps: number;
+  amrap: boolean;
+} {
+  if (enabledLifts.length === 0) {
+    throw new RangeError('nextSessionPlan: enabledLifts must be non-empty');
+  }
+  const idx = enabledLifts.indexOf(currentLift);
+  const liftPos = idx < 0 ? 0 : idx;
+  const nextPos = (liftPos + 1) % enabledLifts.length;
+  const wrapWeek = nextPos === 0;
+  const nextWeekRaw = wrapWeek ? currentWeek + 1 : currentWeek;
+  const nextWeek = (nextWeekRaw > 4 ? 1 : nextWeekRaw) as Week;
+  // biome-ignore lint/style/noNonNullAssertion: nextPos in [0, enabledLifts.length)
+  const nextLift = enabledLifts[nextPos]!;
+  const topSet = prescription(nextWeek)[2];
+  if (!topSet) {
+    throw new RangeError(`nextSessionPlan: prescription(${nextWeek}) missing top set`);
+  }
+  return {
+    lift: nextLift,
+    week: nextWeek,
+    day: nextPos + 1,
+    topPct: topSet.pct,
+    topReps: topSet.reps,
+    amrap: topSet.amrap === true,
+  };
+}
+
+/**
+ * Returns 5 `AppendSetLogInput`-shaped rows ready to be written for a BBB
+ * session. Each row uses `kind: 'bbb'`, `index = 100 + i`, `actualReps = 10`,
+ * `prescribedReps = 10`, and `prescribedWeight = round(tmStorage * pct, storageUnit)`.
+ *
+ * Convention-only: `index ≥ 100` keeps BBB rows past working-set indices for
+ * easy filtering. Default pct = 0.5 matches `bbbSets`.
+ */
+export function bbbPlanRows(
+  sessionId: number,
+  tmStorage: number,
+  storageUnit: Unit,
+  pct = 0.5,
+): AppendSetLogInput[] {
+  const weight = round(tmStorage * pct, storageUnit);
+  return Array.from({ length: 5 }, (_unused, i) => ({
+    sessionId,
+    index: 100 + i,
+    kind: 'bbb' as const,
+    prescribedWeight: weight,
+    prescribedReps: 10,
+    actualReps: 10,
+  }));
 }

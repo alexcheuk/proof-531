@@ -346,6 +346,27 @@ describe('LiveScreen', () => {
       fireEvent.press(screen.getByTestId('amrap-save'));
     });
 
+    // W2.4: terminal AMRAP now routes through `rest` so the user can hit
+    // "Complete session" and we fork to the BBB confirm phase. Drain the
+    // rest timer + advance.
+    await waitFor(() => {
+      expect(screen.getByTestId('rest-phase')).toBeTruthy();
+    });
+    act(() => {
+      jest.advanceTimersByTime(90_000);
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+
+    // Now in the BBB confirm phase — skip BBB to finish.
+    await waitFor(() => {
+      expect(screen.getByTestId('cta-bbb-skip')).toBeTruthy();
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-bbb-skip'));
+    });
+
     await waitFor(() => {
       expect(mockCompleteSession).toHaveBeenCalledTimes(1);
     });
@@ -372,6 +393,11 @@ describe('LiveScreen', () => {
   });
 
   it('cancel button is a two-tap pattern: first tap arms + warning haptic, second tap calls cancelSession', async () => {
+    // W2.5 Branch B: with at least one working set already logged, the cancel
+    // pill opens the two-tap confirm sheet (rather than the immediate-cancel
+    // Branch A path).
+    mockSetLogsState.data = [{ kind: 'working', index: 0 }];
+
     const screen = renderScreen(<LiveScreen sessionId={7} />);
 
     // Open the cancel-confirm sheet via the topbar pill.
@@ -395,6 +421,25 @@ describe('LiveScreen', () => {
     });
     // Cancel session is invoked with (db, sessionId).
     expect(mockCancelSession.mock.calls[0]?.[1]).toBe(7);
+  });
+
+  it('W2.5 Branch A: cancel with zero working sets logged calls cancelSession immediately + replaces to /', async () => {
+    mockSetLogsState.data = [];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('session-cancel'));
+    });
+
+    // No sheet, no two-tap. cancelSession is called immediately.
+    await waitFor(() => {
+      expect(mockCancelSession).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
   });
 
   it('opens the AMRAP bottom sheet when the AMRAP CTA is pressed', async () => {
@@ -603,6 +648,220 @@ describe('LiveScreen', () => {
     // The working-set CTA must NOT be rendered (we'd be at set 0 if state
     // had reset).
     expect(screen.queryByTestId('cta-log-working')).toBeNull();
+  });
+
+  it('W2.4: terminal AMRAP set routes through rest → bbb-confirm phase', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    // Walk through to set 2 (AMRAP).
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+    act(() => jest.advanceTimersByTime(90_000));
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+    act(() => jest.advanceTimersByTime(90_000));
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+
+    // Set 2 AMRAP.
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    // W2.4: terminal AMRAP now routes through rest. The CTA reads "Complete
+    // session" (terminal hint), but advancing forks into BBB confirm.
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('bbb-confirm-surface')).toBeTruthy();
+    });
+    expect(screen.getByTestId('cta-bbb-confirm')).toBeTruthy();
+    expect(screen.getByTestId('cta-bbb-skip')).toBeTruthy();
+  });
+
+  it('W2.4: "Logged it" writes 5 BBB rows (kind=bbb, indices 100..104) then completes', async () => {
+    // Set up a session already at set 2 AMRAP done — simulate by walking
+    // through. We mostly care that 5 appendSetLog calls of kind=bbb fire.
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+    await waitFor(() => expect(screen.getByTestId('bbb-confirm-surface')).toBeTruthy());
+
+    mockAppendSetLog.mockClear();
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-bbb-confirm'));
+    });
+
+    await waitFor(() => {
+      expect(mockAppendSetLog).toHaveBeenCalledTimes(5);
+    });
+
+    const bbbCalls = mockAppendSetLog.mock.calls.map((c) => c[1]);
+    const kinds = bbbCalls.map((row) => row.kind);
+    const indices = bbbCalls.map((row) => row.index);
+    expect(kinds).toEqual(['bbb', 'bbb', 'bbb', 'bbb', 'bbb']);
+    expect(indices).toEqual([100, 101, 102, 103, 104]);
+    expect(bbbCalls[0].actualReps).toBe(10);
+    expect(bbbCalls[0].prescribedReps).toBe(10);
+    // 50% × 300 lb TM = 150 lb.
+    expect(bbbCalls[0].prescribedWeight).toBe(150);
+
+    await waitFor(() => {
+      expect(mockCompleteSession).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('W2.4: "Skip BBB" completes without writing any rows', async () => {
+    mockSetLogsState.data = [
+      { kind: 'working', index: 0 },
+      { kind: 'working', index: 1 },
+    ];
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-amrap'));
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('amrap-save'));
+    });
+
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-advance-rest'));
+    });
+    await waitFor(() => expect(screen.getByTestId('bbb-confirm-surface')).toBeTruthy());
+
+    mockAppendSetLog.mockClear();
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-bbb-skip'));
+    });
+
+    await waitFor(() => {
+      expect(mockCompleteSession).toHaveBeenCalledTimes(1);
+    });
+    expect(mockAppendSetLog).not.toHaveBeenCalled();
+  });
+
+  it('W2.2 haptic ladder: T-10s fires selection haptic, T-3s fires warning, T-0 fires light impact', async () => {
+    const mockHapticsActual = require('expo-haptics');
+    const selectionSpy = jest.spyOn(mockHapticsActual, 'selectionAsync');
+    const impactSpy = jest.spyOn(mockHapticsActual, 'impactAsync');
+    selectionSpy.mockClear();
+    impactSpy.mockClear();
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    // T-10s — 80s elapsed.
+    act(() => jest.advanceTimersByTime(80_000));
+    expect(selectionSpy).toHaveBeenCalled();
+
+    // T-3s — another 7s.
+    act(() => jest.advanceTimersByTime(7_000));
+    expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
+
+    // T-0 — another 3s, light impact.
+    act(() => jest.advanceTimersByTime(3_000));
+    expect(impactSpy).toHaveBeenCalledWith('light');
+
+    selectionSpy.mockRestore();
+    impactSpy.mockRestore();
+  });
+
+  it('W2.2: SKIP control forces restRemaining to 0 (fires T-0 haptic, label pins at 0:00)', async () => {
+    const mockHapticsActual = require('expo-haptics');
+    const impactSpy = jest.spyOn(mockHapticsActual, 'impactAsync');
+    impactSpy.mockClear();
+
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('rest-timer-skip'));
+    });
+
+    // The timer label now reads 0:00.
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('0:00');
+    // T-0 haptic fires.
+    expect(impactSpy).toHaveBeenCalledWith('light');
+
+    impactSpy.mockRestore();
+  });
+
+  it('W2.2: +30s control extends the rest by 30 seconds (label reflects new countdown)', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    // Default 90s rest. Advance 30s → label reads 1:00. Hit +30s → 1:30.
+    act(() => jest.advanceTimersByTime(30_000));
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:00');
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('rest-timer-add'));
+    });
+
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:30');
+  });
+
+  it('W2.1 RestPhase LOGGED band shows the just-logged working set (weight × reps)', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase-logged')).toBeTruthy());
+
+    // Week 1 set 0 is 65% × 5 → 300 × 0.65 = 195 (snap 5) → 195. Reps = 5.
+    const val = screen.getByTestId('rest-phase-logged-value');
+    expect(val.props.children).toEqual([195, ' ', 'lb', ' × ', 5]);
+  });
+
+  it('W2.1 RestPhase plate-load instruction renders below NEXT SET', async () => {
+    const screen = renderScreen(<LiveScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('cta-log-working'));
+    });
+    await waitFor(() => expect(screen.getByTestId('rest-phase')).toBeTruthy());
+
+    expect(screen.getByTestId('rest-phase-plate-instruction')).toBeTruthy();
   });
 
   it('resume regression: bootstrap with all 3 logs auto-completes the session', async () => {
