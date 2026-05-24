@@ -13,8 +13,15 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { Text as RNText, ScrollView, type TextStyle, View, type ViewStyle } from 'react-native';
+import { useCallback, useEffect } from 'react';
+import {
+  BackHandler,
+  Text as RNText,
+  ScrollView,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
@@ -66,10 +73,26 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   const v = data.view;
   const handleClose = () => goTo.home(router);
   const handleAdjustTm = () => goTo.settings(router);
-  const handleBackToHistory = () => {
-    if (router.canGoBack()) router.back();
-    else goTo.history(router);
-  };
+  const handleBackToHistory = useCallback(() => {
+    // Always navigate explicitly to /history rather than calling
+    // router.back(). The tabs → session group push doesn't reliably
+    // remember the originating tab — both Android hardware back and
+    // router.back() can land on the home tab (or Today). Pushing the
+    // tab route directly is the only stable path back to history.
+    goTo.history(router);
+  }, [router]);
+
+  // Android system back: when we arrived from history, override the
+  // hardware back so it routes to /history rather than the default
+  // (which can land on the home tab on a cross-group push).
+  useEffect(() => {
+    if (origin !== 'history') return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleBackToHistory();
+      return true;
+    });
+    return () => sub.remove();
+  }, [origin, handleBackToHistory]);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
   const secondaryLinkStyle: TextStyle = {

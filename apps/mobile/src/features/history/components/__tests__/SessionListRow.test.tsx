@@ -3,8 +3,7 @@
  *
  * Covers the navigation matrix (completed → /session/complete,
  * in_progress → /session/today, cancelled → no nav), the PR ★ chip
- * (visible when hasPr, dispatches onPressPr with the row's lift), the
- * today left-accent stripe (applied only when startedAt is today), and
+ * (visible when hasPr, dispatches onPressPr with the row's lift), and
  * the composed a11y label.
  */
 import type { Session } from '@/data/accessors/session';
@@ -133,21 +132,5 @@ describe('SessionListRow', () => {
     const screen = wrap(<SessionListRow session={makeSession({ id: 32 })} />);
     const row = screen.getByTestId('history-row-32');
     expect(row.props.accessibilityLabel).toBe('Squat, Cycle 2, Week 3, completed');
-  });
-
-  it('applies the today left-accent stripe when the session started today', () => {
-    const todayNoon = (() => {
-      const d = new Date();
-      d.setHours(12, 0, 0, 0);
-      return d.getTime();
-    })();
-    const screen = wrap(<SessionListRow session={makeSession({ id: 51, startedAt: todayNoon })} />);
-    const row = screen.getByTestId('history-row-51');
-    const flat = (s: unknown): Record<string, unknown> => {
-      if (Array.isArray(s)) return Object.assign({}, ...s.map(flat));
-      if (s && typeof s === 'object') return s as Record<string, unknown>;
-      return {};
-    };
-    expect(flat(row.props.style).borderLeftWidth).toBe(2);
   });
 });

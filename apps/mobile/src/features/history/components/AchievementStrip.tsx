@@ -28,7 +28,7 @@ export function AchievementStrip({ filed, prs, activity, bestLift }: Achievement
   if (filed === 0) return null;
   return (
     <Card
-      borders="topBottom"
+      borders="bottom"
       style={{ marginHorizontal: 24, marginTop: 4, marginBottom: 4, gap: 14 }}
       py="md"
       testID="history-achievements"

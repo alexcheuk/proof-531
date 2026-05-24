@@ -9,9 +9,12 @@ export type StreakBadgeProps = {
 };
 
 /**
- * Small "🔥 N-day streak" strip rendered between the Masthead and LiftTabs
+ * Small "★ N-DAY STREAK" strip rendered between the Masthead and LiftTabs
  * when the user has a trailing streak of ≥ 3 days. Designed to be a
  * lightweight ambient nudge — not a destination.
+ *
+ * Uses the ★ unicode glyph (typographic, ink-colored) rather than 🔥 —
+ * the e-ink/paper aesthetic precludes color emoji presentation.
  */
 export function StreakBadge({ streak }: StreakBadgeProps) {
   const { spacing } = useTheme();
@@ -25,7 +28,7 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
     <View style={wrap} testID="home-streak-badge">
       <Row gap="xs">
         <CapsLabel size="xs" weight="semibold" color="ink1" style={{ letterSpacing: 1.8 }}>
-          {`🔥 ${streak}-day streak`}
+          {`★ ${streak}-day streak`}
         </CapsLabel>
         <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 1.4 }}>
           · keep it going

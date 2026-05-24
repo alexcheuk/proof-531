@@ -16,6 +16,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
+const mockPush = jest.fn();
 const mockBack = jest.fn();
 const mockNotificationAsync = jest.fn();
 const routerCanGoBack = { value: true };
@@ -23,7 +24,7 @@ const routerCanGoBack = { value: true };
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     replace: mockReplace,
-    push: jest.fn(),
+    push: mockPush,
     back: mockBack,
     canGoBack: () => routerCanGoBack.value,
   }),
@@ -175,6 +176,7 @@ const buildLogs = (opts: { isPR: boolean }) => [
 describe('SessionCompleteScreen', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockPush.mockClear();
     mockBack.mockClear();
     mockNotificationAsync.mockClear();
     routerCanGoBack.value = true;
@@ -292,7 +294,7 @@ describe('SessionCompleteScreen', () => {
       expect(screen.queryByTestId('session-complete-history-link')).toBeNull();
     });
 
-    it('"Back to history" calls router.back() when canGoBack is true', async () => {
+    it('"Back to history" pushes the history tab route directly', async () => {
       setLogsState.rows = buildLogs({ isPR: false });
       const screen = renderScreen(<SessionCompleteScreen sessionId={42} origin="history" />);
 
@@ -304,7 +306,47 @@ describe('SessionCompleteScreen', () => {
         fireEvent.press(screen.getByTestId('session-complete-back-to-history'));
       });
 
-      expect(mockBack).toHaveBeenCalledTimes(1);
+      // router.back() is unreliable across the tabs→session group push.
+      // The CTA pushes the history tab route directly instead.
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledTimes(1);
+      expect(mockPush).toHaveBeenCalledWith('/(tabs)/history');
+    });
+
+    it('hardwareBackPress override routes to history via push, not router.back()', async () => {
+      const RN = jest.requireActual('react-native');
+      const addSpy = jest.spyOn(RN.BackHandler, 'addEventListener');
+      setLogsState.rows = buildLogs({ isPR: false });
+      const screen = renderScreen(<SessionCompleteScreen sessionId={42} origin="history" />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('session-complete-back-to-history')).toBeTruthy();
+      });
+
+      const call = addSpy.mock.calls.find(([event]) => event === 'hardwareBackPress');
+      expect(call).toBeDefined();
+      const handler = call?.[1] as () => boolean;
+      const swallowed = handler();
+      expect(swallowed).toBe(true);
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledWith('/(tabs)/history');
+      addSpy.mockRestore();
+    });
+
+    it('does NOT register the hardwareBackPress override when origin is live', async () => {
+      const RN = jest.requireActual('react-native');
+      const addSpy = jest.spyOn(RN.BackHandler, 'addEventListener');
+      setLogsState.rows = buildLogs({ isPR: false });
+      renderScreen(<SessionCompleteScreen sessionId={42} />);
+
+      await waitFor(() => {
+        // give the effect a chance to (not) run
+        expect(true).toBe(true);
+      });
+
+      const call = addSpy.mock.calls.find(([event]) => event === 'hardwareBackPress');
+      expect(call).toBeUndefined();
+      addSpy.mockRestore();
     });
   });
 });

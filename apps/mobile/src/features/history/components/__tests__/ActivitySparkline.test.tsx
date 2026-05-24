@@ -28,11 +28,11 @@ describe('ActivitySparkline', () => {
     expect(screen.queryByTestId('history-activity-streak')).toBeNull();
   });
 
-  it('renders the 🔥 streak chip when current streak ≥ 2', () => {
+  it('renders the ★ streak chip when current streak ≥ 2', () => {
     // trailing 3 trues → streak 3
     const activity = [false, false, true, true, true];
     const screen = renderStrip(<ActivitySparkline activity={activity} />);
     expect(screen.getByTestId('history-activity-streak')).toBeTruthy();
-    expect(screen.getByText('🔥 3-day streak')).toBeTruthy();
+    expect(screen.getByText('★ 3-day streak')).toBeTruthy();
   });
 });

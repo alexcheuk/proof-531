@@ -17,12 +17,12 @@ describe('StreakBadge', () => {
   it('renders the streak label when streak is exactly 3', () => {
     const screen = renderBadge(<StreakBadge streak={3} />);
     expect(screen.getByTestId('home-streak-badge')).toBeTruthy();
-    expect(screen.getByText('🔥 3-day streak')).toBeTruthy();
+    expect(screen.getByText('★ 3-day streak')).toBeTruthy();
   });
 
   it('renders the "keep it going" tail', () => {
     const screen = renderBadge(<StreakBadge streak={12} />);
-    expect(screen.getByText('🔥 12-day streak')).toBeTruthy();
+    expect(screen.getByText('★ 12-day streak')).toBeTruthy();
     expect(screen.getByText('· keep it going')).toBeTruthy();
   });
 });
