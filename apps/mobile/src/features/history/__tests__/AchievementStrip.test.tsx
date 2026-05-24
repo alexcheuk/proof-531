@@ -55,4 +55,28 @@ describe('AchievementStrip', () => {
     const { getByTestId } = renderStrip(<AchievementStrip filed={2} prs={0} activity={ACTIVITY} />);
     expect(getByTestId('history-activity-sparkline')).toBeTruthy();
   });
+
+  it('shows the longest-streak chip when ≥ 3', () => {
+    const { getByTestId } = renderStrip(
+      <AchievementStrip filed={5} prs={1} activity={ACTIVITY} longestStreak={7} />,
+    );
+    const chip = getByTestId('history-longest-streak');
+    expect(chip).toBeTruthy();
+    expect(chip.props.children).toContain('Best streak');
+    expect(chip.props.children).toContain('7 days');
+  });
+
+  it('hides the longest-streak chip when < 3', () => {
+    const { queryByTestId } = renderStrip(
+      <AchievementStrip filed={5} prs={1} activity={ACTIVITY} longestStreak={2} />,
+    );
+    expect(queryByTestId('history-longest-streak')).toBeNull();
+  });
+
+  it('hides the longest-streak chip when prop is omitted', () => {
+    const { queryByTestId } = renderStrip(
+      <AchievementStrip filed={5} prs={0} activity={ACTIVITY} />,
+    );
+    expect(queryByTestId('history-longest-streak')).toBeNull();
+  });
 });

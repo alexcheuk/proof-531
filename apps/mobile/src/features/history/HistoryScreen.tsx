@@ -24,7 +24,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
 import { computeHistoryStats } from './achievements';
-import { recentActivity } from './activity';
+import { longestStreakDays, recentActivity } from './activity';
 import { pickBestLift } from './bestLift';
 import { AchievementStrip } from './components/AchievementStrip';
 import { CycleSection } from './components/CycleSection';
@@ -67,11 +67,18 @@ export function HistoryScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all([sessions.refetch(), prIdsQuery.refetch()]);
+      // Refetch every source the strip + list read from. Missing prsQuery or
+      // settingsQuery here would leave the best-lift chip stale after a pull.
+      await Promise.all([
+        sessions.refetch(),
+        prIdsQuery.refetch(),
+        prsQuery.refetch(),
+        settingsQuery.refetch(),
+      ]);
     } finally {
       setRefreshing(false);
     }
-  }, [sessions, prIdsQuery]);
+  }, [sessions, prIdsQuery, prsQuery, settingsQuery]);
 
   const containerStyle: ViewStyle = {
     flex: 1,
@@ -86,6 +93,7 @@ export function HistoryScreen() {
   // user explores filters.
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
   const activity = useMemo(() => recentActivity(rows), [rows]);
+  const longestStreak = useMemo(() => longestStreakDays(rows), [rows]);
   const bestLift = useMemo(() => {
     const storageUnit = settingsQuery.data?.storageUnit ?? 'lbs';
     const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
@@ -136,6 +144,7 @@ export function HistoryScreen() {
           prs={stats.prs}
           activity={activity}
           bestLift={bestLift}
+          longestStreak={longestStreak}
         />
         {rows.length > 0 ? (
           <FilterChips

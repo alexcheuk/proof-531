@@ -45,12 +45,20 @@ jest.mock('@/data/queries/useSessionPrIds', () => ({
   }),
 }));
 
+const mockPrsRefetch = jest.fn(() => Promise.resolve({ data: [] }));
 // HistoryScreen now reads usePrs to derive the "best lift" badge — stub
 // with an empty list so the badge stays hidden in existing assertions.
 jest.mock('@/data/queries/usePrs', () => ({
-  usePrs: () => ({ data: [], isLoading: false, isError: false, error: null }),
+  usePrs: () => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: mockPrsRefetch,
+  }),
 }));
 
+const mockSettingsRefetch = jest.fn(() => Promise.resolve({ data: null }));
 jest.mock('@/data/queries/useSettings', () => ({
   useSettings: () => ({
     data: {
@@ -67,7 +75,7 @@ jest.mock('@/data/queries/useSettings', () => ({
     isLoading: false,
     isError: false,
     error: null,
-    refetch: jest.fn(),
+    refetch: mockSettingsRefetch,
   }),
 }));
 
@@ -96,6 +104,8 @@ describe('HistoryScreen', () => {
   beforeEach(() => {
     mockRefetch.mockClear();
     mockPrIdsRefetch.mockClear();
+    mockPrsRefetch.mockClear();
+    mockSettingsRefetch.mockClear();
     mockSessions = [];
     mockPrIds = new Set();
     mockIsLoading = false;
@@ -146,6 +156,10 @@ describe('HistoryScreen', () => {
     });
     expect(mockRefetch).toHaveBeenCalledTimes(1);
     expect(mockPrIdsRefetch).toHaveBeenCalledTimes(1);
+    // Bug fix: pull-to-refresh must also refetch the PRs + settings queries
+    // that feed the best-lift chip — otherwise stale-after-refresh.
+    expect(mockPrsRefetch).toHaveBeenCalledTimes(1);
+    expect(mockSettingsRefetch).toHaveBeenCalledTimes(1);
   });
 
   it('renders the achievement strip with sessions + PRs totals once filed', () => {

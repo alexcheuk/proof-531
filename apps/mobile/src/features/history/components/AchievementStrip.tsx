@@ -16,6 +16,8 @@ export type AchievementStripProps = {
   activity: ReadonlyArray<boolean>;
   /** Heaviest PR; when present, surfaces as "★ Best · Bench 215 lb" chip. */
   bestLift?: BestLift | null;
+  /** Lifetime longest training streak (days). Surfaces when ≥ 3. */
+  longestStreak?: number;
 };
 
 /**
@@ -24,8 +26,15 @@ export type AchievementStripProps = {
  * Renders nothing when the user has no completed sessions yet — the empty
  * state below the strip already speaks to that case.
  */
-export function AchievementStrip({ filed, prs, activity, bestLift }: AchievementStripProps) {
+export function AchievementStrip({
+  filed,
+  prs,
+  activity,
+  bestLift,
+  longestStreak,
+}: AchievementStripProps) {
   if (filed === 0) return null;
+  const showLongest = (longestStreak ?? 0) >= 3;
   return (
     <Card
       borders="bottom"
@@ -44,6 +53,11 @@ export function AchievementStrip({ filed, prs, activity, bestLift }: Achievement
       {bestLift ? (
         <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-best-lift">
           {`★ Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
+        </CapsLabel>
+      ) : null}
+      {showLongest ? (
+        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-longest-streak">
+          {`★ Best streak · ${longestStreak} days`}
         </CapsLabel>
       ) : null}
       <ActivitySparkline activity={activity} />

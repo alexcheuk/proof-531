@@ -57,3 +57,42 @@ export function currentStreak(activity: ReadonlyArray<boolean>): number {
   }
   return streak;
 }
+
+/**
+ * Longest run of consecutive training days across the user's full history.
+ *
+ * Scans every `completed` session's local-day bucket and walks the sorted
+ * day list, counting the longest contiguous run. Returns `0` when the user
+ * has no completed sessions yet.
+ *
+ * Distinct from `currentStreak`, which only inspects a trailing window.
+ * This is the all-time personal best — surfaced in the achievement strip
+ * so the user has a number to chase.
+ */
+export function longestStreakDays(sessions: ReadonlyArray<Session>): number {
+  const dayBuckets = new Set<number>();
+  for (const s of sessions) {
+    if (s.status !== 'completed') continue;
+    const ts = new Date(s.startedAt);
+    ts.setHours(0, 0, 0, 0);
+    dayBuckets.add(ts.getTime());
+  }
+  if (dayBuckets.size === 0) return 0;
+
+  const sortedDays = [...dayBuckets].sort((a, b) => a - b);
+  let longest = 1;
+  let run = 1;
+  for (let i = 1; i < sortedDays.length; i++) {
+    // biome-ignore lint/style/noNonNullAssertion: i is bounded by sortedDays.length
+    const prev = sortedDays[i - 1]!;
+    // biome-ignore lint/style/noNonNullAssertion: i is bounded by sortedDays.length
+    const day = sortedDays[i]!;
+    if (day - prev === DAY_MS) {
+      run += 1;
+      if (run > longest) longest = run;
+    } else {
+      run = 1;
+    }
+  }
+  return longest;
+}
