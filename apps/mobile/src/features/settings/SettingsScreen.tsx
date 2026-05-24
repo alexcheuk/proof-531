@@ -33,7 +33,7 @@ import { TrainingMaxSection } from './sections/TrainingMaxSection';
 import { UnitsSection } from './sections/UnitsSection';
 
 export function SettingsScreen() {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
   const screenData = useSettingsScreenData();
   const { settings, tmsByLift, isLoading, isError, error, refetch } = screenData;
   const dialogs = useSettingsDialogs(settings?.storageUnit ?? 'lbs');
@@ -70,7 +70,7 @@ export function SettingsScreen() {
       <StatusBar style="dark" />
       <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 48 }} testID="settings-scroll">
+      <ScrollView contentContainerStyle={{ paddingBottom: spacing.xxxl }} testID="settings-scroll">
         <TitleBlock eyebrow="The dials" title="Settings." />
 
         <CycleProgressSection settings={settings} />

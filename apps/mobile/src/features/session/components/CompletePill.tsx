@@ -35,6 +35,7 @@ export function CompletePill({ onPress }: CompletePillProps) {
       accessibilityRole="button"
       accessibilityLabel="Complete session"
       onPress={onPress}
+      hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
       style={pillStyle}
     >
       <RNText style={textStyle}>Complete session</RNText>

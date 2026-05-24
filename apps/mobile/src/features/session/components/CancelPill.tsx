@@ -35,6 +35,7 @@ export function CancelPill({ onPress }: CancelPillProps) {
       accessibilityRole="button"
       accessibilityLabel="Cancel session"
       onPress={onPress}
+      hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
       style={pillStyle}
     >
       <RNText style={textStyle}>Cancel</RNText>

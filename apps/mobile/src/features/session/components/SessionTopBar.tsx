@@ -74,6 +74,9 @@ export function SessionTopBar({
         accessibilityRole="button"
         accessibilityLabel={backLabel}
         onPress={onBack}
+        // Expand the 32×32 visual chip to a ~44pt tap target (Apple's
+        // minimum) without changing its visual mass.
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         style={backStyle}
       >
         <RNText style={backGlyphStyle}>{'←'}</RNText>

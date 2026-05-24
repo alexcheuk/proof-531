@@ -112,7 +112,13 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  const showSetSurface = live.phase === 'set' || live.phase === 'amrap-log';
+  // The set surface stays mounted while the cancel-confirm sheet is open
+  // so the working-set UI is visible behind the destructive sheet. Folding
+  // 'cancel-confirm' into the same predicate keeps the render branch
+  // honest if a future phase is added — the existing dual condition was
+  // fragile (update one site, forget the other).
+  const showSetSurface =
+    live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'cancel-confirm';
   const showRestSurface = live.phase === 'rest';
 
   return (
@@ -157,7 +163,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             }}
             testID="rest-phase"
           />
-        ) : showSetSurface || live.phase === 'cancel-confirm' ? (
+        ) : showSetSurface ? (
           <SetPhase
             setIndex={live.setIndex}
             isAmrap={live.isAmrap}

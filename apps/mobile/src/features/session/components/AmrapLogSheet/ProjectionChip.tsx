@@ -18,6 +18,12 @@ export type ProjectionChipProps = {
   reps: number;
   /** True when the predicted 1RM beats the existing PR — shows the PR badge. */
   isPotentialPR: boolean;
+  /**
+   * True when the predicted 1RM ties (but does not beat) the existing PR.
+   * Mutually exclusive with `isPotentialPR` — when both could in principle
+   * be true the strict-PR badge wins, so the chip never double-stamps.
+   */
+  isTiePR?: boolean;
   testID?: string;
 };
 
@@ -37,13 +43,15 @@ export function ProjectionChip({
   deltaFromBest,
   reps,
   isPotentialPR,
+  isTiePR = false,
   testID,
 }: ProjectionChipProps) {
+  const emphasized = isPotentialPR || isTiePR;
   return (
     <Row gap="sm" align="center" {...(testID !== undefined ? { testID } : {})}>
       <CapsLabel
         weight="semibold"
-        color={isPotentialPR ? 'ink0' : 'ink1'}
+        color={emphasized ? 'ink0' : 'ink1'}
         style={{ letterSpacing: 1.4 }}
       >
         {`EST. 1RM ${predictedE1RM} ${displayUnit(unit)}`}
@@ -58,7 +66,11 @@ export function ProjectionChip({
           {`${deltaFromBest >= 0 ? '↑ +' : '↓ '}${Math.abs(deltaFromBest)}`}
         </CapsLabel>
       ) : null}
-      {isPotentialPR ? <MonoBadge testID="amrap-pr-badge">PR</MonoBadge> : null}
+      {isPotentialPR ? (
+        <MonoBadge testID="amrap-pr-badge">PR</MonoBadge>
+      ) : isTiePR ? (
+        <MonoBadge testID="amrap-tie-badge">TIE</MonoBadge>
+      ) : null}
     </Row>
   );
 }

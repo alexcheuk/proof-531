@@ -2,6 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
 import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
+import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { View } from 'react-native';
 import type { BestLift } from '../bestLift';
@@ -58,13 +59,14 @@ export function AchievementStrip({
   trainingSince,
   totalTrainingDays,
 }: AchievementStripProps) {
+  const { layout } = useTheme();
   if (filed === 0) return null;
   const showLongest = (longestStreak ?? 0) >= 3;
   const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
   return (
     <Card
       borders="bottom"
-      style={{ marginHorizontal: 24, marginTop: 4, marginBottom: 4, gap: 14 }}
+      style={{ marginHorizontal: layout.gutter, marginTop: 4, marginBottom: 4, gap: 14 }}
       py="md"
       testID="history-achievements"
     >

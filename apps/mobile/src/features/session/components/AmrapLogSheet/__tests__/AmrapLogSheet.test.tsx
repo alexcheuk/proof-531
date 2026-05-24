@@ -119,6 +119,25 @@ describe('AmrapLogSheet', () => {
     expect(screen.getByTestId('amrap-pr-badge')).toBeTruthy();
   });
 
+  it('surfaces a TIE caption + badge when reps would match (not beat) the existing best', () => {
+    // Epley: 225 × (1 + 5/30) = 262.5 → rounds to 263.
+    // Set existingBestE1RM to 262.5 so the rounded projection equals the
+    // rounded best — should trigger isTiePR.
+    mockState.reps = 5;
+    const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={262.5} />);
+    expect(screen.getByTestId('amrap-tie-badge')).toBeTruthy();
+    expect(screen.getByTestId('amrap-tie-caption')).toBeTruthy();
+    expect(screen.getByText('TIES YOUR BEST · PUSH FOR +1')).toBeTruthy();
+    expect(screen.queryByTestId('amrap-pr-badge')).toBeNull();
+  });
+
+  it('hides the TIE caption when projection beats the best (PR wins)', () => {
+    mockState.reps = 6; // 225 × (1 + 6/30) = 270 > 262.5
+    const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={262.5} />);
+    expect(screen.getByTestId('amrap-pr-badge')).toBeTruthy();
+    expect(screen.queryByTestId('amrap-tie-caption')).toBeNull();
+  });
+
   it('passes a testID through to the Sheet primitive without crashing', () => {
     // The Sheet primitive forwards testID to BottomSheet; our mock collapses
     // BottomSheet to a Fragment that drops props, so we can't assert the

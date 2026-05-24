@@ -62,6 +62,11 @@ export function AmrapLogSheet({
   const predictedE1RM = Math.round(predictedE1RMRaw);
   const existingBest = existingBestE1RM ?? 0;
   const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
+  // Tie: the projection equals the existing best but doesn't beat it.
+  // Rounded comparison so floating-point drift on the Epley calc doesn't
+  // mark an obvious tie as a near-miss. Requires an existing baseline.
+  const isTiePR =
+    !isPotentialPR && reps > 0 && existingBest > 0 && predictedE1RM === Math.round(existingBest);
   // Real-time delta against the user's current PR. Only surfaced when the
   // user has a prior PR (no baseline → no delta to brag about).
   const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
@@ -100,6 +105,7 @@ export function AmrapLogSheet({
             deltaFromBest={deltaFromBest}
             reps={reps}
             isPotentialPR={isPotentialPR}
+            isTiePR={isTiePR}
             testID="amrap-e1rm-caption"
           />
         </Row>
@@ -123,6 +129,15 @@ export function AmrapLogSheet({
             testID="amrap-big-set"
           >
             BIG SET.
+          </CapsLabel>
+        ) : isTiePR ? (
+          <CapsLabel
+            weight="semibold"
+            color="ink1"
+            style={{ marginTop: spacing.sm, letterSpacing: 1.4, textAlign: 'center' }}
+            testID="amrap-tie-caption"
+          >
+            TIES YOUR BEST · PUSH FOR +1
           </CapsLabel>
         ) : null}
 
