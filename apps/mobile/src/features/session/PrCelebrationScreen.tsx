@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { CornerTicks } from './components/PRCertificate/CornerTicks';
 import { PAPER_28 } from './components/PRCertificate/paperTints';
+import { PrCelebrationComparison } from './components/PrCelebration/PrCelebrationComparison';
 import { PrCelebrationCtas } from './components/PrCelebration/PrCelebrationCtas';
 import {
   PrCelebrationHero,
@@ -221,8 +222,9 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     numbersValue = v ? formatWeight(tickValue) : undefined;
   }
 
-  // Comparison row appears only at the very end.
-  const hideComparison = phase !== 'final';
+  // Comparison row is always mounted (to reserve its space in the
+  // centered body layout); it only reveals itself at phase === 'final'.
+  const comparisonVisible = phase === 'final';
 
   // Hero typewriter prop — when not in title phases, render fully.
   const heroTypedChars = phase === 'title-type' ? typedTitleChars : undefined;
@@ -296,16 +298,28 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
             >
               <PrCelebrationNumbers
                 e1RMDisplay={v.e1RMDisplay}
-                prevE1RMDisplay={v.prevE1RMDisplay}
-                e1RMDelta={v.e1RMDelta}
                 unitGlyph={v.unitGlyph}
-                hasComparison={hasComparison}
                 {...(numbersEyebrow !== undefined ? { eyebrowOverride: numbersEyebrow } : {})}
                 {...(numbersValue !== undefined ? { valueOverride: numbersValue } : {})}
-                hideComparison={hideComparison}
                 hideTopBorder
               />
             </Animated.View>
+            {/* Comparison row lives outside the scaled wrapper so the
+             * 1.25× emphasis on the e1RM block doesn't push the
+             * "Previous best · Stronger by" hairline + content off
+             * the right edge. Always mounted to keep the centered body
+             * layout stable across phase changes — its own internal
+             * animation handles the left-to-right reveal at 'final'. */}
+            {hasComparison ? (
+              <Animated.View style={numbersOpacityStyle}>
+                <PrCelebrationComparison
+                  prevE1RMDisplay={v.prevE1RMDisplay}
+                  e1RMDelta={v.e1RMDelta}
+                  unitGlyph={v.unitGlyph}
+                  visible={comparisonVisible}
+                />
+              </Animated.View>
+            ) : null}
           </>
         ) : (
           <PrCelebrationSkeleton />
