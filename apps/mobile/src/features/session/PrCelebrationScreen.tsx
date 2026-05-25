@@ -98,7 +98,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
       </View>
 
       <View style={bodyStyle}>
-        <Animated.View entering={FadeIn.duration(320)}>
+        <Animated.View entering={FadeIn.duration(180)}>
           <RNText
             style={{
               fontFamily: `${type.mono}-Bold`,
@@ -113,7 +113,9 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
           </RNText>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.duration(420).delay(120).springify().damping(18)}>
+        <Animated.View
+          entering={FadeInDown.duration(240).delay(60).springify().damping(12)}
+        >
           <RNText
             style={{
               fontFamily: `${type.display}-Bold`,
@@ -139,13 +141,14 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         {v ? (
           <>
             <Animated.View
-              entering={FadeInDown.duration(420).delay(220).springify().damping(18)}
+              entering={FadeInDown.duration(240).delay(140).springify().damping(12)}
               style={{
                 marginTop: spacing.xl,
                 paddingTop: spacing.lg,
                 borderTopWidth: 1,
                 borderTopColor: PAPER_28,
               }}
+              testID="pr-celebration-numbers"
             >
               <RNText
                 style={{
@@ -188,7 +191,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
             {hasComparison ? (
               <Animated.View
-                entering={FadeInDown.duration(420).delay(360).springify().damping(18)}
+                entering={FadeInDown.duration(240).delay(220).springify().damping(12)}
                 style={{
                   marginTop: spacing.md,
                   paddingTop: spacing.md,
@@ -269,7 +272,32 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
               </Animated.View>
             ) : null}
           </>
-        ) : null}
+        ) : (
+          // Pre-data skeleton so the screen never reads as a blank
+          // headline. The hero number slot stays present (with a paper-tint
+          // placeholder underline) until useSessionCompleteData resolves.
+          <Animated.View
+            entering={FadeIn.duration(180).delay(140)}
+            testID="pr-celebration-skeleton"
+            style={{
+              marginTop: spacing.xl,
+              paddingTop: spacing.lg,
+              borderTopWidth: 1,
+              borderTopColor: PAPER_28,
+              opacity: 0.45,
+            }}
+          >
+            <View
+              style={{
+                height: 12,
+                width: 140,
+                backgroundColor: PAPER_28,
+                marginBottom: 14,
+              }}
+            />
+            <View style={{ height: 56, width: 220, backgroundColor: PAPER_45 }} />
+          </Animated.View>
+        )}
       </View>
 
       <View style={ctaWrap}>

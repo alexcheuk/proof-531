@@ -2,7 +2,8 @@ import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
 import { Text as RNText, View } from 'react-native';
-import { PAPER_28, PAPER_45, PAPER_55 } from './paperTints';
+import { PaperCapsText } from './PaperCapsText';
+import { PAPER_28, PAPER_45 } from './paperTints';
 
 export type ComparisonRowProps = {
   prevE1RM: number;
@@ -28,18 +29,9 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
       }}
     >
       <View>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-SemiBold`,
-            fontSize: 9,
-            letterSpacing: 1.98,
-            textTransform: 'uppercase',
-            color: PAPER_55,
-            marginBottom: 4,
-          }}
-        >
+        <PaperCapsText variant="label" style={{ marginBottom: 4 }}>
           Previous best
-        </RNText>
+        </PaperCapsText>
         <RNText
           style={{
             fontFamily: `${type.display}-Medium`,
@@ -67,18 +59,9 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
         </RNText>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-SemiBold`,
-            fontSize: 9,
-            letterSpacing: 1.98,
-            textTransform: 'uppercase',
-            color: PAPER_55,
-            marginBottom: 4,
-          }}
-        >
+        <PaperCapsText variant="label" style={{ marginBottom: 4 }}>
           Stronger by
-        </RNText>
+        </PaperCapsText>
         <Row align="baseline" gap="xs">
           <RNText
             testID={testID}
@@ -92,17 +75,9 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
           >
             {`+${formatWeight(delta)}`}
           </RNText>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-Bold`,
-              fontSize: 11,
-              letterSpacing: 2.2,
-              textTransform: 'uppercase',
-              color: colors.bg0,
-            }}
-          >
+          <PaperCapsText variant="unit" tone="paper" style={{ fontSize: 11, letterSpacing: 2.2 }}>
             {unit}
-          </RNText>
+          </PaperCapsText>
         </Row>
       </View>
     </Row>

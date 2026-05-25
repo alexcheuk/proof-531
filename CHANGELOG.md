@@ -9,6 +9,34 @@ build N" section covers what landed on `main` between two preview builds.
 
 ## [Unreleased]
 
+### Added
+- **App icon + splash · real 531 wordmark** — copied the canonical PWA mark
+  (`~/Development/531-pwa/public/icons/icon-512.png` + the maskable variant)
+  into `apps/mobile/assets/images/`. Replaces the placeholder Expo "A" icon.
+- **`scripts/sync-pwa-assets.sh`** — one-command sync of the PWA brand
+  assets into the mobile app's images dir. Safe to re-run.
+- **PR Celebration · loading skeleton** — pre-data state now shows a paper-
+  tint placeholder for the eyebrow + hero number instead of a half-empty
+  screen with only the "Stronger." headline.
+
+### Fixed
+- **Sheet vertical-stack CTA gap closed** — `SheetLayout` previously rendered
+  primary + cancel as separate flex children of the body, so the body's
+  `gap` opened a hairline between an outlined cancel and its primary CTA
+  (whose `borderTopWidth: 0` was designed to sit flush against the
+  primary). Wrapped the action pair in a no-gap container.
+
+### Changed
+- **PR Certificate animation snappier** — 220ms with damping(14) +
+  stiffness(220) on the panel; 240ms staged reveals on the celebration
+  screen. Old 420ms damping(18) felt like it was drifting in.
+- **PRCertificate panel · `PaperCapsText` primitive** extracted — every
+  certificate sub-component (`HeroNumberRow`, `ComparisonRow`,
+  `SignOffRow`, the panel eyebrow) was duplicating the same mono-uppercase
+  paper-tint styles. They now share one primitive with `eyebrow / label /
+  unit / caption` variants and `paper / paper-65 / paper-55 / paper-45`
+  tones.
+
 ### Fixed
 - **Sheet backgrounds unified** — `SheetLayout` bodies were painting in
   `colors.bg2` (paper-dim) while `AmrapLogSheet` used `bg0` directly,

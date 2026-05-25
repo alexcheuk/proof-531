@@ -1,9 +1,9 @@
 import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
-import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
-import { Text as RNText, View } from 'react-native';
-import { PAPER_28, PAPER_55 } from './paperTints';
+import { View } from 'react-native';
+import { PaperCapsText } from './PaperCapsText';
+import { PAPER_28 } from './paperTints';
 
 export type HeroNumberRowProps = {
   e1RM: number;
@@ -13,7 +13,6 @@ export type HeroNumberRowProps = {
 
 /** The big new-1RM number + unit + caption. */
 export function HeroNumberRow({ e1RM, unit, testID }: HeroNumberRowProps) {
-  const { colors, type } = useTheme();
   return (
     <Row
       align="baseline"
@@ -24,28 +23,8 @@ export function HeroNumberRow({ e1RM, unit, testID }: HeroNumberRowProps) {
         {formatWeight(e1RM)}
       </Heading>
       <View style={{ gap: 4 }}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 13,
-            letterSpacing: 2.6,
-            textTransform: 'uppercase',
-            color: colors.bg0,
-          }}
-        >
-          {unit}
-        </RNText>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Medium`,
-            fontSize: 9,
-            letterSpacing: 1.62,
-            textTransform: 'uppercase',
-            color: PAPER_55,
-          }}
-        >
-          est. 1rm
-        </RNText>
+        <PaperCapsText variant="unit">{unit}</PaperCapsText>
+        <PaperCapsText variant="caption">est. 1rm</PaperCapsText>
       </View>
     </Row>
   );

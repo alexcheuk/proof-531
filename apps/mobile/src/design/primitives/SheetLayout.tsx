@@ -90,8 +90,14 @@ export function SheetLayout({
         </Heading>
       </View>
       {renderChildren(children)}
-      {primary}
-      {cancel ? <SheetCancel {...cancel} pending={pending} /> : null}
+      {/* Primary + cancel are wrapped in a no-gap container so the outlined
+          cancel (borderTopWidth: 0) sits flush against the bottom of the
+          primary CTA. Otherwise the body's flex `gap` opens a visible
+          hairline between them when the cancel is stacked vertically. */}
+      <View>
+        {primary}
+        {cancel ? <SheetCancel {...cancel} pending={pending} /> : null}
+      </View>
     </Fragment>
   );
 

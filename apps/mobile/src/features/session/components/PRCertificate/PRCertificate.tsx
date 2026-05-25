@@ -17,8 +17,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ComparisonRow } from './ComparisonRow';
 import { CornerTicks } from './CornerTicks';
 import { HeroNumberRow } from './HeroNumberRow';
+import { PaperCapsText } from './PaperCapsText';
 import { SignOffRow } from './SignOffRow';
-import { PAPER_65 } from './paperTints';
 
 export type PRCertificateProps = {
   /** New estimated 1RM (rounded int). */
@@ -55,7 +55,9 @@ export function PRCertificate({
 
   return (
     <Animated.View
-      entering={FadeInDown.duration(420).springify().damping(18)}
+      // Snappier reveal — 220ms with a tighter spring lands faster and hits
+      // harder than the previous 420ms damping(18) "drift in" feel.
+      entering={FadeInDown.duration(220).springify().damping(14)}
       testID={testID}
       style={panelStyle}
       accessibilityRole="summary"
@@ -73,17 +75,7 @@ export function PRCertificate({
           paddingRight: 16,
         }}
       >
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 10,
-            letterSpacing: 2.8,
-            textTransform: 'uppercase',
-            color: PAPER_65,
-          }}
-        >
-          {'★  A new record  ★'}
-        </RNText>
+        <PaperCapsText variant="eyebrow">{'★  A new record  ★'}</PaperCapsText>
       </View>
 
       {/* Hero — Stronger. */}
