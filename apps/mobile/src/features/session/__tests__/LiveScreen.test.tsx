@@ -399,30 +399,14 @@ describe('LiveScreen', () => {
     });
   });
 
-  it('cancel button is a two-tap pattern: first tap arms + warning haptic, second tap calls cancelSession', async () => {
+  it('does not render the session-cancel pill on the Live screen (cancel moved to Today, loop-004)', async () => {
     const screen = renderScreen(<LiveScreen sessionId={7} />);
-
-    // Open the cancel-confirm sheet via the topbar pill.
-    await act(async () => {
-      fireEvent.press(screen.getByTestId('session-cancel'));
-    });
-
-    // First tap on the destructive confirm — fires warning haptic, arms state.
-    await act(async () => {
-      fireEvent.press(screen.getByTestId('cancel-confirm-destructive'));
-    });
-    expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
-    expect(mockCancelSession).not.toHaveBeenCalled();
-
-    // Second tap — actually cancel.
-    await act(async () => {
-      fireEvent.press(screen.getByTestId('cancel-confirm-destructive'));
-    });
-    await waitFor(() => {
-      expect(mockCancelSession).toHaveBeenCalledTimes(1);
-    });
-    // Cancel session is invoked with (db, sessionId).
-    expect(mockCancelSession.mock.calls[0]?.[1]).toBe(7);
+    // Discord 1508386540 moved Cancel + Restart pills off the Live
+    // screen onto Today. Live now surfaces only the contextual recovery
+    // action (Undo during rest). The two-tap cancel flow is covered by
+    // the TodayScreen test instead.
+    expect(screen.queryByTestId('session-cancel')).toBeNull();
+    expect(screen.queryByTestId('session-reset')).toBeNull();
   });
 
   it('opens the AMRAP bottom sheet when the AMRAP CTA is pressed', async () => {

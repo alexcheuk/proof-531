@@ -13,7 +13,7 @@ import { useTheme } from '@/design/theme';
  * trusts its props.
  */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { Easing, FadeInDown } from 'react-native-reanimated';
 import { ComparisonRow } from './ComparisonRow';
 import { CornerTicks } from './CornerTicks';
 import { HeroNumberRow } from './HeroNumberRow';
@@ -55,9 +55,12 @@ export function PRCertificate({
 
   return (
     <Animated.View
-      // Snappier reveal — 220ms with a tighter spring lands faster and hits
-      // harder than the previous 420ms damping(18) "drift in" feel.
-      entering={FadeInDown.duration(220).springify().damping(14)}
+      // Impact entrance — slides in fast, lands on a hard cubic-out, no
+      // spring bounce. Mirrors the PR celebration screen's no-bounce
+      // pacing (Discord 1508386070: "impact instead of bouncy"). Earlier
+      // springify(14) still drifted past the resting position before
+      // settling, which read as a wobble on the receipt panel.
+      entering={FadeInDown.duration(180).easing(Easing.out(Easing.cubic))}
       testID={testID}
       style={panelStyle}
       accessibilityRole="summary"

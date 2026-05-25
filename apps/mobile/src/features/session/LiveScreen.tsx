@@ -14,9 +14,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
-import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { LiveCtaButton } from './components/LiveCtaButton';
-import { ResetConfirmSheet } from './components/ResetConfirmSheet';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
@@ -107,16 +105,11 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // The set surface stays mounted while the cancel-confirm sheet is open
-  // so the working-set UI is visible behind the destructive sheet. Folding
-  // 'cancel-confirm' into the same predicate keeps the render branch
-  // honest if a future phase is added — the existing dual condition was
-  // fragile (update one site, forget the other).
-  const showSetSurface =
-    live.phase === 'set' ||
-    live.phase === 'amrap-log' ||
-    live.phase === 'cancel-confirm' ||
-    live.phase === 'reset-confirm';
+  // Set surface is visible during 'set' and 'amrap-log'. Cancel/reset
+  // confirm phases are no longer reachable from this screen (loop-004)
+  // — predicate is intentionally narrow now; the state-machine values
+  // remain for tests + a potential future re-introduction.
+  const showSetSurface = live.phase === 'set' || live.phase === 'amrap-log';
   const showRestSurface = live.phase === 'rest';
 
   return (
@@ -125,21 +118,16 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <SessionTopBar
         onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
-        // Two distinct contexts, two distinct top-bar treatments:
-        //   - Set phase  → Cancel + Restart (you're mid-effort; you can
-        //                  bail or wipe the slate).
-        //   - Rest phase → Undo only (you've finished a set; the obvious
-        //                  recovery is rolling back, not bailing).
-        // Cancel/Restart are intentionally suppressed during rest so the
-        // top bar isn't a wall of destructive actions while the user is
-        // staring at the rest timer.
-        {...(live.phase === 'set'
-          ? { rightAction: { kind: 'cancel', onPress: live.onRequestCancel } as const }
-          : {})}
+        // Discord 1508386540: Cancel + Restart moved off the Live screen
+        // entirely — they now live on the Today screen's top bar when a
+        // session is in progress. The Live screen surfaces only the
+        // contextual recovery action: Undo last set during rest.
+        // Mid-effort destructive controls were noisy here and easy to
+        // mis-tap; sending the user back to Today to abort keeps the
+        // commit gesture distinct from the set-in-progress UI.
         {...(live.phase === 'rest' && live.lastLogged && !live.lastLogged.isAmrap
           ? { onUndo: live.onUndoLastSet }
           : {})}
-        {...(live.phase === 'set' ? { onReset: live.onRequestReset } : {})}
       />
       <ScrollView
         testID="live-scroll"
@@ -217,23 +205,12 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         testID="amrap-sheet"
       />
 
-      <CancelConfirmSheet
-        open={live.phase === 'cancel-confirm'}
-        armed={live.cancelArmed}
-        onConfirmFirstTap={live.onConfirmCancelFirstTap}
-        onConfirmSecondTap={live.onConfirmCancelSecondTap}
-        onDismiss={live.onDismissCancelSheet}
-        testID="cancel-confirm-sheet"
-      />
-
-      <ResetConfirmSheet
-        open={live.phase === 'reset-confirm'}
-        armed={live.resetArmed}
-        onConfirmFirstTap={live.onConfirmResetFirstTap}
-        onConfirmSecondTap={live.onConfirmResetSecondTap}
-        onDismiss={live.onDismissResetSheet}
-        testID="reset-confirm-sheet"
-      />
+      {/* Cancel/Restart sheets moved to TodayScreen (loop-004, Discord
+          1508386540). The underlying state-machine phases
+          ('cancel-confirm', 'reset-confirm') and handlers remain in
+          useLiveScreenState — currently unreachable from this screen
+          but kept around as a tested unit so a future re-introduction
+          (e.g. a long-press shortcut) doesn't need to re-derive them. */}
     </SessionLayout>
   );
 }

@@ -21,12 +21,15 @@ import type { Lift } from '@/domain/types';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, type ViewStyle } from 'react-native';
+import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { NoTrainingMaxState } from './components/NoTrainingMaxState';
+import { ResetConfirmSheet } from './components/ResetConfirmSheet';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { TodayBody } from './components/TodayBody';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useTodayScreenState } from './hooks/useTodayScreenState';
+import { useTodaySessionActions } from './hooks/useTodaySessionActions';
 
 export function TodayScreen({ lift }: { lift: Lift }) {
   const router = useRouter();
@@ -34,6 +37,11 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const tm = useLatestTm(lift);
   const state = useTodayScreenState(lift);
   const { colors } = useTheme();
+  // Cancel + Restart now live on the Today top bar when this lift has
+  // an active session (Discord 1508386540). Hook is mounted
+  // unconditionally so its state survives re-renders; controls only
+  // surface when state.mode === 'active'.
+  const sessionActions = useTodaySessionActions(state.sessionId);
 
   // Match the visible back chip — always return to Home, never the tab the
   // user originated from. Stack-default back lands on whichever tab pushed
@@ -84,10 +92,18 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           : `Resume · set ${state.completedCount + 1} of 3`;
   const ctaGlyph = state.mode === 'active' && state.completedCount > 0 ? '↩' : '→';
 
+  const isActive = state.mode === 'active';
+
   return (
     <SessionLayout>
       <StatusBar style="dark" />
-      <SessionTopBar onBack={() => goTo.home(router)} />
+      <SessionTopBar
+        onBack={() => goTo.home(router)}
+        {...(isActive
+          ? { rightAction: { kind: 'cancel', onPress: sessionActions.onRequestCancel } as const }
+          : {})}
+        {...(isActive ? { onReset: sessionActions.onRequestReset } : {})}
+      />
       <ScrollView
         style={scrollStyle}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -116,6 +132,23 @@ export function TodayScreen({ lift }: { lift: Lift }) {
           {ctaLabel}
         </PrimaryPillButton>
       </CtaBar>
+
+      <CancelConfirmSheet
+        open={sessionActions.cancelOpen}
+        armed={sessionActions.cancelArmed}
+        onConfirmFirstTap={sessionActions.onConfirmCancelFirstTap}
+        onConfirmSecondTap={sessionActions.onConfirmCancelSecondTap}
+        onDismiss={sessionActions.onDismissCancelSheet}
+        testID="today-cancel-confirm-sheet"
+      />
+      <ResetConfirmSheet
+        open={sessionActions.resetOpen}
+        armed={sessionActions.resetArmed}
+        onConfirmFirstTap={sessionActions.onConfirmResetFirstTap}
+        onConfirmSecondTap={sessionActions.onConfirmResetSecondTap}
+        onDismiss={sessionActions.onDismissResetSheet}
+        testID="today-reset-confirm-sheet"
+      />
     </SessionLayout>
   );
 }

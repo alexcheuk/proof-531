@@ -60,6 +60,30 @@ jobs:
       - name: Jest
         run: pnpm test
 
+  web:
+    name: Astro web build
+    runs-on: ubuntu-latest
+    needs: static
+    # Vercel auto-builds on push to main, but that runs AFTER merge — a
+    # broken frontmatter / MDX file would land in production before the
+    # PR review notices. This step catches it at PR time.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Astro build
+        run: pnpm build:web
+
   bundle:
     name: Metro bundle check
     runs-on: ubuntu-latest

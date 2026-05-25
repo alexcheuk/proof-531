@@ -9,13 +9,32 @@ import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
-// Reanimated's FadeInDown entrance — stub for jest.
+// Reanimated stub — return a chainable no-op so any combination of
+// `.duration().easing().delay().springify().damping()` resolves cleanly.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
+  const chain = () => {
+    const obj = {
+      duration: () => obj,
+      delay: () => obj,
+      springify: () => obj,
+      damping: () => obj,
+      easing: () => obj,
+    };
+    return obj;
+  };
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text },
-    FadeInDown: { duration: () => ({ springify: () => ({ damping: () => ({}) }) }) },
+    FadeIn: chain(),
+    FadeInDown: chain(),
+    ZoomIn: chain(),
+    Easing: {
+      out: () => () => 0,
+      inOut: () => () => 0,
+      ease: () => 0,
+      cubic: () => 0,
+    },
   };
 });
 

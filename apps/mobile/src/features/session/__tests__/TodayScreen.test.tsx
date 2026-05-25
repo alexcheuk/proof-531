@@ -94,6 +94,23 @@ jest.mock('@/data/queries/useSessions', () => ({
   SESSIONS_KEY: ['sessions'],
 }));
 
+// TodayScreen renders Cancel/Restart sheets when a session is active
+// (loop-004). The gorhom BottomSheet bridges to Reanimated worklets,
+// so stub it inline as a fragment + render the children unconditionally
+// (Sheet primitive drives open/close imperatively; visibility in test
+// land is the children, not the snap point).
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: ({ children }: { children?: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+    BottomSheetBackdrop: () => null,
+    BottomSheetView: ({ children }: { children?: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+  };
+});
+
 // Import after mocks so the module graph picks up the mocked deps.
 import { TodayScreen } from '../TodayScreen';
 

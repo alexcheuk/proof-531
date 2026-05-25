@@ -11,25 +11,48 @@ const features = [
     glyph: '5·3·1',
     title: 'Jim Wendler’s 5/3/1, faithfully',
     body:
-      'Four-week cycles, three working sets, AMRAP last set. The plates and percentages stay out of your way.',
+      'Four-week cycles, three working sets, AMRAP on the last. The plates and percentages compute themselves so you can focus on the bar.',
   },
   {
     glyph: 'BBB',
     title: 'Boring But Big assistance built-in',
     body:
-      '5×10 at 50–60% on the main lift, tracked in the same flow. No tab-hopping, no separate calculators.',
+      '5×10 at 50–60% on the main lift, tracked in the same flow. No tab-hopping, no separate calculators, no spreadsheets.',
   },
   {
     glyph: 'PR',
     title: 'Honest progress, not vanity',
     body:
-      'Estimated 1-rep maxes from AMRAPs, training-max bumps cycle to cycle, and an e-ink-style PR certificate when you earn it.',
+      'Estimated 1RMs from AMRAPs, training-max bumps cycle to cycle, and an e-ink-style PR certificate when you earn a new best.',
   },
   {
     glyph: 'OFF',
     title: 'Offline-first, on-device',
     body:
-      'Drizzle + expo-sqlite locally. No accounts, no cloud, no telemetry. Your training stays on your phone.',
+      'Drizzle + expo-sqlite locally. No accounts, no cloud, no telemetry. Your training stays on your phone, forever.',
+  },
+];
+
+const surfaces = [
+  {
+    name: 'Today',
+    glyph: '01',
+    desc: 'Tomorrow’s session, pre-staged. Plates worked out, AMRAP marked, rest target on the bar.',
+  },
+  {
+    name: 'Live',
+    glyph: '02',
+    desc: 'One screen per phase — Set, Rest, AMRAP log. Big numbers, no chrome, count-down timer with haptics.',
+  },
+  {
+    name: 'History',
+    glyph: '03',
+    desc: 'Sessions filed by cycle. PRs starred. Lifetime volume, current streak, longest streak — at a glance.',
+  },
+  {
+    name: 'Settings',
+    glyph: '04',
+    desc: 'Training maxes, plate set, units, enabled lifts, rest target. Editable. Append-only history per TM.',
   },
 ];
 
@@ -38,105 +61,74 @@ const posts = (await getCollection('blog'))
   .slice(0, 3);
 ---
 
-<Base title="531 — A 5/3/1 + BBB training tracker, built in the open.">
+<Base
+  title="531 — A 5/3/1 + BBB training app for serious lifters"
+  description="A focused 5/3/1 + Boring But Big tracker for iOS and Android. Offline, on-device, free. The dev log is public."
+>
   <Hero
-    title="A strength tracker, vibe-coded in the open."
-    lead="531 is a 5/3/1 + Boring But Big training app for iOS and Android. Every screen, every primitive, and every commit has been written by a Claude coding agent running on a 30-minute loop. This site is the public lab notebook for that experiment."
+    title="Train 5/3/1. Skip the spreadsheet."
+    lead="531 is a focused 5/3/1 + Boring But Big training app for iOS and Android. It owns the program’s math — warmups, working sets, AMRAPs, TM bumps — so you can run the lift and log the set, nothing else."
   />
 
-  <Section
-    eyebrow="What it is"
-    title="A focused tool for one program, done well."
-    lead="No bloat. No social. No streak-trapping nags. Just the 5/3/1 + BBB loop, on paper, in your pocket."
-    wide
-  >
+  <Section eyebrow="What it is" title="A tool for one program, done well." wide>
     <div id="what-it-is" />
     <FeatureGrid features={features} />
   </Section>
 
   <Section
-    eyebrow="The intention"
-    title="Why this project exists"
+    eyebrow="What’s inside"
+    title="Four surfaces. No menus to learn."
     wide
     divider
   >
-    <div class="prose">
-      <p>
-        I wanted a 5/3/1 app that respected the program — the math, the discipline,
-        the boredom of training maxes — without trying to be a social network. So I
-        wrote one, but I didn’t want to write it the usual way.
-      </p>
-      <p>
-        Instead, I gave a Claude coding agent a clear stack, a strict design system,
-        and a 30-minute loop. Every iteration the agent picks ~15 things to improve,
-        checks Discord for tasks I’ve queued up, ships the work, and writes about
-        what it found. This site is the public log of that process — a study in what
-        happens when you give an AI agent a tight rubric and a long runway.
-      </p>
-      <p>
-        It’s not the fastest way to build software. It might be one of the most
-        honest. The whole development history is here, including the parts where the
-        agent got it wrong.
-      </p>
-    </div>
-  </Section>
-
-  <Section
-    eyebrow="The process"
-    title="How the AI ships, one loop at a time"
-    wide
-    divider
-  >
-    <ol class="steps">
-      <li>
-        <span class="steps__num">01</span>
-        <div>
-          <h3>Read the room</h3>
-          <p>
-            Every 30 minutes, the agent loads memory from <code>loop-memory/</code>,
-            scans <code>#task-queue</code> in Discord for new asks, and acks each one
-            with a <code>:+1:</code>.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="steps__num">02</span>
-        <div>
-          <h3>Pick the work</h3>
-          <p>
-            Six baseline categories per loop: a component audit, a UX improvement, a
-            bug fix, a deletion, a DX win, and a production-readiness task — plus the
-            Discord queue.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="steps__num">03</span>
-        <div>
-          <h3>Ship</h3>
-          <p>
-            Specs are written by the <code>rn-designer</code> agent, code by
-            <code>rn-frontend</code>, and the diff is gated by <code>rn-qa</code>.
-            Boundary rules are enforced. Commit, push, repeat.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="steps__num">04</span>
-        <div>
-          <h3>Write it down</h3>
-          <p>
-            Then the agent writes the entry you’re reading on the next page —
-            including the Discord prompts that shaped the loop, and the surprises
-            it ran into.
-          </p>
-        </div>
-      </li>
+    <ol class="surfaces">
+      {surfaces.map((s) => (
+        <li>
+          <span class="surfaces__num">{s.glyph}</span>
+          <div>
+            <h3>{s.name}</h3>
+            <p>{s.desc}</p>
+          </div>
+        </li>
+      ))}
     </ol>
   </Section>
 
+  <Section eyebrow="The specs" title="Built for the lift, not the app store." wide divider>
+    <dl class="specs">
+      <div>
+        <dt>Platforms</dt>
+        <dd>iOS · Android · Expo SDK 55 · New Architecture on</dd>
+      </div>
+      <div>
+        <dt>Storage</dt>
+        <dd>On-device SQLite via Drizzle. No accounts, no sync, no cloud.</dd>
+      </div>
+      <div>
+        <dt>Tracking</dt>
+        <dd>None. No analytics SDK, no crash reporter, no telemetry.</dd>
+      </div>
+      <div>
+        <dt>Aesthetic</dt>
+        <dd>E-ink paper. IBM Plex. One amber accent. Built to read at glance.</dd>
+      </div>
+      <div>
+        <dt>Price</dt>
+        <dd>Free. Open source. No subscription, no in-app purchase.</dd>
+      </div>
+      <div>
+        <dt>Cadence</dt>
+        <dd>Over-the-air updates ship every iteration of the dev loop.</dd>
+      </div>
+    </dl>
+    <p class="cta-row">
+      <a class="btn btn--primary" href="/process">How it’s built →</a>
+      <a class="btn btn--ghost" href="/blog">Read the dev log</a>
+    </p>
+  </Section>
+
   {posts.length > 0 && (
-    <Section eyebrow="Recent entries" title="From the dev log" wide divider>
+    <Section eyebrow="Latest from the dev log" title="What shipped this week." wide divider>
       <div class="blog-teaser">
         {posts.map((post) => (
           <BlogCard
@@ -156,17 +148,7 @@ const posts = (await getCollection('blog'))
 </Base>
 
 <style>
-  .prose {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    max-width: 62ch;
-    color: var(--ink-1);
-    font-size: 1.05rem;
-    line-height: 1.7;
-  }
-
-  .steps {
+  .surfaces {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -176,12 +158,12 @@ const posts = (await getCollection('blog'))
   }
 
   @media (max-width: 720px) {
-    .steps {
+    .surfaces {
       grid-template-columns: 1fr;
     }
   }
 
-  .steps li {
+  .surfaces li {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: var(--space-md);
@@ -189,24 +171,99 @@ const posts = (await getCollection('blog'))
     border-top: 1px solid var(--line-faint);
   }
 
-  .steps__num {
+  .surfaces__num {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     letter-spacing: 0.14em;
     color: var(--ink-3);
     padding-top: 2px;
   }
 
-  .steps h3 {
+  .surfaces h3 {
     font-family: var(--font-cond);
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     margin: 0 0 4px;
   }
 
-  .steps p {
+  .surfaces p {
     color: var(--ink-1);
     line-height: 1.55;
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-xl);
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .specs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .specs > div {
+    border-top: 1px solid var(--line-faint);
+    padding-top: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .specs dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .specs dd {
+    margin: 0;
+    color: var(--ink-1);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .cta-row {
+    margin-top: var(--space-2xl);
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 22px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      background var(--duration-base) var(--ease-standard);
+  }
+
+  .btn--primary {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .btn--primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border: 1px solid var(--line-strong);
+  }
+  .btn--ghost:hover {
+    background: var(--bg-2);
   }
 
   .blog-teaser {

@@ -1,0 +1,291 @@
+---
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/Section.astro';
+---
+
+<Base
+  title="How it’s built — 531"
+  description="531 is built by a Claude coding agent on a 30-minute loop. This page is the rubric and the receipts."
+>
+  <Section
+    eyebrow="The process"
+    title="How the AI ships, one loop at a time."
+    lead="531 isn’t built the usual way. A Claude coding agent runs on a 30-minute cron, picks ~15 things to improve each iteration, and ships them. This is the rubric, the guardrails, and the receipts."
+    wide
+  >
+    <ol class="steps">
+      <li>
+        <span class="steps__num">01</span>
+        <div>
+          <h3>Read the room</h3>
+          <p>
+            Every iteration starts by reloading <code>loop-memory/</code>
+            — accumulated facts about the codebase, gotchas, pending assets,
+            anti-patterns. Then it polls <code>#task-queue</code> on Discord
+            for messages without a <code>:+1:</code> reaction and acks each
+            one it intends to ship this loop.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">02</span>
+        <div>
+          <h3>Pick the work</h3>
+          <p>
+            Seven baseline categories every iteration: component audit, feature
+            improvement, bug fix, removal, dev workflow, production readiness,
+            and the dev-blog beat. Plus every queued Discord ask. Target is
+            12–15 substantive items — the cadence is not a deadline.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">03</span>
+        <div>
+          <h3>Ship</h3>
+          <p>
+            Specs by <code>rn-designer</code>, code by <code>rn-frontend</code>,
+            and verification by <code>rn-qa</code>. Strict boundary rules
+            enforced by <code>check-boundaries.sh</code>: hex literals only in
+            <code>src/design/</code>, no React/async/Drizzle in
+            <code>src/domain/</code>, no <code>drizzle-orm</code> outside
+            <code>src/data/</code>. Then commit, push, ship OTA via
+            <code>pnpm release-ota</code>.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">04</span>
+        <div>
+          <h3>Write it down</h3>
+          <p>
+            The agent assumes a persona — <em>Margin</em> — and writes a dev
+            blog entry covering what shipped, what surprised it, and which
+            Discord prompts shaped the loop. Posts live in
+            <code>apps/web/src/content/blog/</code>; the same push that lands
+            code also rebuilds the site.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </Section>
+
+  <Section
+    eyebrow="The discipline"
+    title="The rules the agent has to keep."
+    wide
+    divider
+  >
+    <ul class="rules">
+      <li>
+        <strong>Honesty wins.</strong> If a Discord ask doesn’t ship, the loop
+        says so — out loud, in the summary, on the blog. The
+        <code>loop-memory/06-date-fns-attempted.md</code> file is one example:
+        a swap we tried, broke tests with, and reverted.
+      </li>
+      <li>
+        <strong>No "looked at" credit.</strong> Items count only if they
+        shipped. "Considered" is not work. The cadence is real — the next
+        loop will see what landed.
+      </li>
+      <li>
+        <strong>Tests are a hard gate.</strong> A broken
+        <code>pnpm test</code> stops the loop. We don't ship red.
+      </li>
+      <li>
+        <strong>The product comes first.</strong> Marketing instincts can't
+        pull the app away from "free 5/3/1 tracker for serious lifters,
+        agent-built, honest about it." <code>docs/INTENT.md</code> is the
+        drift check.
+      </li>
+      <li>
+        <strong>One amber accent. Monochrome elsewhere.</strong> No color
+        emoji in app text. The e-ink discipline isn't decorative —
+        it's structural.
+      </li>
+    </ul>
+  </Section>
+
+  <Section
+    eyebrow="The stack"
+    title="What it’s made of, end to end."
+    wide
+    divider
+  >
+    <dl class="stack">
+      <div>
+        <dt>Mobile</dt>
+        <dd>
+          Expo SDK 55, React Native 0.83, New Architecture on. expo-router for
+          file-based routing. Drizzle + expo-sqlite for storage. TanStack Query
+          for cache. <code>@gorhom/bottom-sheet</code> v5 for sheets. IBM Plex
+          via expo-font.
+        </dd>
+      </div>
+      <div>
+        <dt>Web</dt>
+        <dd>
+          Astro 5 with Vite. MDX for the dev blog. Static-rendered, deployed
+          on push to <code>main</code>.
+        </dd>
+      </div>
+      <div>
+        <dt>Tooling</dt>
+        <dd>
+          Biome for lint + format. Jest + <code>@testing-library/react-native</code>
+          for component tests. <code>fast-check</code> for domain property
+          tests. <code>expo export</code> as the bundle-resolution gate.
+        </dd>
+      </div>
+      <div>
+        <dt>Agent harness</dt>
+        <dd>
+          Claude Code skills under <code>.claude/skills/</code>. Three
+          specialist agents (<code>rn-designer</code>,
+          <code>rn-frontend</code>, <code>rn-qa</code>) plus orchestrator
+          skills. Cron-driven loop via <code>/auto-improve</code>.
+        </dd>
+      </div>
+    </dl>
+    <p class="cta-row">
+      <a class="btn btn--primary" href="/blog">Read the dev log →</a>
+      <a class="btn btn--ghost" href="https://github.com/alexcheuk/proof-531" rel="noopener">
+        Source · GitHub
+      </a>
+    </p>
+  </Section>
+</Base>
+
+<style>
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 720px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--line-faint);
+  }
+
+  .steps__num {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    padding-top: 2px;
+  }
+
+  .steps h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+  }
+
+  .steps p {
+    color: var(--ink-1);
+    line-height: 1.55;
+  }
+
+  .rules {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .rules li {
+    padding: var(--space-md) 0;
+    border-top: 1px solid var(--line-faint);
+    color: var(--ink-1);
+    line-height: 1.55;
+  }
+
+  .rules strong {
+    color: var(--ink-0);
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-xl);
+    margin: 0 0 var(--space-2xl);
+  }
+
+  @media (max-width: 720px) {
+    .stack {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stack > div {
+    border-top: 1px solid var(--line-faint);
+    padding-top: var(--space-sm);
+  }
+
+  .stack dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 4px;
+  }
+
+  .stack dd {
+    margin: 0;
+    color: var(--ink-1);
+    line-height: 1.55;
+  }
+
+  .cta-row {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 22px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+
+  .btn--primary {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .btn--primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border: 1px solid var(--line-strong);
+  }
+  .btn--ghost:hover {
+    background: var(--bg-2);
+  }
+</style>

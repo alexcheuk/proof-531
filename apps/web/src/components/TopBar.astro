@@ -11,7 +11,8 @@ const isActive = (href: string) =>
       <span class="topbar__sub">/ strength</span>
     </a>
     <nav class="topbar__nav" aria-label="Primary">
-      <a href="/" class:list={['topbar__link', { 'is-active': isActive('/') }]}>Overview</a>
+      <a href="/" class:list={['topbar__link', { 'is-active': isActive('/') }]}>App</a>
+      <a href="/process" class:list={['topbar__link', { 'is-active': isActive('/process') }]}>Process</a>
       <a href="/blog" class:list={['topbar__link', { 'is-active': isActive('/blog') }]}>Dev log</a>
     </nav>
   </div>

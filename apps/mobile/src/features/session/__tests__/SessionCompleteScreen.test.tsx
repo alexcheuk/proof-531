@@ -50,13 +50,32 @@ jest.mock('react-native-safe-area-context', () => ({
 // plain RN View.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
+  // Chainable no-op so any combination of `.duration().easing().delay()…`
+  // resolves cleanly across the eyebrow / hero / cert / band animations.
+  const chain = () => {
+    const obj = {
+      duration: () => obj,
+      delay: () => obj,
+      springify: () => obj,
+      damping: () => obj,
+      easing: () => obj,
+    };
+    return obj;
+  };
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
-    FadeInDown: { duration: () => ({ springify: () => ({ damping: () => ({}) }) }) },
-    FadeIn: { duration: () => ({}) },
-    FadeOut: { duration: () => ({}) },
-    LinearTransition: { duration: () => ({}) },
+    FadeIn: chain(),
+    FadeInDown: chain(),
+    FadeOut: chain(),
+    ZoomIn: chain(),
+    LinearTransition: chain(),
+    Easing: {
+      out: () => () => 0,
+      inOut: () => () => 0,
+      ease: () => 0,
+      cubic: () => 0,
+    },
   };
 });
 

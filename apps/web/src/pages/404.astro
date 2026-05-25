@@ -1,0 +1,69 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+
+<Base title="Not found — 531" description="That page doesn't exist. Head back to the overview or the dev log.">
+  <section class="missing container">
+    <span class="eyebrow">404 · NOT FOUND</span>
+    <h1 class="missing__title">Off the program<span class="missing__dot" aria-hidden="true">.</span></h1>
+    <p class="missing__lead">
+      That URL didn't match a page. The site is small — the three places to
+      go are the app overview, the process page, and the dev log.
+    </p>
+    <ul class="missing__links">
+      <li><a href="/">App overview →</a></li>
+      <li><a href="/process">How it's built →</a></li>
+      <li><a href="/blog">Dev log →</a></li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .missing {
+    padding-block: var(--space-5xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 52ch;
+  }
+
+  .missing__title {
+    line-height: 1.05;
+    margin-top: var(--space-xs);
+  }
+
+  .missing__dot {
+    color: var(--amber);
+    margin-left: -0.04em;
+  }
+
+  .missing__lead {
+    color: var(--ink-1);
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+
+  .missing__links {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-xl) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .missing__links a {
+    color: var(--ink-0);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 2px;
+  }
+
+  .missing__links a:hover {
+    border-bottom-color: var(--ink-0);
+  }
+</style>
