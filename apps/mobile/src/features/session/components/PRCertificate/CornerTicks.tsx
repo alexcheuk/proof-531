@@ -14,11 +14,14 @@ export function CornerTicks({
   size = 14,
   thickness = 2,
   inset = 6,
+  hideBottom = false,
 }: {
   color: string;
   size?: number;
   thickness?: number;
   inset?: number;
+  /** When true, render only the two top corners. */
+  hideBottom?: boolean;
 }) {
   const base = {
     position: 'absolute' as const,
@@ -46,24 +49,28 @@ export function CornerTicks({
           borderRightWidth: thickness,
         }}
       />
-      <View
-        style={{
-          ...base,
-          bottom: inset,
-          left: inset,
-          borderBottomWidth: thickness,
-          borderLeftWidth: thickness,
-        }}
-      />
-      <View
-        style={{
-          ...base,
-          bottom: inset,
-          right: inset,
-          borderBottomWidth: thickness,
-          borderRightWidth: thickness,
-        }}
-      />
+      {hideBottom ? null : (
+        <>
+          <View
+            style={{
+              ...base,
+              bottom: inset,
+              left: inset,
+              borderBottomWidth: thickness,
+              borderLeftWidth: thickness,
+            }}
+          />
+          <View
+            style={{
+              ...base,
+              bottom: inset,
+              right: inset,
+              borderBottomWidth: thickness,
+              borderRightWidth: thickness,
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

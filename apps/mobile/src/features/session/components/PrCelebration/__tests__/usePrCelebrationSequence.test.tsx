@@ -48,7 +48,7 @@ describe('usePrCelebrationSequence', () => {
 
     // Internal timer → tick-up
     act(() => {
-      jest.advanceTimersByTime(350);
+      jest.advanceTimersByTime(900);
     });
     expect(result.current.phase).toBe('tick-up');
 

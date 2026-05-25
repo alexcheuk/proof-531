@@ -91,15 +91,21 @@ export function useTypewriterTransition({
   charMs = 45,
   active,
 }: UseTypewriterTransitionOptions): string {
-  const [shown, setShown] = useState(text);
+  // Start empty so the first activation types in from "" → text rather
+  // than appearing instantly. Subsequent target changes (e.g. PREVIOUS
+  // BEST → NEW ESTIMATED 1RM) do their backspace-and-retype as usual.
+  const [shown, setShown] = useState('');
 
-  // Sync shown to text while inactive. Without this, replaying the
-  // sequence would leave the prior settled value in place, causing the
-  // next activation to animate *backwards* (e.g. "NEW ESTIMATED 1RM" →
-  // "PREVIOUS BEST" on replay).
+  // Reset to empty while inactive. Two reasons:
+  //   1. Replay correctness — without this, a settled value from a
+  //      prior run (e.g. "NEW ESTIMATED 1RM") would survive the
+  //      sequence reset and cause the next activation to animate
+  //      backwards to the new target.
+  //   2. Consistent type-in feel — every activation starts from a
+  //      clean slate and types forward.
   useEffect(() => {
-    if (!active) setShown(text);
-  }, [active, text]);
+    if (!active) setShown('');
+  }, [active]);
 
   useEffect(() => {
     if (!active) return;

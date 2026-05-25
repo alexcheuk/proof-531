@@ -62,6 +62,17 @@ function useLeftEntryStyle(visible: boolean, delayMs: number) {
   }));
 }
 
+function useFadeOpacityStyle(visible: boolean) {
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.value = withTiming(visible ? 1 : 0, {
+      duration: ENTRY_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [visible, progress]);
+  return useAnimatedStyle(() => ({ opacity: progress.value }));
+}
+
 export function PrCelebrationComparison({
   prevE1RMDisplay,
   e1RMDelta,
@@ -72,86 +83,100 @@ export function PrCelebrationComparison({
 
   const prevStyle = useLeftEntryStyle(visible, 0);
   const deltaStyle = useLeftEntryStyle(visible, STAGGER_MS);
+  const borderStyle = useFadeOpacityStyle(visible);
 
   return (
-    <View
-      style={{
-        marginTop: spacing.md,
-        paddingTop: spacing.md,
-        borderTopWidth: 1,
-        borderTopColor: PAPER_28,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-      }}
-    >
-      <Animated.View style={prevStyle}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-SemiBold`,
-            fontSize: 9,
-            letterSpacing: 1.98,
-            textTransform: 'uppercase',
-            color: PAPER_55,
-            marginBottom: 4,
-          }}
-        >
-          Previous best
-        </RNText>
-        <RNText
-          style={{
-            fontFamily: `${type.display}-Medium`,
-            fontSize: 22,
-            color: PAPER_45,
-            letterSpacing: -0.44,
-            textDecorationLine: 'line-through',
-            textDecorationColor: PAPER_45,
-          }}
-          testID="pr-celebration-prev"
-        >
-          {`${formatWeight(prevE1RMDisplay)} ${unitGlyph}`}
-        </RNText>
-      </Animated.View>
-      <Animated.View style={[{ alignItems: 'flex-end' }, deltaStyle]}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-SemiBold`,
-            fontSize: 9,
-            letterSpacing: 1.98,
-            textTransform: 'uppercase',
-            color: PAPER_55,
-            marginBottom: 4,
-          }}
-        >
-          Stronger by
-        </RNText>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+    <>
+      {/* Hairline above the comparison row. Always in the layout (1px
+       * tall) so the body's centered content doesn't shift when the
+       * border reveals; opacity is driven by `visible` so the border
+       * only paints once phase reaches 'final'. */}
+      <Animated.View
+        style={[
+          borderStyle,
+          {
+            marginTop: spacing.md,
+            height: 1,
+            backgroundColor: PAPER_28,
+          },
+        ]}
+      />
+      <View
+        style={{
+          paddingTop: spacing.md,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+        }}
+      >
+        <Animated.View style={prevStyle}>
           <RNText
             style={{
-              fontFamily: `${type.display}-Bold`,
-              fontSize: 32,
-              lineHeight: 32,
-              letterSpacing: -0.96,
-              color: colors.bg0,
-            }}
-            testID="pr-celebration-delta"
-          >
-            {`+${formatWeight(e1RMDelta)}`}
-          </RNText>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-Bold`,
-              fontSize: 11,
-              letterSpacing: 2.2,
+              fontFamily: `${type.mono}-SemiBold`,
+              fontSize: 9,
+              letterSpacing: 1.98,
               textTransform: 'uppercase',
-              color: colors.bg0,
-              marginLeft: 4,
+              color: PAPER_55,
+              marginBottom: 4,
             }}
           >
-            {unitGlyph}
+            Previous best
           </RNText>
-        </View>
-      </Animated.View>
-    </View>
+          <RNText
+            style={{
+              fontFamily: `${type.display}-Medium`,
+              fontSize: 22,
+              color: PAPER_45,
+              letterSpacing: -0.44,
+              textDecorationLine: 'line-through',
+              textDecorationColor: PAPER_45,
+            }}
+            testID="pr-celebration-prev"
+          >
+            {`${formatWeight(prevE1RMDisplay)} ${unitGlyph}`}
+          </RNText>
+        </Animated.View>
+        <Animated.View style={[{ alignItems: 'flex-end' }, deltaStyle]}>
+          <RNText
+            style={{
+              fontFamily: `${type.mono}-SemiBold`,
+              fontSize: 9,
+              letterSpacing: 1.98,
+              textTransform: 'uppercase',
+              color: PAPER_55,
+              marginBottom: 4,
+            }}
+          >
+            Stronger by
+          </RNText>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+            <RNText
+              style={{
+                fontFamily: `${type.display}-Bold`,
+                fontSize: 32,
+                lineHeight: 32,
+                letterSpacing: -0.96,
+                color: colors.bg0,
+              }}
+              testID="pr-celebration-delta"
+            >
+              {`+${formatWeight(e1RMDelta)}`}
+            </RNText>
+            <RNText
+              style={{
+                fontFamily: `${type.mono}-Bold`,
+                fontSize: 11,
+                letterSpacing: 2.2,
+                textTransform: 'uppercase',
+                color: colors.bg0,
+                marginLeft: 4,
+              }}
+            >
+              {unitGlyph}
+            </RNText>
+          </View>
+        </Animated.View>
+      </View>
+    </>
   );
 }

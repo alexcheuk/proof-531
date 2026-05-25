@@ -59,9 +59,9 @@ export function PrCelebrationHero({
       <RNText
         style={{
           fontFamily: `${type.mono}-Medium`,
-          fontSize: 18,
-          lineHeight: 22,
-          letterSpacing: 1.6,
+          fontSize: 15,
+          lineHeight: 19,
+          letterSpacing: 1.4,
           textTransform: 'uppercase',
           color: PAPER_55,
           marginBottom: spacing.md + 2,
@@ -74,7 +74,10 @@ export function PrCelebrationHero({
         style={{
           fontFamily: `${type.display}-Bold`,
           fontSize: 76,
-          lineHeight: 82,
+          // 92 (≈1.21× font size) clears the 'g' descender + amber
+          // period without clipping. 82 was too tight on iOS — the
+          // line box ended just below the baseline.
+          lineHeight: 92,
           letterSpacing: -2.8,
           color: colors.bg0,
         }}
@@ -83,7 +86,7 @@ export function PrCelebrationHero({
           <>
             {heroShown.replace(/\.$/, '')}
             {heroShown.endsWith('.') ? (
-              <Text variant="sans" weight="bold" size={76} color="amber" style={{ lineHeight: 82 }}>
+              <Text variant="sans" weight="bold" size={76} color="amber" style={{ lineHeight: 92 }}>
                 .
               </Text>
             ) : null}

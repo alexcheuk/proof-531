@@ -69,18 +69,37 @@ describe('useTypewriterTransition', () => {
     jest.useRealTimers();
   });
 
-  it('starts already showing the initial target (no-op on first render)', () => {
+  it('starts empty and types forward to the initial target on activation', () => {
     const { result } = renderHook(() =>
-      useTypewriterTransition({ text: 'PREVIOUS BEST', charMs: 10, active: true }),
+      useTypewriterTransition({ text: 'ABC', charMs: 10, active: true }),
     );
-    expect(result.current).toBe('PREVIOUS BEST');
+    expect(result.current).toBe('');
+    act(() => jest.advanceTimersByTime(10));
+    expect(result.current).toBe('A');
+    act(() => jest.advanceTimersByTime(20));
+    expect(result.current).toBe('ABC');
   });
 
-  it('backspaces then retypes when target changes (no common prefix)', () => {
+  it('clears shown when active flips to false', () => {
+    const { result, rerender } = renderHook(
+      ({ active }: { active: boolean }) =>
+        useTypewriterTransition({ text: 'ABC', charMs: 10, active }),
+      { initialProps: { active: true } },
+    );
+    act(() => jest.advanceTimersByTime(50));
+    expect(result.current).toBe('ABC');
+    rerender({ active: false });
+    expect(result.current).toBe('');
+  });
+
+  it('backspaces then retypes when target changes mid-flight (no common prefix)', () => {
     const { result, rerender } = renderHook(
       ({ text }: { text: string }) => useTypewriterTransition({ text, charMs: 10, active: true }),
       { initialProps: { text: 'ABC' } },
     );
+    // Settle on the initial target first
+    act(() => jest.advanceTimersByTime(50));
+    expect(result.current).toBe('ABC');
     rerender({ text: 'XYZ' });
     // Three backspaces remove ABC → "AB" → "A" → ""
     act(() => jest.advanceTimersByTime(30));
@@ -95,6 +114,9 @@ describe('useTypewriterTransition', () => {
       ({ text }: { text: string }) => useTypewriterTransition({ text, charMs: 10, active: true }),
       { initialProps: { text: 'ABCDEF' } },
     );
+    // Settle on the initial target first
+    act(() => jest.advanceTimersByTime(100));
+    expect(result.current).toBe('ABCDEF');
     rerender({ text: 'ABCXYZ' });
     // Backspace from 'ABCDEF' → 'ABCDE' → 'ABCD' → 'ABC' (stop at common prefix)
     act(() => jest.advanceTimersByTime(30));
@@ -109,6 +131,8 @@ describe('useTypewriterTransition', () => {
       ({ text }: { text: string }) => useTypewriterTransition({ text, charMs: 10, active: true }),
       { initialProps: { text: 'AB' } },
     );
+    act(() => jest.advanceTimersByTime(30));
+    expect(result.current).toBe('AB');
     rerender({ text: 'C' });
     act(() => jest.advanceTimersByTime(200));
     expect(result.current).toBe('C');

@@ -62,7 +62,7 @@ export type UsePrCelebrationSequenceResult = {
 /** Hold durations in ms. Tuned to feel deliberate without dragging. */
 const TITLE_HOLD_MS = 450;
 const TITLE_SETTLE_MS = 400;
-const PREV_HOLD_MS = 350;
+const PREV_HOLD_MS = 900;
 const NUMBERS_SETTLE_MS = 400;
 
 export function usePrCelebrationSequence({

@@ -257,7 +257,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
           bottom: spacing.md,
         }}
       >
-        <CornerTicks color={colors.bg0} size={28} thickness={2} />
+        <CornerTicks color={colors.bg0} size={28} thickness={2} hideBottom />
       </View>
 
       <View style={bodyStyle}>
