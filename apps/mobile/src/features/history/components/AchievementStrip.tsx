@@ -1,12 +1,12 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
-import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
-import { View } from 'react-native';
 import type { BestLift } from '../bestLift';
 import { formatLifetimeVolume } from '../lifetimeVolume';
+import { AchievementCaption } from './AchievementCaption';
+import { AchievementStat } from './AchievementStat';
 import { ActivitySparkline } from './ActivitySparkline';
 
 export type AchievementStripProps = {
@@ -101,32 +101,36 @@ export function AchievementStrip({
       testID="history-achievements"
     >
       <Row justify="space-between" align="flex-end">
-        <Stat label={filed === 1 ? 'session filed' : 'sessions filed'} value={filed} />
-        <Stat
+        <AchievementStat label={filed === 1 ? 'session filed' : 'sessions filed'} value={filed} />
+        <AchievementStat
           label={prs === 1 ? 'personal record' : 'personal records'}
           value={prs}
           testID="history-achievements-prs"
         />
         {showVolume ? (
-          <Stat label="total volume" value={volumeDisplay} testID="history-achievements-volume" />
+          <AchievementStat
+            label="total volume"
+            value={volumeDisplay}
+            testID="history-achievements-volume"
+          />
         ) : null}
       </Row>
       {showThisWeek ? (
-        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-this-week">
-          {`★ This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
-        </CapsLabel>
+        <AchievementCaption testID="history-this-week">
+          {`This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
+        </AchievementCaption>
       ) : null}
       {bestLift ? (
-        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-best-lift">
-          {`★ Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
-        </CapsLabel>
+        <AchievementCaption testID="history-best-lift">
+          {`Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
+        </AchievementCaption>
       ) : null}
       {showLongest ? (
-        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-longest-streak">
+        <AchievementCaption testID="history-longest-streak">
           {isMatchingBest
-            ? `★ Best streak · ${longestStreak} days · MATCHING NOW`
-            : `★ Best streak · ${longestStreak} days`}
-        </CapsLabel>
+            ? `Best streak · ${longestStreak} days · MATCHING NOW`
+            : `Best streak · ${longestStreak} days`}
+        </AchievementCaption>
       ) : null}
       <ActivitySparkline activity={activity} />
       {showTrainingSince && trainingSince ? (
@@ -140,29 +144,5 @@ export function AchievementStrip({
         </CapsLabel>
       ) : null}
     </Card>
-  );
-}
-
-type StatProps = {
-  label: string;
-  /**
-   * Either a raw count (`number`) or a pre-formatted display string (e.g.
-   * `12.4k lb`). Pre-formatted strings are rendered as-is — useful for the
-   * lifetime-volume cell where the value is compacted before reaching the UI.
-   */
-  value: number | string;
-  testID?: string;
-};
-
-function Stat({ label, value, testID }: StatProps) {
-  return (
-    <View>
-      <Heading size="s" numeric {...(testID !== undefined ? { testID } : {})}>
-        {value}
-      </Heading>
-      <CapsLabel size="xs" color="ink3" style={{ marginTop: 4 }}>
-        {label}
-      </CapsLabel>
-    </View>
   );
 }

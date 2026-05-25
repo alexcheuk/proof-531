@@ -43,7 +43,7 @@ Alternates:
 >
 > **Built for the program.** 5/3/1 percentages, BBB volume work, and AMRAP set logging are first-class. Plate math is computed for your bar, your plates, your unit (kg or lb), and shown per side. Training max progression follows the 5 lb / 2.5 kg upper-body, 10 lb / 5 kg lower-body rules — no manual math after every cycle.
 >
-> **Live session view.** A countdown rest timer between sets. Haptic warning at T-3s and a chime at T-0. Screen stays awake. AMRAP set logged in a single sheet. PR detection runs the moment you save.
+> **Live session view.** A countdown rest timer between sets, with a haptic warning when time's almost up. Screen stays awake. AMRAP set logged in a single sheet. PR detection runs the moment you save.
 >
 > **History that feels earned.** Lifetime sessions filed, personal records, longest training streak, and an activity sparkline going back through your last cycle. No "achievements" plastic — just the numbers that matter.
 >

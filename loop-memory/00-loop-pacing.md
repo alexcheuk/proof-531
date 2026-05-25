@@ -17,6 +17,7 @@ description: Quick reference for what each /loop iteration should aim for to sta
 - **Pick small, surgical wins.** A 30-min loop fits ~6–10 focused edits, not one giant refactor. Refactor work spans loops.
 - **Run typecheck/lint/test in parallel via `run_in_background`** while writing the next files. Don't block on green.
 - **Stage Discord react :+1: BEFORE doing the work.** Easy to forget at the end.
+- **Sleep ≥0.5s between Discord reactions** — back-to-back PUTs to the reactions endpoint return 429 silently and the reaction never lands. Always poll the message back at the end of the loop and retry any missing reaction. Loop on 2026-05-24 had 3 of 6 :+1: drop this way.
 - **Defer image-asset work** (icons, splash images). Can't generate PNGs from this seat; only edit `app.json` config.
 
 ## What to skip

@@ -1,5 +1,15 @@
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
+import Constants from 'expo-constants';
+
+/**
+ * Resolves the app version from the Expo config so this card never drifts
+ * from `app.json`. Falls back to a static placeholder if the config isn't
+ * available (shouldn't happen in normal runs).
+ */
+function getAppVersion(): string {
+  return Constants.expoConfig?.version ?? '—';
+}
 
 export function AboutSection() {
   return (
@@ -10,7 +20,7 @@ export function AboutSection() {
       </LedgerRow>
       <LedgerRow>
         <LedgerRowLabel primary="App version" secondary="531. ledger · paper-and-ink discipline" />
-        <LedgerRowValue value="0.1.0" sub="alpha" />
+        <LedgerRowValue value={getAppVersion()} />
       </LedgerRow>
     </LedgerSection>
   );

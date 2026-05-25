@@ -17,7 +17,8 @@
     "expo-doctor": "pnpm --filter @fivethreeone/mobile exec expo-doctor",
     "bundle-check": "pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false",
     "find-unused": "bash scripts/find-unused-primitives.sh",
-    "ci": "pnpm typecheck && pnpm lint && pnpm test"
+    "check-boundaries": "bash scripts/check-boundaries.sh",
+    "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm test"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"
