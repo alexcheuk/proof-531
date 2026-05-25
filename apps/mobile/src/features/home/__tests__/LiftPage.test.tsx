@@ -87,6 +87,15 @@ describe('LiftPage', () => {
     expect(within(cta).getByText('Resume · set 2 of 3')).toBeTruthy();
   });
 
+  it('falls back to plain "Resume session" copy once all 3 sets are logged (avoids "set 4 of 3")', () => {
+    // The brief window between the third set log and the session-complete
+    // transition can leave isInProgress=true while completedCount===3. The
+    // CTA should not surface a nonsensical "Resume · set 4 of 3".
+    const screen = wrap(<LiftPage {...baseProps} isInProgress={true} completedCount={3} />);
+    const cta = screen.getByTestId('lift-page-squat-cta');
+    expect(within(cta).getByText('Resume session')).toBeTruthy();
+  });
+
   it('fires onBegin when primary CTA is pressed (not in progress)', () => {
     const onBegin = jest.fn();
     const onResume = jest.fn();

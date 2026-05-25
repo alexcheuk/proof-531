@@ -108,4 +108,30 @@ describe('AchievementStrip', () => {
     const chip = getByTestId('history-longest-streak');
     expect(chip.props.children).not.toContain('MATCHING NOW');
   });
+
+  it('renders the lifetime-volume stat cell when lifetimeVolume > 0', () => {
+    const { getByTestId, getByText } = renderStrip(
+      <AchievementStrip filed={3} prs={1} activity={ACTIVITY} lifetimeVolume={12_400} unit="lbs" />,
+    );
+    const cell = getByTestId('history-achievements-volume');
+    expect(cell).toBeTruthy();
+    expect(cell.props.children).toBe('12.4k lb');
+    expect(getByText('total volume')).toBeTruthy();
+  });
+
+  it('uses the kg glyph when unit is kg', () => {
+    const { getByTestId } = renderStrip(
+      <AchievementStrip filed={3} prs={1} activity={ACTIVITY} lifetimeVolume={8400} unit="kg" />,
+    );
+    expect(getByTestId('history-achievements-volume').props.children).toBe('8,400 kg');
+  });
+
+  it('hides the lifetime-volume stat when value is 0 or omitted', () => {
+    const noVol = renderStrip(
+      <AchievementStrip filed={3} prs={1} activity={ACTIVITY} lifetimeVolume={0} unit="lbs" />,
+    );
+    expect(noVol.queryByTestId('history-achievements-volume')).toBeNull();
+    const omitted = renderStrip(<AchievementStrip filed={3} prs={1} activity={ACTIVITY} />);
+    expect(omitted.queryByTestId('history-achievements-volume')).toBeNull();
+  });
 });

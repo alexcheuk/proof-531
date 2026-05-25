@@ -105,6 +105,37 @@ export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
 }
 
 /**
+ * Sum of `prescribedWeight × actualReps` across every working/amrap set log
+ * row whose parent session has `status = 'completed'`. The History tab's
+ * achievement strip uses this to render a "total volume" stat alongside
+ * sessions filed + personal records.
+ *
+ * Aggregated in SQL so we don't have to pull N-sessions × M-rows into JS
+ * just to sum them. Returns `0` when there are no qualifying rows (e.g. a
+ * fresh install with no completed sessions).
+ *
+ * Volume definition mirrors `volumeOfWorkingSets` in `domain/summary.ts`:
+ * warmups, BBB, and generic assistance rows are excluded.
+ */
+export async function getLifetimeVolume(db: AnyDb): Promise<number> {
+  const rows = (await Promise.resolve(
+    db
+      .select({
+        total: sql<number | null>`
+          SUM(${setLogs.prescribedWeight} * ${setLogs.actualReps})
+        `,
+      })
+      .from(setLogs)
+      .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
+      .where(
+        sql`${sessions.status} = 'completed' AND (${setLogs.kind} = 'working' OR ${setLogs.kind} = 'amrap')`,
+      ),
+  )) as Array<{ total: number | null }>;
+  const total = rows[0]?.total;
+  return total === null || total === undefined ? 0 : total;
+}
+
+/**
  * Return the max `estimated1RM` across all set_logs for a given lift,
  * excluding rows from `excludingSessionId`. Used by the SessionComplete
  * PR certificate to render the prior best — the `prs` row alone is

@@ -144,7 +144,7 @@ export function LiftPage({
         testID={`lift-page-${lift}-cta`}
       >
         {isInProgress
-          ? completedCount > 0
+          ? completedCount > 0 && completedCount < 3
             ? `Resume · set ${completedCount + 1} of 3`
             : 'Resume session'
           : 'Begin session'}

@@ -8,94 +8,63 @@
  * strip ("N sessions filed · M PRs") + a 14-day activity sparkline + an
  * "All / PRs / per-lift" filter so the page rewards consistency, not just
  * records completed work.
+ *
+ * Derived/memoized data + the four query reads live in `useHistoryScreenData`
+ * — this file is composition + filter UI state only.
  */
-import { usePrs } from '@/data/queries/usePrs';
-import { useSessionPrIds } from '@/data/queries/useSessionPrIds';
-import { useSessions } from '@/data/queries/useSessions';
-import { useSettings } from '@/data/queries/useSettings';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
-import type { Lift } from '@/domain/types';
-import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
+import { QueryShell } from '@/features/shared/QueryShell';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { RefreshControl, ScrollView, View, type ViewStyle } from 'react-native';
-import { computeHistoryStats } from './achievements';
-import {
-  currentStreakDays,
-  daysSinceFirstSession,
-  firstSessionDate,
-  longestStreakDays,
-  recentActivity,
-} from './activity';
-import { pickBestLift } from './bestLift';
 import { AchievementStrip } from './components/AchievementStrip';
 import { CycleSection } from './components/CycleSection';
 import { FilterChips } from './components/FilterChips';
 import { HistoryEmptyState } from './components/HistoryEmptyState';
 import { HistoryFilterEmptyState } from './components/HistoryFilterEmptyState';
 import { HistorySkeleton } from './components/HistorySkeleton';
-import { type HistoryFilter, applyHistoryFilter } from './filter';
-import { groupByCycle } from './grouping';
-
-const DEFAULT_LIFTS: ReadonlyArray<Lift> = ['squat', 'bench', 'deadlift', 'press'];
+import type { HistoryFilter } from './filter';
+import { useHistoryScreenData } from './hooks/useHistoryScreenData';
 
 export function HistoryScreen() {
   const { colors } = useTheme();
-  const sessions = useSessions();
-  const prIdsQuery = useSessionPrIds();
-  const prsQuery = usePrs();
-  const settingsQuery = useSettings();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<HistoryFilter>({ kind: 'all' });
+  const {
+    rows,
+    prIds,
+    enabledLifts,
+    stats,
+    activity,
+    longestStreak,
+    currentStreak,
+    trainingSince,
+    totalTrainingDays,
+    bestLift,
+    lifetimeVolume,
+    displayUnit,
+    filteredRows,
+    grouped,
+    combined,
+    onRefresh: refetchAll,
+  } = useHistoryScreenData(filter);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      // Refetch every source the strip + list read from. Missing prsQuery or
-      // settingsQuery here would leave the best-lift chip stale after a pull.
-      await Promise.all([
-        sessions.refetch(),
-        prIdsQuery.refetch(),
-        prsQuery.refetch(),
-        settingsQuery.refetch(),
-      ]);
+      await refetchAll();
     } finally {
       setRefreshing(false);
     }
-  }, [sessions, prIdsQuery, prsQuery, settingsQuery]);
+  }, [refetchAll]);
 
   const containerStyle: ViewStyle = {
     flex: 1,
     backgroundColor: colors.bg0,
   };
-
-  const rows = sessions.data ?? [];
-  const prIds = prIdsQuery.data ?? new Set<number>();
-  const enabledLifts = settingsQuery.data?.enabledLifts ?? DEFAULT_LIFTS;
-  // Stats + activity always reflect the FULL history (lifetime totals,
-  // not the filtered view) so the achievement strip stays anchored as the
-  // user explores filters.
-  const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
-  const activity = useMemo(() => recentActivity(rows), [rows]);
-  const longestStreak = useMemo(() => longestStreakDays(rows), [rows]);
-  const currentStreak = useMemo(() => currentStreakDays(rows), [rows]);
-  const trainingSince = useMemo(() => firstSessionDate(rows), [rows]);
-  const totalTrainingDays = useMemo(() => daysSinceFirstSession(rows), [rows]);
-  const bestLift = useMemo(() => {
-    const storageUnit = settingsQuery.data?.storageUnit ?? 'lbs';
-    const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
-    return pickBestLift(prsQuery.data ?? [], storageUnit, displayUnit);
-  }, [prsQuery.data, settingsQuery.data]);
-  const filteredRows = useMemo(
-    () => applyHistoryFilter(rows, filter, prIds),
-    [rows, filter, prIds],
-  );
-  const grouped = useMemo(() => groupByCycle(filteredRows), [filteredRows]);
-
-  const combined = combineQueries(sessions, prIdsQuery);
 
   if (combined.isError) {
     return (
@@ -138,6 +107,8 @@ export function HistoryScreen() {
           currentStreak={currentStreak}
           trainingSince={trainingSince}
           totalTrainingDays={totalTrainingDays}
+          lifetimeVolume={lifetimeVolume}
+          unit={displayUnit}
         />
         {rows.length > 0 ? (
           <FilterChips

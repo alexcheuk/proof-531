@@ -6,6 +6,7 @@ import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { View } from 'react-native';
 import type { BestLift } from '../bestLift';
+import { formatLifetimeVolume } from '../lifetimeVolume';
 import { ActivitySparkline } from './ActivitySparkline';
 
 export type AchievementStripProps = {
@@ -29,6 +30,14 @@ export type AchievementStripProps = {
   trainingSince?: Date | null;
   /** Total elapsed days since first session. Caption only renders when ≥ 30. */
   totalTrainingDays?: number;
+  /**
+   * Lifetime sum of `prescribedWeight × actualReps` across every working/amrap
+   * SetLog in completed sessions. Surfaces as a third "total volume" stat
+   * cell beside `sessions filed` + `personal records` — only when > 0.
+   */
+  lifetimeVolume?: number;
+  /** Display unit for the lifetime-volume glyph. Defaults to `lbs`. */
+  unit?: 'lbs' | 'kg';
 };
 
 const MONTH_NAMES = [
@@ -65,6 +74,8 @@ export function AchievementStrip({
   currentStreak,
   trainingSince,
   totalTrainingDays,
+  lifetimeVolume,
+  unit,
 }: AchievementStripProps) {
   const { layout } = useTheme();
   if (filed === 0) return null;
@@ -72,6 +83,8 @@ export function AchievementStrip({
   const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
   const isMatchingBest =
     showLongest && (currentStreak ?? 0) >= 3 && currentStreak === longestStreak;
+  const showVolume = (lifetimeVolume ?? 0) > 0;
+  const volumeDisplay = showVolume ? formatLifetimeVolume(lifetimeVolume ?? 0, unit ?? 'lbs') : '';
   return (
     <Card
       borders="bottom"
@@ -86,6 +99,9 @@ export function AchievementStrip({
           value={prs}
           testID="history-achievements-prs"
         />
+        {showVolume ? (
+          <Stat label="total volume" value={volumeDisplay} testID="history-achievements-volume" />
+        ) : null}
       </Row>
       {bestLift ? (
         <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-best-lift">
@@ -116,7 +132,12 @@ export function AchievementStrip({
 
 type StatProps = {
   label: string;
-  value: number;
+  /**
+   * Either a raw count (`number`) or a pre-formatted display string (e.g.
+   * `12.4k lb`). Pre-formatted strings are rendered as-is — useful for the
+   * lifetime-volume cell where the value is compacted before reaching the UI.
+   */
+  value: number | string;
   testID?: string;
 };
 
