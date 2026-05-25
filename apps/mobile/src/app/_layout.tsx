@@ -5,6 +5,7 @@ import { useAppFonts } from '@/design/fonts';
 import { ErrorBoundary } from '@/design/primitives/ErrorBoundary';
 import { ThemeProvider } from '@/design/theme';
 import { colors } from '@/design/tokens';
+import { OtaUpdateBanner } from '@/features/shared/OtaUpdateBanner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -39,6 +40,7 @@ function SafeTopFrame() {
   const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.bg0 }}>
+      <OtaUpdateBanner />
       <Slot />
     </View>
   );

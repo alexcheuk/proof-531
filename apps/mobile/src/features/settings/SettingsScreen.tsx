@@ -28,6 +28,7 @@ import { CycleProgressSection } from './sections/CycleProgressSection';
 import { DangerZoneSection } from './sections/DangerZoneSection';
 import { PlateSetSection } from './sections/PlateSetSection';
 import { ProgressionRulesSection } from './sections/ProgressionRulesSection';
+import { ReleaseSection } from './sections/ReleaseSection';
 import { RestTargetSection } from './sections/RestTargetSection';
 import { TrainingMaxSection } from './sections/TrainingMaxSection';
 import { UnitsSection } from './sections/UnitsSection';
@@ -98,6 +99,8 @@ export function SettingsScreen() {
         <RestTargetSection restTargetSeconds={settings.restTargetSeconds} />
 
         <AboutSection />
+
+        <ReleaseSection />
 
         <DangerZoneSection onReset={dialogs.requestReset} />
 
