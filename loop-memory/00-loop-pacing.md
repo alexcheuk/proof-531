@@ -1,44 +1,69 @@
 ---
 name: loop-pacing
-description: Quick reference for what each /loop iteration should aim for to stay productive within 30 minutes.
+description: How each /loop iteration should be scoped. The cron interval is a cadence, not a deadline — finish the work properly even if it spans the next cron tick.
 ---
 
-# Loop pacing — survive the 30-minute window
+# Loop pacing — finish the work, don't watch the clock
 
-## Budget (30 min)
+## The cadence is not a deadline
 
-- 3 min — read this file + `loop-memory/` + Discord `#task-queue` + audit
-- 18 min — implement 6-12 small/medium tasks in parallel where safe
-- 5 min — run typecheck/lint/test, commit, push
-- 4 min — Discord summary + reactions + slack
+The user's `/loop 30m` (or whatever interval) does NOT cap a single iteration. The cron just queues the next iteration; an in-flight iteration is not interrupted, and the next one runs after the current one finishes. So:
+
+- **Pick 12–15 substantive items per iteration.** The user has stated this explicitly. Smaller iterations are under-delivery.
+- **Don't stop because the wall clock is approaching the interval.** Finish the work. The next tick will run when it can.
+- **Don't defer items because "it takes too long".** The user has explicitly said: just do it. Tackle items end-to-end, with tests, in this iteration.
+- **Don't :+1: an item in `#task-queue` unless you intend to ship it THIS iteration.** :+1: means "tackling now"; :white_check_mark: means "shipped". Acknowledged-for-later is a footgun — the user has called it out.
+
+If something genuinely can't ship this iteration (e.g. needs a PNG asset you can't generate, or a design spec you have no input for), say so plainly in the Discord summary and don't :+1: it.
+
+## Loop categories (every iteration)
+
+The user's spec requires at minimum one of each per iteration. With 12–15 items per iteration this is easy to hit:
+
+- Audit & refactor (1+ component split / dedupe / one-component-per-file)
+- Feature improvement or addition
+- Bug fix (always look — there's usually one)
+- Remove unnecessary code / unused asset / stale comment
+- Dev workflow improvement
+- Production readiness (CHANGELOG / marketing / pipeline / a11y / icons)
+
+Plus: every Discord `#task-queue` item the user filed since the last iteration. Acknowledge with :+1: and ship.
 
 ## What works
 
-- **Pick small, surgical wins.** A 30-min loop fits ~6–10 focused edits, not one giant refactor. Refactor work spans loops.
-- **Run typecheck/lint/test in parallel via `run_in_background`** while writing the next files. Don't block on green.
-- **Stage Discord react :+1: BEFORE doing the work.** Easy to forget at the end.
-- **Sleep ≥0.5s between Discord reactions** — back-to-back PUTs to the reactions endpoint return 429 silently and the reaction never lands. Always poll the message back at the end of the loop and retry any missing reaction. Loop on 2026-05-24 had 3 of 6 :+1: drop this way.
-- **Defer image-asset work** (icons, splash images). Can't generate PNGs from this seat; only edit `app.json` config.
+- **Run typecheck / lint / test / bundle-check in parallel via `run_in_background`** while writing the next files. Don't block on green between items.
+- **Stage Discord :+1: BEFORE doing the work**, then :white_check_mark: at the end. Easy to forget the second pass otherwise.
+- **Sleep ≥0.5s between Discord reaction PUTs.** Back-to-back PUTs return 429 silently and the reaction never lands. Always poll the message back at the end and retry any missing reaction.
+- **Aggressive parallelism with the Edit + Write + Bash tools** — many small files can be touched in a single tool-use block.
+- **Audit pass: scan for repeated patterns each iteration.** Three near-identical files is a sign there's a primitive to extract.
 
 ## What to skip
 
 - New npm dependencies (high risk of bundle break — see CLAUDE.md harness gap).
 - Anything touching `~/Development/531-pwa/` (forbidden — read-only reference).
 - Anything in `docs/superpowers/specs/` or `plans/` (forbidden).
-- "While I'm here" refactors. Stay on the picked tasks.
+- "While I'm here" refactors that aren't on the planned list AND aren't a category-required audit. Stay scoped, but the planned list should already be ambitious.
 
-## Always-on checks
+## Pre-commit gauntlet (still required)
 
-Before commit, the four-step gauntlet:
+Before commit, all green:
 
 ```bash
-pnpm --filter @fivethreeone/mobile typecheck
+pnpm typecheck
 pnpm lint
-pnpm --filter @fivethreeone/mobile test
+pnpm test
 # If touched any import graph / route / primitive:
 pnpm bundle-check
 ```
 
-## Forbidden Expo APIs without docs
+If a fail, fix and re-run before committing. Never commit red.
 
-CLAUDE.md says Expo has changed — fetch SDK 55 docs before touching any Expo plugin / config / import. https://docs.expo.dev/versions/v55.0.0/
+## Expo SDK 55 — read the docs first
+
+CLAUDE.md says Expo has changed. Before touching any Expo plugin / config / native import, fetch the versioned docs: https://docs.expo.dev/versions/v55.0.0/
+
+## Anti-patterns observed in past iterations
+
+- **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.
+- **:+1: + defer.** Acknowledging a Discord ask without shipping it is worse than not :+1:'ing — the user has to chase it. Don't.
+- **Stopping at the first green CI.** That's an excuse to call it done. The real signal is the item list: did we ship 12+ substantive things?
