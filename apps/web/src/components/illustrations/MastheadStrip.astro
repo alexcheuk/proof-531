@@ -1,0 +1,59 @@
+---
+/*
+ * Print-broadsheet strip — the program vocabulary the app speaks,
+ * separated by mono dots/ticks. Sits between the hero and the
+ * feature sections as a typographic palate-cleanser.
+ */
+
+const tokens = [
+  '5/3/1',
+  'BBB 5×10',
+  'AMRAP',
+  'EPLEY 1RM',
+  'PER SIDE',
+  'WARMUPS',
+  'TM BUMP',
+  'DELOAD',
+  'WK1 65/75/85',
+  'WK2 70/80/90',
+  'WK3 75/85/95',
+];
+---
+
+<div class="masthead" role="presentation">
+  <div class="masthead__row">
+    {tokens.map((t, i) => (
+      <>
+        <span class="masthead__t">{t}</span>
+        {i < tokens.length - 1 && <span class="masthead__sep">·</span>}
+      </>
+    ))}
+  </div>
+</div>
+
+<style>
+  .masthead {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding-block: var(--space-md);
+    overflow: hidden;
+  }
+  .masthead__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-1);
+    text-transform: uppercase;
+    max-width: var(--content-wide);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .masthead__sep {
+    color: var(--ink-3);
+  }
+</style>

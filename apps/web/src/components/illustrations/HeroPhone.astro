@@ -1,0 +1,1073 @@
+---
+/*
+ * Animated phone demo for the hero — a FAITHFUL port of four real
+ * surfaces from `apps/mobile/src/features/session`:
+ *
+ *   Frame A: SetPhase                 (LiveHeader + TopSetBlock + CTA)
+ *   Frame B: RestPhase                (PR variant: "Stronger." + RestTimer)
+ *   Frame C: PrCelebrationScreen      (full-bleed inverted "Stronger.")
+ *   Frame D: SessionCompleteScreen    ("531 · ledger" receipt: "In the / book.")
+ *
+ * Design-system fidelity contract:
+ *
+ *   - ALL session-surface elements are SQUARE (border-radius 0). The Back
+ *     chip, AMRAP MonoBadge, ±30s / +30s / Skip chips, and primary CTAs
+ *     are all hard rectangles. Only the phone hardware shell has radii.
+ *   - Headlines use IBM Plex Sans BOLD (var(--font-sans)), NOT condensed.
+ *   - The lift title is "{Lift} now." (LiveHeader), amber period.
+ *   - The PR celebration eyebrow is "YOU HIT A NEW PR" — mono bold 22px.
+ *   - The session-complete masthead is "531 · ledger" with an outlined
+ *     "Filed" MonoBadge on the right.
+ *   - The session-complete headline is "In the\nbook." with amber period.
+ *
+ * Four frames cross-fade on a 16s cycle (4s per frame). The rest-timer
+ * countdown ticks via a stepped sprite-strip during its visible window.
+ * Pure CSS, no JS.
+ */
+
+// Plate-size ramp (same math as plateMath.ts, lb anchor).
+function sizeFor(plate: number): number {
+  const t = Math.max(0, Math.min(1, (plate - 2.5) / (45 - 2.5)));
+  return 0.36 + t * 0.64;
+}
+const perSideA: number[] = [45, 45, 45, 10, 5]; // 345 lb on the bar
+const perSideB: number[] = [45, 45, 45, 35];    // 385 lb (next set after the PR)
+
+const platesA = perSideA.map((w) => ({ w, h: Math.round(72 * sizeFor(w)) }));
+const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
+---
+
+<figure class="hp" aria-label="Demo of the 531 set, rest, PR celebration, and session-complete screens">
+  <div class="hp__device" aria-hidden="true">
+    <div class="hp__notch"></div>
+    <div class="hp__screen">
+
+      {/* ── Frame A: SET phase ─────────────────────────────────── */}
+      <div class="hp-frame hp-frame--set">
+
+        <div class="hp-topbar">
+          <span class="hp-back" aria-hidden="true">←</span>
+          <span class="hp-spacer"></span>
+        </div>
+
+        <div class="hp-pad">
+          <div class="hp-caps-row">
+            <span class="hp-caps">FINAL SET · 66% done</span>
+            <span class="hp-caps hp-caps--ink1">12:04</span>
+          </div>
+
+          <h3 class="hp-title">Deadlift now<span class="hp-dot">.</span></h3>
+
+          <div class="hp-monobadge">AMRAP</div>
+          <p class="hp-coaching">As many reps as possible. Push for a PR, leave 1 in the tank.</p>
+        </div>
+
+        <div class="hp-rule"></div>
+
+        <div class="hp-pad">
+          <div class="hp-caps-row">
+            <span class="hp-caps">TOP SET</span>
+            <span class="hp-caps hp-caps--ink3">95% · TM 365</span>
+          </div>
+
+          <div class="hp-number-row">
+            <span class="hp-weight">345</span>
+            <span class="hp-unit">LB</span>
+            <span class="hp-reps">× 1+</span>
+          </div>
+
+          <div class="hp-platebar">
+            <div class="hp-stack hp-stack--l">
+              {platesA.map((p) => (
+                <span class="hp-plate" style={`height: ${p.h}px`}>
+                  <span class="hp-plate__num">{p.w}</span>
+                </span>
+              ))}
+            </div>
+            <span class="hp-collar"></span>
+            <span class="hp-barmid"></span>
+            <span class="hp-collar"></span>
+            <div class="hp-stack hp-stack--r">
+              {platesA.map((p) => (
+                <span class="hp-plate" style={`height: ${p.h}px`}>
+                  <span class="hp-plate__num">{p.w}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div class="hp-perside">
+            <span class="hp-caps">PER SIDE</span>
+            <span class="hp-perside__eq">
+              <span class="hp-grp"><span class="hp-grp__count">3× </span><span class="hp-grp__w">45</span></span>
+              <span class="hp-grp__plus">+</span>
+              <span class="hp-grp__w">10</span>
+              <span class="hp-grp__plus">+</span>
+              <span class="hp-grp__w">5</span>
+              <span class="hp-grp__total">= 150 lb</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="hp-rule"></div>
+        <div class="hp-spacer-fill"></div>
+
+        <div class="hp-ctabar">
+          <button type="button" class="hp-cta">
+            <span class="hp-cta__label">Log AMRAP</span>
+            <span class="hp-cta__glyph">→</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Frame B: REST phase (PR variant) ───────────────────── */}
+      <div class="hp-frame hp-frame--rest">
+
+        <div class="hp-topbar">
+          <span class="hp-back" aria-hidden="true">←</span>
+          <span class="hp-pill-undo">↶ Undo</span>
+        </div>
+
+        <div class="hp-pad">
+          <span class="hp-caps hp-caps--amber">SET COMPLETED · NEW PERSONAL RECORD</span>
+          <h3 class="hp-display">Stronger<span class="hp-dot">.</span></h3>
+        </div>
+
+        <div class="hp-rule"></div>
+
+        <div class="hp-pad">
+          <div class="hp-caps-row">
+            <span class="hp-caps">Rest timer</span>
+            <span class="hp-caps hp-caps--ink3">TARGET</span>
+          </div>
+
+          <div class="hp-clock">
+            <div class="hp-clock__roll">
+              <span>1:30</span><span>1:29</span><span>1:28</span><span>1:27</span><span>1:26</span>
+              <span>1:25</span><span>1:24</span><span>1:23</span><span>1:22</span><span>1:21</span><span>1:20</span>
+            </div>
+          </div>
+
+          <div class="hp-tcontrols">
+            <span class="hp-tchip">−30s</span>
+            <span class="hp-tchip">+30s</span>
+            <span class="hp-tchip hp-tchip--primary">Skip ›</span>
+          </div>
+        </div>
+
+        <div class="hp-rule"></div>
+
+        <div class="hp-pad">
+          <div class="hp-caps-row">
+            <span class="hp-caps">NEXT SET</span>
+            <span class="hp-caps hp-caps--ink3">e1RM 412 · +27</span>
+          </div>
+          <div class="hp-number-row">
+            <span class="hp-weight hp-weight--sm">385</span>
+            <span class="hp-unit">LB</span>
+            <span class="hp-reps hp-reps--sm">× 5</span>
+          </div>
+
+          <div class="hp-platebar hp-platebar--sm">
+            <div class="hp-stack hp-stack--l">
+              {platesB.map((p) => (
+                <span class="hp-plate hp-plate--sm" style={`height: ${p.h}px`}></span>
+              ))}
+            </div>
+            <span class="hp-collar hp-collar--sm"></span>
+            <span class="hp-barmid hp-barmid--sm"></span>
+            <span class="hp-collar hp-collar--sm"></span>
+            <div class="hp-stack hp-stack--r">
+              {platesB.map((p) => (
+                <span class="hp-plate hp-plate--sm" style={`height: ${p.h}px`}></span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="hp-rule"></div>
+        <div class="hp-spacer-fill"></div>
+
+        <div class="hp-ctabar">
+          <button type="button" class="hp-cta">
+            <span class="hp-cta__label">Next set</span>
+            <span class="hp-cta__glyph">→</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Frame C: PR CELEBRATION (full-bleed inverted) ──────── */}
+      <div class="hp-frame hp-frame--cert">
+        {/* Corner ticks at screen scale (size 28 in the real app). */}
+        <span class="hp-cert-tick hp-cert-tick--tl" aria-hidden="true"></span>
+        <span class="hp-cert-tick hp-cert-tick--tr" aria-hidden="true"></span>
+        <span class="hp-cert-tick hp-cert-tick--bl" aria-hidden="true"></span>
+        <span class="hp-cert-tick hp-cert-tick--br" aria-hidden="true"></span>
+
+        <div class="hp-cert-body">
+          <div class="hp-cert-eyebrow">YOU HIT A NEW PR</div>
+          <h3 class="hp-cert-hero">Stronger<span class="hp-dot">.</span></h3>
+
+          <div class="hp-cert-row hp-cert-row--current">
+            <div class="hp-cert-caps">DEADLIFT · ESTIMATED 1RM</div>
+            <div class="hp-cert-num-row">
+              <span class="hp-cert-num">412</span>
+              <span class="hp-cert-unit">LB</span>
+            </div>
+          </div>
+
+          <div class="hp-cert-row hp-cert-row--compare">
+            <div class="hp-cert-compare-col">
+              <div class="hp-cert-caps hp-cert-caps--sm">Previous best</div>
+              <div class="hp-cert-prev">385 lb</div>
+            </div>
+            <div class="hp-cert-compare-col hp-cert-compare-col--right">
+              <div class="hp-cert-caps hp-cert-caps--sm">Stronger by</div>
+              <div class="hp-cert-delta-row">
+                <span class="hp-cert-delta">+27</span>
+                <span class="hp-cert-delta-unit">LB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hp-cert-ctabar">
+          <button type="button" class="hp-cert-cta">
+            <span class="hp-cert-cta__label">Continue  →</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Frame D: SESSION COMPLETE (the receipt) ────────────── */}
+      <div class="hp-frame hp-frame--complete">
+
+        {/* SessionCompleteMasthead — "531 . ledger" + Filed chip */}
+        <div class="hp-complete-mast">
+          <div class="hp-wordmark">
+            <span class="hp-wordmark__531">531</span>
+            <span class="hp-wordmark__dot">.</span>
+            <span class="hp-wordmark__ledger">LEDGER</span>
+          </div>
+          <span class="hp-monobadge hp-monobadge--md">Filed</span>
+        </div>
+
+        {/* SessionCompleteTitle */}
+        <div class="hp-complete-title">
+          <div class="hp-caps hp-caps--ink2 hp-caps--strong">Session № 03 · Sat, May 25</div>
+          <div class="hp-complete-titlerow">
+            <h3 class="hp-complete-headline">
+              In the<br/>book<span class="hp-dot">.</span>
+            </h3>
+            <div class="hp-datestamp" aria-hidden="true">
+              <div class="hp-datestamp__arc">★ NEW RECORD ★</div>
+              <div class="hp-datestamp__inner">
+                <div class="hp-datestamp__weekday">SAT</div>
+                <div class="hp-datestamp__date">MAY 25</div>
+                <div class="hp-datestamp__year">2026</div>
+              </div>
+            </div>
+          </div>
+          <p class="hp-complete-sub">
+            deadlift day, week 3. <strong>a new estimated 1RM on the deadlift</strong>
+            — the bar moved further today than ever before.
+          </p>
+        </div>
+
+        {/* ReceiptCard — "The record" rows */}
+        <div class="hp-receipt">
+          <div class="hp-caps hp-caps--ink2 hp-caps--strong hp-receipt-header">The record</div>
+          <div class="hp-receipt-card">
+            <div class="hp-receipt-row hp-receipt-row--first">
+              <span class="hp-caps hp-caps--strong">Top set</span>
+              <span class="hp-receipt-val">345 × 4+ <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
+            </div>
+            <div class="hp-receipt-row">
+              <span class="hp-caps hp-caps--strong">Est. 1rm</span>
+              <span class="hp-receipt-val">412 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
+            </div>
+            <div class="hp-receipt-row">
+              <span class="hp-caps hp-caps--strong">Volume</span>
+              <span class="hp-receipt-val">4,065 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb · working sets</span></span>
+            </div>
+            <div class="hp-receipt-row">
+              <span class="hp-caps hp-caps--strong">BBB</span>
+              <span class="hp-receipt-val">185 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb · 5×10</span></span>
+            </div>
+            <div class="hp-receipt-row">
+              <span class="hp-caps hp-caps--strong">Elapsed</span>
+              <span class="hp-receipt-val">38:12 <span class="hp-caps hp-caps--ink3 hp-caps--sub">minutes</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hp-spacer-fill"></div>
+
+        <div class="hp-ctabar">
+          <button type="button" class="hp-cta">
+            <span class="hp-cta__label">Close the day</span>
+            <span class="hp-cta__glyph">→</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <figcaption class="hp-caption">
+    <span class="hp-caption__dot" aria-hidden="true"></span>
+    <span>Live demo · iOS · Android</span>
+  </figcaption>
+</figure>
+
+<style>
+  /* ── Outer figure + device shell ─────────────────────────────── */
+  .hp {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    transform: rotate(-0.5deg);
+  }
+
+  /* The phone hardware is the only place rounded corners exist. */
+  .hp__device {
+    --hp-w: 300px;
+    --hp-h: 624px;
+    width: var(--hp-w);
+    height: var(--hp-h);
+    background: var(--ink-0);
+    border-radius: 40px;
+    padding: 8px;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(26, 24, 18, 0.55),
+      0 26px 56px -22px rgba(26, 24, 18, 0.36),
+      0 8px 22px -10px rgba(26, 24, 18, 0.14);
+  }
+  .hp__notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 86px;
+    height: 22px;
+    background: var(--ink-0);
+    border-radius: 0 0 12px 12px;
+    z-index: 5;
+  }
+  .hp__screen {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-0);
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    color: var(--ink-0);
+    font-family: var(--font-sans);
+  }
+
+  /* ── Cross-fade frame cycle: 4 frames × 4s = 16s total ──────── */
+  .hp-frame {
+    position: absolute;
+    inset: 0;
+    padding-top: 32px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    animation: hp-cycle 16s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+    will-change: opacity;
+  }
+  .hp-frame--set      { animation-delay: 0s; }
+  .hp-frame--rest     { animation-delay: 4s; }
+  .hp-frame--cert     { animation-delay: 8s; }
+  .hp-frame--complete { animation-delay: 12s; }
+
+  /* Each frame is visible from 1.5% to 23.5% of the cycle (0.24s to
+     3.76s), so we get a 3.5s read-window with a quick 0.24s fade
+     on each side. The next frame starts its own fade-in at the
+     same moment, so the cross-fade overlaps. */
+  @keyframes hp-cycle {
+    0%    { opacity: 0; }
+    1.5%  { opacity: 1; }
+    23.5% { opacity: 1; }
+    25%   { opacity: 0; }
+    100%  { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-frame { animation: none; opacity: 0; }
+    .hp-frame--set { opacity: 1; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME A + B SHARED CHROME
+     ═════════════════════════════════════════════════════════════ */
+
+  /* ── SessionTopBar ───────────────────────────────────────────── */
+  .hp-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-0);
+  }
+  .hp-back {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink-0);
+    line-height: 1;
+  }
+  .hp-spacer { display: inline-block; }
+  .hp-pill-undo {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink-0);
+    padding: 4px 8px;
+    color: var(--ink-0);
+    background: var(--bg-0);
+  }
+
+  /* ── Section padding ────────────────────────────────────────── */
+  .hp-pad {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* ── Caps labels ────────────────────────────────────────────── */
+  .hp-caps {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hp-caps--ink1   { color: var(--ink-1); font-weight: 600; }
+  .hp-caps--ink2   { color: var(--ink-2); }
+  .hp-caps--ink3   { color: var(--ink-3); }
+  .hp-caps--amber  { color: var(--amber); font-weight: 600; }
+  .hp-caps--strong { font-weight: 600; }
+  .hp-caps--sub    { letter-spacing: 0.12em; font-size: 8px; }
+  .hp-caps-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  /* ── LiveHeader title / RestPhase display ───────────────────── */
+  .hp-title {
+    margin: 4px 0 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+  }
+  .hp-display {
+    margin: 4px 0 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+  }
+  .hp-dot { color: var(--amber); margin-left: -0.04em; }
+
+  /* ── MonoBadge ──────────────────────────────────────────────── */
+  .hp-monobadge {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    background: transparent;
+    border: 1px solid var(--ink-0);
+    padding: 3px 6px 2px;
+    margin-top: 6px;
+  }
+  .hp-monobadge--md {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    padding: 5px 8px 4px;
+    margin-top: 0;
+  }
+
+  .hp-coaching {
+    margin: 6px 0 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--ink-0);
+    max-width: 28ch;
+  }
+
+  /* ── Divider ────────────────────────────────────────────────── */
+  .hp-rule {
+    height: 1px;
+    background: var(--line);
+    margin: 4px 0;
+  }
+  .hp-spacer-fill { flex: 1; }
+
+  /* ── TopSetBlock number row ─────────────────────────────────── */
+  .hp-number-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .hp-weight {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 72px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .hp-weight--sm { font-size: 36px; }
+  .hp-unit {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-0);
+    text-transform: uppercase;
+  }
+  .hp-reps {
+    margin-left: 4px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--ink-1);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hp-reps--sm { font-size: 14px; }
+
+  /* ── PlateBar ───────────────────────────────────────────────── */
+  .hp-platebar {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0 6px;
+  }
+  .hp-platebar--sm { height: 40px; margin: 6px 0 0; }
+  .hp-stack { display: flex; align-items: center; gap: 1px; }
+  .hp-stack--l { flex-direction: row-reverse; }
+  .hp-plate {
+    width: 13px;
+    background: var(--ink-0);
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hp-plate--sm { width: 7px; }
+  .hp-plate__num {
+    transform: rotate(-90deg);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 7px;
+    color: var(--bg-0);
+    white-space: nowrap;
+  }
+  .hp-collar {
+    width: 3px;
+    height: 24px;
+    background: var(--ink-0);
+    margin: 0 2px;
+  }
+  .hp-collar--sm { height: 14px; }
+  .hp-barmid { width: 52px; height: 4px; background: var(--ink-0); }
+  .hp-barmid--sm { width: 30px; height: 3px; }
+
+  .hp-perside {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--line);
+    padding-top: 6px;
+    gap: 8px;
+  }
+  .hp-perside__eq {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--ink-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .hp-grp { display: inline-flex; align-items: baseline; }
+  .hp-grp__count { color: var(--ink-2); }
+  .hp-grp__w { color: var(--ink-0); font-weight: 600; }
+  .hp-grp__plus { color: var(--ink-3); margin: 0 1px; }
+  .hp-grp__total { color: var(--ink-0); font-weight: 700; margin-left: 4px; }
+
+  /* ── Rest countdown sprite-strip ────────────────────────────── */
+  .hp-clock {
+    height: 64px;
+    overflow: hidden;
+    text-align: center;
+    margin: 6px 0;
+  }
+  .hp-clock__roll {
+    display: flex;
+    flex-direction: column;
+    /* Ticks during the rest frame's ~3.5s visible window. 4s steps(10)
+       gives one tick per 0.4s — the timer reads as alive. */
+    animation: hp-tick 4s steps(10, end) infinite;
+    animation-delay: 4s; /* aligned with .hp-frame--rest visibility */
+    will-change: transform;
+  }
+  .hp-clock__roll > span {
+    height: 64px;
+    line-height: 64px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 58px;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  @keyframes hp-tick {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-640px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-clock__roll { animation: none; }
+  }
+
+  /* ── Rest timer controls ─────────────────────────────────────── */
+  .hp-tcontrols {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .hp-tchip {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .hp-tchip--primary { background: var(--ink-0); color: var(--bg-0); }
+
+  /* ── Bottom CTA bar + PrimaryPillButton (square) ─────────────── */
+  .hp-ctabar {
+    padding: 12px 14px 14px;
+    background: var(--bg-0);
+  }
+  .hp-cta {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .hp-cta__label {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--bg-0);
+  }
+  .hp-cta__glyph {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--bg-0);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME C — PR CELEBRATION
+     Full-bleed ink-0 surface + screen-scale corner ticks.
+     ═════════════════════════════════════════════════════════════ */
+
+  .hp-frame--cert {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding-top: 0;
+    justify-content: space-between;
+  }
+  /* Corner-tick frame at SCREEN scale (size 28 / thickness 2 in mobile). */
+  .hp-cert-tick {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--bg-0);
+    z-index: 2;
+  }
+  .hp-cert-tick--tl { top: 12px; left: 12px;  border-right: 0; border-bottom: 0; }
+  .hp-cert-tick--tr { top: 12px; right: 12px; border-left: 0;  border-bottom: 0; }
+  .hp-cert-tick--bl { bottom: 12px; left: 12px;  border-right: 0; border-top: 0; }
+  .hp-cert-tick--br { bottom: 12px; right: 12px; border-left: 0;  border-top: 0; }
+
+  .hp-cert-body {
+    flex: 1;
+    padding: 64px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* "YOU HIT A NEW PR" eyebrow — mono bold 22px, real-app sized down
+     a hair to fit the marketing phone (real is 22px, here 16px). */
+  .hp-cert-eyebrow {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg-0);
+    margin-bottom: 12px;
+  }
+  /* "Stronger." hero — sans bold, real-app 76px → 58px here. */
+  .hp-cert-hero {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 58px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--bg-0);
+  }
+  .hp-cert-hero .hp-dot { color: var(--amber); }
+
+  .hp-cert-row {
+    border-top: 1px solid rgba(231, 227, 214, 0.28);
+    padding-top: 12px;
+  }
+  .hp-cert-row--current { margin-top: 18px; }
+  .hp-cert-row--compare {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .hp-cert-caps {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.55);
+  }
+  .hp-cert-caps--sm {
+    font-size: 8px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .hp-cert-num-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .hp-cert-num {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--bg-0);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .hp-cert-unit {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bg-0);
+  }
+
+  .hp-cert-compare-col { display: flex; flex-direction: column; }
+  .hp-cert-compare-col--right { align-items: flex-end; }
+  .hp-cert-prev {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: rgba(231, 227, 214, 0.45);
+    text-decoration: line-through;
+    text-decoration-color: rgba(231, 227, 214, 0.45);
+    text-decoration-thickness: 1px;
+  }
+  .hp-cert-delta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+  .hp-cert-delta {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--bg-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .hp-cert-delta-unit {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bg-0);
+  }
+
+  /* Cert bottom CTA — bg-0 on ink-0, square, sans bold 15px caps. */
+  .hp-cert-ctabar {
+    padding: 12px 16px 22px;
+  }
+  .hp-cert-cta {
+    width: 100%;
+    background: var(--bg-0);
+    color: var(--ink-0);
+    border: 0;
+    border-radius: 0;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .hp-cert-cta__label {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-0);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME D — SESSION COMPLETE (the receipt)
+     Paper bg, ledger masthead, "In the / book." headline, receipt rows.
+     ═════════════════════════════════════════════════════════════ */
+
+  /* SessionCompleteMasthead */
+  .hp-complete-mast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 14px 12px;
+  }
+  .hp-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .hp-wordmark__531 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+  }
+  .hp-wordmark__dot {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .hp-wordmark__ledger {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-left: 10px;
+  }
+
+  /* SessionCompleteTitle */
+  .hp-complete-title {
+    padding: 8px 14px 18px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .hp-complete-titlerow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .hp-complete-headline {
+    flex: 1;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+  }
+  .hp-complete-sub {
+    margin: 12px 0 0;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 28ch;
+  }
+  .hp-complete-sub strong {
+    font-weight: 700;
+    color: var(--ink-0);
+  }
+
+  /* DateStamp — rotated circular stamp with arc-text + grouped date.
+     The real component uses SVG arc-text; here we approximate the look
+     with a circle, an arc'd top label, and three stacked date lines. */
+  .hp-datestamp {
+    width: 76px;
+    height: 76px;
+    border: 1.5px solid var(--ink-0);
+    border-radius: 999px;
+    position: relative;
+    transform: rotate(-6deg);
+    background: var(--bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .hp-datestamp__arc {
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 6.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink-0);
+  }
+  .hp-datestamp__inner {
+    margin-top: 6px;
+    text-align: center;
+  }
+  .hp-datestamp__weekday {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-0);
+  }
+  .hp-datestamp__date {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    color: var(--ink-0);
+    line-height: 1.05;
+    margin-top: 1px;
+  }
+  .hp-datestamp__year {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: var(--ink-2);
+    margin-top: 1px;
+  }
+
+  /* ReceiptCard */
+  .hp-receipt {
+    padding: 16px 14px 0;
+  }
+  .hp-receipt-header {
+    margin-bottom: 6px;
+  }
+  .hp-receipt-card {
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--bg-1);
+  }
+  .hp-receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 10px;
+    border-top: 1px solid var(--line);
+    gap: 8px;
+  }
+  .hp-receipt-row--first { border-top: 0; }
+  .hp-receipt-val {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink-0);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     Live caption pill below the phone
+     ═════════════════════════════════════════════════════════════ */
+  .hp-caption {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hp-caption__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--amber);
+    animation: hp-blink 1.4s var(--ease-standard) infinite;
+  }
+  @keyframes hp-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-caption__dot { animation: none; opacity: 1; }
+  }
+</style>

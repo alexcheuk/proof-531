@@ -3,10 +3,12 @@ import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
 import Section from '~/components/Section.astro';
 import BlogCard from '~/components/BlogCard.astro';
-import PhoneFrame from '~/components/PhoneFrame.astro';
-import MockToday from '~/components/mockups/MockToday.astro';
-import MockLive from '~/components/mockups/MockLive.astro';
-import MockPrCert from '~/components/mockups/MockPrCert.astro';
+import HeroPhone from '~/components/illustrations/HeroPhone.astro';
+import MastheadStrip from '~/components/illustrations/MastheadStrip.astro';
+import PlateBar from '~/components/illustrations/PlateBar.astro';
+import SessionTape from '~/components/illustrations/SessionTape.astro';
+import AmrapMath from '~/components/illustrations/AmrapMath.astro';
+import WeekLedger from '~/components/illustrations/WeekLedger.astro';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -17,81 +19,127 @@ const posts = (await getCollection('blog'))
   title="531 — A 5/3/1 + BBB training app for serious lifters"
   description="A focused 5/3/1 + Boring But Big tracker for iOS and Android. Offline, on-device, free. The dev log is public."
 >
+  {/* ──────────────────────────────────────────────────────────────
+       HERO — editorial typography poster + tipped-in record card.
+       Replaces the previous left-copy/right-phone split.
+       ────────────────────────────────────────────────────────── */}
   <section class="hero">
     <div class="hero__inner">
       <div class="hero__copy">
-        <span class="eyebrow">5/3/1 + BBB · iOS · Android</span>
-        <h1 class="hero__title">Train the program. Skip the spreadsheet.</h1>
+        <span class="eyebrow">5/3/1 + BBB · iOS · Android · free</span>
+        <h1 class="hero__title">
+          Train the program<span class="hero__dot">.</span><br />
+          Skip the spreadsheet<span class="hero__dot">.</span>
+        </h1>
         <p class="hero__lead">
           531 owns the math of Jim Wendler's 5/3/1 — warmups, working sets,
           AMRAPs, Boring But Big, training-max bumps — so the only thing
           left for you is the bar. One screen per phase. No accounts, no
-          cloud, no telemetry. Free.
+          cloud, no telemetry.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#inside">See it →</a>
+          <a class="btn btn--primary" href="#anatomy">See it →</a>
           <a class="btn btn--ghost" href="/blog">Read the dev log</a>
         </div>
-        <ul class="hero__bullets">
-          <li><span class="bullet-glyph">·</span>4-week cycles, the AMRAP set tracked rep-by-rep.</li>
-          <li><span class="bullet-glyph">·</span>5×10 BBB built in, not a separate flow.</li>
-          <li><span class="bullet-glyph">·</span>E-ink paper UI. Big numbers, no chrome.</li>
-          <li><span class="bullet-glyph">·</span>Offline-first. Local SQLite. No sign-in.</li>
-        </ul>
+        <dl class="hero__ledger">
+          <div><dt>cycle</dt><dd>4 wks · 3 working sets · 1 AMRAP</dd></div>
+          <div><dt>bbb</dt><dd>5×10 supplemental, built in</dd></div>
+          <div><dt>storage</dt><dd>local sqlite · drizzle</dd></div>
+          <div><dt>tracking</dt><dd>none</dd></div>
+        </dl>
       </div>
 
-      <div class="hero__phone" aria-hidden="true">
-        <PhoneFrame caption="Today">
-          <MockToday />
-        </PhoneFrame>
+      <div class="hero__phone">
+        <HeroPhone />
       </div>
     </div>
   </section>
 
+  <MastheadStrip />
+
+  {/* ──────────────────────────────────────────────────────────────
+       PLATE LOADER — page-native illustration of the bar viz.
+       The headline feature: the app shows you exactly which plates
+       go on, heaviest first, per side.
+       ────────────────────────────────────────────────────────── */}
+  <section class="loader" id="plates">
+    <div class="loader__inner">
+      <header class="loader__head">
+        <span class="eyebrow">Plate loader · auto</span>
+        <h2 class="loader__title">
+          The plates work themselves out<span class="hero__dot">.</span>
+        </h2>
+        <p class="loader__lead">
+          Given a target weight and your gym's plate set, 531 shows the
+          exact stack — heaviest first, closest to the bar. The same
+          visualization the app paints on the rest screen, so you load
+          the next set with your phone on the floor and your eyes on
+          the rack.
+        </p>
+      </header>
+
+      <div class="loader__primary">
+        <PlateBar
+          weight={345}
+          perSide={[45, 45, 45, 10, 5]}
+          label="WORKING · SET 03 · AMRAP"
+          size="lg"
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* ──────────────────────────────────────────────────────────────
+       ANATOMY — five-frame storyboard, no phone frames.
+       ────────────────────────────────────────────────────────── */}
   <Section
-    eyebrow="Inside the app"
-    title="Three surfaces. Three jobs."
+    eyebrow="Anatomy of a session"
+    title="One screen per phase. Five phases, end to end."
     wide
     divider
   >
-    <div id="inside" class="surfaces-row">
-      <div class="surfaces-row__col">
-        <PhoneFrame caption="Today">
-          <MockToday />
-        </PhoneFrame>
-        <h3>Tomorrow's session, pre-staged</h3>
-        <p>
-          The plates work themselves out. Warmups at 40 / 50 / 60%,
-          three working sets, AMRAP on the last. Tap Start. The app
-          knows what comes next so you don't have to remember.
-        </p>
-      </div>
-      <div class="surfaces-row__col">
-        <PhoneFrame caption="Live · Rest">
-          <MockLive />
-        </PhoneFrame>
-        <h3>The set runs the room</h3>
-        <p>
-          One phase per screen — Set, Rest, AMRAP log. The countdown
-          fills the canvas. Haptic when rest is up. Undo lives one tap
-          away on the bar; nothing else competes for your eye.
-        </p>
-      </div>
-      <div class="surfaces-row__col">
-        <PhoneFrame caption="PR · Earned">
-          <MockPrCert />
-        </PhoneFrame>
-        <h3>An honest celebration when you earn one</h3>
-        <p>
-          AMRAP that beats your estimated 1RM? Full-bleed certificate,
-          inverted palette, the delta over your old best. Closes back
-          to the receipt. No confetti, no streak meta-game — the lift
-          was the meta-game.
-        </p>
-      </div>
+    <div id="anatomy" class="anatomy-wrap">
+      <SessionTape />
     </div>
   </Section>
 
+  {/* ──────────────────────────────────────────────────────────────
+       AMRAP MATH — Epley formula laid out + recent-PR tape.
+       ────────────────────────────────────────────────────────── */}
+  <Section
+    eyebrow="AMRAP · estimated 1RM"
+    title="The math you'd do on the back of a notebook."
+    wide
+    divider
+  >
+    <p class="amrap-lead">
+      The AMRAP rep on the last working set is the whole point of 5/3/1.
+      531 logs it rep-by-rep, runs Epley on it, and shows you whether it
+      cleared your previous best. No spreadsheet. No "PR detection" toggle.
+    </p>
+    <AmrapMath />
+  </Section>
+
+  {/* ──────────────────────────────────────────────────────────────
+       WEEK LEDGER — coach's tear-off sheet view.
+       ────────────────────────────────────────────────────────── */}
+  <Section
+    eyebrow="The cycle"
+    title="Four weeks. Four lifts. Sixteen sessions."
+    wide
+    divider
+  >
+    <p class="week-lead">
+      Every cycle is the same shape — 5s, 3s, 5/3/1+, then deload. After
+      week 3, training maxes bump (+5 upper, +10 lower) and the cycle
+      restarts. 531 advances the calendar for you.
+    </p>
+    <WeekLedger />
+  </Section>
+
+  {/* ──────────────────────────────────────────────────────────────
+       SPEC — kept, but tightened into a 3-col stat grid.
+       ────────────────────────────────────────────────────────── */}
   <Section eyebrow="The promise" title="Built for the lift, not the app store." wide divider>
     <dl class="specs">
       <div>
@@ -147,27 +195,39 @@ const posts = (await getCollection('blog'))
 </Base>
 
 <style>
+  /* ── Hero ── */
   .hero {
     padding-block: var(--space-4xl) var(--space-3xl);
-    border-bottom: 1px solid var(--line-faint);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Faint print-grid behind the hero — establishes the ledger
+     aesthetic before any words are read. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--line-faint) 1px, transparent 1px);
+    background-size: 96px 100%;
+    opacity: 0.6;
+    pointer-events: none;
   }
   .hero__inner {
+    position: relative;
     max-width: var(--content-wide);
     margin: 0 auto;
     padding-inline: var(--gutter);
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: 1.05fr 0.95fr;
     gap: var(--space-3xl);
-    align-items: center;
+    align-items: end;
   }
-  @media (max-width: 880px) {
+  @media (max-width: 980px) {
     .hero__inner {
       grid-template-columns: 1fr;
       gap: var(--space-2xl);
-    }
-    .hero__phone {
-      order: -1;
-      justify-self: center;
+      align-items: start;
     }
   }
   .hero__copy {
@@ -176,9 +236,16 @@ const posts = (await getCollection('blog'))
     gap: var(--space-lg);
   }
   .hero__title {
-    font-size: clamp(2.1rem, 5.5vw, 3.4rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--ink-0);
+  }
+  .hero__dot {
+    color: var(--amber);
+    margin-left: -0.04em;
   }
   .hero__lead {
     color: var(--ink-1);
@@ -192,28 +259,68 @@ const posts = (await getCollection('blog'))
     margin-top: var(--space-xs);
     flex-wrap: wrap;
   }
-  .hero__bullets {
-    list-style: none;
+  .hero__ledger {
     margin: var(--space-md) 0 0;
     padding: 0;
     display: grid;
-    gap: 4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    max-width: 520px;
+  }
+  .hero__ledger > div {
+    padding: 10px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border-bottom: 1px dotted var(--line-faint);
+  }
+  .hero__ledger > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .hero__ledger > div:nth-child(odd) {
+    padding-right: var(--space-md);
+    border-right: 1px solid var(--line-faint);
+  }
+  .hero__ledger > div:nth-child(even) {
+    padding-left: var(--space-md);
+  }
+  .hero__ledger dt {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    flex-shrink: 0;
+    width: 60px;
+  }
+  .hero__ledger dd {
+    margin: 0;
     font-family: var(--font-mono);
     font-size: 0.82rem;
-    color: var(--ink-2);
+    color: var(--ink-1);
+    letter-spacing: 0.02em;
   }
-  .hero__bullets li {
-    display: flex;
-    gap: 8px;
+  @media (max-width: 540px) {
+    .hero__ledger {
+      grid-template-columns: 1fr;
+    }
+    .hero__ledger > div:nth-child(odd),
+    .hero__ledger > div:nth-child(even) {
+      padding: 10px 0;
+      border-right: 0;
+    }
+    .hero__ledger > div:not(:last-child) {
+      border-bottom: 1px dotted var(--line-faint);
+    }
   }
-  .bullet-glyph {
-    color: var(--ink-3);
-  }
+
   .hero__phone {
     display: flex;
     justify-content: center;
+    align-items: end;
   }
 
+  /* ── Buttons ── */
   .btn {
     font-family: var(--font-mono);
     font-size: 0.78rem;
@@ -244,42 +351,78 @@ const posts = (await getCollection('blog'))
     background: var(--bg-2);
   }
 
-  .surfaces-row {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-2xl) var(--space-xl);
-    margin-top: var(--space-lg);
+  /* ── Plate loader section ── */
+  .loader {
+    padding-block: var(--space-3xl);
+    border-top: 1px solid var(--line-faint);
+    background: var(--bg-0);
   }
-  @media (max-width: 920px) {
-    .surfaces-row {
+  .loader__inner {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+  @media (max-width: 980px) {
+    .loader__inner {
       grid-template-columns: 1fr;
+      gap: var(--space-2xl);
     }
   }
-  .surfaces-row__col {
+  .loader__head {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
+    gap: var(--space-sm);
+    max-width: 36ch;
   }
-  .surfaces-row__col h3 {
-    margin-top: var(--space-sm);
+  .loader__title {
     font-family: var(--font-cond);
     font-weight: 600;
-    font-size: 1.15rem;
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
   }
-  .surfaces-row__col p {
+  .loader__lead {
     color: var(--ink-1);
+    font-size: 0.98rem;
     line-height: 1.55;
-    max-width: 32ch;
   }
+  .loader__primary {
+    background: var(--bg-1);
+    border: 1px solid var(--line);
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  /* ── Section leads ── */
+  .amrap-lead,
+  .week-lead {
+    max-width: 56ch;
+    color: var(--ink-1);
+    font-size: 1rem;
+    line-height: 1.55;
+    margin-bottom: var(--space-xl);
+  }
+
+  .anatomy-wrap {
+    margin-top: var(--space-md);
+  }
+
+  /* ── Specs (unchanged) ── */
   .specs {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-lg) var(--space-xl);
     margin: 0;
   }
-  @media (max-width: 720px) {
+  @media (max-width: 880px) {
+    .specs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 540px) {
     .specs {
       grid-template-columns: 1fr;
     }
