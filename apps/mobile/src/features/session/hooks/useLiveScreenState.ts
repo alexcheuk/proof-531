@@ -23,8 +23,6 @@ import { round as snapWeight } from '@/domain/units';
  * the SDK 55 split removed expo-av's native module from Expo Go).
  *
  * Phases:
- *   - `prep`            — not yet entered first set (currently unused; reserved
- *                          for future warmups).
  *   - `set`             — show the working set; CTA logs working (or opens AMRAP).
  *   - `amrap-log`       — bottom sheet open for AMRAP rep entry.
  *   - `rest`            — countdown between sets.
@@ -50,7 +48,6 @@ import { useLogWorkingSets } from './useLogWorkingSets';
 import { useRestTimer } from './useRestTimer';
 
 export type LivePhase =
-  | 'prep'
   | 'set'
   | 'amrap-log'
   | 'rest'

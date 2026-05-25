@@ -27,4 +27,5 @@ export {
   type SheetLayoutProps,
   type SheetCancelProps,
 } from './SheetLayout';
+export { StatusBarShim, type StatusBarShimProps } from './StatusBarShim';
 export { TopSetBlock, type TopSetBlockProps } from './TopSetBlock';

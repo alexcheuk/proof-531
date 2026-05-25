@@ -122,7 +122,22 @@ if [ -d "$SRC/data/accessors" ]; then
   done < <(find "$SRC/data/accessors" -maxdepth 1 -type f \( -name "*.ts" -o -name "*.tsx" \) | sort)
 fi
 
-echo "Checked $total_checked exports across primitives + data/queries + data/accessors."
+# Feature hooks — opt-in scan, off by default because the heuristic
+# false-positives on type aliases that are exported for docs/clarity
+# rather than for consumers. Pass `--with-hooks` (or set
+# `FIND_UNUSED_HOOKS=1`) to widen.
+if [ "${1:-}" = "--with-hooks" ] || [ "${FIND_UNUSED_HOOKS:-0}" = "1" ]; then
+  for hooks_dir in "$SRC"/features/*/hooks; do
+    [ -d "$hooks_dir" ] || continue
+    feature=$(basename "$(dirname "$hooks_dir")")
+    while IFS= read -r f; do
+      scan_file "$f" "features/$feature/hooks/$(basename "$f" | sed -E 's/\.tsx?$//')"
+    done < <(find "$hooks_dir" -maxdepth 1 -type f \( -name "*.ts" -o -name "*.tsx" \) | sort)
+  done
+  echo "Checked $total_checked exports across primitives + data + features/*/hooks (--with-hooks)."
+else
+  echo "Checked $total_checked exports across primitives + data/queries + data/accessors."
+fi
 if [ "${#unused[@]}" -eq 0 ]; then
   echo "✓ all scanned exports are imported by at least one non-test consumer."
   exit 0

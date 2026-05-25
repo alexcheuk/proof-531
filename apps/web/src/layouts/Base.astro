@@ -22,6 +22,16 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonical} />
 
+    {/* OS browser chrome (Safari address bar, Chrome on Android) picks
+        up this token color and tints itself to match the page bg.
+        Without it Safari paints a default light-gray bar over our paper
+        canvas, breaking the e-ink discipline at the very top of the
+        screen. Both light and dark are paper-aesthetic: we don't have
+        a dark mode yet, so dark UAs get the same bg-0 paper. */}
+    <meta name="theme-color" content="#E7E3D6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#E7E3D6" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light" />
+
     <title>{title}</title>
     <meta name="description" content={description} />
 

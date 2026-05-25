@@ -1,4 +1,5 @@
 import { useTheme } from '@/design/theme';
+import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, type TextStyle, type ViewStyle } from 'react-native';
 
 /**
@@ -50,13 +51,27 @@ export function TopBarPill({
     color: filled ? colors.bg0 : colors.ink0,
     textTransform: 'uppercase',
   };
+  const handlePress = () => {
+    // Light impact haptic on every top-bar pill press so the four pills
+    // (Undo / Restart / Cancel / Complete) read tactile and consistent —
+    // some used to fire haptics from their own bespoke handlers, others
+    // didn't. Centralizing here means the four wrappers stay one-liners
+    // and the haptic stays consistent. Wrapped in try because expo-haptics
+    // throws on unsupported platforms (web preview).
+    try {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch {
+      // best-effort
+    }
+    onPress();
+  };
   return (
     <Pressable
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       {...(accessibilityHint ? { accessibilityHint } : {})}
-      onPress={onPress}
+      onPress={handlePress}
       hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
       style={pillStyle}
     >

@@ -21,10 +21,10 @@
  * mobile DB is single-writer (JS event loop, no concurrent expo-sqlite writers
  * in practice) we skip the wrapper. Each call's reads/writes are still sequential.
  */
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, ne } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
-import { sessions, setLogs } from '../drizzle/schema';
+import { prs, sessions, setLogs } from '../drizzle/schema';
 import { advanceDay, getSettings } from './settings';
 import { getCurrentTrainingMaxes } from './trainingMax';
 
@@ -148,21 +148,31 @@ export async function cancelSession(db: AnyDb, sessionId: number): Promise<void>
 }
 
 /**
- * Reset a still-in-progress session: delete every set log for it and
- * stamp a fresh `startedAt`, leaving `status === 'in_progress'`. Used
- * by the Restart pill on the Live top bar so the user can scrap a
- * miss-logged attempt and start over without cycling through the cancel
- * → today → begin flow.
+ * Reset a still-in-progress session: delete every set log for it,
+ * stamp a fresh `startedAt`, and rebuild the lift's `prs.bestE1RM`
+ * from the remaining (other-session) AMRAP rows. Leaves
+ * `status === 'in_progress'`. Used by the Restart pill on the Today
+ * top bar (loop-004; previously Live) so the user can scrap a
+ * miss-logged attempt and start over without cycling through the
+ * cancel → today → begin flow.
  *
- * Throws if the session row is missing or already finished (completed /
- * cancelled). PR rows are untouched — a deleted AMRAP that set a PR is
- * out of scope for this iteration and would require unwinding `prs` by
- * recomputing the next-best e1RM across remaining set_logs.
+ * Throws if the session row is missing or already finished
+ * (completed / cancelled).
+ *
+ * PR-rebuild contract (loop-005): if this session set a PR via its
+ * now-deleted AMRAP row, the stale `prs.bestE1RM` would otherwise
+ * survive — the History tab's best-lift badge and the AMRAP
+ * projection chip would both compare against a number with no
+ * supporting set_log. We recompute: select max estimated_1rm across
+ * remaining completed/in-progress sessions' AMRAP logs for this
+ * lift; if none remain, delete the prs row entirely; otherwise
+ * update it. The setLogId pointer is best-effort — we point it at
+ * the newest remaining AMRAP row with the new max e1RM.
  */
 export async function resetSession(db: AnyDb, sessionId: number): Promise<void> {
   const rows = (await Promise.resolve(
     db.select().from(sessions).where(eq(sessions.id, sessionId)),
-  )) as Array<{ status: string }>;
+  )) as Array<{ status: string; lift: Lift }>;
   const session = rows[0];
   if (!session) {
     throw new Error(`resetSession: session ${sessionId} does not exist`);
@@ -170,6 +180,40 @@ export async function resetSession(db: AnyDb, sessionId: number): Promise<void> 
   if (session.status !== 'in_progress') {
     throw new Error(`resetSession: session ${sessionId} is ${session.status}, not in_progress`);
   }
+  // PR rebuild must happen BEFORE we delete this session's set_logs,
+  // because `prs.set_log_id` is a NOT NULL FK to `set_logs.id` with
+  // no ON DELETE CASCADE. Deleting a set_log that `prs` points at
+  // would fail with `FOREIGN KEY constraint failed`. So: compute the
+  // surviving best across other sessions, repoint or delete the prs
+  // row, THEN delete this session's set_logs.
+  const surviving = (await Promise.resolve(
+    db
+      .select({ id: setLogs.id, e1rm: setLogs.estimated1RM })
+      .from(setLogs)
+      .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
+      .where(
+        and(
+          eq(sessions.lift, session.lift),
+          eq(setLogs.kind, 'amrap'),
+          isNotNull(setLogs.estimated1RM),
+          ne(setLogs.sessionId, sessionId),
+        ),
+      )
+      .orderBy(desc(setLogs.estimated1RM), desc(setLogs.completedAt)),
+  )) as Array<{ id: number; e1rm: number | null }>;
+
+  const best = surviving[0];
+  if (!best || best.e1rm == null) {
+    await Promise.resolve(db.delete(prs).where(eq(prs.lift, session.lift)));
+  } else {
+    await Promise.resolve(
+      db
+        .update(prs)
+        .set({ bestE1RM: best.e1rm, setLogId: best.id, achievedAt: Date.now() })
+        .where(eq(prs.lift, session.lift)),
+    );
+  }
+
   await Promise.resolve(db.delete(setLogs).where(eq(setLogs.sessionId, sessionId)));
   await Promise.resolve(
     db.update(sessions).set({ startedAt: Date.now() }).where(eq(sessions.id, sessionId)),

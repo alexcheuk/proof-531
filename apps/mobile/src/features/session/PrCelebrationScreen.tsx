@@ -1,8 +1,8 @@
 import { goTo } from '@/app/routes';
+import { StatusBarShim } from '@/design/primitives/StatusBarShim';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -74,29 +74,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
   return (
     <View style={surfaceStyle} testID="pr-celebration">
-      {/* Two-layer fix for the "status bar still shows paper bg" report
-          (Discord 1508386282097606756). On Android, expo-status-bar's
-          `backgroundColor` is only honored when `translucent={false}` —
-          previously we set `translucent` true with bg=ink0 and Android
-          ignored the bg, leaving the OS-default tint visible above the
-          screen. Flip `translucent` off so the OS paints the bar ink0
-          itself.
-          AND — render an absolute ink0 strip over the SafeTopFrame's
-          paper padding for iOS (where the negative-margin escape worked
-          but only inside the safe area). Belt + braces: at least one of
-          the two paths covers every device. */}
-      <StatusBar style="light" backgroundColor={colors.ink0} translucent={false} />
-      <View
-        pointerEvents="none"
-        style={{
-          position: 'absolute',
-          top: -insets.top,
-          left: 0,
-          right: 0,
-          height: insets.top,
-          backgroundColor: colors.ink0,
-        }}
-      />
+      <StatusBarShim color={colors.ink0} style="light" />
       {/* Corner-tick frame that mirrors the PR certificate panel — but at
           screen scale, so the celebration reads as one big certificate. */}
       <View

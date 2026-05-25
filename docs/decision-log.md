@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — `resetSession` rebuilds `prs.bestE1RM` from surviving AMRAP rows; ordering fix for FK constraint
+
+**Tags:** `bug`, `data`
+**Files:** `apps/mobile/src/data/accessors/session.ts`, `apps/mobile/src/data/accessors/__tests__/resetSession.test.ts`
+
+`resetSession` previously left `prs.bestE1RM` untouched (documented as out-of-scope). A user who set a PR via an AMRAP and then reset the session kept the stale PR forever — best-lift badge and AMRAP chip both compared against a number with no supporting set_log. Now: compute the surviving max e1RM across other sessions for this lift, repoint or delete the prs row, THEN delete this session's set_logs. Order matters — `prs.set_log_id` is a NOT NULL FK with no ON DELETE CASCADE, so deleting set_logs first triggers `FOREIGN KEY constraint failed`. New `__tests__/resetSession.test.ts` covers the two rebuild paths + the FK ordering trap.
+
+**Why:** the gap was real and silent. The first integration test failure made it loud (the FK error fires immediately on the simple "delete prs row when no AMRAP survives" case), so it can't drift again.
+
+**Trade-off / what we didn't do:** considered adding `ON DELETE SET NULL` to the FK via a schema migration. Rejected — migration churn for a fix we can do in one accessor by reordering operations. The migration option stays on the table if we ever need to delete set_logs from other call sites without rebuilding prs.
+
+### 2026-05-25 — `StatusBarShim` primitive extracted for full-bleed status-bar fills
+
+**Tags:** `design-system`, `architecture`
+**Files:** `apps/mobile/src/design/primitives/StatusBarShim.tsx`, `loop-memory/07-status-bar-fill.md`
+
+Extracted the two-layer status-bar fill pattern (StatusBar with `translucent={false}` + absolute strip at `top: -insets.top`) into `StatusBarShim`. PrCelebrationScreen now uses the primitive instead of two inline `View`s. Loop-memory note `07-status-bar-fill.md` records the gotcha + why both layers are needed.
+
+**Why:** the same pattern broke three times in three loops (Discord 1508365993, then 1508386282) because Android's `StatusBar.backgroundColor` is silently ignored when `translucent={true}`. Each iteration re-derived the fix from scratch. Naming the primitive + writing the memory file means the next agent / screen reaches for `<StatusBarShim color=... style=... />` and doesn't think about it.
+
 ### 2026-05-25 — Cancel + Restart pills move from Live to Today; LiveScreen surfaces only contextual recovery
 
 **Tags:** `feature`, `architecture`, `ux`
