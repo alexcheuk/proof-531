@@ -62,8 +62,31 @@ If a fail, fix and re-run before committing. Never commit red.
 
 CLAUDE.md says Expo has changed. Before touching any Expo plugin / config / native import, fetch the versioned docs: https://docs.expo.dev/versions/v55.0.0/
 
+## Update loop-memory every iteration
+
+`loop-memory/` is how this loop teaches itself. Every iteration should leave at least one entry better than it found it:
+
+- **When the user corrects you** — drop the lesson into a memory file the same turn. If the correction contradicts an existing line, rewrite the line (don't append a note next to a wrong claim). The 30m-ceiling correction is the canonical example.
+- **When you discover a real bug-class** (hooks-after-return, sheet-onClose-race, Discord 429 silent-drop) — record it so the next iteration's audit pass can grep for it.
+- **When you find a codebase fact worth caching** (new primitive, new accessor, new convention) — add or update `01-known-codebase.md` instead of re-discovering it next iteration.
+- **When an item genuinely cannot ship from this seat** — record why in `02-pending-assets.md` (or similar) so future iterations don't keep trying.
+- **When an anti-pattern repeats across iterations** — append to the list below. Patterns matter more than incidents.
+
+Practical rule: if the iteration produced a lesson you'd want a fresh-context Claude to know on the next tick, write it. Memory updates ship in the same commit as the code work — one extra file in `git add`, no separate process.
+
+The memory files themselves:
+
+| File | Purpose |
+|------|---------|
+| `00-loop-pacing.md` | This file. How to scope iterations + anti-patterns. |
+| `01-known-codebase.md` | Pre-computed codebase facts (primitives, accessors, conventions). |
+| `02-pending-assets.md` | Work that can't ship from this seat (image assets, etc.). |
+
+Add new files freely when a topic doesn't fit existing ones — keep each focused.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.
 - **:+1: + defer.** Acknowledging a Discord ask without shipping it is worse than not :+1:'ing — the user has to chase it. Don't.
 - **Stopping at the first green CI.** That's an excuse to call it done. The real signal is the item list: did we ship 12+ substantive things?
+- **Not updating memory after a correction.** If the user has to repeat the same lesson on a future iteration, the memory failed. Always write the lesson down the turn it lands.
