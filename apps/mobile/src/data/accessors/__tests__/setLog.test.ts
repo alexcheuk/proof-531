@@ -7,6 +7,7 @@ import { createSession } from '../session';
 import { completeSession } from '../session';
 import {
   appendSetLog,
+  getLifetimeVolume,
   getSessionIdsWithPrs,
   getSetLogsForSession,
   undoLastWorkingSet,
@@ -279,5 +280,51 @@ describe('undoLastWorkingSet', () => {
     expect(removed).toBeNull();
     const remaining = await getSetLogsForSession(db, session.id as number);
     expect(remaining).toHaveLength(2);
+  });
+
+  it('getLifetimeVolume counts working + amrap + bbb rows on completed sessions (warmups excluded)', async () => {
+    const { db, session } = await setup();
+    // 1 working: 200×5 = 1000
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 0,
+      kind: 'working',
+      prescribedWeight: 200,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    // 1 amrap: 250×8 = 2000
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 250,
+      prescribedReps: 5,
+      actualReps: 8,
+    });
+    // 5 bbb: 125×10×5 = 6250
+    for (let i = 0; i < 5; i += 1) {
+      await appendSetLog(db, {
+        sessionId: session.id as number,
+        index: i,
+        kind: 'bbb',
+        prescribedWeight: 125,
+        prescribedReps: 10,
+        actualReps: 10,
+      });
+    }
+    // 1 warmup: 100×5 = 500 — must be excluded.
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 0,
+      kind: 'warmup',
+      prescribedWeight: 100,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    // Volume only counts on completed sessions.
+    await completeSession(db, session.id as number);
+    const total = await getLifetimeVolume(db);
+    expect(total).toBe(1000 + 2000 + 6250);
   });
 });

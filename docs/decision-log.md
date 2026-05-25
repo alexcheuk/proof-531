@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — BBB sets are logged on "Mark complete" (skip stays honest)
+
+**Tags:** `feature`, `data`
+**Files:** `apps/mobile/src/features/session/BbbPromptScreen.tsx`, `apps/mobile/src/data/accessors/setLog.ts`, `apps/mobile/src/features/session/hooks/useLiveScreenEffects.ts`, `apps/mobile/src/data/queries/useLifetimeVolume.ts`
+
+`BbbPromptScreen`'s "Mark BBB complete" CTA now writes 5 `kind: 'bbb'` set_logs (10 reps each at 50% TM). "Skip · close the day" still bypasses the writes — the honest "AMRAP happened, BBB didn't" record. `getLifetimeVolume` widened to include `kind = 'bbb'` so the History tab's volume stat counts every BBB set the user actually moved. `useLiveScreenEffects` invalidator picked up `LIFETIME_VOLUME_KEY` (was missing), so the volume stat refreshes on session close. Exported `LIFETIME_VOLUME_KEY` from `useLifetimeVolume.ts` so invalidators share the constant.
+
+**Why:** loop-007's blog post called out the unlogged-BBB gap. The skip path is non-negotiable: silently logging skipped work would corrupt lifetime volume and obscure actual training patterns.
+
+**Trade-off / what we didn't do:** considered asking the user for per-set actual reps on each BBB set. Rejected for now — BBB is supposed to be at a weight you can hit 10 reps with; if you can't, you went too heavy. All-or-nothing is honest enough for the 95% case. Revisit if a user reports needing the granularity.
+
+**Follow-ups:** receipt's working-sets band doesn't show the BBB rows yet — pure presentation, no schema work. Going on loop-009.
+
 ### 2026-05-25 — Separate `settings.bbbRestTargetSeconds` column (additive migration, default 90s)
 
 **Tags:** `feature`, `data`, `migration`

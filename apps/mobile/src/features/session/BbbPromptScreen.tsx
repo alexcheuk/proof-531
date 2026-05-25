@@ -1,5 +1,10 @@
 import { goTo } from '@/app/routes';
+import { useDb } from '@/data/DbProvider';
+import { appendSetLog } from '@/data/accessors/setLog';
+import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
 import { useSession } from '@/data/queries/useSession';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
+import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
@@ -17,8 +22,10 @@ import { decompose, defaultPlateSet } from '@/domain/plates';
 import { formatMmSs } from '@/domain/time';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { convertWeight, displayUnit as displayUnitGlyph } from '@/domain/units';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { useHardwareBack } from './hooks/useHardwareBack';
@@ -28,15 +35,17 @@ import { useHardwareBack } from './hooks/useHardwareBack';
  * SessionComplete receipt — so the user sees their Boring But Big plan
  * (5×10 @ 50% TM) before closing the day. Two CTAs:
  *
- *   - Primary "Mark BBB complete →" — closes the day on the receipt
- *     (BBB logging itself is not yet implemented; the CTA records
- *     intent for now).
- *   - Secondary "Skip · close the day" — also routes to the receipt
- *     without marking BBB done.
+ *   - Primary "Mark BBB complete →" — writes 5 set_logs with
+ *     `kind: 'bbb'` (each 10 reps at 50% TM) and routes to the
+ *     receipt. The session row is already `status = completed`
+ *     by this point (`completeSession` ran inside
+ *     `useLogWorkingSets.onSaveAmrap` after the AMRAP set), so this is
+ *     purely additive — closing the day still works the same way.
+ *   - Secondary "Skip · close the day" — routes to the receipt
+ *     without writing the BBB rows. Captures "I did the AMRAP but
+ *     skipped the back-off work today" honestly.
  *
- * Both paths land on `/session/complete?sessionId=…`. The session row is
- * already in `completed` state by the time we arrive (completeSession ran
- * inside `useLogWorkingSets.onSaveAmrap`).
+ * Both paths land on `/session/complete?sessionId=…`.
  */
 export type BbbPromptScreenProps = {
   sessionId: number;
@@ -46,6 +55,9 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const { colors, spacing } = useTheme();
   const sessionQuery = useSession(sessionId);
   const settingsQuery = useSettings();
+  const db = useDb();
+  const queryClient = useQueryClient();
+  const [logging, setLogging] = useState(false);
 
   const router = useRouter();
 
@@ -78,7 +90,46 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const perSide = decompose(bbbWeightStorage, plateSet).perSide;
   const restHint = formatMmSs(settings.bbbRestTargetSeconds);
 
-  const onClose = () => goTo.complete(router, sessionId, { replace: true });
+  const onSkip = () => goTo.complete(router, sessionId, { replace: true });
+
+  const onMarkComplete = async () => {
+    if (logging) return;
+    setLogging(true);
+    try {
+      // Write the 5 BBB rows at the BBB weight + reps. Use the session's
+      // STORAGE-unit weight so the receipt + history-volume math is
+      // consistent with the working-set rows (which also persist in
+      // storage units). `actualReps === prescribedReps` — we don't ask
+      // the user how many they hit on each BBB set (yet); this captures
+      // the "I did all 5 sets of 10" intent as the receipt's source of
+      // truth.
+      for (let i = 0; i < BBB_SETS; i += 1) {
+        await appendSetLog(db, {
+          sessionId,
+          index: i,
+          kind: 'bbb',
+          prescribedWeight: bbbWeightStorage,
+          prescribedReps: BBB_REPS,
+          actualReps: BBB_REPS,
+        });
+      }
+      // Refresh the session-shaped surface so the receipt's volume +
+      // History tab's lifetime-volume stat pick up the new rows on
+      // arrival.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
+        queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
+        queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
+      ]);
+    } catch (err) {
+      // Don't block close on failure — the user already did the work.
+      // Log the error and route on so they aren't stuck mid-flow.
+      console.error('BbbPromptScreen.onMarkComplete failed', err);
+    } finally {
+      setLogging(false);
+      goTo.complete(router, sessionId, { replace: true });
+    }
+  };
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
@@ -133,12 +184,17 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
 
       <CtaBar>
         <View style={{ gap: spacing.sm }}>
-          <PrimaryPillButton testID="bbb-mark-done" glyph="→" onPress={onClose}>
+          <PrimaryPillButton
+            testID="bbb-mark-done"
+            glyph="→"
+            onPress={() => void onMarkComplete()}
+            disabled={logging}
+          >
             Mark BBB complete
           </PrimaryPillButton>
           <SecondaryLink
             testID="bbb-skip"
-            onPress={onClose}
+            onPress={onSkip}
             accessibilityLabel="Skip BBB and close the day"
           >
             SKIP · CLOSE THE DAY

@@ -1,5 +1,6 @@
 import { goTo } from '@/app/routes';
 import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
+import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
 import { SESSION_KEY } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
@@ -130,7 +131,10 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
   // completeSession runs advanceDay (mutates settings.week/cycle and, on
   // wrap, the training_maxes history) and AMRAP saves may have set a new
   // PR, so we invalidate the broader session-shaped surface alongside the
-  // three core keys.
+  // three core keys. `lifetimeVolume` is included (loop-008) so the
+  // History tab's volume stat refreshes the moment the day closes — the
+  // new working + amrap rows (plus any BBB rows written by BbbPromptScreen)
+  // need to be counted on next render.
   return Promise.all([
     queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
     queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
@@ -139,6 +143,7 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
     queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
     queryClient.invalidateQueries({ queryKey: ['prs'] }),
     queryClient.invalidateQueries({ queryKey: ['sessionPrIds'] }),
+    queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
     queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
   ]);
 }

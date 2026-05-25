@@ -8,14 +8,24 @@
  *     pressable route to /session/complete?sessionId=… (replace).
  */
 import { ThemeProvider } from '@/design/theme';
-import { fireEvent, render } from '@testing-library/react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
+const mockAppendSetLog = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
   useLocalSearchParams: () => ({}),
+}));
+
+jest.mock('@/data/DbProvider', () => ({
+  useDb: () => ({ __stub: 'db' }),
+}));
+
+jest.mock('@/data/accessors/setLog', () => ({
+  appendSetLog: (...args: unknown[]) => mockAppendSetLog(...args),
 }));
 
 jest.mock('react-native-safe-area-context', () => ({
@@ -61,11 +71,21 @@ jest.mock('@/data/queries/useSettings', () => ({
 
 import { BbbPromptScreen } from '../BbbPromptScreen';
 
-const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
+let queryClient: QueryClient;
+
+const renderScreen = (ui: ReactElement) =>
+  render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
+  );
 
 describe('BbbPromptScreen', () => {
   beforeEach(() => {
+    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     mockReplace.mockClear();
+    mockAppendSetLog.mockReset();
+    mockAppendSetLog.mockResolvedValue({});
     mockSessionState.data = {
       id: 7,
       lift: 'squat',
@@ -100,22 +120,45 @@ describe('BbbPromptScreen', () => {
     expect(screen.getByText('150')).toBeTruthy();
   });
 
-  it('routes to /session/complete (replace) on Mark BBB complete', () => {
+  it('writes 5 BBB set_logs and routes to /session/complete on Mark BBB complete', async () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
-    fireEvent.press(screen.getByTestId('bbb-mark-done'));
-    expect(mockReplace).toHaveBeenCalledWith({
-      pathname: '/session/complete',
-      params: { sessionId: '7' },
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('bbb-mark-done'));
     });
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/session/complete',
+        params: { sessionId: '7' },
+      });
+    });
+    expect(mockAppendSetLog).toHaveBeenCalledTimes(5);
+    for (let i = 0; i < 5; i += 1) {
+      const call = mockAppendSetLog.mock.calls[i]?.[1] as {
+        sessionId: number;
+        index: number;
+        kind: string;
+        prescribedWeight: number;
+        prescribedReps: number;
+        actualReps: number;
+      };
+      expect(call.sessionId).toBe(7);
+      expect(call.index).toBe(i);
+      expect(call.kind).toBe('bbb');
+      expect(call.prescribedReps).toBe(10);
+      expect(call.actualReps).toBe(10);
+      // TM 300 × 0.5 = 150 in storage units.
+      expect(call.prescribedWeight).toBe(150);
+    }
   });
 
-  it('routes to /session/complete (replace) on Skip', () => {
+  it('Skip does NOT write any BBB set_logs and routes to /session/complete', () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     fireEvent.press(screen.getByTestId('bbb-skip'));
     expect(mockReplace).toHaveBeenCalledWith({
       pathname: '/session/complete',
       params: { sessionId: '7' },
     });
+    expect(mockAppendSetLog).not.toHaveBeenCalled();
   });
 
   it('rest hint reads settings.bbbRestTargetSeconds, NOT settings.restTargetSeconds', () => {

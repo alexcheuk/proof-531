@@ -141,17 +141,23 @@ export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
 }
 
 /**
- * Sum of `prescribedWeight × actualReps` across every working/amrap set log
- * row whose parent session has `status = 'completed'`. The History tab's
- * achievement strip uses this to render a "total volume" stat alongside
- * sessions filed + personal records.
+ * Sum of `prescribedWeight × actualReps` across every working / amrap /
+ * BBB set log row whose parent session has `status = 'completed'`. The
+ * History tab's achievement strip uses this to render a "total volume"
+ * stat alongside sessions filed + personal records.
  *
  * Aggregated in SQL so we don't have to pull N-sessions × M-rows into JS
  * just to sum them. Returns `0` when there are no qualifying rows (e.g. a
  * fresh install with no completed sessions).
  *
- * Volume definition mirrors `volumeOfWorkingSets` in `domain/summary.ts`:
- * warmups, BBB, and generic assistance rows are excluded.
+ * BBB sets WERE excluded historically because they weren't being logged
+ * — the receipt's `volumeOfWorkingSets` (domain/summary.ts) still only
+ * counts 5/3/1 working sets (that's the receipt's contract). But
+ * loop-008 wired BBB logging end-to-end via `BbbPromptScreen`'s "Mark
+ * complete" CTA, so the lifetime tally should reflect every plate the
+ * user actually moved. Warmups + generic assistance are still excluded
+ * — warmups don't accrue meaningful volume; assistance isn't part of
+ * the program yet.
  */
 export async function getLifetimeVolume(db: AnyDb): Promise<number> {
   const rows = (await Promise.resolve(
@@ -164,7 +170,7 @@ export async function getLifetimeVolume(db: AnyDb): Promise<number> {
       .from(setLogs)
       .innerJoin(sessions, eq(setLogs.sessionId, sessions.id))
       .where(
-        sql`${sessions.status} = 'completed' AND (${setLogs.kind} = 'working' OR ${setLogs.kind} = 'amrap')`,
+        sql`${sessions.status} = 'completed' AND (${setLogs.kind} = 'working' OR ${setLogs.kind} = 'amrap' OR ${setLogs.kind} = 'bbb')`,
       ),
   )) as Array<{ total: number | null }>;
   const total = rows[0]?.total;
