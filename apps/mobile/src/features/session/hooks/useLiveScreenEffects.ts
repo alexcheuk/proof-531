@@ -68,6 +68,21 @@ export function useLiveScreenEffects({
       });
   }, [phase, sessionId, sessionStatus, queryClient, router]);
 
+  // After AMRAP the state machine stops in 'awaiting-bbb' so the user
+  // sees the BBB plan + close-day prompt before the receipt. The session
+  // row is already in `completed` state by this point (completeSession ran
+  // inside onSaveAmrap), so this is purely a routing step.
+  useEffect(() => {
+    if (phase !== 'awaiting-bbb' || sessionId == null) return;
+    const routeToDestination = () => goTo.bbb(router, sessionId, { replace: true });
+    invalidateSessionSurface(queryClient, sessionId)
+      .then(routeToDestination)
+      .catch((err) => {
+        console.error('useLiveScreenEffects awaiting-bbb invalidation failed', err);
+        routeToDestination();
+      });
+  }, [phase, sessionId, queryClient, router]);
+
   // Exit gate: if the session row disappears (deleted) or transitions out
   // of `in_progress` from elsewhere (e.g. cancelled by another surface),
   // bounce home. Skipped while loading and while we're already mid-complete

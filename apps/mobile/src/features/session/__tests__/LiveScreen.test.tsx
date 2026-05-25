@@ -384,10 +384,12 @@ describe('LiveScreen', () => {
       expect.arrayContaining([['activeSession'], ['sessions'], ['session', 7]]),
     );
 
-    // Router replaced to the complete screen with the sessionId.
+    // Router replaced to the BBB prompt screen — the intermediate step
+    // between AMRAP completion and the receipt (Discord ask
+    // 1508265973554348032). The user closes the day from there.
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith({
-        pathname: '/session/complete',
+        pathname: '/session/bbb',
         params: { sessionId: '7' },
       });
     });

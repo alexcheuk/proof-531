@@ -49,7 +49,14 @@ import { useCancelConfirm } from './useCancelConfirm';
 import { useLogWorkingSets } from './useLogWorkingSets';
 import { useRestTimer } from './useRestTimer';
 
-export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
+export type LivePhase =
+  | 'prep'
+  | 'set'
+  | 'amrap-log'
+  | 'rest'
+  | 'awaiting-bbb'
+  | 'complete'
+  | 'cancel-confirm';
 
 /**
  * Default rest duration in seconds.

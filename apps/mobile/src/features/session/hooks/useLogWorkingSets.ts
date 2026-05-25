@@ -141,7 +141,11 @@ export function useLogWorkingSets({
         clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        setPhase('complete');
+        // After AMRAP, stop on the BBB prompt screen — the user sees
+        // their BBB plan and picks "Mark BBB complete" or "Skip · close
+        // the day". Both route to the receipt. Intermediate step by
+        // user request (Discord 1508265973554348032).
+        setPhase('awaiting-bbb');
       } catch (err) {
         console.error('useLogWorkingSets.onSaveAmrap failed', err);
       }

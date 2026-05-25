@@ -3,8 +3,9 @@ import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { useTheme } from '@/design/theme';
+import { BBB_REPS, BBB_SETS, bbbWeightFromTm } from '@/domain/bbb';
 import type { Unit } from '@/domain/types';
-import { displayWeight, round } from '@/domain/units';
+import { displayWeight } from '@/domain/units';
 import { Text as RNText, type TextStyle, View } from 'react-native';
 
 export type BbbBandProps = {
@@ -38,7 +39,7 @@ export function BbbBand({
   restTargetSeconds,
 }: BbbBandProps) {
   const { colors, layout, spacing, type } = useTheme();
-  const bbbWeightStorage = round(tm * 0.5, storageUnit);
+  const bbbWeightStorage = bbbWeightFromTm(tm, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
 
   const countStyle: TextStyle = {
@@ -60,7 +61,7 @@ export function BbbBand({
       </Row>
       <SectionBand padding="tight" testID="today-bbb-band">
         <Row justify="space-between">
-          <RNText style={countStyle}>5 sets of 10</RNText>
+          <RNText style={countStyle}>{`${BBB_SETS} sets of ${BBB_REPS}`}</RNText>
           <Row align="flex-end" gap="xs">
             <Heading size="m" lineHeight={26} numeric>
               {bbbWeight}

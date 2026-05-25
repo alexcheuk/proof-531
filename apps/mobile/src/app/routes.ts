@@ -55,6 +55,12 @@ export const goTo = {
     router.push(href({ pathname: '/session/live', params: { sessionId: String(sessionId) } }));
   },
 
+  bbb(router: Router, sessionId: number | string, opts?: { replace?: boolean }): void {
+    const target = href({ pathname: '/session/bbb', params: { sessionId: String(sessionId) } });
+    if (opts?.replace) router.replace(target);
+    else router.push(target);
+  },
+
   complete(
     router: Router,
     sessionId: number | string,

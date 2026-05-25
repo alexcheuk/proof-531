@@ -140,7 +140,9 @@ describe('useLogWorkingSets — onSaveAmrap', () => {
     expect(setLastLogged).toHaveBeenCalledWith(expect.objectContaining({ isAmrap: true, reps: 8 }));
     expect(setLastLogged.mock.calls[0]?.[0].estimated1RM).toBeGreaterThan(200);
     expect(mockCompleteSession).toHaveBeenCalledWith(expect.anything(), 42);
-    expect(setPhase).toHaveBeenCalledWith('complete');
+    // After AMRAP the state machine stops on the BBB prompt screen so the
+    // user can review their 5×10 supplementary plan before the receipt.
+    expect(setPhase).toHaveBeenCalledWith('awaiting-bbb');
   });
 
   it('swallows save errors and does not advance phase', async () => {
