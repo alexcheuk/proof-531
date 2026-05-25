@@ -84,6 +84,17 @@ The memory files themselves:
 
 Add new files freely when a topic doesn't fit existing ones — keep each focused.
 
+## Discord API gotchas
+
+- **Cloudflare 1010 on `urllib`** — Python `urllib.request` without a
+  spoofed User-Agent gets rejected by Cloudflare with `error code: 1010`
+  even when the bot token is valid. Either use `curl` (which sends
+  `curl/...` UA by default — that one passes) or set a UA header
+  explicitly, e.g. `'User-Agent': 'DiscordBot (https://example.com, 1.0)'`.
+- **Reaction PUTs return 204 silently when rate-limited** — back-to-back
+  PUTs hit 429 with no body; the reaction never lands. Always poll the
+  message back at end-of-loop and retry any missing reactions.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.
