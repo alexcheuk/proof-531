@@ -135,6 +135,70 @@ describe('deriveView (useSessionCompleteData)', () => {
     expect(v.sessionsInCycle).toBe(8); // 2 lifts × 4 weeks
   });
 
+  it('rolls up BBB rows: bbbSetsCompleted counts them, bbbWeightDisplay reads the first row', () => {
+    const v = deriveView({
+      session: session(),
+      setLogsData: [
+        // One working set to keep workingLogs honest.
+        {
+          id: 1,
+          sessionId: 1,
+          index: 0,
+          kind: 'working',
+          prescribedWeight: 200,
+          prescribedReps: 5,
+          actualReps: 5,
+          completedAt: 1,
+          isPR: false,
+          estimated1RM: null,
+        },
+        // 5 BBB rows at 150 lb × 10.
+        ...Array.from({ length: 5 }, (_, i) => ({
+          id: 10 + i,
+          sessionId: 1,
+          index: i,
+          kind: 'bbb' as const,
+          prescribedWeight: 150,
+          prescribedReps: 10,
+          actualReps: 10,
+          completedAt: 100 + i,
+          isPR: false,
+          estimated1RM: null,
+        })),
+      ],
+      settingsData: undefined,
+      prevBestStorage: 0,
+    });
+    expect(v.bbbSetsCompleted).toBe(5);
+    expect(v.bbbWeightDisplay).toBe(150);
+    // Working volume must NOT include BBB — that's the receipt's contract.
+    expect(v.workingVolume).toBe(1000); // 200 × 5
+  });
+
+  it('reports zero BBB when the user skipped (no bbb rows)', () => {
+    const v = deriveView({
+      session: session(),
+      setLogsData: [
+        {
+          id: 1,
+          sessionId: 1,
+          index: 0,
+          kind: 'working',
+          prescribedWeight: 200,
+          prescribedReps: 5,
+          actualReps: 5,
+          completedAt: 1,
+          isPR: false,
+          estimated1RM: null,
+        },
+      ],
+      settingsData: undefined,
+      prevBestStorage: 0,
+    });
+    expect(v.bbbSetsCompleted).toBe(0);
+    expect(v.bbbWeightDisplay).toBe(0);
+  });
+
   it('computes e1RM delta against the prior PR for the lift', () => {
     const v = deriveView({
       session: session(),

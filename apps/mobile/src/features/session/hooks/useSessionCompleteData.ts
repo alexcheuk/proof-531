@@ -55,6 +55,12 @@ export type SessionCompleteView = {
   workingVolume: number;
   elapsedReady: boolean;
   elapsedValue: string;
+  // BBB summary — present (number > 0 + display weight > 0) when the
+  // user marked BBB complete via the prompt screen, absent otherwise.
+  // The skip path on BbbPromptScreen writes no rows, so an empty BBB
+  // remains a real distinction on the receipt.
+  bbbSetsCompleted: number;
+  bbbWeightDisplay: number;
 };
 
 export function useSessionCompleteData(sessionId: number): SessionCompleteData {
@@ -165,6 +171,17 @@ export function deriveView({
   const workingVolumeStorage = volumeOfWorkingSets(workingLogs);
   const workingVolume = Math.round(convertWeight(workingVolumeStorage, storageUnit, renderUnit));
 
+  // BBB rollup — the prompt screen writes 5 `kind: 'bbb'` rows on
+  // "Mark complete" (loop-008). Each row carries the same
+  // prescribedWeight (50% TM in storage units); the first row's weight
+  // is the canonical BBB weight for this session.
+  const bbbLogs = logs.filter((l) => l.kind === 'bbb');
+  const bbbSetsCompleted = bbbLogs.length;
+  const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
+  const bbbWeightDisplay = Math.round(
+    convertWeight(bbbWeightStorageRow, storageUnit, renderUnit),
+  );
+
   // Cycle position math — falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
   // grid ceiling cannot disagree.
@@ -214,5 +231,7 @@ export function deriveView({
     workingVolume,
     elapsedReady,
     elapsedValue,
+    bbbSetsCompleted,
+    bbbWeightDisplay,
   };
 }

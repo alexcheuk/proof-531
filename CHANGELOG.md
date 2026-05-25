@@ -10,6 +10,11 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **BBB on the receipt** — the session-complete receipt now shows a "BBB"
+  row (e.g. `150 lb · 5×10`) when the user marked the back-off work
+  complete on the prompt screen. Conditional — the
+  "Skip · close the day" path leaves the receipt clean, since there's
+  nothing to show.
 - **BBB sets are logged** — tapping "Mark BBB complete" on the post-AMRAP
   prompt screen writes 5 `kind: 'bbb'` set_logs (10 reps each at 50% TM).
   The History tab's lifetime-volume stat now counts every BBB set the

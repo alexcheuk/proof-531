@@ -145,6 +145,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
           elapsedReady={v.elapsedReady}
           elapsedValue={v.elapsedValue}
           unitGlyph={v.unitGlyph}
+          bbbSetsCompleted={v.bbbSetsCompleted}
+          bbbWeightDisplay={v.bbbWeightDisplay}
         />
 
         <CycleGrid

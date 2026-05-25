@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — BBB row on the session-complete receipt (conditional on actual completion)
+
+**Tags:** `feature`, `ui`
+**Files:** `apps/mobile/src/features/session/components/ReceiptCard.tsx`, `apps/mobile/src/features/session/hooks/useSessionCompleteData.ts`
+
+ReceiptCard renders a `BBB · 150 lb · 5×10` row when `bbbSetsCompleted > 0`. `deriveView` rolls the BBB logs into `bbbSetsCompleted` + `bbbWeightDisplay` view fields. The "Skip · close the day" path keeps the receipt clean — no zero-row, no false completion. `volumeOfWorkingSets` stays working-only (the receipt's volume band is still 5/3/1 main work specifically); the BBB row is a sibling, not a sum.
+
+**Why:** loop-008 logged the rows but didn't surface them. The receipt is the moment-of-truth view; showing only the 5/3/1 main work after a BBB-complete session was understating what the user did.
+
+**Trade-off / what we didn't do:** considered showing total volume (working + BBB) in one combined number. Rejected — combining loses the "the working sets are what 5/3/1 is about" signal that the receipt is meant to honor.
+
 ### 2026-05-25 — BBB sets are logged on "Mark complete" (skip stays honest)
 
 **Tags:** `feature`, `data`
