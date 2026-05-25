@@ -95,6 +95,29 @@ describe('SetRow', () => {
     expect(style.borderBottomWidth).toBe(1);
   });
 
+  it('exposes a composed accessibility label so screen readers read the whole row as one (loop-013)', () => {
+    const screen = renderRow(
+      <SetRow
+        index={3}
+        isLast
+        weight={255}
+        unit="lbs"
+        reps={5}
+        amrap
+        pct={0.85}
+        next
+        testID="amrap-up-next"
+      />,
+    );
+    // The label wraps everything the visual row encodes — index +
+    // state, weight + reps + amrap flag, and the % of TM. Plain words
+    // so VoiceOver / TalkBack reads it as a sentence.
+    const labelled = screen.UNSAFE_root.findByProps({
+      accessibilityLabel: 'Set 3, up next. 255 lb × 5 reps, AMRAP. 85 percent of training max',
+    });
+    expect(labelled).toBeTruthy();
+  });
+
   it('omits the bottom border when not the last row', () => {
     const screen = renderRow(
       <SetRow
