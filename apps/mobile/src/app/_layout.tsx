@@ -5,6 +5,7 @@ import { useAppFonts } from '@/design/fonts';
 import { ErrorBoundary } from '@/design/primitives/ErrorBoundary';
 import { ThemeProvider } from '@/design/theme';
 import { colors } from '@/design/tokens';
+import { BootSplash } from '@/features/shared/BootSplash';
 import { OtaUpdateBanner } from '@/features/shared/OtaUpdateBanner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
@@ -64,7 +65,14 @@ export default function RootLayout() {
     return null;
   }
   if (!migrationsReady && !migrationError) {
-    return null;
+    // Fonts are ready but the SQLite migrations haven't completed yet —
+    // paint the branded boot splash (paper bg + 531 wordmark) so the
+    // handoff from OS splash to first screen never flashes blank.
+    return (
+      <ThemeProvider>
+        <BootSplash />
+      </ThemeProvider>
+    );
   }
 
   return (

@@ -18,6 +18,7 @@
  * directly inside a Fragment.
  */
 import { ThemeProvider } from '@/design/theme';
+import { _resetSessionRuntimeForTests } from '@/features/session/sessionRuntime';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
@@ -136,6 +137,7 @@ const mockSessionState: MockSessionState = {
 
 jest.mock('@/data/queries/useSession', () => ({
   useSession: () => mockSessionState,
+  SESSION_KEY: (id: number | null) => ['session', id],
 }));
 
 const mockSetLogsState: { data: Array<{ kind: string; index: number }> } = { data: [] };
@@ -267,6 +269,10 @@ describe('LiveScreen', () => {
     mockSettingsState.isLoading = false;
     mockSettingsState.error = null;
     mockSetLogsState.data = [];
+    // The session-runtime snapshot lives at module scope so it would leak
+    // between tests — explicitly clear it so each case starts from a clean
+    // boot state.
+    _resetSessionRuntimeForTests();
   });
 
   afterEach(() => {

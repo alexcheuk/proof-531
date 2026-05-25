@@ -26,7 +26,10 @@ fi
 
 exit_code=0
 total_checked=0
-declare -a unused
+# bash 4+ `declare -a` does not initialize the variable, so `${#unused[@]}`
+# under `set -u` errors when nothing was pushed. Explicit empty-array init
+# keeps the "all clean" branch from tripping nounset.
+unused=()
 
 # Scan a single source file for `export {X, Y}` / `export function X` /
 # `export class X` / `export const X` / `export type X` declarations and

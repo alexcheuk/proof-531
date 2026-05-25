@@ -50,6 +50,14 @@ describe('SetPhase', () => {
     expect(screen.getByText('AMRAP')).toBeTruthy();
   });
 
+  it('shows the AMRAP coaching banner only when isAmrap', () => {
+    const amrap = renderPhase(<SetPhase setIndex={2} isAmrap {...BASE} />);
+    expect(amrap.getByTestId('amrap-coaching')).toBeTruthy();
+
+    const regular = renderPhase(<SetPhase setIndex={0} isAmrap={false} {...BASE} />);
+    expect(regular.queryByTestId('amrap-coaching')).toBeNull();
+  });
+
   it('renders the plate-change hint when provided', () => {
     const screen = renderPhase(
       <SetPhase

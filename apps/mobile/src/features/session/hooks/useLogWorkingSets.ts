@@ -9,6 +9,7 @@ import { estimateOneRm } from '@/domain/epley';
 import type { WorkingSetIndex } from '@/domain/schemes';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { clearRestSnapshot, setRestSnapshot } from '../sessionRuntime';
 import type { LastLoggedSet, LivePhase } from './useLiveScreenState';
 
 /**
@@ -30,6 +31,13 @@ export type UseLogWorkingSetsOptions = {
   setIndex: WorkingSetIndex;
   prescribedWeight: number;
   prescribedReps: number;
+  /**
+   * Configured rest target in seconds — stamped into the runtime snapshot
+   * so a remount during rest can restore the running countdown. Defaults
+   * to the production constant when omitted (tests don't care about the
+   * absolute value, only that the snapshot exists).
+   */
+  restSeconds?: number;
   setLastLogged: (snapshot: LastLoggedSet) => void;
   setSetIndex: (next: WorkingSetIndex) => void;
   setPhase: (next: LivePhase) => void;
@@ -45,6 +53,7 @@ export function useLogWorkingSets({
   setIndex,
   prescribedWeight,
   prescribedReps,
+  restSeconds = 180,
   setLastLogged,
   setSetIndex,
   setPhase,
@@ -65,15 +74,17 @@ export function useLogWorkingSets({
         actualReps: prescribedReps,
       });
       await queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) });
-      setLastLogged({
+      const snapshot: LastLoggedSet = {
         weight: prescribedWeight,
         reps: prescribedReps,
         estimated1RM: undefined,
         isAmrap: false,
-      });
+      };
+      setLastLogged(snapshot);
       // Terminal on the deload week (no AMRAP at index 2); AMRAP weeks come
       // in through `onSaveAmrap`.
       if (loggedIndex === 2) {
+        clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
         setPhase('complete');
@@ -83,6 +94,13 @@ export function useLogWorkingSets({
       // confirm the same value, but local advance keeps the transition
       // synchronous and the UI in step with the user's tap.
       setSetIndex((loggedIndex + 1) as WorkingSetIndex);
+      // Persist a rest snapshot so navigating away from /session/live during
+      // rest can restore the running timer on remount.
+      setRestSnapshot({
+        sessionId,
+        endsAtMs: Date.now() + restSeconds * 1000,
+        lastLogged: snapshot,
+      });
       setPhase('rest');
     } catch (err) {
       console.error('useLogWorkingSets.onLogWorkingSet failed', err);
@@ -92,6 +110,7 @@ export function useLogWorkingSets({
     prescribedReps,
     prescribedWeight,
     queryClient,
+    restSeconds,
     sessionId,
     setIndex,
     setLastLogged,
@@ -119,6 +138,7 @@ export function useLogWorkingSets({
           estimated1RM: estimateOneRm(prescribedWeight, reps),
           isAmrap: true,
         });
+        clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
         setPhase('complete');

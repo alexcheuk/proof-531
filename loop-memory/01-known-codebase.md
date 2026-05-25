@@ -56,6 +56,23 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `line`, `lineStrong` — hairlines
 - Splash and adaptive icon backgrounds should be `#E7E3D6` (light) / `#1A1812` (dark).
 
+## Back navigation contract
+
+- **Live → Today, Today → Home.** Deterministic via `goTo.today` / `goTo.home`,
+  not `router.back()`. Stack-default `back` lands on the originating tab
+  (often History) which broke the user's mental model.
+- Hardware Android back is overridden by `useHardwareBack({ enabled, onBack })`
+  in `features/session/hooks/`. Use it whenever a visible back chip exists
+  on a screen with a non-default destination.
+
+## Session runtime snapshot
+
+- `features/session/sessionRuntime.ts` holds a module-level rest snapshot
+  (`{ sessionId, endsAtMs, lastLogged }`) so navigating away from the live
+  screen during rest no longer kills the countdown. Cleared on
+  advance-from-rest / undo / cancel / complete. Tests must call
+  `_resetSessionRuntimeForTests()` in `beforeEach`.
+
 ## Routes
 
 - `/(tabs)` — Today / History / Settings (custom tab bar in `features/tabs/`)

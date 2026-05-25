@@ -44,6 +44,7 @@ import { round as snapWeight } from '@/domain/units';
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { clearRestSnapshot, readRestSnapshot } from '../sessionRuntime';
 import { useCancelConfirm } from './useCancelConfirm';
 import { useLogWorkingSets } from './useLogWorkingSets';
 import { useRestTimer } from './useRestTimer';
@@ -182,9 +183,20 @@ export function useLiveScreenState(
   const setLogsQuery = useSetLogsForSession(sessionId);
   const setLogsData = setLogsQuery.data;
 
-  const [phase, setPhase] = useState<LivePhase>('set');
+  // Read any persisted rest snapshot once on mount so we can seed phase /
+  // lastLogged / timer-remaining synchronously and avoid a flicker of the
+  // set surface before the bootstrap effect runs.
+  const initialSnapshotRef = useRef(sessionId != null ? readRestSnapshot(sessionId) : null);
+  const initialSnapshot = initialSnapshotRef.current;
+  const initialRestoredRemaining = initialSnapshot
+    ? Math.max(1, Math.ceil((initialSnapshot.endsAtMs - Date.now()) / 1000))
+    : null;
+
+  const [phase, setPhase] = useState<LivePhase>(initialSnapshot ? 'rest' : 'set');
   const [setIndex, setSetIndex] = useState<WorkingSetIndex>(0);
-  const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(null);
+  const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(
+    initialSnapshot?.lastLogged ?? null,
+  );
   // Two-tap arm/disarm + auto-disarm for the destructive cancel button.
   const cancelConfirm = useCancelConfirm({
     timeoutMs: CANCEL_ARM_TIMEOUT_MS,
@@ -201,10 +213,13 @@ export function useLiveScreenState(
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
 
   // Rest-timer driver — extracted hook owns the countdown, warning latch,
-  // and ±30s controls.
+  // and ±30s controls. `initialRemaining` carries the restored snapshot
+  // value on first mount; null on every subsequent rest entry so the timer
+  // uses the configured rest target.
   const restTimer = useRestTimer({
     active: phase === 'rest',
     seconds: restSeconds,
+    initialRemaining: initialRestoredRemaining,
     warningThresholdSeconds: WARNING_THRESHOLD,
     fireWarningHaptic,
   });
@@ -219,6 +234,14 @@ export function useLiveScreenState(
     if (setLogsData === undefined) return; // still loading
     bootstrappedRef.current = true;
     const next = computeNextSetIndex(setLogsData);
+    // A restored snapshot already seeded setIndex above (the set after the
+    // most recent log). When restoring rest, trust the snapshot — the user
+    // is mid-rest, so we don't want to bounce them back to the set surface
+    // because of a race between query refetch and snapshot write.
+    if (initialSnapshotRef.current && next !== null) {
+      setSetIndex(next);
+      return;
+    }
     if (next === null) {
       // All three slots filled. Re-running completeSession is a no-op when
       // status !== 'in_progress' (see accessors/session.completeSession).
@@ -252,6 +275,7 @@ export function useLiveScreenState(
     setIndex,
     prescribedWeight,
     prescribedReps,
+    restSeconds,
     setLastLogged,
     setSetIndex,
     setPhase,
@@ -278,6 +302,7 @@ export function useLiveScreenState(
         removed.index === 0 || removed.index === 1 || removed.index === 2
           ? (removed.index as WorkingSetIndex)
           : 0;
+      clearRestSnapshot(session.id);
       setSetIndex(restoredIndex);
       setLastLogged(null);
       setPhase('set');
@@ -291,8 +316,9 @@ export function useLiveScreenState(
     // for UI snappiness). The terminal set transitions straight to
     // 'complete' from there, so by the time the rest phase advances we
     // are always heading back to a 'set' surface.
+    if (session?.id) clearRestSnapshot(session.id);
     setPhase('set');
-  }, []);
+  }, [session?.id]);
 
   const { disarm: disarmCancel, arm: armCancel } = cancelConfirm;
 
@@ -318,6 +344,7 @@ export function useLiveScreenState(
     try {
       await cancelSession(db, session.id);
       await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+      clearRestSnapshot(session.id);
       setPhase('complete');
     } catch (err) {
       console.error('useLiveScreenState.onConfirmCancelSecondTap failed', err);

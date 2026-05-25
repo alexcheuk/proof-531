@@ -1,7 +1,8 @@
 import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { createSession } from '@/data/accessors/session';
-import { useActiveSession } from '@/data/queries/useActiveSession';
+import { ACTIVE_SESSION_KEY, useActiveSession } from '@/data/queries/useActiveSession';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { type WorkingSetIndex, nextWorkingSetIndex } from '@/domain/schemes';
 import type { Lift } from '@/domain/types';
@@ -111,8 +112,8 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
     try {
       const session = await createSession(db, lift);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
-        queryClient.invalidateQueries({ queryKey: ['sessions'] }),
+        queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
+        queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
       ]);
       // Same as above: push so Back from Live lands on Today.
       goTo.live(router, session.id);

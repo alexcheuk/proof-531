@@ -26,7 +26,7 @@ import { settings, trainingMaxes } from '../drizzle/schema';
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
-export type FinishOnboardingInput = {
+type FinishOnboardingInput = {
   unit: Unit;
   /** Ordered subset of LIFT_ORDER, length 1..4. */
   enabledLifts: Lift[];

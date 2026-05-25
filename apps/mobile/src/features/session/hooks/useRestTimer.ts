@@ -21,6 +21,13 @@ export type UseRestTimerOptions = {
   active: boolean;
   /** Initial countdown duration; the hook resets to this each time `active` flips to true. */
   seconds: number;
+  /**
+   * One-shot override for the seed value on the *next* activation — used to
+   * restore a rest timer mid-countdown when the screen remounts. Read once
+   * when `active` flips to true, then ignored until the next activation.
+   * Pass `null` (the default) to use `seconds` as the seed.
+   */
+  initialRemaining?: number | null;
   /** Threshold at which the warning haptic fires. Defaults to 3. */
   warningThresholdSeconds?: number;
   /** Side-effect bus for the warning haptic. */
@@ -42,27 +49,38 @@ const STEP_SECONDS = 30;
 export function useRestTimer({
   active,
   seconds,
+  initialRemaining = null,
   warningThresholdSeconds = DEFAULT_WARNING_THRESHOLD,
   fireWarningHaptic,
 }: UseRestTimerOptions): UseRestTimerResult {
   const [remaining, setRemaining] = useState(0);
   const warningFiredRef = useRef(false);
+  // Latch the override so a later prop change (e.g. parent clearing the
+  // restored snapshot) does not retroactively reseed the running timer.
+  const initialRemainingRef = useRef(initialRemaining);
+  initialRemainingRef.current = initialRemaining;
 
-  // Reset + tick. When `active` becomes true we seed `seconds` and arm the
-  // warning latch; the interval decrements each second. When `active` flips
-  // back to false the cleanup tears down the interval (next start will
-  // re-seed).
+  // Reset + tick. When `active` becomes true we seed `initialRemaining` (if
+  // restoring a paused timer) else `seconds`, and arm the warning latch; the
+  // interval decrements each second. When `active` flips back to false the
+  // cleanup tears down the interval (next start will re-seed).
   useEffect(() => {
     if (!active) return;
     warningFiredRef.current = false;
-    setRemaining(seconds);
+    const seed = initialRemainingRef.current ?? seconds;
+    // If the restored remaining is already past the warning threshold, the
+    // user has already heard the haptic — keep the latch tripped.
+    if (seed <= warningThresholdSeconds) {
+      warningFiredRef.current = true;
+    }
+    setRemaining(seed);
     const id = setInterval(() => {
       setRemaining((prev) => prev - 1);
     }, 1000);
     return () => {
       clearInterval(id);
     };
-  }, [active, seconds]);
+  }, [active, seconds, warningThresholdSeconds]);
 
   // Side-effect bus on every `remaining` tick. Kept separate from the
   // interval callback so the haptic fires from React's commit phase rather

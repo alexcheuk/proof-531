@@ -1,4 +1,8 @@
 import { goTo } from '@/app/routes';
+import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
+import { SESSION_KEY } from '@/data/queries/useSession';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
+import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
 import { type Router, useRouter } from 'expo-router';
@@ -99,13 +103,13 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
   // PR, so we invalidate the broader session-shaped surface alongside the
   // three core keys.
   return Promise.all([
-    queryClient.invalidateQueries({ queryKey: ['activeSession'] }),
-    queryClient.invalidateQueries({ queryKey: ['sessions'] }),
-    queryClient.invalidateQueries({ queryKey: ['session', sessionId] }),
+    queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
+    queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
+    queryClient.invalidateQueries({ queryKey: SESSION_KEY(sessionId) }),
     queryClient.invalidateQueries({ queryKey: ['settings'] }),
     queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
     queryClient.invalidateQueries({ queryKey: ['prs'] }),
     queryClient.invalidateQueries({ queryKey: ['sessionPrIds'] }),
-    queryClient.invalidateQueries({ queryKey: ['setLogsForSession', sessionId] }),
+    queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
   ]);
 }

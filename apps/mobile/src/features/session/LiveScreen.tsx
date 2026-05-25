@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -20,6 +21,7 @@ import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { SetPhase } from './components/SetPhase';
 import { useElapsedSeconds } from './hooks/useElapsedSeconds';
+import { useHardwareBack } from './hooks/useHardwareBack';
 import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
 import { useLiveScreenState } from './hooks/useLiveScreenState';
 import { derivePlateChangeHint } from './livePlateHint';
@@ -48,11 +50,22 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   const elapsedSeconds = useElapsedSeconds(sessionQuery.data?.startedAt ?? null);
 
+  // Hardware back on Live should land on the day's plan (Today), not the
+  // tab the user originated from. Mirrors the visible back chip.
+  const liftForBack = sessionQuery.data?.lift as Lift | undefined;
+  useHardwareBack({
+    enabled: live.phase === 'set' || live.phase === 'rest',
+    onBack: () => {
+      if (liftForBack) goTo.today(router, liftForBack, { replace: true });
+      else goTo.home(router);
+    },
+  });
+
   if (!sessionQuery.data) {
     return (
       <SessionLayout testID="live-loading">
         <StatusBar style="dark" />
-        <SessionTopBar onBack={() => router.back()} backLabel="Back to plan" />
+        <SessionTopBar onBack={() => goTo.home(router)} backLabel="Back to plan" />
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text variant="mono" weight="medium" size={11} color="ink3" style={{ letterSpacing: 2 }}>
             LOADING SESSION…
@@ -107,7 +120,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
     <SessionLayout>
       <StatusBar style="dark" />
       <SessionTopBar
-        onBack={() => router.back()}
+        onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
         rightAction={{ kind: 'cancel', onPress: live.onRequestCancel }}
       />

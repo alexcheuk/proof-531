@@ -31,7 +31,7 @@ import { _upsertPR, getPR } from './prs';
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
 export type SetLog = typeof setLogs.$inferSelect;
-export type AppendSetLogInput = Omit<SetLog, 'id' | 'completedAt' | 'isPR' | 'estimated1RM'>;
+type AppendSetLogInput = Omit<SetLog, 'id' | 'completedAt' | 'isPR' | 'estimated1RM'>;
 
 /**
  * Append a row to `set_logs`. For AMRAP sets, computes estimated 1RM,

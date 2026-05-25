@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDb } from '../DbProvider';
 import { getLifetimeVolume } from '../accessors/setLog';
 
-export const LIFETIME_VOLUME_KEY = ['lifetimeVolume'] as const;
+const LIFETIME_VOLUME_KEY = ['lifetimeVolume'] as const;
 
 export function useLifetimeVolume() {
   const db = useDb();

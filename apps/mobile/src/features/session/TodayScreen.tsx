@@ -25,6 +25,7 @@ import { NoTrainingMaxState } from './components/NoTrainingMaxState';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { TodayBody } from './components/TodayBody';
+import { useHardwareBack } from './hooks/useHardwareBack';
 import { useTodayScreenState } from './hooks/useTodayScreenState';
 
 export function TodayScreen({ lift }: { lift: Lift }) {
@@ -33,6 +34,11 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const tm = useLatestTm(lift);
   const state = useTodayScreenState(lift);
   const { colors } = useTheme();
+
+  // Match the visible back chip — always return to Home, never the tab the
+  // user originated from. Stack-default back lands on whichever tab pushed
+  // here (often History), which doesn't match the user's mental model.
+  useHardwareBack({ enabled: true, onBack: () => goTo.home(router) });
 
   // Loading — blank paper canvas, no flicker.
   if (settings.isLoading || tm.isLoading) {
@@ -49,7 +55,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
     return (
       <SessionLayout>
         <StatusBar style="dark" />
-        <SessionTopBar onBack={() => router.back()} />
+        <SessionTopBar onBack={() => goTo.home(router)} />
         <NoTrainingMaxState lift={lift} onOpenSettings={() => goTo.settings(router)} />
       </SessionLayout>
     );
@@ -81,7 +87,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   return (
     <SessionLayout>
       <StatusBar style="dark" />
-      <SessionTopBar onBack={() => router.back()} />
+      <SessionTopBar onBack={() => goTo.home(router)} />
       <ScrollView
         style={scrollStyle}
         contentContainerStyle={{ flexGrow: 1 }}

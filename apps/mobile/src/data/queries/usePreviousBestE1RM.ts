@@ -15,7 +15,7 @@ import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';
 import { getPreviousBestE1RM } from '../accessors/setLog';
 
-export const PREVIOUS_BEST_E1RM_KEY = (lift: Lift | null, sessionId: number | null) =>
+const PREVIOUS_BEST_E1RM_KEY = (lift: Lift | null, sessionId: number | null) =>
   ['previousBestE1RM', lift, sessionId] as const;
 
 export function usePreviousBestE1RM(lift: Lift | null, excludingSessionId: number | null) {
