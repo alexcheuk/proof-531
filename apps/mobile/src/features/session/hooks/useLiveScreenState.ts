@@ -69,16 +69,16 @@ export type LivePhase =
  * History: previously 90s (PWA carry-over) — too short for the heavy top
  * set per user feedback 2026-05-24.
  */
-export const REST_SECONDS = 180;
+const REST_SECONDS = 180;
 /** Seconds-remaining at which the warning haptic fires. */
-export const WARNING_THRESHOLD = 3;
+const WARNING_THRESHOLD = 3;
 /**
  * How long the cancel-confirm destructive button stays armed before
  * silently disarming itself. Prevents the footgun where a user taps once
  * accidentally, looks away, and the second tap an hour later destroys the
  * session.
  */
-export const CANCEL_ARM_TIMEOUT_MS = 8000;
+const CANCEL_ARM_TIMEOUT_MS = 8000;
 
 export type UseLiveScreenStateOptions = {
   /** Defaults to REST_SECONDS — overridable so tests can assert on a shorter timeline. */

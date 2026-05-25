@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — `getSetLogsForSession` enforces `ORDER BY id` (docstring contract → SQL contract)
+
+**Tags:** `data`, `correctness`
+**Files:** `apps/mobile/src/data/accessors/setLog.ts`
+
+The accessor's docstring promised "insertion order" but the SELECT had no `ORDER BY`. SQLite returns rows in insertion order from a single-table SELECT in practice, but it's not guaranteed by SQL. Added `ORDER BY id ASC` so the contract is enforced by the query, not by happenstance. No consumer relied on the order today, but a future one would have hit a non-determinism bug that's hard to repro.
+
+**Why:** found during loop-006 bug-hunt. The doc-vs-code gap is the bug-class; enforcing made it cheap.
+
 ### 2026-05-25 — `resetSession` rebuilds `prs.bestE1RM` from surviving AMRAP rows; ordering fix for FK constraint
 
 **Tags:** `bug`, `data`

@@ -109,10 +109,17 @@ export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<
   return last;
 }
 
-/** Return every set log row for a given session in insertion order. */
+/**
+ * Return every set log row for a given session in insertion order
+ * (ascending `id`). The autoIncrement primary key is the source of
+ * truth for "what happened first" — `completedAt` is a wall-clock
+ * write that can collide on rapid back-to-back appends. Explicit
+ * `ORDER BY id` so the docstring's contract is enforced by SQL, not
+ * by happenstance ordering of an unordered SELECT.
+ */
 export async function getSetLogsForSession(db: AnyDb, sessionId: number): Promise<SetLog[]> {
   return (await Promise.resolve(
-    db.select().from(setLogs).where(eq(setLogs.sessionId, sessionId)),
+    db.select().from(setLogs).where(eq(setLogs.sessionId, sessionId)).orderBy(setLogs.id),
   )) as SetLog[];
 }
 
