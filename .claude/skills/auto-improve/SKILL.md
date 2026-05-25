@@ -53,26 +53,24 @@ Don't over-plan. List the items, then start shipping.
 - **Ship an EAS OTA update so existing installs pick the iteration up immediately.** Run this after the push:
 
   ```bash
-  pnpm --filter @fivethreeone/mobile exec eas update \
-      --branch main \
-      --platform android \
-      --environment production \
-      --non-interactive \
-      --message "$(git log -1 --pretty=%s)"
+  pnpm release-ota
   ```
 
-  `--environment production` + `--non-interactive` are required by newer
-  eas-cli versions running from a non-TTY loop seat (without them you
-  get `The --environment flag must be set when running in
-  --non-interactive mode`).
+  That root script (added 2026-05-25) wraps the full
+  `eas update --branch main --platform android --environment production
+  --non-interactive --message "$(git log -1 --pretty=%s)"` invocation
+  so the loop doesn't have to remember the flag set. The flags exist
+  because newer eas-cli versions refuse non-TTY runs without
+  `--environment production` + `--non-interactive`, and the message
+  uses only the commit subject (`%s`) since the full body
+  (`%B`) often contains unbalanced quotes / backticks that break
+  eas-cli's argument parsing — and the EAS dashboard surfaces only the
+  first line anyway.
 
-  Pass only the commit subject (`--pretty=%s`), not subject + body
-  (`%B`). The full body can contain unbalanced quotes / backticks that
-  break eas-cli's argument parsing — and the EAS dashboard only
-  surfaces the first line anyway. If EAS fails (auth, network,
-  native-incompatible change), surface the error in the Discord
-  summary and continue — code is already on `main`, so the iteration is
-  not lost; the OTA just has to wait for the next push.
+  If EAS fails (auth, network, native-incompatible change), surface
+  the error in the Discord summary and continue — code is already on
+  `main`, so the iteration is not lost; the OTA just has to wait for
+  the next push.
 
 ### 6. Post the Discord summary
 

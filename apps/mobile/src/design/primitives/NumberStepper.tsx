@@ -119,7 +119,19 @@ export function NumberStepper({
           <RNText style={stepGlyphStyle}>−</RNText>
         </Pressable>
         <Row align="baseline" justify="center" gap="sm" style={{ flex: 1, gap: CENTER_GAP }}>
-          <RNText style={valueStyle}>{String(value)}</RNText>
+          {/* Mark the value text as the live region so a screen reader
+              announces the new count after each step press — otherwise a
+              VoiceOver / TalkBack user only knows the button fired, not
+              what the value became. */}
+          <RNText
+            style={valueStyle}
+            accessibilityRole="adjustable"
+            accessibilityLabel={label ? `${label}: ${value}` : `${value}`}
+            accessibilityValue={{ min, max, now: value }}
+            accessibilityLiveRegion="polite"
+          >
+            {String(value)}
+          </RNText>
           {unit ? (
             <CapsLabel size="md" style={{ letterSpacing: 2.34 }}>
               {unitDisplay}

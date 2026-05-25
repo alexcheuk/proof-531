@@ -24,7 +24,8 @@
     "check-boundaries": "bash scripts/check-boundaries.sh",
     "draft-release-notes": "bash scripts/draft-release-notes.sh",
     "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm test",
-    "verify": "pnpm ci && pnpm bundle-check"
+    "verify": "pnpm ci && pnpm bundle-check",
+    "release-ota": "pnpm --filter @fivethreeone/mobile exec eas update --branch main --platform android --environment production --non-interactive --message \"$(git log -1 --pretty=%s)\""
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"

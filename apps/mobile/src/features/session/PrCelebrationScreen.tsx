@@ -1,17 +1,18 @@
 import { goTo } from '@/app/routes';
-import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { formatWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { Text as RNText, View, type ViewStyle } from 'react-native';
 import Animated, { Easing, FadeIn, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CornerTicks } from './components/PRCertificate/CornerTicks';
-import { PAPER_28, PAPER_45, PAPER_55, PAPER_65 } from './components/PRCertificate/paperTints';
+import { PAPER_65 } from './components/PRCertificate/paperTints';
+import { PrCelebrationCtas } from './components/PrCelebration/PrCelebrationCtas';
+import { PrCelebrationNumbers } from './components/PrCelebration/PrCelebrationNumbers';
+import { PrCelebrationSkeleton } from './components/PrCelebration/PrCelebrationSkeleton';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 
@@ -69,12 +70,6 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.lg,
     justifyContent: 'center',
-  };
-
-  const ctaWrap: ViewStyle = {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl + insets.bottom / 2,
-    gap: spacing.xs,
   };
 
   const hasComparison = !!v && v.prevE1RMDisplay > 0 && v.e1RMDelta > 0;
@@ -142,194 +137,20 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         </Animated.View>
 
         {v ? (
-          <>
-            <Animated.View
-              entering={FadeIn.duration(140).delay(220).easing(Easing.out(Easing.cubic))}
-              style={{
-                marginTop: spacing.xl,
-                paddingTop: spacing.lg,
-                borderTopWidth: 1,
-                borderTopColor: PAPER_28,
-              }}
-              testID="pr-celebration-numbers"
-            >
-              <RNText
-                style={{
-                  fontFamily: `${type.mono}-Medium`,
-                  fontSize: 10,
-                  letterSpacing: 2,
-                  textTransform: 'uppercase',
-                  color: PAPER_55,
-                }}
-              >
-                {`${v.liftLower.toUpperCase()} · ESTIMATED 1RM`}
-              </RNText>
-              <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8 }}>
-                <RNText
-                  style={{
-                    fontFamily: `${type.display}-Bold`,
-                    fontSize: 64,
-                    lineHeight: 70,
-                    letterSpacing: -2.2,
-                    color: colors.bg0,
-                  }}
-                  testID="pr-celebration-e1rm"
-                >
-                  {formatWeight(v.e1RMDisplay)}
-                </RNText>
-                <RNText
-                  style={{
-                    fontFamily: `${type.mono}-Bold`,
-                    fontSize: 13,
-                    letterSpacing: 2.6,
-                    textTransform: 'uppercase',
-                    color: colors.bg0,
-                    marginLeft: spacing.sm,
-                  }}
-                >
-                  {v.unitGlyph}
-                </RNText>
-              </View>
-            </Animated.View>
-
-            {hasComparison ? (
-              <Animated.View
-                entering={FadeIn.duration(140).delay(320).easing(Easing.out(Easing.cubic))}
-                style={{
-                  marginTop: spacing.md,
-                  paddingTop: spacing.md,
-                  borderTopWidth: 1,
-                  borderTopColor: PAPER_28,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-end',
-                }}
-              >
-                <View>
-                  <RNText
-                    style={{
-                      fontFamily: `${type.mono}-SemiBold`,
-                      fontSize: 9,
-                      letterSpacing: 1.98,
-                      textTransform: 'uppercase',
-                      color: PAPER_55,
-                      marginBottom: 4,
-                    }}
-                  >
-                    Previous best
-                  </RNText>
-                  <RNText
-                    style={{
-                      fontFamily: `${type.display}-Medium`,
-                      fontSize: 22,
-                      color: PAPER_45,
-                      letterSpacing: -0.44,
-                      textDecorationLine: 'line-through',
-                      textDecorationColor: PAPER_45,
-                    }}
-                    testID="pr-celebration-prev"
-                  >
-                    {`${formatWeight(v.prevE1RMDisplay)} ${v.unitGlyph}`}
-                  </RNText>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <RNText
-                    style={{
-                      fontFamily: `${type.mono}-SemiBold`,
-                      fontSize: 9,
-                      letterSpacing: 1.98,
-                      textTransform: 'uppercase',
-                      color: PAPER_55,
-                      marginBottom: 4,
-                    }}
-                  >
-                    Stronger by
-                  </RNText>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                    <RNText
-                      style={{
-                        fontFamily: `${type.display}-Bold`,
-                        fontSize: 32,
-                        lineHeight: 32,
-                        letterSpacing: -0.96,
-                        color: colors.bg0,
-                      }}
-                      testID="pr-celebration-delta"
-                    >
-                      {`+${formatWeight(v.e1RMDelta)}`}
-                    </RNText>
-                    <RNText
-                      style={{
-                        fontFamily: `${type.mono}-Bold`,
-                        fontSize: 11,
-                        letterSpacing: 2.2,
-                        textTransform: 'uppercase',
-                        color: colors.bg0,
-                        marginLeft: 4,
-                      }}
-                    >
-                      {v.unitGlyph}
-                    </RNText>
-                  </View>
-                </View>
-              </Animated.View>
-            ) : null}
-          </>
+          <PrCelebrationNumbers
+            liftLower={v.liftLower}
+            e1RMDisplay={v.e1RMDisplay}
+            prevE1RMDisplay={v.prevE1RMDisplay}
+            e1RMDelta={v.e1RMDelta}
+            unitGlyph={v.unitGlyph}
+            hasComparison={hasComparison}
+          />
         ) : (
-          // Pre-data skeleton so the screen never reads as a blank
-          // headline. The hero number slot stays present (with a paper-tint
-          // placeholder underline) until useSessionCompleteData resolves.
-          <Animated.View
-            entering={FadeIn.duration(180).delay(140)}
-            testID="pr-celebration-skeleton"
-            style={{
-              marginTop: spacing.xl,
-              paddingTop: spacing.lg,
-              borderTopWidth: 1,
-              borderTopColor: PAPER_28,
-              opacity: 0.45,
-            }}
-          >
-            <View
-              style={{
-                height: 12,
-                width: 140,
-                backgroundColor: PAPER_28,
-                marginBottom: 14,
-              }}
-            />
-            <View style={{ height: 56, width: 220, backgroundColor: PAPER_45 }} />
-          </Animated.View>
+          <PrCelebrationSkeleton />
         )}
       </View>
 
-      <View style={ctaWrap}>
-        <Pressable
-          testID="pr-celebration-continue"
-          accessibilityRole="button"
-          accessibilityLabel="Continue to Boring But Big"
-          onPress={onContinue}
-          style={({ pressed }) => ({
-            backgroundColor: colors.bg0,
-            paddingVertical: spacing.md,
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: pressed ? 0.85 : 1,
-          })}
-        >
-          <Text variant="sans" weight="bold" size={15} color="ink0" style={{ letterSpacing: 0.4 }}>
-            {'Continue  →'}
-          </Text>
-        </Pressable>
-        <SecondaryLink
-          testID="pr-celebration-skip"
-          onPress={onSkipToReceipt}
-          surface="inverse"
-          accessibilityLabel="Skip to session receipt"
-        >
-          SKIP TO RECEIPT
-        </SecondaryLink>
-      </View>
+      <PrCelebrationCtas onContinue={onContinue} onSkipToReceipt={onSkipToReceipt} />
     </View>
   );
 }

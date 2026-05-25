@@ -18,6 +18,7 @@ import { displayUnit } from '@/domain/units';
  */
 import { View, type ViewStyle } from 'react-native';
 import { useAmrapLogState } from '../../hooks/useAmrapLogState';
+import { useAmrapPrEdgeHaptic } from '../../hooks/useAmrapPrEdgeHaptic';
 import { AmrapFooter } from './AmrapFooter';
 import { ProjectionChip } from './ProjectionChip';
 
@@ -62,6 +63,7 @@ export function AmrapLogSheet({
   const predictedE1RM = Math.round(predictedE1RMRaw);
   const existingBest = existingBestE1RM ?? 0;
   const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
+  useAmrapPrEdgeHaptic(open, isPotentialPR);
   // Tie: the projection equals the existing best but doesn't beat it.
   // Rounded comparison so floating-point drift on the Epley calc doesn't
   // mark an obvious tie as a near-miss. Requires an existing baseline.

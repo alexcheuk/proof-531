@@ -30,10 +30,11 @@
  * (e.g. a mocked test handle), we fall back to sequential writes with the
  * same crash-recovery property as before.
  */
+import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Unit } from '../../domain/types';
-import { convertAndSnap } from '../../domain/units';
-import { trainingMaxes } from '../drizzle/schema';
+import { convertAndSnap, convertWeight } from '../../domain/units';
+import { prs, trainingMaxes } from '../drizzle/schema';
 import { getSettings, updateSettings } from './settings';
 import { getCurrentTrainingMaxes } from './trainingMax';
 
@@ -84,6 +85,24 @@ export async function migrateStorageUnit(db: AnyDb, newUnit: Unit): Promise<void
           updatedAt: now,
           note: 'unit-migration',
         }),
+      );
+    }
+    // PRs (`prs.bestE1RM`) are stored as bare numbers in whatever storage
+    // unit was in effect when the AMRAP set was logged — the table has no
+    // unit column. Before this migration, every existing PR was in the
+    // OLD storage unit (single-unit invariant pre-migration), so converting
+    // them all in one pass keeps `pickBestLift`'s numeric `>` comparison
+    // honest after future PRs land in the new unit. Without this, a 100 kg
+    // PR sits at `100` while a fresh 220 lb PR sits at `220` — the lb
+    // value falsely "wins" the heaviest-lift badge.
+    const existingPrs = (await Promise.resolve(db.select().from(prs))) as Array<{
+      lift: 'squat' | 'bench' | 'deadlift' | 'press';
+      bestE1RM: number;
+    }>;
+    for (const row of existingPrs) {
+      const converted = convertWeight(row.bestE1RM, settings.storageUnit, newUnit);
+      await Promise.resolve(
+        db.update(prs).set({ bestE1RM: converted }).where(eq(prs.lift, row.lift)),
       );
     }
     const patch: { storageUnit: Unit; displayUnit?: Unit } = { storageUnit: newUnit };

@@ -106,4 +106,43 @@ describe('migrateStorageUnit', () => {
     expect(benchHistory[0]?.unit).toBe('kg');
     expect(benchHistory[0]?.value).toBe(90);
   });
+
+  it('converts existing prs.bestE1RM to the new unit so mixed-unit best-lift comparisons stay correct', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    // Seed minimal session + set_log + prs rows directly so we can assert
+    // on the post-migration prs.bestE1RM in isolation (without going
+    // through the full AMRAP flow, which would require a full LiveScreen
+    // render). 399 lb e1RM on squat, 220 lb on bench — both pre-migration.
+    const sqlite = (db as unknown as { session: { client: BetterSqlite3.Database } }).session
+      .client;
+    sqlite
+      .prepare(
+        "INSERT INTO sessions (id, lift, cycle, week, started_at, ended_at, status, training_max_snapshot, storage_unit_snapshot, display_unit_snapshot) VALUES (1, 'squat', 1, 1, 0, NULL, 'completed', 300, 'lbs', 'lbs')",
+      )
+      .run();
+    sqlite
+      .prepare(
+        "INSERT INTO set_logs (id, session_id, \"index\", kind, prescribed_weight, prescribed_reps, actual_reps, completed_at, is_pr, estimated_1rm) VALUES (1, 1, 2, 'amrap', 255, 5, 8, 0, 1, 399), (2, 1, 2, 'amrap', 185, 5, 8, 0, 1, 220)",
+      )
+      .run();
+    sqlite
+      .prepare(
+        "INSERT INTO prs (lift, best_e1rm, set_log_id, achieved_at) VALUES ('squat', 399, 1, 0), ('bench', 220, 2, 0)",
+      )
+      .run();
+
+    await migrateStorageUnit(db, 'kg');
+
+    const rows = (await Promise.resolve(db.select().from(schema.prs))) as Array<{
+      lift: string;
+      bestE1RM: number;
+    }>;
+    const squat = rows.find((r) => r.lift === 'squat');
+    const bench = rows.find((r) => r.lift === 'bench');
+    // 399 lb × 0.45359237 ≈ 180.98 kg (no snap — e1RM keeps full precision)
+    expect(squat?.bestE1RM).toBeCloseTo(180.98, 1);
+    // 220 lb × 0.45359237 ≈ 99.79 kg
+    expect(bench?.bestE1RM).toBeCloseTo(99.79, 1);
+  });
 });
