@@ -56,10 +56,23 @@ Don't over-plan. List the items, then start shipping.
   pnpm --filter @fivethreeone/mobile exec eas update \
       --branch main \
       --platform android \
-      --message "$(git log -1 --pretty=%B)"
+      --environment production \
+      --non-interactive \
+      --message "$(git log -1 --pretty=%s)"
   ```
 
-  The `--message` uses the latest commit subject + body so the EAS dashboard shows what the update contains. If the iteration produced multiple commits, that's fine — the OTA bundle reflects working-tree HEAD regardless; the message just labels it. If EAS fails (auth, network, native-incompatible change), surface the error in the Discord summary and continue — code is already on `main`, so the iteration is not lost; the OTA just has to wait for the next push.
+  `--environment production` + `--non-interactive` are required by newer
+  eas-cli versions running from a non-TTY loop seat (without them you
+  get `The --environment flag must be set when running in
+  --non-interactive mode`).
+
+  Pass only the commit subject (`--pretty=%s`), not subject + body
+  (`%B`). The full body can contain unbalanced quotes / backticks that
+  break eas-cli's argument parsing — and the EAS dashboard only
+  surfaces the first line anyway. If EAS fails (auth, network,
+  native-incompatible change), surface the error in the Discord
+  summary and continue — code is already on `main`, so the iteration is
+  not lost; the OTA just has to wait for the next push.
 
 ### 6. Post the Discord summary
 
