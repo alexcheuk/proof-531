@@ -44,6 +44,12 @@ export type AchievementStripProps = {
    * signal so the user sees progress without waiting for a full cycle.
    */
   sessionsThisWeek?: number;
+  /** Sessions completed inside the current 4-week cycle. */
+  sessionsThisCycle?: number;
+  /** Total scheduled sessions for the current cycle (enabledLifts × 4). */
+  cycleTotalSessions?: number;
+  /** Current cycle index (1-based). */
+  currentCycle?: number;
 };
 
 const MONTH_NAMES = [
@@ -83,6 +89,9 @@ export function AchievementStrip({
   lifetimeVolume,
   unit,
   sessionsThisWeek,
+  sessionsThisCycle,
+  cycleTotalSessions,
+  currentCycle,
 }: AchievementStripProps) {
   const { layout } = useTheme();
   if (filed === 0) return null;
@@ -93,6 +102,8 @@ export function AchievementStrip({
   const showVolume = (lifetimeVolume ?? 0) > 0;
   const volumeDisplay = showVolume ? formatLifetimeVolume(lifetimeVolume ?? 0, unit ?? 'lbs') : '';
   const showThisWeek = (sessionsThisWeek ?? 0) >= 1;
+  const showCycleProgress =
+    (sessionsThisCycle ?? 0) >= 1 && (cycleTotalSessions ?? 0) >= 1 && (currentCycle ?? 0) >= 1;
   return (
     <Card
       borders="bottom"
@@ -118,6 +129,11 @@ export function AchievementStrip({
       {showThisWeek ? (
         <AchievementCaption testID="history-this-week">
           {`This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
+        </AchievementCaption>
+      ) : null}
+      {showCycleProgress ? (
+        <AchievementCaption testID="history-cycle-progress">
+          {`Cycle ${currentCycle} · ${sessionsThisCycle} of ${cycleTotalSessions} sessions`}
         </AchievementCaption>
       ) : null}
       {bestLift ? (

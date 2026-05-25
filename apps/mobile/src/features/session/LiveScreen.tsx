@@ -7,7 +7,7 @@ import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
-import { decompose } from '@/domain/plates';
+import { decompose, defaultPlateSet } from '@/domain/plates';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayWeight } from '@/domain/units';
 import { useRouter } from 'expo-router';
@@ -93,8 +93,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // and a plate-set matched to the storage unit so the breakdown is
   // physically correct (lb plates on a lb-storage TM produce a 45-lb bar +
   // lb plates regardless of which currency the user is viewing in).
-  const plateSet: PlateSet =
-    settingsQuery.data?.plateSet ?? (storageUnit === 'kg' ? 'kg-standard' : 'standard');
+  const plateSet: PlateSet = settingsQuery.data?.plateSet ?? defaultPlateSet(storageUnit);
   const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
 

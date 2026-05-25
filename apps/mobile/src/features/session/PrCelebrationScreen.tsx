@@ -1,4 +1,5 @@
 import { goTo } from '@/app/routes';
+import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
@@ -15,16 +16,17 @@ import { useSessionCompleteData } from './hooks/useSessionCompleteData';
  * set that registers a new estimated 1RM PR. Inverts the app's paper
  * canvas — ink-on-paper becomes paper-on-ink — so the moment lands.
  *
- * Single CTA "Continue →" replace-routes to the BBB prompt (the normal
- * post-AMRAP path). Android hardware back also pushes forward — the
- * celebration is a one-shot interstitial, never a destination.
+ * Primary CTA "Continue →" replace-routes to the BBB prompt; secondary
+ * "Skip to receipt" jumps past BBB straight to the session-complete
+ * receipt. Android hardware back also pushes forward — the celebration
+ * is a one-shot interstitial, never a destination.
  */
 export type PrCelebrationScreenProps = {
   sessionId: number;
 };
 
 export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
   const router = useRouter();
   const data = useSessionCompleteData(sessionId);
 
@@ -35,9 +37,8 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   }, []);
 
   const onContinue = () => goTo.bbb(router, sessionId, { replace: true });
+  const onSkipToReceipt = () => goTo.complete(router, sessionId, { replace: true });
 
-  // Hardware back also pushes forward (never back into the now-finished
-  // live screen).
   useHardwareBack({ enabled: true, onBack: onContinue });
 
   const v = data.view;
@@ -49,13 +50,14 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
   const bodyStyle: ViewStyle = {
     flex: 1,
-    paddingHorizontal: 28,
-    paddingTop: 88,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xxxl + spacing.xl,
   };
 
   const ctaWrap: ViewStyle = {
-    paddingHorizontal: 24,
-    paddingBottom: 32,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
+    gap: spacing.xs,
   };
 
   return (
@@ -68,7 +70,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
             weight="bold"
             size={11}
             color="bg0"
-            style={{ letterSpacing: 3, marginBottom: 18 }}
+            style={{ letterSpacing: 3, marginBottom: spacing.md + 2 }}
           >
             {'★  YOU HIT A NEW PR  ★'}
           </Text>
@@ -89,7 +91,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         {v ? (
           <Animated.View
             entering={FadeInDown.duration(420).delay(220).springify().damping(18)}
-            style={{ marginTop: 36 }}
+            style={{ marginTop: spacing.xxl }}
           >
             <Text
               variant="mono"
@@ -133,7 +135,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
           onPress={onContinue}
           style={({ pressed }) => ({
             backgroundColor: colors.bg0,
-            paddingVertical: 16,
+            paddingVertical: spacing.md,
             alignItems: 'center',
             justifyContent: 'center',
             opacity: pressed ? 0.85 : 1,
@@ -143,6 +145,14 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
             {'Continue  →'}
           </Text>
         </Pressable>
+        <SecondaryLink
+          testID="pr-celebration-skip"
+          onPress={onSkipToReceipt}
+          surface="inverse"
+          accessibilityLabel="Skip to session receipt"
+        >
+          SKIP TO RECEIPT
+        </SecondaryLink>
       </View>
     </View>
   );

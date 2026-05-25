@@ -64,6 +64,8 @@ export function QueryShell({
         {query.refetch ? (
           <Pressable
             testID="query-retry"
+            accessibilityRole="button"
+            accessibilityLabel="Retry"
             onPress={() => {
               void query.refetch?.();
             }}

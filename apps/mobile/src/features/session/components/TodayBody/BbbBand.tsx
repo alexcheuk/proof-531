@@ -4,6 +4,7 @@ import { Row } from '@/design/primitives/Row';
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { useTheme } from '@/design/theme';
 import { BBB_REPS, BBB_SETS, bbbWeightFromTm } from '@/domain/bbb';
+import { formatMmSs } from '@/domain/time';
 import type { Unit } from '@/domain/types';
 import { displayWeight } from '@/domain/units';
 import { Text as RNText, type TextStyle, View } from 'react-native';
@@ -16,13 +17,6 @@ export type BbbBandProps = {
   /** Optional rest-target hint shown next to the eyebrow ("REST 1:30 BETWEEN SETS"). */
   restTargetSeconds?: number;
 };
-
-function formatRestHint(seconds: number): string {
-  const safe = Math.max(0, Math.floor(seconds));
-  const m = Math.floor(safe / 60);
-  const s = safe % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
 
 /**
  * "BORING BUT BIG" 5×10 @ 50% TM summary band — read-only, numeric only.
@@ -55,7 +49,7 @@ export function BbbBand({
         <CapsLabel>BORING BUT BIG</CapsLabel>
         {restTargetSeconds !== undefined ? (
           <CapsLabel size="xs" color="ink3" testID="today-bbb-rest-hint">
-            {`REST ${formatRestHint(restTargetSeconds)} BETWEEN SETS`}
+            {`REST ${formatMmSs(restTargetSeconds)} BETWEEN SETS`}
           </CapsLabel>
         ) : null}
       </Row>

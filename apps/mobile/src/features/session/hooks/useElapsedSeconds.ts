@@ -13,7 +13,6 @@ export function useElapsedSeconds(startedAt: number | null | undefined): number 
 
   useEffect(() => {
     if (startedAt == null) return;
-    // Seed once immediately so the first paint isn't `0` for a tick.
     setNow(Date.now());
     const id = setInterval(() => {
       setNow(Date.now());
@@ -27,14 +26,5 @@ export function useElapsedSeconds(startedAt: number | null | undefined): number 
   return Math.max(0, Math.floor((now - startedAt) / 1000));
 }
 
-/** Format seconds as `MM:SS` (or `H:MM:SS` once an hour has elapsed). */
-export function formatElapsedClock(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  const hours = Math.floor(safe / 3600);
-  const minutes = Math.floor((safe % 3600) / 60);
-  const seconds = safe % 60;
-  const mm = String(minutes).padStart(2, '0');
-  const ss = String(seconds).padStart(2, '0');
-  if (hours > 0) return `${hours}:${mm}:${ss}`;
-  return `${mm}:${ss}`;
-}
+export { formatClock as formatElapsedClock } from '@/domain/time';
+

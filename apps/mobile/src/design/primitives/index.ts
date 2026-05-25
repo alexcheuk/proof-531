@@ -20,6 +20,7 @@ export { Masthead } from './Masthead';
 export { PillChip, type PillChipProps, type PillChipTone } from './PillChip';
 export { PlateBar, type PlateBarProps } from './PlateBar';
 export { Row, type RowProps } from './Row';
+export { SecondaryLink, type SecondaryLinkProps } from './SecondaryLink';
 export { Sheet } from './Sheet';
 export {
   SheetLayout,

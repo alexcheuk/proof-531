@@ -6,18 +6,20 @@ import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { Divider } from '@/design/primitives/Divider';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { BBB_REPS, BBB_SETS, bbbWeightFromTm } from '@/domain/bbb';
 import { liftDisplayName } from '@/domain/labels';
-import { decompose } from '@/domain/plates';
+import { decompose, defaultPlateSet } from '@/domain/plates';
+import { formatMmSs } from '@/domain/time';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { convertWeight, displayUnit as displayUnitGlyph } from '@/domain/units';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, ScrollView, View, type ViewStyle } from 'react-native';
+import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { useHardwareBack } from './hooks/useHardwareBack';
 
@@ -39,13 +41,6 @@ import { useHardwareBack } from './hooks/useHardwareBack';
 export type BbbPromptScreenProps = {
   sessionId: number;
 };
-
-function formatRestHint(seconds: number): string {
-  const safe = Math.max(0, Math.floor(seconds));
-  const m = Math.floor(safe / 60);
-  const s = safe % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
 
 export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const { colors, spacing } = useTheme();
@@ -76,13 +71,12 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const lift = session.lift as Lift;
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
   const renderUnit: Unit = session.displayUnitSnapshot ?? storageUnit;
-  const plateSet: PlateSet =
-    settings.plateSet ?? (storageUnit === 'kg' ? 'kg-standard' : 'standard');
+  const plateSet: PlateSet = settings.plateSet ?? defaultPlateSet(storageUnit);
 
   const bbbWeightStorage = bbbWeightFromTm(session.trainingMaxSnapshot, storageUnit);
   const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorage, storageUnit, renderUnit));
   const perSide = decompose(bbbWeightStorage, plateSet).perSide;
-  const restHint = formatRestHint(settings.restTargetSeconds);
+  const restHint = formatMmSs(settings.restTargetSeconds);
 
   const onClose = () => goTo.complete(router, sessionId, { replace: true });
 
@@ -142,28 +136,13 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
           <PrimaryPillButton testID="bbb-mark-done" glyph="→" onPress={onClose}>
             Mark BBB complete
           </PrimaryPillButton>
-          <Pressable
+          <SecondaryLink
             testID="bbb-skip"
-            accessibilityRole="button"
-            accessibilityLabel="Skip BBB and close the day"
             onPress={onClose}
-            style={({ pressed }) => ({
-              alignSelf: 'center',
-              paddingVertical: spacing.sm,
-              paddingHorizontal: spacing.lg,
-              opacity: pressed ? 0.5 : 1,
-            })}
+            accessibilityLabel="Skip BBB and close the day"
           >
-            <Text
-              variant="mono"
-              weight="medium"
-              size={11}
-              color="ink3"
-              style={{ letterSpacing: 2 }}
-            >
-              SKIP · CLOSE THE DAY
-            </Text>
-          </Pressable>
+            SKIP · CLOSE THE DAY
+          </SecondaryLink>
         </View>
       </CtaBar>
     </SessionLayout>

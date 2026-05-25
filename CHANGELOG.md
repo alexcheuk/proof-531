@@ -9,6 +9,25 @@ build N" section covers what landed on `main` between two preview builds.
 
 ## [Unreleased]
 
+### Changed
+- **Time helpers consolidated** — three near-identical `formatRestHint`/
+  `formatRestClock`/`formatLabel` copies inside `RestTimer`,
+  `RestTargetSection`, `BbbBand`, `BbbPromptScreen` collapsed into one
+  `formatMmSs`/`formatClock` pair in `src/domain/time.ts` with proper
+  signed-zero + negative-input handling.
+- **Plate-set defaulting helper** — extracted `defaultPlateSet(unit)` from
+  the inline ternaries in `LiveScreen` + `BbbPromptScreen`.
+- **`pnpm verify`** — runs the full CI gauntlet plus a Metro bundle check
+  in one command, so contributors catch the import-graph drift our CI
+  matrix doesn't exercise.
+- **Design primitives · `SecondaryLink`** — promoted the centered,
+  mono-uppercase, low-emphasis text link (BBB "SKIP · CLOSE THE DAY",
+  PR celebration "SKIP TO RECEIPT") to a first-class primitive with
+  paper + inverse-surface variants.
+- **PR Celebration · Skip CTA** added under `Continue →` so the user
+  isn't forced through BBB on every PR. Magic-number padding replaced
+  with spacing tokens.
+
 ### Added
 - **Live · Boring But Big prompt** — after AMRAP the user lands on a
   new `/session/bbb` screen showing the 5×10 @ 50% TM plan with full

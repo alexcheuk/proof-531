@@ -2,6 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import { formatMmSs } from '@/domain/time';
 /**
  * Rest count-DOWN display + ±30s / Skip controls.
  *
@@ -40,13 +41,6 @@ export type RestTimerProps = {
   testID?: string;
 };
 
-function formatLabel(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  const minutes = Math.floor(safe / 60);
-  const seconds = safe % 60;
-  return `${minutes}:${String(seconds).padStart(2, '0')}`;
-}
-
 // Once the user is meaningfully past target (≥ this many seconds) the giant
 // clock switches to an "over by N:NN" frame so the headline reads as a
 // pacing alert rather than just a count-up.
@@ -61,8 +55,8 @@ export function RestTimer({ remaining, onAddRest, onSubRest, onSkip, testID }: R
   // pace-hint threshold flips the label to "+over-by". Avoids the user
   // staring at "1:30" while waiting (the old count-up framing).
   const label = showOverByHint
-    ? `+${formatLabel(overBySeconds)}`
-    : formatLabel(Math.max(0, remaining));
+    ? `+${formatMmSs(overBySeconds)}`
+    : formatMmSs(Math.max(0, remaining));
 
   // Overtime pulse — gentle opacity sway between 1 and 0.7 over ~1.4s while
   // the user is past target. Reset to 1 the moment they're back inside the

@@ -1,23 +1,5 @@
 import { act, renderHook } from '@testing-library/react-native';
-import { formatElapsedClock, useElapsedSeconds } from '../useElapsedSeconds';
-
-describe('formatElapsedClock', () => {
-  it('formats 0 seconds as 00:00', () => {
-    expect(formatElapsedClock(0)).toBe('00:00');
-  });
-
-  it('formats minutes + seconds', () => {
-    expect(formatElapsedClock(135)).toBe('02:15');
-  });
-
-  it('formats hours + minutes + seconds once past an hour', () => {
-    expect(formatElapsedClock(3725)).toBe('1:02:05');
-  });
-
-  it('floors negative input to 0', () => {
-    expect(formatElapsedClock(-30)).toBe('00:00');
-  });
-});
+import { useElapsedSeconds } from '../useElapsedSeconds';
 
 describe('useElapsedSeconds', () => {
   beforeEach(() => {

@@ -8,7 +8,16 @@
  * This module is part of `src/domain/` — pure. No React, no async, no DB.
  */
 
-import type { PlateSet } from './types';
+import type { PlateSet, Unit } from './types';
+
+/**
+ * Default PlateSet for a given storage unit. Used at the render site when
+ * settings.plateSet is null (a fresh install before the user explicitly
+ * picked a plate flavor).
+ */
+export function defaultPlateSet(unit: Unit): PlateSet {
+  return unit === 'kg' ? 'kg-standard' : 'standard';
+}
 
 export const PLATES_LBS = [45, 35, 25, 10, 5, 2.5] as const;
 export const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;

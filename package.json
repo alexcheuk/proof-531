@@ -19,7 +19,8 @@
     "find-unused": "bash scripts/find-unused-primitives.sh",
     "check-boundaries": "bash scripts/check-boundaries.sh",
     "draft-release-notes": "bash scripts/draft-release-notes.sh",
-    "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm test"
+    "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm test",
+    "verify": "pnpm ci && pnpm bundle-check"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"

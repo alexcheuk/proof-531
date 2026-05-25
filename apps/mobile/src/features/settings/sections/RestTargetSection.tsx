@@ -4,6 +4,7 @@ import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import { LabeledSegRail } from '@/design/primitives/LabeledSegRail';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { SegRail } from '@/design/primitives/SegRail';
+import { formatMmSs } from '@/domain/time';
 import { useQueryClient } from '@tanstack/react-query';
 
 type RestPreset = '60' | '90' | '120' | '180' | '240';
@@ -15,13 +16,6 @@ const REST_PRESETS: ReadonlyArray<{ value: RestPreset; label: string }> = [
   { value: '180', label: '3m' },
   { value: '240', label: '4m' },
 ];
-
-function formatRestClock(seconds: number): string {
-  const safe = Math.max(0, Math.floor(seconds));
-  const minutes = Math.floor(safe / 60);
-  const remainder = safe % 60;
-  return `${minutes}:${String(remainder).padStart(2, '0')}`;
-}
 
 export type RestTargetSectionProps = {
   restTargetSeconds: number;
@@ -41,7 +35,7 @@ export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps)
     <LedgerSection title="Rest target" hint="countdown between working sets">
       <LabeledSegRail
         label="Default rest"
-        hint={`Currently ${formatRestClock(restTargetSeconds)} per set`}
+        hint={`Currently ${formatMmSs(restTargetSeconds)} per set`}
       >
         <SegRail<RestPreset>
           testID="settings-rest-target"

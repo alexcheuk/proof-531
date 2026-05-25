@@ -25,12 +25,33 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `PrimaryPillButton` — the only pressable primitive used by features.
 - `Row`, `Divider`, `SectionBand`, `Skeleton`, `ErrorBoundary` — layout.
 - `Masthead`, `TopSetBlock`, `MonoBadge`, `PillChip`, `NumberStepper` — composites.
+- `SecondaryLink` (added 2026-05-24) — centered, mono-uppercase, low-emphasis
+  text-link button used under CTAs. Variants `surface: 'paper' | 'inverse'`
+  for use over dark surfaces (PR celebration).
+- `TopBarPill` (added 2026-05-24, feature-local to `session/components/`) —
+  shared visual primitive for UndoPill / ResetPill / CancelPill /
+  CompletePill, which are now 5-line wrappers.
 
 ## Removed primitives (do not re-add unless there's a real consumer)
 
 - `Box` — generic spacing wrapper. Removed 2026-05-24. Use `Row`/`Card`/inline `View`.
 - `Button` — generic shadcn-style variants. Removed 2026-05-24. Use `PrimaryPillButton`.
 - `SectionHeader` — Removed 2026-05-24. Use `TitleBlock` for hero/display titles.
+
+## Pure helpers (domain/)
+
+- `time.ts` (added 2026-05-24) — `formatMmSs` (`1:30`) for short cadence
+  labels, `formatClock` (`MM:SS` / `H:MM:SS`) for elapsed clocks.
+  Replaces four inline copies that had subtly different signed-zero
+  behavior.
+- `plates.defaultPlateSet(unit)` — extracts the inline `unit === 'kg' ?
+  'kg-standard' : 'standard'` ternary used at every plate-render site.
+
+## Dev workflow
+
+- `pnpm verify` (added 2026-05-24) — runs the full CI gauntlet *plus*
+  `pnpm bundle-check`. Use before any commit that touches the import
+  graph (CLAUDE.md harness gap notes).
 
 ## Test discipline
 

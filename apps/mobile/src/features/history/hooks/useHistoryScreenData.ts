@@ -63,6 +63,12 @@ export interface HistoryScreenData {
   displayUnit: Unit;
   /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek: number;
+  /** Sessions completed in the current 4-week cycle (matches settings.currentCycle). */
+  sessionsThisCycle: number;
+  /** Total target session count for a cycle: enabledLifts × 4 weeks. */
+  cycleTotalSessions: number;
+  /** Current cycle index (1-based). */
+  currentCycle: number;
   /** Filter-applied rows. */
   filteredRows: Session[];
   /** Filtered rows grouped by cycle, first-seen order. */
@@ -120,6 +126,13 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
   );
   const grouped = useMemo(() => groupByCycle(filteredRows), [filteredRows]);
   const thisWeekCount = useMemo(() => sessionsThisWeek(rows), [rows]);
+  const currentCycle = settingsQuery.data?.currentCycle ?? 1;
+  const sessionsThisCycleCount = useMemo(
+    () =>
+      rows.filter((r) => r.status === 'completed' && (r.cycle ?? 1) === currentCycle).length,
+    [rows, currentCycle],
+  );
+  const cycleTotalSessions = enabledLifts.length * 4;
 
   const combined = combineQueries(sessions, prIdsQuery);
   const lifetimeVolume = lifetimeVolumeQuery.data ?? 0;
@@ -140,6 +153,9 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     lifetimeVolume,
     displayUnit,
     sessionsThisWeek: thisWeekCount,
+    sessionsThisCycle: sessionsThisCycleCount,
+    cycleTotalSessions,
+    currentCycle,
     filteredRows,
     grouped,
     combined,
