@@ -73,22 +73,25 @@ describe('RestPhase', () => {
     expect(screen.getByText('NEXT SET')).toBeTruthy();
   });
 
-  it('formats the timer label as count-UP elapsed (target - remaining)', () => {
-    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={87} target={90} />);
-    // 90 - 87 = 3 → 0:03
-    expect(screen.getByTestId('rest-timer-value').props.children).toBe('0:03');
+  it('formats the timer label as count-DOWN remaining', () => {
+    // Flipped from count-up 2026-05-24 per user feedback — lifters time
+    // rests in their head as "N left", and 0:00 is the cleaner "go" cue.
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={87} target={180} />);
+    // remaining 87 → 1:27 (was 90-87=3 → 0:03 under count-up framing)
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:27');
   });
 
   it('switches to "+MM:SS over-by" framing when the user runs ≥5s past target', () => {
-    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-30} target={90} />);
-    // 30s past target → "+0:30" pacing hint
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-30} target={180} />);
+    // 30s past target → "+0:30" pacing hint (unchanged by direction flip)
     expect(screen.getByTestId('rest-timer-value').props.children).toBe('+0:30');
   });
 
-  it('still shows count-up framing within the pacing-hint threshold (<5s over)', () => {
-    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-3} target={90} />);
-    // 90 - (-3) = 93 → "1:33"
-    expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:33');
+  it('clamps to 0:00 inside the pacing-hint threshold (<5s over)', () => {
+    // Count-down view: just past zero still reads "0:00" until the over-by
+    // pacing hint kicks in at ≥5s overtime.
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-3} target={180} />);
+    expect(screen.getByTestId('rest-timer-value').props.children).toBe('0:00');
   });
 
   it('renders the undo affordance when onUndoLastSet is provided', () => {

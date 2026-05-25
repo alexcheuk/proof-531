@@ -69,5 +69,5 @@ export const DEFAULT_SETTINGS_VALUES = {
   currentCycle: 1,
   week: 1,
   day: 1,
-  restTargetSeconds: 90,
+  restTargetSeconds: 180,
 };

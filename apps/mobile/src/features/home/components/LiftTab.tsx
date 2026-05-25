@@ -96,7 +96,14 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
     >
       <Row gap="xs" style={{ gap: spacing.xs + 2 }}>
         <RNText style={labelStyle}>{shortName(lift)}</RNText>
-        {hasPr ? (
+        {inProgress ? (
+          // In-progress is the more actionable signal — the user is mid-session
+          // and the dot is asking them to come finish. The PR star is still
+          // implicit (PR carries over to the next session anyway) so hiding it
+          // while a session is live is acceptable. Showing both produced a
+          // visually cluttered "★ ▪" pair flagged in production review.
+          <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} />
+        ) : hasPr ? (
           <Animated.Text
             style={starStyle}
             testID={`lift-tab-${lift}-pr-star`}
@@ -105,7 +112,6 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
             ★
           </Animated.Text>
         ) : null}
-        {inProgress ? <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} /> : null}
       </Row>
       <View style={underlineStyle} />
     </Pressable>

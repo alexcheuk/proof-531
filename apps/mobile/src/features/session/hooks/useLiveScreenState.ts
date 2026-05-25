@@ -50,8 +50,19 @@ import { useRestTimer } from './useRestTimer';
 
 export type LivePhase = 'prep' | 'set' | 'amrap-log' | 'rest' | 'complete' | 'cancel-confirm';
 
-/** Default rest duration in seconds. */
-export const REST_SECONDS = 90;
+/**
+ * Default rest duration in seconds.
+ *
+ * Set at **180s (3 minutes)** as a middle ground for 5/3/1 working sets.
+ * Wendler's "Beyond 5/3/1" recommends 2-3 minutes between the 5s / 3s sets
+ * and 4-5 minutes before the heavy top set; the BBB 5×10 supplementary work
+ * typically uses 60-90 seconds. Users who run the program with shorter rest
+ * can adjust in Settings.
+ *
+ * History: previously 90s (PWA carry-over) — too short for the heavy top
+ * set per user feedback 2026-05-24.
+ */
+export const REST_SECONDS = 180;
 /** Seconds-remaining at which the warning haptic fires. */
 export const WARNING_THRESHOLD = 3;
 /**

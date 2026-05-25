@@ -97,4 +97,36 @@ describe('LiftTabs', () => {
     fireEvent.press(getByTestId('lift-tab-bench'));
     expect(onSelect).toHaveBeenCalledWith('bench');
   });
+
+  it('shows only the in-progress dot when a lift has BOTH a PR and is in progress', () => {
+    // Previously the tab rendered "★ ▪" side-by-side which read as visual
+    // clutter. In-progress takes priority because it's the more actionable
+    // signal — the user is mid-session and the dot is asking them to come
+    // finish. The PR badge still appears in the e1RM card and history.
+    const { getByTestId, queryByTestId } = renderWithTheme(
+      <LiftTabs
+        enabled={['squat', 'bench']}
+        selected="squat"
+        inProgressLift="bench"
+        prLifts={new Set(['bench'])}
+        onSelect={() => {}}
+      />,
+    );
+    expect(getByTestId('lift-tab-bench-progress-dot')).toBeTruthy();
+    expect(queryByTestId('lift-tab-bench-pr-star')).toBeNull();
+  });
+
+  it('shows the PR star when the lift has a PR and is NOT in progress', () => {
+    const { getByTestId, queryByTestId } = renderWithTheme(
+      <LiftTabs
+        enabled={['squat', 'bench']}
+        selected="squat"
+        inProgressLift={null}
+        prLifts={new Set(['squat'])}
+        onSelect={() => {}}
+      />,
+    );
+    expect(getByTestId('lift-tab-squat-pr-star')).toBeTruthy();
+    expect(queryByTestId('lift-tab-squat-progress-dot')).toBeNull();
+  });
 });

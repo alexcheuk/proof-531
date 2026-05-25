@@ -33,7 +33,7 @@ describe('settings accessor', () => {
     expect(s.currentCycle).toBe(1);
     expect(s.week).toBe(1);
     expect(s.day).toBe(1);
-    expect(s.restTargetSeconds).toBe(90);
+    expect(s.restTargetSeconds).toBe(180);
   });
 
   it('updateSettings round-trips restTargetSeconds', async () => {
