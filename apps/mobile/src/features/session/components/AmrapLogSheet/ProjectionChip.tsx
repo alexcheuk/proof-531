@@ -47,6 +47,12 @@ export function ProjectionChip({
   testID,
 }: ProjectionChipProps) {
   const emphasized = isPotentialPR || isTiePR;
+  // reps = 0 ⇒ no lift ⇒ no estimate. `estimateOneRm` returns 0 here
+  // (loop-002 fix), so the predictedE1RM would render `0 lb` — visually
+  // noisy and confusing on a fresh sheet open. Show an em-dash placeholder
+  // instead so the chip still reserves layout space but doesn't claim a
+  // bogus number.
+  const e1rmLabel = reps > 0 ? `${predictedE1RM} ${displayUnit(unit)}` : `— ${displayUnit(unit)}`;
   return (
     <Row gap="sm" align="center" {...(testID !== undefined ? { testID } : {})}>
       <CapsLabel
@@ -54,7 +60,7 @@ export function ProjectionChip({
         color={emphasized ? 'ink0' : 'ink1'}
         style={{ letterSpacing: 1.4 }}
       >
-        {`EST. 1RM ${predictedE1RM} ${displayUnit(unit)}`}
+        {`EST. 1RM ${e1rmLabel}`}
       </CapsLabel>
       {deltaFromBest !== null && reps > 0 ? (
         <CapsLabel

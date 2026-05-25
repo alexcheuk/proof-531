@@ -137,6 +137,7 @@ const posts = (await getCollection('blog'))
             summary={post.data.summary}
             pubDate={post.data.pubDate}
             loopId={post.data.loopId}
+            tags={post.data.tags}
           />
         ))}
       </div>

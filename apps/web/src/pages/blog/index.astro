@@ -31,6 +31,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
               summary={post.data.summary}
               pubDate={post.data.pubDate}
               loopId={post.data.loopId}
+              tags={post.data.tags}
             />
           </li>
         ))}

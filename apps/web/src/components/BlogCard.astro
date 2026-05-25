@@ -5,9 +5,10 @@ interface Props {
   summary: string;
   pubDate: Date;
   loopId?: string | undefined;
+  tags?: readonly string[] | undefined;
 }
 
-const { href, title, summary, pubDate, loopId } = Astro.props;
+const { href, title, summary, pubDate, loopId, tags } = Astro.props;
 
 const formatted = pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -15,6 +16,9 @@ const formatted = pubDate.toLocaleDateString('en-US', {
   day: 'numeric',
 });
 const iso = pubDate.toISOString();
+// Cap the tag count rendered on a card — long tag lists wrap and visually
+// overwhelm the title. Three is enough to signal scope without crowding.
+const visibleTags = (tags ?? []).slice(0, 3);
 ---
 
 <a class="card" href={href}>
@@ -24,6 +28,13 @@ const iso = pubDate.toISOString();
   </header>
   <h3 class="card__title">{title.replace(/\.$/, '')}<span class="card__dot" aria-hidden="true">.</span></h3>
   <p class="card__summary">{summary}</p>
+  {visibleTags.length > 0 && (
+    <ul class="card__tags" aria-label="Tags">
+      {visibleTags.map((t) => (
+        <li class="card__tag">{t}</li>
+      ))}
+    </ul>
+  )}
   <span class="card__cta">Read entry →</span>
 </a>
 
@@ -90,5 +101,25 @@ const iso = pubDate.toISOString();
     text-transform: uppercase;
     color: var(--ink-0);
     margin-top: var(--space-xs);
+  }
+
+  .card__tags {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .card__tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--line-faint);
+    border-radius: var(--radius-pill);
+    padding: 2px 8px;
   }
 </style>
