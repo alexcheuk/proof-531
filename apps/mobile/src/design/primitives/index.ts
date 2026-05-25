@@ -1,4 +1,3 @@
-export { Box } from './Box';
 export { CapsLabel, type CapsLabelProps } from './CapsLabel';
 export { Card, type CardProps } from './Card';
 export { Divider, type DividerProps } from './Divider';
@@ -6,7 +5,6 @@ export { ErrorBoundary, type ErrorBoundaryProps } from './ErrorBoundary';
 export { Heading, type HeadingProps } from './Heading';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Text } from './Text';
-export { Button } from './Button';
 export { CheckboxLedger } from './CheckboxLedger';
 export { CtaBar } from './CtaBar';
 export { PrimaryPillButton } from './PrimaryPillButton';

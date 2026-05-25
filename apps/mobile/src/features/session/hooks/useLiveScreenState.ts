@@ -3,6 +3,7 @@ import { cancelSession, completeSession } from '@/data/accessors/session';
 import { useSession } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
+import { useUndoLastWorkingSet } from '@/data/queries/useUndoLastWorkingSet';
 import {
   type WorkingSetIndex,
   getWorkingSetByIndex,
@@ -117,6 +118,13 @@ export type UseLiveScreenStateResult = {
   onDismissCancelSheet: () => void;
   /** True once the user has tapped the destructive button once. */
   cancelArmed: boolean;
+  /**
+   * Roll back the most recent `working` set log for this session and return
+   * to the `'set'` surface. No-op outside `'rest'` or when the most recent
+   * row is not a `working` set (e.g. AMRAP). Best-effort: failures are
+   * swallowed so the UI never enters an undefined state.
+   */
+  onUndoLastSet: () => Promise<void>;
 };
 
 /**
@@ -226,6 +234,8 @@ export function useLiveScreenState(
   const pct = workingSet.pct;
   const isAmrap = isAmrapSet(week, setIndex);
 
+  const undoLastWorkingSet = useUndoLastWorkingSet();
+
   const { onLogWorkingSet, onSaveAmrap } = useLogWorkingSets({
     sessionId: session?.id ?? null,
     setIndex,
@@ -243,6 +253,27 @@ export function useLiveScreenState(
   const onCancelAmrapSheet = useCallback(() => {
     setPhase('set');
   }, []);
+
+  const onUndoLastSet = useCallback(async () => {
+    if (phase !== 'rest') return;
+    if (!session?.id) return;
+    try {
+      const removed = await undoLastWorkingSet(session.id);
+      if (!removed) return;
+      // The deleted row was the working set at `removed.index`. Restore
+      // the local state machine so the user lands back on that set ready
+      // to re-log it.
+      const restoredIndex =
+        removed.index === 0 || removed.index === 1 || removed.index === 2
+          ? (removed.index as WorkingSetIndex)
+          : 0;
+      setSetIndex(restoredIndex);
+      setLastLogged(null);
+      setPhase('set');
+    } catch (err) {
+      console.error('useLiveScreenState.onUndoLastSet failed', err);
+    }
+  }, [phase, session?.id, undoLastWorkingSet]);
 
   const onAdvanceFromRest = useCallback(() => {
     // setIndex was already advanced inside onLogWorkingSet (synchronously
@@ -305,5 +336,6 @@ export function useLiveScreenState(
     onConfirmCancelSecondTap,
     onDismissCancelSheet,
     cancelArmed: cancelConfirm.armed,
+    onUndoLastSet,
   };
 }

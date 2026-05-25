@@ -18,23 +18,34 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `StatGrid` — 3-up "label / value / sub" grid. See `LiftStats.tsx` for usage.
 - `LedgerRow`, `LedgerSection` — accountant-style line items.
 - `Card`, `Sheet`, `SheetLayout` — surfaces.
-- `Heading`, `Text`, `CapsLabel` — typography.
+- `Heading`, `Text`, `CapsLabel`, `TitleBlock` — typography.
 - `CtaBar`, `CtaBarReserve` — sticky bottom action area.
 - `PlateBar` — bar + per-side plate visualization.
 - `SegRail`, `LabeledSegRail` — segmented controls.
-- `Button`, `PrimaryPillButton` — pressables.
-- `Row`, `Box`, `Divider`, `SectionBand`, `SectionHeader`, `Skeleton`, `ErrorBoundary` — layout.
+- `PrimaryPillButton` — the only pressable primitive used by features.
+- `Row`, `Divider`, `SectionBand`, `Skeleton`, `ErrorBoundary` — layout.
+- `Masthead`, `TopSetBlock`, `MonoBadge`, `PillChip`, `NumberStepper` — composites.
+
+## Removed primitives (do not re-add unless there's a real consumer)
+
+- `Box` — generic spacing wrapper. Removed 2026-05-24. Use `Row`/`Card`/inline `View`.
+- `Button` — generic shadcn-style variants. Removed 2026-05-24. Use `PrimaryPillButton`.
+- `SectionHeader` — Removed 2026-05-24. Use `TitleBlock` for hero/display titles.
 
 ## Test discipline
 
 - TDD for `src/domain/`, property-tested with fast-check.
 - Component tests assert behavior not pixels.
 - Jest config in `apps/mobile/package.json`.
+- Hook tests live next to the hook (`hooks/__tests__/useFoo.test.tsx`).
+  Mock queries at module-load — see `useHistoryScreenData.test.tsx`.
 
 ## Known harness gaps
 
 - `pnpm run ci` does NOT exercise Metro. Runtime npm dep that's missing from the install graph will pass CI green but break `expo start`.
 - Fix: `pnpm bundle-check` (added 2026-05-24) runs `expo export --platform ios` to spot-check imports.
+- `pnpm find-unused` (added 2026-05-24) flags primitives barrel exports
+  that no feature imports — run when culling design-system surface area.
 
 ## Color palette (e-ink paper)
 
@@ -52,3 +63,11 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `/session/live` — in-session (rest timer, AMRAP sheet, cancel-confirm sheet)
 - `/session/complete` — receipt + CTA
 - `/onboarding` — first-launch
+
+## Data accessors (one-stop reference)
+
+- `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.
+- `setLog.ts` — `appendSetLog` (single write), `getSetLogsForSession`, `getSessionIdsWithPrs`, `getLifetimeVolume`, `getPreviousBestE1RM`.
+- `prs.ts` — `getPR` / `_upsertPR` (internal, never called from features directly).
+- `settings.ts` — settings row CRUD.
+- `tm.ts` — training-max history.

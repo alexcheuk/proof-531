@@ -20,7 +20,7 @@
  * event loop, no concurrent expo-sqlite writers in practice) we skip the
  * wrapper. Each call's reads/writes are still sequential.
  */
-import { eq, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { estimateOneRm } from '../../domain/epley';
 import type { Lift } from '../../domain/types';
@@ -78,6 +78,35 @@ export async function appendSetLog(db: AnyDb, input: AppendSetLogInput): Promise
   const row = inserted[0];
   if (!row) throw new Error('appendSetLog: insert returned no row');
   return row;
+}
+
+/**
+ * Undo the most recent `working` set log for a session.
+ *
+ * Defensive contract:
+ *   - If the most recent row (by `id` desc — `set_logs.id` is autoincrement and
+ *     therefore strictly increasing in insertion order) is NOT `working`,
+ *     returns `null` and leaves the table untouched. In particular we refuse
+ *     to undo `amrap` rows in this iteration because doing so would have to
+ *     cascade back into the `prs` table — out of scope.
+ *   - If the session has no set log rows, returns `null`.
+ *   - Otherwise deletes the row and returns the deleted row so callers can
+ *     roll back local UI state (setIndex, phase, lastLogged).
+ */
+export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<SetLog | null> {
+  const rows = (await Promise.resolve(
+    db
+      .select()
+      .from(setLogs)
+      .where(eq(setLogs.sessionId, sessionId))
+      .orderBy(desc(setLogs.id))
+      .limit(1),
+  )) as SetLog[];
+  const last = rows[0];
+  if (!last) return null;
+  if (last.kind !== 'working') return null;
+  await Promise.resolve(db.delete(setLogs).where(eq(setLogs.id, last.id)));
+  return last;
 }
 
 /** Return every set log row for a given session in insertion order. */

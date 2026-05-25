@@ -131,6 +131,9 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             onAddRest={live.onAddRest}
             onSubRest={live.onSubRest}
             onSkip={live.onAdvanceFromRest}
+            {...(live.lastLogged && !live.lastLogged.isAmrap
+              ? { onUndoLastSet: live.onUndoLastSet }
+              : {})}
             // During rest, useLiveScreenState has already advanced setIndex
             // to the next set, so live.prescribedWeight / .pct / .isAmrap /
             // .prescribedReps describe that set. The PlateBar perSide is

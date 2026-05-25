@@ -24,7 +24,7 @@ jest.mock('react-native-reanimated', () => {
 });
 
 import { ThemeProvider } from '@/design/theme';
-import { render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { RestPhase } from '../RestPhase';
 
@@ -89,6 +89,29 @@ describe('RestPhase', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={-3} target={90} />);
     // 90 - (-3) = 93 → "1:33"
     expect(screen.getByTestId('rest-timer-value').props.children).toBe('1:33');
+  });
+
+  it('renders the undo affordance when onUndoLastSet is provided', () => {
+    const onUndo = jest.fn();
+    const screen = renderWithTheme(
+      <RestPhase loggedUnit="lbs" remaining={45} target={90} onUndoLastSet={onUndo} />,
+    );
+    expect(screen.getByTestId('rest-phase-undo')).toBeTruthy();
+    expect(screen.getByText('↶ Undo last set')).toBeTruthy();
+  });
+
+  it('fires onUndoLastSet when the undo affordance is pressed', () => {
+    const onUndo = jest.fn();
+    const screen = renderWithTheme(
+      <RestPhase loggedUnit="lbs" remaining={45} target={90} onUndoLastSet={onUndo} />,
+    );
+    fireEvent.press(screen.getByTestId('rest-phase-undo'));
+    expect(onUndo).toHaveBeenCalledTimes(1);
+  });
+
+  it('hides the undo affordance when onUndoLastSet is not provided', () => {
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={45} target={90} />);
+    expect(screen.queryByTestId('rest-phase-undo')).toBeNull();
   });
 
   it('exposes rest-phase and rest-timer testIDs', () => {

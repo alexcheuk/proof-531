@@ -2,6 +2,10 @@
 
 A production scaffold for a 5/3/1 + BBB + assistance training tracker. Expo SDK 55, React Native New Architecture, iOS + Android. The goal is a polished, native-feeling lifting app that ships to TestFlight and Play Console internal track from day one.
 
+- **Changelog**: [`CHANGELOG.md`](./CHANGELOG.md)
+- **Marketing source**: [`docs/MARKETING.md`](./docs/MARKETING.md)
+- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — single user, local-only, no tracking.
+
 ## Project goal
 
 The 5/3/1 program math, plate calculator, e1RM, and PR detection are pure modules under `src/domain/` — well-tested and easy to reason about. The on-device experience is built from a small typed design system (`src/design/`) and composed in `src/features/`. Persistence is Drizzle ORM + expo-sqlite (`src/data/`). The whole thing is wired through an orchestrator (`/initial-implement`) that picks the next task from a queue, dispatches subagents, runs the harness, and commits.

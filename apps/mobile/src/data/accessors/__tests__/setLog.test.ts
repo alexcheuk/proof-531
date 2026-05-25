@@ -5,7 +5,12 @@ import * as schema from '../../drizzle/schema';
 import { getPR, getPRs } from '../prs';
 import { createSession } from '../session';
 import { completeSession } from '../session';
-import { appendSetLog, getSessionIdsWithPrs, getSetLogsForSession } from '../setLog';
+import {
+  appendSetLog,
+  getSessionIdsWithPrs,
+  getSetLogsForSession,
+  undoLastWorkingSet,
+} from '../setLog';
 import { seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
@@ -215,5 +220,64 @@ describe('getSessionIdsWithPrs', () => {
     });
     const ids = await getSessionIdsWithPrs(db);
     expect(ids).toEqual([session.id]);
+  });
+});
+
+describe('undoLastWorkingSet', () => {
+  it('returns null when the session has no set logs', async () => {
+    const { db, session } = await setup();
+    const removed = await undoLastWorkingSet(db, session.id as number);
+    expect(removed).toBeNull();
+    expect(await getSetLogsForSession(db, session.id as number)).toEqual([]);
+  });
+
+  it('deletes the most recent working set and returns the deleted row', async () => {
+    const { db, session } = await setup();
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 0,
+      kind: 'working',
+      prescribedWeight: 162.5,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    const second = await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 1,
+      kind: 'working',
+      prescribedWeight: 187.5,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    const removed = await undoLastWorkingSet(db, session.id as number);
+    expect(removed?.id).toBe(second.id);
+    expect(removed?.index).toBe(1);
+    const remaining = await getSetLogsForSession(db, session.id as number);
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0]?.index).toBe(0);
+  });
+
+  it('returns null and leaves the row in place when the most recent row is AMRAP', async () => {
+    const { db, session } = await setup();
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 0,
+      kind: 'working',
+      prescribedWeight: 162.5,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    await appendSetLog(db, {
+      sessionId: session.id as number,
+      index: 2,
+      kind: 'amrap',
+      prescribedWeight: 212.5,
+      prescribedReps: 5,
+      actualReps: 8,
+    });
+    const removed = await undoLastWorkingSet(db, session.id as number);
+    expect(removed).toBeNull();
+    const remaining = await getSetLogsForSession(db, session.id as number);
+    expect(remaining).toHaveLength(2);
   });
 });

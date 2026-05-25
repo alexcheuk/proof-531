@@ -182,8 +182,15 @@ describe('daysSinceFirstSession', () => {
 });
 
 describe('currentStreakDays', () => {
-  it('returns 0 when today is not a training day', () => {
+  it('keeps the streak alive when today is a rest day but yesterday was trained', () => {
+    // "Don't break the chain" — the user gets one grace day before the
+    // streak resets. Trained yesterday with nothing today → still 1.
     const sessions = [makeSession(TODAY_MIDNIGHT - 1 * DAY)];
+    expect(currentStreakDays(sessions, NOW)).toBe(1);
+  });
+
+  it('returns 0 when the last training day is two-or-more days ago', () => {
+    const sessions = [makeSession(TODAY_MIDNIGHT - 2 * DAY)];
     expect(currentStreakDays(sessions, NOW)).toBe(0);
   });
 
@@ -220,7 +227,7 @@ describe('currentStreakDays', () => {
 
   it('ignores cancelled and in-progress rows', () => {
     const sessions = [
-      makeSession(TODAY_MIDNIGHT - 1 * DAY),
+      makeSession(TODAY_MIDNIGHT - 2 * DAY),
       makeSession(TODAY_MIDNIGHT, 'cancelled'),
     ];
     expect(currentStreakDays(sessions, NOW)).toBe(0);

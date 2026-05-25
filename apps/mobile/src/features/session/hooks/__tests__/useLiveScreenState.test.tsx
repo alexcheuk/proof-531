@@ -17,6 +17,11 @@ jest.mock('@/data/accessors/setLog', () => ({
   appendSetLog: jest.fn().mockResolvedValue(undefined),
 }));
 
+const mockUndoLastWorkingSet = jest.fn();
+jest.mock('@/data/queries/useUndoLastWorkingSet', () => ({
+  useUndoLastWorkingSet: () => mockUndoLastWorkingSet,
+}));
+
 const mockSession: {
   data: {
     id: number;
@@ -102,6 +107,50 @@ describe('useLiveScreenState — phase transitions', () => {
     act(() => result.current.onOpenAmrapSheet());
     expect(result.current.phase).toBe('amrap-log');
     act(() => result.current.onCancelAmrapSheet());
+    expect(result.current.phase).toBe('set');
+  });
+
+  it('onUndoLastSet during rest restores the prior setIndex and returns to set phase', async () => {
+    mockUndoLastWorkingSet.mockReset();
+    // Pretend the accessor deleted the working row at index 0 (the just-logged set).
+    mockUndoLastWorkingSet.mockResolvedValue({
+      id: 1,
+      sessionId: 42,
+      index: 0,
+      kind: 'working',
+      prescribedWeight: 162.5,
+      prescribedReps: 5,
+      actualReps: 5,
+      completedAt: Date.now(),
+      isPR: false,
+      estimated1RM: null,
+    });
+    const { result } = renderHook(() => useLiveScreenState(42), { wrapper });
+    // Log the first working set → advances to setIndex=1, phase='rest'.
+    await act(async () => {
+      await result.current.onLogWorkingSet();
+    });
+    expect(result.current.phase).toBe('rest');
+    expect(result.current.setIndex).toBe(1);
+
+    // Undo → restores setIndex to 0, clears lastLogged, phase back to 'set'.
+    await act(async () => {
+      await result.current.onUndoLastSet();
+    });
+    expect(mockUndoLastWorkingSet).toHaveBeenCalledWith(42);
+    expect(result.current.phase).toBe('set');
+    expect(result.current.setIndex).toBe(0);
+    expect(result.current.lastLogged).toBeNull();
+  });
+
+  it('onUndoLastSet is a no-op outside the rest phase', async () => {
+    mockUndoLastWorkingSet.mockReset();
+    const { result } = renderHook(() => useLiveScreenState(42), { wrapper });
+    expect(result.current.phase).toBe('set');
+    await act(async () => {
+      await result.current.onUndoLastSet();
+    });
+    expect(mockUndoLastWorkingSet).not.toHaveBeenCalled();
     expect(result.current.phase).toBe('set');
   });
 

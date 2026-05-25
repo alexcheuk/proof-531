@@ -80,7 +80,7 @@ jest.mock('@/data/queries/useSettings', () => ({
 }));
 
 const mockLifetimeVolumeRefetch = jest.fn(() => Promise.resolve({ data: 0 }));
-let mockLifetimeVolume = 0;
+const mockLifetimeVolume = 0;
 jest.mock('@/data/queries/useLifetimeVolume', () => ({
   useLifetimeVolume: () => ({
     data: mockLifetimeVolume,

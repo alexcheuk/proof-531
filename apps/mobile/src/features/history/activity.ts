@@ -59,17 +59,22 @@ export function currentStreak(activity: ReadonlyArray<boolean>): number {
 }
 
 /**
- * Real-world consecutive-day streak ending at `now`. Walks back from
- * today's local-midnight bucket through every prior day that contains at
- * least one completed session and returns the run length.
+ * Real-world consecutive-day streak ending at `now`. Walks back through
+ * every prior day that contains at least one completed session and returns
+ * the run length.
+ *
+ * "Alive" rule: the streak survives one day of grace — if the user trained
+ * yesterday but hasn't trained today yet, the streak is still
+ * `yesterday-and-back`, not 0. The streak only resets once two full days
+ * have passed without a session. This is the standard "don't break the
+ * chain" pattern; the prior behavior (return 0 the moment today's bucket
+ * was empty) made the "matching best streak" caption disappear every
+ * morning even when the user was literally on their longest-ever run.
  *
  * Distinct from `currentStreak(activity)` which only sees the trailing
  * 14-day window — that helper saturates at 14 even when the actual streak
  * is longer. This one consults the full session list so it can be
  * meaningfully compared with `longestStreakDays(sessions)`.
- *
- * Returns `0` when today is not a training day (i.e. the streak is
- * broken — the user must hit today to keep the count alive).
  */
 export function currentStreakDays(
   sessions: ReadonlyArray<Session>,
@@ -86,7 +91,10 @@ export function currentStreakDays(
 
   const today = new Date(now);
   today.setHours(0, 0, 0, 0);
-  let cursor = today.getTime();
+  const todayMs = today.getTime();
+  // If today is already a training day, count it. Otherwise start the walk
+  // from yesterday — today's emptiness is grace, not failure.
+  let cursor = dayBuckets.has(todayMs) ? todayMs : todayMs - DAY_MS;
   let streak = 0;
   while (dayBuckets.has(cursor)) {
     streak += 1;
