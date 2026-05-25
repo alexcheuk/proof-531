@@ -216,6 +216,35 @@ describe('SessionCompleteScreen', () => {
     });
   });
 
+  it('omits the receipt-bbb row when the user skipped BBB (no bbb set_logs, loop-016)', async () => {
+    setLogsState.rows = buildLogs({ isPR: false });
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt-volume')).toBeTruthy();
+    });
+    expect(screen.queryByTestId('receipt-bbb')).toBeNull();
+  });
+
+  it('renders the receipt-bbb row when 5 bbb set_logs exist (loop-016)', async () => {
+    setLogsState.rows = [
+      ...buildLogs({ isPR: false }),
+      ...Array.from({ length: 5 }, (_, i) => ({
+        id: 10 + i,
+        sessionId: 42,
+        index: i,
+        kind: 'bbb' as const,
+        prescribedWeight: 150,
+        prescribedReps: 10,
+        actualReps: 10,
+        completedAt: startedAt + (26 + i) * 60 * 1000,
+      })),
+    ];
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('receipt-bbb')).toBeTruthy();
+    });
+  });
+
   it('fires a success notification haptic once when a log has isPR=true', async () => {
     setLogsState.rows = buildLogs({ isPR: true });
     renderScreen(<SessionCompleteScreen sessionId={42} />);
