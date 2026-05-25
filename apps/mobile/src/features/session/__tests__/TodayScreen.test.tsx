@@ -150,6 +150,15 @@ describe('TodayScreen', () => {
     expect(screen.getByText('Begin session')).toBeTruthy();
   });
 
+  it('renders the warmups band (3 rows at 40/50/60% TM, loop-010)', () => {
+    // squat TM 300 → 40% = 120, 50% = 150, 60% = 180 — all lb-snapped.
+    const screen = renderScreen(<TodayScreen lift="squat" />);
+    expect(screen.getByTestId('warmup-row-0')).toBeTruthy();
+    expect(screen.getByTestId('warmup-row-1')).toBeTruthy();
+    expect(screen.getByTestId('warmup-row-2')).toBeTruthy();
+    expect(screen.getByText('WARMUPS')).toBeTruthy();
+  });
+
   it('renders the top-set PlateBar hero and a numeric-only BBB band (no inline plate viz)', () => {
     // squat / week 1 / TM 300 lbs → set 0 = 195 lb. Plate visualization is
     // confined to the top-set hero (matching ref); working-set rows and BBB

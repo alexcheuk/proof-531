@@ -21,6 +21,7 @@ import { convertWeight, displayUnit } from '@/domain/units';
 import { View } from 'react-native';
 import { BbbBand } from './BbbBand';
 import { TopSetHero } from './TopSetHero';
+import { WarmupsBand } from './WarmupsBand';
 import { WorkingSetsBand } from './WorkingSetsBand';
 
 export type TodayBodyProps = {
@@ -113,6 +114,13 @@ export function TodayBody({
         unitGlyph={unitGlyph}
         tmInDisplay={tmInDisplay}
         plateSet={plateSet}
+      />
+
+      <WarmupsBand
+        tm={tm}
+        storageUnit={storageUnit}
+        renderUnit={renderUnit}
+        unitGlyph={unitGlyph}
       />
 
       <WorkingSetsBand

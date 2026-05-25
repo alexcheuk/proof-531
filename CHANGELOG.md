@@ -10,6 +10,11 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Warmups band on Today** — read-only preview of the 5/3/1 warmup ramp
+  (40/50/60% TM × 5/5/3) above the working sets, so the lifter can see
+  the on-ramp + start loading plates without doing percent math between
+  warm-up sets. Warmups still aren't tracked in `set_logs` (kind:
+  'warmup' stays reserved) — the band is a cheat sheet, not a checkbox.
 - **BBB on the receipt** — the session-complete receipt now shows a "BBB"
   row (e.g. `150 lb · 5×10`) when the user marked the back-off work
   complete on the prompt screen. Conditional — the

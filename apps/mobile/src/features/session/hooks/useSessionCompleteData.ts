@@ -178,9 +178,7 @@ export function deriveView({
   const bbbLogs = logs.filter((l) => l.kind === 'bbb');
   const bbbSetsCompleted = bbbLogs.length;
   const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
-  const bbbWeightDisplay = Math.round(
-    convertWeight(bbbWeightStorageRow, storageUnit, renderUnit),
-  );
+  const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorageRow, storageUnit, renderUnit));
 
   // Cycle position math — falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
