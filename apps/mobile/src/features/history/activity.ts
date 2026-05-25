@@ -8,6 +8,34 @@ import type { Session } from '@/data/accessors/session';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
+ * Count completed sessions falling within the current ISO week (Monday →
+ * Sunday) up to and including `now`. The History strip uses this to surface
+ * a "★ THIS WEEK · N sessions" caption — a tighter feedback loop than the
+ * lifetime totals, so users see the needle move even before a cycle wraps.
+ *
+ * Returns `0` when no completed sessions exist in the window.
+ */
+export function sessionsThisWeek(
+  sessions: ReadonlyArray<Session>,
+  now: number = Date.now(),
+): number {
+  // ISO week starts Monday. JS getDay(): 0=Sun..6=Sat. Map to a 0..6 offset
+  // where Monday = 0 so we can roll back to the week's first midnight.
+  const cursor = new Date(now);
+  cursor.setHours(0, 0, 0, 0);
+  const isoDow = (cursor.getDay() + 6) % 7; // Mon=0..Sun=6
+  const weekStartMs = cursor.getTime() - isoDow * DAY_MS;
+  // Inclusive upper bound = end of Sunday for the same ISO week.
+  const weekEndMs = weekStartMs + 7 * DAY_MS - 1;
+  let count = 0;
+  for (const s of sessions) {
+    if (s.status !== 'completed') continue;
+    if (s.startedAt >= weekStartMs && s.startedAt <= weekEndMs) count += 1;
+  }
+  return count;
+}
+
+/**
  * Compute a recent-activity bitmap from session timestamps.
  *
  * Returns one boolean per day in the lookback window (length `days`),
@@ -48,10 +76,21 @@ export function recentActivity(
   return out;
 }
 
-/** Count consecutive trailing `true` days from the end of an activity bitmap. */
+/**
+ * Count consecutive trailing `true` days from the end of an activity bitmap.
+ *
+ * Honors the same one-day grace rule as `currentStreakDays`: if today (the
+ * last index) is empty but yesterday is filled, start the walk from
+ * yesterday. The streak only resets after two consecutive empty days.
+ * Without this the History sparkline's "★ N-day streak" badge would
+ * vanish every morning at midnight before the user had a chance to train.
+ */
 export function currentStreak(activity: ReadonlyArray<boolean>): number {
+  if (activity.length === 0) return 0;
+  const lastIdx = activity.length - 1;
+  let i = activity[lastIdx] ? lastIdx : lastIdx - 1;
   let streak = 0;
-  for (let i = activity.length - 1; i >= 0; i--) {
+  for (; i >= 0; i--) {
     if (!activity[i]) break;
     streak += 1;
   }

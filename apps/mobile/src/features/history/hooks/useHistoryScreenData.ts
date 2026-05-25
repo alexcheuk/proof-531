@@ -28,6 +28,7 @@ import {
   firstSessionDate,
   longestStreakDays,
   recentActivity,
+  sessionsThisWeek,
 } from '../activity';
 import { type BestLift, pickBestLift } from '../bestLift';
 import { type HistoryFilter, applyHistoryFilter } from '../filter';
@@ -60,6 +61,8 @@ export interface HistoryScreenData {
   lifetimeVolume: number;
   /** Unit the achievement strip should render its volume + glyphs in. */
   displayUnit: Unit;
+  /** Sessions completed in the current ISO week (Mon-Sun). */
+  sessionsThisWeek: number;
   /** Filter-applied rows. */
   filteredRows: Session[];
   /** Filtered rows grouped by cycle, first-seen order. */
@@ -116,6 +119,7 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     [rows, filter, prIds],
   );
   const grouped = useMemo(() => groupByCycle(filteredRows), [filteredRows]);
+  const thisWeekCount = useMemo(() => sessionsThisWeek(rows), [rows]);
 
   const combined = combineQueries(sessions, prIdsQuery);
   const lifetimeVolume = lifetimeVolumeQuery.data ?? 0;
@@ -135,6 +139,7 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     bestLift,
     lifetimeVolume,
     displayUnit,
+    sessionsThisWeek: thisWeekCount,
     filteredRows,
     grouped,
     combined,

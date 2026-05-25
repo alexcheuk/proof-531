@@ -46,6 +46,7 @@ export function HistoryScreen() {
     bestLift,
     lifetimeVolume,
     displayUnit,
+    sessionsThisWeek,
     filteredRows,
     grouped,
     combined,
@@ -109,6 +110,7 @@ export function HistoryScreen() {
           totalTrainingDays={totalTrainingDays}
           lifetimeVolume={lifetimeVolume}
           unit={displayUnit}
+          sessionsThisWeek={sessionsThisWeek}
         />
         {rows.length > 0 ? (
           <FilterChips

@@ -6,6 +6,7 @@ import {
   firstSessionDate,
   longestStreakDays,
   recentActivity,
+  sessionsThisWeek,
 } from '../activity';
 
 function makeSession(startedAt: number, status: Session['status'] = 'completed'): Session {
@@ -76,8 +77,13 @@ describe('recentActivity', () => {
 });
 
 describe('currentStreak', () => {
-  it('returns 0 when today is empty', () => {
-    expect(currentStreak([true, true, false])).toBe(0);
+  it('keeps the streak alive when today is empty but yesterday is filled', () => {
+    // Grace-day rule — matches currentStreakDays.
+    expect(currentStreak([true, true, false])).toBe(2);
+  });
+
+  it('returns 0 when both today and yesterday are empty', () => {
+    expect(currentStreak([true, true, false, false])).toBe(0);
   });
 
   it('counts consecutive trailing days', () => {
@@ -248,5 +254,41 @@ describe('firstSessionDate', () => {
       makeSession(TODAY_MIDNIGHT),
     ];
     expect(firstSessionDate(sessions)?.getTime()).toBe(earliest);
+  });
+});
+
+describe('sessionsThisWeek', () => {
+  // Anchor "now" to a stable Wednesday so the ISO-week math is deterministic.
+  // 2026-05-20 = Wednesday. ISO week runs Mon 2026-05-18 → Sun 2026-05-24.
+  const WED = new Date('2026-05-20T12:00:00').getTime();
+  const MON = new Date('2026-05-18T00:30:00').getTime();
+  const SUN = new Date('2026-05-24T23:30:00').getTime();
+  const PRIOR_SUN = new Date('2026-05-17T23:00:00').getTime();
+  const NEXT_MON = new Date('2026-05-25T00:30:00').getTime();
+
+  it('returns 0 when no completed sessions exist', () => {
+    expect(sessionsThisWeek([], WED)).toBe(0);
+  });
+
+  it('counts only completed sessions inside the ISO week (Mon-Sun)', () => {
+    const sessions = [
+      makeSession(MON),
+      makeSession(WED),
+      makeSession(SUN),
+      makeSession(PRIOR_SUN),
+      makeSession(NEXT_MON),
+      makeSession(WED, 'cancelled'),
+    ];
+    expect(sessionsThisWeek(sessions, WED)).toBe(3);
+  });
+
+  it('handles a session right at the Monday boundary', () => {
+    const justAfterMidnight = new Date('2026-05-18T00:00:01').getTime();
+    expect(sessionsThisWeek([makeSession(justAfterMidnight)], WED)).toBe(1);
+  });
+
+  it('treats today (Sunday) sessions as still in this week', () => {
+    const sun = new Date('2026-05-24T08:00:00').getTime();
+    expect(sessionsThisWeek([makeSession(sun)], sun)).toBe(1);
   });
 });

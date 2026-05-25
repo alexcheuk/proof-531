@@ -38,6 +38,12 @@ export type AchievementStripProps = {
   lifetimeVolume?: number;
   /** Display unit for the lifetime-volume glyph. Defaults to `lbs`. */
   unit?: 'lbs' | 'kg';
+  /**
+   * Sessions completed in the current ISO week (Mon-Sun). When ≥ 1, a
+   * "★ This week · N sessions" caption renders — a short-loop feedback
+   * signal so the user sees progress without waiting for a full cycle.
+   */
+  sessionsThisWeek?: number;
 };
 
 const MONTH_NAMES = [
@@ -76,6 +82,7 @@ export function AchievementStrip({
   totalTrainingDays,
   lifetimeVolume,
   unit,
+  sessionsThisWeek,
 }: AchievementStripProps) {
   const { layout } = useTheme();
   if (filed === 0) return null;
@@ -85,6 +92,7 @@ export function AchievementStrip({
     showLongest && (currentStreak ?? 0) >= 3 && currentStreak === longestStreak;
   const showVolume = (lifetimeVolume ?? 0) > 0;
   const volumeDisplay = showVolume ? formatLifetimeVolume(lifetimeVolume ?? 0, unit ?? 'lbs') : '';
+  const showThisWeek = (sessionsThisWeek ?? 0) >= 1;
   return (
     <Card
       borders="bottom"
@@ -103,6 +111,11 @@ export function AchievementStrip({
           <Stat label="total volume" value={volumeDisplay} testID="history-achievements-volume" />
         ) : null}
       </Row>
+      {showThisWeek ? (
+        <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-this-week">
+          {`★ This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
+        </CapsLabel>
+      ) : null}
       {bestLift ? (
         <CapsLabel size="xs" weight="semibold" color="ink1" testID="history-best-lift">
           {`★ Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
