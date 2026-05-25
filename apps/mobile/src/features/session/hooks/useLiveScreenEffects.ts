@@ -153,5 +153,9 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
     queryClient.invalidateQueries({ queryKey: ['sessionPrIds'] }),
     queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
     queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
+    // Prefix invalidate the Progress screen's per-lift projection cache so
+    // the cycle/day grid, e1RM column, and "cycles to goal" all refresh
+    // the moment the user closes a session.
+    queryClient.invalidateQueries({ queryKey: ['liftProgression'] }),
   ]);
 }

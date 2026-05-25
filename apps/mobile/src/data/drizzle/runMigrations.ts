@@ -14,7 +14,14 @@ type MigrationTarget =
  * Tables the canonical schema defines. Order matters for DROP because of FK
  * references: prs → set_logs → sessions, then leaves.
  */
-const ALL_TABLES = ['prs', 'set_logs', 'sessions', 'training_maxes', 'settings'] as const;
+const ALL_TABLES = [
+  'lift_goals',
+  'prs',
+  'set_logs',
+  'sessions',
+  'training_maxes',
+  'settings',
+] as const;
 
 const REQUIRED_SESSIONS_COLUMNS = [
   'lift',

@@ -7,6 +7,7 @@
  * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
  * with a "NO TRAINING MAX SET" strip pointing at onboarding.
  */
+import { goTo } from '@/app/routes';
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
@@ -16,6 +17,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { useRouter } from 'expo-router';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 import { useLiftPageState } from '../../hooks/useLiftPageState';
@@ -63,8 +65,10 @@ export function LiftPage({
   onResume,
   onOpenPlan,
 }: LiftPageProps) {
+  const router = useRouter();
   const { spacing } = useTheme();
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
+  const openProgress = () => goTo.progress(router, lift);
   const lastTrained = useLastCompletedSessionForLift(lift);
   const lastTrainedHint =
     !isInProgress && lastTrained.startedAt !== null
@@ -87,7 +91,7 @@ export function LiftPage({
         testID={`lift-page-${lift}`}
       >
         <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
-        <LiftPageTitle lift={lift} />
+        <LiftPageTitle lift={lift} onPress={openProgress} />
         <LiftPageEmpty testIDPrefix={`lift-page-${lift}`} />
       </Animated.View>
     );

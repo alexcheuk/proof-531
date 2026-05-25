@@ -65,6 +65,21 @@ export const prs = sqliteTable('prs', {
   achievedAt: integer('achieved_at').notNull(),
 });
 
+/**
+ * Per-lift e1RM goal — the Progress screen's "where am I headed" target.
+ *
+ * One row per lift (lift is PK), stored in storage units to match
+ * `trainingMaxes`. Zero rows for a lift = "no goal set" (the correct
+ * empty state). Created/updated via `setLiftGoal`, removed via
+ * `clearLiftGoal`. See `apps/mobile/src/data/accessors/liftGoal.ts`.
+ */
+export const liftGoals = sqliteTable('lift_goals', {
+  lift: text('lift', { enum: ['squat', 'bench', 'deadlift', 'press'] }).primaryKey(),
+  targetE1RM: real('target_e1rm').notNull(),
+  unit: text('unit', { enum: ['lbs', 'kg'] }).notNull(),
+  updatedAt: integer('updated_at').notNull(),
+});
+
 export const DEFAULT_SETTINGS_VALUES = {
   id: 1,
   storageUnit: 'lbs' as const,

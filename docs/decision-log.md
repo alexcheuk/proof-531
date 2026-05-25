@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Progress screen: per-lift cycle×day grid + e1RM goal projection
+
+**Tags:** `feature`, `architecture`, `progress`, `goals`
+**Files:** `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/data/drizzle/schema.ts` (new `lift_goals` table), `apps/mobile/src/data/accessors/{liftGoal,liftProgression}.ts`, `apps/mobile/src/data/queries/{useLiftGoal,useSetLiftGoal,useLiftProgression}.ts`, `apps/mobile/src/design/primitives/{ProgressGridCell,ProgressGridRow,E1rmCell,GoalStrip,PagerDots}.tsx`, `apps/mobile/src/features/progress/`, `apps/mobile/src/app/progress/[lift].tsx`, `apps/mobile/src/features/home/components/LiftPage/LiftPageTitle.tsx` (now Pressable), `_workspace/01_design_spec.md`
+
+New screen reached by tapping the giant lift headline on TODAY. Renders a single lift's progression as a grid (rows = cycles with absolute numbering, cols = D1/D2/D3/Deload), with filled cells for completed days, an outlined "you are here" cell on the most-recent completed day, and ghosted future cells out to current + 6 cycles. A right-column e1RM (Epley, ported from the PWA) shows past-actual and future-projected values. A dashed goal-rule renders between the two cycles whose projected e1RMs straddle the user's goal; the ★ glyph sits on the crossing cycle. Lifts switched via horizontal swipe pager, dots only.
+
+**Why this shape:** the brief wanted "a grid that reads like a notebook" — the e-ink/CycleStrip vocabulary generalizes cleanly to N rows. Goal was set to e1RM (not TM) because lifters internalize PRs as 1RMs; the goal strip is tappable and lives at the top so the answer to "how long until?" is always one tap away. Future projection uses a rolling AMRAP rep-margin average over the last 3 cycles (fallback to minimum prescribed reps for new users), projects from week-3 specifically because that's mathematically the highest-e1RM event of any cycle.
+
+**Trade-offs / what we didn't do:**
+- **No AMRAP failure / TM-reset handling.** Projection assumes on-pace forever. Known gap, called out in the spec.
+- **Per-row TM dropped.** Header sub-line carries `TM 230 · e1RM 248`; per-row would have either repeated (wasted ink) or competed with the e1RM column.
+- **No new design tokens.** Filled/outlined/ghosted all map to existing `ink0`/`bg0`/`line`/`ink3`; the ghosted dashed border uses RN's `borderStyle: 'dashed'` directly with an accepted Android-rendering risk (SVG fallback deferred until QA hits it).
+- **Past-cell tap reuses `SessionCompleteScreen`** via `goTo.complete(router, sessionId, { from: 'history' })` — no new detail screen needed.
+
 ### 2026-05-25 — Cancel session removed end-to-end; Restart is now the only mid-session escape
 
 **Tags:** `removal`, `product`, `session`

@@ -81,4 +81,16 @@ export const goTo = {
     if (opts?.replace) router.replace(target);
     else router.push(target);
   },
+
+  /**
+   * Push the Progress screen (cycle × day grid) for the given lift. Stack
+   * push so hardware/swipe back returns to TODAY (or wherever the user
+   * came from). The `[lift]` segment is part of the path — deep links
+   * `/progress/squat` work directly.
+   */
+  progress(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
+    const target = href({ pathname: '/progress/[lift]', params: { lift } });
+    if (opts?.replace) router.replace(target);
+    else router.push(target);
+  },
 } as const;

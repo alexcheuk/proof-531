@@ -29,3 +29,16 @@ export {
 } from './SheetLayout';
 export { StatusBarShim, type StatusBarShimProps } from './StatusBarShim';
 export { TopSetBlock, type TopSetBlockProps } from './TopSetBlock';
+export {
+  ProgressGridCell,
+  type ProgressGridCellProps,
+  type ProgressGridCellVariant,
+} from './ProgressGridCell';
+export {
+  ProgressGridRow,
+  type ProgressGridRowProps,
+  PROGRESS_GRID_ROW_HEIGHT,
+} from './ProgressGridRow';
+export { E1rmCell, type E1rmCellProps, E1RM_COLUMN_FLEX } from './E1rmCell';
+export { GoalStrip, type GoalStripProps } from './GoalStrip';
+export { PagerDots, type PagerDotsProps } from './PagerDots';

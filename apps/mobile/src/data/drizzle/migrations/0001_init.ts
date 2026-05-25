@@ -54,4 +54,11 @@ CREATE TABLE IF NOT EXISTS prs (
   set_log_id INTEGER NOT NULL REFERENCES set_logs(id),
   achieved_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS lift_goals (
+  lift TEXT PRIMARY KEY,
+  target_e1rm REAL NOT NULL,
+  unit TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
 `;
