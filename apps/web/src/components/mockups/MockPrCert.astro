@@ -1,0 +1,166 @@
+---
+/*
+ * "PR certificate" mockup — the full-bleed ink-0 celebration that
+ * fires after an AMRAP that registers a new estimated 1RM. Inverted
+ * palette + corner brackets so the marketing card recognizably IS
+ * the celebration, not just an ink-on-paper card with words.
+ */
+---
+
+<div class="screen">
+  <span class="tick tl"></span>
+  <span class="tick tr"></span>
+  <span class="tick bl"></span>
+  <span class="tick br"></span>
+
+  <div class="eyebrow">New 1RM · Deadlift</div>
+  <div class="hero">412</div>
+  <div class="unit">lb estimated</div>
+
+  <div class="row">
+    <div>
+      <div class="row__label">Previous</div>
+      <div class="row__value">385</div>
+    </div>
+    <div class="delta">+27</div>
+    <div>
+      <div class="row__label">This set</div>
+      <div class="row__value">345 × 4+</div>
+    </div>
+  </div>
+
+  <div class="signoff">Logged · cycle 4, week 3 · Sat · 5:42p</div>
+
+  <div class="cta-row">
+    <div class="cta">Continue →</div>
+    <div class="cta-secondary">Skip to receipt</div>
+  </div>
+</div>
+
+<style>
+  .screen {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding: 36px 18px 14px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    text-align: center;
+  }
+  .tick {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--bg-0);
+  }
+  .tick.tl {
+    top: 14px;
+    left: 12px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .tick.tr {
+    top: 14px;
+    right: 12px;
+    border-left: 0;
+    border-bottom: 0;
+  }
+  .tick.bl {
+    bottom: 14px;
+    left: 12px;
+    border-right: 0;
+    border-top: 0;
+  }
+  .tick.br {
+    bottom: 14px;
+    right: 12px;
+    border-left: 0;
+    border-top: 0;
+  }
+  .eyebrow {
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .hero {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--bg-0);
+    margin-top: 6px;
+  }
+  .unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .row {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    border-top: 1px solid rgba(231, 227, 214, 0.18);
+    border-bottom: 1px solid rgba(231, 227, 214, 0.18);
+    padding: 12px 0;
+  }
+  .row__label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .row__value {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--bg-0);
+  }
+  .delta {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--bg-0);
+  }
+  .signoff {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .cta-row {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cta {
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 12px 0;
+    border-radius: 999px;
+  }
+  .cta-secondary {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+</style>

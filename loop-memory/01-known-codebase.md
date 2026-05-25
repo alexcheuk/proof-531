@@ -101,13 +101,17 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   logger. Don't reintroduce `bg2` as a sheet body bg — it reads as a
   "secondary" surface to users and breaks the one-canvas illusion.
 
-## PR celebration screen escape
+## PR celebration / full-bleed surfaces — global status-bar tint (loop-018)
 
-- `PrCelebrationScreen` paints the ink-0 surface edge-to-edge under the
-  status bar by using `marginTop: -insets.top; paddingTop: insets.top`
-  to cancel out the root SafeTopFrame's paper top stripe. Any future
-  full-screen modal that needs to escape the paper top stripe should
-  use the same pattern (not a separate Stack screen route option).
+- `PrCelebrationScreen` uses `StatusBarShim` to push ink-0 into the
+  global tint subject (`src/design/statusBarTint.ts`). `SafeTopFrame`
+  in `_layout.tsx` reads the subject and paints an absolute strip over
+  its own paper bg in the safe-area area when non-null.
+- **Do NOT use per-screen `marginTop: -insets.top` to escape the
+  SafeTopFrame paper bg.** The native-stack card's `overflow: hidden`
+  clips the negative-margin escape — that's why the iOS path looked
+  fine on the simulator and broke on device. See
+  `loop-memory/07-status-bar-fill.md` for the full history.
 
 ## Back navigation contract
 

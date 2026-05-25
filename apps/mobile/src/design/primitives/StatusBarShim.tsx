@@ -1,29 +1,30 @@
+import { useStatusBarTint } from '@/design/statusBarTint';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Belt-and-braces status-bar fill for full-bleed screens that need to
- * paint the OS status-bar area in a non-paper color (e.g. ink-0 on the
- * PR celebration).
+ * Full-bleed status-bar tint for screens that want the OS status-bar
+ * area painted in a non-paper color (the PR celebration's ink-0 is the
+ * canonical case).
  *
- * Two-layer pattern, both required:
+ * Two effects, both required:
  *
  * 1. `<StatusBar translucent={false} backgroundColor={color} />` — on
  *    Android `backgroundColor` is only honored when `translucent` is
  *    `false`. Without this the OS draws its own default tint over the
  *    screen.
- * 2. An absolute strip with `top: -insets.top` painted `color` — the
- *    iOS path. The screen's surface paints behind the bar via a
- *    negative-margin escape from the SafeTopFrame, but that only works
- *    inside the safe area; the strip handles the sliver above.
+ * 2. `useStatusBarTint(color)` — pushes the color into the module
+ *    subject the `SafeTopFrame` reads. The frame paints an absolute
+ *    strip over its own paper bg in the safe-area area. This is the
+ *    iOS path; it also works as a belt for Android.
+ *
+ * The previous implementation tried to paint the strip from inside
+ * the consuming screen's tree, but the native-stack card has
+ * `overflow: hidden`, which clipped the strip back at the card
+ * boundary. The user reported "still not black" four times before we
+ * pinned that down — see `loop-memory/07-status-bar-fill.md`.
  *
  * `style="light" | "dark"` follows the foreground-glyph contract from
  * expo-status-bar (light glyphs on dark, dark glyphs on light).
- *
- * Documented in `loop-memory/05-gorhom-sheet-index.md` (sibling memory
- * about the gorhom prop pattern); the StatusBar gotcha is logged in
- * `loop-memory/07-status-bar-fill.md`.
  */
 export type StatusBarShimProps = {
   color: string;
@@ -31,21 +32,6 @@ export type StatusBarShimProps = {
 };
 
 export function StatusBarShim({ color, style }: StatusBarShimProps) {
-  const insets = useSafeAreaInsets();
-  return (
-    <>
-      <StatusBar style={style} backgroundColor={color} translucent={false} />
-      <View
-        pointerEvents="none"
-        style={{
-          position: 'absolute',
-          top: -insets.top,
-          left: 0,
-          right: 0,
-          height: insets.top,
-          backgroundColor: color,
-        }}
-      />
-    </>
-  );
+  useStatusBarTint(color);
+  return <StatusBar style={style} backgroundColor={color} translucent={false} />;
 }

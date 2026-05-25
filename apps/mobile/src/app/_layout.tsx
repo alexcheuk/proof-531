@@ -3,6 +3,7 @@ import { db, expoDb } from '@/data/drizzle/client';
 import { runMigrations } from '@/data/drizzle/runMigrations';
 import { useAppFonts } from '@/design/fonts';
 import { ErrorBoundary } from '@/design/primitives/ErrorBoundary';
+import { useStatusBarTintValue } from '@/design/statusBarTint';
 import { ThemeProvider } from '@/design/theme';
 import { colors } from '@/design/tokens';
 import { BootSplash } from '@/features/shared/BootSplash';
@@ -39,10 +40,29 @@ const queryClient = new QueryClient({
  */
 function SafeTopFrame() {
   const insets = useSafeAreaInsets();
+  const tint = useStatusBarTintValue();
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.bg0 }}>
       <OtaUpdateBanner />
       <Slot />
+      {/* Full-bleed status-bar overlay. Painted LAST so it sits on top
+       * of the SafeTopFrame's paper bg in the safe-area strip. Screens
+       * push a color via `useStatusBarTint(color)`; null = no override.
+       * Needed because the native-stack card clips per-screen
+       * negative-margin escapes (see src/design/statusBarTint.ts). */}
+      {tint ? (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: insets.top,
+            backgroundColor: tint,
+          }}
+        />
+      ) : null}
     </View>
   );
 }

@@ -5,7 +5,6 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CornerTicks } from './components/PRCertificate/CornerTicks';
 import { PrCelebrationCtas } from './components/PrCelebration/PrCelebrationCtas';
 import { PrCelebrationHero } from './components/PrCelebration/PrCelebrationHero';
@@ -20,13 +19,15 @@ import { useSessionCompleteData } from './hooks/useSessionCompleteData';
  *
  * Visually mirrors the PR certificate so the celebration screen and the
  * later receipt cert read as the same artifact at two scales:
- *   - same ink-0 surface + corner ticks
+ *   - same ink-0 surface + corner ticks (one size larger here)
  *   - same eyebrow + hero typography
  *   - same hero-number / comparison-row layout
  *
- * Escapes the root SafeTopFrame's paper-bg top stripe with a negative
- * margin so the ink-0 surface extends behind the status bar — light-mode
- * glyphs render cleanly on the dark canvas without a paper sliver above.
+ * The status-bar safe area is painted ink-0 by `StatusBarShim` via the
+ * global tint layer in `_layout.tsx`. Earlier versions tried to escape
+ * the SafeTopFrame's paper bg with a per-screen negative margin; that
+ * was visually clipped by the native-stack card's `overflow: hidden`,
+ * which is why the user kept reporting "still not black".
  *
  * Primary CTA "Continue →" replace-routes to the BBB prompt; secondary
  * "Skip to receipt" jumps past BBB straight to the session-complete
@@ -38,7 +39,6 @@ export type PrCelebrationScreenProps = {
 
 export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const { colors, spacing } = useTheme();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const data = useSessionCompleteData(sessionId);
 
@@ -53,13 +53,9 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
   const v = data.view;
 
-  // Escape the root SafeTopFrame's paper top stripe so the ink-0 canvas
-  // runs edge-to-edge under the status bar.
   const surfaceStyle: ViewStyle = {
     flex: 1,
     backgroundColor: colors.ink0,
-    marginTop: -insets.top,
-    paddingTop: insets.top,
   };
 
   const bodyStyle: ViewStyle = {
@@ -75,19 +71,19 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   return (
     <View style={surfaceStyle} testID="pr-celebration">
       <StatusBarShim color={colors.ink0} style="light" />
-      {/* Corner-tick frame that mirrors the PR certificate panel — but at
-          screen scale, so the celebration reads as one big certificate. */}
+      {/* Corner-tick frame at SCREEN scale (size 28 vs the cert's 14)
+       * so the celebration reads as one big certificate. */}
       <View
         pointerEvents="none"
         style={{
           position: 'absolute',
-          top: insets.top + spacing.md,
+          top: spacing.md,
           left: spacing.md,
           right: spacing.md,
           bottom: spacing.md,
         }}
       >
-        <CornerTicks color={colors.bg0} />
+        <CornerTicks color={colors.bg0} size={28} thickness={2} />
       </View>
 
       <View style={bodyStyle}>

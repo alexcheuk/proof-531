@@ -1,60 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import Hero from '~/components/Hero.astro';
 import Section from '~/components/Section.astro';
-import FeatureGrid from '~/components/FeatureGrid.astro';
 import BlogCard from '~/components/BlogCard.astro';
-
-const features = [
-  {
-    glyph: '5·3·1',
-    title: 'Jim Wendler’s 5/3/1, faithfully',
-    body:
-      'Four-week cycles, three working sets, AMRAP on the last. The plates and percentages compute themselves so you can focus on the bar.',
-  },
-  {
-    glyph: 'BBB',
-    title: 'Boring But Big assistance built-in',
-    body:
-      '5×10 at 50–60% on the main lift, tracked in the same flow. No tab-hopping, no separate calculators, no spreadsheets.',
-  },
-  {
-    glyph: 'PR',
-    title: 'Honest progress, not vanity',
-    body:
-      'Estimated 1RMs from AMRAPs, training-max bumps cycle to cycle, and an e-ink-style PR certificate when you earn a new best.',
-  },
-  {
-    glyph: 'OFF',
-    title: 'Offline-first, on-device',
-    body:
-      'Drizzle + expo-sqlite locally. No accounts, no cloud, no telemetry. Your training stays on your phone, forever.',
-  },
-];
-
-const surfaces = [
-  {
-    name: 'Today',
-    glyph: '01',
-    desc: 'Tomorrow’s session, pre-staged. Plates worked out, AMRAP marked, rest target on the bar.',
-  },
-  {
-    name: 'Live',
-    glyph: '02',
-    desc: 'One screen per phase — Set, Rest, AMRAP log. Big numbers, no chrome, count-down timer with haptics.',
-  },
-  {
-    name: 'History',
-    glyph: '03',
-    desc: 'Sessions filed by cycle. PRs starred. Lifetime volume, current streak, longest streak — at a glance.',
-  },
-  {
-    name: 'Settings',
-    glyph: '04',
-    desc: 'Training maxes, plate set, units, enabled lifts, rest target. Editable. Append-only history per TM.',
-  },
-];
+import PhoneFrame from '~/components/PhoneFrame.astro';
+import MockToday from '~/components/mockups/MockToday.astro';
+import MockLive from '~/components/mockups/MockLive.astro';
+import MockPrCert from '~/components/mockups/MockPrCert.astro';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -65,40 +17,86 @@ const posts = (await getCollection('blog'))
   title="531 — A 5/3/1 + BBB training app for serious lifters"
   description="A focused 5/3/1 + Boring But Big tracker for iOS and Android. Offline, on-device, free. The dev log is public."
 >
-  <Hero
-    title="Train 5/3/1. Skip the spreadsheet."
-    lead="531 is a focused 5/3/1 + Boring But Big training app for iOS and Android. It owns the program’s math — warmups, working sets, AMRAPs, TM bumps — so you can run the lift and log the set, nothing else."
-  />
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <span class="eyebrow">5/3/1 + BBB · iOS · Android</span>
+        <h1 class="hero__title">Train the program. Skip the spreadsheet.</h1>
+        <p class="hero__lead">
+          531 owns the math of Jim Wendler's 5/3/1 — warmups, working sets,
+          AMRAPs, Boring But Big, training-max bumps — so the only thing
+          left for you is the bar. One screen per phase. No accounts, no
+          cloud, no telemetry. Free.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#inside">See it →</a>
+          <a class="btn btn--ghost" href="/blog">Read the dev log</a>
+        </div>
+        <ul class="hero__bullets">
+          <li><span class="bullet-glyph">·</span>4-week cycles, the AMRAP set tracked rep-by-rep.</li>
+          <li><span class="bullet-glyph">·</span>5×10 BBB built in, not a separate flow.</li>
+          <li><span class="bullet-glyph">·</span>E-ink paper UI. Big numbers, no chrome.</li>
+          <li><span class="bullet-glyph">·</span>Offline-first. Local SQLite. No sign-in.</li>
+        </ul>
+      </div>
 
-  <Section eyebrow="What it is" title="A tool for one program, done well." wide>
-    <div id="what-it-is" />
-    <FeatureGrid features={features} />
-  </Section>
+      <div class="hero__phone" aria-hidden="true">
+        <PhoneFrame caption="Today">
+          <MockToday />
+        </PhoneFrame>
+      </div>
+    </div>
+  </section>
 
   <Section
-    eyebrow="What’s inside"
-    title="Four surfaces. No menus to learn."
+    eyebrow="Inside the app"
+    title="Three surfaces. Three jobs."
     wide
     divider
   >
-    <ol class="surfaces">
-      {surfaces.map((s) => (
-        <li>
-          <span class="surfaces__num">{s.glyph}</span>
-          <div>
-            <h3>{s.name}</h3>
-            <p>{s.desc}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <div id="inside" class="surfaces-row">
+      <div class="surfaces-row__col">
+        <PhoneFrame caption="Today">
+          <MockToday />
+        </PhoneFrame>
+        <h3>Tomorrow's session, pre-staged</h3>
+        <p>
+          The plates work themselves out. Warmups at 40 / 50 / 60%,
+          three working sets, AMRAP on the last. Tap Start. The app
+          knows what comes next so you don't have to remember.
+        </p>
+      </div>
+      <div class="surfaces-row__col">
+        <PhoneFrame caption="Live · Rest">
+          <MockLive />
+        </PhoneFrame>
+        <h3>The set runs the room</h3>
+        <p>
+          One phase per screen — Set, Rest, AMRAP log. The countdown
+          fills the canvas. Haptic when rest is up. Undo lives one tap
+          away on the bar; nothing else competes for your eye.
+        </p>
+      </div>
+      <div class="surfaces-row__col">
+        <PhoneFrame caption="PR · Earned">
+          <MockPrCert />
+        </PhoneFrame>
+        <h3>An honest celebration when you earn one</h3>
+        <p>
+          AMRAP that beats your estimated 1RM? Full-bleed certificate,
+          inverted palette, the delta over your old best. Closes back
+          to the receipt. No confetti, no streak meta-game — the lift
+          was the meta-game.
+        </p>
+      </div>
+    </div>
   </Section>
 
-  <Section eyebrow="The specs" title="Built for the lift, not the app store." wide divider>
+  <Section eyebrow="The promise" title="Built for the lift, not the app store." wide divider>
     <dl class="specs">
       <div>
-        <dt>Platforms</dt>
-        <dd>iOS · Android · Expo SDK 55 · New Architecture on</dd>
+        <dt>Program</dt>
+        <dd>5/3/1 with BBB assistance. Cycles, weeks, deload. AMRAPs estimated via Epley.</dd>
       </div>
       <div>
         <dt>Storage</dt>
@@ -110,7 +108,7 @@ const posts = (await getCollection('blog'))
       </div>
       <div>
         <dt>Aesthetic</dt>
-        <dd>E-ink paper. IBM Plex. One amber accent. Built to read at glance.</dd>
+        <dd>E-ink paper. IBM Plex. One amber accent. Built to read at a glance.</dd>
       </div>
       <div>
         <dt>Price</dt>
@@ -118,17 +116,17 @@ const posts = (await getCollection('blog'))
       </div>
       <div>
         <dt>Cadence</dt>
-        <dd>Over-the-air updates ship every iteration of the dev loop.</dd>
+        <dd>Shipped over-the-air every iteration of the dev loop.</dd>
       </div>
     </dl>
     <p class="cta-row">
-      <a class="btn btn--primary" href="/process">How it’s built →</a>
+      <a class="btn btn--primary" href="/process">How it's built →</a>
       <a class="btn btn--ghost" href="/blog">Read the dev log</a>
     </p>
   </Section>
 
   {posts.length > 0 && (
-    <Section eyebrow="Latest from the dev log" title="What shipped this week." wide divider>
+    <Section eyebrow="From the dev log" title="What shipped recently." wide divider>
       <div class="blog-teaser">
         {posts.map((post) => (
           <BlogCard
@@ -149,90 +147,71 @@ const posts = (await getCollection('blog'))
 </Base>
 
 <style>
-  .surfaces {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-xl);
+  .hero {
+    padding-block: var(--space-4xl) var(--space-3xl);
+    border-bottom: 1px solid var(--line-faint);
   }
-
-  @media (max-width: 720px) {
-    .surfaces {
+  .hero__inner {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+  @media (max-width: 880px) {
+    .hero__inner {
       grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+    .hero__phone {
+      order: -1;
+      justify-self: center;
     }
   }
-
-  .surfaces li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-md);
-    padding: var(--space-lg) 0;
-    border-top: 1px solid var(--line-faint);
-  }
-
-  .surfaces__num {
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-    padding-top: 2px;
-  }
-
-  .surfaces h3 {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: 1.15rem;
-    margin: 0 0 4px;
-  }
-
-  .surfaces p {
-    color: var(--ink-1);
-    line-height: 1.55;
-  }
-
-  .specs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-lg) var(--space-xl);
-    margin: 0;
-  }
-
-  @media (max-width: 720px) {
-    .specs {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .specs > div {
-    border-top: 1px solid var(--line-faint);
-    padding-top: var(--space-sm);
+  .hero__copy {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-lg);
   }
-
-  .specs dt {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-2);
+  .hero__title {
+    font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
   }
-
-  .specs dd {
-    margin: 0;
+  .hero__lead {
     color: var(--ink-1);
-    font-size: 1rem;
+    font-size: 1.1rem;
     line-height: 1.55;
+    max-width: 46ch;
   }
-
-  .cta-row {
-    margin-top: var(--space-2xl);
+  .hero__actions {
     display: flex;
     gap: var(--space-md);
+    margin-top: var(--space-xs);
     flex-wrap: wrap;
+  }
+  .hero__bullets {
+    list-style: none;
+    margin: var(--space-md) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-2);
+  }
+  .hero__bullets li {
+    display: flex;
+    gap: 8px;
+  }
+  .bullet-glyph {
+    color: var(--ink-3);
+  }
+  .hero__phone {
+    display: flex;
+    justify-content: center;
   }
 
   .btn {
@@ -249,7 +228,6 @@ const posts = (await getCollection('blog'))
       transform var(--duration-base) var(--ease-standard),
       background var(--duration-base) var(--ease-standard);
   }
-
   .btn--primary {
     background: var(--ink-0);
     color: var(--bg-0);
@@ -257,7 +235,6 @@ const posts = (await getCollection('blog'))
   .btn--primary:hover {
     transform: translateY(-1px);
   }
-
   .btn--ghost {
     background: transparent;
     color: var(--ink-0);
@@ -267,12 +244,79 @@ const posts = (await getCollection('blog'))
     background: var(--bg-2);
   }
 
+  .surfaces-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2xl) var(--space-xl);
+    margin-top: var(--space-lg);
+  }
+  @media (max-width: 920px) {
+    .surfaces-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .surfaces-row__col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+  }
+  .surfaces-row__col h3 {
+    margin-top: var(--space-sm);
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .surfaces-row__col p {
+    color: var(--ink-1);
+    line-height: 1.55;
+    max-width: 32ch;
+  }
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-xl);
+    margin: 0;
+  }
+  @media (max-width: 720px) {
+    .specs {
+      grid-template-columns: 1fr;
+    }
+  }
+  .specs > div {
+    border-top: 1px solid var(--line-faint);
+    padding-top: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .specs dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .specs dd {
+    margin: 0;
+    color: var(--ink-1);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .cta-row {
+    margin-top: var(--space-2xl);
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
   .blog-teaser {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-lg);
   }
-
   @media (max-width: 880px) {
     .blog-teaser {
       grid-template-columns: 1fr;
@@ -286,7 +330,6 @@ const posts = (await getCollection('blog'))
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
-
   .more a {
     text-decoration: none;
     color: var(--ink-0);

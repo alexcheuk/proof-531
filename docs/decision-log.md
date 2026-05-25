@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Full-bleed status bar uses a global tint subject; native-stack card was clipping the per-screen escape (loop-018)
+
+**Tags:** `bug`, `architecture`, `rn`
+**Files:** `apps/mobile/src/design/statusBarTint.ts`, `apps/mobile/src/design/primitives/StatusBarShim.tsx`, `apps/mobile/src/app/_layout.tsx`, `apps/mobile/src/features/session/PrCelebrationScreen.tsx`, `loop-memory/07-status-bar-fill.md`
+
+The PR celebration's status-bar paint had broken three times across loops 002–005, "fixed" each time with a per-screen `marginTop: -insets.top` escape on the surface. Loop-018's report ("still not black, is it because it's not a normal screen?") finally got us to root cause: react-navigation's native-stack card has `overflow: hidden`, which visually clipped the escape at the card boundary on real devices. Fix: paint the safe-area strip from outside the card. Added a module-level subject (`src/design/statusBarTint.ts`) that screens push into via `useStatusBarTint(color)`, and `SafeTopFrame` reads via `useSyncExternalStore` and renders an absolute strip when non-null. `StatusBarShim` keeps its existing API but is now the one component that does both effects (Android `<StatusBar backgroundColor translucent={false}>` + push tint). The PR celebration screen lost the negative-margin escape entirely.
+
+**Why:** the fix had to be ABOVE the native-stack card in the tree; you can't paint past an `overflow: hidden` ancestor from inside it.
+
+**Trade-off / what we didn't do:** considered moving safe-area handling per-screen (delete `SafeTopFrame`). Rejected — every other screen depends on it and the refactor surface would be large. The global tint subject is a few lines and the consumer surface is one hook call.
+
 ### 2026-05-25 — Pre-commit hook + `pnpm verify` script both had silent gaps (loop-017)
 
 **Tags:** `bug`, `process`, `tooling`
