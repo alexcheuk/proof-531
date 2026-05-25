@@ -3,8 +3,8 @@ import {
   type AccessibilityProps,
   Pressable,
   type PressableStateCallbackType,
-  type StyleProp,
   Text as RNText,
+  type StyleProp,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';

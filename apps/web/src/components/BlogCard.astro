@@ -22,7 +22,7 @@ const iso = pubDate.toISOString();
     <time class="card__date" datetime={iso}>{formatted}</time>
     {loopId && <span class="card__loop">{loopId}</span>}
   </header>
-  <h3 class="card__title">{title}</h3>
+  <h3 class="card__title">{title.replace(/\.$/, '')}<span class="card__dot" aria-hidden="true">.</span></h3>
   <p class="card__summary">{summary}</p>
   <span class="card__cta">Read entry →</span>
 </a>
@@ -71,6 +71,11 @@ const iso = pubDate.toISOString();
     font-size: 1.3rem;
     color: var(--ink-0);
     margin: 0;
+  }
+
+  .card__dot {
+    color: var(--amber);
+    margin-left: -0.04em;
   }
 
   .card__summary {

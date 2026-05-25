@@ -27,4 +27,3 @@ export function useElapsedSeconds(startedAt: number | null | undefined): number 
 }
 
 export { formatClock as formatElapsedClock } from '@/domain/time';
-

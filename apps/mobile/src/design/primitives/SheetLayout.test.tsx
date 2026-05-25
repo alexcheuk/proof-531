@@ -4,18 +4,17 @@ import { ThemeProvider } from '../theme';
 import { PrimaryPillButton } from './PrimaryPillButton';
 import { SheetLayout } from './SheetLayout';
 
+// The Sheet primitive drives open/close imperatively (snapToIndex/close
+// via ref), so the BottomSheet is always mounted in the tree regardless
+// of `open`. Render children unconditionally so the existing assertions
+// can still inspect sheet contents.
 jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = require('react-native');
   const React = require('react');
   return {
     __esModule: true,
-    default: ({
-      children,
-      index,
-    }: {
-      children?: React.ReactNode;
-      index?: number;
-    }) => (index === -1 ? null : React.createElement(View, null, children)),
+    default: ({ children }: { children?: React.ReactNode }) =>
+      React.createElement(View, null, children),
     BottomSheetBackdrop: () => null,
     BottomSheetView: ({
       children,

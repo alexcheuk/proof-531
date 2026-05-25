@@ -1,0 +1,23 @@
+---
+/**
+ * Trailing amber period — the e-ink-paper accent that appears at the end
+ * of every primary title on the mobile app (e.g. "Stronger.", "Squat.",
+ * "Today."). Inherits the surrounding font-family / size / weight so it
+ * sits inline with the heading; just paints the `.` in `--amber`.
+ *
+ * The amber token (#8E5345) is the only non-ink/non-paper color in the
+ * design system. Using it sparingly — one period per page-defining
+ * heading — keeps the site visually anchored to the app.
+ */
+---
+
+<span class="accent-dot" aria-hidden="true">.</span>
+
+<style>
+  .accent-dot {
+    color: var(--amber);
+    /* Pull the period a hair tighter against the preceding word so it
+       reads as part of the title, not a stray glyph. */
+    margin-left: -0.04em;
+  }
+</style>

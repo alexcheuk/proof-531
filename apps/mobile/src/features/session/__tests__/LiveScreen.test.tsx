@@ -74,14 +74,16 @@ type MockViewProps = { children?: React.ReactNode; testID?: string };
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
+  // Sheet primitive now drives open/close imperatively (snapToIndex /
+  // close via ref). The BottomSheet is always mounted in the tree, so
+  // the mock always renders children — the Sheet wrapper itself gates
+  // visibility with a conditional render inside `BottomSheetView` based
+  // on the `open` prop, which the test stub forwards via a sentinel.
   return {
     __esModule: true,
-    default: ({ index, children, onChange, onClose }: MockBottomSheetProps) => {
+    default: ({ children, onChange, onClose }: MockBottomSheetProps) => {
       mockBottomSheet.onChange = onChange ?? null;
       mockBottomSheet.onClose = onClose ?? null;
-      // Render children only when open (index >= 0) so the AMRAP sheet test
-      // can assert visibility cleanly.
-      if ((index ?? -1) < 0) return null;
       return React.createElement(React.Fragment, null, children);
     },
     BottomSheetBackdrop: () => null,
@@ -296,7 +298,7 @@ describe('LiveScreen', () => {
     expect(mockDeactivateKeepAwake).toHaveBeenCalledTimes(1);
   });
 
-  it('fires a warning haptic at T-3s during rest (no audio cue — expo-av dropped)', async () => {
+  it('fires warning haptic at T-3s and "done" success haptic at T-0 during rest', async () => {
     const screen = renderScreen(<LiveScreen sessionId={7} />);
 
     // Week 1, set 0 → working set (non-AMRAP). Log it to enter rest phase.
@@ -320,11 +322,13 @@ describe('LiveScreen', () => {
     expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
     expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
 
-    // Advance to T-0 (90s elapsed) — no extra haptic fires; no audio cue.
+    // Advance to T-0 (90s elapsed) — "done" success haptic fires so the
+    // user gets a stronger "time to lift" cue without watching the screen.
     act(() => {
       jest.advanceTimersByTime(3_000);
     });
-    expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
+    expect(mockNotificationAsync).toHaveBeenCalledWith('success');
+    expect(mockNotificationAsync).toHaveBeenCalledTimes(2);
   });
 
   it('on phase=complete: invalidates session-shaped queries and replaces to /session/complete', async () => {

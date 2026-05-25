@@ -64,8 +64,26 @@ if [ -n "$drizzle_hits" ]; then
   done <<< "$drizzle_hits"
 fi
 
+# 4. gorhom BottomSheet `index={open ? 0 : -1}` regression guard.
+# gorhom v5 documents `index` as initial-only — prop-driven snap is
+# unreliable (see loop-memory/05-gorhom-sheet-index.md and the Discord
+# 1508365310 / 1508312977 cancel-button regressions). Sheet primitive
+# drives open/close imperatively via a ref. If a new consumer
+# reintroduces the prop-driven pattern this gate flags it.
+gorhom_hits=$(grep -RInE "index=\{[A-Za-z0-9_.]+ \? 0 : -1\}" \
+  "$SRC" \
+  --include='*.ts' \
+  --include='*.tsx' \
+  --exclude-dir='__tests__' 2>/dev/null || true)
+if [ -n "$gorhom_hits" ]; then
+  violations+=("BottomSheet 'index={X ? 0 : -1}' — index is initial-only in gorhom v5; drive open/close imperatively via a ref:")
+  while IFS= read -r line; do
+    violations+=("  $line")
+  done <<< "$gorhom_hits"
+fi
+
 if [ "${#violations[@]}" -eq 0 ]; then
-  echo "✓ boundary rules clean: no hex outside design, no React/async in domain, no drizzle outside data."
+  echo "✓ boundary rules clean: no hex outside design, no React/async in domain, no drizzle outside data, no prop-driven BottomSheet index."
   exit 0
 fi
 

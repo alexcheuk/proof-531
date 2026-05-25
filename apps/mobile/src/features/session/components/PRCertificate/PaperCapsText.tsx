@@ -1,5 +1,5 @@
 import { useTheme } from '@/design/theme';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Text as RNText, type TextStyle } from 'react-native';
 import { PAPER_45, PAPER_55, PAPER_65 } from './paperTints';
 
@@ -39,19 +39,17 @@ const VARIANT_TRACKING: Record<NonNullable<PaperCapsTextProps['variant']>, numbe
   caption: 1.62,
 };
 
-const VARIANT_WEIGHT: Record<NonNullable<PaperCapsTextProps['variant']>, 'Bold' | 'SemiBold' | 'Medium'> = {
+const VARIANT_WEIGHT: Record<
+  NonNullable<PaperCapsTextProps['variant']>,
+  'Bold' | 'SemiBold' | 'Medium'
+> = {
   eyebrow: 'Bold',
   label: 'SemiBold',
   unit: 'Bold',
   caption: 'Medium',
 };
 
-export function PaperCapsText({
-  children,
-  variant = 'label',
-  tone,
-  style,
-}: PaperCapsTextProps) {
+export function PaperCapsText({ children, variant = 'label', tone, style }: PaperCapsTextProps) {
   const { colors, type } = useTheme();
   const resolvedTone = tone ?? defaultToneFor(variant);
   const color =
@@ -81,7 +79,9 @@ export function PaperCapsText({
   );
 }
 
-function defaultToneFor(variant: NonNullable<PaperCapsTextProps['variant']>): NonNullable<PaperCapsTextProps['tone']> {
+function defaultToneFor(
+  variant: NonNullable<PaperCapsTextProps['variant']>,
+): NonNullable<PaperCapsTextProps['tone']> {
   switch (variant) {
     case 'eyebrow':
       return 'paper-65';

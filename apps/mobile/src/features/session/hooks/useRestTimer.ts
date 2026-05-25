@@ -10,6 +10,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * threshold so users adding time mid-rest get the warning again on their
  * second pass through T-3s.
  *
+ * Optionally also fires `fireDoneHaptic` exactly once when `remaining`
+ * crosses 0 — a stronger "GO" cue at the moment rest ends so the user
+ * doesn't need to be staring at the screen to know it's time to lift.
+ *
  * Why this lives outside useLiveScreenState: keeping the timer as its own
  * hook makes it independently testable (no DbProvider / session row), keeps
  * the live-screen state machine focused on phase transitions, and lets
@@ -32,6 +36,12 @@ export type UseRestTimerOptions = {
   warningThresholdSeconds?: number;
   /** Side-effect bus for the warning haptic. */
   fireWarningHaptic: () => void;
+  /**
+   * Optional side-effect bus for the "rest done" haptic — fires exactly
+   * once per countdown when `remaining` transitions to 0. Same re-arm
+   * semantics as the warning: pushing time back above 0 re-arms.
+   */
+  fireDoneHaptic?: () => void;
 };
 
 export type UseRestTimerResult = {
@@ -52,9 +62,16 @@ export function useRestTimer({
   initialRemaining = null,
   warningThresholdSeconds = DEFAULT_WARNING_THRESHOLD,
   fireWarningHaptic,
+  fireDoneHaptic,
 }: UseRestTimerOptions): UseRestTimerResult {
   const [remaining, setRemaining] = useState(0);
   const warningFiredRef = useRef(false);
+  // Done haptic only fires on the positive → ≤0 transition. Initial
+  // `remaining=0` (before the seed effect runs) must not count as a
+  // transition, so we track the previous tick and require it to have
+  // been > 0.
+  const doneFiredRef = useRef(false);
+  const prevRemainingRef = useRef<number>(remaining);
   // Latch the override so a later prop change (e.g. parent clearing the
   // restored snapshot) does not retroactively reseed the running timer.
   const initialRemainingRef = useRef(initialRemaining);
@@ -67,11 +84,15 @@ export function useRestTimer({
   useEffect(() => {
     if (!active) return;
     warningFiredRef.current = false;
+    doneFiredRef.current = false;
     const seed = initialRemainingRef.current ?? seconds;
     // If the restored remaining is already past the warning threshold, the
     // user has already heard the haptic — keep the latch tripped.
     if (seed <= warningThresholdSeconds) {
       warningFiredRef.current = true;
+    }
+    if (seed <= 0) {
+      doneFiredRef.current = true;
     }
     setRemaining(seed);
     const id = setInterval(() => {
@@ -87,12 +108,23 @@ export function useRestTimer({
   // than from a setState updater (which can run twice under StrictMode and
   // double-fire the side effect).
   useEffect(() => {
-    if (!active) return;
+    if (!active) {
+      prevRemainingRef.current = remaining;
+      return;
+    }
     if (remaining === warningThresholdSeconds && !warningFiredRef.current) {
       warningFiredRef.current = true;
       fireWarningHaptic();
     }
-  }, [active, remaining, warningThresholdSeconds, fireWarningHaptic]);
+    // Fire done only on the positive → ≤0 transition. Guards against the
+    // initial commit where remaining is still 0 from the useState seed
+    // before the activation effect has setRemaining(seed).
+    if (remaining <= 0 && prevRemainingRef.current > 0 && !doneFiredRef.current && fireDoneHaptic) {
+      doneFiredRef.current = true;
+      fireDoneHaptic();
+    }
+    prevRemainingRef.current = remaining;
+  }, [active, remaining, warningThresholdSeconds, fireWarningHaptic, fireDoneHaptic]);
 
   const addTime = useCallback(() => {
     if (!active) return;
@@ -104,6 +136,9 @@ export function useRestTimer({
       // which is the opposite of the contract stated in the docstring.
       if (next > warningThresholdSeconds) {
         warningFiredRef.current = false;
+      }
+      if (next > 0) {
+        doneFiredRef.current = false;
       }
       return next;
     });
@@ -118,6 +153,8 @@ export function useRestTimer({
       if (next > warningThresholdSeconds) {
         warningFiredRef.current = false;
       }
+      // Floor at 1 means `next` is always > 0 — done latch stays armed
+      // until the timer naturally hits 0 again.
       return next;
     });
   }, [active, warningThresholdSeconds]);

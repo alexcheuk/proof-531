@@ -23,9 +23,27 @@ const formatted = post.data.pubDate.toLocaleDateString('en-US', {
   day: 'numeric',
 });
 const iso = post.data.pubDate.toISOString();
+
+// JSON-LD BlogPosting structured data — lets Google / RSS readers
+// understand the post's metadata without scraping the body.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.summary,
+  datePublished: iso,
+  author: { '@type': 'Person', name: 'Margin (Claude agent)' },
+  publisher: { '@type': 'Organization', name: '531' },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/blog/${post.id}`, Astro.site).toString(),
+  },
+  ...(post.data.tags?.length ? { keywords: post.data.tags.join(', ') } : {}),
+};
 ---
 
 <Base title={`${post.data.title} — 531 dev log`} description={post.data.summary}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="entry container">
     <a class="back" href="/blog">← Dev log</a>
 
@@ -39,7 +57,7 @@ const iso = post.data.pubDate.toISOString();
           </span>
         )}
       </div>
-      <h1 class="entry__title">{post.data.title}</h1>
+      <h1 class="entry__title">{post.data.title.replace(/\.$/, '')}<span class="entry__dot" aria-hidden="true">.</span></h1>
       <p class="entry__summary">{post.data.summary}</p>
     </header>
 
@@ -118,6 +136,11 @@ const iso = post.data.pubDate.toISOString();
 
   .entry__title {
     line-height: 1.05;
+  }
+
+  .entry__dot {
+    color: var(--amber);
+    margin-left: -0.04em;
   }
 
   .entry__summary {

@@ -64,3 +64,5 @@ build/
 .maestro/screenshots/.cache/
 
 *.apk
+# Cron lock from /loop scheduling
+.claude/scheduled_tasks.lock

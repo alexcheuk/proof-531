@@ -1,15 +1,15 @@
-import type { BestLift } from '../bestLift';
 import { liftDisplayName } from '@/domain/labels';
+import type { BestLift } from '../bestLift';
 import { AchievementCaption } from './AchievementCaption';
 
 export type AchievementCaptionsProps = {
-  sessionsThisWeek?: number;
-  currentCycle?: number;
-  sessionsThisCycle?: number;
-  cycleTotalSessions?: number;
-  bestLift?: BestLift | null;
-  longestStreak?: number;
-  currentStreak?: number;
+  sessionsThisWeek?: number | undefined;
+  currentCycle?: number | undefined;
+  sessionsThisCycle?: number | undefined;
+  cycleTotalSessions?: number | undefined;
+  bestLift?: BestLift | null | undefined;
+  longestStreak?: number | undefined;
+  currentStreak?: number | undefined;
 };
 
 /**

@@ -50,14 +50,16 @@ type MockBottomSheetProps = {
 };
 type MockViewProps = { children?: React.ReactNode; testID?: string };
 
+// Sheet primitive uses imperative ref control (always mounted, drives
+// snapToIndex/close via ref). Always render children so the test can
+// access sheet contents — open/close transitions are out-of-scope for
+// these query-shell tests.
 jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
   return {
     __esModule: true,
-    default: ({ index, children }: MockBottomSheetProps) => {
-      if ((index ?? -1) < 0) return null;
-      return React.createElement(React.Fragment, null, children);
-    },
+    default: ({ children }: MockBottomSheetProps) =>
+      React.createElement(React.Fragment, null, children),
     BottomSheetBackdrop: () => null,
     BottomSheetView: ({ children }: MockViewProps) => {
       const React = require('react');

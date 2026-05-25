@@ -4,8 +4,8 @@
  *   `today`           — fired today
  *   `yesterday`       — 1 day ago
  *   `N days ago`      — 2..6 days
- *   `N weeks ago`     — 7..27 days
- *   `N months ago`    — 28..364 days (30-day buckets)
+ *   `N weeks ago`     — 7..29 days (so 4w wins over "1mo" at day 28)
+ *   `N months ago`    — 30..364 days (30-day buckets)
  *   `N years ago`     — ≥ 365 days
  *
  * Future timestamps return `today` (clock skew should not produce

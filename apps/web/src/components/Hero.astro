@@ -1,5 +1,6 @@
 ---
 import Stat from './Stat.astro';
+import AccentDot from './AccentDot.astro';
 
 interface Props {
   eyebrow?: string;
@@ -8,12 +9,16 @@ interface Props {
 }
 
 const { eyebrow = 'A study in vibe-coded software', title, lead } = Astro.props;
+// Strip a single trailing period if present so the accent dot is the
+// only punctuation — avoids "Stronger.." when authors include the dot
+// in the prop verbatim.
+const cleanTitle = title.replace(/\.$/, '');
 ---
 
 <section class="hero">
   <div class="hero__inner container container--wide">
     <span class="eyebrow">{eyebrow}</span>
-    <h1 class="hero__title">{title}</h1>
+    <h1 class="hero__title">{cleanTitle}<AccentDot /></h1>
     <p class="hero__lead">{lead}</p>
     <div class="hero__actions">
       <a class="btn btn--primary" href="/blog">Read the dev log →</a>

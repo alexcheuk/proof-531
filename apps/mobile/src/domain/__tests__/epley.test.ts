@@ -8,6 +8,11 @@ describe('estimateOneRm', () => {
     expect(estimateOneRm(-100, 5)).toBe(0);
   });
 
+  it('returns 0 for non-positive reps (zero reps is not a lift)', () => {
+    expect(estimateOneRm(225, 0)).toBe(0);
+    expect(estimateOneRm(225, -3)).toBe(0);
+  });
+
   it('reps=1 returns weight (identity short-circuit)', () => {
     expect(estimateOneRm(225, 1)).toBe(225);
     expect(estimateOneRm(135, 1)).toBe(135);

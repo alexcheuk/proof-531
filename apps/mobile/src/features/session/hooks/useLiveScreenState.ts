@@ -91,6 +91,12 @@ export type UseLiveScreenStateOptions = {
    * Defaults to expo-haptics' `notificationAsync(Warning)` — injectable for tests.
    */
   fireWarningHaptic?: () => void;
+  /**
+   * Fires a "rest done" haptic the moment the timer crosses 0 — gives the
+   * user a stronger "time to lift" cue without needing to watch the screen.
+   * Defaults to expo-haptics' `notificationAsync(Success)`; injectable.
+   */
+  fireDoneHaptic?: () => void;
 };
 
 /**
@@ -170,6 +176,16 @@ function defaultFireWarningHaptic() {
   }
 }
 
+function defaultFireDoneHaptic() {
+  try {
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
+    const Haptics = require('expo-haptics') as any;
+    Haptics.notificationAsync?.(Haptics.NotificationFeedbackType?.Success ?? 'success');
+  } catch (err) {
+    console.warn('useLiveScreenState: done haptic unavailable', err);
+  }
+}
+
 function computeNextSetIndex(
   logs: ReadonlyArray<{ kind: string; index: number }> | undefined,
 ): WorkingSetIndex | null {
@@ -189,6 +205,7 @@ export function useLiveScreenState(
   const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
+  const fireDoneHaptic = options.fireDoneHaptic ?? defaultFireDoneHaptic;
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;
@@ -245,6 +262,7 @@ export function useLiveScreenState(
     initialRemaining: initialRestoredRemaining,
     warningThresholdSeconds: WARNING_THRESHOLD,
     fireWarningHaptic,
+    fireDoneHaptic,
   });
 
   // Bootstrap setIndex (and possibly phase) from persisted set_logs the

@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CornerTicks } from './components/PRCertificate/CornerTicks';
 import { PAPER_28, PAPER_45, PAPER_55, PAPER_65 } from './components/PRCertificate/paperTints';
@@ -81,7 +81,13 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
   return (
     <View style={surfaceStyle} testID="pr-celebration">
-      <StatusBar style="light" />
+      {/* Force the OS status bar bg to ink0 on Android — the negative-margin
+          escape paints ink0 behind the status bar on iOS, but Android needs
+          an explicit backgroundColor or the OS draws a default tint over
+          our surface. `translucent` keeps the status bar overlaying our
+          content; `backgroundColor` is the fallback the OS uses if the
+          window has no content underneath. */}
+      <StatusBar style="light" backgroundColor={colors.ink0} translucent />
       {/* Corner-tick frame that mirrors the PR certificate panel — but at
           screen scale, so the celebration reads as one big certificate. */}
       <View
@@ -98,7 +104,12 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
       </View>
 
       <View style={bodyStyle}>
-        <Animated.View entering={FadeIn.duration(180)}>
+        {/* Achievement-stamp pacing: short crisp fades + a single
+            scale-stamp on the hero line. No springify — the previous
+            spring damping(12) read as a drift-in instead of a slam.
+            Cascade timing 0 / 100 / 220 / 320ms so the whole thing
+            settles in under 500ms. */}
+        <Animated.View entering={FadeIn.duration(120).easing(Easing.out(Easing.cubic))}>
           <RNText
             style={{
               fontFamily: `${type.mono}-Bold`,
@@ -113,9 +124,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
           </RNText>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInDown.duration(240).delay(60).springify().damping(12)}
-        >
+        <Animated.View entering={ZoomIn.duration(180).delay(80).easing(Easing.out(Easing.cubic))}>
           <RNText
             style={{
               fontFamily: `${type.display}-Bold`,
@@ -126,13 +135,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
             }}
           >
             Stronger
-            <Text
-              variant="sans"
-              weight="bold"
-              size={76}
-              color="amber"
-              style={{ lineHeight: 82 }}
-            >
+            <Text variant="sans" weight="bold" size={76} color="amber" style={{ lineHeight: 82 }}>
               .
             </Text>
           </RNText>
@@ -141,7 +144,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         {v ? (
           <>
             <Animated.View
-              entering={FadeInDown.duration(240).delay(140).springify().damping(12)}
+              entering={FadeIn.duration(140).delay(220).easing(Easing.out(Easing.cubic))}
               style={{
                 marginTop: spacing.xl,
                 paddingTop: spacing.lg,
@@ -191,7 +194,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
             {hasComparison ? (
               <Animated.View
-                entering={FadeInDown.duration(240).delay(220).springify().damping(12)}
+                entering={FadeIn.duration(140).delay(320).easing(Easing.out(Easing.cubic))}
                 style={{
                   marginTop: spacing.md,
                   paddingTop: spacing.md,

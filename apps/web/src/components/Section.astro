@@ -1,4 +1,6 @@
 ---
+import AccentDot from './AccentDot.astro';
+
 interface Props {
   eyebrow?: string;
   title?: string;
@@ -9,6 +11,7 @@ interface Props {
 }
 
 const { eyebrow, title, lead, align = 'left', wide = false, divider = false } = Astro.props;
+const cleanTitle = title?.replace(/\.$/, '');
 ---
 
 <section class:list={['section', { 'section--divider': divider }]}>
@@ -22,7 +25,7 @@ const { eyebrow, title, lead, align = 'left', wide = false, divider = false } = 
     {(eyebrow || title || lead) && (
       <header class="section__head">
         {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-        {title && <h2 class="section__title">{title}</h2>}
+        {cleanTitle && <h2 class="section__title">{cleanTitle}<AccentDot /></h2>}
         {lead && <p class="section__lead">{lead}</p>}
       </header>
     )}

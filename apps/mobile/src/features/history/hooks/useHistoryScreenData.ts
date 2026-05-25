@@ -128,8 +128,7 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
   const thisWeekCount = useMemo(() => sessionsThisWeek(rows), [rows]);
   const currentCycle = settingsQuery.data?.currentCycle ?? 1;
   const sessionsThisCycleCount = useMemo(
-    () =>
-      rows.filter((r) => r.status === 'completed' && (r.cycle ?? 1) === currentCycle).length,
+    () => rows.filter((r) => r.status === 'completed' && (r.cycle ?? 1) === currentCycle).length,
     [rows, currentCycle],
   );
   const cycleTotalSessions = enabledLifts.length * 4;

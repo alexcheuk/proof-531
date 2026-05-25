@@ -70,6 +70,20 @@ export function Sheet({
     onDismiss();
   }, [onDismiss]);
 
+  // Drive open/close imperatively. gorhom v5 documents `index` as
+  // initial-only — re-rendering with `index={-1}` does not reliably
+  // close the sheet. The Cancel button regression on the AmrapLogSheet
+  // (Discord 1508365310359633990) was the second time we hit this; the
+  // first "fix" relied on the prop happening to re-snap. Make it
+  // explicit: open → snapToIndex(0), closed → close().
+  useEffect(() => {
+    if (open) {
+      sheetRef.current?.snapToIndex(0);
+    } else {
+      sheetRef.current?.close();
+    }
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -84,7 +98,7 @@ export function Sheet({
   return (
     <BottomSheet
       ref={sheetRef}
-      index={open ? 0 : -1}
+      index={-1}
       snapPoints={effectiveSnapPoints}
       enablePanDownToClose
       onChange={handleChange}

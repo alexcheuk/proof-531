@@ -7,7 +7,7 @@ const isActive = (href: string) =>
 <header class="topbar">
   <div class="topbar__inner container container--wide">
     <a class="topbar__brand" href="/" aria-label="531 home">
-      <span class="topbar__mark">531</span>
+      <span class="topbar__mark">531<span class="topbar__dot" aria-hidden="true">.</span></span>
       <span class="topbar__sub">/ strength</span>
     </a>
     <nav class="topbar__nav" aria-label="Primary">
@@ -47,6 +47,11 @@ const isActive = (href: string) =>
     font-weight: 600;
     font-size: 1.2rem;
     letter-spacing: -0.01em;
+  }
+
+  .topbar__dot {
+    color: var(--amber);
+    margin-left: -0.04em;
   }
 
   .topbar__sub {
