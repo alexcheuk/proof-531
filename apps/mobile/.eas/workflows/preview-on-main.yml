@@ -44,6 +44,5 @@ jobs:
     type: update
     params:
       platform: android
-      branch: main
       channel: preview
       message: ${{ github.event.head_commit.message }}
