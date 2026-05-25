@@ -9,6 +9,10 @@
   },
   "scripts": {
     "typecheck": "pnpm -r --parallel typecheck",
+    "dev:mobile": "pnpm --filter @fivethreeone/mobile start",
+    "dev:web": "pnpm --filter @fivethreeone/web dev",
+    "build:web": "pnpm --filter @fivethreeone/web build",
+    "preview:web": "pnpm --filter @fivethreeone/web preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",

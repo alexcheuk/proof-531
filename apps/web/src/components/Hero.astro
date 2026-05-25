@@ -1,0 +1,110 @@
+---
+import Stat from './Stat.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead: string;
+}
+
+const { eyebrow = 'A study in vibe-coded software', title, lead } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero__inner container container--wide">
+    <span class="eyebrow">{eyebrow}</span>
+    <h1 class="hero__title">{title}</h1>
+    <p class="hero__lead">{lead}</p>
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="/blog">Read the dev log →</a>
+      <a class="btn btn--ghost" href="#what-it-is">What it is</a>
+    </div>
+    <div class="hero__strip">
+      <Stat label="Loops shipped" value="100+" />
+      <Stat label="Cadence" value="30m" />
+      <Stat label="Pilot" value="Claude" />
+      <Stat label="Aesthetic" value="E-ink" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-5xl) var(--space-4xl);
+    border-bottom: 1px solid var(--line-faint);
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    max-width: 780px;
+  }
+
+  .hero__title {
+    margin-top: var(--space-sm);
+    line-height: 1.02;
+  }
+
+  .hero__lead {
+    color: var(--ink-1);
+    font-size: 1.2rem;
+    line-height: 1.55;
+    max-width: 52ch;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 22px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      background var(--duration-base) var(--ease-standard);
+  }
+
+  .btn--primary {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .btn--primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border: 1px solid var(--line-strong);
+  }
+  .btn--ghost:hover {
+    background: var(--bg-2);
+  }
+
+  .hero__strip {
+    margin-top: var(--space-3xl);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-lg);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding-block: var(--space-lg);
+  }
+
+  @media (max-width: 600px) {
+    .hero__strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

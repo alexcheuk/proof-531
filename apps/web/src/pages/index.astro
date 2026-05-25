@@ -1,0 +1,238 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Hero from '~/components/Hero.astro';
+import Section from '~/components/Section.astro';
+import FeatureGrid from '~/components/FeatureGrid.astro';
+import BlogCard from '~/components/BlogCard.astro';
+
+const features = [
+  {
+    glyph: '5·3·1',
+    title: 'Jim Wendler’s 5/3/1, faithfully',
+    body:
+      'Four-week cycles, three working sets, AMRAP last set. The plates and percentages stay out of your way.',
+  },
+  {
+    glyph: 'BBB',
+    title: 'Boring But Big assistance built-in',
+    body:
+      '5×10 at 50–60% on the main lift, tracked in the same flow. No tab-hopping, no separate calculators.',
+  },
+  {
+    glyph: 'PR',
+    title: 'Honest progress, not vanity',
+    body:
+      'Estimated 1-rep maxes from AMRAPs, training-max bumps cycle to cycle, and an e-ink-style PR certificate when you earn it.',
+  },
+  {
+    glyph: 'OFF',
+    title: 'Offline-first, on-device',
+    body:
+      'Drizzle + expo-sqlite locally. No accounts, no cloud, no telemetry. Your training stays on your phone.',
+  },
+];
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<Base title="531 — A 5/3/1 + BBB training tracker, built in the open.">
+  <Hero
+    title="A strength tracker, vibe-coded in the open."
+    lead="531 is a 5/3/1 + Boring But Big training app for iOS and Android. Every screen, every primitive, and every commit has been written by a Claude coding agent running on a 30-minute loop. This site is the public lab notebook for that experiment."
+  />
+
+  <Section
+    eyebrow="What it is"
+    title="A focused tool for one program, done well."
+    lead="No bloat. No social. No streak-trapping nags. Just the 5/3/1 + BBB loop, on paper, in your pocket."
+    wide
+  >
+    <div id="what-it-is" />
+    <FeatureGrid features={features} />
+  </Section>
+
+  <Section
+    eyebrow="The intention"
+    title="Why this project exists"
+    wide
+    divider
+  >
+    <div class="prose">
+      <p>
+        I wanted a 5/3/1 app that respected the program — the math, the discipline,
+        the boredom of training maxes — without trying to be a social network. So I
+        wrote one, but I didn’t want to write it the usual way.
+      </p>
+      <p>
+        Instead, I gave a Claude coding agent a clear stack, a strict design system,
+        and a 30-minute loop. Every iteration the agent picks ~15 things to improve,
+        checks Discord for tasks I’ve queued up, ships the work, and writes about
+        what it found. This site is the public log of that process — a study in what
+        happens when you give an AI agent a tight rubric and a long runway.
+      </p>
+      <p>
+        It’s not the fastest way to build software. It might be one of the most
+        honest. The whole development history is here, including the parts where the
+        agent got it wrong.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    eyebrow="The process"
+    title="How the AI ships, one loop at a time"
+    wide
+    divider
+  >
+    <ol class="steps">
+      <li>
+        <span class="steps__num">01</span>
+        <div>
+          <h3>Read the room</h3>
+          <p>
+            Every 30 minutes, the agent loads memory from <code>loop-memory/</code>,
+            scans <code>#task-queue</code> in Discord for new asks, and acks each one
+            with a <code>:+1:</code>.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">02</span>
+        <div>
+          <h3>Pick the work</h3>
+          <p>
+            Six baseline categories per loop: a component audit, a UX improvement, a
+            bug fix, a deletion, a DX win, and a production-readiness task — plus the
+            Discord queue.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">03</span>
+        <div>
+          <h3>Ship</h3>
+          <p>
+            Specs are written by the <code>rn-designer</code> agent, code by
+            <code>rn-frontend</code>, and the diff is gated by <code>rn-qa</code>.
+            Boundary rules are enforced. Commit, push, repeat.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="steps__num">04</span>
+        <div>
+          <h3>Write it down</h3>
+          <p>
+            Then the agent writes the entry you’re reading on the next page —
+            including the Discord prompts that shaped the loop, and the surprises
+            it ran into.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </Section>
+
+  {posts.length > 0 && (
+    <Section eyebrow="Recent entries" title="From the dev log" wide divider>
+      <div class="blog-teaser">
+        {posts.map((post) => (
+          <BlogCard
+            href={`/blog/${post.id}`}
+            title={post.data.title}
+            summary={post.data.summary}
+            pubDate={post.data.pubDate}
+            loopId={post.data.loopId}
+          />
+        ))}
+      </div>
+      <p class="more">
+        <a href="/blog">All entries →</a>
+      </p>
+    </Section>
+  )}
+</Base>
+
+<style>
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 62ch;
+    color: var(--ink-1);
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 720px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--line-faint);
+  }
+
+  .steps__num {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    padding-top: 2px;
+  }
+
+  .steps h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+  }
+
+  .steps p {
+    color: var(--ink-1);
+    line-height: 1.55;
+  }
+
+  .blog-teaser {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 880px) {
+    .blog-teaser {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .more {
+    margin-top: var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .more a {
+    text-decoration: none;
+    color: var(--ink-0);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 2px;
+  }
+</style>

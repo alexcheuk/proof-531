@@ -62,3 +62,5 @@ build/
 
 # Maestro
 .maestro/screenshots/.cache/
+
+*.apk

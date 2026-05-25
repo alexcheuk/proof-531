@@ -1,0 +1,85 @@
+---
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+---
+
+<header class="topbar">
+  <div class="topbar__inner container container--wide">
+    <a class="topbar__brand" href="/" aria-label="531 home">
+      <span class="topbar__mark">531</span>
+      <span class="topbar__sub">/ strength</span>
+    </a>
+    <nav class="topbar__nav" aria-label="Primary">
+      <a href="/" class:list={['topbar__link', { 'is-active': isActive('/') }]}>Overview</a>
+      <a href="/blog" class:list={['topbar__link', { 'is-active': isActive('/blog') }]}>Dev log</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .topbar {
+    border-bottom: 1px solid var(--line-faint);
+    background: var(--bg-0);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: saturate(140%) blur(6px);
+  }
+
+  .topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .topbar__brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    text-decoration: none;
+    color: var(--ink-0);
+  }
+
+  .topbar__mark {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .topbar__sub {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .topbar__nav {
+    display: flex;
+    gap: var(--space-lg);
+  }
+
+  .topbar__link {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding-block: var(--space-xs);
+    border-bottom: 1px solid transparent;
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+
+  .topbar__link:hover {
+    color: var(--ink-0);
+  }
+
+  .topbar__link.is-active {
+    color: var(--ink-0);
+    border-bottom-color: var(--ink-0);
+  }
+</style>

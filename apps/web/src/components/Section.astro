@@ -1,0 +1,67 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  align?: 'left' | 'center';
+  wide?: boolean;
+  divider?: boolean;
+}
+
+const { eyebrow, title, lead, align = 'left', wide = false, divider = false } = Astro.props;
+---
+
+<section class:list={['section', { 'section--divider': divider }]}>
+  <div
+    class:list={[
+      'section__inner',
+      'container',
+      { 'container--wide': wide, 'section__inner--center': align === 'center' },
+    ]}
+  >
+    {(eyebrow || title || lead) && (
+      <header class="section__head">
+        {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+        {title && <h2 class="section__title">{title}</h2>}
+        {lead && <p class="section__lead">{lead}</p>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--space-3xl);
+  }
+
+  .section--divider {
+    border-top: 1px solid var(--line-faint);
+  }
+
+  .section__inner--center {
+    text-align: center;
+  }
+
+  .section__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    max-width: 56ch;
+  }
+
+  .section__inner--center .section__head {
+    margin-inline: auto;
+  }
+
+  .section__title {
+    margin-top: var(--space-xs);
+  }
+
+  .section__lead {
+    color: var(--ink-1);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+</style>

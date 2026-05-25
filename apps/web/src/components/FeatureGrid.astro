@@ -1,0 +1,73 @@
+---
+interface Feature {
+  glyph: string;
+  title: string;
+  body: string;
+}
+
+interface Props {
+  features: Feature[];
+}
+
+const { features } = Astro.props;
+---
+
+<ul class="feature-grid">
+  {
+    features.map((f) => (
+      <li class="feature">
+        <span class="feature__glyph" aria-hidden="true">{f.glyph}</span>
+        <h3 class="feature__title">{f.title}</h3>
+        <p class="feature__body">{f.body}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .feature-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 720px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .feature {
+    background: var(--bg-1);
+    border: 1px solid var(--line-faint);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .feature__glyph {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    color: var(--ink-0);
+    margin-bottom: var(--space-xs);
+  }
+
+  .feature__title {
+    font-family: var(--font-cond);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink-0);
+    margin: 0;
+  }
+
+  .feature__body {
+    color: var(--ink-1);
+    line-height: 1.55;
+    font-size: 0.98rem;
+  }
+</style>

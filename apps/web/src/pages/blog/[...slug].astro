@@ -1,0 +1,226 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formatted = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const iso = post.data.pubDate.toISOString();
+---
+
+<Base title={`${post.data.title} — 531 dev log`} description={post.data.summary}>
+  <article class="entry container">
+    <a class="back" href="/blog">← Dev log</a>
+
+    <header class="entry__head">
+      <div class="entry__meta">
+        <time datetime={iso}>{formatted}</time>
+        {post.data.loopId && <span class="entry__loop">{post.data.loopId}</span>}
+        {post.data.commitCount !== undefined && (
+          <span class="entry__commits">
+            {post.data.commitCount} commit{post.data.commitCount === 1 ? '' : 's'}
+          </span>
+        )}
+      </div>
+      <h1 class="entry__title">{post.data.title}</h1>
+      <p class="entry__summary">{post.data.summary}</p>
+    </header>
+
+    {post.data.discordPrompts && post.data.discordPrompts.length > 0 && (
+      <aside class="prompts">
+        <span class="eyebrow">From the queue</span>
+        <ul>
+          {post.data.discordPrompts.map((p) => (
+            <li>
+              <span class="prompts__author">@{p.author}</span>
+              <span class="prompts__channel">{p.channel}</span>
+              <p>{p.text}</p>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
+    <div class="entry__body">
+      <Content />
+    </div>
+
+    {post.data.tags.length > 0 && (
+      <footer class="entry__tags">
+        {post.data.tags.map((t) => (
+          <span class="tag">{t}</span>
+        ))}
+      </footer>
+    )}
+  </article>
+</Base>
+
+<style>
+  .entry {
+    padding-block: var(--space-3xl);
+    max-width: var(--content-max);
+  }
+
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  .back:hover {
+    color: var(--ink-0);
+  }
+
+  .entry__head {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .entry__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .entry__loop,
+  .entry__commits {
+    border: 1px solid var(--line);
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+  }
+
+  .entry__title {
+    line-height: 1.05;
+  }
+
+  .entry__summary {
+    font-size: 1.15rem;
+    color: var(--ink-1);
+    line-height: 1.5;
+  }
+
+  .prompts {
+    background: var(--bg-1);
+    border: 1px solid var(--line-faint);
+    border-left: 3px solid var(--ink-0);
+    border-radius: var(--radius-sm);
+    padding: var(--space-lg) var(--space-xl);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .prompts ul {
+    list-style: none;
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prompts__author {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-0);
+    margin-right: var(--space-xs);
+  }
+
+  .prompts__channel {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .prompts p {
+    margin: 4px 0 0;
+    color: var(--ink-1);
+  }
+
+  .entry__body {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--ink-1);
+  }
+
+  .entry__body :global(h2) {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-sm);
+    color: var(--ink-0);
+  }
+
+  .entry__body :global(h3) {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xs);
+    color: var(--ink-0);
+  }
+
+  .entry__body :global(p) {
+    margin-block: var(--space-md);
+  }
+
+  .entry__body :global(ul),
+  .entry__body :global(ol) {
+    margin-block: var(--space-md);
+    padding-left: var(--space-xl);
+  }
+
+  .entry__body :global(li) {
+    margin-block: var(--space-xs);
+  }
+
+  .entry__body :global(blockquote) {
+    border-left: 3px solid var(--line-strong);
+    padding-left: var(--space-lg);
+    margin: var(--space-lg) 0;
+    color: var(--ink-2);
+    font-style: italic;
+  }
+
+  .entry__tags {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--line-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 2px 10px;
+  }
+</style>

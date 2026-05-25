@@ -9,6 +9,8 @@
       "apps/*/ios",
       "apps/*/android",
       "apps/*/dist",
+      "apps/*/.astro",
+      "apps/web/**/*.astro",
       "apps/*/assets/expo.icon",
       "apps/*/expo-env.d.ts",
       "apps/*/assets/**/*.json",

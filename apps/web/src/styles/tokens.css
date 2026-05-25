@@ -1,0 +1,60 @@
+/*
+ * Design tokens — ported from apps/mobile/src/design/tokens.ts.
+ * This is the ONLY file allowed to contain hex/px literals.
+ * All other web modules must read these custom properties.
+ */
+
+:root {
+  /* ── Surfaces (paper) ── */
+  --bg-0: #e7e3d6;
+  --bg-1: #dcd8cb;
+  --bg-2: #d2cec0;
+  --bg-3: #c7c3b5;
+
+  /* ── Ink ── */
+  --ink-0: #1a1812;
+  --ink-1: #3d3a30;
+  --ink-2: #6b6759;
+  --ink-3: #8f8b7d;
+  --ink-4: #b2ae9f;
+
+  /* ── Lines ── */
+  --line: rgba(26, 24, 18, 0.16);
+  --line-strong: rgba(26, 24, 18, 0.42);
+  --line-faint: rgba(26, 24, 18, 0.08);
+
+  /* ── Accents (collapse to ink — names retained for parity) ── */
+  --amber: #8e5345;
+
+  /* ── Type families ── */
+  --font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-cond: "IBM Plex Sans Condensed", "IBM Plex Sans Variable", system-ui, sans-serif;
+
+  /* ── Radii ── */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+
+  /* ── Spacing (4-pt scale) ── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 72px;
+  --space-5xl: 112px;
+
+  /* ── Layout ── */
+  --gutter: var(--space-xl);
+  --content-max: 720px;
+  --content-wide: 960px;
+
+  /* ── Motion ── */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-base: 220ms;
+}

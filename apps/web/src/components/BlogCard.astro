@@ -1,0 +1,89 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  pubDate: Date;
+  loopId?: string | undefined;
+}
+
+const { href, title, summary, pubDate, loopId } = Astro.props;
+
+const formatted = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+const iso = pubDate.toISOString();
+---
+
+<a class="card" href={href}>
+  <header class="card__head">
+    <time class="card__date" datetime={iso}>{formatted}</time>
+    {loopId && <span class="card__loop">{loopId}</span>}
+  </header>
+  <h3 class="card__title">{title}</h3>
+  <p class="card__summary">{summary}</p>
+  <span class="card__cta">Read entry →</span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-xl);
+    background: var(--bg-1);
+    border: 1px solid var(--line-faint);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard);
+  }
+
+  .card:hover {
+    border-color: var(--line);
+    transform: translateY(-1px);
+  }
+
+  .card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .card__loop {
+    padding: 1px 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+  }
+
+  .card__title {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--ink-0);
+    margin: 0;
+  }
+
+  .card__summary {
+    color: var(--ink-1);
+    line-height: 1.55;
+  }
+
+  .card__cta {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    margin-top: var(--space-xs);
+  }
+</style>
