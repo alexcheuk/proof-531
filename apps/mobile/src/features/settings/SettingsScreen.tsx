@@ -96,7 +96,10 @@ export function SettingsScreen() {
 
         <PlateSetSection plateSet={settings.plateSet} />
 
-        <RestTargetSection restTargetSeconds={settings.restTargetSeconds} />
+        <RestTargetSection
+          restTargetSeconds={settings.restTargetSeconds}
+          bbbRestTargetSeconds={settings.bbbRestTargetSeconds}
+        />
 
         <AboutSection />
 

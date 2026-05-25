@@ -51,6 +51,7 @@ function toRow(s: Settings): SettingsInsert {
     week: s.week,
     day: s.day,
     restTargetSeconds: s.restTargetSeconds,
+    bbbRestTargetSeconds: s.bbbRestTargetSeconds,
   };
 }
 
@@ -66,6 +67,7 @@ function fromRow(row: SettingsRow): Settings {
     week: row.week as Week,
     day: row.day as Day,
     restTargetSeconds: row.restTargetSeconds,
+    bbbRestTargetSeconds: row.bbbRestTargetSeconds,
   };
 }
 

@@ -76,7 +76,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const bbbWeightStorage = bbbWeightFromTm(session.trainingMaxSnapshot, storageUnit);
   const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorage, storageUnit, renderUnit));
   const perSide = decompose(bbbWeightStorage, plateSet).perSide;
-  const restHint = formatMmSs(settings.restTargetSeconds);
+  const restHint = formatMmSs(settings.bbbRestTargetSeconds);
 
   const onClose = () => goTo.complete(router, sessionId, { replace: true });
 

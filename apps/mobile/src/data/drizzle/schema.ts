@@ -12,6 +12,11 @@ export const settings = sqliteTable('settings', {
   week: integer('week').notNull(),
   day: integer('day').notNull(),
   restTargetSeconds: integer('rest_target_seconds').notNull(),
+  // BBB rest is shorter than the working-set rest by design — the BBB
+  // sets are 5×10 at 50% TM, light enough that 3 minutes between is
+  // wasted time. Default 90s. Additive column; see ADDITIVE_COLUMNS in
+  // runMigrations.ts so existing installs pick it up via ALTER TABLE.
+  bbbRestTargetSeconds: integer('bbb_rest_target_seconds').notNull(),
 });
 
 export const trainingMaxes = sqliteTable('training_maxes', {
@@ -70,4 +75,5 @@ export const DEFAULT_SETTINGS_VALUES = {
   week: 1,
   day: 1,
   restTargetSeconds: 180,
+  bbbRestTargetSeconds: 90,
 };

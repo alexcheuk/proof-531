@@ -36,6 +36,7 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'week',
   'day',
   'rest_target_seconds',
+  'bbb_rest_target_seconds',
 ] as const;
 
 /**
@@ -54,6 +55,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     table: 'settings',
     column: 'rest_target_seconds',
     ddl: 'ALTER TABLE settings ADD COLUMN rest_target_seconds INTEGER NOT NULL DEFAULT 90',
+  },
+  {
+    table: 'settings',
+    column: 'bbb_rest_target_seconds',
+    ddl: 'ALTER TABLE settings ADD COLUMN bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90',
   },
 ];
 

@@ -65,10 +65,18 @@ export interface Settings {
   day: Day;
   /**
    * Target rest-timer duration (seconds) between working sets. User-tunable
-   * via Settings → Rest target. Default = 90s. Consumed by `useLiveScreenState`
+   * via Settings → Rest target. Default = 180s. Consumed by `useLiveScreenState`
    * as the rest countdown's initial value.
    */
   restTargetSeconds: number;
+  /**
+   * Target rest-timer duration (seconds) between BBB sets. BBB is 5×10 at
+   * 50% TM — much lighter than the working sets, so the rest target is
+   * shorter by default. User-tunable via Settings → BBB rest target.
+   * Default = 90s. Surfaced by `BbbPromptScreen` and `TodayBody`'s BBB
+   * band hint.
+   */
+  bbbRestTargetSeconds: number;
 }
 
 /**
@@ -85,4 +93,5 @@ export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
   week: 1,
   day: 1,
   restTargetSeconds: 180,
+  bbbRestTargetSeconds: 90,
 };

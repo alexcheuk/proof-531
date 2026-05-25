@@ -180,6 +180,7 @@ const mockSettingsState: { data: unknown; isLoading: boolean; error: unknown } =
     week: 1,
     day: 1,
     restTargetSeconds: 90,
+    bbbRestTargetSeconds: 90,
   },
   isLoading: false,
   error: null,
@@ -267,6 +268,7 @@ describe('LiveScreen', () => {
       week: 1,
       day: 1,
       restTargetSeconds: 90,
+      bbbRestTargetSeconds: 90,
     };
     mockSettingsState.isLoading = false;
     mockSettingsState.error = null;
@@ -505,6 +507,7 @@ describe('LiveScreen', () => {
       week: 1,
       day: 1,
       restTargetSeconds: 120,
+      bbbRestTargetSeconds: 90,
     };
 
     const screen = renderScreen(<LiveScreen sessionId={7} />);

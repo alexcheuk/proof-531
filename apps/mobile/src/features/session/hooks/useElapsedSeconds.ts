@@ -25,5 +25,3 @@ export function useElapsedSeconds(startedAt: number | null | undefined): number 
   if (startedAt == null) return 0;
   return Math.max(0, Math.floor((now - startedAt) / 1000));
 }
-
-export { formatClock as formatElapsedClock } from '@/domain/time';

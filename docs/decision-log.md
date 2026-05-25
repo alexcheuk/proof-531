@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Separate `settings.bbbRestTargetSeconds` column (additive migration, default 90s)
+
+**Tags:** `feature`, `data`, `migration`
+**Files:** `apps/mobile/src/data/drizzle/schema.ts`, `apps/mobile/src/data/drizzle/migrations/0001_init.{sql,ts}`, `apps/mobile/src/data/drizzle/runMigrations.ts`, `apps/mobile/src/domain/types.ts`, `apps/mobile/src/data/accessors/{settings,onboarding}.ts`, `apps/mobile/src/features/settings/sections/RestTargetSection.tsx`, `apps/mobile/src/features/session/{BbbPromptScreen.tsx,components/TodayBody/{TodayBody,BbbBand}.tsx}`
+
+BBB sets are 5×10 at 50% TM — much lighter than the working sets, so the rest target should be shorter. Was inheriting the working-set rest; users with `rest = 3:00` configured were resting 3 minutes between back-off sets too. Added `bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90` as a new additive column; existing installs pick it up via the ALTER pathway in `runMigrations.ts`. Settings UI now has two stacked rails ("Working sets" + "BBB sets"). BbbPromptScreen + TodayBody's BBB band both read the new field.
+
+**Why:** called out as a deferred fix in loop-006's "the timer that counts down" blog post. Honest-receivable follow-through.
+
+**Trade-off / what we didn't do:** considered overloading `restTargetSeconds` with a `context: 'working' | 'bbb'` param at read time. Rejected — sub-second value, but a long-tail correctness liability (callers forgetting to pass the right context). A dedicated column is one schema row + one switch case at every consumer.
+
+**Follow-ups:** logged the five-file coordination shape in `loop-memory/08-additive-column-checklist.md` so the next column add is fill-in-the-blank.
+
 ### 2026-05-25 — `getSetLogsForSession` enforces `ORDER BY id` (docstring contract → SQL contract)
 
 **Tags:** `data`, `correctness`

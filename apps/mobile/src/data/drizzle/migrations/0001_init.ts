@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS settings (
   current_cycle INTEGER NOT NULL,
   week INTEGER NOT NULL,
   day INTEGER NOT NULL,
-  rest_target_seconds INTEGER NOT NULL DEFAULT 90
+  rest_target_seconds INTEGER NOT NULL DEFAULT 90,
+  bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90
 );
 
 CREATE TABLE IF NOT EXISTS training_maxes (

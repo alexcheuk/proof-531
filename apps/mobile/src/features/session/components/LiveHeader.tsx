@@ -3,6 +3,7 @@ import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import { formatClock as formatElapsedClock } from '@/domain/time';
 /**
  * Live screen masthead. Caps eyebrow ("ON THE BAR · SET N OF 3") tells the
  * user *this is the set you're doing right now*; large sans-bold "Set N."
@@ -11,7 +12,6 @@ import { useTheme } from '@/design/theme';
  * chip sits inline with the title row so it baseline-aligns visually.
  */
 import { View, type ViewStyle } from 'react-native';
-import { formatElapsedClock } from '../hooks/useElapsedSeconds';
 
 const TITLE_SIZE = 64;
 // PWA `tracking-[-0.04em]` × 64px = -2.56 letter spacing.

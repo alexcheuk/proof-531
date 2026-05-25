@@ -10,6 +10,12 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Separate BBB rest target** — Settings → Rest target now has two rails:
+  "Working sets" (default 3:00) and "BBB sets" (default 1:30). BBB is
+  5×10 at 50% TM and was over-resting on the same 3-min default as the
+  working sets. `bbbRestTargetSeconds` is an additive `settings` column;
+  existing installs receive it via `ALTER TABLE ADD COLUMN` on next boot.
+  BbbPromptScreen and TodayBody's BBB band both read the new field.
 - **App icon + splash · real 531 wordmark** — copied the canonical PWA mark
   (`~/Development/531-pwa/public/icons/icon-512.png` + the maskable variant)
   into `apps/mobile/assets/images/`. Replaces the placeholder Expo "A" icon.

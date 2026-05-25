@@ -46,11 +46,12 @@ export type TodayBodyProps = {
    */
   completedIndices?: ReadonlyArray<0 | 1 | 2>;
   /**
-   * User's configured rest target between working sets, in seconds. When
-   * provided, shown as a hint chip next to the BBB band so the user can
-   * verify their pace before starting.
+   * User's configured BBB rest target (seconds). When provided, shown as
+   * a hint chip next to the BBB band so the user can verify their pace
+   * before starting. Sourced from `settings.bbbRestTargetSeconds` — NOT
+   * the working-set rest target.
    */
-  restTargetSeconds?: number;
+  bbbRestTargetSeconds?: number;
 };
 
 export function TodayBody({
@@ -63,7 +64,7 @@ export function TodayBody({
   plateSet,
   nextSetIndex = 1,
   completedIndices = [],
-  restTargetSeconds,
+  bbbRestTargetSeconds,
 }: TodayBodyProps) {
   const { colors, layout, spacing } = useTheme();
   const sets = prescription(week);
@@ -130,7 +131,7 @@ export function TodayBody({
         storageUnit={storageUnit}
         renderUnit={renderUnit}
         unitGlyph={unitGlyph}
-        {...(restTargetSeconds !== undefined ? { restTargetSeconds } : {})}
+        {...(bbbRestTargetSeconds !== undefined ? { bbbRestTargetSeconds } : {})}
       />
 
       <CapsLabel

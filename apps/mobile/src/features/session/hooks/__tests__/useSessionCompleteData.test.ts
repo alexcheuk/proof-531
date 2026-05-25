@@ -128,6 +128,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         week: 1,
         day: 1,
         restTargetSeconds: 90,
+        bbbRestTargetSeconds: 90,
       },
       prevBestStorage: 0,
     });

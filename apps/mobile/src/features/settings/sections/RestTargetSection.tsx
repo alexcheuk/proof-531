@@ -19,29 +19,50 @@ const REST_PRESETS: ReadonlyArray<{ value: RestPreset; label: string }> = [
 
 export type RestTargetSectionProps = {
   restTargetSeconds: number;
+  bbbRestTargetSeconds: number;
 };
 
-export function RestTargetSection({ restTargetSeconds }: RestTargetSectionProps) {
+export function RestTargetSection({
+  restTargetSeconds,
+  bbbRestTargetSeconds,
+}: RestTargetSectionProps) {
   const db = useDb();
   const queryClient = useQueryClient();
-  const current = String(restTargetSeconds) as RestPreset;
+  const currentWorking = String(restTargetSeconds) as RestPreset;
+  const currentBbb = String(bbbRestTargetSeconds) as RestPreset;
 
   async function commitRestTarget(next: RestPreset) {
     await updateSettings(db, { restTargetSeconds: Number(next) });
     await queryClient.invalidateQueries({ queryKey: SETTINGS_KEY });
   }
 
+  async function commitBbbRestTarget(next: RestPreset) {
+    await updateSettings(db, { bbbRestTargetSeconds: Number(next) });
+    await queryClient.invalidateQueries({ queryKey: SETTINGS_KEY });
+  }
+
   return (
-    <LedgerSection title="Rest target" hint="countdown between working sets">
+    <LedgerSection title="Rest target" hint="countdown between sets">
       <LabeledSegRail
-        label="Default rest"
-        hint={`Currently ${formatMmSs(restTargetSeconds)} per set`}
+        label="Working sets"
+        hint={`Currently ${formatMmSs(restTargetSeconds)} per set · 5/3/1 main work`}
       >
         <SegRail<RestPreset>
           testID="settings-rest-target"
-          value={current}
+          value={currentWorking}
           options={REST_PRESETS}
           onChange={(next) => void commitRestTarget(next)}
+        />
+      </LabeledSegRail>
+      <LabeledSegRail
+        label="BBB sets"
+        hint={`Currently ${formatMmSs(bbbRestTargetSeconds)} per set · 5×10 @ 50%`}
+      >
+        <SegRail<RestPreset>
+          testID="settings-bbb-rest-target"
+          value={currentBbb}
+          options={REST_PRESETS}
+          onChange={(next) => void commitBbbRestTarget(next)}
         />
       </LabeledSegRail>
     </LedgerSection>

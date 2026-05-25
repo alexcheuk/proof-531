@@ -52,6 +52,7 @@ const mockSettingsState: {
     currentCycle: number;
     enabledLifts: Array<'squat' | 'bench' | 'deadlift' | 'press'>;
     restTargetSeconds: number;
+    bbbRestTargetSeconds: number;
   } | null;
 } = { data: null };
 jest.mock('@/data/queries/useSettings', () => ({
@@ -86,6 +87,7 @@ describe('BbbPromptScreen', () => {
       currentCycle: 1,
       enabledLifts: ['squat', 'bench', 'deadlift', 'press'],
       restTargetSeconds: 180,
+      bbbRestTargetSeconds: 90,
     };
   });
 
@@ -114,5 +116,13 @@ describe('BbbPromptScreen', () => {
       pathname: '/session/complete',
       params: { sessionId: '7' },
     });
+  });
+
+  it('rest hint reads settings.bbbRestTargetSeconds, NOT settings.restTargetSeconds', () => {
+    // restTargetSeconds = 180 (working sets) vs bbbRestTargetSeconds = 90.
+    // The BBB rest hint must render the 1:30 from the BBB-specific field.
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    expect(screen.getByText(/REST 1:30 BETWEEN SETS/)).toBeTruthy();
+    expect(screen.queryByText(/REST 3:00 BETWEEN SETS/)).toBeNull();
   });
 });
