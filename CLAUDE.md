@@ -7,6 +7,8 @@
 A production scaffold for **531 Strength** — a 5/3/1 + BBB training tracker for iOS and Android.
 The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md`.
 
+**The product vision lives in `docs/INTENT.md`.** It is a **drift check** — re-read it when a proposed change feels like it might be pulling the app sideways from what the user wants it to be (audience, aesthetic, scope, or the integrity of the vibe-coded experiment). It is *not* a brief for the blog or marketing site; those are downstream artifacts. Most decisions don't need this file. The ones that do, need it badly.
+
 ## Stack
 
 - Expo SDK 55, React Native 0.83+ (New Architecture on), **Expo Go workflow** (no custom dev client)
@@ -119,6 +121,16 @@ Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), 
 | Date | Change | Target | Reason |
 |------|--------|--------|--------|
 | 2026-05-23 | Initial build — designer/frontend/QA team + role skills + orchestrator | `.claude/agents/`, `.claude/skills/` | New harness request |
+
+## Decision log
+
+`docs/decision-log.md` is an append-only record of notable decisions made in this repo. It is the primary source the dev-blog persona ([[dev-blog-persona|Margin]]) reads when writing posts — without it, posts have to be reverse-engineered from diffs and lose the *why*.
+
+**When you make a notable decision in any session — loop or ad-hoc — append an entry before the work is done.** Notable = anything a future reader would want context on: new/removed skills, harnesses, agents, conventions; architectural calls; process changes; bug post-mortems worth remembering; a path considered and rejected. Routine fixes, single-line edits, and anything obvious from the diff alone do NOT belong.
+
+Entry format and examples live in `docs/decision-log.md` itself. Append new entries at the top under `## Entries`. Keep them short — depth lives in the eventual blog post.
+
+If you're unsure whether something is notable, log it. Margin can ignore an entry that turns out to be noise; Margin cannot recover a decision that was never written down.
 
 ## Test discipline
 

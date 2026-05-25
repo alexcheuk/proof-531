@@ -18,14 +18,7 @@ If something genuinely can't ship this iteration (e.g. needs a PNG asset you can
 
 ## Loop categories (every iteration)
 
-The user's spec requires at minimum one of each per iteration. With 12–15 items per iteration this is easy to hit:
-
-- Audit & refactor (1+ component split / dedupe / one-component-per-file)
-- Feature improvement or addition
-- Bug fix (always look — there's usually one)
-- Remove unnecessary code / unused asset / stale comment
-- Dev workflow improvement
-- Production readiness (CHANGELOG / marketing / pipeline / a11y / icons)
+The category list lives in [`loop-criteria.md`](loop-criteria.md) — read it fresh every iteration. The user edits that file between loops to change what each iteration must cover. With 12–15 items per iteration, hitting at least one of each category is easy.
 
 Plus: every Discord `#task-queue` item the user filed since the last iteration. Acknowledge with :+1: and ship.
 
@@ -79,6 +72,7 @@ The memory files themselves:
 | File | Purpose |
 |------|---------|
 | `00-loop-pacing.md` | This file. How to scope iterations + anti-patterns. |
+| `loop-criteria.md` | Per-iteration coverage categories. User edits between loops; the skill reads it fresh. |
 | `01-known-codebase.md` | Pre-computed codebase facts (primitives, accessors, conventions). |
 | `02-pending-assets.md` | Work that can't ship from this seat (image assets, etc.). |
 
