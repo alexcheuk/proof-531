@@ -105,10 +105,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // Set surface is visible during 'set' and 'amrap-log'. Cancel/reset
-  // confirm phases are no longer reachable from this screen (loop-004)
-  // — predicate is intentionally narrow now; the state-machine values
-  // remain for tests + a potential future re-introduction.
+  // Set surface is visible during 'set' and 'amrap-log'.
   const showSetSurface = live.phase === 'set' || live.phase === 'amrap-log';
   const showRestSurface = live.phase === 'rest';
 
@@ -118,13 +115,8 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <SessionTopBar
         onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
-        // Discord 1508386540: Cancel + Restart moved off the Live screen
-        // entirely — they now live on the Today screen's top bar when a
-        // session is in progress. The Live screen surfaces only the
-        // contextual recovery action: Undo last set during rest.
-        // Mid-effort destructive controls were noisy here and easy to
-        // mis-tap; sending the user back to Today to abort keeps the
-        // commit gesture distinct from the set-in-progress UI.
+        // Live surfaces only the contextual recovery action: Undo last
+        // set during rest. Restart lives on the Today screen.
         {...(live.phase === 'rest' && live.lastLogged && !live.lastLogged.isAmrap
           ? { onUndo: live.onUndoLastSet }
           : {})}
@@ -204,13 +196,6 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         onSave={live.onSaveAmrap}
         testID="amrap-sheet"
       />
-
-      {/* Cancel/Restart sheets moved to TodayScreen (loop-004, Discord
-          1508386540). The underlying state-machine phases
-          ('cancel-confirm', 'reset-confirm') and handlers remain in
-          useLiveScreenState — currently unreachable from this screen
-          but kept around as a tested unit so a future re-introduction
-          (e.g. a long-press shortcut) doesn't need to re-derive them. */}
     </SessionLayout>
   );
 }

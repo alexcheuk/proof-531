@@ -6,8 +6,8 @@
  * useHomeScreenState) read `data?.lift` to determine the in-progress lift
  * and gate CTA copy/glyph accordingly.
  *
- * Invalidation: `createSession` / `completeSession` / `cancelSession`
- * callers should invalidate `ACTIVE_SESSION_KEY` to refresh consumers.
+ * Invalidation: `createSession` / `completeSession` callers should
+ * invalidate `ACTIVE_SESSION_KEY` to refresh consumers.
  */
 import { useQuery } from '@tanstack/react-query';
 import { useDb } from '../DbProvider';

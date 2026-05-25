@@ -6,8 +6,6 @@
  *   - Rest timer fires the warning haptic at T-3s. (T-0 audio cue was removed
  *     when expo-av was dropped — Expo Go on SDK 55 no longer ships its
  *     native module.)
- *   - Cancel button uses a two-tap pattern: first tap fires the warning
- *     haptic, second tap calls cancelSession.
  *   - The AMRAP bottom sheet is visible while in the `amrap-log` phase.
  *   - On phase==='complete', session-shaped queries are invalidated and the
  *     router replaces to `/session/complete?sessionId=…`.
@@ -27,7 +25,6 @@ const mockBack = jest.fn();
 const mockReplace = jest.fn();
 const mockAppendSetLog = jest.fn();
 const mockCompleteSession = jest.fn();
-const mockCancelSession = jest.fn();
 const mockActivateKeepAwake = jest.fn();
 const mockDeactivateKeepAwake = jest.fn();
 const mockNotificationAsync = jest.fn();
@@ -197,7 +194,6 @@ jest.mock('@/data/accessors/setLog', () => ({
 
 jest.mock('@/data/accessors/session', () => ({
   completeSession: (...args: unknown[]) => mockCompleteSession(...args),
-  cancelSession: (...args: unknown[]) => mockCancelSession(...args),
 }));
 
 // Import after mocks.
@@ -251,8 +247,6 @@ describe('LiveScreen', () => {
     mockAppendSetLog.mockResolvedValue({ id: 1 });
     mockCompleteSession.mockReset();
     mockCompleteSession.mockResolvedValue(undefined);
-    mockCancelSession.mockReset();
-    mockCancelSession.mockResolvedValue(undefined);
     mockActivateKeepAwake.mockClear();
     mockDeactivateKeepAwake.mockClear();
     mockNotificationAsync.mockClear();
@@ -401,13 +395,10 @@ describe('LiveScreen', () => {
     });
   });
 
-  it('does not render the session-cancel pill on the Live screen (cancel moved to Today, loop-004)', async () => {
+  it('does not render the session-reset pill on the Live screen (Restart moved to Today)', async () => {
     const screen = renderScreen(<LiveScreen sessionId={7} />);
-    // Discord 1508386540 moved Cancel + Restart pills off the Live
-    // screen onto Today. Live now surfaces only the contextual recovery
-    // action (Undo during rest). The two-tap cancel flow is covered by
-    // the TodayScreen test instead.
-    expect(screen.queryByTestId('session-cancel')).toBeNull();
+    // Live surfaces only the contextual recovery action (Undo during
+    // rest). Restart lives on the Today top bar.
     expect(screen.queryByTestId('session-reset')).toBeNull();
   });
 

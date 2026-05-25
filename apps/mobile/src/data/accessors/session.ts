@@ -135,19 +135,6 @@ export async function completeSession(db: AnyDb, sessionId: number): Promise<voi
 }
 
 /**
- * Cancel a session. Set logs are kept (per spec §8 — AMRAP PRs achieved
- * before cancel still count). Day is NOT advanced.
- */
-export async function cancelSession(db: AnyDb, sessionId: number): Promise<void> {
-  await Promise.resolve(
-    db
-      .update(sessions)
-      .set({ status: 'cancelled', endedAt: Date.now() })
-      .where(eq(sessions.id, sessionId)),
-  );
-}
-
-/**
  * Reset a still-in-progress session: delete every set log for it,
  * stamp a fresh `startedAt`, and rebuild the lift's `prs.bestE1RM`
  * from the remaining (other-session) AMRAP rows. Leaves

@@ -24,8 +24,8 @@ export type LiveCtaButtonProps = {
  * "Complete session" on `setIndex === 2` was misleading: pressing it took
  * the user to their FINAL set, not to the receipt.
  *
- * Cancel-confirm and amrap-log phases re-use the CTA from the phase they
- * popped out of, so the same selection rules apply.
+ * The amrap-log phase re-uses the CTA from the phase it popped out of,
+ * so the same selection rules apply.
  */
 export function LiveCtaButton({
   phase,
@@ -43,7 +43,7 @@ export function LiveCtaButton({
       </PrimaryPillButton>
     );
   }
-  if (phase !== 'set' && phase !== 'amrap-log' && phase !== 'cancel-confirm') return null;
+  if (phase !== 'set' && phase !== 'amrap-log') return null;
   if (isAmrap) {
     return (
       <PrimaryPillButton testID="cta-log-amrap" glyph="→" onPress={onOpenAmrapSheet}>

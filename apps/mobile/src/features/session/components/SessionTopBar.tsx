@@ -4,8 +4,7 @@ import { useTheme } from '@/design/theme';
  *
  * Ported from the PWA `~/Development/531-pwa/src/features/session/components/
  * SessionTopBar.tsx`. Back chip on the left, optional right-side action:
- * nothing, a Cancel pill (see `CancelPill`), or a Complete-session pill
- * (see `CompletePill`).
+ * nothing or a Complete-session pill (see `CompletePill`).
  *
  * Visual contract:
  *   - bg-bg-0 surface, bottom hairline `colors.line`.
@@ -13,15 +12,11 @@ import { useTheme } from '@/design/theme';
  *   - Back chip: 32×32, ink-0 border, mono `←` glyph.
  */
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
-import { CancelPill } from './CancelPill';
 import { CompletePill } from './CompletePill';
 import { ResetPill } from './ResetPill';
 import { UndoPill } from './UndoPill';
 
-export type RightAction =
-  | { kind: 'none' }
-  | { kind: 'cancel'; onPress: () => void }
-  | { kind: 'complete'; onPress: () => void };
+export type RightAction = { kind: 'none' } | { kind: 'complete'; onPress: () => void };
 
 export type SessionTopBarProps = {
   /** Pressed when the user taps the back chip. */
@@ -99,7 +94,6 @@ export function SessionTopBar({
       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
         {onUndo ? <UndoPill onPress={onUndo} /> : null}
         {onReset ? <ResetPill onPress={onReset} /> : null}
-        {rightAction.kind === 'cancel' ? <CancelPill onPress={rightAction.onPress} /> : null}
         {rightAction.kind === 'complete' ? <CompletePill onPress={rightAction.onPress} /> : null}
       </View>
     </View>

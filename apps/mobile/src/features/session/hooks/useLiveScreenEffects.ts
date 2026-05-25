@@ -99,12 +99,20 @@ export function useLiveScreenEffects({
   }, [phase, sessionId, queryClient, router]);
 
   // Exit gate: if the session row disappears (deleted) or transitions out
-  // of `in_progress` from elsewhere (e.g. cancelled by another surface),
-  // bounce home. Skipped while loading and while we're already mid-complete
-  // flow (the effect above owns routing in that case, so this would race).
+  // of `in_progress` from elsewhere, bounce home. Skipped while loading
+  // and while we're already mid-routing flow (the awaiting-bbb /
+  // pr-celebration / complete effects above own routing in those cases,
+  // so this would race).
+  //
+  // The awaiting-bbb / pr-celebration exclusions matter because
+  // completeSession runs inside onSaveAmrap BEFORE setPhase, so by the time
+  // we render with phase='awaiting-bbb' the SESSION_KEY refetch can land
+  // sessionStatus='completed' — without these excludes, the gate fires
+  // goTo.home in the same render window and the user lands on Home
+  // instead of BBB.
   useEffect(() => {
     if (sessionLoading) return;
-    if (phase === 'complete') return;
+    if (phase === 'complete' || phase === 'awaiting-bbb' || phase === 'pr-celebration') return;
     if (sessionMissing) {
       goTo.home(router);
       return;

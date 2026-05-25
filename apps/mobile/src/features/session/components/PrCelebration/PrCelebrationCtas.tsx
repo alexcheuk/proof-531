@@ -1,4 +1,3 @@
-import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { Pressable, View, type ViewStyle } from 'react-native';
@@ -6,14 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * Bottom CTA stack for the PR celebration screen — paper-on-ink primary
- * "Continue →" + monochrome inverse "Skip to receipt" link.
+ * "Continue →".
  */
 export type PrCelebrationCtasProps = {
   onContinue: () => void;
-  onSkipToReceipt: () => void;
 };
 
-export function PrCelebrationCtas({ onContinue, onSkipToReceipt }: PrCelebrationCtasProps) {
+export function PrCelebrationCtas({ onContinue }: PrCelebrationCtasProps) {
   const { colors, spacing } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -42,14 +40,6 @@ export function PrCelebrationCtas({ onContinue, onSkipToReceipt }: PrCelebration
           {'Continue  →'}
         </Text>
       </Pressable>
-      <SecondaryLink
-        testID="pr-celebration-skip"
-        onPress={onSkipToReceipt}
-        surface="inverse"
-        accessibilityLabel="Skip to session receipt"
-      >
-        SKIP TO RECEIPT
-      </SecondaryLink>
     </View>
   );
 }

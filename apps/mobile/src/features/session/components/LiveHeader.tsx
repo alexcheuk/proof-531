@@ -95,21 +95,22 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
             .
           </Text>
         </Text>
-
-        {isAmrap ? <MonoBadge>AMRAP</MonoBadge> : null}
       </View>
 
       {isAmrap ? (
-        <Text
-          variant="sans"
-          weight="semibold"
-          size={15}
-          color="ink0"
-          style={{ marginTop: spacing.sm, lineHeight: 20 }}
-          testID="live-amrap-coaching"
-        >
-          As many reps as possible — push for a PR, leave 1 in the tank.
-        </Text>
+        <View style={{ marginTop: spacing.sm, alignItems: 'flex-start' }}>
+          <MonoBadge>AMRAP</MonoBadge>
+          <Text
+            variant="sans"
+            weight="semibold"
+            size={15}
+            color="ink0"
+            style={{ marginTop: spacing.xs, lineHeight: 20 }}
+            testID="live-amrap-coaching"
+          >
+            As many reps as possible. Push for a PR, leave 1 in the tank.
+          </Text>
+        </View>
       ) : null}
     </View>
   );

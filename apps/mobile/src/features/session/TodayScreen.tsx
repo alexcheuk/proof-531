@@ -21,7 +21,6 @@ import type { Lift } from '@/domain/types';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, type ViewStyle } from 'react-native';
-import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { NoTrainingMaxState } from './components/NoTrainingMaxState';
 import { ResetConfirmSheet } from './components/ResetConfirmSheet';
 import { SessionLayout } from './components/SessionLayout';
@@ -37,10 +36,9 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const tm = useLatestTm(lift);
   const state = useTodayScreenState(lift);
   const { colors } = useTheme();
-  // Cancel + Restart now live on the Today top bar when this lift has
-  // an active session (Discord 1508386540). Hook is mounted
-  // unconditionally so its state survives re-renders; controls only
-  // surface when state.mode === 'active'.
+  // Restart lives on the Today top bar when this lift has an active
+  // session. Hook is mounted unconditionally so its state survives
+  // re-renders; controls only surface when state.mode === 'active'.
   const sessionActions = useTodaySessionActions(state.sessionId);
 
   // Match the visible back chip — always return to Home, never the tab the
@@ -99,9 +97,6 @@ export function TodayScreen({ lift }: { lift: Lift }) {
       <StatusBar style="dark" />
       <SessionTopBar
         onBack={() => goTo.home(router)}
-        {...(isActive
-          ? { rightAction: { kind: 'cancel', onPress: sessionActions.onRequestCancel } as const }
-          : {})}
         {...(isActive ? { onReset: sessionActions.onRequestReset } : {})}
       />
       <ScrollView
@@ -133,14 +128,6 @@ export function TodayScreen({ lift }: { lift: Lift }) {
         </PrimaryPillButton>
       </CtaBar>
 
-      <CancelConfirmSheet
-        open={sessionActions.cancelOpen}
-        armed={sessionActions.cancelArmed}
-        onConfirmFirstTap={sessionActions.onConfirmCancelFirstTap}
-        onConfirmSecondTap={sessionActions.onConfirmCancelSecondTap}
-        onDismiss={sessionActions.onDismissCancelSheet}
-        testID="today-cancel-confirm-sheet"
-      />
       <ResetConfirmSheet
         open={sessionActions.resetOpen}
         armed={sessionActions.resetArmed}

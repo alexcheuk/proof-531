@@ -1,5 +1,5 @@
 import { useDb } from '@/data/DbProvider';
-import { cancelSession, completeSession, resetSession } from '@/data/accessors/session';
+import { completeSession, resetSession } from '@/data/accessors/session';
 import { useSession } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
@@ -17,17 +17,17 @@ import { round as snapWeight } from '@/domain/units';
  * Structural port of `~/Development/531-pwa/src/features/session/hooks/
  * useLiveScreenState.ts`. The PWA models the screen as `ready` vs `rest`
  * keyed on persisted SetLog rows. The mobile port simplifies to an explicit
- * phase tag so the screen can also model the AMRAP rep-entry sheet and the
- * cancel-confirm sheet as first-class states, and so the rest timer can
- * count DOWN (T-3s warning haptic; T-0 has no audio cue under Expo Go since
- * the SDK 55 split removed expo-av's native module from Expo Go).
+ * phase tag so the screen can also model the AMRAP rep-entry sheet as a
+ * first-class state, and so the rest timer can count DOWN (T-3s warning
+ * haptic; T-0 has no audio cue under Expo Go since the SDK 55 split
+ * removed expo-av's native module from Expo Go).
  *
  * Phases:
  *   - `set`             — show the working set; CTA logs working (or opens AMRAP).
  *   - `amrap-log`       — bottom sheet open for AMRAP rep entry.
  *   - `rest`            — countdown between sets.
  *   - `complete`        — session finished, parent should route away.
- *   - `cancel-confirm`  — bottom sheet open for cancel confirmation.
+ *   - `reset-confirm`   — bottom sheet open for Restart confirmation.
  *
  * `setIndex` is **derived from the persisted `set_logs` rows on bootstrap**
  * — when the user backs out of Live and resumes, the next-unfinished set is
@@ -54,7 +54,6 @@ export type LivePhase =
   | 'pr-celebration'
   | 'awaiting-bbb'
   | 'complete'
-  | 'cancel-confirm'
   | 'reset-confirm';
 
 /**
@@ -73,10 +72,10 @@ const REST_SECONDS = 180;
 /** Seconds-remaining at which the warning haptic fires. */
 const WARNING_THRESHOLD = 3;
 /**
- * How long the cancel-confirm destructive button stays armed before
- * silently disarming itself. Prevents the footgun where a user taps once
- * accidentally, looks away, and the second tap an hour later destroys the
- * session.
+ * How long a destructive confirm button stays armed before silently
+ * disarming itself. Prevents the footgun where a user taps once
+ * accidentally, looks away, and the second tap an hour later destroys
+ * the session. Used by the Restart confirm flow.
  */
 const CANCEL_ARM_TIMEOUT_MS = 8000;
 
@@ -136,12 +135,6 @@ export type UseLiveScreenStateResult = {
   onSaveAmrap: (reps: number) => Promise<void>;
   onCancelAmrapSheet: () => void;
   onAdvanceFromRest: () => void;
-  onRequestCancel: () => void;
-  onConfirmCancelFirstTap: () => void;
-  onConfirmCancelSecondTap: () => Promise<void>;
-  onDismissCancelSheet: () => void;
-  /** True once the user has tapped the destructive button once. */
-  cancelArmed: boolean;
   /**
    * Roll back the most recent `working` set log for this session and return
    * to the `'set'` surface. No-op outside `'rest'` or when the most recent
@@ -227,12 +220,8 @@ export function useLiveScreenState(
   const [lastLogged, setLastLogged] = useState<LastLoggedSet | null>(
     initialSnapshot?.lastLogged ?? null,
   );
-  // Two-tap arm/disarm + auto-disarm for the destructive cancel button.
-  const cancelConfirm = useCancelConfirm({
-    timeoutMs: CANCEL_ARM_TIMEOUT_MS,
-    onArmHaptic: fireWarningHaptic,
-  });
-  // Same pattern for the destructive Reset (Restart) button.
+  // Two-tap arm/disarm + auto-disarm for the destructive Reset (Restart)
+  // button.
   const resetConfirm = useCancelConfirm({
     timeoutMs: CANCEL_ARM_TIMEOUT_MS,
     onArmHaptic: fireWarningHaptic,
@@ -243,10 +232,9 @@ export function useLiveScreenState(
   // which would otherwise re-derive the same setIndex value and cause a
   // benign re-render — guard so the read only happens once per session).
   const bootstrappedRef = useRef(false);
-  // The phase to return to when the cancel sheet is dismissed. Captured at
-  // open time so the cancel flow doesn't disturb the underlying state.
-  const phaseBeforeCancelRef = useRef<LivePhase>('set');
-  // Same for the Reset confirm flow.
+  // The phase to return to when the Reset confirm sheet is dismissed.
+  // Captured at open time so the reset flow doesn't disturb the
+  // underlying state.
   const phaseBeforeResetRef = useRef<LivePhase>('set');
 
   // Rest-timer driver — extracted hook owns the countdown, warning latch,
@@ -358,37 +346,6 @@ export function useLiveScreenState(
     setPhase('set');
   }, [session?.id]);
 
-  const { disarm: disarmCancel, arm: armCancel } = cancelConfirm;
-
-  const onRequestCancel = useCallback(() => {
-    phaseBeforeCancelRef.current = phase;
-    disarmCancel();
-    setPhase('cancel-confirm');
-  }, [phase, disarmCancel]);
-
-  const onDismissCancelSheet = useCallback(() => {
-    disarmCancel();
-    setPhase(phaseBeforeCancelRef.current);
-  }, [disarmCancel]);
-
-  // First tap on the destructive button — arm the confirm and fire the warning
-  // haptic via useCancelConfirm. The second tap is what actually destroys.
-  const onConfirmCancelFirstTap = useCallback(() => {
-    armCancel();
-  }, [armCancel]);
-
-  const onConfirmCancelSecondTap = useCallback(async () => {
-    if (!session?.id) return;
-    try {
-      await cancelSession(db, session.id);
-      await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-      clearRestSnapshot(session.id);
-      setPhase('complete');
-    } catch (err) {
-      console.error('useLiveScreenState.onConfirmCancelSecondTap failed', err);
-    }
-  }, [db, queryClient, session?.id]);
-
   const { disarm: disarmReset, arm: armReset } = resetConfirm;
 
   const onRequestReset = useCallback(() => {
@@ -453,11 +410,6 @@ export function useLiveScreenState(
     onAdvanceFromRest,
     onAddRest: restTimer.addTime,
     onSubRest: restTimer.subtractTime,
-    onRequestCancel,
-    onConfirmCancelFirstTap,
-    onConfirmCancelSecondTap,
-    onDismissCancelSheet,
-    cancelArmed: cancelConfirm.armed,
     onUndoLastSet,
     onRequestReset,
     onConfirmResetFirstTap,

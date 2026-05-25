@@ -1,5 +1,5 @@
 import { useDb } from '@/data/DbProvider';
-import { cancelSession, resetSession } from '@/data/accessors/session';
+import { resetSession } from '@/data/accessors/session';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
@@ -7,32 +7,18 @@ import { clearRestSnapshot } from '../sessionRuntime';
 import { useCancelConfirm } from './useCancelConfirm';
 
 /**
- * Today-screen cancel + restart actions for an in-progress session.
- *
- * Moved here (loop-004, Discord 1508386540) when Cancel + Restart pills
- * were lifted out of the Live screen top bar onto Today. Live now shows
- * only contextual recovery (Undo during rest); destructive actions live
- * at the entry-point screen.
+ * Today-screen restart action for an in-progress session.
  *
  * Surface contract — three modeless interactions:
- *   - `onRequestCancel()`  → opens the cancel-confirm sheet.
- *   - `onConfirmCancelFirstTap()` / `onConfirmCancelSecondTap()` — two-tap arm.
- *   - `onDismissCancelSheet()` — close + disarm.
- *   - Same trio for reset.
+ *   - `onRequestReset()` → opens the reset-confirm sheet.
+ *   - `onConfirmResetFirstTap()` / `onConfirmResetSecondTap()` — two-tap arm.
+ *   - `onDismissResetSheet()` — close + disarm.
  *
- * On success of either destroy, invalidates the same query keys the Live
- * screen's destroy paths invalidate, so the Today screen rerenders with
- * `mode === 'preview'` (no active session). The caller stays on Today —
+ * On success, invalidates the session-shaped query keys so the Today
+ * screen rerenders with a fresh start. The caller stays on Today —
  * no navigation here.
  */
 export type UseTodaySessionActionsResult = {
-  cancelOpen: boolean;
-  cancelArmed: boolean;
-  onRequestCancel: () => void;
-  onConfirmCancelFirstTap: () => void;
-  onConfirmCancelSecondTap: () => Promise<void>;
-  onDismissCancelSheet: () => void;
-
   resetOpen: boolean;
   resetArmed: boolean;
   onRequestReset: () => void;
@@ -52,9 +38,7 @@ function fireWarningHaptic() {
 export function useTodaySessionActions(sessionId: number | null): UseTodaySessionActionsResult {
   const db = useDb();
   const queryClient = useQueryClient();
-  const [cancelOpen, setCancelOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
-  const cancelConfirm = useCancelConfirm({ onArmHaptic: fireWarningHaptic });
   const resetConfirm = useCancelConfirm({ onArmHaptic: fireWarningHaptic });
 
   const invalidateSessionQueries = useCallback(() => {
@@ -65,34 +49,6 @@ export function useTodaySessionActions(sessionId: number | null): UseTodaySessio
     void queryClient.invalidateQueries({ queryKey: ['activeSession'] });
     void queryClient.invalidateQueries({ queryKey: ['sessions'] });
   }, [queryClient, sessionId]);
-
-  const onRequestCancel = useCallback(() => {
-    cancelConfirm.disarm();
-    setCancelOpen(true);
-  }, [cancelConfirm]);
-
-  const onConfirmCancelFirstTap = useCallback(() => {
-    cancelConfirm.arm();
-  }, [cancelConfirm]);
-
-  const onConfirmCancelSecondTap = useCallback(async () => {
-    if (sessionId == null) return;
-    try {
-      await cancelSession(db, sessionId);
-      clearRestSnapshot(sessionId);
-      invalidateSessionQueries();
-    } catch (err) {
-      console.error('useTodaySessionActions.onConfirmCancelSecondTap failed', err);
-    } finally {
-      cancelConfirm.disarm();
-      setCancelOpen(false);
-    }
-  }, [cancelConfirm, db, invalidateSessionQueries, sessionId]);
-
-  const onDismissCancelSheet = useCallback(() => {
-    cancelConfirm.disarm();
-    setCancelOpen(false);
-  }, [cancelConfirm]);
 
   const onRequestReset = useCallback(() => {
     resetConfirm.disarm();
@@ -123,13 +79,6 @@ export function useTodaySessionActions(sessionId: number | null): UseTodaySessio
   }, [resetConfirm]);
 
   return {
-    cancelOpen,
-    cancelArmed: cancelConfirm.armed,
-    onRequestCancel,
-    onConfirmCancelFirstTap,
-    onConfirmCancelSecondTap,
-    onDismissCancelSheet,
-
     resetOpen,
     resetArmed: resetConfirm.armed,
     onRequestReset,

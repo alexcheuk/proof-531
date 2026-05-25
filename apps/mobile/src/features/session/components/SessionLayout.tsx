@@ -7,10 +7,6 @@ import { useTheme } from '@/design/theme';
  * supplies the paper canvas + top safe-area padding, and renders its children
  * as a column. The screen (Today) is responsible for placing the sticky top
  * bar, scrollable body, and sticky CTA in the right order.
- *
- * The PWA hosts a cancel-confirm bottom sheet here as well — Today's PE-04
- * port surfaces the preview + Start CTA only; cancel/complete sheets follow
- * in later tasks.
  */
 import type { ReactNode } from 'react';
 import { View, type ViewStyle } from 'react-native';

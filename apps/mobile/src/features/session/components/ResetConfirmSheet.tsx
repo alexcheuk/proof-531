@@ -4,13 +4,10 @@ import { useTheme } from '@/design/theme';
 import { Pressable, type ViewStyle } from 'react-native';
 
 /**
- * Restart-session confirm sheet. Two-tap destructive pattern matching
- * `CancelConfirmSheet` — the Reset action wipes every set log for the
- * current session and re-stamps `startedAt`, leaving the session row
- * in_progress so the user can immediately begin again.
- *
- * Distinct from cancel: cancel marks the session `cancelled` and the
- * user lands home; reset keeps the session open at set 1.
+ * Restart-session confirm sheet. Two-tap destructive pattern — the
+ * Reset action wipes every set log for the current session and
+ * re-stamps `startedAt`, leaving the session row in_progress so the
+ * user can immediately begin again.
  */
 export type ResetConfirmSheetProps = {
   open: boolean;

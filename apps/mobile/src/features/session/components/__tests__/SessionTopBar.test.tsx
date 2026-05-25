@@ -23,19 +23,7 @@ describe('SessionTopBar', () => {
 
   it('renders no right-side action by default', () => {
     const screen = renderBar(<SessionTopBar onBack={() => {}} />);
-    expect(screen.queryByTestId('session-cancel')).toBeNull();
     expect(screen.queryByTestId('session-complete')).toBeNull();
-  });
-
-  it('renders the Cancel pill when rightAction.kind = "cancel"', () => {
-    const onPress = jest.fn();
-    const screen = renderBar(
-      <SessionTopBar onBack={() => {}} rightAction={{ kind: 'cancel', onPress }} />,
-    );
-    const pill = screen.getByTestId('session-cancel');
-    expect(pill).toBeTruthy();
-    fireEvent.press(pill);
-    expect(onPress).toHaveBeenCalledTimes(1);
   });
 
   it('renders the Complete-session pill when rightAction.kind = "complete"', () => {

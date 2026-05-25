@@ -51,13 +51,6 @@ describe('LiveCtaButton', () => {
     expect(handlers.onLogWorkingSet).toHaveBeenCalledTimes(1);
   });
 
-  it('cancel-confirm phase still renders the set CTA (popped-out source)', () => {
-    const screen = renderCta(
-      <LiveCtaButton phase="cancel-confirm" setIndex={0} isAmrap={false} {...handlers} />,
-    );
-    expect(screen.getByText('Set complete')).toBeTruthy();
-  });
-
   it('renders null on an unrecognised phase', () => {
     const screen = renderCta(
       <LiveCtaButton

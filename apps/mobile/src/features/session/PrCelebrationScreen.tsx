@@ -29,9 +29,8 @@ import { useSessionCompleteData } from './hooks/useSessionCompleteData';
  * was visually clipped by the native-stack card's `overflow: hidden`,
  * which is why the user kept reporting "still not black".
  *
- * Primary CTA "Continue →" replace-routes to the BBB prompt; secondary
- * "Skip to receipt" jumps past BBB straight to the session-complete
- * receipt. Android hardware back also pushes forward.
+ * Primary CTA "Continue →" replace-routes to the BBB prompt. Android
+ * hardware back also pushes forward.
  */
 export type PrCelebrationScreenProps = {
   sessionId: number;
@@ -47,7 +46,6 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   }, []);
 
   const onContinue = () => goTo.bbb(router, sessionId, { replace: true });
-  const onSkipToReceipt = () => goTo.complete(router, sessionId, { replace: true });
 
   useHardwareBack({ enabled: true, onBack: onContinue });
 
@@ -102,7 +100,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         )}
       </View>
 
-      <PrCelebrationCtas onContinue={onContinue} onSkipToReceipt={onSkipToReceipt} />
+      <PrCelebrationCtas onContinue={onContinue} />
     </View>
   );
 }

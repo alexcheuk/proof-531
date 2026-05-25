@@ -3,7 +3,6 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
 import {
-  cancelSession,
   completeSession,
   createSession,
   getActiveSession,
@@ -143,18 +142,5 @@ describe('session accessor', () => {
     // After completion the in-progress row should be gone.
     await completeSession(db, s.id as number);
     expect(await getActiveSession(db)).toBeNull();
-  });
-
-  it('cancelSession marks cancelled and does NOT advance day', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 250, 'lbs');
-    const s = await createSession(db, 'squat');
-    const sessionId = s.id as number;
-    await cancelSession(db, sessionId);
-    const after = await getSession(db, sessionId);
-    expect(after?.status).toBe('cancelled');
-    const settings = await getSettings(db);
-    expect(settings.day).toBe(1); // unchanged
   });
 });

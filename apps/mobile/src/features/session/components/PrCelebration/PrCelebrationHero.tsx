@@ -2,10 +2,9 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, View } from 'react-native';
 import Animated, { Easing, FadeIn, ZoomIn } from 'react-native-reanimated';
-import { PAPER_65 } from '../PRCertificate/paperTints';
 
 /**
- * The "★ YOU HIT A NEW PR ★" eyebrow + "Stronger." hero pair used at
+ * The "YOU HIT A NEW PR" eyebrow + "Stronger." hero pair used at
  * the top of the PR celebration full-screen.
  *
  * Animation cascade — 0 / 80ms — sized to match the rest of the
@@ -23,14 +22,15 @@ export function PrCelebrationHero() {
         <RNText
           style={{
             fontFamily: `${type.mono}-Bold`,
-            fontSize: 11,
-            letterSpacing: 2.8,
+            fontSize: 22,
+            lineHeight: 26,
+            letterSpacing: 2,
             textTransform: 'uppercase',
-            color: PAPER_65,
+            color: colors.bg0,
             marginBottom: spacing.md + 2,
           }}
         >
-          {'★  YOU HIT A NEW PR  ★'}
+          {'YOU HIT A NEW PR'}
         </RNText>
       </Animated.View>
 

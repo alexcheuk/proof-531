@@ -10,7 +10,6 @@ jest.mock('@/data/DbProvider', () => ({
 
 jest.mock('@/data/accessors/session', () => ({
   completeSession: (...args: unknown[]) => mockCompleteSession(...args),
-  cancelSession: jest.fn(),
 }));
 
 jest.mock('@/data/accessors/setLog', () => ({
@@ -151,15 +150,6 @@ describe('useLiveScreenState — phase transitions', () => {
       await result.current.onUndoLastSet();
     });
     expect(mockUndoLastWorkingSet).not.toHaveBeenCalled();
-    expect(result.current.phase).toBe('set');
-  });
-
-  it('onRequestCancel parks the prior phase and switches to cancel-confirm', () => {
-    const { result } = renderHook(() => useLiveScreenState(42), { wrapper });
-    act(() => result.current.onRequestCancel());
-    expect(result.current.phase).toBe('cancel-confirm');
-    expect(result.current.cancelArmed).toBe(false);
-    act(() => result.current.onDismissCancelSheet());
     expect(result.current.phase).toBe('set');
   });
 });
