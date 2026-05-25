@@ -25,6 +25,7 @@ import { SeeFullRecordLink } from './components/SeeFullRecordLink';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
+import { SharePrPill, buildPrShareMessage } from './components/SharePrPill';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
@@ -59,6 +60,22 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     }
   }, [data.loading, data.missing, data.notCompleted, router]);
 
+  // CRITICAL: all hooks must run on every render — keep this above any
+  // early return so the React Hook rules hold. Previously `useCallback`
+  // and `useHistoryBackHandler` were below an `if (!data.view) return`
+  // which crashed with "Rendered more hooks than during the previous
+  // render" the instant `data.view` resolved on a PR row.
+  const handleBackToHistory = useCallback(() => {
+    // Always navigate explicitly to /history rather than calling
+    // router.back(). The tabs → session group push doesn't reliably
+    // remember the originating tab — both Android hardware back and
+    // router.back() can land on the home tab (or Today). Pushing the
+    // tab route directly is the only stable path back to history.
+    goTo.history(router);
+  }, [router]);
+
+  useHistoryBackHandler({ enabled: origin === 'history', onBack: handleBackToHistory });
+
   if (!data.view) {
     return (
       <SessionLayout>
@@ -70,16 +87,6 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   const v = data.view;
   const handleClose = () => goTo.home(router);
   const handleAdjustTm = () => goTo.settings(router);
-  const handleBackToHistory = useCallback(() => {
-    // Always navigate explicitly to /history rather than calling
-    // router.back(). The tabs → session group push doesn't reliably
-    // remember the originating tab — both Android hardware back and
-    // router.back() can land on the home tab (or Today). Pushing the
-    // tab route directly is the only stable path back to history.
-    goTo.history(router);
-  }, [router]);
-
-  useHistoryBackHandler({ enabled: origin === 'history', onBack: handleBackToHistory });
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
@@ -116,6 +123,14 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
               delta={v.e1RMDelta}
               unit={v.unitGlyph}
               liftLabel={v.liftLower}
+            />
+            <SharePrPill
+              message={buildPrShareMessage({
+                liftLabel: v.liftLower,
+                e1RM: v.e1RMDisplay,
+                delta: v.e1RMDelta,
+                unit: v.unitGlyph,
+              })}
             />
             <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={handleAdjustTm} />
           </>

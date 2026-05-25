@@ -33,7 +33,8 @@
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error"
       },
       "style": {
         "useImportType": "error",
