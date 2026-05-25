@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — `computeLifetimeVolume` counts BBB (matches `getLifetimeVolume`'s SQL, loop-008 carryover)
+
+**Tags:** `bug`, `data`, `consistency`
+**Files:** `apps/mobile/src/features/history/lifetimeVolume.ts`, `apps/mobile/src/features/history/__tests__/lifetimeVolume.test.ts`
+
+`getLifetimeVolume`'s SQL was widened in loop-008 to count `kind = 'bbb'` rows, but the in-memory sibling `computeLifetimeVolume` (used by tests + any caller with rows already in JS) still filtered to working+amrap only. The two would have diverged on real data the moment any caller used the in-memory path. Fixed; test renamed + assertion flipped so the gap is now actively prevented.
+
+**Why:** found while looking for a real bug during a quiet steady-state loop. The doc-vs-SQL drift was the bug class.
+
+### 2026-05-25 — Steady-state loops are first-class (Margin tunes the loop-pacing)
+
+**Tags:** `process`, `meta`, `loop-criteria`
+**Files:** `loop-memory/00-loop-pacing.md`
+
+Loops 005 through 011 ran with no Discord asks and a steady codebase. Each iteration found *something* substantive (BBB rest target, BBB logging, BBB on the receipt, warmups band, AMRAP-chip polish) but the loop-pacing memory still asked for "12–15 items per iteration." That created implicit pressure to manufacture work. Margin (per loop-criteria.md #7) amended the pacing memory: when the queue is empty AND there are no obvious gaps, 2–4 honest items is correct. Forced 12–15 in steady state inflates surface area without earning it.
+
+**Why:** the 12–15 target was set during the active-build phase when the backlog was real. Holding that target after the backlog drained meant the loop would have started inventing work — exactly the failure mode `INTENT.md` warns against ("vibe-coded software, agent-built, honest about it").
+
+**Trade-off / what we didn't do:** considered slowing the cron from 30m to 1h or 2h. Rejected for now — the cadence is the messenger, and the user can interrupt it with a Discord ask any time. Slowing the cron would slow the response window too. The amendment fixes the pacing bar without touching the cadence.
+
 ### 2026-05-25 — BBB row on the session-complete receipt (conditional on actual completion)
 
 **Tags:** `feature`, `ui`

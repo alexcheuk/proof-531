@@ -56,25 +56,31 @@ describe('computeLifetimeVolume', () => {
     expect(computeLifetimeVolume(sessions, logs)).toBe(500 + 750 + 1600 + 1000);
   });
 
-  it('skips non-working / non-amrap kinds (warmup, bbb, assistance)', () => {
+  it('skips non-counted kinds (warmup, assistance) but COUNTS bbb (loop-012)', () => {
+    // BBB is counted as of loop-012 — `getLifetimeVolume`'s SQL filter
+    // was widened in loop-008 when BbbPromptScreen started writing
+    // `kind: 'bbb'` rows, and this in-memory helper finally matches.
+    // The single-session `volumeOfWorkingSets` in `domain/summary.ts`
+    // still excludes BBB (different contract for the receipt's
+    // working-set band).
     const sessions = [makeSession({ id: 1 })];
     const logs = new Map<number, SetLog[]>([
       [
         1,
         [
-          makeLog({ sessionId: 1, kind: 'warmup', prescribedWeight: 95, actualReps: 5 }),
-          makeLog({ sessionId: 1, kind: 'bbb', prescribedWeight: 135, actualReps: 10 }),
+          makeLog({ sessionId: 1, kind: 'warmup', prescribedWeight: 95, actualReps: 5 }), // skip
+          makeLog({ sessionId: 1, kind: 'bbb', prescribedWeight: 135, actualReps: 10 }), // 1350
           makeLog({
             sessionId: 1,
             kind: 'assistance',
             prescribedWeight: 100,
             actualReps: 12,
-          }),
+          }), // skip
           makeLog({ sessionId: 1, kind: 'working', prescribedWeight: 200, actualReps: 5 }), // 1000
         ],
       ],
     ]);
-    expect(computeLifetimeVolume(sessions, logs)).toBe(1000);
+    expect(computeLifetimeVolume(sessions, logs)).toBe(1000 + 1350);
   });
 
   it('skips sessions whose status is not completed', () => {

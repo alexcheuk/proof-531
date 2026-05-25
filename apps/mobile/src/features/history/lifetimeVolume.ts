@@ -3,11 +3,18 @@
  * rather than `domain/` because it has to fan out across many sessions'
  * SetLog lists at once. `src/domain/summary.ts` stays per-session-pure.
  *
- * "Volume" here mirrors the PWA definition: sum of
- * `prescribedWeight × actualReps` across every `working`/`amrap` SetLog
- * belonging to a session whose `status === 'completed'`. Warmups, BBB, and
- * generic assistance rows are excluded — the same shape that
- * `volumeOfWorkingSets` uses for the single-session receipt.
+ * "Volume" here is the SUM of `prescribedWeight × actualReps` across every
+ * `working` / `amrap` / `bbb` SetLog belonging to a session whose
+ * `status === 'completed'`. Warmups + generic assistance rows are excluded
+ * (warmups don't accrue meaningful volume; assistance isn't part of the
+ * program yet). BBB was added to the kind list in loop-008 when the BBB
+ * prompt screen started writing rows; this helper followed in loop-012 so
+ * it matches the SQL accessor's contract.
+ *
+ * Note: `volumeOfWorkingSets` in `domain/summary.ts` still excludes BBB
+ * because the session-receipt's "Volume · working sets" band is
+ * 5/3/1-main-work specifically; the BBB row is a sibling, not a sum.
+ * The single-session vs cross-session split is intentional.
  *
  * Pure (no React, no Drizzle, no async). Lives behind a TanStack Query hook
  * + Drizzle accessor in `data/` for the actual SQL aggregation.
@@ -16,16 +23,19 @@ import type { Session } from '@/data/accessors/session';
 import type { SetLog } from '@/domain/types';
 
 /**
- * Sum of `prescribedWeight × actualReps` across every working/amrap set log
- * belonging to completed sessions.
+ * Sum of `prescribedWeight × actualReps` across every working/amrap/bbb
+ * set log belonging to completed sessions. Mirrors `getLifetimeVolume`'s
+ * SQL filter so the in-memory math and the production query return the
+ * same number for the same inputs.
  *
- * Defensive: skips uncompleted/cancelled sessions (i.e. status !== 'completed'),
- * non-working/non-amrap rows, and sessions with no logs in the map. Returns
- * `0` when `sessions` is empty.
+ * Defensive: skips uncompleted/cancelled sessions (i.e. status !==
+ * 'completed'), non-counted rows (warmup / assistance), and sessions
+ * with no logs in the map. Returns `0` when `sessions` is empty.
  *
- * NOTE: a SQL accessor (`getLifetimeVolume`) is the production path — this
- * helper exists so the math is unit-testable and so callers that already
- * have the rows in-memory (e.g. tests) don't have to round-trip the DB.
+ * NOTE: a SQL accessor (`getLifetimeVolume`) is the production path —
+ * this helper exists so the math is unit-testable and so callers that
+ * already have the rows in-memory (e.g. tests) don't have to round-trip
+ * the DB.
  */
 export function computeLifetimeVolume(
   sessions: ReadonlyArray<Session>,
@@ -37,7 +47,7 @@ export function computeLifetimeVolume(
     const logs = setLogsBySession.get(session.id);
     if (!logs) continue;
     for (const log of logs) {
-      if (log.kind !== 'working' && log.kind !== 'amrap') continue;
+      if (log.kind !== 'working' && log.kind !== 'amrap' && log.kind !== 'bbb') continue;
       total += log.prescribedWeight * log.actualReps;
     }
   }

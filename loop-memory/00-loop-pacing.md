@@ -9,9 +9,10 @@ description: How each /loop iteration should be scoped. The cron interval is a c
 
 The user's `/loop 30m` (or whatever interval) does NOT cap a single iteration. The cron just queues the next iteration; an in-flight iteration is not interrupted, and the next one runs after the current one finishes. So:
 
-- **Pick 12–15 substantive items per iteration.** The user has stated this explicitly. Smaller iterations are under-delivery.
+- **Pick 12–15 substantive items per iteration when there's work to fill it.** The user stated this explicitly during the active-build phase. The target was set when the codebase had a long backlog and Discord asks landed daily.
+- **Steady-state mode (Margin's amendment, loop-012):** when the queue is empty AND the codebase is steady (no recent regressions, no obvious gaps), shipping 2–4 honest items is correct. Forcing 12–15 in a steady-state loop manufactures surface area and inflates the diff without earning it. The cron stays the messenger; the loop is the message. Honest "looked, found nothing in X / Y / Z" beats fake feature inflation. The decision-log entry from loop-012 captures the criteria for switching modes.
 - **Don't stop because the wall clock is approaching the interval.** Finish the work. The next tick will run when it can.
-- **Don't defer items because "it takes too long".** The user has explicitly said: just do it. Tackle items end-to-end, with tests, in this iteration.
+- **Don't defer items because "it takes too long".** Tackle items end-to-end, with tests, in this iteration.
 - **Don't :+1: an item in `#task-queue` unless you intend to ship it THIS iteration.** :+1: means "tackling now"; :white_check_mark: means "shipped". Acknowledged-for-later is a footgun — the user has called it out.
 
 If something genuinely can't ship this iteration (e.g. needs a PNG asset you can't generate, or a design spec you have no input for), say so plainly in the Discord summary and don't :+1: it.
