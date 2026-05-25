@@ -123,7 +123,7 @@ export function useLogWorkingSets({
       if (sessionId == null) return;
       const loggedIndex = setIndex;
       try {
-        await appendSetLog(db, {
+        const inserted = await appendSetLog(db, {
           sessionId,
           index: loggedIndex,
           kind: 'amrap',
@@ -141,11 +141,12 @@ export function useLogWorkingSets({
         clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        // After AMRAP, stop on the BBB prompt screen — the user sees
-        // their BBB plan and picks "Mark BBB complete" or "Skip · close
-        // the day". Both route to the receipt. Intermediate step by
-        // user request (Discord 1508265973554348032).
-        setPhase('awaiting-bbb');
+        // After AMRAP, stop on the PR celebration screen if this AMRAP
+        // set a new record (Discord 1508314178257948682), otherwise drop
+        // straight on the BBB prompt (Discord 1508265973554348032). The
+        // celebration screen's CTA routes onward to /session/bbb so
+        // the user always sees BBB before the receipt.
+        setPhase(inserted.isPR ? 'pr-celebration' : 'awaiting-bbb');
       } catch (err) {
         console.error('useLogWorkingSets.onSaveAmrap failed', err);
       }

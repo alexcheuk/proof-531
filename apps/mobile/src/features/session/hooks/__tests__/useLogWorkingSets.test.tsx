@@ -110,7 +110,9 @@ describe('useLogWorkingSets — onSaveAmrap', () => {
   beforeEach(() => {
     mockAppendSetLog.mockReset();
     mockCompleteSession.mockReset();
-    mockAppendSetLog.mockResolvedValue(undefined);
+    // Default: simulate a non-PR insert. Tests that exercise the PR branch
+    // override with `mockResolvedValueOnce({ isPR: true })`.
+    mockAppendSetLog.mockResolvedValue({ id: 1, isPR: false });
     mockCompleteSession.mockResolvedValue(undefined);
   });
 
@@ -143,6 +145,20 @@ describe('useLogWorkingSets — onSaveAmrap', () => {
     // After AMRAP the state machine stops on the BBB prompt screen so the
     // user can review their 5×10 supplementary plan before the receipt.
     expect(setPhase).toHaveBeenCalledWith('awaiting-bbb');
+  });
+
+  it('routes to pr-celebration when the AMRAP row was flagged isPR', async () => {
+    mockAppendSetLog.mockResolvedValueOnce({ id: 99, isPR: true });
+    const setPhase = jest.fn();
+    const props = baseProps({ setIndex: 2, setPhase });
+    const { result } = renderHook(() => useLogWorkingSets(props), { wrapper });
+
+    await act(async () => {
+      await result.current.onSaveAmrap(10);
+    });
+
+    expect(setPhase).toHaveBeenCalledWith('pr-celebration');
+    expect(setPhase).not.toHaveBeenCalledWith('awaiting-bbb');
   });
 
   it('swallows save errors and does not advance phase', async () => {

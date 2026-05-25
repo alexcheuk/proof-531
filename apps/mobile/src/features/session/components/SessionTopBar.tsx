@@ -15,6 +15,7 @@ import { useTheme } from '@/design/theme';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { CancelPill } from './CancelPill';
 import { CompletePill } from './CompletePill';
+import { ResetPill } from './ResetPill';
 import { UndoPill } from './UndoPill';
 
 export type RightAction =
@@ -35,6 +36,11 @@ export type SessionTopBarProps = {
    * working set without leaving the top bar. Omit to hide entirely.
    */
   onUndo?: () => void;
+  /**
+   * Optional "↺ Restart" pill rendered between Undo and the primary right
+   * action. Used on Live to surface the wipe-and-start-over flow.
+   */
+  onReset?: () => void;
   testID?: string;
 };
 
@@ -43,6 +49,7 @@ export function SessionTopBar({
   backLabel = 'Back to Home',
   rightAction = { kind: 'none' },
   onUndo,
+  onReset,
   testID,
 }: SessionTopBarProps) {
   const { colors, layout, type } = useTheme();
@@ -91,6 +98,7 @@ export function SessionTopBar({
       </Pressable>
       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
         {onUndo ? <UndoPill onPress={onUndo} /> : null}
+        {onReset ? <ResetPill onPress={onReset} /> : null}
         {rightAction.kind === 'cancel' ? <CancelPill onPress={rightAction.onPress} /> : null}
         {rightAction.kind === 'complete' ? <CompletePill onPress={rightAction.onPress} /> : null}
       </View>

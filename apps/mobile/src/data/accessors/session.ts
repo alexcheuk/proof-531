@@ -24,7 +24,7 @@
 import { desc, eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
-import { sessions } from '../drizzle/schema';
+import { sessions, setLogs } from '../drizzle/schema';
 import { advanceDay, getSettings } from './settings';
 import { getCurrentTrainingMaxes } from './trainingMax';
 
@@ -144,5 +144,34 @@ export async function cancelSession(db: AnyDb, sessionId: number): Promise<void>
       .update(sessions)
       .set({ status: 'cancelled', endedAt: Date.now() })
       .where(eq(sessions.id, sessionId)),
+  );
+}
+
+/**
+ * Reset a still-in-progress session: delete every set log for it and
+ * stamp a fresh `startedAt`, leaving `status === 'in_progress'`. Used
+ * by the Restart pill on the Live top bar so the user can scrap a
+ * miss-logged attempt and start over without cycling through the cancel
+ * → today → begin flow.
+ *
+ * Throws if the session row is missing or already finished (completed /
+ * cancelled). PR rows are untouched — a deleted AMRAP that set a PR is
+ * out of scope for this iteration and would require unwinding `prs` by
+ * recomputing the next-best e1RM across remaining set_logs.
+ */
+export async function resetSession(db: AnyDb, sessionId: number): Promise<void> {
+  const rows = (await Promise.resolve(
+    db.select().from(sessions).where(eq(sessions.id, sessionId)),
+  )) as Array<{ status: string }>;
+  const session = rows[0];
+  if (!session) {
+    throw new Error(`resetSession: session ${sessionId} does not exist`);
+  }
+  if (session.status !== 'in_progress') {
+    throw new Error(`resetSession: session ${sessionId} is ${session.status}, not in_progress`);
+  }
+  await Promise.resolve(db.delete(setLogs).where(eq(setLogs.sessionId, sessionId)));
+  await Promise.resolve(
+    db.update(sessions).set({ startedAt: Date.now() }).where(eq(sessions.id, sessionId)),
   );
 }

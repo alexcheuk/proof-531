@@ -1,5 +1,5 @@
 import { useDb } from '@/data/DbProvider';
-import { cancelSession, completeSession } from '@/data/accessors/session';
+import { cancelSession, completeSession, resetSession } from '@/data/accessors/session';
 import { useSession } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
@@ -54,9 +54,11 @@ export type LivePhase =
   | 'set'
   | 'amrap-log'
   | 'rest'
+  | 'pr-celebration'
   | 'awaiting-bbb'
   | 'complete'
-  | 'cancel-confirm';
+  | 'cancel-confirm'
+  | 'reset-confirm';
 
 /**
  * Default rest duration in seconds.
@@ -144,6 +146,13 @@ export type UseLiveScreenStateResult = {
    * swallowed so the UI never enters an undefined state.
    */
   onUndoLastSet: () => Promise<void>;
+  /** Open the Restart-session confirm sheet. */
+  onRequestReset: () => void;
+  onConfirmResetFirstTap: () => void;
+  onConfirmResetSecondTap: () => Promise<void>;
+  onDismissResetSheet: () => void;
+  /** True once the user has tapped the destructive Restart button once. */
+  resetArmed: boolean;
 };
 
 /**
@@ -209,6 +218,11 @@ export function useLiveScreenState(
     timeoutMs: CANCEL_ARM_TIMEOUT_MS,
     onArmHaptic: fireWarningHaptic,
   });
+  // Same pattern for the destructive Reset (Restart) button.
+  const resetConfirm = useCancelConfirm({
+    timeoutMs: CANCEL_ARM_TIMEOUT_MS,
+    onArmHaptic: fireWarningHaptic,
+  });
   // Bootstrap-once gate: keeps the first non-undefined setLogs read from
   // overwriting subsequent local advances (after we manually setSetIndex on
   // log-and-advance, the query refetches and arrives with one MORE row,
@@ -218,6 +232,8 @@ export function useLiveScreenState(
   // The phase to return to when the cancel sheet is dismissed. Captured at
   // open time so the cancel flow doesn't disturb the underlying state.
   const phaseBeforeCancelRef = useRef<LivePhase>('set');
+  // Same for the Reset confirm flow.
+  const phaseBeforeResetRef = useRef<LivePhase>('set');
 
   // Rest-timer driver — extracted hook owns the countdown, warning latch,
   // and ±30s controls. `initialRemaining` carries the restored snapshot
@@ -358,6 +374,52 @@ export function useLiveScreenState(
     }
   }, [db, queryClient, session?.id]);
 
+  const { disarm: disarmReset, arm: armReset } = resetConfirm;
+
+  const onRequestReset = useCallback(() => {
+    phaseBeforeResetRef.current = phase;
+    disarmReset();
+    setPhase('reset-confirm');
+  }, [phase, disarmReset]);
+
+  const onDismissResetSheet = useCallback(() => {
+    disarmReset();
+    setPhase(phaseBeforeResetRef.current);
+  }, [disarmReset]);
+
+  const onConfirmResetFirstTap = useCallback(() => {
+    armReset();
+  }, [armReset]);
+
+  const onConfirmResetSecondTap = useCallback(async () => {
+    if (!session?.id) return;
+    try {
+      await resetSession(db, session.id);
+      clearRestSnapshot(session.id);
+      // Reset the local state machine: setIndex back to 0, no lastLogged,
+      // phase back to 'set' so the user is dropped on set 1. Setting
+      // bootstrappedRef.current=true prevents the bootstrap effect from
+      // re-running and re-deriving setIndex from the now-empty setLogs
+      // query (which would land on the same value but cause a
+      // flash-of-stale-state during the round trip).
+      bootstrappedRef.current = true;
+      setSetIndex(0);
+      setLastLogged(null);
+      disarmReset();
+      setPhase('set');
+      // Refetch session row (startedAt was rewritten) + clear set_logs
+      // cache for this session so the live screen, today screen, and
+      // history all re-read.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['session', session.id] }),
+        queryClient.invalidateQueries({ queryKey: ['setLogsForSession', session.id] }),
+        queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
+      ]);
+    } catch (err) {
+      console.error('useLiveScreenState.onConfirmResetSecondTap failed', err);
+    }
+  }, [db, queryClient, session?.id, disarmReset]);
+
   return {
     phase,
     setIndex,
@@ -382,5 +444,10 @@ export function useLiveScreenState(
     onDismissCancelSheet,
     cancelArmed: cancelConfirm.armed,
     onUndoLastSet,
+    onRequestReset,
+    onConfirmResetFirstTap,
+    onConfirmResetSecondTap,
+    onDismissResetSheet,
+    resetArmed: resetConfirm.armed,
   };
 }

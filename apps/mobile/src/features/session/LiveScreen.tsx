@@ -16,6 +16,7 @@ import { ScrollView, View, type ViewStyle } from 'react-native';
 import { AmrapLogSheet } from './components/AmrapLogSheet';
 import { CancelConfirmSheet } from './components/CancelConfirmSheet';
 import { LiveCtaButton } from './components/LiveCtaButton';
+import { ResetConfirmSheet } from './components/ResetConfirmSheet';
 import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
@@ -113,7 +114,10 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   // honest if a future phase is added — the existing dual condition was
   // fragile (update one site, forget the other).
   const showSetSurface =
-    live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'cancel-confirm';
+    live.phase === 'set' ||
+    live.phase === 'amrap-log' ||
+    live.phase === 'cancel-confirm' ||
+    live.phase === 'reset-confirm';
   const showRestSurface = live.phase === 'rest';
 
   return (
@@ -130,6 +134,11 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         {...(live.phase === 'rest' && live.lastLogged && !live.lastLogged.isAmrap
           ? { onUndo: live.onUndoLastSet }
           : {})}
+        // Surface Restart on the top bar whenever the live session is
+        // active. Distinct from Cancel: Restart wipes the in-progress
+        // session's set logs and drops the user back at set 1. Suppressed
+        // while a confirm sheet is already open to avoid stacking modals.
+        {...(live.phase === 'set' || live.phase === 'rest' ? { onReset: live.onRequestReset } : {})}
       />
       <ScrollView
         testID="live-scroll"
@@ -214,6 +223,15 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         onConfirmSecondTap={live.onConfirmCancelSecondTap}
         onDismiss={live.onDismissCancelSheet}
         testID="cancel-confirm-sheet"
+      />
+
+      <ResetConfirmSheet
+        open={live.phase === 'reset-confirm'}
+        armed={live.resetArmed}
+        onConfirmFirstTap={live.onConfirmResetFirstTap}
+        onConfirmSecondTap={live.onConfirmResetSecondTap}
+        onDismiss={live.onDismissResetSheet}
+        testID="reset-confirm-sheet"
       />
     </SessionLayout>
   );

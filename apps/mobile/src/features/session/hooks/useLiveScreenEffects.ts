@@ -83,6 +83,20 @@ export function useLiveScreenEffects({
       });
   }, [phase, sessionId, queryClient, router]);
 
+  // PR celebration — same routing pattern but lands on the full-screen
+  // inverted celebration before the BBB prompt. Only entered when
+  // `onSaveAmrap` detected `isPR` on the appended row.
+  useEffect(() => {
+    if (phase !== 'pr-celebration' || sessionId == null) return;
+    const routeToDestination = () => goTo.prCelebration(router, sessionId, { replace: true });
+    invalidateSessionSurface(queryClient, sessionId)
+      .then(routeToDestination)
+      .catch((err) => {
+        console.error('useLiveScreenEffects pr-celebration invalidation failed', err);
+        routeToDestination();
+      });
+  }, [phase, sessionId, queryClient, router]);
+
   // Exit gate: if the session row disappears (deleted) or transitions out
   // of `in_progress` from elsewhere (e.g. cancelled by another surface),
   // bounce home. Skipped while loading and while we're already mid-complete

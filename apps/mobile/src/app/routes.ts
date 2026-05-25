@@ -61,6 +61,15 @@ export const goTo = {
     else router.push(target);
   },
 
+  prCelebration(router: Router, sessionId: number | string, opts?: { replace?: boolean }): void {
+    const target = href({
+      pathname: '/session/pr-celebration',
+      params: { sessionId: String(sessionId) },
+    });
+    if (opts?.replace) router.replace(target);
+    else router.push(target);
+  },
+
   complete(
     router: Router,
     sessionId: number | string,
