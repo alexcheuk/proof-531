@@ -1,5 +1,6 @@
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
+import { formatWeight } from '@/domain/units';
 import { Text as RNText, View } from 'react-native';
 import { PAPER_28, PAPER_45, PAPER_55 } from './paperTints';
 
@@ -50,7 +51,7 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
             textDecorationColor: PAPER_45,
           }}
         >
-          {`${prevE1RM} `}
+          {`${formatWeight(prevE1RM)} `}
           <RNText
             style={{
               fontFamily: `${type.mono}-Medium`,
@@ -89,7 +90,7 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
               color: colors.bg0,
             }}
           >
-            {`+${delta}`}
+            {`+${formatWeight(delta)}`}
           </RNText>
           <RNText
             style={{

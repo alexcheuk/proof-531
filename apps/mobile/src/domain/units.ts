@@ -118,3 +118,20 @@ export function displayUnit(unit: Unit): 'lb' | 'kg' {
 export function trainingMaxFrom(oneRM: number, unit: Unit): number {
   return round(oneRM * 0.9, unit);
 }
+
+/**
+ * Render a weight with thousands-separators (`1,200`, `1,234`).
+ *
+ * Numbers under 1000 render unchanged (`315` not `315.00`). Negative
+ * inputs render the magnitude with a leading `-`. Non-finite input
+ * falls back to `0` rather than letting `NaN`/`Infinity` leak into the
+ * UI (the user has no recourse for a NaN label).
+ */
+export function formatWeight(value: number): string {
+  if (!Number.isFinite(value)) return '0';
+  const rounded = Math.round(value);
+  const sign = rounded < 0 ? '-' : '';
+  const abs = Math.abs(rounded);
+  if (abs < 1000) return `${sign}${abs}`;
+  return `${sign}${abs.toLocaleString('en-US')}`;
+}

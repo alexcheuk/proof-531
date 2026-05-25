@@ -1,5 +1,6 @@
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { useTheme } from '@/design/theme';
+import { formatWeight } from '@/domain/units';
 import { Text as RNText, type TextStyle, View } from 'react-native';
 import { ReceiptRow } from './ReceiptRow';
 
@@ -48,21 +49,21 @@ export function ReceiptCard({
           testID="receipt-top"
           first
           label="Top set"
-          value={`${topWeight} × ${topReps}${topIsAmrap ? '+' : ''}`}
+          value={`${formatWeight(topWeight)} × ${topReps}${topIsAmrap ? '+' : ''}`}
           sub={unitGlyph}
         />
         {topIsAmrap ? (
           <ReceiptRow
             testID="receipt-e1rm"
             label="Est. 1rm"
-            value={`${e1RMDisplay}`}
+            value={formatWeight(e1RMDisplay)}
             sub={unitGlyph}
           />
         ) : null}
         <ReceiptRow
           testID="receipt-volume"
           label="Volume"
-          value={`${workingVolume.toLocaleString()}`}
+          value={formatWeight(workingVolume)}
           sub={`${unitGlyph} · working sets`}
         />
         {elapsedReady ? (

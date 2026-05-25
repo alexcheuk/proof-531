@@ -1,12 +1,11 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
-import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
-import { liftDisplayName } from '@/domain/labels';
 import type { BestLift } from '../bestLift';
 import { formatLifetimeVolume } from '../lifetimeVolume';
-import { AchievementCaption } from './AchievementCaption';
-import { AchievementStat } from './AchievementStat';
+import { formatTrainingSince } from '../trainingSince';
+import { AchievementCaptions } from './AchievementCaptions';
+import { AchievementHero } from './AchievementHero';
 import { ActivitySparkline } from './ActivitySparkline';
 
 export type AchievementStripProps = {
@@ -38,11 +37,7 @@ export type AchievementStripProps = {
   lifetimeVolume?: number;
   /** Display unit for the lifetime-volume glyph. Defaults to `lbs`. */
   unit?: 'lbs' | 'kg';
-  /**
-   * Sessions completed in the current ISO week (Mon-Sun). When ≥ 1, a
-   * "★ This week · N sessions" caption renders — a short-loop feedback
-   * signal so the user sees progress without waiting for a full cycle.
-   */
+  /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek?: number;
   /** Sessions completed inside the current 4-week cycle. */
   sessionsThisCycle?: number;
@@ -52,30 +47,13 @@ export type AchievementStripProps = {
   currentCycle?: number;
 };
 
-const MONTH_NAMES = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-function formatTrainingSince(date: Date): string {
-  return `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
-}
-
 /**
  * Lifetime achievement strip rendered under the History title block.
  *
- * Renders nothing when the user has no completed sessions yet — the empty
- * state below the strip already speaks to that case.
+ * Composition shell — the stat row, caption stack, and sparkline each
+ * live in their own files. Renders nothing when the user has no
+ * completed sessions yet (the empty state below the strip already
+ * speaks to that case).
  */
 export function AchievementStrip({
   filed,
@@ -95,15 +73,9 @@ export function AchievementStrip({
 }: AchievementStripProps) {
   const { layout } = useTheme();
   if (filed === 0) return null;
-  const showLongest = (longestStreak ?? 0) >= 3;
-  const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
-  const isMatchingBest =
-    showLongest && (currentStreak ?? 0) >= 3 && currentStreak === longestStreak;
   const showVolume = (lifetimeVolume ?? 0) > 0;
   const volumeDisplay = showVolume ? formatLifetimeVolume(lifetimeVolume ?? 0, unit ?? 'lbs') : '';
-  const showThisWeek = (sessionsThisWeek ?? 0) >= 1;
-  const showCycleProgress =
-    (sessionsThisCycle ?? 0) >= 1 && (cycleTotalSessions ?? 0) >= 1 && (currentCycle ?? 0) >= 1;
+  const showTrainingSince = trainingSince !== null && (totalTrainingDays ?? 0) >= 30;
   return (
     <Card
       borders="bottom"
@@ -111,43 +83,16 @@ export function AchievementStrip({
       py="md"
       testID="history-achievements"
     >
-      <Row justify="space-between" align="flex-end">
-        <AchievementStat label={filed === 1 ? 'session filed' : 'sessions filed'} value={filed} />
-        <AchievementStat
-          label={prs === 1 ? 'personal record' : 'personal records'}
-          value={prs}
-          testID="history-achievements-prs"
-        />
-        {showVolume ? (
-          <AchievementStat
-            label="total volume"
-            value={volumeDisplay}
-            testID="history-achievements-volume"
-          />
-        ) : null}
-      </Row>
-      {showThisWeek ? (
-        <AchievementCaption testID="history-this-week">
-          {`This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
-        </AchievementCaption>
-      ) : null}
-      {showCycleProgress ? (
-        <AchievementCaption testID="history-cycle-progress">
-          {`Cycle ${currentCycle} · ${sessionsThisCycle} of ${cycleTotalSessions} sessions`}
-        </AchievementCaption>
-      ) : null}
-      {bestLift ? (
-        <AchievementCaption testID="history-best-lift">
-          {`Best · ${liftDisplayName(bestLift.lift)} ${bestLift.e1RMDisplay} ${bestLift.unitGlyph}`}
-        </AchievementCaption>
-      ) : null}
-      {showLongest ? (
-        <AchievementCaption testID="history-longest-streak">
-          {isMatchingBest
-            ? `Best streak · ${longestStreak} days · MATCHING NOW`
-            : `Best streak · ${longestStreak} days`}
-        </AchievementCaption>
-      ) : null}
+      <AchievementHero filed={filed} prs={prs} volumeDisplay={volumeDisplay} />
+      <AchievementCaptions
+        sessionsThisWeek={sessionsThisWeek}
+        currentCycle={currentCycle}
+        sessionsThisCycle={sessionsThisCycle}
+        cycleTotalSessions={cycleTotalSessions}
+        bestLift={bestLift}
+        longestStreak={longestStreak}
+        currentStreak={currentStreak}
+      />
       <ActivitySparkline activity={activity} />
       {showTrainingSince && trainingSince ? (
         <CapsLabel

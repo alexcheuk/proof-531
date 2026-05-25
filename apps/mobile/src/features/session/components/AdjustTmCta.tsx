@@ -21,13 +21,13 @@ export function AdjustTmCta({
   onPress,
   testID = 'session-complete-adjust-tm',
 }: AdjustTmCtaProps) {
-  const { colors, type } = useTheme();
+  const { colors, spacing, type } = useTheme();
 
   const ctaStyle: ViewStyle = {
-    marginHorizontal: 24,
-    marginTop: 18,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md + 2,
+    paddingVertical: spacing.md - 2,
+    paddingHorizontal: spacing.md,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     flexDirection: 'row',

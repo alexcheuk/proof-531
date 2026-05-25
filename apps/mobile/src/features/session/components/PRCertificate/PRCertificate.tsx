@@ -42,13 +42,13 @@ export function PRCertificate({
   liftLabel,
   testID,
 }: PRCertificateProps) {
-  const { colors, type } = useTheme();
+  const { colors, spacing, type } = useTheme();
 
   const panelStyle: ViewStyle = {
-    marginHorizontal: 24,
-    marginTop: 24,
-    padding: 22,
-    paddingBottom: 20,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+    padding: spacing.lg + 2,
+    paddingBottom: spacing.lg,
     backgroundColor: colors.ink0,
     position: 'relative',
   };

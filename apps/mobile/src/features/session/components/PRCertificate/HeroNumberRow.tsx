@@ -1,6 +1,7 @@
 import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
+import { formatWeight } from '@/domain/units';
 import { Text as RNText, View } from 'react-native';
 import { PAPER_28, PAPER_55 } from './paperTints';
 
@@ -20,7 +21,7 @@ export function HeroNumberRow({ e1RM, unit, testID }: HeroNumberRowProps) {
       style={{ paddingTop: 14, borderTopWidth: 1, borderTopColor: PAPER_28 }}
     >
       <Heading size="huge" color="bg0" numeric {...(testID !== undefined ? { testID } : {})}>
-        {e1RM}
+        {formatWeight(e1RM)}
       </Heading>
       <View style={{ gap: 4 }}>
         <RNText

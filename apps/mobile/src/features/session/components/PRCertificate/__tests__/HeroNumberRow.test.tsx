@@ -15,8 +15,15 @@ describe('HeroNumberRow', () => {
   });
 
   it('renders the kg unit when storage is metric', () => {
-    const screen = renderHero(<HeroNumberRow e1RM={142.5} unit="kg" />);
-    expect(screen.getByText('142.5')).toBeTruthy();
+    // Callers pre-round to int before passing in (see PRCertificate.tsx
+    // prop doc — "rounded int"). formatWeight applies that contract.
+    const screen = renderHero(<HeroNumberRow e1RM={143} unit="kg" />);
+    expect(screen.getByText('143')).toBeTruthy();
     expect(screen.getByText('kg')).toBeTruthy();
+  });
+
+  it('renders thousands-separators for 4-digit weights', () => {
+    const screen = renderHero(<HeroNumberRow e1RM={1234} unit="lb" />);
+    expect(screen.getByText('1,234')).toBeTruthy();
   });
 });

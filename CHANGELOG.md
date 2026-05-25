@@ -10,6 +10,29 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Changed
+- **Weights ≥ 1000 now render with comma separators** (`1,200 lb`, `12,500 lb`)
+  via a shared `formatWeight` helper. Wired through the PR certificate
+  hero, comparison row, and receipt rows so lifetime numbers stop reading
+  like an unbroken digit string.
+- **AchievementStrip split** into `AchievementHero` + `AchievementCaptions`
+  + `trainingSince.ts` so the strip body is now composition, not a 164-line
+  prop-soup component.
+- **PR certificate + Adjust-TM CTA** magic-number margins (24 / 16 / 22 / 18)
+  replaced with `spacing` tokens.
+
+### Added
+- **`scripts/install-hooks.sh`** — drops a husky-free pre-commit hook into
+  `.git/hooks/` that runs `pnpm verify` before each non-docs commit.
+- **CI · Metro bundle job** — `.github/workflows/ci.yml` now has a dedicated
+  `bundle` job that runs `pnpm bundle-check`, closing the documented harness
+  gap where typecheck/lint/test never load the Metro bundler.
+- **A11y · top-bar pill hints** — Undo / Restart / Cancel / Complete now
+  declare `accessibilityHint` describing the consequence of the tap, on top
+  of the existing role + label.
+- **`CONTRIBUTING.md` primitives catalog** — explicit table of the design
+  primitives + the `pnpm verify` gate.
+
+### Added
 - **Time helpers consolidated** — three near-identical `formatRestHint`/
   `formatRestClock`/`formatLabel` copies inside `RestTimer`,
   `RestTargetSection`, `BbbBand`, `BbbPromptScreen` collapsed into one

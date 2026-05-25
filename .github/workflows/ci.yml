@@ -60,6 +60,31 @@ jobs:
       - name: Jest
         run: pnpm test
 
+  bundle:
+    name: Metro bundle check
+    runs-on: ubuntu-latest
+    needs: static
+    # Closes the harness gap documented in CLAUDE.md: pnpm test/typecheck/lint
+    # never load the Metro bundler, so a runtime dep missing from the install
+    # graph passes those checks but breaks `expo start`. This step runs the
+    # iOS export so CI catches that drift before it lands on main.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Expo Metro bundle
+        run: pnpm bundle-check
+
   perf:
     name: Reassure perf
     runs-on: ubuntu-latest

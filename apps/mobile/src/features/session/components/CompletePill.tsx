@@ -9,6 +9,7 @@ export function CompletePill({ onPress }: CompletePillProps) {
     <TopBarPill
       testID="session-complete"
       accessibilityLabel="Complete session"
+      accessibilityHint="Files this session to history and closes the day"
       onPress={onPress}
       label="Complete session"
       variant="filled"

@@ -9,6 +9,7 @@ export function CancelPill({ onPress }: CancelPillProps) {
     <TopBarPill
       testID="session-cancel"
       accessibilityLabel="Cancel session"
+      accessibilityHint="Discards this session without filing it to history"
       onPress={onPress}
       label="Cancel"
     />

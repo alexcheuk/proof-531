@@ -46,12 +46,20 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   behavior.
 - `plates.defaultPlateSet(unit)` — extracts the inline `unit === 'kg' ?
   'kg-standard' : 'standard'` ternary used at every plate-render site.
+- `units.formatWeight(n)` (added 2026-05-24) — thousands-separator
+  formatting for weights ≥ 1000. Always route 4-digit+ weights through
+  this; raw `n.toString()` was the prior convention.
 
 ## Dev workflow
 
 - `pnpm verify` (added 2026-05-24) — runs the full CI gauntlet *plus*
   `pnpm bundle-check`. Use before any commit that touches the import
   graph (CLAUDE.md harness gap notes).
+- `bash scripts/install-hooks.sh` (added 2026-05-24) — drops a husky-free
+  pre-commit hook that auto-runs `pnpm verify` (skips on docs-only
+  commits). Contributors run once after cloning.
+- `.github/workflows/ci.yml` now has a dedicated `bundle` job (added
+  2026-05-24) running `pnpm bundle-check` on every PR/push.
 
 ## Test discipline
 

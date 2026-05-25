@@ -34,11 +34,45 @@ pnpm typecheck                            # tsc --noEmit across workspace
 pnpm lint                                 # biome
 pnpm test                                 # jest
 pnpm expo-doctor                          # expo doctor (renamed; `pnpm doctor` is a pnpm builtin)
-pnpm run ci                               # full chain — typecheck + lint + test (use `run`; `ci` is a pnpm builtin)
+pnpm bundle-check                         # full Metro export — catches missing deps CI doesn't
+pnpm run ci                               # full chain — typecheck + lint + boundaries + test
+pnpm verify                               # `pnpm run ci` PLUS `pnpm bundle-check`
 ```
 
-`pnpm run ci` is the green-bar gate. If it does not pass locally, neither will
-the orchestrator's verifier.
+`pnpm verify` is the green-bar gate before every commit. If it does not pass
+locally, neither will the orchestrator's verifier (and CI will fail too).
+
+### Local pre-commit hook (optional, recommended)
+
+Run once after cloning:
+
+```bash
+bash scripts/install-hooks.sh
+```
+
+This drops a husky-free `pre-commit` shell hook into `.git/hooks/` that runs
+`pnpm verify` whenever you commit a non-docs change. Docs-only commits skip
+the gate so quick CHANGELOG / README edits don't pay the bundle-check tax.
+Bypass for a single commit with `git commit -n`.
+
+### Design primitives — single source
+
+Anything that renders pixels lives in `src/design/primitives/`. Before adding
+a new primitive, check the catalog — odds are something close already exists:
+
+| Surface           | Primitive                  |
+|-------------------|----------------------------|
+| Text              | `Text`, `Heading`, `CapsLabel`, `TitleBlock`, `MonoBadge` |
+| Layout            | `Row`, `Card`, `Divider`, `SectionBand`, `Masthead`       |
+| Tap targets       | `PrimaryPillButton`, `SecondaryLink`, `PillChip`, `CheckboxLedger`, `SegRail`, `LabeledSegRail` |
+| Numeric input     | `NumberStepper`, `StatGrid`                                |
+| Sheets / surfaces | `Sheet`, `SheetLayout`                                     |
+| Top bar pills (session-local) | `TopBarPill` (+ `UndoPill`, `ResetPill`, `CancelPill`, `CompletePill` thin wrappers) |
+| Domain composites | `LedgerRow`, `LedgerSection`, `TopSetBlock`, `PlateBar`    |
+
+If your change extends a primitive, prefer adding a variant prop over copying
+the file. Drift between near-identical components is the single biggest cause
+of visual inconsistency in this app.
 
 ## Architecture rules
 

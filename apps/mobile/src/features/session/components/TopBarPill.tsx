@@ -18,6 +18,8 @@ export type TopBarPillProps = {
   onPress: () => void;
   testID: string;
   accessibilityLabel: string;
+  /** Optional screen-reader hint describing what tapping the pill does. */
+  accessibilityHint?: string | undefined;
 };
 
 export function TopBarPill({
@@ -27,6 +29,7 @@ export function TopBarPill({
   onPress,
   testID,
   accessibilityLabel,
+  accessibilityHint,
 }: TopBarPillProps) {
   const { colors, type } = useTheme();
   const filled = variant === 'filled';
@@ -52,6 +55,7 @@ export function TopBarPill({
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      {...(accessibilityHint ? { accessibilityHint } : {})}
       onPress={onPress}
       hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
       style={pillStyle}

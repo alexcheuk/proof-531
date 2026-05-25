@@ -9,6 +9,7 @@ export function UndoPill({ onPress }: UndoPillProps) {
     <TopBarPill
       testID="session-undo"
       accessibilityLabel="Undo the most recent working set"
+      accessibilityHint="Rolls back the last logged set so you can re-enter it"
       onPress={onPress}
       glyph="↶"
       label="Undo"

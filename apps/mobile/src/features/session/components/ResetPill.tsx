@@ -9,6 +9,7 @@ export function ResetPill({ onPress }: ResetPillProps) {
     <TopBarPill
       testID="session-reset"
       accessibilityLabel="Restart session from set 1"
+      accessibilityHint="Wipes all logged sets in this session and returns to set 1"
       onPress={onPress}
       glyph="↺"
       label="Restart"
