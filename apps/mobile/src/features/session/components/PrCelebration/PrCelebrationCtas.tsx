@@ -4,8 +4,8 @@ import { Pressable, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Bottom CTA stack for the PR celebration screen — paper-on-ink primary
- * "Continue →".
+ * Bottom CTA stack for the PR celebration screen — outlined "Continue →"
+ * that reads as paper-on-ink without competing with the headline.
  */
 export type PrCelebrationCtasProps = {
   onContinue: () => void;
@@ -29,14 +29,16 @@ export function PrCelebrationCtas({ onContinue }: PrCelebrationCtasProps) {
         accessibilityLabel="Continue to Boring But Big"
         onPress={onContinue}
         style={({ pressed }) => ({
-          backgroundColor: colors.bg0,
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: colors.bg0,
           paddingVertical: spacing.md,
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: pressed ? 0.85 : 1,
+          opacity: pressed ? 0.6 : 1,
         })}
       >
-        <Text variant="sans" weight="bold" size={15} color="ink0" style={{ letterSpacing: 0.4 }}>
+        <Text variant="sans" weight="bold" size={15} color="bg0" style={{ letterSpacing: 0.4 }}>
           {'Continue  →'}
         </Text>
       </Pressable>
