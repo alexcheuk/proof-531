@@ -70,11 +70,14 @@ export function SheetLayout({
 }: SheetLayoutProps) {
   const { colors, spacing } = useTheme();
 
+  // Match AmrapLogSheet (which uses `Sheet` directly) — paper bg0 across
+  // every sheet body so the user sees one consistent surface, not a
+  // dimmed bg2 panel on the editor/confirm sheets.
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
-    backgroundColor: colors.bg2,
+    backgroundColor: colors.bg0,
     gap: titleVariant === 'compact' ? spacing.lg : spacing.md,
   };
 

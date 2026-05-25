@@ -125,19 +125,21 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       <SessionTopBar
         onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
-        rightAction={{ kind: 'cancel', onPress: live.onRequestCancel }}
-        // Surface undo on the top bar during rest when there's a non-AMRAP
-        // working set to roll back. Mirrors the in-rest undo affordance
-        // so the action is reachable from above the scroll, not just inside
-        // the RestPhase body.
+        // Two distinct contexts, two distinct top-bar treatments:
+        //   - Set phase  → Cancel + Restart (you're mid-effort; you can
+        //                  bail or wipe the slate).
+        //   - Rest phase → Undo only (you've finished a set; the obvious
+        //                  recovery is rolling back, not bailing).
+        // Cancel/Restart are intentionally suppressed during rest so the
+        // top bar isn't a wall of destructive actions while the user is
+        // staring at the rest timer.
+        {...(live.phase === 'set'
+          ? { rightAction: { kind: 'cancel', onPress: live.onRequestCancel } as const }
+          : {})}
         {...(live.phase === 'rest' && live.lastLogged && !live.lastLogged.isAmrap
           ? { onUndo: live.onUndoLastSet }
           : {})}
-        // Surface Restart on the top bar whenever the live session is
-        // active. Distinct from Cancel: Restart wipes the in-progress
-        // session's set logs and drops the user back at set 1. Suppressed
-        // while a confirm sheet is already open to avoid stacking modals.
-        {...(live.phase === 'set' || live.phase === 'rest' ? { onReset: live.onRequestReset } : {})}
+        {...(live.phase === 'set' ? { onReset: live.onRequestReset } : {})}
       />
       <ScrollView
         testID="live-scroll"
@@ -159,9 +161,9 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
             onAddRest={live.onAddRest}
             onSubRest={live.onSubRest}
             onSkip={live.onAdvanceFromRest}
-            {...(live.lastLogged && !live.lastLogged.isAmrap
-              ? { onUndoLastSet: live.onUndoLastSet }
-              : {})}
+            // Undo lives on the top bar during rest (no duplicate inline
+            // button); RestPhase no longer renders an onUndoLastSet
+            // affordance even when the prop is wired.
             // During rest, useLiveScreenState has already advanced setIndex
             // to the next set, so live.prescribedWeight / .pct / .isAmrap /
             // .prescribedReps describe that set. The PlateBar perSide is

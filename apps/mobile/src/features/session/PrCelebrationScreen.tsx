@@ -2,37 +2,48 @@ import { goTo } from '@/app/routes';
 import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import { formatWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CornerTicks } from './components/PRCertificate/CornerTicks';
+import { PAPER_28, PAPER_45, PAPER_55, PAPER_65 } from './components/PRCertificate/paperTints';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 
 /**
  * Full-screen, inverted-color celebration shown right after an AMRAP
- * set that registers a new estimated 1RM PR. Inverts the app's paper
- * canvas — ink-on-paper becomes paper-on-ink — so the moment lands.
+ * set that registers a new estimated 1RM PR.
+ *
+ * Visually mirrors the PR certificate so the celebration screen and the
+ * later receipt cert read as the same artifact at two scales:
+ *   - same ink-0 surface + corner ticks
+ *   - same eyebrow + hero typography
+ *   - same hero-number / comparison-row layout
+ *
+ * Escapes the root SafeTopFrame's paper-bg top stripe with a negative
+ * margin so the ink-0 surface extends behind the status bar — light-mode
+ * glyphs render cleanly on the dark canvas without a paper sliver above.
  *
  * Primary CTA "Continue →" replace-routes to the BBB prompt; secondary
  * "Skip to receipt" jumps past BBB straight to the session-complete
- * receipt. Android hardware back also pushes forward — the celebration
- * is a one-shot interstitial, never a destination.
+ * receipt. Android hardware back also pushes forward.
  */
 export type PrCelebrationScreenProps = {
   sessionId: number;
 };
 
 export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, type } = useTheme();
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const data = useSessionCompleteData(sessionId);
 
   useEffect(() => {
-    // PR moments deserve a heavier haptic than the regular complete-set
-    // success — Notification.Success fires a stronger pattern on iOS.
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, []);
 
@@ -43,87 +54,221 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
 
   const v = data.view;
 
+  // Escape the root SafeTopFrame's paper top stripe so the ink-0 canvas
+  // runs edge-to-edge under the status bar.
   const surfaceStyle: ViewStyle = {
     flex: 1,
     backgroundColor: colors.ink0,
+    marginTop: -insets.top,
+    paddingTop: insets.top,
   };
 
   const bodyStyle: ViewStyle = {
     flex: 1,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xxxl + spacing.xl,
+    paddingTop: spacing.xxxl,
+    paddingBottom: spacing.lg,
+    justifyContent: 'center',
   };
 
   const ctaWrap: ViewStyle = {
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing.xxl + insets.bottom / 2,
     gap: spacing.xs,
   };
+
+  const hasComparison = !!v && v.prevE1RMDisplay > 0 && v.e1RMDelta > 0;
 
   return (
     <View style={surfaceStyle} testID="pr-celebration">
       <StatusBar style="light" />
+      {/* Corner-tick frame that mirrors the PR certificate panel — but at
+          screen scale, so the celebration reads as one big certificate. */}
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          top: insets.top + spacing.md,
+          left: spacing.md,
+          right: spacing.md,
+          bottom: spacing.md,
+        }}
+      >
+        <CornerTicks color={colors.bg0} />
+      </View>
+
       <View style={bodyStyle}>
         <Animated.View entering={FadeIn.duration(320)}>
-          <Text
-            variant="mono"
-            weight="bold"
-            size={11}
-            color="bg0"
-            style={{ letterSpacing: 3, marginBottom: spacing.md + 2 }}
+          <RNText
+            style={{
+              fontFamily: `${type.mono}-Bold`,
+              fontSize: 11,
+              letterSpacing: 2.8,
+              textTransform: 'uppercase',
+              color: PAPER_65,
+              marginBottom: spacing.md + 2,
+            }}
           >
             {'★  YOU HIT A NEW PR  ★'}
-          </Text>
+          </RNText>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(420).delay(120).springify().damping(18)}>
-          <Text
-            variant="sans"
-            weight="bold"
-            size={72}
-            color="bg0"
-            style={{ lineHeight: 78, letterSpacing: -2.6 }}
+          <RNText
+            style={{
+              fontFamily: `${type.display}-Bold`,
+              fontSize: 76,
+              lineHeight: 82,
+              letterSpacing: -2.8,
+              color: colors.bg0,
+            }}
           >
-            Stronger.
-          </Text>
-        </Animated.View>
-
-        {v ? (
-          <Animated.View
-            entering={FadeInDown.duration(420).delay(220).springify().damping(18)}
-            style={{ marginTop: spacing.xxl }}
-          >
-            <Text
-              variant="mono"
-              weight="medium"
-              size={10}
-              color="bg0"
-              style={{ letterSpacing: 2, opacity: 0.65 }}
-            >
-              {`${v.liftLower.toUpperCase()} · ESTIMATED 1RM`}
-            </Text>
+            Stronger
             <Text
               variant="sans"
               weight="bold"
-              size={56}
-              color="bg0"
-              style={{ lineHeight: 64, letterSpacing: -1.8, marginTop: 4 }}
-              numeric
+              size={76}
+              color="amber"
+              style={{ lineHeight: 82 }}
             >
-              {`${v.e1RMDisplay} ${v.unitGlyph}`}
+              .
             </Text>
-            {v.e1RMDelta > 0 ? (
-              <Text
-                variant="mono"
-                weight="semibold"
-                size={11}
-                color="bg0"
-                style={{ letterSpacing: 1.8, marginTop: 8, opacity: 0.7 }}
+          </RNText>
+        </Animated.View>
+
+        {v ? (
+          <>
+            <Animated.View
+              entering={FadeInDown.duration(420).delay(220).springify().damping(18)}
+              style={{
+                marginTop: spacing.xl,
+                paddingTop: spacing.lg,
+                borderTopWidth: 1,
+                borderTopColor: PAPER_28,
+              }}
+            >
+              <RNText
+                style={{
+                  fontFamily: `${type.mono}-Medium`,
+                  fontSize: 10,
+                  letterSpacing: 2,
+                  textTransform: 'uppercase',
+                  color: PAPER_55,
+                }}
               >
-                {`+${v.e1RMDelta} ${v.unitGlyph} OVER YOUR LAST BEST`}
-              </Text>
+                {`${v.liftLower.toUpperCase()} · ESTIMATED 1RM`}
+              </RNText>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8 }}>
+                <RNText
+                  style={{
+                    fontFamily: `${type.display}-Bold`,
+                    fontSize: 64,
+                    lineHeight: 70,
+                    letterSpacing: -2.2,
+                    color: colors.bg0,
+                  }}
+                  testID="pr-celebration-e1rm"
+                >
+                  {formatWeight(v.e1RMDisplay)}
+                </RNText>
+                <RNText
+                  style={{
+                    fontFamily: `${type.mono}-Bold`,
+                    fontSize: 13,
+                    letterSpacing: 2.6,
+                    textTransform: 'uppercase',
+                    color: colors.bg0,
+                    marginLeft: spacing.sm,
+                  }}
+                >
+                  {v.unitGlyph}
+                </RNText>
+              </View>
+            </Animated.View>
+
+            {hasComparison ? (
+              <Animated.View
+                entering={FadeInDown.duration(420).delay(360).springify().damping(18)}
+                style={{
+                  marginTop: spacing.md,
+                  paddingTop: spacing.md,
+                  borderTopWidth: 1,
+                  borderTopColor: PAPER_28,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                }}
+              >
+                <View>
+                  <RNText
+                    style={{
+                      fontFamily: `${type.mono}-SemiBold`,
+                      fontSize: 9,
+                      letterSpacing: 1.98,
+                      textTransform: 'uppercase',
+                      color: PAPER_55,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Previous best
+                  </RNText>
+                  <RNText
+                    style={{
+                      fontFamily: `${type.display}-Medium`,
+                      fontSize: 22,
+                      color: PAPER_45,
+                      letterSpacing: -0.44,
+                      textDecorationLine: 'line-through',
+                      textDecorationColor: PAPER_45,
+                    }}
+                    testID="pr-celebration-prev"
+                  >
+                    {`${formatWeight(v.prevE1RMDisplay)} ${v.unitGlyph}`}
+                  </RNText>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <RNText
+                    style={{
+                      fontFamily: `${type.mono}-SemiBold`,
+                      fontSize: 9,
+                      letterSpacing: 1.98,
+                      textTransform: 'uppercase',
+                      color: PAPER_55,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Stronger by
+                  </RNText>
+                  <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                    <RNText
+                      style={{
+                        fontFamily: `${type.display}-Bold`,
+                        fontSize: 32,
+                        lineHeight: 32,
+                        letterSpacing: -0.96,
+                        color: colors.bg0,
+                      }}
+                      testID="pr-celebration-delta"
+                    >
+                      {`+${formatWeight(v.e1RMDelta)}`}
+                    </RNText>
+                    <RNText
+                      style={{
+                        fontFamily: `${type.mono}-Bold`,
+                        fontSize: 11,
+                        letterSpacing: 2.2,
+                        textTransform: 'uppercase',
+                        color: colors.bg0,
+                        marginLeft: 4,
+                      }}
+                    >
+                      {v.unitGlyph}
+                    </RNText>
+                  </View>
+                </View>
+              </Animated.View>
             ) : null}
-          </Animated.View>
+          </>
         ) : null}
       </View>
 

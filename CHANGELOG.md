@@ -9,6 +9,30 @@ build N" section covers what landed on `main` between two preview builds.
 
 ## [Unreleased]
 
+### Fixed
+- **Sheet backgrounds unified** — `SheetLayout` bodies were painting in
+  `colors.bg2` (paper-dim) while `AmrapLogSheet` used `bg0` directly,
+  giving the TM editor / reset / unit-migration sheets a different
+  visual surface from the AMRAP logger. All sheet bodies now share the
+  same `bg0` paper canvas.
+
+### Changed
+- **Live top-bar pill placement is now phase-scoped:**
+  - Set phase → Cancel + Restart only (no Undo while you're mid-effort).
+  - Rest phase → Undo only (no Cancel/Restart while you're staring at
+    a rest timer).
+  - Removed the duplicate in-body Undo button from `RestPhase` — the
+    top-bar Undo is the single source.
+- **PR Celebration screen redesigned** to share the PR certificate's
+  visual language:
+  - True full-screen ink-0 surface, escapes the root SafeTopFrame so
+    the canvas runs edge-to-edge under the status bar.
+  - Corner-tick frame mirroring the certificate panel.
+  - Hero number row + previous-best comparison row + delta, with the
+    same paper-tint hairlines as the certificate.
+  - Staged FadeInDown reveal (eyebrow → "Stronger." → hero number →
+    comparison).
+
 ### Changed
 - **Weights ≥ 1000 now render with comma separators** (`1,200 lb`, `12,500 lb`)
   via a shared `formatWeight` helper. Wired through the PR certificate

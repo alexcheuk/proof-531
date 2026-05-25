@@ -13,8 +13,12 @@ import { displayUnit } from '@/domain/units';
  * RECORD"), display headline ("Rest." or "Stronger." on a PR), hairline
  * divider, the count-up RestTimer, and an optional NEXT SET preview block
  * so the user can prep plates while the timer ticks.
+ *
+ * Undo lives on the top bar during rest — RestPhase no longer renders an
+ * inline undo button (removed 2026-05-24 per user feedback that the
+ * duplicate was visual noise).
  */
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
 
 export type RestPhaseProps = {
@@ -34,15 +38,6 @@ export type RestPhaseProps = {
   onAddRest?: () => void;
   onSubRest?: () => void;
   onSkip?: () => void;
-  /**
-   * Optional "undo last set" affordance. Rendered as a subtle text/glyph
-   * Pressable between the RestTimer and the NEXT SET block when provided.
-   * Hidden entirely when omitted (so the rest-after-AMRAP transition, which
-   * cannot be undone in this iteration, simply doesn't pass the callback).
-   */
-  onUndoLastSet?: () => void;
-  /** Override the undo affordance copy. Defaults to `↶ Undo last set`. */
-  undoLabel?: string;
   /**
    * Optional preview of the upcoming set — rendered as a TopSetBlock so the
    * user can prep plates while the timer counts down. Omit on the terminal
@@ -71,8 +66,6 @@ export function RestPhase({
   onAddRest,
   onSubRest,
   onSkip,
-  onUndoLastSet,
-  undoLabel = '↶ Undo last set',
   nextSet,
   testID,
 }: RestPhaseProps) {
@@ -117,28 +110,6 @@ export function RestPhase({
         {...(onSkip ? { onSkip } : {})}
         testID="rest-timer"
       />
-
-      {onUndoLastSet ? (
-        <Pressable
-          onPress={onUndoLastSet}
-          accessibilityRole="button"
-          accessibilityLabel={undoLabel}
-          hitSlop={{ top: 8, bottom: 8, left: 16, right: 16 }}
-          style={({ pressed }) => ({
-            alignSelf: 'center',
-            // 44pt minimum touch target — paddingVertical 12 + the CapsLabel
-            // glyph's intrinsic line-height clears the AA threshold.
-            paddingVertical: spacing.md,
-            paddingHorizontal: spacing.lg,
-            opacity: pressed ? 0.5 : 1,
-          })}
-          testID="rest-phase-undo"
-        >
-          <CapsLabel color="ink2" weight="medium">
-            {undoLabel}
-          </CapsLabel>
-        </Pressable>
-      ) : null}
 
       <Divider />
 

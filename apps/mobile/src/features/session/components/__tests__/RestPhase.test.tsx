@@ -24,7 +24,7 @@ jest.mock('react-native-reanimated', () => {
 });
 
 import { ThemeProvider } from '@/design/theme';
-import { fireEvent, render } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { RestPhase } from '../RestPhase';
 
@@ -94,27 +94,13 @@ describe('RestPhase', () => {
     expect(screen.getByTestId('rest-timer-value').props.children).toBe('0:00');
   });
 
-  it('renders the undo affordance when onUndoLastSet is provided', () => {
-    const onUndo = jest.fn();
-    const screen = renderWithTheme(
-      <RestPhase loggedUnit="lbs" remaining={45} target={90} onUndoLastSet={onUndo} />,
-    );
-    expect(screen.getByTestId('rest-phase-undo')).toBeTruthy();
-    expect(screen.getByText('↶ Undo last set')).toBeTruthy();
-  });
-
-  it('fires onUndoLastSet when the undo affordance is pressed', () => {
-    const onUndo = jest.fn();
-    const screen = renderWithTheme(
-      <RestPhase loggedUnit="lbs" remaining={45} target={90} onUndoLastSet={onUndo} />,
-    );
-    fireEvent.press(screen.getByTestId('rest-phase-undo'));
-    expect(onUndo).toHaveBeenCalledTimes(1);
-  });
-
-  it('hides the undo affordance when onUndoLastSet is not provided', () => {
+  it('does not render an inline undo affordance (lives on the top bar now)', () => {
+    // The undo affordance was removed from RestPhase on 2026-05-24 per user
+    // feedback — undo lives on the SessionTopBar during rest, no duplicate
+    // inside the rest body.
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={45} target={90} />);
     expect(screen.queryByTestId('rest-phase-undo')).toBeNull();
+    expect(screen.queryByText('↶ Undo last set')).toBeNull();
   });
 
   it('exposes rest-phase and rest-timer testIDs', () => {

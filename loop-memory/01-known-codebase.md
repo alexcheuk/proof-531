@@ -85,6 +85,30 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `line`, `lineStrong` — hairlines
 - Splash and adaptive icon backgrounds should be `#E7E3D6` (light) / `#1A1812` (dark).
 
+## Session top-bar pill contract (updated 2026-05-24)
+
+- **Set phase** → Cancel + Restart only (no Undo).
+- **Rest phase** → Undo only (no Cancel/Restart).
+- The duplicate in-body Undo button in `RestPhase` was removed — undo
+  lives on the top bar; rendering it twice was visual noise per user
+  feedback.
+
+## Sheet styling contract
+
+- All sheets paint their body in `colors.bg0` (paper). `SheetLayout`
+  previously used `bg2` (paper-dim) which made the TM editor /
+  reset / unit-migration sheets look visibly different from the AMRAP
+  logger. Don't reintroduce `bg2` as a sheet body bg — it reads as a
+  "secondary" surface to users and breaks the one-canvas illusion.
+
+## PR celebration screen escape
+
+- `PrCelebrationScreen` paints the ink-0 surface edge-to-edge under the
+  status bar by using `marginTop: -insets.top; paddingTop: insets.top`
+  to cancel out the root SafeTopFrame's paper top stripe. Any future
+  full-screen modal that needs to escape the paper top stripe should
+  use the same pattern (not a separate Stack screen route option).
+
 ## Back navigation contract
 
 - **Live → Today, Today → Home.** Deterministic via `goTo.today` / `goTo.home`,
