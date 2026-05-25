@@ -46,10 +46,20 @@ Don't over-plan. List the items, then start shipping.
 - Respect every project rule in `CLAUDE.md` (boundary rules, forbidden paths, commit prefix conventions).
 - For each item, leave the repo greener than you found it: dead code out, comments only where they explain *why*, primitives extracted when three near-identical fragments exist.
 
-### 5. Commit and push
+### 5. Commit, push, ship OTA
 
 - Conventional commits. One commit per logical change is fine; squashing a related cluster into one commit is also fine. Do **not** prefix with `[auto]` (that's reserved for the queue orchestrator).
 - `git push` after each iteration finishes. If a pre-commit/pre-push hook fails, fix it and commit again — never bypass with `--no-verify`.
+- **Ship an EAS OTA update so existing installs pick the iteration up immediately.** Run this after the push:
+
+  ```bash
+  pnpm --filter @fivethreeone/mobile exec eas update \
+      --branch main \
+      --platform android \
+      --message "$(git log -1 --pretty=%B)"
+  ```
+
+  The `--message` uses the latest commit subject + body so the EAS dashboard shows what the update contains. If the iteration produced multiple commits, that's fine — the OTA bundle reflects working-tree HEAD regardless; the message just labels it. If EAS fails (auth, network, native-incompatible change), surface the error in the Discord summary and continue — code is already on `main`, so the iteration is not lost; the OTA just has to wait for the next push.
 
 ### 6. Post the Discord summary
 
