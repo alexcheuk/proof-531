@@ -43,7 +43,7 @@ const jsonLd = {
 ---
 
 <Base title={`${post.data.title} — 531 dev log`} description={post.data.summary}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="entry container">
     <a class="back" href="/blog">← Dev log</a>
 

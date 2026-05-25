@@ -114,7 +114,7 @@ const setLogsState: {
     id: number;
     sessionId: number;
     index: number;
-    kind: 'working' | 'amrap';
+    kind: 'working' | 'amrap' | 'bbb';
     prescribedWeight: number;
     prescribedReps: number;
     actualReps: number;

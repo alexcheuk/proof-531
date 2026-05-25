@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Pre-commit hook + `pnpm verify` script both had silent gaps (loop-017)
+
+**Tags:** `bug`, `process`, `tooling`
+**Files:** `package.json`, `loop-memory/00-loop-pacing.md`, `.git/hooks/pre-commit` (local, via `scripts/install-hooks.sh`)
+
+Loop-016 pushed a commit with a typecheck failure (fixture row used `kind: 'bbb' as const` against a `'working' | 'amrap'` union). The pre-commit hook that exists for exactly this case had never been installed on this seat — `.git/hooks/pre-commit` was empty. And `pnpm verify` (what the hook runs) invoked `pnpm ci` instead of `pnpm run ci`, hitting the pnpm builtin instead of our script — so even with the hook installed, verify would have errored before running typecheck. Fixed all three: widened the union, installed the hook, swapped `pnpm ci` → `pnpm run ci` in the verify script. Added the recovery steps to `loop-memory/00-loop-pacing.md` so the next fresh-context loop doesn't repeat the chain.
+
+**Why:** the gap between two safety layers you assume are independent is where the failure hides. Worth a decision-log entry because the fix is structural (the verify-script bug applies to every contributor, not just this seat).
+
+**Trade-off / what we didn't do:** considered auto-installing the hook on every loop run. Rejected — the loop shouldn't mutate the contributor's `.git/hooks/` invisibly. Pacing memory now documents the manual install instead.
+
 ### 2026-05-25 — `computeLifetimeVolume` counts BBB (matches `getLifetimeVolume`'s SQL, loop-008 carryover)
 
 **Tags:** `bug`, `data`, `consistency`
