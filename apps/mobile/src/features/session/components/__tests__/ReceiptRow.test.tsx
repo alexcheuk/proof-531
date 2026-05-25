@@ -50,4 +50,15 @@ describe('ReceiptRow', () => {
       : row.props.style;
     expect(style.borderTopWidth).toBe(1);
   });
+
+  it('composes an accessibility label so screen readers read the row as one (loop-014)', () => {
+    const screen = renderRow(
+      <ReceiptRow label="Top set" value="225 × 8+" sub="lb · 85% tm" stamp="★ PR" testID="row" />,
+    );
+    expect(
+      screen.UNSAFE_root.findByProps({
+        accessibilityLabel: 'Top set, 225 × 8+, lb · 85% tm, ★ PR',
+      }),
+    ).toBeTruthy();
+  });
 });

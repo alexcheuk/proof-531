@@ -3,6 +3,7 @@ import { Heading } from '@/design/primitives/Heading';
 import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
+import { View } from 'react-native';
 /**
  * Single line item on the session-complete "receipt".
  *
@@ -38,24 +39,33 @@ export function ReceiptRow({ label, value, sub, stamp, first = false, testID }: 
     borderTopColor: colors.line,
   };
 
+  // Compose a single a11y label so a screen reader reads the row as
+  // "Top set: 255 × 8+, lb · working sets, star PR" instead of scrubbing
+  // through the three Text nodes individually. Same pattern as SetRow
+  // (loop-013). View is the a11y handle; the Row keeps its layout role
+  // and the existing testID for behavioural assertions.
+  const a11yLabel = [label, value, sub, ...(stamp ? [stamp] : [])].join(', ');
+
   return (
-    <Row
-      align="baseline"
-      justify="space-between"
-      gap="md"
-      style={containerStyle}
-      {...(testID !== undefined ? { testID } : {})}
-    >
-      <CapsLabel weight="semibold">{label}</CapsLabel>
-      <Row align="baseline" gap="sm">
-        {stamp ? <MonoBadge>{stamp}</MonoBadge> : null}
-        <Heading size="m" lineHeight={24} numeric>
-          {value}
-        </Heading>
-        <CapsLabel weight="semibold" color="ink3" style={{ letterSpacing: 1.4 }}>
-          {sub}
-        </CapsLabel>
+    <View accessible accessibilityLabel={a11yLabel}>
+      <Row
+        align="baseline"
+        justify="space-between"
+        gap="md"
+        style={containerStyle}
+        {...(testID !== undefined ? { testID } : {})}
+      >
+        <CapsLabel weight="semibold">{label}</CapsLabel>
+        <Row align="baseline" gap="sm">
+          {stamp ? <MonoBadge>{stamp}</MonoBadge> : null}
+          <Heading size="m" lineHeight={24} numeric>
+            {value}
+          </Heading>
+          <CapsLabel weight="semibold" color="ink3" style={{ letterSpacing: 1.4 }}>
+            {sub}
+          </CapsLabel>
+        </Row>
       </Row>
-    </Row>
+    </View>
   );
 }

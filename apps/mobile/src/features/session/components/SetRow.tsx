@@ -91,40 +91,36 @@ export function SetRow({
   // the View is purely the a11y handle.
   return (
     <View accessible accessibilityLabel={a11yLabel}>
-      <Row
-        {...(testID !== undefined ? { testID } : {})}
-        style={containerStyle}
-        gap="md"
-      >
+      <Row {...(testID !== undefined ? { testID } : {})} style={containerStyle} gap="md">
         <RNText style={indexStyle}>{done ? '✓' : String(index).padStart(2, '0')}</RNText>
-      <Row style={{ flex: 1 }} gap="sm" wrap>
-        <Row align="baseline" gap="xs">
-          <Heading
-            size="m"
-            lineHeight={26}
-            numeric
-            style={done ? { textDecorationLine: 'line-through' } : undefined}
-          >
-            {weight}
-          </Heading>
-          <CapsLabel size="xs" style={{ letterSpacing: 1.62 }}>
-            {displayUnit(unit)}
-          </CapsLabel>
-        </Row>
+        <Row style={{ flex: 1 }} gap="sm" wrap>
+          <Row align="baseline" gap="xs">
+            <Heading
+              size="m"
+              lineHeight={26}
+              numeric
+              style={done ? { textDecorationLine: 'line-through' } : undefined}
+            >
+              {weight}
+            </Heading>
+            <CapsLabel size="xs" style={{ letterSpacing: 1.62 }}>
+              {displayUnit(unit)}
+            </CapsLabel>
+          </Row>
 
-        <Text
-          variant="sans"
-          weight="medium"
-          size={18}
-          color="ink1"
-          numeric
-          style={{ letterSpacing: -0.36 }}
-        >
-          × {reps}
-          {amrap ? '+' : ''}
-        </Text>
-        {amrap ? <MonoBadge>AMRAP</MonoBadge> : null}
-      </Row>
+          <Text
+            variant="sans"
+            weight="medium"
+            size={18}
+            color="ink1"
+            numeric
+            style={{ letterSpacing: -0.36 }}
+          >
+            × {reps}
+            {amrap ? '+' : ''}
+          </Text>
+          {amrap ? <MonoBadge>AMRAP</MonoBadge> : null}
+        </Row>
 
         <Row gap="sm">
           {next ? <MonoBadge>UP NEXT</MonoBadge> : null}
