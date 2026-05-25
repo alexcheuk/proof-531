@@ -78,8 +78,16 @@ export function useAmrapLogState({
 
   const handleCancel = useCallback(() => {
     if (pending) return;
+    // Critical: the parent's `onCancel` typically transitions phase back
+    // to `'set'`. When the sheet auto-closes after a successful save
+    // (parent flips `open` to false because phase advanced to
+    // `'awaiting-bbb'`), gorhom's BottomSheet fires `onClose` → our
+    // `onDismiss` → this handler. Without this guard we would call
+    // `onCancel` immediately and clobber the just-set phase, sending the
+    // user back to the live set screen and skipping the BBB prompt.
+    if (!open) return;
     onCancel();
-  }, [onCancel, pending]);
+  }, [onCancel, open, pending]);
 
   return { reps, setReps, pending, handleSave, handleCancel };
 }

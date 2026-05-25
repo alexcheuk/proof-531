@@ -5,7 +5,6 @@ import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { View } from 'react-native';
-import { AmrapCoachingBanner } from './AmrapCoachingBanner';
 import { LiveHeader } from './LiveHeader';
 
 /**
@@ -84,7 +83,6 @@ export function SetPhase({
             {plateChangeHint}
           </CapsLabel>
         ) : null}
-        {isAmrap ? <AmrapCoachingBanner /> : null}
       </View>
 
       <Divider />

@@ -50,12 +50,14 @@ describe('SetPhase', () => {
     expect(screen.getByText('AMRAP')).toBeTruthy();
   });
 
-  it('shows the AMRAP coaching banner only when isAmrap', () => {
+  it('renders the AMRAP coaching banner inside LiveHeader only when isAmrap', () => {
+    // The banner moved from the SetPhase body into LiveHeader so it sits
+    // next to the AMRAP chip — testID is now `live-amrap-coaching`.
     const amrap = renderPhase(<SetPhase setIndex={2} isAmrap {...BASE} />);
-    expect(amrap.getByTestId('amrap-coaching')).toBeTruthy();
+    expect(amrap.getByTestId('live-amrap-coaching')).toBeTruthy();
 
     const regular = renderPhase(<SetPhase setIndex={0} isAmrap={false} {...BASE} />);
-    expect(regular.queryByTestId('amrap-coaching')).toBeNull();
+    expect(regular.queryByTestId('live-amrap-coaching')).toBeNull();
   });
 
   it('renders the plate-change hint when provided', () => {

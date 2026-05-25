@@ -15,6 +15,7 @@ import { useTheme } from '@/design/theme';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { CancelPill } from './CancelPill';
 import { CompletePill } from './CompletePill';
+import { UndoPill } from './UndoPill';
 
 export type RightAction =
   | { kind: 'none' }
@@ -28,6 +29,12 @@ export type SessionTopBarProps = {
   backLabel?: string;
   /** Right-side action — defaults to `{ kind: 'none' }`. */
   rightAction?: RightAction;
+  /**
+   * Optional "↶ Undo" pill rendered just left of the primary right action.
+   * Used on Live during rest so the user can roll back the most recent
+   * working set without leaving the top bar. Omit to hide entirely.
+   */
+  onUndo?: () => void;
   testID?: string;
 };
 
@@ -35,6 +42,7 @@ export function SessionTopBar({
   onBack,
   backLabel = 'Back to Home',
   rightAction = { kind: 'none' },
+  onUndo,
   testID,
 }: SessionTopBarProps) {
   const { colors, layout, type } = useTheme();
@@ -81,8 +89,11 @@ export function SessionTopBar({
       >
         <RNText style={backGlyphStyle}>{'←'}</RNText>
       </Pressable>
-      {rightAction.kind === 'cancel' ? <CancelPill onPress={rightAction.onPress} /> : null}
-      {rightAction.kind === 'complete' ? <CompletePill onPress={rightAction.onPress} /> : null}
+      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+        {onUndo ? <UndoPill onPress={onUndo} /> : null}
+        {rightAction.kind === 'cancel' ? <CancelPill onPress={rightAction.onPress} /> : null}
+        {rightAction.kind === 'complete' ? <CompletePill onPress={rightAction.onPress} /> : null}
+      </View>
     </View>
   );
 }

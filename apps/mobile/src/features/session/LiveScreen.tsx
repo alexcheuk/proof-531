@@ -123,6 +123,13 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
         onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
         rightAction={{ kind: 'cancel', onPress: live.onRequestCancel }}
+        // Surface undo on the top bar during rest when there's a non-AMRAP
+        // working set to roll back. Mirrors the in-rest undo affordance
+        // so the action is reachable from above the scroll, not just inside
+        // the RestPhase body.
+        {...(live.phase === 'rest' && live.lastLogged && !live.lastLogged.isAmrap
+          ? { onUndo: live.onUndoLastSet }
+          : {})}
       />
       <ScrollView
         testID="live-scroll"

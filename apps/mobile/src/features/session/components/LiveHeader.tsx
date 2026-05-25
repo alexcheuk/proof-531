@@ -98,6 +98,19 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
 
         {isAmrap ? <MonoBadge>AMRAP</MonoBadge> : null}
       </View>
+
+      {isAmrap ? (
+        <Text
+          variant="sans"
+          weight="semibold"
+          size={15}
+          color="ink0"
+          style={{ marginTop: spacing.sm, lineHeight: 20 }}
+          testID="live-amrap-coaching"
+        >
+          As many reps as possible — push for a PR, leave 1 in the tank.
+        </Text>
+      ) : null}
     </View>
   );
 }
