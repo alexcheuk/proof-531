@@ -50,6 +50,7 @@ export function LedgerRow({
         testID={testID}
         onPress={onPress}
         accessibilityRole="button"
+        hitSlop={4}
         {...(accessibilityLabel !== undefined ? { accessibilityLabel } : {})}
         style={[containerStyle, style]}
       >

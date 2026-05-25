@@ -5,7 +5,7 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
-import { type ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, type ViewStyle } from 'react-native';
 
 type SheetProps = {
@@ -34,6 +34,15 @@ export function Sheet({
 }: SheetProps) {
   const { colors, spacing } = useTheme();
   const sheetRef = useRef<BottomSheet>(null);
+  // Capture the initial `open` value once so we can seed gorhom's
+  // initial `index` (gorhom v5 docs say `index` is initial-only). This
+  // matters for screens that conditionally mount the sheet AS open —
+  // Settings' TM-edit / unit-migration / reset-everything sheets all
+  // do this. Without seeding, the sheet would mount at -1 and rely on
+  // the effect below to snap it open, which races gorhom's internal
+  // ref attachment on a fresh mount and silently fails (the press
+  // fires, state updates, sheet stays off-screen).
+  const [initialIndex] = useState(open ? 0 : -1);
   const effectiveSnapPoints = snapPoints ?? DEFAULT_SNAP_POINTS;
   const effectiveBackground = backgroundColor ?? colors.bg0;
   const backgroundStyle = useMemo<ViewStyle>(
@@ -70,12 +79,15 @@ export function Sheet({
     onDismiss();
   }, [onDismiss]);
 
-  // Drive open/close imperatively. gorhom v5 documents `index` as
-  // initial-only — re-rendering with `index={-1}` does not reliably
-  // close the sheet. The Cancel button regression on the AmrapLogSheet
-  // (Discord 1508365310359633990) was the second time we hit this; the
-  // first "fix" relied on the prop happening to re-snap. Make it
-  // explicit: open → snapToIndex(0), closed → close().
+  // Drive open/close imperatively for subsequent state changes. gorhom
+  // v5 documents `index` as initial-only — re-rendering with
+  // `index={-1}` does not reliably close the sheet (AmrapLogSheet
+  // cancel regression, Discord 1508365310359633990). So we keep the
+  // imperative effect for transitions, BUT we also seed the initial
+  // index off `open` below so a fresh mount with `open=true` (Settings
+  // conditionally mounts its sheets — TM edit, unit migration, reset
+  // everything) shows the sheet on first paint instead of waiting for
+  // an effect-driven snap that races gorhom's ref attachment.
   useEffect(() => {
     if (open) {
       sheetRef.current?.snapToIndex(0);
@@ -98,7 +110,7 @@ export function Sheet({
   return (
     <BottomSheet
       ref={sheetRef}
-      index={-1}
+      index={initialIndex}
       snapPoints={effectiveSnapPoints}
       enablePanDownToClose
       onChange={handleChange}
