@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Cancel session removed end-to-end; Restart is now the only mid-session escape
+
+**Tags:** `removal`, `product`, `session`
+**Files:** `apps/mobile/src/features/session/components/CancelPill.tsx` (deleted), `apps/mobile/src/features/session/components/CancelConfirmSheet.tsx` (deleted), `apps/mobile/src/data/accessors/session.ts`, `apps/mobile/src/features/session/hooks/useLiveScreenState.ts`, `apps/mobile/src/features/session/hooks/useTodaySessionActions.ts`, `apps/mobile/src/features/session/components/SessionTopBar.tsx`, `apps/mobile/src/features/session/TodayScreen.tsx`
+
+Deleted the cancel-session surface entirely: the pill, the two-tap confirm sheet, the `cancelSession` accessor, the `'cancel-confirm'` phase in the live-screen state machine, and all the wiring on Today + Live + tests. The `'cancelled'` status enum value stays in the schema for legacy data, but nothing in the app writes it anymore. Restart (`resetSession`) is now the only mid-session escape — and it keeps the session in_progress at set 1 rather than closing it.
+
+**Why:** user ask — cancel was the second destructive flow on a screen that already has Restart, and the two reads as redundant. Removing one collapses the recovery model to "you're either training or starting over."
+
+**Trade-off / what we didn't do:** kept the `'cancelled'` status in the schema rather than migrating it out. Cheap to leave, expensive to drop with no benefit.
+
+### 2026-05-25 — Live-screen exit gate must exclude `'awaiting-bbb'` and `'pr-celebration'`, or the SESSION_KEY refetch races the BBB redirect
+
+**Tags:** `bug`, `architecture`, `rn`
+**Files:** `apps/mobile/src/features/session/hooks/useLiveScreenEffects.ts`
+
+After AMRAP, fast-tapping through the rep entry dropped the user on Home instead of BBB. Root cause: `onSaveAmrap` runs `completeSession` BEFORE `setPhase('awaiting-bbb')`, so by the time the `'awaiting-bbb'` effect fires `invalidateSessionSurface`, the `SESSION_KEY` refetch can land `status: 'completed'` and re-render. The exit gate effect only excluded `phase === 'complete'`, so on that intermediate render it saw `status !== 'in_progress'` and fired `goTo.home(router)` — clobbering the in-flight redirect to BBB. Fix: exclude `'awaiting-bbb'` and `'pr-celebration'` from the gate too. Those phases own their own routing.
+
+**Why:** the dedicated routing effect and the defensive exit gate were both listening to the same state, and the exit gate's "non-in_progress = go home" was too aggressive for phases that intentionally outlive the status transition.
+
+**Trade-off / what we didn't do:** considered moving the status check fully inside the routing effects and dropping the gate. Rejected — the gate is what catches "session deleted from another surface", which the routing effects don't model. The fix is additive: the gate now bails for any phase that owns its own navigation.
+
 ### 2026-05-25 — Full-bleed status bar uses a global tint subject; native-stack card was clipping the per-screen escape (loop-018)
 
 **Tags:** `bug`, `architecture`, `rn`
