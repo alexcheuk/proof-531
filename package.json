@@ -18,6 +18,7 @@
     "bundle-check": "pnpm --filter @fivethreeone/mobile exec expo export --platform ios --output-dir /tmp/expo-bundle-check --dump-sourcemap=false --dump-assetmap=false",
     "find-unused": "bash scripts/find-unused-primitives.sh",
     "check-boundaries": "bash scripts/check-boundaries.sh",
+    "draft-release-notes": "bash scripts/draft-release-notes.sh",
     "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm test"
   },
   "devDependencies": {

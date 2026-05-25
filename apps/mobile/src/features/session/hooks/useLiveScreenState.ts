@@ -38,9 +38,9 @@ import { round as snapWeight } from '@/domain/units';
  * (set → rest → set), and the query is invalidated so other surfaces (Today's
  * "Resume working set N" CTA, SessionComplete's receipt) see the new row.
  *
- * Rest duration is fixed at 90s for this iteration. The warning haptic at T-3s
- * fires deterministically off the countdown so it can be asserted by advancing
- * fake timers in tests.
+ * Rest duration is configurable in Settings (default `REST_SECONDS` =
+ * 180s). The warning haptic at T-3s fires deterministically off the
+ * countdown so it can be asserted by advancing fake timers in tests.
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';

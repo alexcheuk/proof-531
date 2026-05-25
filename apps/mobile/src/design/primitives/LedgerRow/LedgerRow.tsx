@@ -1,0 +1,71 @@
+/**
+ * One record line within a LedgerSection. Behavioral port of the PWA
+ * `LedgerRow` (src/components/ui/ledger-row.tsx).
+ *
+ * - Hairline top border: strong on first row of a section, faint otherwise.
+ * - Renders as a Pressable when `onPress` is provided AND not `disabled`,
+ *   otherwise as a non-interactive View — so non-pressable rows don't
+ *   advertise a tap target to a11y tooling.
+ */
+import type { ReactNode } from 'react';
+import { Pressable, type StyleProp, View, type ViewStyle } from 'react-native';
+import { useTheme } from '../../theme';
+
+export type LedgerRowProps = {
+  first?: boolean;
+  disabled?: boolean;
+  onPress?: () => void;
+  children: ReactNode;
+  testID?: string;
+  style?: StyleProp<ViewStyle>;
+  /** Composed accessibility label — overrides the auto-derived label. */
+  accessibilityLabel?: string;
+};
+
+export function LedgerRow({
+  first = false,
+  disabled = false,
+  onPress,
+  children,
+  testID,
+  style,
+  accessibilityLabel,
+}: LedgerRowProps) {
+  const { colors } = useTheme();
+
+  const containerStyle: ViewStyle = {
+    paddingVertical: 14,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+    borderTopWidth: 1,
+    borderTopColor: first ? colors.lineStrong : colors.line,
+  };
+
+  if (onPress && !disabled) {
+    return (
+      <Pressable
+        testID={testID}
+        onPress={onPress}
+        accessibilityRole="button"
+        {...(accessibilityLabel !== undefined ? { accessibilityLabel } : {})}
+        style={[containerStyle, style]}
+      >
+        {children}
+      </Pressable>
+    );
+  }
+
+  return (
+    <View
+      testID={testID}
+      accessibilityState={disabled ? { disabled: true } : undefined}
+      {...(accessibilityLabel !== undefined ? { accessibilityLabel } : {})}
+      style={[containerStyle, style]}
+    >
+      {children}
+    </View>
+  );
+}

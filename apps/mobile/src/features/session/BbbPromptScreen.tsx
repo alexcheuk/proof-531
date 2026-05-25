@@ -1,6 +1,7 @@
 import { goTo } from '@/app/routes';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { Divider } from '@/design/primitives/Divider';
@@ -18,6 +19,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
+import { useHardwareBack } from './hooks/useHardwareBack';
 
 /**
  * Shown automatically after AMRAP — between the live set and the
@@ -38,12 +40,28 @@ export type BbbPromptScreenProps = {
   sessionId: number;
 };
 
+function formatRestHint(seconds: number): string {
+  const safe = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(safe / 60);
+  const s = safe % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
 export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const { colors, spacing } = useTheme();
   const sessionQuery = useSession(sessionId);
   const settingsQuery = useSettings();
 
   const router = useRouter();
+
+  // Android hardware back from /session/bbb should land on the receipt
+  // (the user has already finished AMRAP; this is a post-completion
+  // surface). The expo-router stack default would re-enter /session/live,
+  // which would see status=completed and bounce home — a regression.
+  useHardwareBack({
+    enabled: true,
+    onBack: () => goTo.complete(router, sessionId, { replace: true }),
+  });
 
   if (!sessionQuery.data || !settingsQuery.data) {
     return (
@@ -64,6 +82,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const bbbWeightStorage = bbbWeightFromTm(session.trainingMaxSnapshot, storageUnit);
   const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorage, storageUnit, renderUnit));
   const perSide = decompose(bbbWeightStorage, plateSet).perSide;
+  const restHint = formatRestHint(settings.restTargetSeconds);
 
   const onClose = () => goTo.complete(router, sessionId, { replace: true });
 
@@ -101,8 +120,16 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
             color="ink3"
             style={{ marginTop: spacing.md }}
           >
-            Same bar, same plates, every set. Rest as needed.
+            Same bar, same plates, every set.
           </Text>
+          <CapsLabel
+            size="xs"
+            color="ink3"
+            style={{ marginTop: spacing.xs, letterSpacing: 1.4 }}
+            testID="bbb-rest-hint"
+          >
+            {`REST ${restHint} BETWEEN SETS`}
+          </CapsLabel>
         </View>
 
         <Divider />
