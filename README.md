@@ -13,14 +13,14 @@ The 5/3/1 program math, plate calculator, e1RM, and PR detection are pure module
 ## Quick start
 
 ```bash
-# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+, bash 4+, yq v4, Xcode 26+ for iOS native builds
+# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+, bash 4+, yq v4
 corepack enable && corepack prepare pnpm@latest --activate
 
 pnpm install                                # workspace install
-pnpm --filter @fivethreeone/mobile start       # boot dev client (Metro)
+pnpm --filter @fivethreeone/mobile start       # boot Metro
 ```
 
-Press `i` for iOS simulator or `a` for Android emulator. A dev client build is required — see [EAS docs](https://docs.expo.dev/build/setup/) and the `eas.json` profiles (`development` / `preview` / `production`).
+This project uses the **Expo Go workflow** — no custom dev client. Scan the QR code with the Expo Go app on a physical device, or press `i` / `a` for iOS Simulator / Android Emulator. EAS is used for OTA updates and store builds, not for local development.
 
 ### Daily commands
 
@@ -44,9 +44,21 @@ pnpm run ci                                 # full chain (use `run` — `ci` is 
 | [`docs/superpowers/queue.yaml`](docs/superpowers/queue.yaml) | Orchestrator backlog |
 | [`CLAUDE.md`](CLAUDE.md) | Agent orientation (root); see also `apps/mobile/src/{design,domain}/CLAUDE.md` |
 
-## How work happens — `/initial-implement`
+## How work happens
 
-Most code in this repo is written via the `/initial-implement` orchestrator. It picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents, runs the full harness, squash-merges to `main`, and marks the task done.
+Three entry points, each with its own orchestrator. Pick the one that matches the input.
+
+### `/auto-improve` — the standing 30-minute loop
+
+The primary day-to-day driver. Reads `loop-memory/`, polls the `#task-queue` Discord channel for unacknowledged messages, picks 12–15 substantive items (or 2–4 in steady state when the queue is empty), ships them, commits, pushes, ships OTA, writes a Verso dev-blog entry. Usually invoked via `/loop 30m /auto-improve`. See [`.claude/skills/auto-improve/`](.claude/skills/auto-improve/) for the skill source and `loop-memory/00-loop-pacing.md` for the pacing rules.
+
+### `rn-expo-pipeline` — idea-driven feature work
+
+Triggered when an idea, description, or wireframe comes in. Runs a coordinated design / frontend / QA team (`rn-designer` → `rn-frontend` → `rn-qa`) to ship a PR-ready commit on `feat/<slug>`. See [`.claude/skills/rn-expo-pipeline/`](.claude/skills/rn-expo-pipeline/).
+
+### `/initial-implement` — queue-driven backlog drain
+
+For when a spec + plan already exist in `docs/superpowers/`. Picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents, runs the full harness, squash-merges to `main`.
 
 ```bash
 /initial-implement                     # one ready task
@@ -57,7 +69,7 @@ Most code in this repo is written via the `/initial-implement` orchestrator. It 
 /initial-implement --status            # print queue
 ```
 
-See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for the full flow, and [`.claude/skills/initial-implement/`](.claude/skills/initial-implement/) for the skill's source.
+See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for the full flow.
 
 ## License
 

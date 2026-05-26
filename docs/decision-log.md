@@ -42,6 +42,18 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — README + home-page small consistency pass
+
+**Tags:** `docs`, `home-page`
+**Files:** `README.md`, `apps/web/src/pages/index.astro`
+
+Two consistency fixes in the docs surface:
+
+- The root README told new contributors "A dev client build is required" — but the project explicitly uses the Expo Go workflow (CLAUDE.md mandates this). Also dropped the stale `Xcode 26+ for iOS native builds` prereq (not needed for Expo Go) and the "Most code is written via `/initial-implement`" framing (most code is now written via `/auto-improve`). The "How work happens" section now lists three orchestrators with each one's purpose: `/auto-improve` (the standing loop), `rn-expo-pipeline` (idea-driven), and `/initial-implement` (queue-driven).
+- The home page's cycle-section lead said `training maxes bump (+5 upper, +10 lower)` — implicitly lb-only. Added the kg numbers (`+2.5 / +5 kg`) so kg-default lifters see themselves in the copy.
+
+**Why:** README contradicting CLAUDE.md actively misleads any first contributor (or any agent reading fresh). The kg-or-lb omission was a small outside-reader violation in the opposite direction — assuming the visitor is American.
+
 ### 2026-05-26 — /process page caught up: Verso (not Margin) + outside-reader pass
 
 **Tags:** `website`, `process-page`, `persona`
