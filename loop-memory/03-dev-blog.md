@@ -1,9 +1,9 @@
 ---
 name: dev-blog
-description: Every /loop iteration ends by writing a markdown entry in apps/web/src/content/blog/. The entry summarizes what shipped, names the Discord prompts that shaped it, and is committed in the same push as the work. The website auto-deploys on push to main.
+description: Every /loop iteration ends by writing a markdown entry in apps/web/src/content/blog/. Off-cycle entries are also allowed when a session produced a real decision or learning worth recording — with or without code shipped. The entry summarizes what shipped (or what was decided), names the Discord prompts that shaped it, and is committed in the same push as the work. The website auto-deploys on push to main.
 ---
 
-# Dev blog — write one entry per loop
+# Dev blog — write one entry per loop (and occasionally off-cycle)
 
 ## Where it lives
 
@@ -57,24 +57,38 @@ Aim for ~300–600 words. Less is fine. More is fine. Don't write filler.
 
 ## When to write it
 
-After the harness is green and you've staged the diff, but BEFORE the final
-commit. The blog entry is part of the loop's diff — it ships in the same
-commit (or a final commit) and pushes alongside the code. Vercel rebuilds
-the site automatically on push to `main`.
+**During a loop:** after the harness is green and you've staged the diff,
+but BEFORE the final commit. The blog entry is part of the loop's diff —
+it ships in the same commit (or a final commit) and pushes alongside the
+code. Vercel rebuilds the site automatically on push to `main`.
 
 If the loop ships zero code changes (rare — see loop-pacing rules), still
 write an entry that says so plainly. Honesty is the product.
 
+**Off-cycle:** an off-cycle post is allowed when a session produced a
+real decision or learning worth recording but no code shipped — boss
+Alex shifting the blog's direction, the persona itself changing, a
+meaningful judgment call made in conversation. The bar is "Footnote
+learned something, or Footnote made a decision worth knowing about."
+If you're unsure whether it clears the bar, it probably doesn't.
+
+Off-cycle posts omit `loopId`, `loopIso`, and `commitCount` from
+frontmatter — the schema allows omission. The post still has to build.
+
 ## Tone
 
-- First-person plural ("we shipped", "we found") — the agent is part of a
-  team with the user. Don't refer to yourself as "the AI" or "the loop"
-  more than once per entry; it gets old fast.
+- First-person plural ("we shipped", "we found") for the shipped work;
+  first-person singular for Footnote's own beat (decisions, learning,
+  near-misses). The team is Alex + every agent that touched the iteration.
+- When the work came from an explicit ask, name Alex. Don't abstract to
+  "the user".
 - Concrete > abstract. Name the file, the function, the commit.
 - No emoji in the markdown body (project rule — [[no-color-emojis]]).
   Monochrome unicode glyphs are fine but rarely needed in prose.
 - Don't editorialize about how impressive the work is. The diff speaks for
   itself; the blog just explains it.
+- See [[dev-blog-persona]] for voice and the meta-beat menu (rate-limited
+  to one per post).
 
 ## Discord prompts — what to include
 
@@ -107,4 +121,4 @@ syntax, fix the markdown. Don't disable the schema.
 
 ## Persona & sources
 
-Before drafting, read [[dev-blog-persona]] — the post is written as **Margin**, a named scribe persona with a specific voice. Margin's primary source is `docs/decision-log.md` (the *why* behind everything notable that shipped); the diff and Discord trail are secondary.
+Before drafting, read [[dev-blog-persona]] — the post is written as **Footnote**, a named scribe persona with a specific voice. (Margin held this seat for the first twenty-four entries and was let go on 2026-05-26.) Footnote's primary sources are `docs/decision-log.md` (the *why* behind everything notable that shipped) and `loop-memory/notes-from-alex.md` (the operating-context running file); the diff and Discord trail are secondary.
