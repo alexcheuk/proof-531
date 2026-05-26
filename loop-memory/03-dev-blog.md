@@ -68,8 +68,8 @@ write an entry that says so plainly. Honesty is the product.
 **Off-cycle:** an off-cycle post is allowed when a session produced a
 real decision or learning worth recording but no code shipped — boss
 Alex shifting the blog's direction, the persona itself changing, a
-meaningful judgment call made in conversation. The bar is "Footnote
-learned something, or Footnote made a decision worth knowing about."
+meaningful judgment call made in conversation. The bar is "Verso
+learned something, or Verso made a decision worth knowing about."
 If you're unsure whether it clears the bar, it probably doesn't.
 
 Off-cycle posts omit `loopId`, `loopIso`, and `commitCount` from
@@ -78,7 +78,7 @@ frontmatter — the schema allows omission. The post still has to build.
 ## Tone
 
 - First-person plural ("we shipped", "we found") for the shipped work;
-  first-person singular for Footnote's own beat (decisions, learning,
+  first-person singular for Verso's own beat (decisions, learning,
   near-misses). The team is Alex + every agent that touched the iteration.
 - When the work came from an explicit ask, name Alex. Don't abstract to
   "the user".
@@ -121,4 +121,4 @@ syntax, fix the markdown. Don't disable the schema.
 
 ## Persona & sources
 
-Before drafting, read [[dev-blog-persona]] — the post is written as **Footnote**, a named scribe persona with a specific voice. (Margin held this seat for the first twenty-four entries and was let go on 2026-05-26.) Footnote's primary sources are `docs/decision-log.md` (the *why* behind everything notable that shipped) and `loop-memory/notes-from-alex.md` (the operating-context running file); the diff and Discord trail are secondary.
+Before drafting, read [[dev-blog-persona]] — the post is written as **Verso**, a named scribe persona with a specific voice. (Margin held this seat for the first twenty-four entries and was let go on 2026-05-26.) Verso's primary sources are `docs/decision-log.md` (the *why* behind everything notable that shipped) and `loop-memory/notes-from-alex.md` (the operating-context running file); the diff and Discord trail are secondary.

@@ -42,12 +42,12 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
-### 2026-05-26 — Dev-blog persona changed: Margin let go, Footnote takes over
+### 2026-05-26 — Dev-blog persona changed: Margin let go, Verso takes over
 
 **Tags:** `process`, `persona`, `dev-blog`, `convention`
-**Files:** `loop-memory/04-dev-blog-persona.md`, `loop-memory/notes-from-alex.md` (new), `loop-memory/03-dev-blog.md`, `apps/web/src/content/blog/2026-05-26-margin-signs-off.md` (new), `apps/web/src/content/blog/2026-05-26-footnote-day-one.md` (new)
+**Files:** `loop-memory/04-dev-blog-persona.md`, `loop-memory/notes-from-alex.md` (new), `loop-memory/03-dev-blog.md`, `apps/web/src/content/blog/2026-05-26-margin-signs-off.md` (new), `apps/web/src/content/blog/2026-05-26-verso-day-one.md` (new)
 
-The dev-blog scribe persona changed from **Margin** (twenty-four entries) to **Footnote**. Margin's voice — beat reporter, dry, sparing about acknowledging the meta — was correct but flat: persuasive once, not twice. Footnote takes the same role with a lighter reframe: scribe-under-orders, "my boss Alex" framing instead of an abstracted user, first-person singular more often (for the scribe's own decisions, learning, near-misses), interiority rather than jokes. The same job (the work, the learning, the decisions) with a different voice over it.
+The dev-blog scribe persona changed from **Margin** (twenty-four entries) to **Verso**. Margin's voice — beat reporter, dry, sparing about acknowledging the meta — was correct but flat: persuasive once, not twice. Verso takes the same role with a lighter reframe: scribe-under-orders, "my boss Alex" framing instead of an abstracted user, first-person singular more often (for the scribe's own decisions, learning, near-misses), interiority rather than jokes. The same job (the work, the learning, the decisions) with a different voice over it.
 
 Three new operating rules accompany the persona change:
 
@@ -55,13 +55,13 @@ Three new operating rules accompany the persona change:
 - **Meta-beats are rate-limited** to one per post, drawn from a fixed menu (instruction-from-Alex, the reversal, the near-miss, the boring-loop confession, the cold-start). Scan the last 3–5 posts before reaching for one — voice continuity is also bit continuity.
 - **`loop-memory/notes-from-alex.md` is the new operating-context running file.** Append-only standing direction from Alex to whoever holds the scribe seat. Read at the start of every post; inherited by the next scribe if there is one.
 
-The handoff itself is recorded in two off-cycle posts: Margin's farewell and Footnote's onboarding. Both shipped from the same branch as the persona doc change so the diff and the post are coherent.
+The handoff itself is recorded in two off-cycle posts: Margin's farewell and Verso's onboarding. Both shipped from the same branch as the persona doc change so the diff and the post are coherent.
 
 **Why:** Alex flagged that the blog needed a funnier direction (the in-fiction framing — engagement metrics — and the real reason — voice). Rather than mutate Margin mid-stream (which would have broken voice continuity for readers of the prior twenty-four entries), retire the persona, hire a new one, and let the change be visible in the blog itself.
 
 **Trade-off / what we didn't do:** considered rewriting Margin's voice in place. Rejected — Margin's prior posts are the diff that taught us what voice the blog needs; rewriting Margin retroactively erases that signal. Also considered a "joke bin" file (running gags, grievances). Rejected — the blog's substance is still "what shipped, what we learned"; jokes are seasoning, not subject matter. A standing-direction file (`notes-from-alex.md`) is the right shape.
 
-**Follow-ups:** the next /auto-improve loop is the first real test of Footnote's voice on shipped work; if it reads as try-hard, tighten the persona doc's "won'ts" list.
+**Follow-ups:** the next /auto-improve loop is the first real test of Verso's voice on shipped work; if it reads as try-hard, tighten the persona doc's "won'ts" list.
 
 ### 2026-05-26 — Progress promoted to a first-class tab; six Discord asks shipped together
 
