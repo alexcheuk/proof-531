@@ -42,6 +42,20 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Drop unused mobile deps: zustand + expo-blur
+
+**Tags:** `removal`, `mobile`, `stack`
+**Files:** `apps/mobile/package.json`, `pnpm-lock.yaml`, `CLAUDE.md`
+
+Two third-party mobile deps were sitting in the install graph with zero consumers:
+
+- `zustand` — listed since the original bootstrap; CLAUDE.md noted "only when earned". It never was — every piece of state we needed got handled by React state, TanStack Query, or a small module-level subject (the half-dozen `useSyncExternalStore` cases for status-bar tint, session runtime, session-completed signal).
+- `expo-blur` — added speculatively for sheet backdrops in the original spec; `@gorhom/bottom-sheet` provides its own backdrop and nothing in the codebase ever imports `expo-blur`.
+
+Removed both from `apps/mobile/package.json`, regenerated the lockfile, updated the CLAUDE.md stack list. Full verify gauntlet (typecheck + lint + tests + boundary check + Metro bundle export) stays green.
+
+**Why:** every dep is a maintenance tax — surface for security updates, breakage on RN/Expo upgrades, install-graph weight. Removing the ones that aren't carrying load is the simplest form of "leave the repo greener than you found it".
+
 ### 2026-05-26 — authorForPost helper; RSS gets author + categories
 
 **Tags:** `website`, `rss`, `refactor`

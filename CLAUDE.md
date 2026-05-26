@@ -13,8 +13,8 @@ The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superp
 
 - Expo SDK 55, React Native 0.83+ (New Architecture on), **Expo Go workflow** (no custom dev client)
 - TypeScript strict, Biome, pnpm workspaces, Node 22
-- expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query, Zustand (only when earned)
-- React Native Reanimated 4, expo-haptics, expo-blur, expo-av, expo-keep-awake
+- expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query
+- React Native Reanimated 4, expo-haptics, expo-keep-awake
 - `@gorhom/bottom-sheet` v5 for sheets; IBM Plex Sans/Mono/Sans-Condensed via expo-font
 - Jest + @testing-library/react-native + fast-check (domain property tests)
 - No Sentry, no PostHog, no Skia, no Storybook, no Maestro, no Reassure (all deferred until dev-client build)
