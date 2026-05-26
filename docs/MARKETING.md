@@ -73,7 +73,7 @@ Alternates:
 - Zero analytics, zero ad SDKs, zero crash reporters in the v1 build.
 - Future iCloud / Drive backup will be opt-in, end-to-end encrypted, never social.
 
-Privacy policy lives at `docs/PRIVACY.md` (TODO before submission).
+Privacy policy lives at `docs/PRIVACY.md` and is ready for store submission — needs hosting at a public URL before the listing goes live.
 
 ## Launch checklist
 

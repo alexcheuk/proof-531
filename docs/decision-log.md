@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — RELEASE.md + MARKETING.md catch up
+
+**Tags:** `docs`, `release`
+**Files:** `docs/RELEASE.md`, `docs/MARKETING.md`
+
+Two more doc drifts:
+
+- **RELEASE.md** smoke-test step 4 said "'Close the day' returns home". That changed in loop-035 (Discord 1508779267 — Close the day now routes to Progress with a one-time fill-in animation on the just-completed cell). Fixed.
+- **RELEASE.md** hotfix flow described a hand-rolled `git commit && git push` and leaned on the EAS preview-on-main workflow to fire an OTA. The standing path (since 2026-05-25) is the `pnpm release-ota` wrapper. Documented the wrapper, explained why it carries the `--environment production --non-interactive` flags (newer eas-cli refuses non-TTY runs without them) and the `%s`-vs-`%B` message choice (the body often has unbalanced quotes/backticks). Also called out the runtime-version fingerprint gotcha for native-dep changes.
+- **MARKETING.md** privacy section said `docs/PRIVACY.md` was "TODO before submission". The file exists and is ready for store submission — it just needs hosting at a public URL. Fixed the framing.
+
+**Home-page note (loop-048):** category 8 not touched. Same restraint as loop-047 — the page is in steady state, recent loops shipped the meaningful items (favicon, RSS link, skip-link), forcing more would be manufacturing surface.
+
 ### 2026-05-26 — CONTRIBUTING.md catches up to the Expo Go reality
 
 **Tags:** `docs`, `process`

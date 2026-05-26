@@ -92,7 +92,8 @@ Install the build on a real device and walk:
 3. **Live** → log set 1, hit rest, undo set 1, redo it, advance through
    set 2 and 3. AMRAP entry produces a PR certificate.
 4. **SessionComplete** → receipt shows volume + elapsed; "Close the day"
-   returns home.
+   routes to the Progress tab and plays a one-time fill-in animation
+   on the just-completed cell (loop-035, Discord 1508779267).
 5. **History** → today's session appears with the PR star; the lifetime
    volume stat updates; activity sparkline shows today as filled.
 6. **Settings** → flip storage unit lbs → kg, confirm conversion sheet
@@ -103,15 +104,27 @@ If any of those flows feels off, that's a release blocker.
 ## Hotfix flow (JS-only emergency)
 
 For pure-JS regressions you can ship an OTA update without going through
-the stores:
+the stores. The standing `/auto-improve` loop does this on every iteration
+via the wrapper script:
 
 ```bash
 git commit -m "fix(<area>): <one-line summary>"
 git push origin main
-# preview-on-main workflow fires; OTA lands within minutes.
+pnpm release-ota                  # eas update --branch main --platform android --environment production --non-interactive
 ```
 
-For native crashes, you need a new build — no shortcut.
+The wrapper exists because newer eas-cli releases refuse non-TTY runs
+without `--environment production` + `--non-interactive`, and pass the
+commit subject (`%s`) — not the full body — as the message so unbalanced
+quotes/backticks in the body don't break eas-cli's argument parsing.
+
+`runtimeVersion: { policy: "fingerprint" }` means changes to autolinked
+native deps advance the runtime version. Existing installs only pick up
+an OTA whose runtime version matches the APK they're on — pure-JS
+changes are fine; adding or removing a native module isn't an OTA-safe
+shortcut. See `loop-memory/01-known-codebase.md` for the full note.
+
+For native crashes, you need a new EAS Build — no shortcut.
 
 ## Reverting
 
