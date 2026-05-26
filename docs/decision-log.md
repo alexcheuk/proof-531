@@ -42,6 +42,24 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — CONTRIBUTING.md catches up to the Expo Go reality
+
+**Tags:** `docs`, `process`
+**Files:** `docs/CONTRIBUTING.md`
+
+Three drifts in the contributor onboarding doc:
+
+- **Prereqs** listed `Xcode 26+` for iOS native builds. Not required under Expo Go (no custom dev client). Replaced with "Expo Go latest from App Store / Play Store".
+- **Daily commands** described `pnpm --filter @fivethreeone/mobile start` as "boot Dev Client (Metro)". It boots Metro for Expo Go. Fixed.
+- **Test discipline** said "pixel fidelity is checked via Storybook + Maestro screenshots, not jest". Neither is wired today — they're deferred along with the dev-client itself. Fixed to point at the actual review path (manual PWA-vs-RN screenshot pairs on each PR).
+- **Pre-commit and PR review** claimed "Coverage gates are enforced; the reviewer subagent rejects diffs that drop coverage in `src/domain/`". The verifier supports per-task `coverage on X >= N` rules but there is no global gate; rewrote to describe what's actually enforced.
+
+Also tightened the `pnpm verify` description to match the actual script (`ci && bundle-check && build:web`).
+
+**Why:** CONTRIBUTING.md is the second file a new contributor opens (after the README). Telling them they need Xcode 26 when they don't, or that there's a coverage gate that doesn't exist, makes the bar look more intimidating than it is.
+
+**Home-page note (loop-047):** category 8 was not touched this loop. The home page is in steady state — the audit checklist is mostly green and recent loops shipped favicon (loop-040), home-page RSS link (loop-044), and the Base.astro skip-link (loop-046). Forcing a home-page change this loop would be manufacturing surface. Per the pacing memory's "honest looked-found-nothing beats fake feature inflation" line, this is the right call.
+
 ### 2026-05-26 — DESIGN.md status banner + Base.astro skip-to-content link
 
 **Tags:** `docs`, `website`, `accessibility`

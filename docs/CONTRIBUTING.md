@@ -14,7 +14,7 @@ document picks up where that leaves off.
 | pnpm | 9.15+ | Workspace manager. Install via Corepack: `corepack enable && corepack prepare pnpm@latest --activate`. |
 | bash | 4+ | Orchestrator scripts use `mapfile` and `declare -A`. macOS ships 3.2 — `brew install bash`. |
 | yq (mikefarah) | v4 | Queue scripts. `brew install yq`, or download from https://github.com/mikefarah/yq/releases. |
-| Xcode | 26+ | iOS native builds (SDK 55). Not required for JS-only dev. |
+| Expo Go | latest from App Store / Play Store | Run the app on a physical device by scanning Metro's QR. |
 
 ### Bootstrap
 
@@ -29,14 +29,14 @@ pnpm install
 ## Daily commands
 
 ```bash
-pnpm --filter @fivethreeone/mobile start    # boot Dev Client (Metro)
+pnpm --filter @fivethreeone/mobile start    # boot Metro; scan QR with Expo Go
 pnpm typecheck                            # tsc --noEmit across workspace
 pnpm lint                                 # biome
 pnpm test                                 # jest
 pnpm expo-doctor                          # expo doctor (renamed; `pnpm doctor` is a pnpm builtin)
 pnpm bundle-check                         # full Metro export — catches missing deps CI doesn't
 pnpm run ci                               # full chain — typecheck + lint + boundaries + test
-pnpm verify                               # `pnpm run ci` PLUS `pnpm bundle-check`
+pnpm verify                               # `pnpm run ci` PLUS `pnpm bundle-check` PLUS `build:web`
 ```
 
 `pnpm verify` is the green-bar gate before every commit. If it does not pass
@@ -221,17 +221,21 @@ the `done_when` checklist and a link to the run log in the body.
 - **TDD for `src/domain/`**: red → green → commit. Property tests via
   [`fast-check`](https://github.com/dubzzz/fast-check) where applicable.
 - **Component tests assert behavior, not pixels.** Pixel fidelity is checked
-  via Storybook + Maestro screenshots, not jest.
+  manually against the PWA reference (screenshot pairs attached to each PR).
+  Storybook + Maestro screenshot harnesses from the original spec are
+  deferred until a dev-client build is needed.
 - **No skipped tests** without a comment linking to a tracking issue.
 
 ## Pre-commit and PR review
 
-- `pnpm run ci` must pass locally before opening a PR.
-- Coverage gates are enforced; the reviewer subagent rejects diffs that drop
-  coverage in `src/domain/`.
-- Reviewer also enforces boundary rules (no hex outside `tokens.ts`, no React
-  in `domain/`, no `drizzle` imports outside `data/`, no barrels in `features/`
-  or `domain/`, one-way import direction).
+- `pnpm verify` must pass locally before opening a PR (typecheck + lint +
+  boundary check + test + Metro bundle export + web build).
+- The orchestrator's reviewer subagent enforces boundary rules (no hex outside
+  `tokens.ts`, no React/async/Drizzle in `domain/`, no `drizzle` imports
+  outside `data/`, no barrels in `features/` or `domain/`, one-way import
+  direction).
+- Domain-layer coverage thresholds are configured per-task on the queue when
+  needed; there is no global 95% gate today.
 
 If the reviewer requests changes, fix them and re-run `pnpm run ci`. The
 orchestrator handles this automatically; humans should follow the same loop.
