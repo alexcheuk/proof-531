@@ -80,6 +80,21 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `pnpm find-unused` (added 2026-05-24) flags primitives barrel exports
   that no feature imports — run when culling design-system surface area.
 
+## OTA fingerprint sensitivity (loop-043)
+
+- `app.json` sets `runtimeVersion: { policy: "fingerprint" }`. The
+  fingerprint hashes the autolinked native modules (and a few config
+  files). Removing or adding a native module (e.g. `expo-blur`,
+  `expo-av`, anything with a native binding) changes the fingerprint,
+  which means the published OTA carries a new runtime version that no
+  existing APK matches — installed clients stay on the prior OTA until
+  a fresh native build ships.
+- Pure-JS dep changes (e.g. `zustand`) do NOT change the fingerprint
+  and the OTA reaches existing installs normally.
+- When in doubt, check the OTA output's `Runtime version` line against
+  the prior loop's. If it changed, the OTA is effectively a no-op for
+  existing users — code is still on `main`, just gated on a rebuild.
+
 ## Sticky-header elevation (`useScrolledPast` + `Masthead elevated`)
 
 - Pair `useScrolledPast()` (in `src/design/hooks/`) with `<Masthead elevated>`
