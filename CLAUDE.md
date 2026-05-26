@@ -108,6 +108,12 @@ See `.claude/skills/initial-implement/SKILL.md` for the orchestrator's full beha
 
 Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
 
+### Skill scoping
+
+- **`frontend-design`** (Anthropic) is scoped to `apps/web/` (the marketing site) only. Its own SKILL.md mandates "BOLD aesthetic direction" — brutalism, maximalist chaos, experimental typography — which directly conflicts with the e-ink monochrome system the mobile app is locked into. **Do not invoke `frontend-design` for any work under `apps/mobile/`**; use `rn-designer` (via the `rn-expo-pipeline` skill) instead. For `apps/web/` it remains available.
+- **`vercel-react-native-skills`** (vendored at `.claude/skills/vercel-react-native-skills/`) is the RN/Expo runtime-quality reference. `rn-frontend` consults it during implementation, `rn-qa` consults it during audit. Read `531-INTEGRATION.md` in that folder for local adaptations (which rules don't apply, which need translating to the token system).
+- **`rn-design-audit`** (`.claude/skills/rn-design-audit/`) is the standalone visual-audit skill — invoke when you want a phased polish plan for an existing screen or the whole app, separate from the per-feature spec/implement/QA loop.
+
 ## Harness: rn-expo (design + frontend + QA pipeline)
 
 **Goal:** ship a 531 feature end-to-end (idea → PR-ready commit) via a coordinated design/frontend/QA agent team.

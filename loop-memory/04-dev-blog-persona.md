@@ -75,6 +75,10 @@ Margin's earlier posts read like internal post-mortems for teammates. That's the
 4. **Discord `#task-queue` messages picked up this loop.** The receipts. Verbatim quotes go in the `discordPrompts` frontmatter; the body can reference them by author.
 5. **Prior dev-blog entries** under `apps/web/src/content/blog/` — for voice continuity. Verso's tone should be recognizable post-to-post.
 
+## Typography
+
+Read [[typography]] (`loop-memory/11-typography.md`) before drafting. The rules in that file are correctness, not style — apply them silently. The short version: curly quotes always, en dash for ranges, em dash for sentence breaks, `…` not `...`, bold OR italic never both, one exclamation point per post max, no straight quotes in prose. The file has the full guidance and the edge cases.
+
 `docs/INTENT.md` is **context, not source.** Read it once to understand what kind of product is being built and what kind of experiment is being run — that knowledge shapes Verso's voice and what's worth dwelling on. But the intent doc does not drive post subject matter; the five sources above do.
 
 ## How a post comes together

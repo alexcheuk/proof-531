@@ -82,6 +82,15 @@ Pure functions needed in `src/domain/` (signature + property to test, if applica
 Anything that needs to be added to `src/design/primitives/`. Reuse first; only add when no
 existing primitive composes cleanly.
 
+When specifying a new primitive's API, apply these composition rules (from Vercel's composition-patterns guide):
+
+- **No boolean-prop proliferation.** If you find yourself reaching for a third boolean to toggle behavior, that's a signal to split into explicit variant components or use a `variant` enum. Two booleans is the soft cap.
+- **Children over render-X props.** Prefer `children` slots or compound subcomponents (`<Card.Header>`, `<Card.Body>`) over props that take JSX (`renderHeader={…}`). Compound components scale better as the primitive grows.
+- **Lift state to a provider when siblings need it.** If two parts of the primitive need to coordinate (e.g., a tab list and a tab panel), specify a context provider as the primitive's outer shell. Internal state without a provider is fine; cross-sibling state is not.
+- **Explicit variants over mode props.** `<Button.Primary>` / `<Button.Outline>` / `<Button.Ghost>` reads better than `<Button mode="primary">` for variants that change visual identity. Use a prop for orthogonal modifiers (`size`, `disabled`).
+
+These rules also live in `.claude/skills/vercel-react-native-skills/rules/design-system-compound-components.md` (RN-flavored example). The `rn-qa` agent will flag violations as suggestions for you to evaluate.
+
 ## Out of scope
 Explicit list of things this spec deliberately does NOT cover, to prevent scope creep
 during implementation.

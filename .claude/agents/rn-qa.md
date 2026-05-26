@@ -104,6 +104,28 @@ If the spec lists PWA references, open each one and compare the implemented comp
 
 Flag every divergence. The spec author may have intended some divergences — note both intended and unintended.
 
+### 7. RN best-practices audit
+Consult `.claude/skills/vercel-react-native-skills/SKILL.md` (read `531-INTEGRATION.md` first for local adaptations). Walk the categorized rule index against the diff in priority order:
+
+- **CRITICAL — List performance.** Any new list? Confirm FlashList, item memoization, callback stability, no inline style objects, no inline functions in render. Open `rules/list-performance-*.md` only on suspected violations.
+- **HIGH — Animation.** Any new Reanimated worklet? Confirm GPU-only properties (`transform`, `opacity`), `useDerivedValue` for computed shared values, `Gesture.Tap` over `Pressable` when both interactions and animations interact.
+- **HIGH — UI patterns.** New touchable? Should be `Pressable`. New image? Should be `expo-image`. New modal/menu? Prefer native.
+- **MEDIUM — State & rendering.** Spot-check for `react-state-minimize`, `rendering-no-falsy-and`, `rendering-text-in-text-component`.
+
+Skip `react-compiler-*` (not enabled in 531). Treat `ui-styling` as satisfied when tokens are consumed via `src/design/primitives/` (raw hex/px outside `src/design/` is already a separate finding from §3 boundary audit).
+
+File RN-practice findings in the report under `## RN best-practices` with the rule ID, file:line, and one-line explanation.
+
+### 8. Component-API check (new or modified primitives)
+When the diff touches `src/design/primitives/`, audit the API against composition patterns:
+
+- **Boolean prop proliferation** — primitive accepts more than 2 booleans that toggle behavior? Suggest explicit variant components (`<Button.Primary>` vs `<Button.Outline>` vs `<Button>` with a `variant` enum) instead.
+- **Render-X props** — any `renderHeader` / `renderItem` props that take JSX? Suggest `children` or slot-style subcomponents.
+- **State location** — primitive owns state that a parent needs to read? Suggest lifting state into a provider so siblings can subscribe.
+- **Compound shape** — primitive composes 3+ subparts (header / body / footer / actions)? Suggest a compound-component shape with shared context (`<Card>`, `<Card.Header>`, `<Card.Body>`) rather than props-as-slots.
+
+These are *suggestions*, not blockers — call them out for `rn-designer` to evaluate, not for `rn-frontend` to silently rework.
+
 ## Output
 
 Write `_workspace/03_qa_report.md`:
