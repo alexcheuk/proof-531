@@ -1,10 +1,14 @@
 /**
- * Per-lift e1RM goal accessors.
+ * Per-lift goal accessors.
  *
  * The `lift_goals` table holds at most one row per lift (lift is PK). Zero
  * rows = "no goal set" — the Progress screen's empty/unset state. Stored
  * in storage units to match `trainingMaxes`; the render boundary converts
- * to the user's display unit via `displayWeight()` / `convertWeight()`.
+ * to the user's display unit at read time.
+ *
+ * A goal carries a `kind`:
+ *   - `'tm'`  — target training max
+ *   - `'1rm'` — target estimated one-rep max (TM ≈ 0.9 × 1RM)
  *
  * `setLiftGoal` is an upsert (ON CONFLICT lift). `clearLiftGoal` deletes
  * the row entirely so the next read returns `null`.
@@ -17,6 +21,7 @@ import { liftGoals } from '../drizzle/schema';
 // biome-ignore lint/suspicious/noExplicitAny: structural typing for cross-driver drizzle
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
+export type LiftGoalKind = 'tm' | '1rm';
 export type LiftGoal = typeof liftGoals.$inferSelect;
 
 /** Read a single lift's goal, or `null` if none has been set. */
@@ -40,18 +45,19 @@ export async function getLiftGoals(db: AnyDb): Promise<LiftGoal[]> {
 export async function setLiftGoal(
   db: AnyDb,
   lift: Lift,
-  targetE1RM: number,
+  kind: LiftGoalKind,
+  targetValue: number,
   unit: Unit,
 ): Promise<LiftGoal> {
   const updatedAt = Date.now();
-  const row = { lift, targetE1RM, unit, updatedAt };
+  const row = { lift, kind, targetValue, unit, updatedAt };
   const inserted = (await Promise.resolve(
     db
       .insert(liftGoals)
       .values(row)
       .onConflictDoUpdate({
         target: liftGoals.lift,
-        set: { targetE1RM, unit, updatedAt },
+        set: { kind, targetValue, unit, updatedAt },
       })
       .returning(),
   )) as LiftGoal[];

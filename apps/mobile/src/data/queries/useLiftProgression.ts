@@ -1,32 +1,29 @@
 /**
- * `useLiftProgression(lift)` — assembles the Progress screen's view model:
- * past rows (one per completed cycle, with the AMRAP-based actual e1RM and
- * tap-target session ids per day), the current row (the one anchored as
- * "you are here"), future rows (projected via the domain functions), and
- * the goal/cycles-to-go shape for the goal strip.
+ * `useLiftProgression(lift)` — assembles the Progress screen view model:
+ * one row per cycle from C1 through `currentCycle + 6`, each with 4 day
+ * cells (past / last-done / now / future), the cycle's TM, and a
+ * `crossesGoal` marker on the cycle whose projected TM first reaches the
+ * goal.
  *
- * The hook is a thin orchestration over four upstream queries (settings,
- * TMs, lift goal, completed-sessions-with-AMRAP) plus the pure projection
- * math in `domain/progression.ts`. Reshape logic lives here (not in the
- * domain layer) because it has to thread display-unit conversion and DB
- * shape juggling that doesn't belong in the pure layer.
+ * The hook orchestrates four upstream queries (settings, TMs, lift goal,
+ * completed-sessions-with-AMRAP) and threads the pure projection math in
+ * `domain/progression.ts`. Display-unit conversion happens here so the
+ * render boundary just consumes numbers.
  *
- * Cache key is prefixed with `'liftProgression'` so the session-complete
- * invalidation chain (see `useLiveScreenEffects`) can blow this surface
- * away with a single prefix invalidate. The goal-set mutation invalidates
- * the same prefix.
+ * Cache key prefix `'liftProgression'` is invalidated by the
+ * session-complete chain and by the goal-set mutation.
  */
 import { useQuery } from '@tanstack/react-query';
 import {
-  bestE1RMForCycle,
-  cyclesUntilGoal,
-  projectFutureCycles,
-  rollingAmrapMargin,
+  cyclesUntilTmGoal,
+  goalTargetTm,
+  projectCycleRows,
+  projectTopSetWeight,
 } from '../../domain/progression';
 import type { Lift, Unit } from '../../domain/types';
 import { convertWeight, displayWeight, round } from '../../domain/units';
 import { useDb } from '../DbProvider';
-import { getLiftGoal } from '../accessors/liftGoal';
+import { type LiftGoalKind, getLiftGoal } from '../accessors/liftGoal';
 import {
   type CompletedSessionWithAmrap,
   getCompletedSessionsWithAmrapForLift,
@@ -36,21 +33,26 @@ import { getCurrentTrainingMaxes } from '../accessors/trainingMax';
 
 export const LIFT_PROGRESSION_KEY = (lift: Lift) => ['liftProgression', lift] as const;
 
-/**
- * One day cell inside a {@link ProgressionRow}. All weights are in display
- * units, rounded to the unit's plate step for render.
- */
 export type ProgressionCellPast = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
-  /** `'last-done'` is the outlined "you are here" treatment. */
   kind: 'past' | 'last-done';
   sessionId: number;
+  /** Display-unit, plate-snapped. */
   topWeight: number;
   topReps: number;
-  /** True when this cell is the AMRAP top set. Deload sessions have no AMRAP. */
+  /** True when the cell is the AMRAP top set. Deload sessions have no AMRAP. */
   amrap: boolean;
-  /** True for the week-4 deload cell. */
+  /** True for the week-4 deload column. */
+  deload: boolean;
+};
+
+export type ProgressionCellNow = {
+  cycle: number;
+  day: 1 | 2 | 3 | 4;
+  kind: 'now';
+  /** Display-unit, plate-snapped — what the user is about to lift today. */
+  prescribedWeight: number;
   deload: boolean;
 };
 
@@ -58,39 +60,42 @@ export type ProgressionCellFuture = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'future';
+  /** Display-unit, plate-snapped. 0 = no data and not projected (rare). */
   projectedWeight: number;
-  /** True for the week-4 deload cell. */
   deload: boolean;
 };
 
-export type ProgressionCell = ProgressionCellPast | ProgressionCellFuture;
+export type ProgressionCell = ProgressionCellPast | ProgressionCellNow | ProgressionCellFuture;
 
 export type ProgressionRow = {
   cycle: number;
+  isPast: boolean;
+  isCurrent: boolean;
+  isFuture: boolean;
   cells: ProgressionCell[];
-  /** Display-unit e1RM (rounded). */
-  e1rm: number;
-  e1rmKind: 'past' | 'projected';
-  /** True on the first projected row whose e1rm ≥ goal (for ★ + dashed goal-rule). */
+  /** Display-unit, plate-snapped. */
+  tm: number;
+  /** True on the first row whose `tm >= targetTm` (drives the dashed goal-rule above this row). */
   crossesGoal?: true;
 };
 
 export type LiftProgression = {
   lift: Lift;
-  /** Current TM in display units, rounded for render. */
-  tm: number;
-  /** Current actual e1RM in display units (max across the current cycle's AMRAPs), or 0. */
-  currentE1RM: number;
-  currentCycle: number;
-  /** Display unit at view-time. */
   unit: Unit;
-  /** Past cycles (every fully-completed cycle), oldest first. */
-  pastRows: ProgressionRow[];
-  /** Future cycles (currentCycle+1 .. currentCycle+6). */
-  futureRows: ProgressionRow[];
-  /** Goal in display units, or null when no goal is set. */
-  goal: { value: number; unit: Unit } | null;
-  /** Number of future cycles until projection crosses goal, or null. */
+  /** Current TM in display units (plate-snapped). */
+  tm: number;
+  currentCycle: number;
+  currentWeek: 1 | 2 | 3 | 4;
+  /** All rendered cycle rows: C1 .. currentCycle + 6, in chronological order. */
+  rows: ProgressionRow[];
+  /** Goal — value/unit in DISPLAY units; targetTm in display units too. */
+  goal: {
+    kind: LiftGoalKind;
+    value: number;
+    unit: Unit;
+    targetTm: number;
+  } | null;
+  /** Cycles from currentCycle until projected TM crosses goal; 0 if already past; null if no goal or unreachable. */
   cyclesUntilGoal: number | null;
 };
 
@@ -111,236 +116,173 @@ export function useLiftProgression(lift: Lift) {
       const tmRow = tms.find((t) => t.lift === lift);
       const currentTmStorage = tmRow?.value ?? 0;
       const currentTmStorageUnit = tmRow?.unit ?? settings.storageUnit;
-      const tmDisplay = displayWeight(currentTmStorage, currentTmStorageUnit, displayU);
+      const tmDisplay = round(
+        displayWeight(currentTmStorage, currentTmStorageUnit, displayU),
+        displayU,
+      );
       const currentCycle = settings.currentCycle;
+      const currentWeek = clampWeek(settings.week);
 
-      // Group sessions by cycle. Each cycle gets one row of up-to-4 day cells.
-      const byCycle = groupByCycle(sessions);
+      const startCycle = 1;
+      const endCycle = currentCycle + FUTURE_COUNT;
 
-      // PAST rows: cycles strictly less than current. Each row's e1rm = max
-      // bestE1RMForCycle across all the cycle's amrap rows (display unit).
-      const pastCycles = Array.from(byCycle.keys())
-        .filter((c) => c < currentCycle)
-        .sort((a, b) => a - b);
-      const currentRowSessions = byCycle.get(currentCycle) ?? [];
-
-      // Future-projection inputs.
-      const completedAmrapPerCycle: Array<{
-        amrapPrescribedReps: number;
-        amrapActualReps: number;
-      }> = [];
-      for (const c of pastCycles) {
-        const sessionsForCycle = byCycle.get(c) ?? [];
-        // Pick the heaviest-e1RM amrap in the cycle for the rolling-margin sample.
-        let best: { prescribedReps: number; actualReps: number; e1rm: number } | null = null;
-        for (const s of sessionsForCycle) {
-          if (!s.amrap) continue;
-          const e1 = s.amrap.estimated1RM ?? 0;
-          if (!best || e1 > best.e1rm) {
-            best = {
-              prescribedReps: s.amrap.prescribedReps,
-              actualReps: s.amrap.actualReps,
-              e1rm: e1,
-            };
-          }
-        }
-        if (best) {
-          completedAmrapPerCycle.push({
-            amrapPrescribedReps: best.prescribedReps,
-            amrapActualReps: best.actualReps,
-          });
-        }
+      // Map sessions by cycle then day.
+      const byCycleDay = new Map<number, Map<1 | 2 | 3 | 4, CompletedSessionWithAmrap>>();
+      for (const s of sessions) {
+        const day = weekToDay(s.week);
+        const day2session = byCycleDay.get(s.cycle) ?? new Map();
+        day2session.set(day, s);
+        byCycleDay.set(s.cycle, day2session);
       }
-      const margin = rollingAmrapMargin(completedAmrapPerCycle, 3);
 
-      // Identify the "you are here" session — the most recently completed
-      // session row for this lift (greatest startedAt). Per the spec this
-      // outlined treatment is the **single** last-completed cell across
-      // all rows, so we mark exactly one cell.
+      // Most-recent completed session for the outlined "you are here" cell.
       const mostRecentSessionId = sessions[0]?.sessionId ?? null;
 
-      const pastRows: ProgressionRow[] = pastCycles.map((cycle) => {
-        const cycleSessions = byCycle.get(cycle) ?? [];
-        const cells = buildPastCells(
-          cycle,
-          cycleSessions,
-          mostRecentSessionId,
-          currentTmStorageUnit,
-          displayU,
-        );
-        // e1rm = best across this cycle's amrap rows, in DISPLAY units.
-        const rows = cycleSessions
-          .filter((s) => s.amrap)
-          .map((s) => {
-            // amrap weight is stored in the session's storage snapshot unit.
-            const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
-            const wDisplay = convertWeight(
-              // biome-ignore lint/style/noNonNullAssertion: filter above
-              s.amrap!.prescribedWeight,
-              storageU,
+      // Skeleton: cycle range with projected TM and day weights (used for
+      // 'now' / 'future' cells; past cells overlay with real data).
+      const skeleton = projectCycleRows(
+        startCycle,
+        endCycle,
+        tmDisplay,
+        currentCycle,
+        lift,
+        displayU,
+      );
+
+      const rows: ProgressionRow[] = skeleton.map((s) => {
+        const day2session = byCycleDay.get(s.cycle);
+        const cells: ProgressionCell[] = ([1, 2, 3, 4] as const).map((day) => {
+          const sess = day2session?.get(day);
+          const isPastCycle = s.cycle < currentCycle;
+          const isCurrentCycle = s.cycle === currentCycle;
+          const isPastInCurrent = isCurrentCycle && day < currentWeek;
+          const isNow = isCurrentCycle && day === currentWeek;
+
+          if (sess) {
+            return makePastCell(
+              s.cycle,
+              day,
+              sess,
+              mostRecentSessionId,
+              currentTmStorageUnit,
+              displayU,
+            );
+          }
+          if (isPastCycle || isPastInCurrent) {
+            // No session logged for a past/current-past slot — render as ghosted
+            // future-style cell anchored to the projected weight for that day.
+            const projected = projectTopSetWeight(
+              s.cycle,
+              day,
+              tmDisplay,
+              currentCycle,
+              lift,
               displayU,
             );
             return {
-              prescribedWeight: wDisplay,
-              // biome-ignore lint/style/noNonNullAssertion: filter above
-              actualReps: s.amrap!.actualReps,
-              kind: 'amrap' as const,
-            };
-          });
-        const e1rm = Math.round(bestE1RMForCycle(rows));
-        return {
-          cycle,
-          cells,
-          e1rm,
-          e1rmKind: 'past',
-        };
-      });
-
-      // CURRENT row: a row at currentCycle whose cells mix past (if any
-      // sessions logged in this cycle) and future (projected for days not
-      // yet logged). We render this as part of the future tail so the
-      // grid is one continuous scroll list; mark days that have a session
-      // as past, the rest as future projection from currentTm itself.
-      const currentRowCells = buildCurrentRowCells(
-        currentCycle,
-        currentRowSessions,
-        mostRecentSessionId,
-        currentTmStorage,
-        currentTmStorageUnit,
-        displayU,
-        lift,
-      );
-      // Current e1RM = best across the current cycle's amrap rows.
-      const currentE1rmRows = currentRowSessions
-        .filter((s) => s.amrap)
-        .map((s) => {
-          const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
-          const wDisplay = convertWeight(
-            // biome-ignore lint/style/noNonNullAssertion: filter above
-            s.amrap!.prescribedWeight,
-            storageU,
-            displayU,
-          );
-          return {
-            prescribedWeight: wDisplay,
-            // biome-ignore lint/style/noNonNullAssertion: filter above
-            actualReps: s.amrap!.actualReps,
-            kind: 'amrap' as const,
-          };
-        });
-      const currentE1RM = Math.round(bestE1RMForCycle(currentE1rmRows));
-
-      // FUTURE rows: projected from currentTm forward. Convert all weights
-      // through displayWeight at construction time so the render boundary
-      // just consumes display numbers.
-      const futureRaw = projectFutureCycles(
-        FUTURE_COUNT,
-        // Project in display units so the snap matches the displayed step.
-        tmDisplay,
-        currentCycle,
-        margin,
-        lift,
-        displayU,
-      );
-      const futureRowsList: ProgressionRow[] = futureRaw.map((r) => {
-        const cells: ProgressionCellFuture[] = r.days.map((d) => ({
-          cycle: r.cycle,
-          day: d.day,
-          kind: 'future',
-          projectedWeight: d.weight,
-          deload: d.day === 4,
-        }));
-        return {
-          cycle: r.cycle,
-          cells,
-          e1rm: Math.round(r.e1rm),
-          e1rmKind: 'projected',
-        };
-      });
-
-      // Prepend the current row (cycle === currentCycle).
-      const allFutureRows: ProgressionRow[] = [
-        {
-          cycle: currentCycle,
-          cells: currentRowCells,
-          e1rm:
-            currentE1RM > 0
-              ? currentE1RM
-              : // No completed AMRAP yet this cycle; project from current TM.
-                Math.round(
-                  projectFutureCycles(1, tmDisplay, currentCycle - 1, margin, lift, displayU)[0]
-                    ?.e1rm ?? 0,
-                ),
-          e1rmKind: currentE1RM > 0 ? 'past' : 'projected',
-        },
-        ...futureRowsList,
-      ];
-
-      // Goal computation (display units).
-      const goalDisplay = goalRow
-        ? {
-            value: displayWeight(goalRow.targetE1RM, goalRow.unit, displayU),
-            unit: displayU,
+              cycle: s.cycle,
+              day,
+              kind: 'future',
+              projectedWeight: projected,
+              deload: day === 4,
+            } satisfies ProgressionCellFuture;
           }
+          if (isNow) {
+            return {
+              cycle: s.cycle,
+              day,
+              kind: 'now',
+              prescribedWeight: projectTopSetWeight(
+                s.cycle,
+                day,
+                tmDisplay,
+                currentCycle,
+                lift,
+                displayU,
+              ),
+              deload: day === 4,
+            } satisfies ProgressionCellNow;
+          }
+          // Pure future.
+          return {
+            cycle: s.cycle,
+            day,
+            kind: 'future',
+            projectedWeight: projectTopSetWeight(
+              s.cycle,
+              day,
+              tmDisplay,
+              currentCycle,
+              lift,
+              displayU,
+            ),
+            deload: day === 4,
+          } satisfies ProgressionCellFuture;
+        });
+        return {
+          cycle: s.cycle,
+          isPast: s.cycle < currentCycle,
+          isCurrent: s.cycle === currentCycle,
+          isFuture: s.cycle > currentCycle,
+          cells,
+          tm: round(s.tm, displayU),
+        };
+      });
+
+      // Resolve goal → targetTm in display units.
+      const goal = goalRow
+        ? (() => {
+            const valueDisplay = round(
+              displayWeight(goalRow.targetValue, goalRow.unit, displayU),
+              displayU,
+            );
+            const targetTm = round(goalTargetTm(goalRow.kind, valueDisplay, displayU), displayU);
+            return { kind: goalRow.kind, value: valueDisplay, unit: displayU, targetTm };
+          })()
         : null;
 
-      const k = cyclesUntilGoal(
-        goalDisplay?.value ?? null,
-        currentE1RM,
-        tmDisplay,
-        currentCycle,
-        margin,
-        lift,
-        displayU,
-      );
-
-      // Mark the first future row whose e1rm crosses the goal as
-      // crossesGoal=true.
-      if (goalDisplay) {
-        for (const row of allFutureRows) {
+      // Mark crossesGoal on the first row (with cycle > currentCycle) whose
+      // tm reaches the target. The current cycle is excluded — we treat the
+      // goal as a forward-looking target.
+      if (goal) {
+        for (const row of rows) {
           if (row.cycle <= currentCycle) continue;
-          if (row.e1rm >= goalDisplay.value) {
+          if (row.tm >= goal.targetTm) {
             row.crossesGoal = true;
             break;
           }
         }
       }
 
+      const cyclesUntilGoal = cyclesUntilTmGoal(
+        goal?.targetTm ?? null,
+        tmDisplay,
+        currentCycle,
+        lift,
+        displayU,
+      );
+
       return {
         lift,
-        tm: round(tmDisplay, displayU),
-        currentE1RM,
-        currentCycle,
         unit: displayU,
-        pastRows,
-        futureRows: allFutureRows,
-        goal: goalDisplay,
-        cyclesUntilGoal: k,
+        tm: tmDisplay,
+        currentCycle,
+        currentWeek,
+        rows,
+        goal,
+        cyclesUntilGoal,
       };
     },
   });
 }
 
-/** Group sessions by their `cycle` field. */
-function groupByCycle(
-  sessions: CompletedSessionWithAmrap[],
-): Map<number, CompletedSessionWithAmrap[]> {
-  const m = new Map<number, CompletedSessionWithAmrap[]>();
-  for (const s of sessions) {
-    const list = m.get(s.cycle);
-    if (list) list.push(s);
-    else m.set(s.cycle, [s]);
-  }
-  return m;
+function clampWeek(w: number): 1 | 2 | 3 | 4 {
+  if (w <= 1) return 1;
+  if (w === 2) return 2;
+  if (w === 3) return 3;
+  return 4;
 }
 
-/**
- * Map a session's `week` (1..4) to its `day` in the progression grid.
- * 5/3/1 trains one lift per week, so within a cycle a lift has at most
- * 4 sessions: week 1 → D1 (5×5+), week 2 → D2 (3×3+), week 3 → D3
- * (5/3/1+), week 4 → Deload. The Progress grid uses day columns to
- * match this: D1 = week 1, D2 = week 2, D3 = week 3, Deload = week 4.
- */
 function weekToDay(week: number): 1 | 2 | 3 | 4 {
   if (week === 1) return 1;
   if (week === 2) return 2;
@@ -348,112 +290,28 @@ function weekToDay(week: number): 1 | 2 | 3 | 4 {
   return 4;
 }
 
-function buildPastCells(
+function makePastCell(
   cycle: number,
-  cycleSessions: CompletedSessionWithAmrap[],
+  day: 1 | 2 | 3 | 4,
+  s: CompletedSessionWithAmrap,
   mostRecentSessionId: number | null,
   currentTmStorageUnit: Unit,
   displayU: Unit,
-): ProgressionCell[] {
-  const byDay = new Map<1 | 2 | 3 | 4, CompletedSessionWithAmrap>();
-  for (const s of cycleSessions) {
-    byDay.set(weekToDay(s.week), s);
-  }
-  const cells: ProgressionCell[] = [];
-  for (const day of [1, 2, 3, 4] as const) {
-    const s = byDay.get(day);
-    if (s) {
-      // Map session to PAST cell. Use AMRAP if present; otherwise fall
-      // back to the prescribed top set (week-1/2 day-cells of the cycle
-      // still show the *top set* — the third 'working' set's prescribed
-      // weight, which equals the AMRAP's prescribed weight). Since we
-      // only joined AMRAP rows, a session without amrap (deload) gets
-      // weight from the TM snapshot × week-4 60% (mirrors the projection
-      // path).
-      const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
-      const weight =
-        s.amrap !== null
-          ? convertWeight(s.amrap.prescribedWeight, storageU, displayU)
-          : // Deload (week 4): TM × 0.60 in display units.
-            round(convertWeight(s.trainingMaxSnapshot * 0.6, storageU, displayU), displayU);
-      const reps = s.amrap ? s.amrap.actualReps : 5; // deload reps placeholder; cell renders ✓
-      cells.push({
-        cycle,
-        day,
-        kind: s.sessionId === mostRecentSessionId ? 'last-done' : 'past',
-        sessionId: s.sessionId,
-        topWeight: round(weight, displayU),
-        topReps: reps,
-        amrap: !!s.amrap,
-        deload: day === 4,
-      } satisfies ProgressionCellPast);
-    } else {
-      // Past cycle, missing day — render as ghosted future-style cell
-      // anchored to the TM at this cycle. The user finished the cycle
-      // (it's < currentCycle) but didn't log this day; we can't fabricate
-      // a session id, so the cell is non-interactive.
-      cells.push({
-        cycle,
-        day,
-        kind: 'future',
-        projectedWeight: 0,
-        deload: day === 4,
-      } satisfies ProgressionCellFuture);
-    }
-  }
-  return cells;
-}
-
-function buildCurrentRowCells(
-  cycle: number,
-  cycleSessions: CompletedSessionWithAmrap[],
-  mostRecentSessionId: number | null,
-  currentTmStorage: number,
-  currentTmStorageUnit: Unit,
-  displayU: Unit,
-  lift: Lift,
-): ProgressionCell[] {
-  const byDay = new Map<1 | 2 | 3 | 4, CompletedSessionWithAmrap>();
-  for (const s of cycleSessions) {
-    byDay.set(weekToDay(s.week), s);
-  }
-  const cells: ProgressionCell[] = [];
-  for (const day of [1, 2, 3, 4] as const) {
-    const s = byDay.get(day);
-    if (s) {
-      const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
-      const weight =
-        s.amrap !== null
-          ? convertWeight(s.amrap.prescribedWeight, storageU, displayU)
-          : round(convertWeight(s.trainingMaxSnapshot * 0.6, storageU, displayU), displayU);
-      const reps = s.amrap ? s.amrap.actualReps : 5;
-      cells.push({
-        cycle,
-        day,
-        kind: s.sessionId === mostRecentSessionId ? 'last-done' : 'past',
-        sessionId: s.sessionId,
-        topWeight: round(weight, displayU),
-        topReps: reps,
-        amrap: !!s.amrap,
-        deload: day === 4,
-      } satisfies ProgressionCellPast);
-    } else {
-      // Project the missing day from the current TM (display units).
-      // Reuse the same projection function the future rows use so the
-      // numbers match exactly (no drift from a parallel formula).
-      const tmDisplay = displayWeight(currentTmStorage, currentTmStorageUnit, displayU);
-      // projectTopSetWeight in domain expects future cycles; pass cycle as
-      // the "future" and currentCycle = cycle so delta = 0 → no TM bump.
-      const futureRows = projectFutureCycles(1, tmDisplay, cycle - 1, 0, lift, displayU);
-      const projected = futureRows[0]?.days.find((d) => d.day === day)?.weight ?? 0;
-      cells.push({
-        cycle,
-        day,
-        kind: 'future',
-        projectedWeight: projected,
-        deload: day === 4,
-      } satisfies ProgressionCellFuture);
-    }
-  }
-  return cells;
+): ProgressionCellPast {
+  const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
+  const weight =
+    s.amrap !== null
+      ? convertWeight(s.amrap.prescribedWeight, storageU, displayU)
+      : round(convertWeight(s.trainingMaxSnapshot * 0.6, storageU, displayU), displayU);
+  const reps = s.amrap ? s.amrap.actualReps : 5;
+  return {
+    cycle,
+    day,
+    kind: s.sessionId === mostRecentSessionId ? 'last-done' : 'past',
+    sessionId: s.sessionId,
+    topWeight: round(weight, displayU),
+    topReps: reps,
+    amrap: !!s.amrap,
+    deload: day === 4,
+  };
 }

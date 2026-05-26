@@ -18,28 +18,35 @@ describe('liftGoal accessors', () => {
     expect(await getLiftGoals(db)).toEqual([]);
   });
 
-  it('upserts a single row per lift', async () => {
+  it('upserts a single row per lift, preserving kind on update', async () => {
     const db = freshDb();
-    const first = await setLiftGoal(db, 'squat', 315, 'lbs');
-    expect(first.targetE1RM).toBe(315);
-    const second = await setLiftGoal(db, 'squat', 335, 'lbs');
-    expect(second.targetE1RM).toBe(335);
+    const first = await setLiftGoal(db, 'squat', 'tm', 315, 'lbs');
+    expect(first.kind).toBe('tm');
+    expect(first.targetValue).toBe(315);
+    const second = await setLiftGoal(db, 'squat', '1rm', 405, 'lbs');
+    expect(second.kind).toBe('1rm');
+    expect(second.targetValue).toBe(405);
     const rows = await getLiftGoals(db);
     expect(rows).toHaveLength(1);
-    expect(rows[0]?.targetE1RM).toBe(335);
+    expect(rows[0]?.kind).toBe('1rm');
+    expect(rows[0]?.targetValue).toBe(405);
   });
 
   it('keeps goals per lift independent', async () => {
     const db = freshDb();
-    await setLiftGoal(db, 'squat', 315, 'lbs');
-    await setLiftGoal(db, 'bench', 225, 'lbs');
-    expect((await getLiftGoal(db, 'squat'))?.targetE1RM).toBe(315);
-    expect((await getLiftGoal(db, 'bench'))?.targetE1RM).toBe(225);
+    await setLiftGoal(db, 'squat', 'tm', 315, 'lbs');
+    await setLiftGoal(db, 'bench', '1rm', 250, 'lbs');
+    const squat = await getLiftGoal(db, 'squat');
+    const bench = await getLiftGoal(db, 'bench');
+    expect(squat?.kind).toBe('tm');
+    expect(squat?.targetValue).toBe(315);
+    expect(bench?.kind).toBe('1rm');
+    expect(bench?.targetValue).toBe(250);
   });
 
   it('clearLiftGoal removes the row idempotently', async () => {
     const db = freshDb();
-    await setLiftGoal(db, 'press', 145, 'lbs');
+    await setLiftGoal(db, 'press', 'tm', 145, 'lbs');
     await clearLiftGoal(db, 'press');
     expect(await getLiftGoal(db, 'press')).toBeNull();
     // Second clear is a no-op.

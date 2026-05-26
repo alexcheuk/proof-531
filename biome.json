@@ -16,6 +16,8 @@
       "apps/*/assets/**/*.json",
       "design-reference",
       "docs/superpowers/runs",
+      "_workspace",
+      "_workspace_archive",
       "**/*.lock",
       "**/pnpm-lock.yaml"
     ]

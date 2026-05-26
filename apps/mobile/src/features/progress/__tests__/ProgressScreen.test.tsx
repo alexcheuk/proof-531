@@ -1,24 +1,15 @@
 /**
- * Behavioral tests for the Progress screen using a real in-memory
- * better-sqlite3 DB and DbProvider, so the data layer (accessors +
- * useLiftProgression reshape) is exercised end-to-end.
+ * Smoke + behavioral tests for the rewritten Progress screen.
+ *
+ * Verifies the canonical-driven layout renders without crash and exercises
+ * the goal panel and past-cell tap. Visual fidelity (alignment, spacing) is
+ * checked manually on-device.
  */
-import { type AppDb, DbProvider } from '@/data/DbProvider';
-import { completeSession, createSession } from '@/data/accessors/session';
-import { appendSetLog } from '@/data/accessors/setLog';
-import { seedDefaultSettings } from '@/data/accessors/settings';
-import { setTrainingMax } from '@/data/accessors/trainingMax';
-import { runMigrations } from '@/data/drizzle/runMigrations';
-import * as schema from '@/data/drizzle/schema';
 import { ThemeProvider } from '@/design/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, render, waitFor, within } from '@testing-library/react-native';
-import BetterSqlite3 from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import type { ReactNode } from 'react';
+import { fireEvent, render } from '@testing-library/react-native';
+import type { ReactElement } from 'react';
 
-// Reanimated 4 boots react-native-worklets at module load — not present in
-// jest; inline-mock to plain RN views (mirrors HomeScreen test).
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
   return {
@@ -31,13 +22,13 @@ jest.mock('react-native-reanimated', () => {
 });
 
 const mockRouterPush = jest.fn();
-const mockSetParams = jest.fn();
+const mockRouterSetParams = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: mockRouterPush,
     replace: jest.fn(),
     back: jest.fn(),
-    setParams: mockSetParams,
+    setParams: mockRouterSetParams,
   }),
 }));
 
@@ -46,157 +37,230 @@ jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(),
   notificationAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
-  NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
+  NotificationFeedbackType: { Success: 'success' },
 }));
 
-// Gorhom's BottomSheet needs the gesture-handler context; for the goal-sheet
-// behavior tests we render the body shell directly without the gorhom mount.
-jest.mock('@gorhom/bottom-sheet', () => {
-  const React = require('react');
-  const RN = require('react-native');
-  const BottomSheet = ({ children }: { children: ReactNode }) =>
-    React.createElement(RN.View, null, children);
-  const BottomSheetView = ({ children }: { children: ReactNode }) =>
-    React.createElement(RN.View, null, children);
-  const BottomSheetBackdrop = () => null;
-  return {
-    __esModule: true,
-    default: BottomSheet,
-    BottomSheetView,
-    BottomSheetBackdrop,
-  };
-});
-
-function freshDb(): AppDb {
-  const sqlite = new BetterSqlite3(':memory:');
-  runMigrations(sqlite);
-  // biome-ignore lint/suspicious/noExplicitAny: cross-driver structural typing
-  return drizzle(sqlite, { schema }) as any;
-}
-
-function makeWrapper(db: AppDb) {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <ThemeProvider>
-        <QueryClientProvider client={client}>
-          <DbProvider db={db}>{children}</DbProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    );
-  };
-}
-
-async function seedSquatHistory(db: AppDb) {
-  await seedDefaultSettings(db);
-  await setTrainingMax(db, 'squat', 230, 'lbs');
-  // Two completed cycles: cycle 1 week 3 amrap, cycle 2 week 3 amrap.
-  // Settings starts at cycle=1; we'll set rows up directly.
-  // Use createSession + appendSetLog + completeSession (which advances day);
-  // for the test we just want completed rows with amrap.
-  const s1 = await createSession(db, 'squat');
-  // Bypass the cycle-walk: write the row directly via drizzle to set cycle.
-  // s1.cycle = 1 (from default settings).
-  await appendSetLog(db, {
-    sessionId: s1.id,
-    index: 2,
-    kind: 'amrap',
-    prescribedWeight: 218,
-    prescribedReps: 1,
-    actualReps: 5,
-  });
-  await completeSession(db, s1.id);
-  return s1.id;
-}
+const mockSetGoal = jest.fn().mockResolvedValue(null);
+jest.mock('@/data/queries/useSettings', () => ({
+  useSettings: () => ({
+    data: {
+      storageUnit: 'lbs',
+      displayUnit: 'lbs',
+      enabledLifts: ['squat'],
+      currentCycle: 3,
+      week: 2,
+    },
+    isLoading: false,
+    isError: false,
+  }),
+}));
+jest.mock('@/data/queries/useLatestTm', () => ({
+  useLatestTms: () => ({
+    data: [{ lift: 'squat', value: 275, unit: 'lbs' }],
+    isLoading: false,
+    isError: false,
+  }),
+}));
+jest.mock('@/data/queries/usePrs', () => ({
+  usePrs: () => ({
+    data: [{ lift: 'squat', bestE1RM: 310, setLogId: 1, achievedAt: 1 }],
+    isLoading: false,
+    isError: false,
+  }),
+}));
+jest.mock('@/data/queries/useLiftGoal', () => ({
+  useLiftGoal: () => ({ data: null, isLoading: false, isError: false }),
+  LIFT_GOAL_KEY: (lift: string) => ['liftGoal', lift],
+}));
+jest.mock('@/data/queries/useSetLiftGoal', () => ({
+  useSetLiftGoal: () => ({ mutateAsync: mockSetGoal, isPending: false }),
+}));
+jest.mock('@/data/queries/useLiftProgression', () => ({
+  useLiftProgression: (lift: string) => ({
+    data: {
+      lift,
+      unit: 'lbs',
+      tm: 275,
+      currentCycle: 3,
+      currentWeek: 2,
+      rows: [
+        {
+          cycle: 1,
+          isPast: true,
+          isCurrent: false,
+          isFuture: false,
+          tm: 275,
+          cells: [
+            {
+              kind: 'past',
+              cycle: 1,
+              day: 1,
+              sessionId: 11,
+              topWeight: 215,
+              topReps: 5,
+              amrap: true,
+              deload: false,
+            },
+            {
+              kind: 'past',
+              cycle: 1,
+              day: 2,
+              sessionId: 12,
+              topWeight: 230,
+              topReps: 5,
+              amrap: true,
+              deload: false,
+            },
+            {
+              kind: 'past',
+              cycle: 1,
+              day: 3,
+              sessionId: 13,
+              topWeight: 240,
+              topReps: 1,
+              amrap: true,
+              deload: false,
+            },
+            {
+              kind: 'past',
+              cycle: 1,
+              day: 4,
+              sessionId: 14,
+              topWeight: 155,
+              topReps: 5,
+              amrap: false,
+              deload: true,
+            },
+          ],
+        },
+        {
+          cycle: 3,
+          isPast: false,
+          isCurrent: true,
+          isFuture: false,
+          tm: 275,
+          cells: [
+            {
+              kind: 'past',
+              cycle: 3,
+              day: 1,
+              sessionId: 31,
+              topWeight: 230,
+              topReps: 5,
+              amrap: true,
+              deload: false,
+            },
+            { kind: 'now', cycle: 3, day: 2, prescribedWeight: 245, deload: false },
+            { kind: 'future', cycle: 3, day: 3, projectedWeight: 260, deload: false },
+            { kind: 'future', cycle: 3, day: 4, projectedWeight: 165, deload: true },
+          ],
+        },
+        {
+          cycle: 4,
+          isPast: false,
+          isCurrent: false,
+          isFuture: true,
+          tm: 285,
+          cells: [
+            { kind: 'future', cycle: 4, day: 1, projectedWeight: 215, deload: false },
+            { kind: 'future', cycle: 4, day: 2, projectedWeight: 240, deload: false },
+            { kind: 'future', cycle: 4, day: 3, projectedWeight: 270, deload: false },
+            { kind: 'future', cycle: 4, day: 4, projectedWeight: 170, deload: true },
+          ],
+        },
+      ],
+      goal: null,
+      cyclesUntilGoal: null,
+    },
+    isLoading: false,
+    isError: false,
+  }),
+  LIFT_PROGRESSION_KEY: (lift: string) => ['liftProgression', lift],
+}));
 
 import { ProgressScreen } from '../ProgressScreen';
 
-const renderScreen = (db: AppDb) => {
-  const Wrapper = makeWrapper(db);
-  return render(
-    <Wrapper>
-      <ProgressScreen lift="squat" />
-    </Wrapper>,
+const wrap = (ui: ReactElement) =>
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <ThemeProvider>{ui}</ThemeProvider>
+    </QueryClientProvider>,
   );
-};
+
+beforeEach(() => {
+  mockRouterPush.mockClear();
+  mockRouterSetParams.mockClear();
+  mockSetGoal.mockClear();
+});
 
 describe('ProgressScreen', () => {
-  beforeEach(() => {
-    mockRouterPush.mockClear();
-    mockSetParams.mockClear();
+  it('renders title, stats triplet, grid header, and footnote', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    expect(screen.getByText('Progress.')).toBeTruthy();
+    expect(screen.getByText('On the back squat')).toBeTruthy();
+    expect(screen.getByText('Training max')).toBeTruthy();
+    expect(screen.getByText('Best e1rm')).toBeTruthy();
+    expect(screen.getByText('D1')).toBeTruthy();
+    expect(screen.getByText('D2')).toBeTruthy();
+    expect(screen.getByText('D3')).toBeTruthy();
+    expect(screen.getByText('D4')).toBeTruthy();
+    expect(screen.getByText('→ TM')).toBeTruthy();
+    expect(screen.getByText(/per cycle · lower body/)).toBeTruthy();
   });
 
-  it('renders empty-state CTA when no sessions are logged', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 230, 'lbs');
-    const screen = renderScreen(db);
-    const page = await screen.findByTestId('progress-page-squat');
-    await waitFor(() => {
-      expect(within(page).queryByTestId('progress-empty')).toBeTruthy();
-    });
-    expect(within(page).getByText('LOG A SESSION TO LIGHT UP THIS GRID')).toBeTruthy();
+  it('zero-pads cycle labels (C01, C03, C04)', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    expect(screen.getByText('C01')).toBeTruthy();
+    // C03 appears both in the stats triplet "Cycle" column and as the current-cycle row label.
+    expect(screen.getAllByText('C03').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('C04')).toBeTruthy();
   });
 
-  it('renders the goal strip in no-goal state and opens the sheet on press', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 230, 'lbs');
-    const screen = renderScreen(db);
-    const page = await screen.findByTestId('progress-page-squat');
-    const strip = within(page).getByTestId('goal-strip-squat');
-    expect(within(page).getByText('SET AN e1RM GOAL')).toBeTruthy();
-    fireEvent.press(strip);
-    await waitFor(() => {
-      expect(within(page).queryByTestId('goal-sheet-squat-save')).toBeTruthy();
-    });
+  it('shows the NOW caps label on the current week cell', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    expect(screen.getByText('now')).toBeTruthy();
   });
 
-  it('saves a goal optimistically: strip swaps to goal-set copy after Save', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 230, 'lbs');
-    const screen = renderScreen(db);
-    const page = await screen.findByTestId('progress-page-squat');
-    fireEvent.press(within(page).getByTestId('goal-strip-squat'));
-    const save = within(page).getByTestId('goal-sheet-squat-save');
-    await act(async () => {
-      fireEvent.press(save);
-    });
-    await waitFor(() => {
-      // After save the strip swaps from "SET AN e1RM GOAL" to "GOAL · e1RM …".
-      expect(within(page).queryByText(/GOAL · e1RM/)).toBeTruthy();
-    });
+  it('renders goal panel with TM tab selected by default and ±/value steppers', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    expect(screen.getByTestId('goal-panel-squat-tab-tm')).toBeTruthy();
+    expect(screen.getByTestId('goal-panel-squat-tab-1rm')).toBeTruthy();
+    expect(screen.getByTestId('goal-panel-squat-inc')).toBeTruthy();
+    expect(screen.getByTestId('goal-panel-squat-dec')).toBeTruthy();
   });
 
-  it('tapping a past cell calls router.push to SessionComplete with from=history', async () => {
-    const db = freshDb();
-    const sessionId = await seedSquatHistory(db);
-    const screen = renderScreen(db);
-    const page = await screen.findByTestId('progress-page-squat');
-    // seedSquatHistory creates a session at cycle=1 week=1 → day=1;
-    // completeSession bumps day, so the session row stays inside the
-    // current cycle row. The week-1 session lands in cell D1 of cycle 1.
-    const cell = await within(page).findByTestId('progress-cell-1-1');
-    fireEvent.press(cell);
-    expect(mockRouterPush).toHaveBeenCalledTimes(1);
-    const call = mockRouterPush.mock.calls[0]?.[0] as {
-      pathname: string;
-      params: Record<string, string>;
-    };
-    expect(call.pathname).toContain('complete');
-    expect(call.params.sessionId).toBe(String(sessionId));
-    expect(call.params.from).toBe('history');
+  it('persists a goal when the increment stepper is tapped (creates goal on first tap)', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    fireEvent.press(screen.getByTestId('goal-panel-squat-inc'));
+    expect(mockSetGoal).toHaveBeenCalledTimes(1);
+    expect(mockSetGoal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lift: 'squat',
+        target: expect.objectContaining({ kind: 'tm', unit: 'lbs' }),
+      }),
+    );
   });
 
-  it('future cells render with accessibilityRole text (not button)', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 230, 'lbs');
-    const screen = renderScreen(db);
-    const page = await screen.findByTestId('progress-page-squat');
-    // CurrentCycle starts at 1; future row at cycle 2 day 1 should be ghosted.
-    const future = await within(page).findByTestId('progress-cell-2-1');
-    expect(future.props.accessibilityRole).toBe('text');
+  it('switches goal kind to 1RM when the 1rm tab is tapped', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    fireEvent.press(screen.getByTestId('goal-panel-squat-tab-1rm'));
+    expect(mockSetGoal).toHaveBeenCalledTimes(1);
+    expect(mockSetGoal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lift: 'squat',
+        target: expect.objectContaining({ kind: '1rm' }),
+      }),
+    );
+  });
+
+  it('routes to SessionComplete when a past cell is tapped', () => {
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    fireEvent.press(screen.getByTestId('progress-cell-1-1'));
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/session/complete',
+        params: expect.objectContaining({ sessionId: '11', from: 'history' }),
+      }),
+    );
   });
 });

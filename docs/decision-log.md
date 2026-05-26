@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — Progress screen rebuilt against canonical design (TM/1RM goal, stats triplet)
+
+**Tags:** `redesign`, `progress`, `goals`, `data-migration`
+**Files:** `apps/mobile/src/features/progress/`, `apps/mobile/src/design/primitives/{ProgressGridCell,ProgressGridRow,TmCell,PagerDots}.tsx`, `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/data/drizzle/{schema,migrations/0001_init,runMigrations}.ts`, `apps/mobile/src/data/accessors/liftGoal.ts`, `apps/mobile/src/data/queries/{useLiftGoal,useSetLiftGoal,useLiftProgression}.ts`, `_workspace/00_input/canonical-progress-v3.jsx`
+
+User surfaced the canonical Claude-Design HTML/JSX file for the Progress screen ("531 v3.html" bundle, screen `screens-progress-v3.jsx`) and asked us to implement against it. The earlier brainstorm-derived implementation diverged enough that we threw it out and rebuilt: stats triplet (TM · Best e1RM · Cycle) above a TM/1RM-toggle goal panel above a cycle-matrix grid with TM right column and a horizontal goal rule + beyond-chart footer; +N per cycle footnote. Past + current + future cycles render in one continuous range C01..currentCycle+6 with a `now` cell on the current week (caps "NOW" eyebrow + prescribed weight on a tinted row). Lift switcher kept as our swipe pager + dots (the one deliberate divergence from the canonical's tabs).
+
+**Schema change:** `lift_goals` table `target_e1rm` column replaced with `kind ∈ ('tm','1rm')` + `target_value`. Dev DBs heal via the existing staleness-drop path (extended to `lift_goals`).
+
+**Why:** the brainstorm-derived goal model (e1RM-only with rolling AMRAP rep-margin projection) was clever but the canonical design's TM/1RM toggle is simpler and matches how 5/3/1 lifters actually think about progression. Right column = TM (not e1RM) — TM is what gets projected; e1RM lives in the stats triplet as the "best lifetime PR" anchor. Goal panel is inline (not a sheet) so stepping the value gives an immediate visual response on the goal-rule placement.
+
+**Trade-offs / what we didn't do:**
+- **Kept swipe pager**, not the canonical's full-width tabs. User decision — tabs would compete with bottom-nav style elsewhere; the swipe gesture matches Today.
+- **Domain functions dropped:** `projectE1RMForFuture`, `cyclesUntilGoal` (both e1RM-based). Added `tmFromOneRm`, `goalTargetTm`, `cyclesUntilTmGoal`, `projectCycleRows`. `bestE1RMForCycle` + `rollingAmrapMargin` kept (latter is informational only now — projection is pure TM-linear).
+- **AMRAP failure / TM reset still deferred** (carried over from prior decision).
+- **Pre-prod data migration:** the brief existence of the e1RM-goal schema means no users had real data; dev DBs drop+recreate via the existing staleness mechanism. No production users to migrate.
+
 ### 2026-05-25 — Progress screen: per-lift cycle×day grid + e1RM goal projection
 
 **Tags:** `feature`, `architecture`, `progress`, `goals`

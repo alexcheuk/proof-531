@@ -125,6 +125,15 @@ describe('LiftPage', () => {
     expect(onOpenPlan).toHaveBeenCalledTimes(1);
   });
 
+  it('routes to /progress/[lift] when the "SEE PROGRESS" link is pressed', () => {
+    const screen = wrap(<LiftPage {...baseProps} />);
+    fireEvent.press(screen.getByTestId('lift-page-squat-see-progress'));
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: '/progress/[lift]', params: { lift: 'squat' } }),
+    );
+  });
+
   it('renders 4 CycleStrip cells and inverts the active week', () => {
     const screen = wrap(<LiftPage {...baseProps} week={2} />);
     // All four cells present.

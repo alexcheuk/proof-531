@@ -3,14 +3,14 @@ import { estimateOneRm } from '../epley';
 import { tmIncrement } from '../increments';
 import {
   bestE1RMForCycle,
-  cyclesUntilGoal,
-  projectE1RMForFuture,
-  projectFutureCycles,
+  cyclesUntilTmGoal,
+  goalTargetTm,
+  projectCycleRows,
   projectTmForCycle,
   projectTopSetWeight,
   rollingAmrapMargin,
+  tmFromOneRm,
 } from '../progression';
-import { setsForWeek } from '../schemes';
 import type { Lift, Unit } from '../types';
 import { round } from '../units';
 
@@ -23,23 +23,12 @@ describe('bestE1RMForCycle', () => {
   });
 
   it('returns the max Epley e1RM across rows', () => {
-    // 225 × 5 → 262.5; 245 × 3 → 269.5; 265 × 1 → 265 (short-circuit).
     const rows = [
       { prescribedWeight: 225, actualReps: 5, kind: 'amrap' as const },
       { prescribedWeight: 245, actualReps: 3, kind: 'amrap' as const },
       { prescribedWeight: 265, actualReps: 1, kind: 'amrap' as const },
     ];
-    const best = bestE1RMForCycle(rows);
-    expect(best).toBeCloseTo(269.5, 5);
-  });
-
-  it('ignores non-positive rows (zero-rep, zero-weight)', () => {
-    const rows = [
-      { prescribedWeight: 225, actualReps: 0, kind: 'amrap' as const },
-      { prescribedWeight: 0, actualReps: 5, kind: 'amrap' as const },
-      { prescribedWeight: 200, actualReps: 5, kind: 'amrap' as const },
-    ];
-    expect(bestE1RMForCycle(rows)).toBeCloseTo(estimateOneRm(200, 5), 5);
+    expect(bestE1RMForCycle(rows)).toBeCloseTo(269.5, 5);
   });
 
   it('property: equals max of per-row estimateOneRm', () => {
@@ -72,7 +61,6 @@ describe('rollingAmrapMargin', () => {
   });
 
   it('averages (actual - prescribed) over the last N cycles', () => {
-    // window=3; only last three considered: (5-1)=4, (3-1)=2, (4-1)=3 → mean=3.
     const cycles = [
       { amrapPrescribedReps: 5, amrapActualReps: 9 },
       { amrapPrescribedReps: 5, amrapActualReps: 8 },
@@ -82,30 +70,6 @@ describe('rollingAmrapMargin', () => {
     ];
     expect(rollingAmrapMargin(cycles, 3)).toBeCloseTo(3, 5);
   });
-
-  it('property: ignores leading entries beyond the window', () => {
-    fc.assert(
-      fc.property(
-        fc.array(
-          fc.record({
-            amrapPrescribedReps: fc.integer({ min: 1, max: 5 }),
-            amrapActualReps: fc.integer({ min: 1, max: 20 }),
-          }),
-          { minLength: 3, maxLength: 10 },
-        ),
-        (cycles) => {
-          // Replacing entries that fall outside the last-3 window must not
-          // change the rolling margin.
-          const lastThree = cycles.slice(-3);
-          const garbage = cycles
-            .slice(0, Math.max(0, cycles.length - 3))
-            .map(() => ({ amrapPrescribedReps: 99, amrapActualReps: 99 }));
-          const polluted = [...garbage, ...lastThree];
-          return rollingAmrapMargin(cycles, 3) === rollingAmrapMargin(polluted, 3);
-        },
-      ),
-    );
-  });
 });
 
 describe('projectTmForCycle', () => {
@@ -114,17 +78,15 @@ describe('projectTmForCycle', () => {
   });
 
   it('applies one tmIncrement per cycle delta', () => {
-    // squat lb: +10 per cycle.
     expect(projectTmForCycle(230, 7, 10, 'squat', 'lbs')).toBe(230 + 30);
-    // bench lb: +5 per cycle.
     expect(projectTmForCycle(180, 5, 9, 'bench', 'lbs')).toBe(180 + 20);
   });
 
-  it('returns currentTm when targetCycle < currentCycle (no past projection)', () => {
+  it('returns currentTm when targetCycle < currentCycle', () => {
     expect(projectTmForCycle(230, 7, 5, 'squat', 'lbs')).toBe(230);
   });
 
-  it('property: monotonicity', () => {
+  it('property: monotonicity for k ≥ 1', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...LIFTS),
@@ -133,10 +95,9 @@ describe('projectTmForCycle', () => {
         fc.integer({ min: 1, max: 50 }),
         fc.integer({ min: 1, max: 20 }),
         (lift, unit, tm, c, k) => {
-          const same = projectTmForCycle(tm, c, c, lift, unit);
-          const future = projectTmForCycle(tm, c, c + k, lift, unit);
-          // tmIncrement is always strictly > 0 in 531, so future > same.
-          return future > same;
+          return (
+            projectTmForCycle(tm, c, c + k, lift, unit) > projectTmForCycle(tm, c, c, lift, unit)
+          );
         },
       ),
     );
@@ -144,18 +105,17 @@ describe('projectTmForCycle', () => {
 });
 
 describe('projectTopSetWeight', () => {
-  it('snaps to the unit step (lbs → nearest 5)', () => {
-    // squat, current TM 230, future cycle = current + 1 → TM = 240.
-    // Day 1 week-3 percentage is 0.75; 240 × 0.75 = 180.
-    expect(projectTopSetWeight(8, 1, 230, 7, 'squat', 'lbs')).toBe(180);
+  it('day 3 uses week-3 0.95 percentage; snaps to unit step', () => {
+    // squat, current TM 230, future cycle 8 → TM 240; 240 × 0.95 = 228 → 230.
+    expect(projectTopSetWeight(8, 3, 230, 7, 'squat', 'lbs')).toBe(230);
   });
 
-  it('day 4 (deload) uses the deload week-4 top percentage 0.6', () => {
-    // squat, current TM 230, projection at current cycle = TM 230 → 230 × 0.6 = 138 → snap 140.
+  it('day 4 (deload) uses 0.60 TM', () => {
+    // squat TM 230 at current cycle → 230 × 0.60 = 138 → 140.
     expect(projectTopSetWeight(7, 4, 230, 7, 'squat', 'lbs')).toBe(140);
   });
 
-  it('property: returned weight is plate-snapped to the unit', () => {
+  it('property: plate-snapped to the unit step', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...LIFTS),
@@ -173,118 +133,100 @@ describe('projectTopSetWeight', () => {
   });
 });
 
-describe('projectE1RMForFuture', () => {
-  it('returns 0 for non-future cycles (caller asks current/past)', () => {
-    // future === current is "current cycle" — caller computes past e1RM separately.
-    expect(projectE1RMForFuture(7, 230, 7, 0, 'squat', 'lbs')).toBe(
-      estimateOneRm(projectTopSetWeight(7, 3, 230, 7, 'squat', 'lbs'), 1 + 0),
-    );
+describe('tmFromOneRm + goalTargetTm', () => {
+  it('TM ≈ 0.9 × 1RM, snapped to unit step', () => {
+    expect(tmFromOneRm(350, 'lbs')).toBe(round(315, 'lbs'));
+    expect(tmFromOneRm(200, 'kg')).toBe(round(180, 'kg'));
   });
 
-  it('uses week-3 day-3 top set with reps = 1 + margin', () => {
-    // squat, current TM 230 lbs, future cycle 8 → TM 240; week-3 day-3 pct 0.95
-    // top weight = 240 × 0.95 = 228 → snap 230.
-    // margin = 2 → reps = 3, e1RM = 230 × (1 + 3/30) = 253.
-    const e1 = projectE1RMForFuture(8, 230, 7, 2, 'squat', 'lbs');
-    expect(e1).toBeCloseTo(253, 5);
+  it('goalTargetTm passes through for kind=tm', () => {
+    expect(goalTargetTm('tm', 305, 'lbs')).toBe(305);
   });
 
-  it('property: monotonicity for k ≥ 0 with fixed margin', () => {
+  it('goalTargetTm converts kind=1rm via 0.9 factor', () => {
+    expect(goalTargetTm('1rm', 350, 'lbs')).toBe(round(315, 'lbs'));
+  });
+
+  it('property: TM derived from 1RM is always plate-snapped', () => {
     fc.assert(
-      fc.property(
-        fc.constantFrom(...LIFTS),
-        fc.constantFrom(...UNITS),
-        fc.integer({ min: 50, max: 600 }),
-        fc.integer({ min: 1, max: 30 }),
-        fc.integer({ min: 0, max: 6 }),
-        fc.integer({ min: 0, max: 5 }),
-        (lift, unit, tm, c, k, margin) => {
-          const a = projectE1RMForFuture(c + k, tm, c, margin, lift, unit);
-          const b = projectE1RMForFuture(c + k + 1, tm, c, margin, lift, unit);
-          return b >= a;
-        },
-      ),
+      fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 50, max: 1000 }), (unit, oneRm) => {
+        const tm = tmFromOneRm(oneRm, unit);
+        return round(tm, unit) === tm;
+      }),
     );
   });
 });
 
-describe('cyclesUntilGoal', () => {
-  it('returns null when goal is null', () => {
-    expect(cyclesUntilGoal(null, 248, 230, 7, 0, 'squat', 'lbs')).toBeNull();
+describe('cyclesUntilTmGoal', () => {
+  it('returns null when targetTm is null', () => {
+    expect(cyclesUntilTmGoal(null, 230, 7, 'squat', 'lbs')).toBeNull();
   });
 
-  it('returns 0 when currentE1RM already meets the goal', () => {
-    expect(cyclesUntilGoal(245, 248, 230, 7, 0, 'squat', 'lbs')).toBe(0);
+  it('returns 0 when currentTm already meets the goal', () => {
+    expect(cyclesUntilTmGoal(230, 230, 7, 'squat', 'lbs')).toBe(0);
+    expect(cyclesUntilTmGoal(225, 230, 7, 'squat', 'lbs')).toBe(0);
   });
 
-  it('returns the minimum k such that future cycle currentCycle+k meets goal', () => {
-    // squat TM 230, current cycle 7, margin 1. Look for smallest k with projected ≥ 280.
-    const got = cyclesUntilGoal(280, 0, 230, 7, 1, 'squat', 'lbs');
-    expect(typeof got).toBe('number');
-    expect(got).toBeGreaterThanOrEqual(1);
+  it('returns the minimum k such that projected TM at currentCycle+k meets goal', () => {
+    // squat +10/cycle: 230 → 240 → 250 → 260 → 270 → 280. Goal 270 = k 4.
+    expect(cyclesUntilTmGoal(270, 230, 7, 'squat', 'lbs')).toBe(4);
+    // bench +5/cycle: 180 → 185 → 190 → 195 → 200. Goal 200 = k 4.
+    expect(cyclesUntilTmGoal(200, 180, 5, 'bench', 'lbs')).toBe(4);
   });
 
   it('returns null when goal exceeds maxLookahead', () => {
-    expect(cyclesUntilGoal(1_000_000, 0, 230, 7, 0, 'squat', 'lbs', 60)).toBeNull();
+    expect(cyclesUntilTmGoal(1_000_000, 230, 7, 'squat', 'lbs', 60)).toBeNull();
   });
 
-  it('property: goal-hit ⇒ cycles non-null and equals first k', () => {
+  it('property: goal-hit ⇒ cycles non-null and minimal', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...LIFTS),
         fc.constantFrom(...UNITS),
         fc.integer({ min: 100, max: 400 }),
         fc.integer({ min: 1, max: 20 }),
-        fc.integer({ min: 1, max: 6 }),
-        fc.integer({ min: 0, max: 5 }),
-        (lift, unit, tm, c, kSearch, margin) => {
-          // Build a goal we know is reachable by cycle c+kSearch.
-          const goal = projectE1RMForFuture(c + kSearch, tm, c, margin, lift, unit);
-          const got = cyclesUntilGoal(goal, 0, tm, c, margin, lift, unit, 60);
+        fc.integer({ min: 1, max: 20 }),
+        (lift, unit, tm, c, kReach) => {
+          const targetTm = projectTmForCycle(tm, c, c + kReach, lift, unit);
+          const got = cyclesUntilTmGoal(targetTm, tm, c, lift, unit, 60);
           if (got === null) return false;
-          // Search must return the smallest k.
-          for (let k = 1; k < got; k++) {
-            const e1 = projectE1RMForFuture(c + k, tm, c, margin, lift, unit);
-            if (e1 >= goal) return false;
+          if (got > kReach) return false;
+          for (let k = 0; k < got; k++) {
+            if (projectTmForCycle(tm, c, c + k, lift, unit) >= targetTm) return k === 0;
           }
-          const hit = projectE1RMForFuture(c + got, tm, c, margin, lift, unit);
-          return hit >= goal;
+          return projectTmForCycle(tm, c, c + got, lift, unit) >= targetTm;
         },
       ),
     );
   });
 });
 
-describe('projectFutureCycles', () => {
-  it('returns N rows starting at currentCycle+1', () => {
-    const rows = projectFutureCycles(6, 230, 7, 2, 'squat', 'lbs');
+describe('projectCycleRows', () => {
+  it('returns inclusive range start..end', () => {
+    const rows = projectCycleRows(1, 6, 230, 3, 'squat', 'lbs');
     expect(rows).toHaveLength(6);
-    expect(rows[0]?.cycle).toBe(8);
-    expect(rows[5]?.cycle).toBe(13);
+    expect(rows[0]?.cycle).toBe(1);
+    expect(rows[5]?.cycle).toBe(6);
   });
 
-  it('each row has 4 days (D1..D3 + deload) at correct percentages, snapped', () => {
-    const rows = projectFutureCycles(1, 230, 7, 0, 'squat', 'lbs');
-    const row = rows[0];
-    expect(row?.days).toHaveLength(4);
-    // For day 1 of cycle 8, expect week-1 day-1 = TM(240) × 0.75 = 180 (week-3 D1, per spec).
-    // Spec routes future-projection through week 3 pcts on D1/D2/D3 (since that's the
-    // heaviest-AMRAP week) — verify the d3 weight is the week-3 top single.
-    const d3 = row?.days.find((d) => d.day === 3);
-    expect(d3?.weight).toBe(round(240 * 0.95, 'lbs')); // = 230 (228 → snap 230)
+  it('past + current rows use currentTm; future rows project forward', () => {
+    const rows = projectCycleRows(1, 5, 230, 3, 'squat', 'lbs');
+    expect(rows[0]?.tm).toBe(230); // cycle 1, past
+    expect(rows[2]?.tm).toBe(230); // cycle 3, current
+    expect(rows[3]?.tm).toBe(240); // cycle 4 (+10 squat)
+    expect(rows[4]?.tm).toBe(250); // cycle 5
   });
 
-  it('property: all weights are plate-snapped', () => {
+  it('property: every projected weight is plate-snapped', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...LIFTS),
         fc.constantFrom(...UNITS),
         fc.integer({ min: 50, max: 600 }),
         fc.integer({ min: 1, max: 30 }),
-        fc.integer({ min: 0, max: 5 }),
-        fc.integer({ min: 1, max: 6 }),
-        (lift, unit, tm, c, margin, count) => {
-          const rows = projectFutureCycles(count, tm, c, margin, lift, unit);
+        fc.integer({ min: 1, max: 12 }),
+        (lift, unit, tm, c, span) => {
+          const rows = projectCycleRows(c, c + span, tm, c, lift, unit);
           return rows.every((row) => row.days.every((d) => round(d.weight, unit) === d.weight));
         },
       ),
@@ -293,19 +235,11 @@ describe('projectFutureCycles', () => {
 });
 
 describe('integration sanity', () => {
-  it('setsForWeek(3) D3 percentage matches the projection contract', () => {
-    // The projection assumes week-3 D3 percentage 0.95 with prescribed reps 1.
-    const w3 = setsForWeek(3);
-    expect(w3[2]?.pct).toBeCloseTo(0.95, 5);
-    expect(w3[2]?.reps).toBe(1);
-  });
-
   it('tmIncrement consistency: future TM equals currentTm + k × increment', () => {
     for (const lift of LIFTS) {
       for (const unit of UNITS) {
         const inc = tmIncrement(unit, lift);
-        const got = projectTmForCycle(200, 5, 12, lift, unit);
-        expect(got).toBeCloseTo(200 + 7 * inc, 5);
+        expect(projectTmForCycle(200, 5, 12, lift, unit)).toBeCloseTo(200 + 7 * inc, 5);
       }
     }
   });

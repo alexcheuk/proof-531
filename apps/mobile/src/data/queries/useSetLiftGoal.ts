@@ -1,25 +1,29 @@
 /**
  * `useSetLiftGoal()` — mutation that upserts (target ≠ null) or clears
- * (target === null) a per-lift e1RM goal.
+ * (target === null) a per-lift goal. Goal carries a `kind` ('tm' | '1rm').
  *
  * Optimistic: writes `setQueryData(['liftGoal', lift], ...)` in `onMutate`
- * so the Progress goal strip updates the moment the user taps Save; on
- * failure rolls back via the snapshot captured in onMutate. Invalidates
- * both `['liftGoal', lift]` and the `['liftProgression']` prefix so the
- * grid's "cycles to go" recomputes against the new target.
+ * so the Progress goal panel updates the moment the user taps a stepper or
+ * toggles a tab; on failure rolls back via the snapshot captured in
+ * onMutate. Invalidates both `['liftGoal', lift]` and the
+ * `['liftProgression']` prefix so the grid's "cycles to go" + goal-rule
+ * placement recompute against the new target.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Lift, Unit } from '../../domain/types';
 import { useDb } from '../DbProvider';
-import { type LiftGoal, clearLiftGoal, setLiftGoal } from '../accessors/liftGoal';
+import {
+  type LiftGoal,
+  type LiftGoalKind,
+  clearLiftGoal,
+  setLiftGoal,
+} from '../accessors/liftGoal';
 import { LIFT_GOAL_KEY } from './useLiftGoal';
 
 export type SetLiftGoalInput = {
   lift: Lift;
   /** Pass `null` to clear the goal. */
-  targetE1RM: number | null;
-  /** Required when targetE1RM is non-null (the storage unit at write time). */
-  unit?: Unit;
+  target: { kind: LiftGoalKind; value: number; unit: Unit } | null;
 };
 
 export function useSetLiftGoal() {
@@ -27,27 +31,24 @@ export function useSetLiftGoal() {
   const queryClient = useQueryClient();
 
   return useMutation<LiftGoal | null, Error, SetLiftGoalInput, { previous: LiftGoal | null }>({
-    mutationFn: async ({ lift, targetE1RM, unit }) => {
-      if (targetE1RM === null) {
+    mutationFn: async ({ lift, target }) => {
+      if (target === null) {
         await clearLiftGoal(db, lift);
         return null;
       }
-      if (!unit) {
-        throw new Error('useSetLiftGoal: `unit` is required when targetE1RM is non-null');
-      }
-      return setLiftGoal(db, lift, targetE1RM, unit);
+      return setLiftGoal(db, lift, target.kind, target.value, target.unit);
     },
-    onMutate: async ({ lift, targetE1RM, unit }) => {
-      // Cancel any in-flight refetch so it doesn't clobber our optimistic value.
+    onMutate: async ({ lift, target }) => {
       await queryClient.cancelQueries({ queryKey: LIFT_GOAL_KEY(lift) });
       const previous = queryClient.getQueryData<LiftGoal | null>(LIFT_GOAL_KEY(lift)) ?? null;
       const optimistic: LiftGoal | null =
-        targetE1RM === null
+        target === null
           ? null
           : {
               lift,
-              targetE1RM,
-              unit: unit ?? previous?.unit ?? 'lbs',
+              kind: target.kind,
+              targetValue: target.value,
+              unit: target.unit,
               updatedAt: Date.now(),
             };
       queryClient.setQueryData(LIFT_GOAL_KEY(lift), optimistic);
@@ -60,7 +61,6 @@ export function useSetLiftGoal() {
     },
     onSettled: (_data, _err, { lift }) => {
       void queryClient.invalidateQueries({ queryKey: LIFT_GOAL_KEY(lift) });
-      // Prefix invalidation: the projection's "cycles to go" depends on the goal.
       void queryClient.invalidateQueries({ queryKey: ['liftProgression'] });
     },
   });

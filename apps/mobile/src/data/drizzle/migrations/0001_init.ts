@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS prs (
 
 CREATE TABLE IF NOT EXISTS lift_goals (
   lift TEXT PRIMARY KEY,
-  target_e1rm REAL NOT NULL,
+  kind TEXT NOT NULL,
+  target_value REAL NOT NULL,
   unit TEXT NOT NULL,
   updated_at INTEGER NOT NULL
 );

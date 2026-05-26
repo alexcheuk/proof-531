@@ -1,103 +1,99 @@
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
 /**
- * One row of the Progress grid: a leading `C7` cycle label, 4 day cells,
- * and a trailing e1RM cell. This primitive owns the chrome (label width,
- * border-l between cells, outer border) and delegates the cell visuals
- * to its children — pass {@link ProgressGridCell} + {@link E1rmCell}
- * children, in left-to-right order.
+ * One row of the Progress grid: zero-padded cycle label (`C07`), 4 day
+ * cells, trailing TM cell. Row chrome (borders, label tile, current-cycle
+ * tint) is owned here; cell visuals are children.
  *
- * The chrome matches the PWA `CycleStrip`'s vocabulary: outer
- * `lineStrong` border, hairline `line` between cells.
+ * Layout: identical to {@link ProgressGridHeaderShell} — a fixed-width label
+ * column on the left (34 px), 4 day cells each `flex: 1`, and a fixed-width
+ * TM column on the right (54 px). The shared widths are exported so the
+ * header in the screen file can pin to the same numbers.
+ *
+ * Current-cycle row:
+ *   - subtle row tint (`paperMuted`) across the body
+ *   - cycle-label cell INVERTED (bg `ink0`, fg `bg0`)
+ *
+ * Past-cycle row:    cycle-label color `ink0`
+ * Future-cycle row:  cycle-label color `ink3`
  */
 export type ProgressGridRowProps = {
-  /** Cycle number rendered as `C{n}` to the left of the row. */
   cycle: number;
-  /** Children should be: 4 day cells + 1 e1RM cell, in that order. */
+  /** 4 day cell children + 1 TM cell child (5 children, in that order). */
   children: ReactNode;
-  /** Optional caps eyebrow rendered above the cycle number (e.g. `CURRENT`). */
-  eyebrow?: string;
+  /** Row state controls cycle-label color + current-cycle tint. */
+  state: 'past' | 'current' | 'future';
   testID?: string;
 };
 
-const ROW_HEIGHT = 56;
-const LABEL_WIDTH = 32;
-const EYEBROW_WIDTH = 60;
+const ROW_HEIGHT = 64;
+const LABEL_WIDTH = 34;
+const TM_WIDTH = 54;
 
-export function ProgressGridRow({ cycle, children, eyebrow, testID }: ProgressGridRowProps) {
-  const { colors, type, spacing } = useTheme();
+export function ProgressGridRow({ cycle, children, state, testID }: ProgressGridRowProps) {
+  const { colors, type } = useTheme();
+  const items = Array.isArray(children) ? children : [children];
 
-  // Inter-cell hairline rules — applied to each child as a left border via
-  // a wrapping View. Children pass through unmodified.
-  const wrappedChildren = useMemo(() => {
-    const arr: ReactNode[] = [];
-    const items = Array.isArray(children) ? children : [children];
-    items.forEach((child, idx) => {
-      arr.push(
-        <View
-          key={`gc-${idx}-${cycle}`}
-          style={{
-            flex: idx === items.length - 1 ? 0.8 : 1,
-            borderLeftWidth: idx === 0 ? 0 : 1,
-            borderLeftColor: colors.line,
-          }}
-        >
-          {child}
-        </View>,
-      );
-    });
-    return arr;
-  }, [children, cycle, colors.line]);
+  const isCurrent = state === 'current';
 
   const rowStyle: ViewStyle = {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     minHeight: ROW_HEIGHT,
-    borderWidth: 1,
-    borderColor: colors.lineStrong,
-    borderTopWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+    backgroundColor: isCurrent ? colors.paperMuted : 'transparent',
   };
 
-  const labelWrap: ViewStyle = {
+  const labelCellStyle: ViewStyle = {
     width: LABEL_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
-    height: ROW_HEIGHT,
     borderRightWidth: 1,
-    borderRightColor: colors.line,
+    borderRightColor: colors.ink0,
+    backgroundColor: isCurrent ? colors.ink0 : 'transparent',
   };
 
-  const labelStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 12,
-    color: colors.ink2,
+  const labelTextStyle: TextStyle = {
+    fontFamily: `${type.mono}-Bold`,
+    fontSize: 10,
+    color: isCurrent ? colors.bg0 : state === 'past' ? colors.ink0 : colors.ink3,
+    letterSpacing: 0.4,
     fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
-  const eyebrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    color: colors.ink3,
-    letterSpacing: 1.62,
-    textTransform: 'uppercase',
-    marginRight: spacing.xs,
   };
 
   return (
     <View testID={testID} style={rowStyle}>
-      {eyebrow ? (
-        <View style={{ width: EYEBROW_WIDTH, alignItems: 'flex-end', paddingRight: spacing.xs }}>
-          <RNText style={eyebrowStyle}>{eyebrow}</RNText>
-        </View>
-      ) : null}
-      <View style={labelWrap}>
-        <RNText style={labelStyle}>{`C${cycle}`}</RNText>
+      <View style={labelCellStyle}>
+        <RNText style={labelTextStyle}>{`C${String(cycle).padStart(2, '0')}`}</RNText>
       </View>
-      {wrappedChildren}
+      {items.slice(0, 4).map((child, idx) => (
+        <View
+          key={`day-${idx}-${cycle}`}
+          style={{
+            flex: 1,
+            borderLeftWidth: 1,
+            borderLeftColor: colors.line,
+          }}
+        >
+          {child}
+        </View>
+      ))}
+      <View
+        style={{
+          width: TM_WIDTH,
+          borderLeftWidth: 1,
+          borderLeftColor: colors.ink0,
+        }}
+      >
+        {items[4]}
+      </View>
     </View>
   );
 }
 
 export const PROGRESS_GRID_ROW_HEIGHT = ROW_HEIGHT;
+export const PROGRESS_GRID_LABEL_WIDTH = LABEL_WIDTH;
+export const PROGRESS_GRID_TM_WIDTH = TM_WIDTH;

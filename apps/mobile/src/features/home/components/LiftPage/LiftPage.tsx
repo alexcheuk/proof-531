@@ -105,7 +105,7 @@ export function LiftPage({
       testID={`lift-page-${lift}`}
     >
       <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
-      <LiftPageTitle lift={lift} />
+      <LiftPageTitle lift={lift} onPress={openProgress} />
       {week === 4 ? (
         <LiftPageHint testID={`lift-page-${lift}-deload-callout`}>
           DELOAD WEEK · EASE OFF, BUILD THE NEXT CYCLE
@@ -163,6 +163,18 @@ export function LiftPage({
       >
         <CapsLabel weight="semibold" style={{ textAlign: 'center' }}>
           SEE FULL SESSION →
+        </CapsLabel>
+      </Pressable>
+
+      <Pressable
+        onPress={openProgress}
+        testID={`lift-page-${lift}-see-progress`}
+        accessibilityRole="button"
+        accessibilityLabel={`See ${liftDisplayName(lift)} progress`}
+        style={{ paddingVertical: spacing.sm, alignItems: 'center' }}
+      >
+        <CapsLabel weight="semibold" style={{ textAlign: 'center' }}>
+          SEE PROGRESS →
         </CapsLabel>
       </Pressable>
     </Animated.View>

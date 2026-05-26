@@ -1,51 +1,42 @@
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
 /**
- * Single Progress-grid cell. Three visual variants matching the spec's
- * `▓` / `┃` / `·` vocabulary:
+ * Single Progress-grid cell. Four visual variants matching the canonical
+ * design (see `_workspace/00_input/canonical-progress-v3.jsx`):
  *
- *   - `filled` (`▓`)   — past completed day; ink-filled with inverted text.
- *   - `outlined` (`┃`) — the single "you are here" day; 2-px ink border,
- *                       paper background.
- *   - `ghosted` (`·`)  — future / projected day; dashed ink-line border,
- *                       muted ink text.
+ *   - `past`  — completed day; ink-filled (bg `ink0`, fg `bg0`). Shows
+ *               weight (display 17) on top + `× N` (mono 9, .78 alpha) below.
+ *   - `outlined` — most-recent completed day; same fill as `past`, plus a
+ *               2-px ink outline INSET (rendered with stacked borders so
+ *               outer dimensions stay aligned with neighboring cells).
+ *   - `now`   — current week's upcoming day; paper bg, caps "now" eyebrow
+ *               on top + display 15 weight below.
+ *   - `future` — projected day; paper bg, mono 13 weight only, `ink3` color.
  *
- * Renders as a Pressable when `onPress` is supplied (past cells routing
- * to SessionComplete), otherwise as a plain View (future cells must not
- * announce a phantom VoiceOver button per spec accessibility section).
+ * Marker (`✓` / `─`) replaces the second-line content on deload cells.
  *
- * Marker (`✓` / `─` / null) replaces the second-line `×N` reps for the
- * deload column; pass `marker` instead of `reps` for deload cells.
- *
- * The dashed-border treatment uses `borderStyle: 'dashed'`. RN supports
- * this with platform quirks (Android may render unevenly under some
- * driver/skia combinations); spec accepts the risk and proposes SVG
- * fallback only if QA flags it.
+ * Renders as Pressable when `onPress` is supplied (past cells tap into
+ * SessionComplete); otherwise as a plain View so VoiceOver does not
+ * announce phantom buttons.
  */
 
-export type ProgressGridCellVariant = 'filled' | 'outlined' | 'ghosted';
+export type ProgressGridCellVariant = 'past' | 'outlined' | 'now' | 'future';
 
 export type ProgressGridCellProps = {
   variant: ProgressGridCellVariant;
-  /** Display-unit weight; rendered as the first line. */
+  /** Display-unit weight; rendered as the primary number. */
   weight: number;
-  /** Reps for AMRAP/working cells. Pass null/undefined for deload variants. */
+  /** AMRAP/working reps. Pass null for deload variants or future cells. */
   reps?: number | null;
-  /** Deload marker glyph replacing the reps line. */
+  /** Deload glyph (✓ for done deload, ─ for projected deload). */
   marker?: '✓' | '─' | null;
-  /** Tap target — typically navigates to SessionComplete. Omit for non-interactive cells. */
   onPress?: () => void;
-  /** Accessibility label override (spec defines per-cell content). */
   accessibilityLabel?: string;
   testID?: string;
 };
 
-const CELL_HEIGHT = 56;
-const PRIMARY_FONT_SIZE = 15;
-const SECONDARY_FONT_SIZE = 11;
-const OUTLINE_BORDER = 2;
-const DASHED_BORDER = 1;
+const CELL_HEIGHT = 64;
 
 export function ProgressGridCell({
   variant,
@@ -58,68 +49,117 @@ export function ProgressGridCell({
 }: ProgressGridCellProps) {
   const { colors, type } = useTheme();
 
-  const isFilled = variant === 'filled';
+  const isPast = variant === 'past';
   const isOutlined = variant === 'outlined';
-  const isGhosted = variant === 'ghosted';
+  const isNow = variant === 'now';
+  const isFuture = variant === 'future';
+  const filled = isPast || isOutlined;
 
   const containerBase: ViewStyle = {
+    position: 'relative',
     flex: 1,
-    height: CELL_HEIGHT,
+    minHeight: CELL_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 2,
+    paddingVertical: 6,
+    backgroundColor: filled ? colors.ink0 : 'transparent',
   };
 
-  const filledStyle: ViewStyle = {
-    backgroundColor: colors.ink0,
-  };
+  const weightColor = filled ? colors.bg0 : isFuture ? colors.ink3 : colors.ink0;
+  const secondaryColor = filled ? colors.paperMuted : isFuture ? colors.ink3 : colors.ink2;
 
-  const outlinedStyle: ViewStyle = {
-    backgroundColor: colors.bg0,
-    borderWidth: OUTLINE_BORDER,
-    borderColor: colors.ink0,
-  };
-
-  const ghostedStyle: ViewStyle = {
-    backgroundColor: colors.bg0,
-    borderWidth: DASHED_BORDER,
-    borderStyle: 'dashed',
-    borderColor: colors.line,
-  };
-
-  const variantStyle: ViewStyle = isFilled
-    ? filledStyle
-    : isOutlined
-      ? outlinedStyle
-      : ghostedStyle;
-
-  const weightColor = isFilled ? colors.bg0 : isGhosted ? colors.ink3 : colors.ink0;
-  const secondaryColor = isFilled ? colors.paperMuted : isGhosted ? colors.ink3 : colors.ink2;
-
-  const weightStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: PRIMARY_FONT_SIZE,
-    color: weightColor,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
-  const secondaryStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: SECONDARY_FONT_SIZE,
-    color: secondaryColor,
-    marginTop: 2,
-    fontVariant: ['tabular-nums', 'lining-nums'],
-  };
-
-  const renderBody = () => (
+  const renderPastOrOutlined = () => (
     <>
-      <RNText style={weightStyle}>{weight > 0 ? String(weight) : '·'}</RNText>
-      {marker !== undefined && marker !== null ? (
-        <RNText style={secondaryStyle}>{marker}</RNText>
-      ) : typeof reps === 'number' && reps > 0 ? (
-        <RNText style={secondaryStyle}>×{reps}</RNText>
-      ) : null}
+      <RNText
+        style={{
+          fontFamily: `${type.sans}-Bold`,
+          fontSize: 17,
+          color: weightColor,
+          letterSpacing: -0.51,
+          lineHeight: 17,
+          fontVariant: ['tabular-nums', 'lining-nums'],
+        }}
+      >
+        {weight > 0 ? String(weight) : '·'}
+      </RNText>
+      <RNText
+        style={{
+          fontFamily: `${type.mono}-SemiBold`,
+          fontSize: 9,
+          color: secondaryColor,
+          letterSpacing: 0.36,
+          marginTop: 3,
+          fontVariant: ['tabular-nums', 'lining-nums'],
+        }}
+      >
+        {marker ? marker : typeof reps === 'number' && reps > 0 ? `× ${reps}` : ''}
+      </RNText>
     </>
   );
+
+  const renderNow = () => (
+    <>
+      <RNText
+        style={{
+          fontFamily: `${type.mono}-Bold`,
+          fontSize: 8,
+          color: colors.ink2,
+          letterSpacing: 1.92,
+          textTransform: 'uppercase',
+        }}
+      >
+        now
+      </RNText>
+      <RNText
+        style={{
+          fontFamily: `${type.sans}-SemiBold`,
+          fontSize: 15,
+          color: colors.ink0,
+          letterSpacing: -0.375,
+          lineHeight: 15,
+          marginTop: 3,
+          fontVariant: ['tabular-nums', 'lining-nums'],
+        }}
+      >
+        {weight > 0 ? String(weight) : '·'}
+      </RNText>
+    </>
+  );
+
+  const renderFuture = () => (
+    <RNText
+      style={{
+        fontFamily: `${type.mono}-Medium`,
+        fontSize: 13,
+        color: colors.ink3,
+        letterSpacing: 0.26,
+        fontVariant: ['tabular-nums', 'lining-nums'],
+      }}
+    >
+      {weight > 0 ? String(weight) : '·'}
+    </RNText>
+  );
+
+  const body = isFuture ? renderFuture() : isNow ? renderNow() : renderPastOrOutlined();
+
+  // Outline overlay for the "last completed" cell. Rendered as an absolutely
+  // positioned 2-px border so it sits on top of the fill without changing
+  // the cell's outer dimensions (which would shift adjacent columns).
+  const outlineOverlay = isOutlined ? (
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderWidth: 2,
+        borderColor: colors.ink0,
+      }}
+    />
+  ) : null;
 
   if (onPress) {
     return (
@@ -129,21 +169,24 @@ export function ProgressGridCell({
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
-        style={[containerBase, variantStyle]}
+        style={containerBase}
       >
-        {renderBody()}
+        {body}
+        {outlineOverlay}
       </Pressable>
     );
   }
-
   return (
     <View
       testID={testID}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="text"
-      style={[containerBase, variantStyle]}
+      style={containerBase}
     >
-      {renderBody()}
+      {body}
+      {outlineOverlay}
     </View>
   );
 }
+
+export const PROGRESS_GRID_CELL_HEIGHT = CELL_HEIGHT;

@@ -1,48 +1,85 @@
 /**
- * Progress screen — single-lift cycle × day grid with future projection,
- * goal strip, and a horizontal pager between lifts. Mirrors the design
- * spec at `_workspace/01_design_spec.md` faithfully — see "Per-screen
- * breakdown".
+ * Progress screen — single-lift cycle × day matrix with TM/1RM goal panel,
+ * stats triplet, goal rule, and beyond-chart marker.
  *
- * Composition only — token / hex / px literals stay in the design layer.
- * Data wiring: per-lift `useLiftProgression` (carries past/future rows,
- * goal, cyclesUntilGoal) + `useSetLiftGoal` for the goal sheet.
+ * Implements the canonical design at
+ * `_workspace/00_input/canonical-progress-v3.jsx` (visual + structural
+ * source of truth), with one deliberate divergence: lift switching uses a
+ * horizontal swipe pager + dots instead of the canonical's full-width tabs
+ * (user decision recorded in `_workspace/00_input/brief.md`).
+ *
+ * Composition only — tokens / hex / px literals stay in `src/design/`.
+ * Data wiring: `useLiftProgression` for the per-lift view-model,
+ * `useLiftGoal` + `useSetLiftGoal` for the goal panel.
  */
 import { goTo } from '@/app/routes';
+import type { LiftGoalKind } from '@/data/accessors/liftGoal';
 import { useLatestTms } from '@/data/queries/useLatestTm';
+import { useLiftGoal } from '@/data/queries/useLiftGoal';
 import { type LiftProgression, useLiftProgression } from '@/data/queries/useLiftProgression';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSettings } from '@/data/queries/useSettings';
-import { CapsLabel } from '@/design/primitives/CapsLabel';
-import { E1rmCell } from '@/design/primitives/E1rmCell';
-import { GoalStrip } from '@/design/primitives/GoalStrip';
 import { Masthead } from '@/design/primitives/Masthead';
 import { PagerDots } from '@/design/primitives/PagerDots';
 import { ProgressGridCell } from '@/design/primitives/ProgressGridCell';
 import { ProgressGridRow } from '@/design/primitives/ProgressGridRow';
 import { Skeleton } from '@/design/primitives/Skeleton';
-import { Text } from '@/design/primitives/Text';
+import { TmCell } from '@/design/primitives/TmCell';
 import { useTheme } from '@/design/theme';
-import { liftDisplayName } from '@/domain/labels';
-import type { Lift } from '@/domain/types';
-import { displayUnit, displayWeight } from '@/domain/units';
+import { tmIncrement } from '@/domain/increments';
+import { goalTargetTm } from '@/domain/progression';
+import type { Lift, Unit } from '@/domain/types';
+import { displayWeight } from '@/domain/units';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, type ListRenderItem, ScrollView, View, useWindowDimensions } from 'react-native';
+import {
+  FlatList,
+  type ListRenderItem,
+  Text as RNText,
+  ScrollView,
+  View,
+  type ViewStyle,
+  useWindowDimensions,
+} from 'react-native';
+import { BeyondChartFooter } from './components/BeyondChartFooter';
+import { GoalPanel } from './components/GoalPanel';
 import { GoalRuleRow } from './components/GoalRuleRow';
-import { GoalSheet } from './components/GoalSheet';
+import { StatsTriplet } from './components/StatsTriplet';
 import { useProgressCarouselSync } from './hooks/useProgressCarouselSync';
 
 export type ProgressScreenProps = {
   lift: Lift;
 };
 
+function longLiftName(l: Lift): string {
+  if (l === 'deadlift') return 'deadlift';
+  if (l === 'press') return 'overhead press';
+  if (l === 'bench') return 'bench press';
+  return 'back squat';
+}
+
+function unitGlyphFor(unit: Unit): 'lb' | 'kg' {
+  return unit === 'lbs' ? 'lb' : 'kg';
+}
+
+function goalStep(unit: Unit): number {
+  return unit === 'lbs' ? 5 : 2.5;
+}
+
+function defaultBumpStep(unit: Unit): number {
+  return unit === 'lbs' ? 25 : 10;
+}
+
+function ceilToStep(value: number, step: number): number {
+  return Math.ceil(value / step) * step;
+}
+
 export function ProgressScreen({ lift }: ProgressScreenProps) {
   const router = useRouter();
-  const { colors, spacing, layout } = useTheme();
+  const { colors, layout, spacing, type } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
 
   const settings = useSettings();
@@ -55,10 +92,6 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   );
 
   const [selectedLift, setSelectedLift] = useState<Lift>(lift);
-
-  // Keep route param in sync with pager. The pager drives the param; the
-  // param drives the pager. The Carousel hook handles the scrollToIndex
-  // edge of the loop.
   useEffect(() => {
     setSelectedLift(lift);
   }, [lift]);
@@ -91,7 +124,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   if (combined.isError) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg0 }}>
-        <Masthead />
+        <Masthead rightSlot={<CapsRight>projection</CapsRight>} />
         <QueryShell query={combined}>{null}</QueryShell>
       </View>
     );
@@ -101,7 +134,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg0 }} testID="progress-screen">
-      <Masthead />
+      <Masthead rightSlot={<CapsRight>projection</CapsRight>} />
       {combined.isLoading || !settings.data ? (
         <ProgressSkeleton />
       ) : (
@@ -109,13 +142,47 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
           <View
             style={{
               paddingHorizontal: layout.gutter,
-              paddingTop: spacing.md,
-              paddingBottom: spacing.sm,
-              alignItems: 'center',
+              paddingTop: 14,
+              paddingBottom: 22,
+              borderBottomWidth: 1,
+              borderBottomColor: colors.lineStrong,
             }}
           >
-            <PagerDots count={enabledLifts.length} selectedIndex={selectedIndex} />
+            <RNText
+              style={{
+                fontFamily: `${type.mono}-SemiBold`,
+                fontSize: 10,
+                letterSpacing: 2.2,
+                textTransform: 'uppercase',
+                color: colors.ink2,
+                marginBottom: 8,
+              }}
+            >
+              {`On the ${longLiftName(selectedLift)}`}
+            </RNText>
+            <RNText
+              style={{
+                fontFamily: `${type.sans}-Bold`,
+                fontSize: 56,
+                lineHeight: 52,
+                letterSpacing: -2.24,
+                color: colors.ink0,
+              }}
+            >
+              Progress.
+            </RNText>
           </View>
+          {enabledLifts.length > 1 ? (
+            <View
+              style={{
+                alignItems: 'center',
+                paddingTop: spacing.md,
+                paddingBottom: spacing.sm,
+              }}
+            >
+              <PagerDots count={enabledLifts.length} selectedIndex={selectedIndex} />
+            </View>
+          ) : null}
           <FlatList
             ref={listRef}
             testID="progress-lift-carousel"
@@ -141,261 +208,325 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   );
 }
 
-/**
- * One page (one lift) inside the Progress pager. Each page is independent —
- * its own ScrollView with its own grid + goal sheet. Lifting per-lift
- * state to the parent would prevent vertical scroll positions from
- * persisting per lift.
- */
+function CapsRight({ children }: { children: string }) {
+  const { colors, type } = useTheme();
+  return (
+    <RNText
+      style={{
+        fontFamily: `${type.mono}-Medium`,
+        fontSize: 10,
+        letterSpacing: 2.2,
+        textTransform: 'uppercase',
+        color: colors.ink2,
+      }}
+    >
+      {children}
+    </RNText>
+  );
+}
+
+/** One page (one lift) inside the Progress pager. */
 function ProgressLiftPage({ lift }: { lift: Lift }) {
   const router = useRouter();
-  const { colors, spacing, layout } = useTheme();
+  const { colors, layout, spacing, type } = useTheme();
   const progression = useLiftProgression(lift);
+  const goalQuery = useLiftGoal(lift);
   const setGoal = useSetLiftGoal();
-  const tms = useLatestTms();
-  const prs = usePrs();
   const settings = useSettings();
-  const [sheetOpen, setSheetOpen] = useState(false);
-
-  const openSheet = useCallback(() => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSheetOpen(true);
-  }, []);
-  const closeSheet = useCallback(() => setSheetOpen(false), []);
+  const prs = usePrs();
 
   const data: LiftProgression | undefined = progression.data;
-  if (progression.isError) {
+  const storageUnit = settings.data?.storageUnit ?? 'lbs';
+  const displayU = settings.data?.displayUnit ?? storageUnit;
+  const ugDisplay = unitGlyphFor(displayU);
+  const tmStep = useMemo(() => tmIncrement(displayU, lift), [displayU, lift]);
+
+  // Per-lift PR for the stats triplet (Best e1RM). PRs are stored in
+  // storage units; convert to display at the render boundary.
+  const liftPr = useMemo(() => {
+    const row = prs.data?.find((p) => p.lift === lift) ?? null;
+    if (!row) return null;
+    return Math.round(displayWeight(row.bestE1RM, storageUnit, displayU));
+  }, [prs.data, lift, storageUnit, displayU]);
+
+  // Goal panel local state — seeded from the persisted goal, or from a
+  // sensible default when no goal exists. Tabs/steppers mutate this state
+  // AND fire the persistence mutation (optimistic).
+  const goalRow = goalQuery.data ?? null;
+  const persistedKind: LiftGoalKind = goalRow?.kind ?? 'tm';
+  const persistedValue: number | null = goalRow
+    ? Math.round(displayWeight(goalRow.targetValue, goalRow.unit, displayU))
+    : null;
+
+  // Default goal value seeded relative to current TM so the goal rule
+  // typically lands inside the chart.
+  const defaultValueFor = useCallback(
+    (kind: LiftGoalKind): number => {
+      const tm = data?.tm ?? 0;
+      const base = kind === 'tm' ? tm : Math.round(tm / 0.9);
+      return ceilToStep(base + 4 * tmStep, defaultBumpStep(displayU));
+    },
+    [data?.tm, displayU, tmStep],
+  );
+
+  const [draftKind, setDraftKind] = useState<LiftGoalKind>(persistedKind);
+  const [draftValue, setDraftValue] = useState<number>(
+    persistedValue ?? defaultValueFor(persistedKind),
+  );
+
+  // Sync local draft to persisted goal when the query resolves / lift changes.
+  useEffect(() => {
+    setDraftKind(persistedKind);
+    setDraftValue(persistedValue ?? defaultValueFor(persistedKind));
+  }, [persistedKind, persistedValue, defaultValueFor]);
+
+  const unset = persistedValue === null;
+
+  const persist = useCallback(
+    (kind: LiftGoalKind, value: number) => {
+      // Convert display-unit value back to storage units before persisting.
+      const valueStorage = displayWeight(value, displayU, storageUnit);
+      void setGoal.mutateAsync({
+        lift,
+        target: { kind, value: valueStorage, unit: storageUnit },
+      });
+    },
+    [setGoal, lift, displayU, storageUnit],
+  );
+
+  const onKindChange = useCallback(
+    (kind: LiftGoalKind) => {
+      // Swap kinds: TM ↔ 1RM via 0.9 factor so the "real" goal stays put.
+      const nextValue =
+        kind === draftKind
+          ? draftValue
+          : kind === 'tm'
+            ? Math.round(draftValue * 0.9)
+            : Math.round(draftValue / 0.9);
+      setDraftKind(kind);
+      setDraftValue(nextValue);
+      persist(kind, nextValue);
+    },
+    [draftKind, draftValue, persist],
+  );
+
+  const onValueChange = useCallback(
+    (value: number) => {
+      setDraftValue(value);
+      persist(draftKind, value);
+    },
+    [draftKind, persist],
+  );
+
+  // For the goal-rule placement, recompute targetTm + crossing in display
+  // units against the draft (so the rule moves the moment the user steps).
+  const draftTargetTm = useMemo(
+    () => goalTargetTm(draftKind, draftValue, displayU),
+    [draftKind, draftValue, displayU],
+  );
+
+  if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;
   }
-  if (!data) {
+  if (!data || !settings.data) {
     return <ProgressSkeleton />;
   }
 
-  const tmRow = tms.data?.find((t) => t.lift === lift);
-  const displayU = settings.data?.displayUnit ?? settings.data?.storageUnit ?? 'lbs';
-  const unitGlyph = displayUnit(displayU);
+  const cyclesUntilDraft = (() => {
+    if (data.tm >= draftTargetTm) return 0;
+    for (let k = 1; k <= 120; k++) {
+      const projected = data.tm + k * tmStep;
+      if (projected >= draftTargetTm) return k;
+    }
+    return null;
+  })();
 
-  const prRow = prs.data?.find((p) => p.lift === lift);
-  const bestE1RMRawDisplay = prRow
-    ? displayWeight(prRow.bestE1RM, tmRow?.unit ?? displayU, displayU)
-    : 0;
-  const bestE1RM = Math.round(Math.max(bestE1RMRawDisplay, data.currentE1RM));
+  const goalCycle =
+    cyclesUntilDraft !== null && cyclesUntilDraft > 0 ? data.currentCycle + cyclesUntilDraft : null;
+  const lastRenderedCycle = data.rows[data.rows.length - 1]?.cycle ?? data.currentCycle;
+  const goalBeyondChart = goalCycle !== null && goalCycle > lastRenderedCycle;
+  const cyclesBeyondChart = goalBeyondChart ? goalCycle - lastRenderedCycle : 0;
 
-  // The carousel page swaps display unit when the user changes display
-  // unit in Settings, so just consume the progression hook's `unit`.
-  const goalDisplay = data.goal?.value ?? null;
-
-  const handleSave = async (target: number) => {
-    if (!tmRow) return;
-    await setGoal.mutateAsync({
-      lift,
-      targetE1RM: target,
-      unit: tmRow.unit,
-    });
-  };
-  const handleClear = async () => {
-    await setGoal.mutateAsync({ lift, targetE1RM: null });
-  };
+  const minGoal = data.tm + tmStep;
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingBottom: spacing.xxl, backgroundColor: colors.bg0 }}
-      showsVerticalScrollIndicator={false}
-      testID={`progress-page-${lift}`}
+      style={{ flex: 1, backgroundColor: colors.bg0 }}
+      contentContainerStyle={{ paddingBottom: spacing.xxl }}
+      testID={`progress-lift-${lift}`}
     >
-      <LiftHeader
-        lift={lift}
-        tmDisplay={data.tm}
-        currentE1RM={Math.max(data.currentE1RM, bestE1RM)}
-        unitGlyph={unitGlyph}
+      <StatsTriplet
+        tm={data.tm}
+        bestE1RM={liftPr}
+        cycle={data.currentCycle}
+        unitGlyph={ugDisplay}
+        testID={`stats-triplet-${lift}`}
       />
-      {goalDisplay !== null && data.goal !== null ? (
-        <GoalStrip
-          state="goal-set"
-          goalValue={goalDisplay}
-          goalUnit={data.goal.unit === 'lbs' ? 'lb' : 'kg'}
-          cyclesUntilGoal={data.cyclesUntilGoal}
-          lift={lift}
-          onPress={openSheet}
-          testID={`goal-strip-${lift}`}
-        />
-      ) : (
-        <GoalStrip state="no-goal" onPress={openSheet} testID={`goal-strip-${lift}`} />
-      )}
-      <View style={{ paddingHorizontal: layout.gutter, marginTop: spacing.lg }}>
-        <ProgressGridHeader unitGlyph={unitGlyph} />
-        <ProgressGridBody
-          data={data}
-          onPastCellPress={(sessionId) => {
-            void Haptics.selectionAsync();
-            goTo.complete(router, sessionId, { from: 'history' });
+
+      <GoalPanel
+        kind={draftKind}
+        value={draftValue}
+        unitGlyph={ugDisplay}
+        step={goalStep(displayU)}
+        minValue={minGoal}
+        cyclesUntilGoal={cyclesUntilDraft}
+        onKindChange={onKindChange}
+        onValueChange={onValueChange}
+        unset={unset}
+        testID={`goal-panel-${lift}`}
+      />
+
+      <View style={{ paddingHorizontal: 16, paddingTop: 24 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            marginBottom: 10,
           }}
-        />
-        {data.pastRows.length === 0 && data.currentE1RM === 0 ? (
-          <View style={{ alignItems: 'center', marginTop: spacing.lg }} testID="progress-empty">
-            <CapsLabel size="sm" color="ink3">
-              LOG A SESSION TO LIGHT UP THIS GRID
-            </CapsLabel>
-          </View>
-        ) : null}
+        >
+          <RNText
+            style={{
+              fontFamily: `${type.mono}-SemiBold`,
+              fontSize: 10,
+              letterSpacing: 2.2,
+              textTransform: 'uppercase',
+              color: colors.ink2,
+            }}
+          >
+            Cycle matrix
+          </RNText>
+          <RNText
+            style={{
+              fontFamily: `${type.mono}-Medium`,
+              fontSize: 9,
+              letterSpacing: 1.62,
+              textTransform: 'uppercase',
+              color: colors.ink3,
+            }}
+          >
+            {`weight · amreps · ${ugDisplay}`}
+          </RNText>
+        </View>
+
+        <View
+          style={{
+            borderTopWidth: 1,
+            borderTopColor: colors.ink0,
+            borderLeftWidth: 1,
+            borderLeftColor: colors.ink0,
+            borderRightWidth: 1,
+            borderRightColor: colors.ink0,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.ink0,
+          }}
+        >
+          <ProgressGridHeader unitGlyph={ugDisplay} />
+          {data.rows.map((row) => (
+            <Row
+              key={`row-${row.cycle}`}
+              row={row}
+              unitGlyph={ugDisplay}
+              onPastCellPress={(sessionId) => {
+                void Haptics.selectionAsync();
+                goTo.complete(router, sessionId, { from: 'history' });
+              }}
+              goalCycle={goalCycle}
+              draftKind={draftKind}
+              draftValue={draftValue}
+              draftTargetTm={draftTargetTm}
+            />
+          ))}
+          {goalBeyondChart ? (
+            <BeyondChartFooter
+              cyclesBeyond={cyclesBeyondChart}
+              goalValue={draftValue}
+              unitGlyph={ugDisplay}
+              testID={`progress-beyond-${lift}`}
+            />
+          ) : null}
+        </View>
       </View>
-      <GoalSheet
-        open={sheetOpen}
-        onDismiss={closeSheet}
-        lift={lift}
-        unit={displayU}
-        currentGoal={goalDisplay}
-        bestE1RM={bestE1RM}
-        currentTm={data.tm}
-        currentCycle={data.currentCycle}
-        rollingMargin={0}
-        onSave={handleSave}
-        onClear={handleClear}
-        testID={`goal-sheet-${lift}`}
-      />
+
+      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 28, alignItems: 'center' }}>
+        <RNText
+          style={{
+            fontFamily: `${type.mono}-Medium`,
+            fontSize: 9,
+            letterSpacing: 2.88,
+            textTransform: 'uppercase',
+            color: colors.ink3,
+          }}
+        >
+          {`+${tmStep} per cycle · ${isLowerBody(lift) ? 'lower body' : 'upper body'}`}
+        </RNText>
+      </View>
     </ScrollView>
   );
 }
 
-function LiftHeader({
-  lift,
-  tmDisplay,
-  currentE1RM,
+function Row({
+  row,
   unitGlyph,
-}: {
-  lift: Lift;
-  tmDisplay: number;
-  currentE1RM: number;
-  unitGlyph: 'lb' | 'kg';
-}) {
-  const { layout, spacing } = useTheme();
-  return (
-    <View
-      style={{ paddingHorizontal: layout.gutter, marginTop: spacing.md, alignItems: 'flex-start' }}
-      accessibilityRole="header"
-      accessibilityLabel={`${liftDisplayName(lift)} progress`}
-    >
-      <Text
-        variant="sans"
-        weight="bold"
-        size={56}
-        color="ink0"
-        style={{ letterSpacing: -2.24, lineHeight: 64 }}
-      >
-        {liftDisplayName(lift).toLowerCase()}
-        <Text variant="sans" weight="bold" size={56} color="amber" style={{ lineHeight: 64 }}>
-          .
-        </Text>
-      </Text>
-      <View style={{ marginTop: spacing.xs }}>
-        <CapsLabel size="sm" color="ink2">
-          {`TM ${tmDisplay} ${unitGlyph} · e1RM ${currentE1RM > 0 ? `${currentE1RM} ${unitGlyph}` : '—'}`}
-        </CapsLabel>
-      </View>
-    </View>
-  );
-}
-
-function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
-  const { colors, spacing } = useTheme();
-  const cell = (label: string, flex: number) => (
-    <View style={{ flex, alignItems: 'center', justifyContent: 'center' }}>
-      <Text
-        variant="mono"
-        weight="medium"
-        size={10}
-        color="ink3"
-        style={{ letterSpacing: 2.2, textTransform: 'uppercase' }}
-      >
-        {label}
-      </Text>
-    </View>
-  );
-  // Match the row layout: 32 px label + 4 flex cells + 0.8 flex e1RM.
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        height: 28,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.line,
-        marginBottom: spacing.xs,
-      }}
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-    >
-      {/* Spacer matching ProgressGridRow's leading label column. */}
-      <View style={{ width: 32 }} />
-      {cell('D1', 1)}
-      {cell('D2', 1)}
-      {cell('D3', 1)}
-      {cell('DELOAD', 1)}
-      {cell(`e1RM ${unitGlyph}`, 0.8)}
-    </View>
-  );
-}
-
-function ProgressGridBody({
-  data,
   onPastCellPress,
+  goalCycle,
+  draftKind,
+  draftValue,
+  draftTargetTm,
 }: {
-  data: LiftProgression;
+  row: LiftProgression['rows'][number];
+  unitGlyph: 'lb' | 'kg';
   onPastCellPress: (sessionId: number) => void;
+  goalCycle: number | null;
+  draftKind: LiftGoalKind;
+  draftValue: number;
+  draftTargetTm: number;
 }) {
-  // Past rows oldest-first, then the future tail (which includes the
-  // currentCycle row as its first entry per useLiftProgression).
-  const rows: Array<{ row: LiftProgression['futureRows'][number]; eyebrow?: string }> = [];
-  for (const r of data.pastRows) {
-    rows.push({ row: r });
-  }
-  for (let i = 0; i < data.futureRows.length; i++) {
-    const r = data.futureRows[i];
-    if (!r) continue;
-    if (i === 0) rows.push({ row: r, eyebrow: 'CURRENT' });
-    else rows.push({ row: r });
-  }
-
-  // Insert goal-rule row between the first row whose e1rm >= goal and the
-  // one prior. We use the `crossesGoal` flag set by the data hook.
-  const elements: React.ReactNode[] = [];
-  for (let i = 0; i < rows.length; i++) {
-    const entry = rows[i];
-    if (!entry) continue;
-    const { row, eyebrow } = entry;
-    if (row.crossesGoal && data.goal) {
-      elements.push(
+  const placeRuleAbove = goalCycle === row.cycle;
+  return (
+    <>
+      {placeRuleAbove ? (
         <GoalRuleRow
-          key={`goal-rule-${row.cycle}`}
-          goalValue={data.goal.value}
-          unit={data.goal.unit === 'lbs' ? 'lb' : 'kg'}
-          testID="progress-goal-rule"
-        />,
-      );
-    }
-    elements.push(
+          kind={draftKind}
+          value={draftValue}
+          targetTm={draftTargetTm}
+          unitGlyph={unitGlyph}
+          testID={`progress-goal-rule-${row.cycle}`}
+        />
+      ) : null}
       <ProgressGridRow
-        key={`row-${row.cycle}`}
         cycle={row.cycle}
+        state={row.isCurrent ? 'current' : row.isPast ? 'past' : 'future'}
         testID={`progress-row-${row.cycle}`}
-        {...(eyebrow ? { eyebrow } : {})}
       >
         {row.cells.map((cell) => {
-          if (cell.kind === 'future') {
+          if (cell.kind === 'now') {
             return (
               <ProgressGridCell
                 key={`cell-${row.cycle}-${cell.day}`}
-                variant="ghosted"
-                weight={cell.projectedWeight}
-                marker={cell.deload ? '─' : null}
-                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: projected ${cell.projectedWeight}`}
+                variant="now"
+                weight={cell.prescribedWeight}
+                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: now, prescribed ${cell.prescribedWeight} ${unitGlyph}`}
                 testID={`progress-cell-${row.cycle}-${cell.day}`}
               />
             );
           }
-          const variant = cell.kind === 'last-done' ? 'outlined' : 'filled';
-          const a11yPrefix = cell.kind === 'last-done' ? 'Most recent. ' : '';
+          if (cell.kind === 'future') {
+            return (
+              <ProgressGridCell
+                key={`cell-${row.cycle}-${cell.day}`}
+                variant="future"
+                weight={cell.projectedWeight}
+                marker={cell.deload ? '─' : null}
+                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: projected ${cell.projectedWeight} ${unitGlyph}`}
+                testID={`progress-cell-${row.cycle}-${cell.day}`}
+              />
+            );
+          }
+          // past / last-done
+          const variant = cell.kind === 'last-done' ? 'outlined' : 'past';
           const marker = cell.deload ? '✓' : null;
+          const a11yPrefix = cell.kind === 'last-done' ? 'Most recent. ' : '';
           return (
             <ProgressGridCell
               key={`cell-${row.cycle}-${cell.day}`}
@@ -404,43 +535,121 @@ function ProgressGridBody({
               reps={cell.amrap ? cell.topReps : null}
               marker={marker}
               onPress={() => onPastCellPress(cell.sessionId)}
-              accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} for ${cell.topReps} reps`}
+              accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${cell.amrap ? ` for ${cell.topReps} reps` : cell.deload ? ' deload logged' : ''}`}
               testID={`progress-cell-${row.cycle}-${cell.day}`}
             />
           );
         })}
-        <E1rmCell
-          value={row.e1rm}
-          variant={row.e1rmKind}
-          showAchievement={row.crossesGoal === true}
-          accessibilityLabel={
-            row.e1rmKind === 'past'
-              ? `Cycle ${row.cycle} estimated 1RM ${row.e1rm}`
-              : `Cycle ${row.cycle} projected estimated 1RM ${row.e1rm}${row.crossesGoal ? ' — projected to reach goal' : ''}`
-          }
-          testID={`progress-e1rm-${row.cycle}`}
+        <TmCell
+          tm={row.tm}
+          variant={row.isCurrent ? 'current' : row.isPast ? 'past' : 'future'}
+          unitGlyph={unitGlyph}
+          accessibilityLabel={`Cycle ${row.cycle} training max ${row.tm} ${unitGlyph}`}
+          testID={`progress-tm-${row.cycle}`}
         />
-      </ProgressGridRow>,
-    );
-  }
+      </ProgressGridRow>
+    </>
+  );
+}
 
-  return <View>{elements}</View>;
+function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
+  const { colors, type } = useTheme();
+  // Mirror ProgressGridRow's column structure: 34 px label + 4× flex 1 + 54 px TM.
+  const dayLabels: Array<{ label: string; scheme: string }> = [
+    { label: 'D1', scheme: '5+' },
+    { label: 'D2', scheme: '3+' },
+    { label: 'D3', scheme: '1+' },
+    { label: 'D4', scheme: 'del' },
+  ];
+  const headerCell = (
+    label: string,
+    sub: string | null,
+    flex: number | undefined,
+    width: number | undefined,
+    withLeftRule: boolean,
+    withLeftStrongRule: boolean,
+  ) => (
+    <View
+      style={{
+        flex,
+        width,
+        paddingVertical: 8,
+        paddingHorizontal: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        minHeight: 36,
+        borderLeftWidth: withLeftRule || withLeftStrongRule ? 1 : 0,
+        borderLeftColor: withLeftStrongRule ? colors.ink0 : colors.line,
+      }}
+    >
+      <RNText
+        style={{
+          fontFamily: `${type.mono}-Bold`,
+          fontSize: 10,
+          letterSpacing: 1.8,
+          textTransform: 'uppercase',
+          color: colors.ink0,
+        }}
+      >
+        {label}
+      </RNText>
+      {sub ? (
+        <RNText
+          style={{
+            fontFamily: `${type.mono}-Medium`,
+            fontSize: 8,
+            letterSpacing: 1.44,
+            textTransform: 'uppercase',
+            color: colors.ink3,
+          }}
+        >
+          {sub}
+        </RNText>
+      ) : null}
+    </View>
+  );
+
+  const wrap: ViewStyle = {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.ink0,
+  };
+
+  return (
+    <View style={wrap}>
+      {/* Label spacer (34 px) + right rule matches the body's ink0 label/day divider. */}
+      <View
+        style={{
+          width: 34,
+          borderRightWidth: 1,
+          borderRightColor: colors.ink0,
+        }}
+      />
+      {dayLabels.map((d, i) => headerCell(d.label, d.scheme, 1, undefined, i > 0, false))}
+      {headerCell('→ TM', unitGlyph, undefined, 54, false, true)}
+    </View>
+  );
+}
+
+function isLowerBody(lift: Lift): boolean {
+  return lift === 'squat' || lift === 'deadlift';
 }
 
 function ProgressSkeleton() {
-  const { spacing, layout } = useTheme();
+  const { colors, spacing, layout } = useTheme();
+  const containerStyle: ViewStyle = {
+    paddingHorizontal: layout.gutter,
+    paddingTop: spacing.md,
+    gap: spacing.md,
+    backgroundColor: colors.bg0,
+  };
   return (
-    <View
-      style={{ flex: 1, paddingHorizontal: layout.gutter, paddingTop: spacing.lg, gap: spacing.md }}
-      testID="progress-skeleton"
-    >
-      <Skeleton width="60%" height={56} />
-      <Skeleton height={12} width="40%" />
-      <Skeleton height={64} />
-      {Array.from({ length: 7 }).map((_, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton row index is the key
-        <Skeleton key={`pg-sk-${i}`} height={56} />
-      ))}
+    <View style={containerStyle} testID="progress-skeleton">
+      <Skeleton style={{ width: '60%', height: 56 }} />
+      <Skeleton style={{ height: 96 }} />
+      <Skeleton style={{ height: 200 }} />
     </View>
   );
 }

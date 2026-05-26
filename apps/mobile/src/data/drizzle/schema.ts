@@ -75,7 +75,8 @@ export const prs = sqliteTable('prs', {
  */
 export const liftGoals = sqliteTable('lift_goals', {
   lift: text('lift', { enum: ['squat', 'bench', 'deadlift', 'press'] }).primaryKey(),
-  targetE1RM: real('target_e1rm').notNull(),
+  kind: text('kind', { enum: ['tm', '1rm'] }).notNull(),
+  targetValue: real('target_value').notNull(),
   unit: text('unit', { enum: ['lbs', 'kg'] }).notNull(),
   updatedAt: integer('updated_at').notNull(),
 });

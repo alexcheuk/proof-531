@@ -39,6 +39,5 @@ export {
   type ProgressGridRowProps,
   PROGRESS_GRID_ROW_HEIGHT,
 } from './ProgressGridRow';
-export { E1rmCell, type E1rmCellProps, E1RM_COLUMN_FLEX } from './E1rmCell';
-export { GoalStrip, type GoalStripProps } from './GoalStrip';
+export { TmCell, type TmCellProps } from './TmCell';
 export { PagerDots, type PagerDotsProps } from './PagerDots';

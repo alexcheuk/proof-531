@@ -1,6 +1,7 @@
 /**
- * `useLiftGoal(lift)` — TanStack Query hook returning the per-lift e1RM goal
- * row, or `null` when no goal has been set.
+ * `useLiftGoal(lift)` — TanStack Query hook returning the per-lift goal
+ * row (TM or 1RM target with its value/unit), or `null` when no goal has
+ * been set.
  *
  * Companion mutation lives in `./useSetLiftGoal.ts` so the read and the
  * optimistic write stay in separate files.

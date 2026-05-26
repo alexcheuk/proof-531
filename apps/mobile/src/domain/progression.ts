@@ -1,20 +1,17 @@
 /**
  * Progress-screen domain math.
  *
- * Pure domain layer — no React, no async, no Drizzle. Mirrors the way the
- * existing `epley` / `schemes` / `increments` / `units` modules expose
- * primitive-only functions consumed by the data layer's `useLiftProgression`
- * reshape hook.
+ * Pure domain layer — no React, no async, no Drizzle. Used by the data
+ * layer's `useLiftProgression` reshape hook.
  *
  * The Progress feature shows a single lift's cycle × day grid plus a
- * projection forward to the user's e1RM goal. Past rows are computed from
- * persisted set-log data (best Epley e1RM per cycle); future rows are
- * projected by linearly advancing the training max (TM) per cycle and
- * snapping the prescribed-percentage weights to the unit's plate step.
+ * projection forward to the user's TM (or 1RM) goal. Past rows come from
+ * persisted set-log data; future rows are projected by linearly advancing
+ * the training max (TM) per cycle and snapping the prescribed-percentage
+ * weights to the unit's plate step.
  *
- * AMRAP failure / TM reset handling is deliberately out of scope per the
- * spec — the projection assumes the lifter stays on-pace forever. See the
- * spec at `_workspace/01_design_spec.md` "Out of scope" §1.
+ * AMRAP failure / TM reset is deliberately out of scope — the projection
+ * assumes on-pace progress forever.
  */
 
 import { estimateOneRm } from './epley';
@@ -23,21 +20,12 @@ import { setsForWeek } from './schemes';
 import type { Lift, SetLogKind, Unit } from './types';
 import { round } from './units';
 
+export type GoalKind = 'tm' | '1rm';
+
 /**
- * Best (max) Epley e1RM across the rows of a single completed cycle for
- * one lift. Used to compute the **past** e1RM displayed in the Progress
- * grid's right column.
- *
- * Iterates every row and runs `estimateOneRm` per row; returns the max,
- * or `0` when no row contributes (empty input, zero-weight rows, zero-rep
- * rows). The caller decides whether to include only AMRAP rows or all
- * working rows — this function does not filter by `kind`.
- *
- * Note: PAST e1RM iterates every working/AMRAP row in the cycle (D1/D2/D3)
- * and takes the max, while FUTURE projected e1RM is computed from week-3
- * (day 3) specifically — see {@link projectE1RMForFuture}. Both reduce to
- * "the heaviest e1RM event of the cycle", but past has actual reps to read
- * from every set while future projects only from the known-heaviest event.
+ * Best (max) Epley e1RM across the rows of a single completed cycle. Used
+ * for the "Best e1RM" stat in the Progress stats triplet — NOT a projection
+ * target. Returns 0 for empty input.
  */
 export function bestE1RMForCycle(
   rowsInCycle: Array<{ prescribedWeight: number; actualReps: number; kind: SetLogKind }>,
@@ -52,12 +40,9 @@ export function bestE1RMForCycle(
 
 /**
  * Rolling AMRAP rep-margin: average of `(actualReps − prescribedReps)` over
- * the most recent `windowSize` completed cycles (default 3). Used as the
- * extra-rep estimate when projecting future AMRAP performance.
- *
- * Returns `0` on empty input. Caller decides how to handle the "no
- * history" fallback (the spec routes new users through margin=0, i.e.
- * "assume only the prescribed reps").
+ * the most recent `windowSize` completed cycles (default 3). Returns 0 on
+ * empty input. Currently informational only — the projection is TM-based
+ * and does not factor AMRAP performance.
  */
 export function rollingAmrapMargin(
   completedCycles: Array<{ amrapPrescribedReps: number; amrapActualReps: number }>,
@@ -74,11 +59,7 @@ export function rollingAmrapMargin(
 
 /**
  * Project the TM for a future cycle by applying `tmIncrement` once per cycle
- * delta. Pure linear projection — no failure handling, no plateaus.
- *
- * Past (`targetCycle < currentCycle`) and present (`targetCycle ===
- * currentCycle`) collapse to `currentTm` — callers asking for past TM
- * should look it up from the append-only `training_maxes` table instead.
+ * delta. Pure linear projection. Past/present collapse to `currentTm`.
  */
 export function projectTmForCycle(
   currentTm: number,
@@ -93,19 +74,10 @@ export function projectTmForCycle(
 }
 
 /**
- * Projected top-set weight for a future `(cycle, day)` cell in the grid.
+ * Projected top-set weight for a `(cycle, day)` cell.
  *
- * Routes:
- *   - day 1 / 2 / 3 → week-3 top-set percentage (D1=0.75 D2=0.85 D3=0.95).
- *     Even though the lifter cycles through weeks 1–4 in reality, the
- *     Progress grid's "future cycle" rows are an abstracted summary — each
- *     row represents a *whole* cycle and the cells show the heaviest top
- *     set for the matching position in week 3 (the highest-e1RM week).
- *     This keeps the grid readable as a single "where will my lifts be?"
- *     ledger rather than collapsing into a 12-row week×day mess.
- *   - day 4 (deload) → week-4 top-set percentage 0.60.
- *
- * Always plate-snaps the result.
+ * Day 1/2/3 → week-3 prescription (5/3/1+ scheme; D1=0.75, D2=0.85, D3=0.95
+ * of TM). Day 4 (deload) → 0.60 × TM. Plate-snapped to the unit's step.
  */
 export function projectTopSetWeight(
   futureCycle: number,
@@ -116,119 +88,96 @@ export function projectTopSetWeight(
   unit: Unit,
 ): number {
   const tm = projectTmForCycle(currentTm, currentCycle, futureCycle, lift, unit);
-  if (day === 4) {
-    // Week 4 (deload) top set is the third set @ 0.60.
-    return round(tm * 0.6, unit);
-  }
+  if (day === 4) return round(tm * 0.6, unit);
   const week3 = setsForWeek(3);
-  // day=1..3 → index 0..2 in the week-3 prescription.
-  const setIndex = day - 1;
-  const set = week3[setIndex];
-  if (!set) {
-    // Shouldn't happen — day is constrained to 1|2|3|4 above.
-    return 0;
-  }
+  const set = week3[day - 1];
+  if (!set) return 0;
   return round(tm * set.pct, unit);
 }
 
 /**
- * Projected e1RM for a future cycle.
- *
- * Uses week-3 day-3 (top single @ 0.95 TM × 1+ rep AMRAP) as the
- * representative "heaviest event of the cycle" — that's the highest-e1RM
- * row in any cycle, so it's the right anchor for "where will my projected
- * 1RM be by then?". Reps assumed = `1 + round(rollingMargin)`, clamped to
- * a minimum of 1 (the prescribed rep).
- *
- * Caller computes `rollingMargin` from the last N completed cycles via
- * {@link rollingAmrapMargin}; passing `0` (e.g. on a fresh install) makes
- * the projection a strict on-pace forecast.
+ * Convert a 1RM goal to its equivalent training max. Per Wendler: TM ≈ 90%
+ * of 1RM. Result is plate-snapped to the unit's step so the goal lands on a
+ * loadable TM.
  */
-export function projectE1RMForFuture(
-  futureCycle: number,
-  currentTm: number,
-  currentCycle: number,
-  rollingMargin: number,
-  lift: Lift,
-  unit: Unit,
-): number {
-  const weight = projectTopSetWeight(futureCycle, 3, currentTm, currentCycle, lift, unit);
-  const reps = Math.max(1, Math.round(1 + rollingMargin));
-  return estimateOneRm(weight, reps);
+export function tmFromOneRm(oneRm: number, unit: Unit): number {
+  return round(oneRm * 0.9, unit);
 }
 
 /**
- * Number of future cycles (≥ 1) before projected e1RM reaches or exceeds
- * `goal`. Returns `0` when `currentE1RM` already meets the goal, and
- * `null` when:
- *
- *   - `goal` is `null` (no goal set — nothing to count toward);
- *   - no cycle within `[currentCycle+1, currentCycle+maxLookahead]` crosses
- *     the goal (guards against a runaway loop on a goal beyond any
- *     realistic horizon).
- *
- * Default `maxLookahead = 60` cycles, ≈ 5 years of 5/3/1, well past any
- * useful planning horizon.
+ * Resolve a goal (kind + value, in storage units) into its target TM (also
+ * storage units). For `kind: 'tm'` this is the identity; for `kind: '1rm'`
+ * it routes through {@link tmFromOneRm}.
  */
-export function cyclesUntilGoal(
-  goal: number | null,
-  currentE1RM: number,
+export function goalTargetTm(kind: GoalKind, value: number, unit: Unit): number {
+  if (kind === 'tm') return value;
+  return tmFromOneRm(value, unit);
+}
+
+/**
+ * Number of cycles (≥ 0) before projected TM reaches or exceeds
+ * `targetTm`. Returns `0` when the current TM already meets/exceeds the
+ * goal, and `null` when:
+ *
+ *   - `targetTm` is `null` (no goal set);
+ *   - no cycle within `[currentCycle+1, currentCycle+maxLookahead]` crosses
+ *     it (runaway guard).
+ *
+ * Default `maxLookahead = 120` — ~10 years of 5/3/1, well past any useful
+ * planning horizon.
+ */
+export function cyclesUntilTmGoal(
+  targetTm: number | null,
   currentTm: number,
   currentCycle: number,
-  rollingMargin: number,
   lift: Lift,
   unit: Unit,
-  maxLookahead = 60,
+  maxLookahead = 120,
 ): number | null {
-  if (goal === null) return null;
-  if (currentE1RM >= goal) return 0;
+  if (targetTm === null) return null;
+  if (currentTm >= targetTm) return 0;
   for (let k = 1; k <= maxLookahead; k++) {
-    const e1 = projectE1RMForFuture(
-      currentCycle + k,
-      currentTm,
-      currentCycle,
-      rollingMargin,
-      lift,
-      unit,
-    );
-    if (e1 >= goal) return k;
+    const tm = projectTmForCycle(currentTm, currentCycle, currentCycle + k, lift, unit);
+    if (tm >= targetTm) return k;
   }
   return null;
 }
 
 /**
- * Build the full list of future cycle rows from `currentCycle + 1` through
- * `currentCycle + count` (default 6). Each row has the 4 day cells'
- * projected weights and the projected e1RM. Used by the data hook to
- * shape the Progress grid's "future" tail.
+ * Build cycle rows from `startCycle` through `endCycle` (inclusive). Each
+ * row carries the 4 day-cell projected weights and the cycle's TM.
+ *
+ * Used by `useLiftProgression` to shape the full grid (past + current +
+ * future): past cycles get this scaffold and then have their actual data
+ * overlaid; current cycle's `tm` is just `currentTm`; future cycles use
+ * `projectTmForCycle`.
  */
-export function projectFutureCycles(
-  count: number,
+export function projectCycleRows(
+  startCycle: number,
+  endCycle: number,
   currentTm: number,
   currentCycle: number,
-  rollingMargin: number,
   lift: Lift,
   unit: Unit,
 ): Array<{
   cycle: number;
+  tm: number;
   days: Array<{ day: 1 | 2 | 3 | 4; weight: number }>;
-  e1rm: number;
 }> {
   const rows: Array<{
     cycle: number;
+    tm: number;
     days: Array<{ day: 1 | 2 | 3 | 4; weight: number }>;
-    e1rm: number;
   }> = [];
-  for (let i = 1; i <= count; i++) {
-    const cycle = currentCycle + i;
+  for (let cycle = startCycle; cycle <= endCycle; cycle++) {
+    const tm = projectTmForCycle(currentTm, currentCycle, cycle, lift, unit);
     const days: Array<{ day: 1 | 2 | 3 | 4; weight: number }> = [
       { day: 1, weight: projectTopSetWeight(cycle, 1, currentTm, currentCycle, lift, unit) },
       { day: 2, weight: projectTopSetWeight(cycle, 2, currentTm, currentCycle, lift, unit) },
       { day: 3, weight: projectTopSetWeight(cycle, 3, currentTm, currentCycle, lift, unit) },
       { day: 4, weight: projectTopSetWeight(cycle, 4, currentTm, currentCycle, lift, unit) },
     ];
-    const e1rm = projectE1RMForFuture(cycle, currentTm, currentCycle, rollingMargin, lift, unit);
-    rows.push({ cycle, days, e1rm });
+    rows.push({ cycle, tm, days });
   }
   return rows;
 }

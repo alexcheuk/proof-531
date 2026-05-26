@@ -46,6 +46,8 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'bbb_rest_target_seconds',
 ] as const;
 
+const REQUIRED_LIFT_GOALS_COLUMNS = ['kind', 'target_value', 'unit'] as const;
+
 /**
  * Additive columns we can safely add in production via `ALTER TABLE ADD
  * COLUMN`. Each entry MUST supply a default so existing rows acquire a
@@ -139,6 +141,7 @@ function isDevEnv(): boolean {
 export function runMigrations(database: MigrationTarget): void {
   const sessionsCols = getColumns(database, 'sessions');
   const settingsCols = getColumns(database, 'settings');
+  const liftGoalsCols = getColumns(database, 'lift_goals');
 
   // Try additive ALTER first — safe in both dev and prod, and resolves
   // stale schemas without dropping user data.
@@ -183,7 +186,11 @@ export function runMigrations(database: MigrationTarget): void {
     settingsCols !== null &&
     settingsCols.length > 0 &&
     REQUIRED_SETTINGS_COLUMNS.some((c) => !settingsCols.includes(c));
-  const isStale = sessionsStale || settingsStale;
+  const liftGoalsStale =
+    liftGoalsCols !== null &&
+    liftGoalsCols.length > 0 &&
+    REQUIRED_LIFT_GOALS_COLUMNS.some((c) => !liftGoalsCols.includes(c));
+  const isStale = sessionsStale || settingsStale || liftGoalsStale;
 
   if (isStale) {
     if (isDevEnv()) {
