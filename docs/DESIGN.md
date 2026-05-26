@@ -5,6 +5,21 @@
 
 ---
 
+> **Status note (2026-05-26).** This document is the **original product spec**.
+> Sections 1 (product direction) and 2 (the program) still describe what got
+> built. Section 3 onward (visual language, information architecture, screens)
+> reflects the original "dark canvas / hot-orange accent / Space Grotesk +
+> JetBrains Mono" target. During Phase A the visual language pivoted to
+> **paper / e-ink / amber-dot / IBM Plex Sans + Mono + Sans-Condensed**, and
+> the tab bar landed at four tabs (Today / Progress / History / Settings),
+> not five. The pivot is documented across `apps/mobile/src/design/tokens.ts`
+> (the authoritative source of design tokens), `CLAUDE.md` (current stack),
+> and the decision log. This file is kept as historical record of the
+> original direction — useful for context, **not authoritative for current
+> design work**. When in doubt, trust the running app.
+
+---
+
 ## 1 · Product direction
 
 ### Who it's for

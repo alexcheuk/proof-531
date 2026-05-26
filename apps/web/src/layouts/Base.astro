@@ -52,10 +52,40 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <link rel="alternate" type="application/rss+xml" title="531 dev blog" href="/rss.xml" />
   </head>
   <body>
+    {/* Skip-to-content link — first focusable element, visually hidden
+        until a keyboard user tabs onto it. Lets the keyboard audience
+        jump past the top-bar nav and land in the main content. */}
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <TopBar />
-    <main>
+    <main id="main-content" tabindex="-1">
       <slot />
     </main>
     <Footer />
+    <style>
+      .skip-link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: var(--ink-0);
+        color: var(--bg-0);
+        padding: 10px 16px;
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transform: translateY(-110%);
+        transition: transform 0.18s ease;
+        z-index: 100;
+      }
+      .skip-link:focus {
+        transform: translateY(0);
+        outline: 2px solid var(--amber);
+        outline-offset: -2px;
+      }
+      main:focus {
+        outline: none;
+      }
+    </style>
   </body>
 </html>

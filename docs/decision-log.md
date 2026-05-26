@@ -42,6 +42,18 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — DESIGN.md status banner + Base.astro skip-to-content link
+
+**Tags:** `docs`, `website`, `accessibility`
+**Files:** `docs/DESIGN.md`, `apps/web/src/layouts/Base.astro`
+
+Two unrelated polish wins:
+
+- **DESIGN.md** is the original product spec, written when the visual language was "dark canvas / hot-orange accent / Space Grotesk + JetBrains Mono". The actual app pivoted to "paper / e-ink / amber-dot / IBM Plex" in Phase A, and large sections of DESIGN.md (color, typography, shape, IA, screens) describe a UI that never shipped. A full rewrite is bigger than a steady-state loop wants — the file is also valuable as historical context for the pivot. Added a clear status banner at the top: sections 1–2 still describe what shipped; sections 3+ are historical, trust the running app for current design language, and point readers at `src/design/tokens.ts` + CLAUDE.md as the authoritative sources.
+- **Base.astro** had no skip-to-content link. Keyboard users tabbing through the marketing site had to tab through the entire top nav before reaching the page body. Added the standard pattern: a visually-hidden anchor at the top of `<body>` that becomes visible on focus and jumps to `#main-content`. Mainstream WCAG win; ~30 lines of CSS+markup.
+
+**Why:** DESIGN.md is one of the top hits when an agent or a contributor reads the project's docs end-to-end; catching them up on the pivot avoids the "wait, why isn't the app orange?" confusion. The skip-link is a small but real accessibility gap on the marketing site.
+
 ### 2026-05-26 — ARCHITECTURE.md + INTENT.md catch up to reality
 
 **Tags:** `docs`, `stale-content`
