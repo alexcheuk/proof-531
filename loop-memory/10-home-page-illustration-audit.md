@@ -74,18 +74,27 @@ must visually match what the app actually shows for the same screen.
 
 ## Other illustrations
 
-- `PlateBar.astro` — should match `src/design/primitives/PlateBar/`.
-  Not audited this loop.
+- `PlateBar.astro` — primitive itself is faithful to the mobile
+  PlateBar (matching size ramp, plate ordering, PER SIDE caption
+  format, ON THE BAR readout).
+  - [x] (loop-036) Home-page usage had `label="WORKING · SET 03 ·
+    AMRAP"`, which doesn't appear anywhere in the mobile app and
+    also violated the "no leading-zero numbers" rule from Discord
+    1508668998. Replaced with `ON THE BAR · 95% TM` (the actual
+    SetPhase eyebrow during a 95% AMRAP working set).
 - `SessionTape.astro` — meant to abstract the session flow. Less
   literal; check that the labels still match user-visible feature
-  names.
-- `AmrapMath.astro` — the Epley formula illustration. Verify the
-  numbers shown match what the app would compute.
-- `WeekLedger.astro` — four-week cycle illustration. Verify the
-  per-week percentages + the "deload" framing match the actual
-  schemes table.
+  names. Not audited this loop.
+- `AmrapMath.astro` — covered in loop-034 (formula correctness).
+- `WeekLedger.astro` — four-week cycle illustration. Per-week
+  schemes (5/5/5+ → 3/3/3+ → 5/3/1+ → deload 5/5/5) verified
+  against `domain/schemes.ts` in loop-036 — all correct.
+  - [x] (loop-036) Lift row label `OHP` was the only drift; the
+    mobile app surfaces `Press` everywhere (the type itself is
+    `'press'` and `liftDisplayName('press')` returns `'Press'`).
+    Fixed.
 - `MastheadStrip.astro` — branding strip; should match the actual
-  Masthead's typography.
+  Masthead's typography. Not audited this loop.
 
 ## Process for the next audit pass
 

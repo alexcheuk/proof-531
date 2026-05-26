@@ -42,6 +42,20 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home-page audit pass 3: PlateBar label + Press vs OHP
+
+**Tags:** `website`, `home-page`
+**Files:** `apps/web/src/pages/index.astro`, `apps/web/src/components/illustrations/WeekLedger.astro`, `loop-memory/10-home-page-illustration-audit.md`
+
+Continued the running illustration audit. Two more drifts patched:
+
+- The plate-loader section's PlateBar carried `label="WORKING · SET 03 · AMRAP"`. That label doesn't exist anywhere in the mobile app — the actual eyebrow on the matching SetPhase surface is `ON THE BAR · 95% TM`, and the leading-zero `SET 03` violated the no-leading-zero convention from Discord 1508668998. Swapped to the real eyebrow.
+- WeekLedger named the fourth lift `OHP`. The mobile app calls it `Press` everywhere (label, type, settings). Aligned.
+
+Verified WeekLedger's per-week rep schemes (`5/5/5+`, `3/3/3+`, `5/3/1+`, deload `5/5/5`) against `domain/schemes.ts` — all correct.
+
+**Why:** Same drift-check loop as before. The criteria-category-8 slot keeps chipping at the home-page audit until the running checklist memory file is green.
+
 ### 2026-05-26 — Close-the-day routes to Progress with a one-time animation
 
 **Tags:** `feature`, `session`, `progress`, `navigation`
