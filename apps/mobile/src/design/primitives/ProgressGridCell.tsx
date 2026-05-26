@@ -10,8 +10,10 @@ import { useTheme } from '../theme';
  *   - `outlined` — most-recent completed day; same fill as `past`, plus a
  *               2-px ink outline INSET (rendered with stacked borders so
  *               outer dimensions stay aligned with neighboring cells).
- *   - `now`   — current week's upcoming day; paper bg, caps "now" eyebrow
- *               on top + display 15 weight below.
+ *   - `now`   — current week's upcoming day; paper bg, caps "next" eyebrow
+ *               on top + display 15 weight below + inset 1-px ink ring
+ *               highlight (mirrors the just-done marker on the Settings
+ *               cycle-progress grid).
  *   - `future` — projected day; paper bg, mono 13 weight only, `ink3` color.
  *
  * Marker (`✓` / `─`) replaces the second-line content on deload cells.
@@ -67,7 +69,10 @@ export function ProgressGridCell({
   };
 
   const weightColor = filled ? colors.bg0 : isFuture ? colors.ink3 : colors.ink0;
-  const secondaryColor = filled ? colors.paperMuted : isFuture ? colors.ink3 : colors.ink2;
+  // Brighten the rep count on filled cells from paperMuted → bg0 (full
+  // paper white) so the "× N" reads clearly against ink-0 — and bump to
+  // fontSize 10 so it pulls its weight next to the bolded weight number.
+  const secondaryColor = filled ? colors.bg0 : isFuture ? colors.ink3 : colors.ink2;
 
   const renderPastOrOutlined = () => (
     <>
@@ -86,7 +91,7 @@ export function ProgressGridCell({
       <RNText
         style={{
           fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 9,
+          fontSize: 10,
           color: secondaryColor,
           letterSpacing: 0.36,
           marginTop: 3,
@@ -109,7 +114,7 @@ export function ProgressGridCell({
           textTransform: 'uppercase',
         }}
       >
-        now
+        next
       </RNText>
       <RNText
         style={{
@@ -161,6 +166,25 @@ export function ProgressGridCell({
     />
   ) : null;
 
+  // "NEXT" cell highlight: a 1-px ink-0 ring inset 2 px from the cell's
+  // outer border. Mirrors the just-done marker style on the Settings
+  // cycle-progress grid so the two surfaces speak the same visual
+  // language ("you are here").
+  const nextRingOverlay = isNow ? (
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        top: 2,
+        left: 2,
+        right: 2,
+        bottom: 2,
+        borderWidth: 1,
+        borderColor: colors.ink0,
+      }}
+    />
+  ) : null;
+
   if (onPress) {
     return (
       <Pressable
@@ -173,6 +197,7 @@ export function ProgressGridCell({
       >
         {body}
         {outlineOverlay}
+        {nextRingOverlay}
       </Pressable>
     );
   }
@@ -185,6 +210,7 @@ export function ProgressGridCell({
     >
       {body}
       {outlineOverlay}
+      {nextRingOverlay}
     </View>
   );
 }

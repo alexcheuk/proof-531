@@ -3,9 +3,9 @@ import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-nati
 import { useTheme } from '../theme';
 
 /**
- * One row of the Progress grid: zero-padded cycle label (`C07`), 4 day
- * cells, trailing TM cell. Row chrome (borders, label tile, current-cycle
- * tint) is owned here; cell visuals are children.
+ * One row of the Progress grid: cycle label (`C7`), 4 day cells, trailing
+ * TM cell. Row chrome (borders, label tile, current-cycle tint) is owned
+ * here; cell visuals are children.
  *
  * Layout: identical to {@link ProgressGridHeaderShell} — a fixed-width label
  * column on the left (34 px), 4 day cells each `flex: 1`, and a fixed-width
@@ -70,7 +70,7 @@ export function ProgressGridRow({ cycle, children, state, testID }: ProgressGrid
   return (
     <View testID={testID} style={rowStyle}>
       <View style={labelCellStyle}>
-        <RNText style={labelTextStyle}>{`C${String(cycle).padStart(2, '0')}`}</RNText>
+        <RNText style={labelTextStyle}>{`C${cycle}`}</RNText>
       </View>
       {items.slice(0, 4).map((child, idx) => (
         <View

@@ -7,6 +7,7 @@ export default function TabsLayout() {
     <FirstLaunchGate>
       <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <CustomTabBar {...props} />}>
         <Tabs.Screen name="index" options={{ title: 'TODAY' }} />
+        <Tabs.Screen name="progress" options={{ title: 'PROGRESS' }} />
         <Tabs.Screen name="history" options={{ title: 'HISTORY' }} />
         <Tabs.Screen name="settings" options={{ title: 'YOU' }} />
       </Tabs>

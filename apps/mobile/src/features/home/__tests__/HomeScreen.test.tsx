@@ -177,8 +177,8 @@ jest.mock('@/data/queries/useActiveSession', () => ({
   ACTIVE_SESSION_KEY: ['activeSession'],
 }));
 
-// HomeScreen now reads useSessions via useActivityStreak; mock with an
-// empty list so the streak badge stays hidden in the existing assertions.
+// LiftPage renders LAST TRAINED via useLastCompletedSessionForLift, which
+// reads useSessions. Stub it so the test render doesn't hit a real DB.
 jest.mock('@/data/queries/useSessions', () => ({
   useSessions: () => ({ data: [], isLoading: false }),
   SESSIONS_KEY: ['sessions'],

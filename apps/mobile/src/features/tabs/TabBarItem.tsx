@@ -5,6 +5,7 @@ import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 
 const LABELS: Record<string, string> = {
   index: 'TODAY',
+  progress: 'PROGRESS',
   history: 'HISTORY',
   settings: 'YOU',
 };

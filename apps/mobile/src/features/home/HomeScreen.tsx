@@ -31,8 +31,6 @@ import { HomeContainer } from './components/HomeContainer';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
-import { StreakBadge } from './components/StreakBadge';
-import { useActivityStreak } from './hooks/useActivityStreak';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {
@@ -55,7 +53,6 @@ export function HomeScreen() {
   // layout, and momentum-end index calculation stay correct under
   // orientation change.
   const { width: screenWidth } = useWindowDimensions();
-  const { streak } = useActivityStreak();
 
   const { listRef, onMomentumScrollEnd } = useLiftCarouselSync({
     selectedLift,
@@ -179,7 +176,6 @@ export function HomeScreen() {
   return (
     <HomeContainer>
       <Masthead rightSlot={<DateBadge label={dateLabel(new Date())} />} />
-      <StreakBadge streak={streak} />
       <LiftTabs
         enabled={enabledLifts}
         selected={selectedToRender}

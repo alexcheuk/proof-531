@@ -56,7 +56,7 @@ export function ProgressLiftRow({
                 key={`cell-${row.cycle}-${cell.day}`}
                 variant="now"
                 weight={cell.prescribedWeight}
-                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: now, prescribed ${cell.prescribedWeight} ${unitGlyph}`}
+                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: next, prescribed ${cell.prescribedWeight} ${unitGlyph}`}
                 testID={`progress-cell-${row.cycle}-${cell.day}`}
               />
             );
@@ -92,7 +92,6 @@ export function ProgressLiftRow({
         <TmCell
           tm={row.tm}
           variant={row.isCurrent ? 'current' : row.isPast ? 'past' : 'future'}
-          unitGlyph={unitGlyph}
           accessibilityLabel={`Cycle ${row.cycle} training max ${row.tm} ${unitGlyph}`}
           testID={`progress-tm-${row.cycle}`}
         />

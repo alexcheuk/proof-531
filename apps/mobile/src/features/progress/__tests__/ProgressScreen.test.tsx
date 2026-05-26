@@ -208,17 +208,17 @@ describe('ProgressScreen', () => {
     expect(screen.getByText(/per cycle · lower body/)).toBeTruthy();
   });
 
-  it('zero-pads cycle labels (C01, C03, C04)', () => {
+  it('renders cycle labels (C1, C3, C4 — no leading zeros)', () => {
     const screen = wrap(<ProgressScreen lift="squat" />);
-    expect(screen.getByText('C01')).toBeTruthy();
-    // C03 appears both in the stats triplet "Cycle" column and as the current-cycle row label.
-    expect(screen.getAllByText('C03').length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText('C04')).toBeTruthy();
+    expect(screen.getByText('C1')).toBeTruthy();
+    // C3 appears both in the stats triplet "Cycle" column and as the current-cycle row label.
+    expect(screen.getAllByText('C3').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('C4')).toBeTruthy();
   });
 
-  it('shows the NOW caps label on the current week cell', () => {
+  it('shows the NEXT caps label on the current week cell', () => {
     const screen = wrap(<ProgressScreen lift="squat" />);
-    expect(screen.getByText('now')).toBeTruthy();
+    expect(screen.getByText('next')).toBeTruthy();
   });
 
   it('renders goal panel with TM tab selected by default and ±/value steppers', () => {

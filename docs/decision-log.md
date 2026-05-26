@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Progress promoted to a first-class tab; six Discord asks shipped together
+
+**Tags:** `feature`, `navigation`, `progress`, `home`, `removal`
+**Files:** `apps/mobile/src/app/(tabs)/{_layout,progress}.tsx`, `apps/mobile/src/app/progress/` (deleted), `apps/mobile/src/app/routes.ts`, `apps/mobile/src/features/tabs/TabBarItem.tsx`, `apps/mobile/src/design/primitives/{ProgressGridCell,ProgressGridRow,TmCell}.tsx`, `apps/mobile/src/features/progress/components/{StatsTriplet,ProgressLiftRow}.tsx`, `apps/mobile/src/features/home/HomeScreen.tsx`, `apps/mobile/src/features/home/components/StreakBadge.tsx` (deleted), `apps/mobile/src/features/home/hooks/useActivityStreak.ts` (deleted), tests, plus `apps/mobile/src/features/home/__tests__/HomeScreen.test.tsx`
+
+Six task-queue items landed together. Progress is now a top-level tab between Today and History — `(tabs)/progress.tsx` reads an optional `?lift=` param and defaults to `enabledLifts[0]`; the screen's existing LiftTabs + swipe pager handle within-screen lift switching. The old stack route `/progress/[lift]` and its `_layout.tsx` were deleted. As a side effect, the "going back from Progress lands on History" complaint disappears — tabs have no back stack; the user just taps another tab.
+
+The cycle labels lost their leading zero (`C01 → C1`) in both the Progress grid and the StatsTriplet — Settings's CycleProgressSection still uses `Cycle 0N` for the ledger row where the row label format is its own thing. The day cell rep count brightened from `paperMuted` to `bg0` and grew from fontSize 9 → 10 so it reads at glance on the ink-filled cells. TmCells lost their per-row unit glyph — the column header already carries `→ TM lb`; the per-row duplication was just noise. The "NOW" cell renamed to "NEXT" with a 1-px inset ink ring, mirroring the just-done marker in the Settings cycle-progress grid so the two surfaces speak the same visual language.
+
+Removed the StreakBadge + `useActivityStreak` hook entirely. User: *"Days streaks function doesn't make sense if you don't lift everyday, which is intended if I just do bench."* The streak math is fine for a daily-training population; 5/3/1 + BBB lifters train 3–4×/week, and single-lift users train less. The right answer is to drop the surface, not pivot to a smaller cadence — Settings already exposes cycle progress, which is the actual signal a serious lifter watches.
+
+**Why bundled:** all six items converge on the same surface (Progress + tab bar + Home). Shipping piecemeal would have meant six diffs that each had to keep the carousel + lift selection + back nav coherent. One commit, one decision-log entry, one OTA.
+
+**Trade-offs:**
+- The `now` variant token in `ProgressGridCell` kept its name in the data model (`kind: 'now'`) while the rendered label changed to "NEXT". The variant lives across `useLiftProgression`'s `ProgressionCellNow` type and the cell prop union — renaming would have rippled into the SQL projection and three accessor sites for no real win. The display copy is decoupled from the data token.
+- Settings's "Cycle 0N" ledger label was left zero-padded. The user's complaint was about the Progress grid; the Settings ledger has its own typographic rhythm (`Cycle 03 · day 7 of 16`) that the leading zero supports.
+
 ### 2026-05-26 — Routes `goTo` helpers DRY'd via a shared `go(router, target, opts)`
 
 **Tags:** `refactor`, `routes`

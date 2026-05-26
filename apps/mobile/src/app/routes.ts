@@ -81,12 +81,13 @@ export const goTo = {
   },
 
   /**
-   * Push the Progress screen (cycle × day grid) for the given lift. Stack
-   * push so hardware/swipe back returns to TODAY (or wherever the user
-   * came from). The `[lift]` segment is part of the path — deep links
-   * `/progress/squat` work directly.
+   * Open the Progress tab with a specific lift pre-selected. Progress is
+   * a first-class tab (loop-024); navigating here swaps tabs rather than
+   * stack-pushing a sub-screen. The `lift` param is consumed by
+   * `(tabs)/progress.tsx`, which falls back to `enabledLifts[0]` if
+   * omitted.
    */
   progress(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
-    go(router, href({ pathname: '/progress/[lift]', params: { lift } }), opts);
+    go(router, href({ pathname: '/(tabs)/progress', params: { lift } }), opts);
   },
 } as const;

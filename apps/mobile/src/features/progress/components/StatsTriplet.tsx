@@ -35,7 +35,7 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
       value: e1rmHas ? String(bestE1RM) : '—',
       suffix: e1rmHas ? unitGlyph : null,
     },
-    { label: 'Cycle', value: `C${String(cycle).padStart(2, '0')}`, suffix: null },
+    { label: 'Cycle', value: `C${cycle}`, suffix: null },
   ];
 
   return (

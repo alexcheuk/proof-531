@@ -10,18 +10,18 @@ import { useTheme } from '../theme';
  *   - `past`    — past cycle TM. Display 18 semibold, color `ink1`.
  *   - `future`  — projected TM. Display 18 semibold, color `ink3`.
  *
- * Unit glyph (`lb` / `kg`) rendered underneath in caps mono 8.
+ * The per-row unit glyph was removed in loop-024 — the column header
+ * already carries `→ TM lb` / `kg` so per-row duplication was just noise.
  */
 export type TmCellProps = {
   /** TM value in display units, plate-snapped. */
   tm: number;
   variant: 'past' | 'current' | 'future';
-  unitGlyph: 'lb' | 'kg';
   accessibilityLabel?: string;
   testID?: string;
 };
 
-export function TmCell({ tm, variant, unitGlyph, accessibilityLabel, testID }: TmCellProps) {
+export function TmCell({ tm, variant, accessibilityLabel, testID }: TmCellProps) {
   const { colors, type } = useTheme();
 
   const isCurrent = variant === 'current';
@@ -58,18 +58,6 @@ export function TmCell({ tm, variant, unitGlyph, accessibilityLabel, testID }: T
         }}
       >
         {tm > 0 ? String(tm) : '·'}
-      </RNText>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 8,
-          color: colors.ink3,
-          letterSpacing: 1.44,
-          textTransform: 'uppercase',
-          marginTop: 2,
-        }}
-      >
-        {unitGlyph}
       </RNText>
     </View>
   );

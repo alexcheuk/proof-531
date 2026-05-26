@@ -117,12 +117,12 @@ describe('LiftPage', () => {
     expect(onBegin).not.toHaveBeenCalled();
   });
 
-  it('routes to /progress/[lift] when the "SEE PROGRESS" link is pressed', () => {
+  it('routes to the Progress tab when the "SEE PROGRESS" link is pressed', () => {
     const screen = wrap(<LiftPage {...baseProps} />);
     fireEvent.press(screen.getByTestId('lift-page-squat-see-progress'));
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
     expect(mockRouterPush).toHaveBeenCalledWith(
-      expect.objectContaining({ pathname: '/progress/[lift]', params: { lift: 'squat' } }),
+      expect.objectContaining({ pathname: '/(tabs)/progress', params: { lift: 'squat' } }),
     );
   });
 
