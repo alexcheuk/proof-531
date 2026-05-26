@@ -58,7 +58,6 @@ const baseProps: RequiredProps = {
   isInProgress: false,
   onBegin: () => {},
   onResume: () => {},
-  onOpenPlan: () => {},
 };
 
 describe('LiftPage', () => {
@@ -116,13 +115,6 @@ describe('LiftPage', () => {
     fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
     expect(onResume).toHaveBeenCalledTimes(1);
     expect(onBegin).not.toHaveBeenCalled();
-  });
-
-  it('fires onOpenPlan when the secondary "SEE FULL SESSION" button is pressed', () => {
-    const onOpenPlan = jest.fn();
-    const screen = wrap(<LiftPage {...baseProps} onOpenPlan={onOpenPlan} />);
-    fireEvent.press(screen.getByTestId('lift-page-squat-open-plan'));
-    expect(onOpenPlan).toHaveBeenCalledTimes(1);
   });
 
   it('routes to /progress/[lift] when the "SEE PROGRESS" link is pressed', () => {

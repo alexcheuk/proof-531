@@ -47,7 +47,6 @@ type LiftPageProps = {
   completedCount?: number;
   onBegin: () => void;
   onResume: () => void;
-  onOpenPlan: () => void;
 };
 
 export function LiftPage({
@@ -63,7 +62,6 @@ export function LiftPage({
   completedCount = 0,
   onBegin,
   onResume,
-  onOpenPlan,
 }: LiftPageProps) {
   const router = useRouter();
   const { spacing } = useTheme();
@@ -140,6 +138,14 @@ export function LiftPage({
         />
       </View>
 
+      <SecondaryLink
+        onPress={openProgress}
+        testID={`lift-page-${lift}-see-progress`}
+        accessibilityLabel={`See ${liftDisplayName(lift)} progress`}
+      >
+        SEE PROGRESS →
+      </SecondaryLink>
+
       <View style={{ flex: 1, minHeight: 18 }} />
 
       <PrimaryPillButton
@@ -153,23 +159,6 @@ export function LiftPage({
             : 'Resume session'
           : 'Begin session'}
       </PrimaryPillButton>
-
-      <SecondaryLink
-        onPress={onOpenPlan}
-        testID={`lift-page-${lift}-open-plan`}
-        accessibilityLabel={`See the full ${liftDisplayName(lift)} session`}
-        style={{ marginTop: spacing.md }}
-      >
-        SEE FULL SESSION →
-      </SecondaryLink>
-
-      <SecondaryLink
-        onPress={openProgress}
-        testID={`lift-page-${lift}-see-progress`}
-        accessibilityLabel={`See ${liftDisplayName(lift)} progress`}
-      >
-        SEE PROGRESS →
-      </SecondaryLink>
     </Animated.View>
   );
 }

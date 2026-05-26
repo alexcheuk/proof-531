@@ -134,6 +134,7 @@ export function GoalPanel({
               fontSize: 56,
               color: unset ? colors.ink2 : colors.ink0,
               letterSpacing: -2.52,
+              // rn-line-height-ok: digit-only display (tabular-nums); '—' fallback
               lineHeight: 56,
               fontVariant: ['tabular-nums', 'lining-nums'],
             }}

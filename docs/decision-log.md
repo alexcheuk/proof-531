@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Line-height clipping rule codified as `pnpm check-line-heights`
+
+**Tags:** `bug-class`, `tooling`, `convention`, `process`
+**Files:** `scripts/check-line-heights.sh`, `package.json`, `loop-memory/09-rn-text-clipping.md`, `apps/mobile/src/design/primitives/Heading.tsx`, `apps/mobile/src/features/progress/components/ProgressTitleBlock.tsx`, `apps/mobile/src/features/session/components/RestPhase.tsx`, `apps/mobile/src/features/onboarding/steps/PickLifts.tsx`, plus four annotation-only touches in PR celebration / GoalPanel / StatsTriplet for legitimately digit-only displays
+
+User reported the Progress screen masthead clipping the "Progress." descender — *again*, with the explicit frustration "why do we keep getting lineheight font cut off issues". The recurring root cause: PWA Tailwind designs use `leading-[0.92]`-style ratios that look fine in browsers (which let glyphs bleed below the line box) but RN strictly clips. Porters keep transcribing the tight ratio verbatim. Codified the rule as a CI check: for any inline `fontSize: N` + `lineHeight: M` pair in display-size text (≥ 24 px), require `M ≥ 1.14 × N`. Digit-only displays (`numeric` props, countdown clocks, tabular-num stat values) can opt out with a `// rn-line-height-ok: <reason>` comment on the preceding line. Wired the script into `pnpm verify` so the next time a porter writes `lineHeight: 52` against `fontSize: 56`, the gauntlet refuses to ship.
+
+The audit found one additional unreported bug — RestPhase's "Stronger" headline (PR-mode top of rest phase) was rendering at fontSize 64 / lineHeight 64; the 'g' was clipped. Fixed (64/74, matching LiftPageTitle's tested ratio).
+
+**Why:** the bug class repeats; the loop-memory note alone was not enough. A CI gate forces correctness at commit time instead of relying on screenshot pairs.
+
+**Trade-off:** the heuristic is grep-based, so it misses fontSize/lineHeight pairs that aren't adjacent inline literals (e.g. constants defined elsewhere and referenced by name). That's an accepted gap — the inline pattern is where the bug actually lives.
+
+### 2026-05-26 — Home LiftPage: SEE FULL SESSION removed; SEE PROGRESS hoisted to under the stats triplet
+
+**Tags:** `feature`, `removal`, `home`
+**Files:** `apps/mobile/src/features/home/components/LiftPage/LiftPage.tsx`, `apps/mobile/src/features/home/HomeScreen.tsx`, `apps/mobile/src/features/home/__tests__/LiftPage.{,setDisplayUnit,crossUnit}.test.tsx`
+
+User: "Remove the See full Session CTA in home screen. It's duplicate behavior as the primary CTA." Both `onResume` and `onOpenPlan` already routed to the same `handleOpenToday(lift)` — the chip was a true no-op alternative. Dropped the chip, the SecondaryLink import in that screen, the `onOpenPlan` prop on `LiftPage`, the corresponding wire-up in HomeScreen, and the test that exercised it. Then moved the remaining SEE PROGRESS chip from below the primary CTA to directly under the LiftStats triplet (per the user's "right under the three metrics" framing), so the lifter can hop to the projection without scanning past the CTA.
+
+**Why:** the duplicate affordance was confusing — two ways to start the same action; lifters explored which differed and learned the answer was "nothing". Putting SEE PROGRESS near the metrics keeps the projection accessible without giving it the same visual weight as Begin/Resume.
+
 ### 2026-05-25 — ProgressScreen split into one-component-per-file; LiftPage adopts SecondaryLink
 
 **Tags:** `refactor`, `progress`, `home`, `convention`

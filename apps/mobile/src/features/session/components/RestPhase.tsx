@@ -80,7 +80,9 @@ export function RestPhase({
   const headlineStyle: TextStyle = {
     fontFamily: `${type.sans}-Bold`,
     fontSize: 64,
-    lineHeight: 64,
+    // 'Stronger' has a 'g' descender; 64/64 clips it on Android.
+    // See loop-memory/09-rn-text-clipping.md.
+    lineHeight: 74,
     letterSpacing: -1.92,
     color: colors.ink0,
   };

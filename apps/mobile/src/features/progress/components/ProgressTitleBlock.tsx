@@ -36,7 +36,11 @@ export function ProgressTitleBlock({ lift }: { lift: Lift }) {
         style={{
           fontFamily: `${type.sans}-Bold`,
           fontSize: 56,
-          lineHeight: 52,
+          // RN clips descenders when lineHeight < ~1.14× fontSize. "Progress."
+          // has a 'g'; the canonical design's 0.93× (52) cut the bowl of the
+          // letter on iOS and Android both. Bump to 64 so the descender lands
+          // safely. See loop-memory/09-rn-text-clipping.md.
+          lineHeight: 64,
           letterSpacing: -2.24,
           color: colors.ink0,
         }}

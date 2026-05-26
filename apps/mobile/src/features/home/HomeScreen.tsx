@@ -138,7 +138,6 @@ export function HomeScreen() {
             completedCount={lift === inProgressLift ? inProgressCompletedCount : 0}
             onBegin={() => handleBegin(lift)}
             onResume={() => handleOpenToday(lift)}
-            onOpenPlan={() => handleOpenToday(lift)}
           />
         </View>
       );

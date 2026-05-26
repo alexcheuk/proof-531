@@ -18,6 +18,13 @@ import type { ColorToken } from '../tokens';
  * Default weight is `bold`; pass `weight="medium"` for the lighter masthead
  * accent (e.g. SessionComplete's eyebrow). Letter-spacing follows the PWA
  * tracking ratio (~-0.045em).
+ *
+ * Descenders: `xl` and `huge` default line-heights are tighter than their
+ * fontSize (0.94× and 0.98×). RN clips descenders (g j p q y) when the
+ * line-height is below ~1.14× fontSize. Current consumers are safe because
+ * they render descender-free copy ("book", digits); any new consumer with a
+ * descending letter must pass an explicit `lineHeight` override
+ * (≥ fontSize × 1.14). See loop-memory/09-rn-text-clipping.md.
  */
 export type HeadingProps = {
   children: ReactNode;

@@ -50,7 +50,7 @@ export function PickLifts({ enabled, unit, onToggle, onBack, onNext }: PickLifts
           weight="bold"
           size={44}
           color="ink0"
-          style={{ letterSpacing: -1.54, lineHeight: 48 }}
+          style={{ letterSpacing: -1.54, lineHeight: 52 }}
         >
           Which lifts{'\n'}
           <Text variant="sans" weight="medium" size={44} color="ink2">

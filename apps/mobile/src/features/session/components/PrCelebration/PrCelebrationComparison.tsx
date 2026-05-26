@@ -154,6 +154,7 @@ export function PrCelebrationComparison({
               style={{
                 fontFamily: `${type.display}-Bold`,
                 fontSize: 32,
+                // rn-line-height-ok: numeric delta value (e.g. "+12") only
                 lineHeight: 32,
                 letterSpacing: -0.96,
                 color: colors.bg0,

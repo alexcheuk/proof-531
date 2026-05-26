@@ -103,7 +103,6 @@ describe('Home cross-unit render via setDisplayUnit (integration)', () => {
         isInProgress={false}
         onBegin={() => {}}
         onResume={() => {}}
-        onOpenPlan={() => {}}
       />,
     );
 

@@ -63,7 +63,6 @@ describe('LiftPage (cross-unit rendering)', () => {
       isInProgress: false,
       onBegin: () => {},
       onResume: () => {},
-      onOpenPlan: () => {},
     };
     const screen = wrap(<LiftPage {...props} />);
 

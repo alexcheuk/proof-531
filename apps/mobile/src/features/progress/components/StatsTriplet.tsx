@@ -69,6 +69,7 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
               fontSize: 26,
               color: colors.ink0,
               letterSpacing: -0.78,
+              // rn-line-height-ok: tabular numeric stats only
               lineHeight: 26,
               fontVariant: ['tabular-nums', 'lining-nums'],
             }}

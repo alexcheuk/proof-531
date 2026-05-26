@@ -81,6 +81,7 @@ export function PrCelebrationNumbers({
           style={{
             fontFamily: `${type.display}-Bold`,
             fontSize: 64,
+            // rn-line-height-ok: numeric e1RM display only
             lineHeight: 70,
             letterSpacing: -2.2,
             color: colors.bg0,

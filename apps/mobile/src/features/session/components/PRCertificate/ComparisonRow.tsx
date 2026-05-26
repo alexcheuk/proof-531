@@ -68,6 +68,7 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
             style={{
               fontFamily: `${type.display}-Bold`,
               fontSize: 32,
+              // rn-line-height-ok: numeric delta value only
               lineHeight: 32,
               letterSpacing: -0.96,
               color: colors.bg0,
