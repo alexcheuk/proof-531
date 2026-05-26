@@ -11,7 +11,9 @@ import AmrapMath from '~/components/illustrations/AmrapMath.astro';
 import WeekLedger from '~/components/illustrations/WeekLedger.astro';
 import { sortPostsNewestFirst } from '~/lib/posts';
 
-const posts = sortPostsNewestFirst(await getCollection('blog')).slice(0, 3);
+const posts = sortPostsNewestFirst(
+  await getCollection('blog', ({ data }) => !data.draft),
+).slice(0, 3);
 ---
 
 <Base
