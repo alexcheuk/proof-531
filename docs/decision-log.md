@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home-page audit pass 4: SessionTape AMRAP UX + numbers; MastheadStrip clean
+
+**Tags:** `website`, `home-page`
+**Files:** `apps/web/src/components/illustrations/SessionTape.astro`, `loop-memory/10-home-page-illustration-audit.md`
+
+Continued the running illustration audit. The biggest drift was Frame 04 of the session-tape: a tally of rep boxes labelled "TAP PER REP" suggested a tap-per-rep interaction model that doesn't exist — the real AMRAP log sheet uses a NumberStepper. Replaced the boxes with a centered stepper (− N +) and a projection chip below ("EST. 1RM 414 LB · ↑ +29 · PR"), matching what the user actually sees. Several smaller drifts patched in the same illustration: Frame 02 had `SET 02 · DEADLIFT` (leading zero again) + a fictional `DID IT →` pill — now `ON THE BAR · 85% TM` + `SET COMPLETE ✓`; Frame 03 said `UP NEXT` where the real rest preview says `NEXT SET`; Frame 05's PR numbers were stuck at the pre-loop-034 412 / +27 — bumped to 414 / +29 for narrative consistency.
+
+Also audited `MastheadStrip.astro` — turns out it's a vocabulary palate cleanser, not a port of the mobile Masthead. Every token matches actual program terminology; per-week percentages match the schemes table. No drift.
+
+The audit checklist now has only the spacing/proportions pixel-pass against live screenshots left for Frames C and D of the HeroPhone — that's harder from this seat without a running mobile build to screenshot.
+
+**Why:** same drift-check loop. The home page promises an aesthetic and a behavior — both have to be true.
+
 ### 2026-05-26 — Home-page audit pass 3: PlateBar label + Press vs OHP
 
 **Tags:** `website`, `home-page`

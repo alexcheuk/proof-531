@@ -82,9 +82,22 @@ must visually match what the app actually shows for the same screen.
     also violated the "no leading-zero numbers" rule from Discord
     1508668998. Replaced with `ON THE BAR · 95% TM` (the actual
     SetPhase eyebrow during a 95% AMRAP working set).
-- `SessionTape.astro` — meant to abstract the session flow. Less
-  literal; check that the labels still match user-visible feature
-  names. Not audited this loop.
+- `SessionTape.astro` — five-frame storyboard of the session phases.
+  Audited loop-037.
+  - [x] (loop-037) Frame 02 SET eyebrow `SET 02 · DEADLIFT` (leading
+    zero again) + pill `DID IT →` swapped for the actual SetPhase
+    eyebrow `ON THE BAR · 85% TM` and the actual primary CTA
+    `SET COMPLETE ✓`.
+  - [x] (loop-037) Frame 03 REST eyebrow `UP NEXT` → `NEXT SET` to
+    match the actual RestPhase NEXT SET block.
+  - [x] (loop-037) Frame 04 AMRAP visual replaced. The tally of rep
+    boxes + "TAP PER REP" caption suggested a tap-per-rep UX; the
+    real AmrapLogSheet uses a NumberStepper. New visual is a
+    centered stepper (− N +) with the projection chip below
+    (EST. 1RM 414 LB · ↑ +29 · PR), matching the actual sheet.
+  - [x] (loop-037) Frame 05 PR numbers: 412 / +27 lb still showed
+    the pre-loop-034 values. Updated to 414 / +29 lb so the PR cert
+    matches the rest of the marketing-narrative scenario.
 - `AmrapMath.astro` — covered in loop-034 (formula correctness).
 - `WeekLedger.astro` — four-week cycle illustration. Per-week
   schemes (5/5/5+ → 3/3/3+ → 5/3/1+ → deload 5/5/5) verified
@@ -93,8 +106,14 @@ must visually match what the app actually shows for the same screen.
     mobile app surfaces `Press` everywhere (the type itself is
     `'press'` and `liftDisplayName('press')` returns `'Press'`).
     Fixed.
-- `MastheadStrip.astro` — branding strip; should match the actual
-  Masthead's typography. Not audited this loop.
+- `MastheadStrip.astro` — vocabulary strip (5/3/1, BBB 5×10, AMRAP,
+  EPLEY 1RM, PER SIDE, WARMUPS, TM BUMP, DELOAD, WK1/2/3
+  percentage triplets). The name is slightly misleading — it's
+  *not* a port of the mobile Masthead primitive; it's a marketing
+  palate cleanser of program-vocabulary tokens. Audited loop-037:
+  every token matches actual program terminology, and the per-week
+  percentages (65/75/85 → 70/80/90 → 75/85/95) match the schemes
+  table verbatim. No drift.
 
 ## Process for the next audit pass
 

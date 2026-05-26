@@ -33,11 +33,11 @@
     <span class="tape__no">02</span>
     <span class="tape__phase">SET</span>
     <div class="frame frame--set">
-      <div class="f-eyebrow">SET 02 · DEADLIFT</div>
+      <div class="f-eyebrow">ON THE BAR · 85% TM</div>
       <div class="f-bignum">310</div>
       <div class="f-bigreps">× 3</div>
-      <div class="f-meta">85% TM · 365</div>
-      <div class="f-pill">DID IT →</div>
+      <div class="f-meta">DEADLIFT · TM 365</div>
+      <div class="f-pill">SET COMPLETE ✓</div>
     </div>
     <p class="tape__cap">The set fills the canvas. Nothing competes for the eye.</p>
   </li>
@@ -52,7 +52,7 @@
         <span class="f-clock-tick" aria-hidden="true"></span>
       </div>
       <div class="f-next">
-        <span class="f-next-k">UP NEXT</span>
+        <span class="f-next-k">NEXT SET</span>
         <span class="f-next-v">345 × 1+ · AMRAP</span>
       </div>
     </div>
@@ -63,18 +63,16 @@
     <span class="tape__no">04</span>
     <span class="tape__phase">AMRAP</span>
     <div class="frame frame--amrap">
-      <div class="f-eyebrow">AMRAP · 345 lb</div>
-      <div class="f-reps">
-        <span class="f-rep">1</span>
-        <span class="f-rep">2</span>
-        <span class="f-rep">3</span>
-        <span class="f-rep f-rep--last">4</span>
-        <span class="f-rep f-rep--ghost">+</span>
+      <div class="f-eyebrow">LOG AMRAP · 345 LB</div>
+      <div class="f-amrap-stepper" aria-hidden="true">
+        <span class="f-amrap-step">−</span>
+        <span class="f-amrap-reps">6</span>
+        <span class="f-amrap-step">+</span>
       </div>
-      <div class="f-tap">TAP PER REP</div>
-      <div class="f-final">FINAL · 4 reps</div>
+      <div class="f-amrap-proj">EST. 1RM 414 LB · ↑ +29 · PR</div>
+      <div class="f-final">SAVE →</div>
     </div>
-    <p class="tape__cap">Tap each rep. Long-press to undo. No keyboard.</p>
+    <p class="tape__cap">Dial reps with +/-. The projection updates as you go.</p>
   </li>
 
   <li class="tape__frame">
@@ -86,8 +84,8 @@
       <span class="pr-tick pr-tick--bl"></span>
       <span class="pr-tick pr-tick--br"></span>
       <div class="pr-eyebrow">NEW 1RM · DL</div>
-      <div class="pr-num">412</div>
-      <div class="pr-delta">+27 lb</div>
+      <div class="pr-num">414</div>
+      <div class="pr-delta">+29 lb</div>
     </div>
     <p class="tape__cap">When the math says PR, the whole screen says PR.</p>
   </li>
@@ -306,43 +304,53 @@
     letter-spacing: 0.04em;
   }
 
-  /* AMRAP frame — tally */
+  /* AMRAP frame — NumberStepper visualization (matches AmrapLogSheet). */
   .frame--amrap {
     justify-content: space-between;
   }
-  .f-reps {
+  .f-amrap-stepper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 10px 0;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 14px 0 8px;
   }
-  .f-rep {
-    width: 26px;
-    height: 26px;
-    border-radius: 4px;
-    background: var(--ink-0);
-    color: var(--bg-0);
+  .f-amrap-step {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-mono);
     font-weight: 500;
-    font-size: 0.78rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--ink-0);
+  }
+  .f-amrap-reps {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
     font-variant-numeric: tabular-nums;
+    min-width: 40px;
+    text-align: center;
   }
-  .f-rep--last { background: var(--amber); }
-  .f-rep--ghost {
-    background: transparent;
-    border: 1px dashed var(--line-strong);
-    color: var(--ink-3);
-  }
-  .f-tap {
+  .f-amrap-proj {
     font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-3);
-    margin-bottom: 4px;
+    color: var(--ink-0);
+    font-weight: 600;
+    text-align: center;
+    padding-block: 6px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
   .f-final {
     margin-top: auto;
