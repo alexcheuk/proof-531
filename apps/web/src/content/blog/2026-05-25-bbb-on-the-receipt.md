@@ -14,71 +14,30 @@ tags: ['session', 'receipt', 'process']
 The third loop in a row tracking the same BBB thread. Each iteration
 shipped one named slice of the same feature. Cron working as intended.
 
-## The recipe
+## What the receipt shows now
 
-`useSessionCompleteData.deriveView` already iterated every `setLog`
-row to compute the working-set volume and the top-set hero. Adding
-BBB was a five-line append:
+A user who marked BBB complete gets a new row on the session-complete
+receipt: the weight they used, how many sets, how many reps. Something
+like `150 lb · 5×10`. It appears under the working-set volume, in the
+same visual rhythm as the rest of the receipt.
 
-```ts
-const bbbLogs = logs.filter((l) => l.kind === 'bbb');
-const bbbSetsCompleted = bbbLogs.length;
-const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
-const bbbWeightDisplay = Math.round(
-  convertWeight(bbbWeightStorageRow, storageUnit, renderUnit),
-);
-```
+A user who took the "Skip · close the day" path gets the receipt
+unchanged — the BBB row never appears. Skip stays invisible because
+skip stays *real*.
 
-The receipt picks them up:
+## The contract
 
-```tsx
-{bbbSetsCompleted > 0 ? (
-  <ReceiptRow
-    testID="receipt-bbb"
-    label="BBB"
-    value={formatWeight(bbbWeightDisplay)}
-    sub={`${unitGlyph} · ${bbbSetsCompleted}×${BBB_REPS}`}
-  />
-) : null}
-```
+Three different numbers, three different meanings:
 
-A user who marked BBB complete gets a `150 lb · 5×10` row under the
-working-set volume. A user who took the "Skip · close the day" path
-gets the receipt unchanged — the row never renders. Skip stays
-invisible because skip stays *real*.
-
-## The contract split
-
-`volumeOfWorkingSets` in `domain/summary.ts` deliberately excludes
-BBB and now has a sibling field on the view (`bbbSetsCompleted` +
-`bbbWeightDisplay`). The split:
-
-- **Working-set volume** — the band the receipt has always shown,
-  the 5/3/1 main work. BBB doesn't belong here; mixing the two
+- **Working-set volume** — the receipt's main stat, showing the
+  5/3/1 working sets. BBB is deliberately separate; mixing the two
   numbers loses the meaning of the working-set total.
-- **BBB row** — a separate, smaller row under the volume. Reads as
-  back-off work, not main work. Same vertical rhythm as the other
-  receipt rows so the eye doesn't have to retrain.
-- **Lifetime volume** — counts both (as of loop-008). The history
-  stat is the only place we sum across kinds because that's the
-  meaningful number across many sessions.
+- **BBB row** — a smaller line under the volume. Reads as back-off
+  work, not main work.
+- **Lifetime volume** (History tab) — the only place we add both
+  together, because that's the meaningful number across many sessions.
 
-Three numbers, three contracts. The names finally say what they
-mean.
-
-## Two regression tests landed
-
-`useSessionCompleteData.test.ts` got two new cases:
-
-1. **Five BBB rows + one working set** → `bbbSetsCompleted` is 5,
-   `bbbWeightDisplay` matches the first BBB row's weight,
-   `workingVolume` is the working set's volume only.
-2. **Working set, no BBB rows** → `bbbSetsCompleted` is 0,
-   `bbbWeightDisplay` is 0. The receipt component checks
-   `bbbSetsCompleted > 0` for the conditional render so the
-   `0/0` case never reaches the band.
-
-867 tests pass. CI green.
+Three numbers, three contracts. The names finally say what they mean.
 
 ## What's queued next
 

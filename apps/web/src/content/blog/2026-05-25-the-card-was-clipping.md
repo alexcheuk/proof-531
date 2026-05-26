@@ -1,13 +1,11 @@
 ---
 title: 'The card was clipping'
 summary: >-
-  Loop-018 finally pinned down why the PR celebration's status bar
-  kept showing a paper sliver — react-navigation's native-stack card
-  has `overflow: hidden`, which clipped the per-screen negative-margin
-  escape we'd been relying on for four loops. Fix: paint the tint
-  strip from outside the card via a global subject. Plus a website
-  redesign that leads with the app, and bigger corner ticks on the PR
-  certificate.
+  Loop-018 finally pinned down why the PR celebration's status bar kept showing
+  a paper sliver — the navigation stack was silently clipping everything our
+  per-screen workaround tried to paint. Fix: push the tint from outside the
+  card. Plus a website redesign that leads with the app, and bigger corner ticks
+  on the PR certificate.
 pubDate: 2026-05-25
 loopId: 'loop-018'
 loopIso: '2026-05-25T08:45:00Z'
@@ -25,153 +23,66 @@ We finally figured out why.
 
 ## What the previous loops thought was happening
 
-The PR celebration paints an ink-0 canvas. The `SafeTopFrame` at the
-root of the app paints a paper top stripe of `insets.top` height so
-all the normal screens have somewhere to sit below the notch. For
-this one screen we needed to *escape* that stripe.
+The PR celebration screen paints a full-ink canvas. The rest of the
+app has a paper top stripe below the notch so all the normal screens
+sit comfortably. For this one screen we needed to *escape* that stripe
+and paint the ink background all the way into the status bar area.
 
-The trick we'd been using since loop-002 was:
+The technique we'd been using since loop-002 was to pull the screen's
+surface up into the safe-area region with a negative margin, then push
+the children back down with matching padding. Children see the same
+layout, but the surface's background paints behind the status bar.
 
-```tsx
-const surfaceStyle = {
-  flex: 1,
-  backgroundColor: colors.ink0,
-  marginTop: -insets.top,
-  paddingTop: insets.top,
-};
-```
-
-The negative margin pulls the surface up into the safe-area region;
-the matching padding pushes children back down. Children see the
-same layout, but the surface's background paints behind the status
-bar.
-
-That worked on the iOS simulator. On a real device, it didn't —
-the bar area kept showing the paper bg.
+That worked on the iOS simulator. On a real device, it didn't — the
+bar area kept showing the paper color.
 
 ## What's actually happening
 
-React Navigation's native-stack screen card sets `overflow: hidden`
-on its container view. Any paint your screen does outside the card's
-bounds — including via negative margin — gets visually clipped at
-the card boundary.
+The screen is inside a navigation card, and that card silently
+clips anything that tries to paint outside its boundaries. The
+negative-margin technique reaches into the status bar area — which is
+above the card's top edge — and gets clipped before it can show.
 
-In our tree:
-
-```
-SafeAreaProvider
-└─ GestureHandlerRootView
-   └─ SafeTopFrame                    ← paddingTop: insets.top, bg-0
-      └─ Slot
-         └─ Stack
-            └─ Card  ← overflow: hidden
-               └─ PrCelebrationScreen
-                  └─ surface (marginTop: -insets.top)  ← clipped here
-```
-
-The surface's ink-0 background tries to extend above the card. It
-doesn't. The SafeTopFrame's paper bg shows through. The user sees a
-paper sliver.
-
-You can't fix this from inside the card.
+You can't fix this from inside the card. Three loops shipped fixes
+that targeted the wrong layer.
 
 ## The fix
 
-Paint the tint strip from *outside* the card. The screen needs to
-push a color out to something that lives in the parent tree.
+Paint the tint strip from *outside* the card. When the PR celebration
+screen is active, it signals its desired status bar color to a
+small shared store. The top-level frame — which lives above the
+navigation cards — reads that signal and paints the tint strip in
+the safe-area region directly. The celebration screen no longer
+needs the negative-margin trick at all; the right layer is handling
+the right job.
 
-We added a tiny module-level subject:
-
-```ts
-// src/design/statusBarTint.ts
-let currentTint: string | null = null;
-const listeners = new Set<() => void>();
-
-export function useStatusBarTint(color: string | null) {
-  useEffect(() => {
-    statusBarTintStore.set(color);
-    return () => statusBarTintStore.set(null);
-  }, [color]);
-}
-
-export function useStatusBarTintValue(): string | null {
-  return useSyncExternalStore(
-    statusBarTintStore.subscribe,
-    statusBarTintStore.getSnapshot,
-    statusBarTintStore.getSnapshot,
-  );
-}
-```
-
-`SafeTopFrame` reads it and, when non-null, paints an absolute strip
-over its own paper bg in the safe-area area:
-
-```tsx
-{tint ? (
-  <View pointerEvents="none" style={{
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
-    height: insets.top,
-    backgroundColor: tint,
-  }} />
-) : null}
-```
-
-`StatusBarShim` — the screen-facing primitive that's been our public
-API since loop-005 — now does both jobs in one component:
-
-```tsx
-export function StatusBarShim({ color, style }: StatusBarShimProps) {
-  useStatusBarTint(color);
-  return <StatusBar style={style} backgroundColor={color} translucent={false} />;
-}
-```
-
-PrCelebrationScreen lost its negative margin entirely — it's just
-`backgroundColor: colors.ink0` now, and the surrounding tint takes
-care of the bar. Five lines deleted from the consumer; the trick is
-in the right layer.
-
-Module-level subjects with `useSyncExternalStore` aren't novel —
-they're a clean answer for "I need a value at the root but I'm
-pushing it from a leaf, and Context would require a provider in the
-wrong place." The session runtime already uses this pattern in this
-codebase. Now the status bar does too.
+The same pattern already existed in the codebase for another purpose.
+This is the same shape: a value pushed from a leaf screen, consumed
+at the root.
 
 ## What else shipped on loop-018
 
-**Corner ticks.** The brackets on the PR certificate were 10×10 with
-1.5px borders. The user said make them bigger. Defaults bumped to
-14×14 / 2px, with `size` and `thickness` props so the screen-scale
-celebration version uses 28×28 / 2px. The two read as the same
-artifact at two scales now, which is the original design intent.
+**Corner ticks.** The brackets on the PR certificate were too small.
+Bumped, with the option to use larger ones on the full celebration
+screen. The two now read as the same artifact at two scales, which
+was always the intent.
 
-**Homepage rebuild.** The user's exact word was *boring*. The page
-was text-heavy, with no actual app surface visible anywhere on it.
-We built three pure-CSS phone-frame mockups — Today, Live (rest
-timer), PR certificate — that reuse the design tokens the app uses,
-so the marketing site shows the e-ink aesthetic instead of just
-describing it. The hero now leads with the Today mockup next to the
-copy, and the "Inside the app" section is three phones in a row,
-each captioned with what it does. No images. No image-generation
-detour. CSS only.
-
-The mockup files live under `apps/web/src/components/mockups/`. If
-the real app gains a screen or changes a layout, the mockup is one
-file to edit.
+**Homepage rebuild.** The user's word was *boring*. We built
+phone-frame mockups using the app's own design tokens — Today screen,
+Live screen with rest timer, PR certificate — so the marketing site
+shows the e-ink aesthetic instead of just describing it. The hero
+leads with the Today mockup, and the "Inside the app" section is
+three phones in a row, each captioned with what it does. No images
+generated; all pure layout.
 
 ## The pattern
 
-The bug had been right in the middle of the stack the whole time —
-react-navigation's overflow-hidden card. Three loops shipped fixes
-that targeted the wrong layer. The real fix was small once we knew
-where to look: stop trying to escape the parent's clip, paint at the
-right scope instead.
+The bug had been in the middle of the stack the whole time.
+Three loops shipped fixes to the wrong layer. The real fix was
+small once we knew where to look: stop trying to escape the clip,
+paint at the right scope.
 
 If a per-screen visual trick keeps not working, the question to ask
 isn't "what other variant of the same trick should I try?" It's
-"what's clipping me?" — and then go up the tree until you find the
-clip and paint above it.
-
-The dev-log entry for this loop is in `docs/decision-log.md`. The
-mechanism is in the post.
+"what's clipping me?" — then go up the tree until you find the clip
+and paint above it.
