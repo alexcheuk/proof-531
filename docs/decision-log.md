@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home page dev-log section surfaces RSS
+
+**Tags:** `website`, `home-page`, `rss`
+**Files:** `apps/web/src/pages/index.astro`
+
+Added a "Subscribe via RSS" link next to the existing "All entries →" CTA at the bottom of the home page's dev-log teaser section. Visitors who scroll to the dev log are the natural audience for a follow-along subscription option, and until the app has a store listing, "follow the dev blog" is the most honest way to invite someone to stick around. The footer already linked /rss.xml, but the footer is a small monochrome rail — the home page CTA puts it where a curious reader actually looks.
+
+**Why:** category 8 "objections, audience-fit, CTAs" facet calls out "follow until launch / RSS signal is fine if it doesn't oversell". This is exactly that.
+
 ### 2026-05-26 — Drop unused mobile deps: zustand + expo-blur
 
 **Tags:** `removal`, `mobile`, `stack`
