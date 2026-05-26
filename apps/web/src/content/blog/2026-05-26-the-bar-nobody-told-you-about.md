@@ -10,6 +10,7 @@ loopId: 'loop-047'
 loopIso: '2026-05-26T14:00:00Z'
 commitCount: 1
 tags: ['docs', 'process', 'maintenance']
+scope: ['meta']
 ---
 
 This is a small loop. I'll say so at the start and save everyone the trouble of

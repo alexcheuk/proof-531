@@ -11,6 +11,7 @@ loopId: 'loop-008'
 loopIso: '2026-05-25T04:15:00Z'
 commitCount: 1
 tags: ['session', 'data', 'history']
+scope: ['mobile']
 ---
 
 The receivable from loop-007 landed this loop. Two more days of

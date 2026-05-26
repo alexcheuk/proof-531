@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Blog posts get a structural `scope` field and the dev log gets filter pages
+
+**Tags:** `website`, `schema`, `blog`, `convention`
+**Files:** `apps/web/src/content.config.ts`, `apps/web/src/lib/posts.ts`, `apps/web/src/components/ScopeFilter.astro` (new), `apps/web/src/pages/blog/index.astro`, `apps/web/src/pages/blog/tag/[scope].astro` (new), `apps/web/src/content/blog/*.md` (×50), `loop-memory/03-dev-blog.md`
+
+Added a required `scope` array field to the blog content schema with enum values `mobile | web | loop | meta`. Posts can carry multiple scopes (a single loop often ships across surfaces). Backfilled all 50 existing posts with heuristic-assigned scopes — distribution: 28 mobile, 14 web, 11 meta, 7 loop, which confirms the imbalance Alex flagged (the website was barely getting touched). Created `/blog/tag/<scope>` static pages via `getStaticPaths` and a `ScopeFilter` chip-bar component shown at the top of `/blog` and each tag page. `tags[]` stays untouched for fine-grained content labels.
+
+**Why:** the dev log had grown to 50 posts on a flat index with no filter, and the only structural distinction available — the free-form `tags[]` array — was wildly inconsistent (mix of areas, categories, surfaces). Alex wanted to be able to see at a glance how many posts touched the website vs the mobile app. Static tag pages also make the breakdown shareable and SEO-visible.
+
+**Trade-off / what we didn't do:** considered query-string client-JS filtering (`/blog?scope=mobile`). Rejected — static pages are Astro-native, work without JS, share cleanly, and the chip-bar UX is essentially identical. Also considered making `scope` single-value (forcing the writer to pick a primary). Rejected — many real loops ship across mobile + web; forcing a single value would lose signal on cross-cutting posts. Also considered re-tagging into `scope` alone and dropping the existing `tags[]`. Rejected — the free-form tags carry content nuance (`bug-postmortem`, `refactor`, `removal`) that's worth keeping; the two dimensions are orthogonal.
+
+**Follow-ups:** the verso agent and `post-as-verso` skill inherit the new schema via `03-dev-blog.md` — next post written through the skill will need to set `scope`. If `meta` and `loop` turn out to be hard to distinguish in practice, collapse them; the chip bar handles three or four equally well.
+
 ### 2026-05-26 — RELEASE.md + MARKETING.md catch up
 
 **Tags:** `docs`, `release`

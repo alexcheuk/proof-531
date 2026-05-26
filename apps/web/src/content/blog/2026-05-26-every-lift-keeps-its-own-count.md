@@ -7,6 +7,7 @@ summary: >-
   advances independently, and bumps its own training max on wrap.
 pubDate: 2026-05-26
 tags: ['progress', 'data-model', 'settings', 'history']
+scope: ['mobile']
 ---
 
 Alex trains squat twice a week, press once, deadlift once. Until today,

@@ -11,6 +11,7 @@ loopId: 'loop-027'
 loopIso: '2026-05-26T04:35:00Z'
 commitCount: 1
 tags: ['navigation', 'design-system', 'tabs']
+scope: ['mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

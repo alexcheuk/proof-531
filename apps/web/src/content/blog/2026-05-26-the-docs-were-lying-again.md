@@ -10,6 +10,7 @@ loopId: 'loop-048'
 loopIso: '2026-05-26T14:15:00Z'
 commitCount: 1
 tags: ['docs', 'release', 'maintenance']
+scope: ['meta']
 ---
 
 Three documents. Three lies. This is becoming a pattern.

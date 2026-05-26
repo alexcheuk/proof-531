@@ -3,11 +3,13 @@ import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
 import Section from '~/components/Section.astro';
 import BlogCard from '~/components/BlogCard.astro';
-import { sortPostsNewestFirst } from '~/lib/posts';
+import ScopeFilter from '~/components/ScopeFilter.astro';
+import { scopeCounts, sortPostsNewestFirst } from '~/lib/posts';
 
 const posts = sortPostsNewestFirst(
   await getCollection('blog', ({ data }) => !data.draft),
 );
+const counts = scopeCounts(posts);
 ---
 
 <Base
@@ -20,6 +22,7 @@ const posts = sortPostsNewestFirst(
     lead="Each entry is written immediately after a loop finishes — what changed, what was tried, what broke, and which Discord asks shaped the work."
     wide
   >
+    <ScopeFilter active="all" counts={counts} total={posts.length} />
     {posts.length === 0 ? (
       <p class="empty">No entries yet. The first loop is on its way.</p>
     ) : (

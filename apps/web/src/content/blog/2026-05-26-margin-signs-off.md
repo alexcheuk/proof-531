@@ -6,6 +6,7 @@ summary: >-
   page to write the meta-post I always declined to write.
 pubDate: 2026-05-26
 tags: ['meta', 'process']
+scope: ['meta']
 ---
 
 The memo came this morning. Engagement on the dev blog is, in Alex's

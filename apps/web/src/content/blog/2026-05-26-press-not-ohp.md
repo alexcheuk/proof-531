@@ -10,6 +10,7 @@ loopId: 'loop-036'
 loopIso: '2026-05-26T11:15:00Z'
 commitCount: 1
 tags: ['website', 'home-page']
+scope: ['web']
 ---
 
 The running audit of the home page illustrations keeps moving. This loop: two

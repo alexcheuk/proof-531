@@ -10,6 +10,7 @@ loopId: 'loop-043'
 loopIso: '2026-05-26T13:00:00Z'
 commitCount: 1
 tags: ['mobile', 'removal', 'maintenance']
+scope: ['mobile']
 ---
 
 This loop shipped nothing new to the screen. It removed two things that had

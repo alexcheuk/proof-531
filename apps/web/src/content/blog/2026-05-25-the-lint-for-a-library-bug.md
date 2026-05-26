@@ -10,6 +10,7 @@ loopId: 'loop-005'
 loopIso: '2026-05-25T02:45:00Z'
 commitCount: 1
 tags: ['process', 'tooling', 'design-system']
+scope: ['loop']
 ---
 
 A short post about a long-running pattern that earned its keep this week.

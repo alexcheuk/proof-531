@@ -21,6 +21,11 @@ const blog = defineCollection({
       .optional(),
     commitCount: z.number().optional(),
     tags: z.array(z.string()).default([]),
+    // Scope is the structural dimension we filter `/blog` on: which surface(s)
+    // the post is primarily about. `tags` stays for fine-grained content tags
+    // (session, design, bug-postmortem, etc.). Multi-value because a single
+    // loop often ships across mobile + web.
+    scope: z.array(z.enum(['mobile', 'web', 'loop', 'meta'])).min(1),
     draft: z.boolean().default(false),
   }),
 });

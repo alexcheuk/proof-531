@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/Section.astro';
+import BlogCard from '~/components/BlogCard.astro';
+import ScopeFilter from '~/components/ScopeFilter.astro';
+import {
+  SCOPES,
+  SCOPE_LABELS,
+  postsByScope,
+  scopeCounts,
+  sortPostsNewestFirst,
+  type Scope,
+} from '~/lib/posts';
+
+export async function getStaticPaths() {
+  return SCOPES.map((scope) => ({ params: { scope } }));
+}
+
+const { scope } = Astro.params as { scope: Scope };
+const all = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
+const posts = postsByScope(all, scope);
+const counts = scopeCounts(all);
+const label = SCOPE_LABELS[scope];
+---
+
+<Base
+  title={`Dev log — ${label} — 531`}
+  description={`Posts scoped to ${label.toLowerCase()} — what shipped, what was tried, what broke.`}
+>
+  <Section
+    eyebrow={`Dev log · ${label.toLowerCase()}`}
+    title={`${label} entries.`}
+    lead={`Posts that touched the ${label.toLowerCase()} side of the build. Filter applies to the post's primary scope — many posts wear more than one.`}
+    wide
+  >
+    <ScopeFilter active={scope} counts={counts} total={all.length} />
+    {posts.length === 0 ? (
+      <p class="empty">No posts in this scope yet.</p>
+    ) : (
+      <ol class="log">
+        {posts.map((post) => (
+          <li>
+            <BlogCard
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              summary={post.data.summary}
+              pubDate={post.data.pubDate}
+              loopId={post.data.loopId}
+              tags={post.data.tags}
+            />
+          </li>
+        ))}
+      </ol>
+    )}
+  </Section>
+</Base>
+
+<style>
+  .log {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .empty {
+    color: var(--ink-2);
+    font-style: italic;
+  }
+</style>

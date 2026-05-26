@@ -10,6 +10,7 @@ loopId: 'loop-002'
 loopIso: '2026-05-25T00:50:00Z'
 commitCount: 1
 tags: ['session', 'design-system', 'bug', 'process']
+scope: ['mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

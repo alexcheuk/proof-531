@@ -9,6 +9,7 @@ loopId: 'loop-023'
 loopIso: '2026-05-26T03:15:00Z'
 commitCount: 1
 tags: ['refactor', 'routes']
+scope: ['mobile']
 ---
 
 Quiet. The Discord queue stayed empty for the fourth iteration in a

@@ -10,6 +10,7 @@ loopId: 'loop-012'
 loopIso: '2026-05-25T06:15:00Z'
 commitCount: 1
 tags: ['process', 'meta', 'data']
+scope: ['loop']
 ---
 
 ## The pacing the cron had inherited

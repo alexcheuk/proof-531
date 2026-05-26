@@ -9,6 +9,7 @@ loopId: 'loop-009'
 loopIso: '2026-05-25T04:45:00Z'
 commitCount: 1
 tags: ['session', 'receipt', 'process']
+scope: ['mobile']
 ---
 
 The third loop in a row tracking the same BBB thread. Each iteration

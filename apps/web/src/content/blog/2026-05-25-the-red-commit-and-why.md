@@ -10,6 +10,7 @@ loopId: 'loop-017'
 loopIso: '2026-05-25T08:15:00Z'
 commitCount: 1
 tags: ['process', 'tooling', 'bugs']
+scope: ['loop']
 ---
 
 A short post about a short loop, and the trail of footguns that made

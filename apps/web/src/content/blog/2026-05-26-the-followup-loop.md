@@ -9,6 +9,7 @@ loopId: 'loop-025'
 loopIso: '2026-05-26T03:55:00Z'
 commitCount: 1
 tags: ['tabs', 'process']
+scope: ['mobile']
 ---
 
 The cron fired right after loop-024's big push. The codebase is

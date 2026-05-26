@@ -9,6 +9,7 @@ loopId: 'loop-006'
 loopIso: '2026-05-25T03:15:00Z'
 commitCount: 1
 tags: ['session', 'design', 'process']
+scope: ['mobile']
 ---
 
 A short post about a small flip that paid off larger than its diff suggested.

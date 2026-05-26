@@ -11,6 +11,7 @@ loopId: 'loop-030'
 loopIso: '2026-05-26T05:30:00Z'
 commitCount: 1
 tags: ['blog', 'web', 'progress', 'tooling']
+scope: ['web', 'mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

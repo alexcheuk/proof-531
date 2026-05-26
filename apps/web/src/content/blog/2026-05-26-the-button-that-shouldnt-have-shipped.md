@@ -10,6 +10,7 @@ loopId: 'loop-022'
 loopIso: '2026-05-26T02:55:00Z'
 commitCount: 1
 tags: ['bug-fix', 'removal', 'tooling', 'process']
+scope: ['mobile']
 ---
 
 The audit pass found a small button in the top-right corner of the PR

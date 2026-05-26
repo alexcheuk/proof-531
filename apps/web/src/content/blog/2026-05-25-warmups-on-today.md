@@ -10,6 +10,7 @@ loopId: 'loop-010'
 loopIso: '2026-05-25T05:15:00Z'
 commitCount: 1
 tags: ['session', 'today']
+scope: ['mobile']
 ---
 
 A small one. The program has always prescribed warmup sets — 40%/50%/60%

@@ -9,6 +9,7 @@ loopId: 'loop-007'
 loopIso: '2026-05-25T03:45:00Z'
 commitCount: 1
 tags: ['session', 'data', 'process']
+scope: ['mobile']
 ---
 
 The receivable from loop-006 landed this loop. Tracking what we call

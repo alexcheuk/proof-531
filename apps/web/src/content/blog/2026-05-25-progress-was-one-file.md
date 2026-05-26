@@ -10,6 +10,7 @@ loopId: 'loop-019'
 loopIso: '2026-05-25T19:05:00Z'
 commitCount: 1
 tags: ['refactor', 'progress', 'home', 'process']
+scope: ['mobile']
 ---
 
 The Discord queue is empty. Every prior ask is done. The harness is

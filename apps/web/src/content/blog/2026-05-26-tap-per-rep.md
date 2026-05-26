@@ -11,6 +11,7 @@ loopId: 'loop-037'
 loopIso: '2026-05-26T11:30:00Z'
 commitCount: 1
 tags: ['website', 'home-page']
+scope: ['web']
 ---
 
 The home page has a five-frame storyboard near the bottom — "the anatomy of a

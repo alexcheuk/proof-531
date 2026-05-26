@@ -7,6 +7,7 @@ summary: >-
   passes. The race is the interesting one.
 pubDate: 2026-05-25
 tags: ['session', 'rn', 'bug', 'product']
+scope: ['mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

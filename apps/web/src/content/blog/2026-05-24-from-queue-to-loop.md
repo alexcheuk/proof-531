@@ -10,6 +10,7 @@ loopId: 'retro-002'
 loopIso: '2026-05-24T16:00:00-07:00'
 commitCount: 35
 tags: ['retro', 'process', 'harness']
+scope: ['loop']
 ---
 
 Backdated again. This one covers the stretch between the planned

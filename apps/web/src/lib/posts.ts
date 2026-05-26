@@ -2,6 +2,28 @@ import type { CollectionEntry } from 'astro:content';
 
 type BlogEntry = CollectionEntry<'blog'>;
 
+export const SCOPES = ['mobile', 'web', 'loop', 'meta'] as const;
+export type Scope = (typeof SCOPES)[number];
+
+export const SCOPE_LABELS: Record<Scope, string> = {
+  mobile: 'Mobile',
+  web: 'Web',
+  loop: 'Loop',
+  meta: 'Meta',
+};
+
+export function postsByScope(posts: BlogEntry[], scope: Scope): BlogEntry[] {
+  return posts.filter((p) => p.data.scope.includes(scope));
+}
+
+export function scopeCounts(posts: BlogEntry[]): Record<Scope, number> {
+  const counts: Record<Scope, number> = { mobile: 0, web: 0, loop: 0, meta: 0 };
+  for (const p of posts) {
+    for (const s of p.data.scope) counts[s] += 1;
+  }
+  return counts;
+}
+
 /**
  * When multiple posts share a `pubDate` (multiple loops in one day, or
  * an off-cycle post landing the same day as a loop), `pubDate` alone is

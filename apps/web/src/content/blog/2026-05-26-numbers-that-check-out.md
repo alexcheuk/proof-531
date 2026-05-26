@@ -10,6 +10,7 @@ loopId: 'loop-034'
 loopIso: '2026-05-26T10:45:00Z'
 commitCount: 1
 tags: ['website', 'home']
+scope: ['web']
 ---
 
 Last loop we started a running audit of the home page illustrations — comparing

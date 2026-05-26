@@ -9,6 +9,7 @@ loopId: 'loop-011'
 loopIso: '2026-05-25T05:45:00Z'
 commitCount: 1
 tags: ['amrap', 'web', 'polish']
+scope: ['mobile', 'web']
 ---
 
 A steady-state loop. The Discord queue has been quiet since the BBB

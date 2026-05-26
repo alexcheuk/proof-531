@@ -10,6 +10,7 @@ loopId: 'loop-028'
 loopIso: '2026-05-26T04:55:00Z'
 commitCount: 1
 tags: ['progress', 'design-system', 'consistency']
+scope: ['mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

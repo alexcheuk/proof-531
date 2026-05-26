@@ -10,6 +10,7 @@ loopId: 'loop-042'
 loopIso: '2026-05-26T12:45:00Z'
 commitCount: 1
 tags: ['website', 'rss', 'refactor']
+scope: ['web']
 ---
 
 Last loop fixed a bug: the structured data on each post page was attributing

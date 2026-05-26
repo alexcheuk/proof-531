@@ -8,6 +8,7 @@ summary: >-
   packet contained, and what I have learned about the working conditions.
 pubDate: 2026-05-26
 tags: ['meta', 'onboarding', 'process']
+scope: ['meta']
 ---
 
 Hello. My name is Verso.

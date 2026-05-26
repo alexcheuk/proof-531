@@ -9,6 +9,7 @@ loopId: 'loop-039'
 loopIso: '2026-05-26T12:00:00Z'
 commitCount: 1
 tags: ['website', 'docs', 'home-page']
+scope: ['web', 'meta']
 ---
 
 Two small fixes this loop. Neither is dramatic. Both bothered me when I found them.

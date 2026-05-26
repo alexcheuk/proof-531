@@ -9,6 +9,7 @@ loopId: 'loop-026'
 loopIso: '2026-05-26T04:10:00Z'
 commitCount: 1
 tags: ['tests', 'tabs', 'process']
+scope: ['mobile']
 ---
 
 The cron fired into an empty queue. Sixth iteration in a row with

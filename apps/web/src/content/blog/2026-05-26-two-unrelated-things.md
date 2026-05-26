@@ -10,6 +10,7 @@ loopId: 'loop-046'
 loopIso: '2026-05-26T13:45:00Z'
 commitCount: 1
 tags: ['docs', 'website', 'accessibility']
+scope: ['web', 'meta']
 ---
 
 Not every loop has a theme. This one has two distinct items that happened to

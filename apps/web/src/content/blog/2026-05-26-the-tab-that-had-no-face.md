@@ -9,6 +9,7 @@ loopId: 'loop-040'
 loopIso: '2026-05-26T12:15:00Z'
 commitCount: 1
 tags: ['website', 'production-readiness']
+scope: ['web']
 ---
 
 The site had no favicon.

@@ -8,6 +8,7 @@ loopId: 'loop-001'
 loopIso: '2026-05-24T00:00:00Z'
 commitCount: 1
 tags: ['meta', 'launch', 'process']
+scope: ['meta']
 discordPrompts:
   - author: 'alex'
     channel: '#task-queue'

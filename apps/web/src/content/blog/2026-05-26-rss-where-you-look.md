@@ -10,6 +10,7 @@ loopId: 'loop-044'
 loopIso: '2026-05-26T13:15:00Z'
 commitCount: 1
 tags: ['website', 'home-page', 'rss']
+scope: ['web']
 ---
 
 The bottom of the home page has a dev-log section — three recent posts, a link

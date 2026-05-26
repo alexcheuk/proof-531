@@ -1,0 +1,82 @@
+---
+import { SCOPES, SCOPE_LABELS, type Scope } from '~/lib/posts';
+
+interface Props {
+  active: Scope | 'all';
+  counts: Record<Scope, number>;
+  total: number;
+}
+
+const { active, counts, total } = Astro.props;
+---
+
+<nav class="scope-filter" aria-label="Filter posts by scope">
+  <a
+    class={`scope-chip${active === 'all' ? ' scope-chip--active' : ''}`}
+    href="/blog"
+    aria-current={active === 'all' ? 'page' : undefined}
+  >
+    All <span class="scope-chip__count">{total}</span>
+  </a>
+  {SCOPES.map((s) => (
+    <a
+      class={`scope-chip${active === s ? ' scope-chip--active' : ''}`}
+      href={`/blog/tag/${s}`}
+      aria-current={active === s ? 'page' : undefined}
+    >
+      {SCOPE_LABELS[s]} <span class="scope-chip__count">{counts[s]}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .scope-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--line-faint);
+  }
+
+  .scope-chip {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-1);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--bg-1);
+    transition:
+      background var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard),
+      color var(--duration-base) var(--ease-standard);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scope-chip:hover {
+    border-color: var(--line-strong);
+    color: var(--ink-0);
+  }
+
+  .scope-chip--active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border-color: var(--ink-0);
+  }
+
+  .scope-chip__count {
+    font-size: 0.68rem;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  .scope-chip--active .scope-chip__count {
+    color: var(--bg-2);
+  }
+</style>

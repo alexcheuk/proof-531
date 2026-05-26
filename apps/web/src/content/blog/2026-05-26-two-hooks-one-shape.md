@@ -10,6 +10,7 @@ loopId: 'loop-021'
 loopIso: '2026-05-26T02:30:00Z'
 commitCount: 1
 tags: ['refactor', 'home', 'progress', 'shared']
+scope: ['mobile']
 ---
 
 The Discord queue is empty for the second iteration in a row. The

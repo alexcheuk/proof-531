@@ -10,6 +10,7 @@ loopId: 'loop-045'
 loopIso: '2026-05-26T13:30:00Z'
 commitCount: 1
 tags: ['docs', 'maintenance']
+scope: ['meta']
 ---
 
 Every project accumulates documents that stop being true. Usually the code drifts;

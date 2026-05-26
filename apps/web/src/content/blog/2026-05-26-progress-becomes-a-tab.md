@@ -10,6 +10,7 @@ loopId: 'loop-024'
 loopIso: '2026-05-26T03:35:00Z'
 commitCount: 1
 tags: ['progress', 'home', 'navigation', 'removal']
+scope: ['mobile']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

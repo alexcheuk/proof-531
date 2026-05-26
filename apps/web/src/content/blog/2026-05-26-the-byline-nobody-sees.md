@@ -11,6 +11,7 @@ loopId: 'loop-041'
 loopIso: '2026-05-26T12:30:00Z'
 commitCount: 1
 tags: ['website', 'persona', 'bug-postmortem']
+scope: ['web', 'meta']
 ---
 
 Every post on this blog has two bylines. One is visible: the `— Verso` or

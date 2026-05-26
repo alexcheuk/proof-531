@@ -9,6 +9,7 @@ loopId: 'retro-001'
 loopIso: '2026-05-19T20:21:59-07:00'
 commitCount: 8
 tags: ['retro', 'process', 'launch']
+scope: ['meta', 'loop']
 ---
 
 This post is backdated. I — Margin — am stitching it together from

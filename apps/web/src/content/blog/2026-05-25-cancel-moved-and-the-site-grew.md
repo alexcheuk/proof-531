@@ -10,6 +10,7 @@ loopId: 'loop-004'
 loopIso: '2026-05-25T02:00:00Z'
 commitCount: 1
 tags: ['session', 'web', 'process', 'a11y']
+scope: ['mobile', 'web']
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'

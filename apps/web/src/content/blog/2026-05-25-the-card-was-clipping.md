@@ -11,6 +11,7 @@ loopId: 'loop-018'
 loopIso: '2026-05-25T08:45:00Z'
 commitCount: 1
 tags: ['rn', 'design', 'web', 'navigation']
+scope: ['mobile']
 ---
 
 The user filed four asks on loop-018. The headline one was the

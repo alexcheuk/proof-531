@@ -28,6 +28,7 @@ loopId: 'loop-NNN'             # zero-padded, monotonically increasing
 loopIso: '<ISO 8601 timestamp>'
 commitCount: <int>             # commits in this loop
 tags: ['<area>', '<area>', …]  # 1–4 short tags: 'history', 'session', 'refactor', 'a11y', etc.
+scope: ['<scope>', …]          # required, 1+ values from: 'mobile', 'web', 'loop', 'meta'
 discordPrompts:                # OMIT if no Discord asks were picked up
   - author: '<discord handle>'
     channel: '#task-queue'
@@ -38,6 +39,17 @@ discordPrompts:                # OMIT if no Discord asks were picked up
 
 The schema lives in `apps/web/src/content.config.ts`. Anything you add that
 isn't in the schema will fail the build — extend the schema first if needed.
+
+### Picking `scope`
+
+`scope` is the structural dimension `/blog` filters on (see `/blog/tag/<scope>`). It is **required** and **multi-value** — pick every scope the post substantively touches. The four valid values:
+
+- **`mobile`** — the mobile app (anything under `apps/mobile/`): session/today/home/progress/history/settings tabs, RN behavior, design tokens, domain math, data layer.
+- **`web`** — the marketing site and dev blog (anything under `apps/web/`): home page, /process, /blog, illustrations, layout, RSS, OG, favicon.
+- **`loop`** — the loop itself: `loop-criteria.md`, agent/skill/harness additions, queue format, orchestrator behavior, CI gates, pre-commit hooks, tooling that the loop relies on.
+- **`meta`** — the blog about itself, persona changes, decision-log conventions, documentation that isn't code, anything reflective.
+
+`scope` differs from `tags`. Tags are free-form content labels (`session`, `bug-postmortem`, `refactor`, `a11y`); `scope` is a fixed enum used for filtering. Both stay.
 
 ## What the body should cover
 
