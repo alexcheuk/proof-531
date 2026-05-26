@@ -55,8 +55,6 @@ export type UsePrCelebrationSequenceResult = {
   onPrevTyped: () => void;
   /** Caller passes this to the count-up's onComplete. */
   onTickComplete: () => void;
-  /** Snap back to `idle`; the ready-effect will then kick off the sequence again. */
-  replay: () => void;
 };
 
 /** Hold durations in ms. Tuned to feel deliberate without dragging. */
@@ -112,7 +110,5 @@ export function usePrCelebrationSequence({
     setPhase((prev) => (prev === 'tick-up' ? 'numbers-settle' : prev));
   }, []);
 
-  const replay = useCallback(() => setPhase('idle'), []);
-
-  return { phase, onTitleTyped, onPrevTyped, onTickComplete, replay };
+  return { phase, onTitleTyped, onPrevTyped, onTickComplete };
 }

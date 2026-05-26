@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Dev-only "REPLAY" button removed from PR celebration; `pnpm check-temp-markers` added
+
+**Tags:** `bug-fix`, `removal`, `tooling`, `production-readiness`
+**Files:** `apps/mobile/src/features/session/PrCelebrationScreen.tsx`, `apps/mobile/src/features/session/components/PrCelebration/usePrCelebrationSequence.ts`, `scripts/check-temp-markers.sh`, `package.json`
+
+Audit found a dev-only "REPLAY" Pressable, comment-tagged `TEMP: dev-only replay trigger ... Remove before shipping`, still rendering on the PR celebration screen. It was production-visible — a small black-on-paper REPLAY button in the top-right corner of the celebration. Removed the button, the local Pressable/RNText imports it required, the unused `type` destructure from `useTheme`, and the now-orphan `replay` callback on `usePrCelebrationSequence` (return type and impl). No tests depended on either.
+
+Added `scripts/check-temp-markers.sh` and wired it into `pnpm verify`. The script greps `apps/mobile/src` (non-test files) for `TEMP:` / `Remove before shipping` / `FIXME` markers; non-zero exit if any survive. This is the third "leftover dev artifact" caught in five iterations — the first two were a red typecheck (loop-016) and the line-height pattern (loop-020). A grep-based gate is the cheapest possible insurance and keeps the gauntlet honest.
+
+**Why:** the comment was unambiguous and yet the button shipped — review-time vigilance is not enough, and screenshot diff doesn't catch a one-pixel REPLAY chip on a dark background. The audit also flagged: this class of bug (visible-but-dev-only artifact) had no automated gate.
+
 ### 2026-05-26 — `useLiftCarouselSync` extracted to shared; per-screen wrappers deleted
 
 **Tags:** `refactor`, `home`, `progress`, `shared`

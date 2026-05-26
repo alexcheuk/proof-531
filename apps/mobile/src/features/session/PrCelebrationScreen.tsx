@@ -5,7 +5,7 @@ import { formatWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -108,7 +108,7 @@ function useFadeStyle(visible: boolean, durationMs = FADE_MS) {
 }
 
 export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
   const router = useRouter();
   const data = useSessionCompleteData(sessionId);
 
@@ -123,7 +123,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const hasComparison = !!v && v.prevE1RMDisplay > 0 && v.e1RMDelta > 0;
   const sequenceReady = !!v;
 
-  const { phase, onTitleTyped, onPrevTyped, onTickComplete, replay } = usePrCelebrationSequence({
+  const { phase, onTitleTyped, onPrevTyped, onTickComplete } = usePrCelebrationSequence({
     hasComparison,
     ready: sequenceReady,
   });
@@ -329,38 +329,6 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
       <Animated.View style={ctaOpacityStyle}>
         <PrCelebrationCtas onContinue={onContinue} />
       </Animated.View>
-
-      {/* TEMP: dev-only replay trigger so the sequence can be previewed
-       * without going back through the AMRAP flow each time. Last child
-       * of the surface so RN's source-order stacking puts it on top of
-       * everything else. Remove before shipping. */}
-      <Pressable
-        testID="pr-celebration-replay"
-        accessibilityRole="button"
-        accessibilityLabel="Replay PR celebration animation"
-        onPress={replay}
-        hitSlop={12}
-        style={({ pressed }) => ({
-          position: 'absolute',
-          top: spacing.lg,
-          right: spacing.lg,
-          paddingHorizontal: 10,
-          paddingVertical: 6,
-          backgroundColor: colors.bg0,
-          opacity: pressed ? 0.5 : 1,
-        })}
-      >
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 12,
-            letterSpacing: 1.4,
-            color: colors.ink0,
-          }}
-        >
-          REPLAY
-        </RNText>
-      </Pressable>
     </View>
   );
 }
