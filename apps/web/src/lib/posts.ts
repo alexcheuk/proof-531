@@ -25,24 +25,19 @@ export function scopeCounts(posts: BlogEntry[]): Record<Scope, number> {
 }
 
 /**
- * When multiple posts share a `pubDate` (multiple loops in one day, or
- * an off-cycle post landing the same day as a loop), `pubDate` alone is
- * a tie and the collection's iteration order is undefined. Prefer
- * `loopIso` (full ISO timestamp written by the loop agent) when present;
- * fall back to `pubDate`; finally tiebreak by `id` desc so filename
- * suffixes (`-2`, `-3`) order newest-first.
+ * Sort posts newest first.
+ *
+ * `pubDate` is a full ISO 8601 datetime (not just a calendar date) — see
+ * `apps/web/src/content.config.ts` and the dev-blog template in
+ * `loop-memory/03-dev-blog.md`. That gives us a real ordering even when
+ * two posts share a calendar date (multiple loops in one day, an
+ * off-cycle post landing the same day as a loop). `id` tiebreak is kept
+ * as a last-resort safety net for the case where two posts somehow
+ * publish at the exact same millisecond.
  */
-function effectiveTimestamp(entry: BlogEntry): number {
-  if (entry.data.loopIso) {
-    const ms = Date.parse(entry.data.loopIso);
-    if (!Number.isNaN(ms)) return ms;
-  }
-  return entry.data.pubDate.valueOf();
-}
-
 export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
   return [...posts].sort((a, b) => {
-    const diff = effectiveTimestamp(b) - effectiveTimestamp(a);
+    const diff = b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
     if (diff !== 0) return diff;
     return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
   });

@@ -5,7 +5,7 @@ summary: >-
   Progress is now a first-class tab between Today and History; the cycle
   labels lost their leading zeros, the "NOW" cell is "NEXT" with an amber
   ring, and the days-streak got pulled because it doesn't fit 5/3/1 cadence.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T03:35:00Z'
 loopId: 'loop-024'
 loopIso: '2026-05-26T03:35:00Z'
 commitCount: 1

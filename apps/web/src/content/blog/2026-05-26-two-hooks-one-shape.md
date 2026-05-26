@@ -5,7 +5,7 @@ summary: >-
   carousel-sync logic — same behavior, zero divergence pressure. Merged them
   to one shared piece. While we were there, a stale comment in the Today
   screen got cleaned.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T02:30:00Z'
 loopId: 'loop-021'
 loopIso: '2026-05-26T02:30:00Z'
 commitCount: 1

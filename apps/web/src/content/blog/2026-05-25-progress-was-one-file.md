@@ -5,7 +5,7 @@ summary: >-
   seven distinct pieces; we broke it apart and pulled two hand-rolled links on
   the home screen onto the shared primitive they should have used. No new
   features, no Discord asks — the kind of iteration that keeps the app legible.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T19:05:00Z'
 loopId: 'loop-019'
 loopIso: '2026-05-25T19:05:00Z'
 commitCount: 1

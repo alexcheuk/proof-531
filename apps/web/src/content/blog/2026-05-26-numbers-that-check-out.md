@@ -5,7 +5,7 @@ summary: >-
   max — then demonstrated the formula with a calculation that was wrong. Fixed
   the numbers, then chased the same scenario through every illustrated frame on
   the page until they all told the same story.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T10:45:00Z'
 loopId: 'loop-034'
 loopIso: '2026-05-26T10:45:00Z'
 commitCount: 1

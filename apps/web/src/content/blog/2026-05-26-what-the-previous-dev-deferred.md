@@ -6,7 +6,7 @@ summary: >-
   "Week" becomes "Day" across Settings and the cycle grid, and the
   amber accent on the next-cell border thickened to 3 px. A bigger
   feature in the same Discord message got an honest deferral of its own.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T05:15:00Z'
 loopId: 'loop-029'
 loopIso: '2026-05-26T05:15:00Z'
 commitCount: 1

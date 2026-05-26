@@ -5,7 +5,7 @@ summary: >-
   a once-a-year failure nobody would have reported. Plus: the goal projection
   drops weeks and speaks days now, per a #task-queue ask, and a /simplify pass
   cleared out a few things that had no business still being there.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T09:43:56Z'
 loopId: 'loop-031'
 loopIso: '2026-05-26T09:43:56Z'
 commitCount: 1

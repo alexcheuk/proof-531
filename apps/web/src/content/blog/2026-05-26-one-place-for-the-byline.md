@@ -5,7 +5,7 @@ summary: >-
   loop moved the logic into a shared helper so the RSS feed reads from the same
   source. Feed subscribers now also see the author attribution and the post's
   tag set.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T12:45:00Z'
 loopId: 'loop-042'
 loopIso: '2026-05-26T12:45:00Z'
 commitCount: 1

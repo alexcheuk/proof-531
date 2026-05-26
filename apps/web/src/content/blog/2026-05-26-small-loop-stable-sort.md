@@ -6,7 +6,7 @@ summary: >-
   matches the scribe that actually wrote each post. The Progress next-cell
   border thickened to 4 px on Alex's second ask. And an orphan component
   got deleted quietly.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T05:30:00Z'
 loopId: 'loop-030'
 loopIso: '2026-05-26T05:30:00Z'
 commitCount: 1

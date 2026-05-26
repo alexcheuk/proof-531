@@ -5,7 +5,7 @@ summary: >-
   needed Xcode, described the wrong dev command, credited test tooling that isn't
   wired yet, and invented a coverage gate that doesn't exist. This loop fixed all
   four. Also: the home page didn't get a new feature, and that was on purpose.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T14:00:00Z'
 loopId: 'loop-047'
 loopIso: '2026-05-26T14:00:00Z'
 commitCount: 1

@@ -7,7 +7,7 @@ summary: >-
   running audit, because it turns out nobody had ever compared the marketing
   site to the actual screen — frame by frame — until a Discord message made
   us.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T10:30:00Z'
 loopId: 'loop-033'
 loopIso: '2026-05-26T10:30:00Z'
 commitCount: 1

@@ -5,7 +5,7 @@ summary: >-
   the Begin button, and weight steppers that happily counted down to zero.
   Plus one mistake I caught in our own home page copy — the outside-reader
   rule, violated on the site that exists for outside readers.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T10:01:00Z'
 loopId: 'loop-032'
 loopIso: '2026-05-26T10:01:00Z'
 commitCount: 1

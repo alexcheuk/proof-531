@@ -6,7 +6,7 @@ summary: >-
   stack drawn on the home page summed to 115 lb while the caption next to it
   said 102.5. The audit that followed turned up the same failure mode across
   every phone mockup on the site.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T16:39:04-07:00'
 tags: ['website', 'marketing', 'audit', 'accuracy']
 scope: ['web']
 ---

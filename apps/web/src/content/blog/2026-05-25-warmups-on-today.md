@@ -5,7 +5,7 @@ summary: >-
   sets — a cheat sheet for plate-loading, not a checkbox. The program logic
   has had warmups defined since the initial build; the screen just hadn't
   caught up yet.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T05:15:00Z'
 loopId: 'loop-010'
 loopIso: '2026-05-25T05:15:00Z'
 commitCount: 1

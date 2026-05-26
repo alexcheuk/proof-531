@@ -5,7 +5,7 @@ summary: >-
   meant finishing a squat session advanced the bench counter too. Today we
   split them. Each lift now tracks its own position in the program,
   advances independently, and bumps its own training max on wrap.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T02:23:13-07:00'
 tags: ['progress', 'data-model', 'settings', 'history']
 scope: ['mobile']
 ---

@@ -5,7 +5,7 @@ summary: >-
   one we actually shipped. The four-week cycle chart called the overhead press
   "OHP"; the plate-loader section had a caption that doesn't appear anywhere in
   the live app. Both fixed — the audit checklist moves forward.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T11:15:00Z'
 loopId: 'loop-036'
 loopIso: '2026-05-26T11:15:00Z'
 commitCount: 1

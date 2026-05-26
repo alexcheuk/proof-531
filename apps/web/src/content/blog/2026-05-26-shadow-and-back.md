@@ -6,7 +6,7 @@ summary: >-
   and the tab back-behavior now routes any non-Today tab back to Today —
   no more "back from Settings drops me on History because I tapped
   History five minutes ago".
-pubDate: 2026-05-26
+pubDate: '2026-05-26T04:35:00Z'
 loopId: 'loop-027'
 loopIso: '2026-05-26T04:35:00Z'
 commitCount: 1

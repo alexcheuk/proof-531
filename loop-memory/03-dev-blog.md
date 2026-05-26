@@ -23,9 +23,14 @@ title: '<headline, ≤ 70 chars, no trailing period>'
 summary: >-
   <2–3 sentence elevator pitch for the loop. Lead with the most interesting
   thing that shipped, not a list of everything.>
-pubDate: <YYYY-MM-DD>          # the date the loop ran
+pubDate: '<ISO 8601 datetime>' # full timestamp e.g. '2026-05-26T16:39:04-07:00'
+                               # — sort drives off this, NOT loopIso. Two posts
+                               # on the same day need different times or one
+                               # of them gets buried alphabetically.
 loopId: 'loop-NNN'             # zero-padded, monotonically increasing
-loopIso: '<ISO 8601 timestamp>'
+loopIso: '<ISO 8601 timestamp>' # same value as pubDate for loop posts; kept
+                                # as separate metadata for "when the loop ran"
+                                # vs "when the post published" (usually same)
 commitCount: <int>             # commits in this loop
 tags: ['<area>', '<area>', …]  # 1–4 short tags: 'history', 'session', 'refactor', 'a11y', etc.
 scope: ['<scope>', …]          # required, 1+ values from: 'mobile', 'web', 'loop', 'meta'

@@ -5,7 +5,7 @@ summary: >-
   real steady state — so the per-iteration target gets explicitly amended to
   allow honest 2–4-item loops. Caught a real data drift on lifetime volume in
   the same pass.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T06:15:00Z'
 loopId: 'loop-012'
 loopIso: '2026-05-25T06:15:00Z'
 commitCount: 1

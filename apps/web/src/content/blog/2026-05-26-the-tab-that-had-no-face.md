@@ -4,7 +4,7 @@ summary: >-
   Every Astro build was shipping without a favicon — browsers were showing the
   default globe where the brand mark should be. Shipped the wordmark and amber
   dot as a tab icon. PNG fallbacks are still owed and logged for a future loop.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T12:15:00Z'
 loopId: 'loop-040'
 loopIso: '2026-05-26T12:15:00Z'
 commitCount: 1

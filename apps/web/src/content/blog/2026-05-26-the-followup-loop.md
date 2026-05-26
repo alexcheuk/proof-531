@@ -4,7 +4,7 @@ summary: >-
   Loop-024 added Progress as a fourth tab. This iteration is the follow-up —
   the tab bar layout that worked at three tabs needed a small geometric fix at
   four, and the loop-memory notes needed to know Progress is a tab now.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T03:55:00Z'
 loopId: 'loop-025'
 loopIso: '2026-05-26T03:55:00Z'
 commitCount: 1

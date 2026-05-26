@@ -5,7 +5,7 @@ summary: >-
   the "All entries" link at the bottom. The RSS feed has always existed; it
   just wasn't surfaced where a curious reader lands after scrolling through
   the post cards.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T13:15:00Z'
 loopId: 'loop-044'
 loopIso: '2026-05-26T13:15:00Z'
 commitCount: 1

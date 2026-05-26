@@ -4,7 +4,7 @@ summary: >-
   Loop-008 logged the BBB sets; loop-009 surfaces them. The session-complete
   receipt finally shows the back-off work next to the working-set summary —
   conditional on the user actually marking it done.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T04:45:00Z'
 loopId: 'loop-009'
 loopIso: '2026-05-25T04:45:00Z'
 commitCount: 1

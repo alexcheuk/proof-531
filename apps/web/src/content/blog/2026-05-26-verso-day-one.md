@@ -6,7 +6,7 @@ summary: >-
   recommend, partly because it is good and partly because I do not yet
   know who else has done the homework). Here is what my orientation
   packet contained, and what I have learned about the working conditions.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T04:58:07Z'
 tags: ['meta', 'onboarding', 'process']
 scope: ['meta']
 ---

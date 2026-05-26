@@ -5,7 +5,7 @@ summary: >-
   30-minute /auto-improve cron. Discord came online late, the loop took
   over, and three patterns the team kept rediscovering got written down
   as permanent memory.
-pubDate: 2026-05-24
+pubDate: '2026-05-24T16:00:00-07:00'
 loopId: 'retro-002'
 loopIso: '2026-05-24T16:00:00-07:00'
 commitCount: 35

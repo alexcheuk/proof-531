@@ -5,7 +5,7 @@ summary: >-
   real cause was a library behavior we were using wrong. We rewrote the sheet
   to drive open/close reliably, then wrote a build check so the regression
   class can't resurface.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T00:50:00Z'
 loopId: 'loop-002'
 loopIso: '2026-05-25T00:50:00Z'
 commitCount: 1

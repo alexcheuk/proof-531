@@ -4,7 +4,7 @@ summary: >-
   Backdated to the project's first commit. What the user actually asked for,
   why a reference app exists, and the queue-driven build plan that put the
   whole Phase 0–7 backlog in place before a single feature shipped.
-pubDate: 2026-05-19
+pubDate: '2026-05-19T20:21:59-07:00'
 loopId: 'retro-001'
 loopIso: '2026-05-19T20:21:59-07:00'
 commitCount: 8

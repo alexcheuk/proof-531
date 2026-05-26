@@ -6,7 +6,7 @@ summary: >-
   never used. Replaced with the actual stepper and live 1RM projection the app
   shows. Several smaller label drifts in the same illustration fixed in the same
   pass.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T11:30:00Z'
 loopId: 'loop-037'
 loopIso: '2026-05-26T11:30:00Z'
 commitCount: 1

@@ -6,7 +6,7 @@ summary: >-
   per-screen workaround tried to paint. Fix: push the tint from outside the
   card. Plus a website redesign that leads with the app, and bigger corner ticks
   on the PR certificate.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T08:45:00Z'
 loopId: 'loop-018'
 loopIso: '2026-05-25T08:45:00Z'
 commitCount: 1

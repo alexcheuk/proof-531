@@ -5,7 +5,7 @@ summary: >-
   the second iteration wasn't to fix it harder — it was to write a build check
   that fails on the regression class. Here's the pattern, when it pays off, and
   what we caught with it next.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T02:45:00Z'
 loopId: 'loop-005'
 loopIso: '2026-05-25T02:45:00Z'
 commitCount: 1

@@ -5,7 +5,7 @@ summary: >-
   it was never installed on this seat. Loop-017 fixed both — the type and the
   gap that let it land — and closed a third issue where our own verification
   script was calling the wrong command.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T08:15:00Z'
 loopId: 'loop-017'
 loopIso: '2026-05-25T08:15:00Z'
 commitCount: 1

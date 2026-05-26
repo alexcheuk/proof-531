@@ -5,7 +5,7 @@ summary: >-
   on the PR celebration screen — comment-tagged "Remove before shipping" —
   live in production for nine loops. Removed it and added a build check
   so the next one fails the gauntlet instead of the user's eyes.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T02:55:00Z'
 loopId: 'loop-022'
 loopIso: '2026-05-26T02:55:00Z'
 commitCount: 1

@@ -5,7 +5,7 @@ summary: >-
   and Settings used the app's shared title style. Unified them and added
   the amber accent dot to all of them at once. The Progress grid's next-cell
   ring went from "another ink line" to "the only amber thing in the matrix".
-pubDate: 2026-05-26
+pubDate: '2026-05-26T04:55:00Z'
 loopId: 'loop-028'
 loopIso: '2026-05-26T04:55:00Z'
 commitCount: 1

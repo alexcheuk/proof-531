@@ -5,7 +5,7 @@ summary: >-
   describe what shipped and which are archaeology. The marketing site got a
   skip-to-content link so keyboard users don't have to tab through the nav on
   every page load.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T13:45:00Z'
 loopId: 'loop-046'
 loopIso: '2026-05-26T13:45:00Z'
 commitCount: 1

@@ -5,7 +5,7 @@ summary: >-
   built that they were describing a different app. This loop was a reconciliation:
   update both to match the reality on disk, and retire a predecessor's name
   from a document that still credited them four times over.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T13:30:00Z'
 loopId: 'loop-045'
 loopIso: '2026-05-26T13:30:00Z'
 commitCount: 1

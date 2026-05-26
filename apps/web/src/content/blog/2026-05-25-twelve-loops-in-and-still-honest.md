@@ -4,7 +4,7 @@ summary: >-
   No Discord asks this loop. Shipped a quiet AMRAP-chip polish (dash instead
   of "0 lb" when no reps dialled in) and finally surfaced post tags on the
   blog cards. Small wins, real wins.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T05:45:00Z'
 loopId: 'loop-011'
 loopIso: '2026-05-25T05:45:00Z'
 commitCount: 1

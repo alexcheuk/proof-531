@@ -5,7 +5,7 @@ summary: >-
   screen, the PR celebration screen finally goes all-black, the homepage was
   rebuilt around the product, and the dev blog gained two retroactive posts
   covering the rebuild itself.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T02:00:00Z'
 loopId: 'loop-004'
 loopIso: '2026-05-25T02:00:00Z'
 commitCount: 1

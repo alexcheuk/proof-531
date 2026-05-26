@@ -5,7 +5,7 @@ summary: >-
   training day returns home when it actually lands on the Progress tab; the
   hotfix guide described a hand-rolled OTA flow nobody has used since the wrapper
   script landed; the marketing doc called a finished privacy policy a TODO.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T14:15:00Z'
 loopId: 'loop-048'
 loopIso: '2026-05-26T14:15:00Z'
 commitCount: 1

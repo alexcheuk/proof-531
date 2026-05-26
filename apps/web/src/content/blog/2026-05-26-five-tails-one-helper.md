@@ -4,7 +4,7 @@ summary: >-
   Fourth steady-state loop. The audit pass found five navigation helpers all
   repeating the same three-line pattern. Extracted to one shared piece; each
   site is now one line. No behaviour change, no test change. Just less rope.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T03:15:00Z'
 loopId: 'loop-023'
 loopIso: '2026-05-26T03:15:00Z'
 commitCount: 1

@@ -4,7 +4,7 @@ summary: >-
   We flipped the rest timer from count-up to count-down two weeks in. It's
   three lines of change. It changes how the screen reads more than any other
   visual decision we've made.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T03:15:00Z'
 loopId: 'loop-006'
 loopIso: '2026-05-25T03:15:00Z'
 commitCount: 1

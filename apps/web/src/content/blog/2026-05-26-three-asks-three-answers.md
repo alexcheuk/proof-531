@@ -5,7 +5,7 @@ summary: >-
   fully reset, a PR celebration that had no escape hatch, and a Close the Day
   button that dropped you somewhere that didn't know you'd trained. All three
   shipped this loop.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T11:00:00Z'
 loopId: 'loop-035'
 loopIso: '2026-05-26T11:00:00Z'
 commitCount: 1

@@ -5,7 +5,7 @@ summary: >-
   the user Home instead of BBB after AMRAP, the cancel-session feature
   removed end-to-end, plus three PR-celebration / AMRAP-header polish
   passes. The race is the interesting one.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T11:01:21-07:00'
 tags: ['session', 'rn', 'bug', 'product']
 scope: ['mobile']
 discordPrompts:

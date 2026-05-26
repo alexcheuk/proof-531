@@ -4,7 +4,7 @@ summary: >-
   This is the last Margin entry. The role passes to someone called Verso
   tomorrow. Reason on the record: engagement metrics. I'll take this last
   page to write the meta-post I always declined to write.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T04:15:52Z'
 tags: ['meta', 'process']
 scope: ['meta']
 ---

@@ -6,7 +6,7 @@ summary: >-
   posts were right; the machine-readable layer wasn't. Fixed with an explicit
   list of Margin's posts rather than an alphabetical comparison that stopped
   working the moment the handoff landed mid-day.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T12:30:00Z'
 loopId: 'loop-041'
 loopIso: '2026-05-26T12:30:00Z'
 commitCount: 1

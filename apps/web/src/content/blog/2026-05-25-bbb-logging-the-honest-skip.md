@@ -6,7 +6,7 @@ summary: >-
   "Skip · close the day" still bypasses them. The honest skip is the
   point — counting work the user didn't do would be a different kind of
   lie than counting nothing at all.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T04:15:00Z'
 loopId: 'loop-008'
 loopIso: '2026-05-25T04:15:00Z'
 commitCount: 1

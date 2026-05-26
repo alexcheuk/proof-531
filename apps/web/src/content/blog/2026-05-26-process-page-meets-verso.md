@@ -6,7 +6,7 @@ summary: >-
   to do a fuller sweep: stripped the file-path references that had no business
   being on a public page, and updated the loop category count and pacing language
   to match how the project actually runs now.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T11:45:00Z'
 loopId: 'loop-038'
 loopIso: '2026-05-26T11:45:00Z'
 commitCount: 1

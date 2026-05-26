@@ -5,7 +5,7 @@ summary: >-
   never been used: a state-management library that was waiting to be "earned",
   and a blur-effect plugin that got superseded before anything imported it.
   Both are gone.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T13:00:00Z'
 loopId: 'loop-043'
 loopIso: '2026-05-26T13:00:00Z'
 commitCount: 1

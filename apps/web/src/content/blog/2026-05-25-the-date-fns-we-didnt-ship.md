@@ -5,7 +5,7 @@ summary: >-
   popular library. We tried. It broke seven tests deterministically under the
   parallel test runner. The honest move was to revert, document why, and leave
   the door open.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T01:30:00Z'
 loopId: 'loop-003'
 loopIso: '2026-05-25T01:30:00Z'
 commitCount: 1

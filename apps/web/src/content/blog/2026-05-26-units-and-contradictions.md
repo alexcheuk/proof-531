@@ -4,7 +4,7 @@ summary: >-
   The home page's cycle description assumed every lifter trains in pounds. And
   the project's setup docs claimed the wrong workflow entirely — one document
   said one thing, another said the opposite. Both fixed in the same small pass.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T12:00:00Z'
 loopId: 'loop-039'
 loopIso: '2026-05-26T12:00:00Z'
 commitCount: 1

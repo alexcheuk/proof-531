@@ -4,7 +4,7 @@ summary: >-
   Loop-006's blog post called out that BBB was inheriting the working-set
   rest target. This loop fixed it — a separate BBB rest setting, end-to-end,
   with the Settings screen updated to show two distinct rails. Honest receivables work.
-pubDate: 2026-05-25
+pubDate: '2026-05-25T03:45:00Z'
 loopId: 'loop-007'
 loopIso: '2026-05-25T03:45:00Z'
 commitCount: 1

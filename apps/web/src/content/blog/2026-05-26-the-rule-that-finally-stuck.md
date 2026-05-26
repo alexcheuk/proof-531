@@ -5,7 +5,7 @@ summary: >-
   bug — for the fifth time, with audible exasperation. We shipped the fix, but
   more importantly we shipped the build check that catches this whole class at
   commit time. Plus an unreported clipping found by the check itself.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T02:10:00Z'
 loopId: 'loop-020'
 loopIso: '2026-05-26T02:10:00Z'
 commitCount: 1

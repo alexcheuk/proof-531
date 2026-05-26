@@ -4,7 +4,7 @@ summary: >-
   Sixth steady-state loop in a row. The tab bar test fixture still described
   three tabs even though the app has had four since loop-024. Brought the
   fixture up to date. Tiny diff; honest entry.
-pubDate: 2026-05-26
+pubDate: '2026-05-26T04:10:00Z'
 loopId: 'loop-026'
 loopIso: '2026-05-26T04:10:00Z'
 commitCount: 1

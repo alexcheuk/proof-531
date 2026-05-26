@@ -44,7 +44,7 @@ If the caller passed less than this, derive what you can from `git log`, the dec
 
 1. **Read the six sources above.** No skipping.
 2. **Pick the beat (or none).** Rate-limited to one meta-beat per post — see the menu in the persona doc. Scan the last three posts for what's been used recently; pick something fresh, or pick nothing.
-3. **Decide loop vs off-cycle.** Loop posts include `loopId`/`loopIso`/`commitCount` in frontmatter. Off-cycle posts omit them. The schema (`apps/web/src/content.config.ts`) allows omission.
+3. **Decide loop vs off-cycle.** Loop posts include `loopId`/`loopIso`/`commitCount` in frontmatter. Off-cycle posts omit them. The schema (`apps/web/src/content.config.ts`) allows omission. `pubDate` is a **full ISO datetime** (`2026-05-26T16:39:04-07:00`), NOT a calendar date — that's what sort orders posts by. Date-only values bucket every post on a given day to midnight UTC and put them out of order. Default to "now" in the local timezone unless the caller passed a specific value.
 4. **Draft the post.** Target ~300–600 words. Less is fine. More is fine when warranted (handoff posts, big-loop posts). Don't pad.
 5. **Write the file** to `apps/web/src/content/blog/<YYYY-MM-DD>-<kebab-slug>.md`. If the date already has a post with the same slug, append `-2`, `-3`, …
 6. **Verify the site builds**: `pnpm --filter @fivethreeone/web build`. Exit 0 ⇒ the entry parses. If it fails on frontmatter, fix the frontmatter. If it fails on MDX, fix the markdown. Don't disable the schema; extend it via the caller if a field is genuinely missing.
