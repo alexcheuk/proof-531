@@ -12,6 +12,7 @@
  * Derived/memoized data + the four query reads live in `useHistoryScreenData`
  * — this file is composition + filter UI state only.
  */
+import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
@@ -56,6 +57,8 @@ export function HistoryScreen() {
     onRefresh: refetchAll,
   } = useHistoryScreenData(filter);
 
+  const { scrolled, onScroll, scrollEventThrottle } = useScrolledPast();
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -93,10 +96,12 @@ export function HistoryScreen() {
   return (
     <View style={containerStyle} testID="history-screen">
       <StatusBar style="dark" />
-      <Masthead rightSlot={<CapsLabel>history</CapsLabel>} />
+      <Masthead rightSlot={<CapsLabel>history</CapsLabel>} elevated={scrolled} />
       <ScrollView
         testID="history-scroll"
         contentContainerStyle={{ paddingBottom: 24 }}
+        onScroll={onScroll}
+        scrollEventThrottle={scrollEventThrottle}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} testID="history-refresh" />
         }

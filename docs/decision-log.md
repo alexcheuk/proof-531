@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Sticky-header elevation on scroll; tab back-behavior → initialRoute
+
+**Tags:** `feature`, `navigation`, `tabs`, `design-system`
+**Files:** `apps/mobile/src/design/hooks/useScrolledPast.ts` (new), `apps/mobile/src/design/primitives/Masthead.tsx`, `apps/mobile/src/features/settings/SettingsScreen.tsx`, `apps/mobile/src/features/history/HistoryScreen.tsx`, `apps/mobile/src/app/(tabs)/_layout.tsx`, `loop-memory/01-known-codebase.md`
+
+Two Discord asks shipped together. `Masthead` gained an `elevated` prop that paints a subtle shadow (`shadowOpacity: 0.08`, `shadowRadius: 6`, `shadowOffset: { 0, 2 }`, `elevation: 4`) — deliberately small so it reads as paper-shadow, not Material-card. Pairs with a new `useScrolledPast(threshold = 4)` hook in `design/hooks/` that exposes `{ scrolled, onScroll, scrollEventThrottle }`; the boolean only re-renders on threshold-flip so intermediate scroll ticks don't thrash. Wired in Settings + History.
+
+`Tabs.backBehavior` set to `"initialRoute"`. Android hardware back from any non-Today tab now routes to Today; from Today it exits the app. The default `"history"` behaviour landed wherever the user had visited most recently, not on the root — confusing, and the user said so.
+
+**Trade-off:** Progress's elevation is deferred. The FlatList carousel renders one ScrollView per lift; cross-page elevation needs scroll state lifted up to the screen-level Masthead, which the simple hook doesn't yet do. The memory note (`01-known-codebase.md`) calls out the path forward — a module-level subject mirroring `statusBarTint`. Settings + History cover the canonical sticky-header pattern; Progress can land in a follow-up if the user notices.
+
 ### 2026-05-26 — CustomTabBar test fixture brought in sync with the 4-tab config
 
 **Tags:** `tests`, `tabs`
