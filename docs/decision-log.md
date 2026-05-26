@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — authorForPost helper; RSS gets author + categories
+
+**Tags:** `website`, `rss`, `refactor`
+**Files:** `apps/web/src/lib/posts.ts`, `apps/web/src/pages/blog/[...slug].astro`, `apps/web/src/pages/rss.xml.ts`
+
+Hoisted the loop-041 Margin-allowlist into `lib/posts.ts` as `authorForPost(entry)`. The blog post page now imports the helper instead of inlining the set. The RSS feed picked up the helper too, plus the per-item categories from the post's tags. So an RSS subscriber now sees the persona attribution and the tag set the search engine sees on the page.
+
+**Why:** loop-041's fix landed the right logic in one place; this loop puts it in the *right* place (shared lib) so RSS subscribers and any future surface that needs the byline reads from the same source of truth. Categories on RSS items is a small completeness win — feed readers that group by category now work.
+
 ### 2026-05-26 — JSON-LD author tag: explicit Margin set, not alphabetical compare
 
 **Tags:** `bug-postmortem`, `website`, `persona`
