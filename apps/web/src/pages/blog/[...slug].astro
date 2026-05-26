@@ -65,12 +65,16 @@ const jsonLd = {
       <h1 class="entry__title">{post.data.title.replace(/\.$/, '')}<span class="entry__dot" aria-hidden="true">.</span></h1>
     </header>
 
-    {/* TL;DR block — frontmatter `summary` styled as a meta-element so
-        readers can tell it apart from the lede paragraph of the body.
-        Verso's body openings always restate the same thesis, so without
-        a visual distinction the summary reads as a duplicate. */}
+    {/* TL;DR block — frontmatter `summary` rendered as a meta-element
+        with the page's amber accent on the left edge, so readers can
+        tell it apart from the lede paragraph of the body. Verso's body
+        openings always restate the same thesis, so without a visual
+        distinction the summary reads as a duplicate. The amber bar +
+        amber eyebrow tie it to the brand (the dot in the title is also
+        amber); the bg-1 fill sets it off from the page surface; sharp
+        corners match the app's discipline. */}
     <aside class="entry__tldr">
-      <span class="eyebrow">TL;DR</span>
+      <span class="entry__tldr-eyebrow">TL;DR</span>
       <p>{post.data.summary}</p>
     </aside>
 
@@ -156,22 +160,34 @@ const jsonLd = {
     margin-left: -0.04em;
   }
 
-  /* TL;DR block — sits between the entry header and the body.
-     Caps eyebrow + the post's `summary` in a slightly muted color so
-     the eye reads it as a meta-element, not the post's lede paragraph
-     (the body restates the thesis on purpose). */
+  /* TL;DR block — amber-accent card. Sits between the entry header
+     and the body. The 4px amber left edge + amber caps eyebrow
+     visually quote the title's amber period; bg-1 fill sets it off
+     from the page surface so the eye reads it as a meta-element, not
+     a lede paragraph (Verso's body openings restate the thesis on
+     purpose, and this discrete framing keeps that from feeling like
+     repetition). Sharp corners match the app's borderRadius: 0
+     discipline. */
   .entry__tldr {
     margin-top: var(--space-xl);
-    padding: var(--space-md) 0 var(--space-lg);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-1);
+    border-left: 4px solid var(--amber);
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: var(--space-sm);
+  }
+  .entry__tldr-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
   }
   .entry__tldr p {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.55;
     color: var(--ink-1);
     max-width: 64ch;
