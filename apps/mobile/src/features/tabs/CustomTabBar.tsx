@@ -40,10 +40,14 @@ export function CustomTabBar({ state, navigation }: CustomTabBarProps) {
     borderTopColor: colors.lineStrong,
     paddingTop: 14,
     paddingBottom: insets.bottom + spacing.sm,
+    // `space-around` so 3 or 4 tabs lay out evenly across the bar. A
+    // fixed `gap="xxxl"` (the previous setting) overflowed narrower
+    // devices once Progress joined the bar in loop-024.
+    paddingHorizontal: spacing.md,
   };
 
   return (
-    <Row justify="center" gap="xxxl" style={barStyle}>
+    <Row justify="space-around" style={barStyle}>
       {state.routes.map((route, index) => (
         <TabBarItem
           key={route.key}

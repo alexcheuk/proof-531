@@ -118,6 +118,11 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - **Live → Today, Today → Home.** Deterministic via `goTo.today` / `goTo.home`,
   not `router.back()`. Stack-default `back` lands on the originating tab
   (often History) which broke the user's mental model.
+- **Progress is a tab** as of loop-024 — so there's no "back from Progress"
+  case. Tab-to-tab navigation has no back stack; the user just taps another
+  tab. If you ever add another stack-pushed screen, route the visible back
+  chip via `goTo.*` and override Android hardware back with
+  `useHardwareBack({ enabled, onBack })` to match.
 - Hardware Android back is overridden by `useHardwareBack({ enabled, onBack })`
   in `features/session/hooks/`. Use it whenever a visible back chip exists
   on a screen with a non-default destination.
@@ -132,7 +137,10 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 
 ## Routes
 
-- `/(tabs)` — Today / History / Settings (custom tab bar in `features/tabs/`)
+- `/(tabs)` — Today / Progress / History / Settings (custom tab bar in `features/tabs/`).
+  Progress was promoted from a stack-push route (`/progress/[lift]`) to a tab in
+  loop-024; `goTo.progress(router, lift)` navigates to `/(tabs)/progress?lift=X`.
+  The tab accepts an optional `?lift=` param and falls back to `enabledLifts[0]`.
 - `/session/today` — pre-session preview
 - `/session/live` — in-session (rest timer, AMRAP sheet, cancel-confirm sheet)
 - `/session/complete` — receipt + CTA

@@ -42,6 +42,13 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Tab bar switched to `space-around` to accommodate the 4th tab
+
+**Tags:** `fix`, `layout`, `tabs`
+**Files:** `apps/mobile/src/features/tabs/CustomTabBar.tsx`, `loop-memory/01-known-codebase.md`
+
+`CustomTabBar` was laid out as `Row justify="center" gap="xxxl"`. With three tabs the fixed 48-px gap was comfortable; with four (loop-024 added Progress) the centred row overflows on narrower devices. Switched to `justify="space-around"` with `paddingHorizontal: spacing.md` — each tab gets equal slack on both sides regardless of count, and the layout self-adjusts to future additions. Also updated `01-known-codebase.md` so the routes list and back-navigation contract reflect that Progress is a tab; the back-nav contract previously called out the exact bug loop-024 fixed.
+
 ### 2026-05-26 — Progress promoted to a first-class tab; six Discord asks shipped together
 
 **Tags:** `feature`, `navigation`, `progress`, `home`, `removal`
