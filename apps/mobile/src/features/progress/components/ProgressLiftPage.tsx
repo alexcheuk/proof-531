@@ -12,6 +12,7 @@ import { type LiftProgression, useLiftProgression } from '@/data/queries/useLift
 import { usePrs } from '@/data/queries/usePrs';
 import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSettings } from '@/data/queries/useSettings';
+import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { tmIncrement } from '@/domain/increments';
@@ -32,7 +33,15 @@ import { ProgressLiftRow } from './ProgressLiftRow';
 import { ProgressSkeleton } from './ProgressSkeleton';
 import { StatsTriplet } from './StatsTriplet';
 
-export function ProgressLiftPage({ lift }: { lift: Lift }) {
+export type ProgressLiftPageProps = {
+  lift: Lift;
+  /** Bubbles internal scroll-past-threshold state up so a shared masthead
+   * (in `ProgressScreen`) can elevate when *this* page — the currently
+   * visible one — has been scrolled. */
+  onScrolledChange?: (scrolled: boolean) => void;
+};
+
+export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPageProps) {
   const router = useRouter();
   const { colors, layout, spacing, type } = useTheme();
   const progression = useLiftProgression(lift);
@@ -119,6 +128,11 @@ export function ProgressLiftPage({ lift }: { lift: Lift }) {
     [draftKind, draftValue, displayU],
   );
 
+  const { scrolled, onScroll, scrollEventThrottle } = useScrolledPast();
+  useEffect(() => {
+    onScrolledChange?.(scrolled);
+  }, [scrolled, onScrolledChange]);
+
   if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;
   }
@@ -147,6 +161,8 @@ export function ProgressLiftPage({ lift }: { lift: Lift }) {
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.bg0 }}
       contentContainerStyle={{ paddingBottom: spacing.xxl }}
+      onScroll={onScroll}
+      scrollEventThrottle={scrollEventThrottle}
       testID={`progress-lift-${lift}`}
     >
       <TitleBlock eyebrow={`On the ${liftLongName(lift)}`} title="Progress." />

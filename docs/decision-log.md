@@ -78,6 +78,23 @@ The handoff itself is recorded in two off-cycle posts: Margin's farewell and Ver
 
 **Follow-ups:** the next /auto-improve loop is the first real test of Verso's voice on shipped work; if it reads as try-hard, tighten the persona doc's "won'ts" list.
 
+### 2026-05-26 — Progress masthead shadow wired; Week→Day terminology rename; thicker next-cell border
+
+**Tags:** `progress`, `design-system`, `consistency`, `terminology`
+**Files:** `apps/mobile/src/features/progress/ProgressScreen.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/design/primitives/ProgressGridCell.tsx`, `apps/mobile/src/features/settings/sections/{CyclePrescriptionSection,CycleProgressSection}.tsx`, `apps/mobile/src/features/settings/cycleProgress.ts`, `apps/mobile/src/features/session/components/CycleGridFrame.tsx`, `apps/mobile/src/features/home/components/LiftPage/LiftPage.tsx`, `apps/mobile/src/features/history/components/SessionListRow.tsx`, plus tests
+
+Three task-queue items shipped together; one of them had three sub-asks of which two landed.
+
+**Masthead shadow on Progress.** Loop-027 deferred this — Progress's carousel renders one ScrollView per lift, so cross-page elevation needed scroll state lifted up. `ProgressLiftPage` now accepts an `onScrolledChange` callback; `ProgressScreen` keeps a `Partial<Record<Lift, boolean>>` and reads the active lift's value to drive `Masthead elevated`. Each page reports its own `useScrolledPast` state in an effect.
+
+**Week → Day terminology.** User: *"In settings and progress page. Get rid of concept of weeks. They are Days."* Renamed throughout the user-facing copy: `CyclePrescriptionSection` rows "Week 1/2/3/4" → "Day 1/2/3/4"; `CycleProgressSection` hint "week N of 4" → "day N of 4"; `cycleProgress.ts` captions "N weeks until deload" → "N days until deload" and "Deload week · light loads" → "Deload day · light loads"; `CycleGridFrame` labels W1-W4 → D1-D4; LiftPage hint "DELOAD WEEK · …" → "DELOAD DAY · …"; SessionListRow `C2 · W3` → `C2 · D3` plus a11y label. The internal `Week` type kept its name — it's a data token, decoupled from display copy.
+
+**Centered cycle-grid labels.** `CycleGridFrame`'s D1-D4 row went from `justify="space-between"` (snapped to row edges) to `flex: 1 + textAlign: center` per label — now each sits under the centre of its group of cells.
+
+**Thicker next-cell border.** `ProgressGridCell` "next" cell border bumped from 2 → 3 px (loop-028 → loop-029).
+
+**Trade-off (deferred):** the per-lift weekly cadence picker and "goal in days" projection. User asked: *"The estimated goal should be based on how many days left, and time is based on how many days you expect to workout every week for that lift."* That needs a new `settings` column + UI to set per-lift cadence + projection math change. Substantial; not a quick rename. Logged for a future iteration. Filed as known follow-up in the Discord summary.
+
 ### 2026-05-26 — TitleBlock unified across screens with auto-amber dot; Progress "next" cell uses 2-px amber border
 
 **Tags:** `design-system`, `progress`, `consistency`

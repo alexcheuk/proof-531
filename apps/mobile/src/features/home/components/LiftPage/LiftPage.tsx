@@ -106,7 +106,7 @@ export function LiftPage({
       <LiftPageTitle lift={lift} onPress={openProgress} />
       {week === 4 ? (
         <LiftPageHint testID={`lift-page-${lift}-deload-callout`}>
-          DELOAD WEEK · EASE OFF, BUILD THE NEXT CYCLE
+          DELOAD DAY · EASE OFF, BUILD THE NEXT CYCLE
         </LiftPageHint>
       ) : null}
       {lastTrainedHint ? (

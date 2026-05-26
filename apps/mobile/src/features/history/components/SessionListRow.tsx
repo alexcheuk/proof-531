@@ -97,7 +97,7 @@ export function SessionListRow({
 
   const a11yLabel = [
     liftDisplayName(session.lift),
-    `Cycle ${session.cycle}, Week ${week}`,
+    `Cycle ${session.cycle}, Day ${week}`,
     statusCaps(session.status).toLowerCase(),
     hasPr ? 'personal record' : null,
   ]
@@ -144,7 +144,7 @@ export function SessionListRow({
       <Row gap="sm">
         {prChip}
         <LedgerRowValue
-          value={`C${session.cycle} · W${week}`}
+          value={`C${session.cycle} · D${week}`}
           sub={rowSubCaption(session)}
           numeric
         />

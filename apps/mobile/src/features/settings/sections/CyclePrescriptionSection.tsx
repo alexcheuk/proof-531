@@ -8,10 +8,10 @@ interface CycleRow {
 }
 
 const CYCLE_ROWS: readonly CycleRow[] = [
-  { label: 'Week 1', pct: '65 · 75 · 85', reps: '5 / 5 / 5+' },
-  { label: 'Week 2', pct: '70 · 80 · 90', reps: '3 / 3 / 3+' },
-  { label: 'Week 3', pct: '75 · 85 · 95', reps: '5 / 3 / 1+' },
-  { label: 'Week 4', pct: '40 · 50 · 60', reps: '5 / 5 / 5 · deload' },
+  { label: 'Day 1', pct: '65 · 75 · 85', reps: '5 / 5 / 5+' },
+  { label: 'Day 2', pct: '70 · 80 · 90', reps: '3 / 3 / 3+' },
+  { label: 'Day 3', pct: '75 · 85 · 95', reps: '5 / 3 / 1+' },
+  { label: 'Day 4', pct: '40 · 50 · 60', reps: '5 / 5 / 5 · deload' },
 ];
 
 export function CyclePrescriptionSection() {

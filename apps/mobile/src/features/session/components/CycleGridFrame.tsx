@@ -3,7 +3,7 @@ import { useTheme } from '@/design/theme';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { CycleGridCell } from './CycleGridCell';
 
-const WEEK_LABELS = ['W1', 'W2', 'W3', 'W4'] as const;
+const DAY_LABELS = ['D1', 'D2', 'D3', 'D4'] as const;
 
 export type CycleGridFrameProps = {
   completedThisCycle: number;
@@ -50,10 +50,13 @@ export function CycleGridFrame({
           />
         ))}
       </Row>
-      <Row justify="space-between" style={{ marginTop: 10 }}>
-        {WEEK_LABELS.map((w) => (
-          <RNText key={w} style={weekLabel}>
-            {w}
+      {/* Each label gets equal `flex: 1` width + text-centered so it sits
+       * under the centre of its group of `sessionsInCycle / 4` cells,
+       * not snapped to the row edges (the old `space-between` layout). */}
+      <Row style={{ marginTop: 10 }}>
+        {DAY_LABELS.map((d) => (
+          <RNText key={d} style={[weekLabel, { flex: 1, textAlign: 'center' }]}>
+            {d}
           </RNText>
         ))}
       </Row>

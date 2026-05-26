@@ -50,11 +50,11 @@ describe('SessionListRow', () => {
     mockReplace.mockClear();
   });
 
-  it('renders the lift label, dated caption, cycle/week glyph, and elapsed-duration sub', () => {
+  it('renders the lift label, dated caption, cycle/day glyph, and elapsed-duration sub', () => {
     const screen = wrap(<SessionListRow session={makeSession()} />);
     expect(screen.getByText('Squat')).toBeTruthy();
     expect(screen.getByText('FRI · MAY 1')).toBeTruthy();
-    expect(screen.getByText('C2 · W3')).toBeTruthy();
+    expect(screen.getByText('C2 · D3')).toBeTruthy();
     // 60_000 ms span → "1m" — completed rows surface duration instead of
     // the redundant "COMPLETED" status caption.
     expect(screen.getByText('1m')).toBeTruthy();
@@ -128,12 +128,12 @@ describe('SessionListRow', () => {
   it('exposes a composed a11y label including the PR clause when hasPr', () => {
     const screen = wrap(<SessionListRow session={makeSession({ id: 31 })} hasPr />);
     const row = screen.getByTestId('history-row-31');
-    expect(row.props.accessibilityLabel).toBe('Squat, Cycle 2, Week 3, completed, personal record');
+    expect(row.props.accessibilityLabel).toBe('Squat, Cycle 2, Day 3, completed, personal record');
   });
 
   it('omits the personal-record clause from the a11y label when hasPr is false', () => {
     const screen = wrap(<SessionListRow session={makeSession({ id: 32 })} />);
     const row = screen.getByTestId('history-row-32');
-    expect(row.props.accessibilityLabel).toBe('Squat, Cycle 2, Week 3, completed');
+    expect(row.props.accessibilityLabel).toBe('Squat, Cycle 2, Day 3, completed');
   });
 });

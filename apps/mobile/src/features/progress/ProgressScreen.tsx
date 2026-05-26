@@ -49,6 +49,19 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
     setSelectedLift(lift);
   }, [lift]);
 
+  // Per-lift scrolled flag. Each ProgressLiftPage's ScrollView is its own
+  // beast; the Masthead lives above the carousel and needs to know whether
+  // the *currently visible* page has scrolled. The page reports its
+  // boolean back via `reportScrolled`; the screen reads off the selected
+  // lift's value to drive `Masthead elevated`.
+  const [scrolledByLift, setScrolledByLift] = useState<Partial<Record<Lift, boolean>>>({});
+  const reportScrolled = useCallback((reporting: Lift, scrolled: boolean) => {
+    setScrolledByLift((prev) =>
+      prev[reporting] === scrolled ? prev : { ...prev, [reporting]: scrolled },
+    );
+  }, []);
+  const mastheadElevated = !!scrolledByLift[selectedLift];
+
   const updateRouteParam = useCallback(
     (next: Lift) => {
       setSelectedLift(next);
@@ -67,17 +80,20 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   const renderItem = useCallback<ListRenderItem<Lift>>(
     ({ item }) => (
       <View style={{ width: screenWidth }}>
-        <ProgressLiftPage lift={item} />
+        <ProgressLiftPage
+          lift={item}
+          onScrolledChange={(scrolled) => reportScrolled(item, scrolled)}
+        />
       </View>
     ),
-    [screenWidth],
+    [screenWidth, reportScrolled],
   );
 
   const combined = combineQueries(settings, tms, prs);
   if (combined.isError) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg0 }}>
-        <Masthead rightSlot={<CapsRight>projection</CapsRight>} />
+        <Masthead rightSlot={<CapsRight>projection</CapsRight>} elevated={mastheadElevated} />
         <QueryShell query={combined}>{null}</QueryShell>
       </View>
     );
@@ -87,7 +103,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg0 }} testID="progress-screen">
-      <Masthead rightSlot={<CapsRight>projection</CapsRight>} />
+      <Masthead rightSlot={<CapsRight>projection</CapsRight>} elevated={mastheadElevated} />
       {combined.isLoading || !settings.data ? (
         <ProgressSkeleton />
       ) : (

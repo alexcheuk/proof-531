@@ -167,7 +167,7 @@ export function ProgressGridCell({
     />
   ) : null;
 
-  // "NEXT" cell highlight: a 2-px amber accent border inset 2 px from
+  // "NEXT" cell highlight: a 3-px amber accent border inset 2 px from
   // the cell's outer line. Amber is the project's lone accent color and
   // is reserved for "you are here" / wordmark dots — using it here gives
   // the next-session cell a clear visual lock without inventing a new
@@ -181,7 +181,7 @@ export function ProgressGridCell({
         left: 2,
         right: 2,
         bottom: 2,
-        borderWidth: 2,
+        borderWidth: 3,
         borderColor: colors.amber,
       }}
     />

@@ -12,7 +12,7 @@ export type CycleProgress = {
   dayOfCycle: number;
   /** Total days in the cycle (liftsPerCycle × 4 weeks). */
   totalDays: number;
-  /** Free-text caption: "3 days to deload" / "Deload week · last cycle day" / etc. */
+  /** Free-text caption: "3 days until deload" / "Deload day · light loads" / etc. */
   caption: string;
 };
 
@@ -28,10 +28,10 @@ export function deriveCycleProgress(week: number, liftsPerCycle: number): CycleP
 
   let caption: string;
   if (safeWeek === 4) {
-    caption = 'Deload week · light loads';
+    caption = 'Deload day · light loads';
   } else {
-    const weeksToDeload = 4 - safeWeek;
-    caption = weeksToDeload === 1 ? '1 week until deload' : `${weeksToDeload} weeks until deload`;
+    const daysToDeload = 4 - safeWeek;
+    caption = daysToDeload === 1 ? '1 day until deload' : `${daysToDeload} days until deload`;
   }
   return { dayOfCycle, totalDays, caption };
 }

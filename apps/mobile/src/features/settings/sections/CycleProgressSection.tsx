@@ -31,7 +31,7 @@ export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
   const gridBleed = -layout.gutter;
 
   return (
-    <LedgerSection title="Cycle progress" hint={`week ${settings.week} of 4`}>
+    <LedgerSection title="Cycle progress" hint={`day ${settings.week} of 4`}>
       <LedgerRow first testID="settings-cycle-progress-row">
         <LedgerRowLabel
           primary={`Cycle ${String(settings.currentCycle).padStart(2, '0')}`}
@@ -56,7 +56,7 @@ export function CycleProgressSection({ settings }: CycleProgressSectionProps) {
           testID="settings-cycle-deload-hint"
         >
           <CapsLabel size="xs" color="ink3" style={{ lineHeight: 16 }}>
-            Deload week · 40/50/60% sets to recover. Next cycle starts after week 4 finishes.
+            Deload day · 40/50/60% sets to recover. Next cycle starts after day 4 finishes.
           </CapsLabel>
         </View>
       ) : null}
