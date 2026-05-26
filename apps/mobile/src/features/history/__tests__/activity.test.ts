@@ -238,6 +238,24 @@ describe('currentStreakDays', () => {
     ];
     expect(currentStreakDays(sessions, NOW)).toBe(0);
   });
+
+  it('walks back across a DST boundary using calendar arithmetic (regression)', () => {
+    // Day after US spring-forward 2026-03-08 in Pacific time. Naive
+    // `cursor -= DAY_MS` arithmetic from the local midnight bucket lands
+    // 1 hour before the prior local midnight, missing the bucket and
+    // killing the streak at 1. Calendar-day arithmetic survives.
+    //
+    // In TZs without DST this test exercises the same code path with
+    // identical results — it's a no-op there, but a guard on DST locales.
+    const now = new Date('2026-03-09T12:00:00');
+    const sessions = [0, 1, 2].map((i) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      d.setHours(10, 0, 0, 0);
+      return makeSession(d.getTime());
+    });
+    expect(currentStreakDays(sessions, now.getTime())).toBe(3);
+  });
 });
 
 describe('firstSessionDate', () => {

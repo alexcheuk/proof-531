@@ -8,6 +8,20 @@ import type { Session } from '@/data/accessors/session';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
+ * Local-midnight timestamp for the day `daysAgo` calendar days before the
+ * one containing `ms`. Uses `Date.setDate` (not `ms - n*DAY_MS`) so the
+ * arithmetic survives DST transitions — on a spring-forward day a calendar
+ * day is 23 hours wide, on fall-back 25 hours, and naive ms-subtraction
+ * lands the cursor in the wrong bucket and breaks the streak walk.
+ */
+function previousLocalMidnight(ms: number, daysAgo = 1): number {
+  const d = new Date(ms);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - daysAgo);
+  return d.getTime();
+}
+
+/**
  * Count completed sessions falling within the current ISO week (Monday →
  * Sunday) up to and including `now`. The History strip uses this to surface
  * a "★ THIS WEEK · N sessions" caption — a tighter feedback loop than the
@@ -70,7 +84,7 @@ export function recentActivity(
   // Build the window oldest → newest so the consumer renders L→R.
   const out: boolean[] = [];
   for (let i = days - 1; i >= 0; i--) {
-    const dayMs = todayMs - i * DAY_MS;
+    const dayMs = i === 0 ? todayMs : previousLocalMidnight(todayMs, i);
     out.push(filledDays.has(dayMs));
   }
   return out;
@@ -133,11 +147,11 @@ export function currentStreakDays(
   const todayMs = today.getTime();
   // If today is already a training day, count it. Otherwise start the walk
   // from yesterday — today's emptiness is grace, not failure.
-  let cursor = dayBuckets.has(todayMs) ? todayMs : todayMs - DAY_MS;
+  let cursor = dayBuckets.has(todayMs) ? todayMs : previousLocalMidnight(todayMs);
   let streak = 0;
   while (dayBuckets.has(cursor)) {
     streak += 1;
-    cursor -= DAY_MS;
+    cursor = previousLocalMidnight(cursor);
   }
   return streak;
 }
@@ -211,7 +225,7 @@ export function longestStreakDays(sessions: ReadonlyArray<Session>): number {
     const prev = sortedDays[i - 1]!;
     // biome-ignore lint/style/noNonNullAssertion: i is bounded by sortedDays.length
     const day = sortedDays[i]!;
-    if (day - prev === DAY_MS) {
+    if (previousLocalMidnight(day) === prev) {
       run += 1;
       if (run > longest) longest = run;
     } else {

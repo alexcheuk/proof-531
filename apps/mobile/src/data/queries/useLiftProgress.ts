@@ -15,8 +15,8 @@ import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';
 import { getAllLiftProgress, getLiftProgress } from '../accessors/liftProgress';
 
-export const LIFT_PROGRESS_KEY = (lift: Lift) => ['liftProgress', lift] as const;
-export const ALL_LIFT_PROGRESS_KEY = (lifts: readonly Lift[]) =>
+const LIFT_PROGRESS_KEY = (lift: Lift) => ['liftProgress', lift] as const;
+const ALL_LIFT_PROGRESS_KEY = (lifts: readonly Lift[]) =>
   ['liftProgress', 'all', [...lifts].sort().join(',')] as const;
 
 export function useLiftProgress(lift: Lift) {

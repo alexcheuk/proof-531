@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Streak walk switches to calendar arithmetic (DST bug)
+
+**Tags:** `bug-postmortem`, `domain`, `time`
+**Files:** `apps/mobile/src/features/history/activity.ts`
+
+Replaced `cursor -= DAY_MS` and `day - prev === DAY_MS` with a `previousLocalMidnight` helper that uses `Date.setDate(d.getDate() - 1)`. The fix applies to `currentStreakDays`, `recentActivity`, and `longestStreakDays`. Added a DST regression test that constructs three consecutive calendar days via `setDate` — it's a no-op in UTC CI but guards DST locales.
+
+**Why:** the prior implementation bucketed sessions by local midnight (`setHours(0,0,0,0)`) but then walked the cursor by a fixed 24-hour subtraction. On a spring-forward day the local calendar day is 23 hours wide, so the cursor landed 1 hour before the previous local midnight, missed the bucket, and the streak silently broke. Same shape for the longest-streak adjacency check. A user in any DST-using timezone would have seen their streak vanish on the morning of the time change without explanation.
+
+**Trade-off / what we didn't do:** considered switching the bucket key to a `YYYY-MM-DD` string and walking by string-key — would have been more uniform but required rewriting the bitmap helpers too. The minimal fix lives in `activity.ts` only and uses the same Date API both sides of the comparison.
+
 ### 2026-05-26 — Home page gets a dedicated loop slot (criteria category 8)
 
 **Tags:** `loop`, `criteria`, `website`, `process`

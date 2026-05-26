@@ -22,7 +22,7 @@ import { getCurrentTrainingMaxes, setTrainingMax } from './trainingMax';
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
-export type LiftProgress = {
+type LiftProgress = {
   lift: Lift;
   currentCycle: number;
   week: Week;

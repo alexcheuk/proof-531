@@ -23,7 +23,7 @@ export type GoalPanelProps = {
   cyclesUntilGoal: number | null;
   /**
    * User's expected workout days per week for THIS lift. `null` = unset.
-   * Drives the secondary "≈ K weeks · M mo" estimate next to the days-left
+   * Drives the secondary "≈ N mo at K/wk" estimate next to the days-left
    * figure; without it we render days-only.
    */
   daysPerWeek: number | null;
@@ -61,12 +61,12 @@ export function GoalPanel({
 
   // One 5/3/1 "day" = one session for this lift, and a cycle holds 4 such
   // sessions. So days-until-goal = cycles × 4. When the user has supplied
-  // days/week we can also project that out to calendar time.
+  // days/week we can also project that out to calendar months — weeks are
+  // not a concept the user cares about here.
   const daysApprox = cyclesUntilGoal !== null ? cyclesUntilGoal * 4 : 0;
   const dpw = daysPerWeek && daysPerWeek > 0 ? daysPerWeek : null;
-  const weeksApprox =
-    dpw !== null && daysApprox > 0 ? Math.max(1, Math.round(daysApprox / dpw)) : 0;
-  const monthsApprox = weeksApprox > 0 ? Math.max(1, Math.round(weeksApprox / 4.3)) : 0;
+  const monthsApprox =
+    dpw !== null && daysApprox > 0 ? Math.max(1, Math.round(daysApprox / dpw / 4.345)) : 0;
 
   const onDaysPerWeekStep = (delta: number) => {
     void Haptics.selectionAsync();
@@ -209,7 +209,7 @@ export function GoalPanel({
               ? 'beyond horizon'
               : cyclesUntilGoal === 0
                 ? 'already past goal'
-                : `~${cyclesUntilGoal} cycle${cyclesUntilGoal === 1 ? '' : 's'} away`}
+                : `~${daysApprox} day${daysApprox === 1 ? '' : 's'} away`}
         </RNText>
         <RNText
           testID={`${testID ?? 'goal-panel'}-estimate`}
@@ -222,7 +222,7 @@ export function GoalPanel({
           }}
         >
           {!unset && cyclesUntilGoal && cyclesUntilGoal > 0 && dpw !== null
-            ? `≈ ${weeksApprox} wks · ${monthsApprox}mo`
+            ? `≈ ${monthsApprox} mo at ${dpw}/wk`
             : ''}
         </RNText>
       </View>
