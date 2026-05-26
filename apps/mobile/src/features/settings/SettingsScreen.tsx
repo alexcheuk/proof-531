@@ -6,6 +6,7 @@
  * migration, destructive reset) is owned by `useSettingsDialogs`. This file
  * is intentionally thin so the section order is the first thing a reader sees.
  */
+import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
@@ -38,6 +39,7 @@ export function SettingsScreen() {
   const screenData = useSettingsScreenData();
   const { settings, tmsByLift, isLoading, isError, error, refetch } = screenData;
   const dialogs = useSettingsDialogs(settings?.storageUnit ?? 'lbs');
+  const { scrolled, onScroll, scrollEventThrottle } = useScrolledPast();
 
   const containerStyle: ViewStyle = {
     flex: 1,
@@ -69,9 +71,14 @@ export function SettingsScreen() {
   return (
     <View style={containerStyle}>
       <StatusBar style="dark" />
-      <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} />
+      <Masthead rightSlot={<CapsLabel>settings</CapsLabel>} elevated={scrolled} />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: spacing.xxxl }} testID="settings-scroll">
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: spacing.xxxl }}
+        testID="settings-scroll"
+        onScroll={onScroll}
+        scrollEventThrottle={scrollEventThrottle}
+      >
         <TitleBlock eyebrow="The dials" title="Settings." />
 
         <CycleProgressSection settings={settings} />

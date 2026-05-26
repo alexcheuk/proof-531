@@ -78,6 +78,44 @@ The handoff itself is recorded in two off-cycle posts: Margin's farewell and Ver
 
 **Follow-ups:** the next /auto-improve loop is the first real test of Verso's voice on shipped work; if it reads as try-hard, tighten the persona doc's "won'ts" list.
 
+### 2026-05-26 — TitleBlock unified across screens with auto-amber dot; Progress "next" cell uses 2-px amber border
+
+**Tags:** `design-system`, `progress`, `consistency`
+**Files:** `apps/mobile/src/design/primitives/TitleBlock.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/features/progress/components/ProgressTitleBlock.tsx` (deleted), `apps/mobile/src/design/primitives/ProgressGridCell.tsx`
+
+Two Discord asks shipped together.
+
+`TitleBlock` now auto-renders a trailing `.` in `colors.amber` when the title ends with a period. The PWA's wordmark treatment lands on every screen for free — "Settings.", "History.", "Progress.", "Boring But Big." all get the accent dot without any consumer change. `ProgressLiftPage` migrated off the bespoke 56-px `ProgressTitleBlock` (a one-off carryover from the loop-018 canonical-design rebuild) onto the shared 28-px `TitleBlock` — same eyebrow / title vocabulary as History and Settings. The custom file was deleted.
+
+`ProgressGridCell`'s "NEXT" cell changed from a 1-px inset ink-0 ring to a 2-px inset amber accent border. Amber is the project's lone accent token (reserved for wordmark dots and "you are here" markers); making the next-session cell the only amber thing on the grid gives it a clear visual lock without inventing a new tint.
+
+**Why:** the user's exact framing — *"Make progress screen header consistent as history and settings"* — exposes the bespoke Progress header as the outlier. Same for the "next" highlight: an ink-0 ring is the same color as everything else on the grid, so it relied on the geometry change to read; switching to amber gives it color-encoded meaning that survives a glance.
+
+### 2026-05-26 — Sticky-header elevation on scroll; tab back-behavior → initialRoute
+
+**Tags:** `feature`, `navigation`, `tabs`, `design-system`
+**Files:** `apps/mobile/src/design/hooks/useScrolledPast.ts` (new), `apps/mobile/src/design/primitives/Masthead.tsx`, `apps/mobile/src/features/settings/SettingsScreen.tsx`, `apps/mobile/src/features/history/HistoryScreen.tsx`, `apps/mobile/src/app/(tabs)/_layout.tsx`, `loop-memory/01-known-codebase.md`
+
+Two Discord asks shipped together. `Masthead` gained an `elevated` prop that paints a subtle shadow (`shadowOpacity: 0.08`, `shadowRadius: 6`, `shadowOffset: { 0, 2 }`, `elevation: 4`) — deliberately small so it reads as paper-shadow, not Material-card. Pairs with a new `useScrolledPast(threshold = 4)` hook in `design/hooks/` that exposes `{ scrolled, onScroll, scrollEventThrottle }`; the boolean only re-renders on threshold-flip so intermediate scroll ticks don't thrash. Wired in Settings + History.
+
+`Tabs.backBehavior` set to `"initialRoute"`. Android hardware back from any non-Today tab now routes to Today; from Today it exits the app. The default `"history"` behaviour landed wherever the user had visited most recently, not on the root — confusing, and the user said so.
+
+**Trade-off:** Progress's elevation is deferred. The FlatList carousel renders one ScrollView per lift; cross-page elevation needs scroll state lifted up to the screen-level Masthead, which the simple hook doesn't yet do. The memory note (`01-known-codebase.md`) calls out the path forward — a module-level subject mirroring `statusBarTint`. Settings + History cover the canonical sticky-header pattern; Progress can land in a follow-up if the user notices.
+
+### 2026-05-26 — CustomTabBar test fixture brought in sync with the 4-tab config
+
+**Tags:** `tests`, `tabs`
+**Files:** `apps/mobile/src/features/tabs/__tests__/CustomTabBar.test.tsx`
+
+The test built `state.routes` with three entries (`index / history / settings`); the actual app has had four since loop-024 (`index / progress / history / settings`). Tests passed because the component renders whatever routes it gets, not because the fixture mirrored prod. Added the `progress` route to the fixture, renamed the labels-rendered assertion to include PROGRESS, shifted the active-tab test's index from 1 → 2 (history's new slot), and asserted on the `tab-progress` accessibilityState. Behavioural coverage held; the fixture is now true.
+
+### 2026-05-26 — Tab bar switched to `space-around` to accommodate the 4th tab
+
+**Tags:** `fix`, `layout`, `tabs`
+**Files:** `apps/mobile/src/features/tabs/CustomTabBar.tsx`, `loop-memory/01-known-codebase.md`
+
+`CustomTabBar` was laid out as `Row justify="center" gap="xxxl"`. With three tabs the fixed 48-px gap was comfortable; with four (loop-024 added Progress) the centred row overflows on narrower devices. Switched to `justify="space-around"` with `paddingHorizontal: spacing.md` — each tab gets equal slack on both sides regardless of count, and the layout self-adjusts to future additions. Also updated `01-known-codebase.md` so the routes list and back-navigation contract reflect that Progress is a tab; the back-nav contract previously called out the exact bug loop-024 fixed.
+
 ### 2026-05-26 — Progress promoted to a first-class tab; six Discord asks shipped together
 
 **Tags:** `feature`, `navigation`, `progress`, `home`, `removal`

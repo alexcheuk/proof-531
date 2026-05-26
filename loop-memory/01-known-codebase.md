@@ -76,6 +76,19 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `pnpm find-unused` (added 2026-05-24) flags primitives barrel exports
   that no feature imports — run when culling design-system surface area.
 
+## Sticky-header elevation (`useScrolledPast` + `Masthead elevated`)
+
+- Pair `useScrolledPast()` (in `src/design/hooks/`) with `<Masthead elevated>`
+  on any screen whose body scrolls underneath a fixed Masthead. The hook
+  returns `{ scrolled, onScroll, scrollEventThrottle }` — spread onto the
+  ScrollView/FlatList and pass `scrolled` to the masthead. Wired in
+  Settings + History as of loop-027.
+- Deferred: Progress (the FlatList carousel renders one ScrollView per
+  lift; cross-page elevation requires lifting per-page scroll state up
+  to the screen-level Masthead, which the simple hook doesn't yet do).
+  Add a module-level subject (mirror `statusBarTint`) if/when the user
+  asks for Progress elevation.
+
 ## Color palette (e-ink paper)
 
 - `bg0` / `paper`: `#E7E3D6` — main canvas
@@ -118,6 +131,16 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - **Live → Today, Today → Home.** Deterministic via `goTo.today` / `goTo.home`,
   not `router.back()`. Stack-default `back` lands on the originating tab
   (often History) which broke the user's mental model.
+- **Progress is a tab** as of loop-024 — so there's no "back from Progress"
+  case. Tab-to-tab navigation has no back stack; the user just taps another
+  tab. If you ever add another stack-pushed screen, route the visible back
+  chip via `goTo.*` and override Android hardware back with
+  `useHardwareBack({ enabled, onBack })` to match.
+- **Tab `backBehavior="initialRoute"`** (loop-027). Android hardware back
+  from any non-Today tab routes to Today; from Today it exits the app.
+  Stack-pushed sub-screens still pop normally. See Discord 1508687777179369575
+  for the user's framing — the default `history` behaviour landed wherever
+  the user had visited most recently, not on the obvious root.
 - Hardware Android back is overridden by `useHardwareBack({ enabled, onBack })`
   in `features/session/hooks/`. Use it whenever a visible back chip exists
   on a screen with a non-default destination.
@@ -132,7 +155,10 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 
 ## Routes
 
-- `/(tabs)` — Today / History / Settings (custom tab bar in `features/tabs/`)
+- `/(tabs)` — Today / Progress / History / Settings (custom tab bar in `features/tabs/`).
+  Progress was promoted from a stack-push route (`/progress/[lift]`) to a tab in
+  loop-024; `goTo.progress(router, lift)` navigates to `/(tabs)/progress?lift=X`.
+  The tab accepts an optional `?lift=` param and falls back to `enabledLifts[0]`.
 - `/session/today` — pre-session preview
 - `/session/live` — in-session (rest timer, AMRAP sheet, cancel-confirm sheet)
 - `/session/complete` — receipt + CTA

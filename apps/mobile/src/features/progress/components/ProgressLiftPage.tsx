@@ -12,6 +12,7 @@ import { type LiftProgression, useLiftProgression } from '@/data/queries/useLift
 import { usePrs } from '@/data/queries/usePrs';
 import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSettings } from '@/data/queries/useSettings';
+import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { tmIncrement } from '@/domain/increments';
 import { goalTargetTm } from '@/domain/progression';
@@ -23,13 +24,12 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text as RNText, ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
-import { isLowerBody } from '../labels';
+import { isLowerBody, liftLongName } from '../labels';
 import { BeyondChartFooter } from './BeyondChartFooter';
 import { GoalPanel } from './GoalPanel';
 import { ProgressGridHeader } from './ProgressGridHeader';
 import { ProgressLiftRow } from './ProgressLiftRow';
 import { ProgressSkeleton } from './ProgressSkeleton';
-import { ProgressTitleBlock } from './ProgressTitleBlock';
 import { StatsTriplet } from './StatsTriplet';
 
 export function ProgressLiftPage({ lift }: { lift: Lift }) {
@@ -149,7 +149,7 @@ export function ProgressLiftPage({ lift }: { lift: Lift }) {
       contentContainerStyle={{ paddingBottom: spacing.xxl }}
       testID={`progress-lift-${lift}`}
     >
-      <ProgressTitleBlock lift={lift} />
+      <TitleBlock eyebrow={`On the ${liftLongName(lift)}`} title="Progress." />
 
       <StatsTriplet
         tm={data.tm}

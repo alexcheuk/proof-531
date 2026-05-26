@@ -5,6 +5,13 @@ import { useTheme } from '../theme';
 type MastheadProps = {
   rightSlot?: ReactNode;
   underline?: 'hairline' | 'none';
+  /**
+   * When true, paint a subtle drop shadow under the masthead — used by
+   * screens that pair with a scrollable body to signal "there is content
+   * above the visible area". Pair with `useScrolledPast()` to flip on/off
+   * based on the body's scroll position.
+   */
+  elevated?: boolean;
   testID?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -24,7 +31,13 @@ type MastheadProps = {
  * Note: React Native does not support `alignItems: 'baseline'`, so the
  * wordmark cluster uses `'center'` instead.
  */
-export function Masthead({ rightSlot, underline = 'none', testID, style }: MastheadProps) {
+export function Masthead({
+  rightSlot,
+  underline = 'none',
+  elevated = false,
+  testID,
+  style,
+}: MastheadProps) {
   const { colors, layout, type } = useTheme();
 
   const containerStyle: ViewStyle = {
@@ -34,7 +47,28 @@ export function Masthead({ rightSlot, underline = 'none', testID, style }: Masth
     gap: 12,
     paddingHorizontal: layout.gutter,
     paddingTop: 12,
+    // Background is opaque so the elevated shadow has something to cast
+    // from. Non-elevated rendering looks identical to the previous
+    // transparent treatment — every consumer's parent paints bg0.
+    backgroundColor: colors.bg0,
     ...(underline === 'hairline' ? { borderBottomWidth: 1, borderBottomColor: colors.line } : null),
+    // zIndex keeps the (elevated) masthead above the scrollable body
+    // so the shadow doesn't get clipped by sibling content.
+    zIndex: 1,
+    ...(elevated
+      ? {
+          // Subtle drop shadow under the masthead while content scrolls
+          // beneath it. The numbers are deliberately small — anything
+          // heavier reads as a Material elevation, which is wrong for an
+          // e-ink-paper aesthetic. Shadow extends outside the box so the
+          // box geometry stays identical between elevated/non-elevated.
+          shadowColor: '#000',
+          shadowOpacity: 0.08,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 4,
+        }
+      : null),
   };
 
   return (
