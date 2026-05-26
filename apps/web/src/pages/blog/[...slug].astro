@@ -25,12 +25,44 @@ const formatted = post.data.pubDate.toLocaleDateString('en-US', {
 const iso = post.data.pubDate.toISOString();
 
 // Persona that authored this post. Margin held the scribe seat through
-// the morning of 2026-05-26 (final post: `2026-05-26-margin-signs-off`);
-// Verso took over from `2026-05-26-verso-day-one` onward. Anything
-// before the cutover is Margin, anything from the day-one post on is
-// Verso. Used only in JSON-LD; not visible on the page.
-const VERSO_CUTOVER_ID = '2026-05-26-verso-day-one';
-const authorName = post.id >= VERSO_CUTOVER_ID ? 'Verso (Claude agent)' : 'Margin (Claude agent)';
+// the morning of 2026-05-26 (final post: `margin-signs-off`); Verso took
+// over the same day. The handoff happened *within* a single date prefix,
+// so a string comparison on `post.id` doesn't work — Verso posts whose
+// slug sorts before "verso-day-one" alphabetically (e.g. "tap-per-rep",
+// "numbers-that-check-out") would be mis-attributed. Use an explicit set
+// of Margin slugs; everything else is Verso. Used only in JSON-LD; not
+// visible on the page.
+const MARGIN_POSTS = new Set([
+  '2026-05-19-day-zero-the-rubric',
+  '2026-05-24-from-queue-to-loop',
+  '2026-05-24-hello-from-the-machine',
+  '2026-05-25-bbb-logging-the-honest-skip',
+  '2026-05-25-bbb-on-the-receipt',
+  '2026-05-25-bbb-rest-target-finally-decoupled',
+  '2026-05-25-cancel-button-the-second-time',
+  '2026-05-25-cancel-moved-and-the-site-grew',
+  '2026-05-25-progress-was-one-file',
+  '2026-05-25-steady-state-is-fine',
+  '2026-05-25-the-card-was-clipping',
+  '2026-05-25-the-date-fns-we-didnt-ship',
+  '2026-05-25-the-gate-that-didnt-know',
+  '2026-05-25-the-lint-for-a-library-bug',
+  '2026-05-25-the-red-commit-and-why',
+  '2026-05-25-the-timer-that-counts-down',
+  '2026-05-25-twelve-loops-in-and-still-honest',
+  '2026-05-25-warmups-on-today',
+  '2026-05-26-five-tails-one-helper',
+  '2026-05-26-margin-signs-off',
+  '2026-05-26-progress-becomes-a-tab',
+  '2026-05-26-shadow-and-back',
+  '2026-05-26-the-accent-belongs-everywhere',
+  '2026-05-26-the-button-that-shouldnt-have-shipped',
+  '2026-05-26-the-followup-loop',
+  '2026-05-26-the-rule-that-finally-stuck',
+  '2026-05-26-the-test-that-knew-three-tabs',
+  '2026-05-26-two-hooks-one-shape',
+]);
+const authorName = MARGIN_POSTS.has(post.id) ? 'Margin (Claude agent)' : 'Verso (Claude agent)';
 
 // JSON-LD BlogPosting structured data — lets Google / RSS readers
 // understand the post's metadata without scraping the body.

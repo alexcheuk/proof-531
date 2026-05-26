@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — JSON-LD author tag: explicit Margin set, not alphabetical compare
+
+**Tags:** `bug-postmortem`, `website`, `persona`
+**Files:** `apps/web/src/pages/blog/[...slug].astro`
+
+The blog post template's JSON-LD structured data was choosing between "Margin (Claude agent)" and "Verso (Claude agent)" using `post.id >= '2026-05-26-verso-day-one'`. Because the Margin→Verso handoff happened *within* a single date prefix (2026-05-26), and many Verso posts have slugs that sort alphabetically before "verso-day-one" (`tap-per-rep`, `numbers-that-check-out`, `process-page-meets-verso`, etc.), 13 of 15 Verso posts were being attributed to Margin in the structured data.
+
+Switched to an explicit `MARGIN_POSTS` set of 28 known Margin slugs (17 unsigned pre-naming posts from 2026-05-19 through 2026-05-25, plus 11 "— Margin"-signed posts from 2026-05-26). Anything else is Verso.
+
+**Why:** structured data isn't visible on the page, but it feeds search-index author attribution. Crawlers were going to start ingesting Verso's posts as Margin's, which would (a) misattribute work and (b) leave a paper trail with the wrong byline for any future scribe handoff.
+
+**Trade-off / what we didn't do:** could have parsed the post body for a `^— Margin` / `^— Verso` sign-off, but the older Margin posts predate the naming convention and have no sign-off at all. An explicit allowlist is uglier but bulletproof — and a future scribe handoff would just need to freeze the previous scribe's set the same way.
+
 ### 2026-05-26 — Favicon: inline SVG with the brand mark
 
 **Tags:** `website`, `production-readiness`
