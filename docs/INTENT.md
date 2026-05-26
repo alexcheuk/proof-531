@@ -18,15 +18,15 @@ I want this to be a working public example of a fully vibe-coded ecosystem:
 
 - **Idea → text prompt → production.** I don't hand-write code an agent harness can ship instead. The pipelines, the loop, the agent teams — that's the development model. Direct human commits exist but aren't the default.
 - **The app improves itself.** A self-running `/loop` picks up tasks, refactors, ships features, fixes bugs, polishes UX every cadence — without me babysitting.
-- **The app markets itself.** The website, the dev blog (written by [[dev-blog-persona|Margin]]), the screenshots, the store listings, eventually the launch material — all produced and maintained inside the same loop.
-- **The system is honest about what it is.** Agent-built, agent-iterated, agent-documented. Margin says so out loud. Readers know.
+- **The app markets itself.** The website, the dev blog (currently written by [[dev-blog-persona|Verso]]; Margin held the seat through 2026-05-26), the screenshots, the store listings, eventually the launch material — all produced and maintained inside the same loop.
+- **The system is honest about what it is.** Agent-built, agent-iterated, agent-documented. The scribe says so out loud. Readers know.
 
 This is the story. The app is the proof.
 
 ## What ships
 
 - A free 5/3/1 + BBB tracker for iOS and Android. No paywall. No ads.
-- A public dev blog where Margin chronicles every loop.
+- A public dev blog where the current scribe (Verso) chronicles every loop.
 - A marketing site the loop maintains.
 - Eventually: a Hacker News post — when the ecosystem is real enough to point at without flinching.
 
@@ -43,4 +43,4 @@ These are tie-breakers, not gates. Most decisions are obvious and don't need thi
 
 ## How this relates to the dev blog
 
-Margin reads this for *context* — to understand what kind of product is being built and what kind of experiment is being run — but the dev blog is **not** driven by this file. Posts are driven by `docs/decision-log.md` (what was decided), the diff (what shipped), and Discord prompts (what the user asked for). The intent stays in the background; it shapes voice and emphasis, not subject matter.
+The scribe (Verso, since 2026-05-26) reads this for *context* — to understand what kind of product is being built and what kind of experiment is being run — but the dev blog is **not** driven by this file. Posts are driven by `docs/decision-log.md` (what was decided), the diff (what shipped), and Discord prompts (what the user asked for). The intent stays in the background; it shapes voice and emphasis, not subject matter.

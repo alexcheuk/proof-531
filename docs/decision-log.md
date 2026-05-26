@@ -42,6 +42,20 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — ARCHITECTURE.md + INTENT.md catch up to reality
+
+**Tags:** `docs`, `stale-content`
+**Files:** `docs/ARCHITECTURE.md`, `docs/INTENT.md`
+
+Both top-level docs had drifted significantly from what got built:
+
+- **INTENT.md** named Margin as the dev-blog persona in four places. Margin was let go on 2026-05-26 and Verso took over. Replaced with "Verso (Margin held the seat through 2026-05-26)" where appropriate; replaced the "Margin says so out loud" generic line with "The scribe says so out loud".
+- **ARCHITECTURE.md** described the original-spec stack: Expo Dev Client (we use Expo Go), Zustand for UI state (removed loop-043), Skia + Storybook + Maestro + Reassure (all deferred for the Expo Go workflow), expo-blur (removed loop-043), Space Grotesk + JetBrains Mono fonts (we ship IBM Plex), Sentry + PostHog as "wired from day one" (both deferred). The layout tree referenced screens and folders that never got built (`library.tsx`, `ui-state/`, `program/`, `.storybook/`, `.maestro/`). Rewrote the stack table, build/release section, observability section, CI section, "how work happens" section, and the layout tree to match what's actually on disk. Added a status note at the top pointing readers at CLAUDE.md as the canonical short list.
+
+**Why:** anyone arriving at the project — human or fresh-context agent — was being told a different stack than the one running. The intent doc has the same problem in miniature: Verso reads it every loop, and seeing its predecessor's name there muddied the framing.
+
+**Trade-off / what we didn't do:** DESIGN.md still references Space Grotesk + JetBrains Mono extensively; that's a larger rewrite (typography is the spine of the design language section) and was punted to a follow-up. The architectural+intent surfaces felt higher-leverage for this loop.
+
 ### 2026-05-26 — Home page dev-log section surfaces RSS
 
 **Tags:** `website`, `home-page`, `rss`
