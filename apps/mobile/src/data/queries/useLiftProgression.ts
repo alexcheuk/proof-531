@@ -31,9 +31,9 @@ import {
 import { getSettings } from '../accessors/settings';
 import { getCurrentTrainingMaxes } from '../accessors/trainingMax';
 
-export const LIFT_PROGRESSION_KEY = (lift: Lift) => ['liftProgression', lift] as const;
+const LIFT_PROGRESSION_KEY = (lift: Lift) => ['liftProgression', lift] as const;
 
-export type ProgressionCellPast = {
+type ProgressionCellPast = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'past' | 'last-done';
@@ -47,7 +47,7 @@ export type ProgressionCellPast = {
   deload: boolean;
 };
 
-export type ProgressionCellNow = {
+type ProgressionCellNow = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'now';
@@ -56,7 +56,7 @@ export type ProgressionCellNow = {
   deload: boolean;
 };
 
-export type ProgressionCellFuture = {
+type ProgressionCellFuture = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'future';
@@ -65,9 +65,9 @@ export type ProgressionCellFuture = {
   deload: boolean;
 };
 
-export type ProgressionCell = ProgressionCellPast | ProgressionCellNow | ProgressionCellFuture;
+type ProgressionCell = ProgressionCellPast | ProgressionCellNow | ProgressionCellFuture;
 
-export type ProgressionRow = {
+type ProgressionRow = {
   cycle: number;
   isPast: boolean;
   isCurrent: boolean;

@@ -20,7 +20,7 @@ import {
 } from '../accessors/liftGoal';
 import { LIFT_GOAL_KEY } from './useLiftGoal';
 
-export type SetLiftGoalInput = {
+type SetLiftGoalInput = {
   lift: Lift;
   /** Pass `null` to clear the goal. */
   target: { kind: LiftGoalKind; value: number; unit: Unit } | null;

@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-25 — ProgressScreen split into one-component-per-file; LiftPage adopts SecondaryLink
+
+**Tags:** `refactor`, `progress`, `home`, `convention`
+**Files:** `apps/mobile/src/features/progress/{ProgressScreen,labels,goalDefaults}.{ts,tsx}`, `apps/mobile/src/features/progress/components/{ProgressLiftPage,ProgressLiftRow,ProgressGridHeader,ProgressSkeleton,ProgressTitleBlock}.tsx`, `apps/mobile/src/features/home/components/LiftPage/LiftPage.tsx`
+
+ProgressScreen.tsx was a 655-line file holding seven components (the screen, the per-lift page, a grid header, a row, a skeleton, a caps label, and a local helper named `Row` that collided semantically with the `Row` primitive). Split into one component per file under `components/`, with two small helper modules (`labels.ts`, `goalDefaults.ts`) for the pure helpers. The local `Row` is now `ProgressLiftRow` — distinct from the design-system `Row`, which is a flex layout primitive. LiftPage.tsx's two bottom action chips ("SEE FULL SESSION", "SEE PROGRESS") were inline `Pressable + CapsLabel` blocks that exactly matched the `SecondaryLink` primitive added in loop-018; swapped both. Also dropped the local `unitGlyphFor` in favour of `domain/units.displayUnit`, and downgraded six unused `export`s on `useLiftProgression` / `useSetLiftGoal` to module-local types now that `find-unused` is wired into the loop.
+
+**Why:** the criteria explicitly call for one-component-per-file and primitive consolidation when three near-identical fragments exist. ProgressScreen had been touched in seven of the last seven commits — exactly the "frequently-edited" smell the rule points at. The SecondaryLink swap is the same shape lesson: a primitive existed, two sites still hand-rolled the same Pressable+CapsLabel chrome.
+
+**Trade-off:** no behavioural change, no test changes — the refactor is purely structural. The grid header, skeleton, and lift row are now testable on their own if a future iteration needs to assert pixel-level behaviour; today they remain covered through `ProgressScreen.test.tsx`'s screen-level assertions.
+
 ### 2026-05-25 — Progress screen rebuilt against canonical design (TM/1RM goal, stats triplet)
 
 **Tags:** `redesign`, `progress`, `goals`, `data-migration`

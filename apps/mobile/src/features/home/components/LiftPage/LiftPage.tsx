@@ -9,8 +9,8 @@
  */
 import { goTo } from '@/app/routes';
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
-import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
@@ -18,7 +18,7 @@ import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 import { useRouter } from 'expo-router';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 import { useLiftPageState } from '../../hooks/useLiftPageState';
 import { CycleStrip } from '../CycleStrip';
@@ -154,29 +154,22 @@ export function LiftPage({
           : 'Begin session'}
       </PrimaryPillButton>
 
-      <Pressable
+      <SecondaryLink
         onPress={onOpenPlan}
         testID={`lift-page-${lift}-open-plan`}
-        accessibilityRole="button"
         accessibilityLabel={`See the full ${liftDisplayName(lift)} session`}
-        style={{ paddingVertical: spacing.sm, marginTop: spacing.md, alignItems: 'center' }}
+        style={{ marginTop: spacing.md }}
       >
-        <CapsLabel weight="semibold" style={{ textAlign: 'center' }}>
-          SEE FULL SESSION →
-        </CapsLabel>
-      </Pressable>
+        SEE FULL SESSION →
+      </SecondaryLink>
 
-      <Pressable
+      <SecondaryLink
         onPress={openProgress}
         testID={`lift-page-${lift}-see-progress`}
-        accessibilityRole="button"
         accessibilityLabel={`See ${liftDisplayName(lift)} progress`}
-        style={{ paddingVertical: spacing.sm, alignItems: 'center' }}
       >
-        <CapsLabel weight="semibold" style={{ textAlign: 'center' }}>
-          SEE PROGRESS →
-        </CapsLabel>
-      </Pressable>
+        SEE PROGRESS →
+      </SecondaryLink>
     </Animated.View>
   );
 }
