@@ -3,15 +3,12 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
 import {
-  advanceCycle,
-  advanceDay,
   getSettings,
   seedDefaultSettings,
   setDisplayUnit,
   setTrainingMaxFromOneRM,
   updateSettings,
 } from '../settings';
-import { getCurrentTrainingMaxes, setTrainingMax } from '../trainingMax';
 
 type TestDb = ReturnType<typeof drizzle<typeof schema>>;
 
@@ -106,88 +103,6 @@ describe('settings accessor', () => {
     const s = await setDisplayUnit(db, 'kg');
     expect(s.displayUnit).toBe('kg');
     expect(s.storageUnit).toBe('lbs');
-  });
-
-  it('advanceDay advances day, wraps to week, then to cycle', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    // 4 enabled lifts → day cycles 1..4
-    let s = await advanceDay(db);
-    expect(s.day).toBe(2);
-    s = await advanceDay(db);
-    expect(s.day).toBe(3);
-    s = await advanceDay(db);
-    expect(s.day).toBe(4);
-    // Next call wraps: day=1, week=2
-    s = await advanceDay(db);
-    expect(s.day).toBe(1);
-    expect(s.week).toBe(2);
-  });
-
-  it('advanceDay rolls into the next cycle after week 4 day 4', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 250, 'lbs');
-    await setTrainingMax(db, 'bench', 200, 'lbs');
-    await setTrainingMax(db, 'deadlift', 300, 'lbs');
-    await setTrainingMax(db, 'press', 140, 'lbs');
-    // Fast-forward to week 4 day 4.
-    await updateSettings(db, { week: 4, day: 4 });
-    const s = await advanceDay(db);
-    expect(s.currentCycle).toBe(2);
-    expect(s.week).toBe(1);
-    expect(s.day).toBe(1);
-  });
-
-  it('advanceCycle increments cycle, resets week/day, bumps TMs', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 250, 'lbs');
-    await setTrainingMax(db, 'bench', 200, 'lbs');
-    await setTrainingMax(db, 'deadlift', 300, 'lbs');
-    await setTrainingMax(db, 'press', 140, 'lbs');
-    const s = await advanceCycle(db);
-    expect(s.currentCycle).toBe(2);
-    expect(s.week).toBe(1);
-    expect(s.day).toBe(1);
-
-    // TMs bumped: lower body +10, upper body +5 (in lbs)
-    const tms = await getCurrentTrainingMaxes(db);
-    const find = (l: string) => tms.find((t) => t.lift === l)?.value;
-    expect(find('squat')).toBe(260);
-    expect(find('deadlift')).toBe(310);
-    expect(find('bench')).toBe(205);
-    expect(find('press')).toBe(145);
-  });
-
-  it("advanceCycle bumps in each TM row's own unit", async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    // squat row was set in kg → should bump +5 kg, not +10 lb
-    await setTrainingMax(db, 'squat', 110, 'kg');
-    await setTrainingMax(db, 'bench', 80, 'kg');
-    await setTrainingMax(db, 'deadlift', 140, 'kg');
-    await setTrainingMax(db, 'press', 60, 'kg');
-    await advanceCycle(db);
-    const tms = await getCurrentTrainingMaxes(db);
-    const find = (l: string) => tms.find((t) => t.lift === l);
-    expect(find('squat')?.value).toBe(115);
-    expect(find('squat')?.unit).toBe('kg');
-    expect(find('deadlift')?.value).toBe(145);
-    expect(find('bench')?.value).toBe(82.5);
-    expect(find('press')?.value).toBe(62.5);
-  });
-
-  it('advanceCycle skips lifts without a TM history row', async () => {
-    const db = freshDb();
-    await seedDefaultSettings(db);
-    await setTrainingMax(db, 'squat', 250, 'lbs');
-    // No other TMs set.
-    const s = await advanceCycle(db);
-    expect(s.currentCycle).toBe(2);
-    const tms = await getCurrentTrainingMaxes(db);
-    expect(tms).toHaveLength(1);
-    expect(tms[0]?.value).toBe(260);
   });
 
   it('setTrainingMaxFromOneRM persists TM = 90% × 1RM snapped', async () => {

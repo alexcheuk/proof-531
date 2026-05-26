@@ -13,9 +13,9 @@ export type CycleGridFrameProps = {
 
 /**
  * Standalone visual grid — frame + per-day cells + week-label row. Used
- * by SessionComplete (under the `CycleGrid` header) and by Settings
- * (under the `CycleProgressSection` row) so both surfaces share one
- * visual treatment.
+ * by SessionComplete (under the `CycleGrid` header) — the Settings
+ * surface that used to host this no longer makes sense now that each
+ * lift runs its own cycle.
  */
 export function CycleGridFrame({
   completedThisCycle,
@@ -50,10 +50,11 @@ export function CycleGridFrame({
           />
         ))}
       </Row>
-      {/* Each label gets equal `flex: 1` width + text-centered so it sits
-       * under the centre of its group of `sessionsInCycle / 4` cells,
-       * not snapped to the row edges (the old `space-between` layout). */}
-      <Row style={{ marginTop: 10 }}>
+      {/* Each label gets equal `flex: 1` width + the SAME `gap="xs"` as the
+       * cells row above. That makes each label's column align exactly with
+       * its group of `sessionsInCycle / 4` cells — without the gap match the
+       * label centers drift by `3 * xs / 8` from the cell-group centers. */}
+      <Row gap="xs" style={{ marginTop: 10 }}>
         {DAY_LABELS.map((d) => (
           <RNText key={d} style={[weekLabel, { flex: 1, textAlign: 'center' }]}>
             {d}

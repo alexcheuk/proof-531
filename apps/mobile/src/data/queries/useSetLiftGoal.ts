@@ -41,6 +41,10 @@ export function useSetLiftGoal() {
     onMutate: async ({ lift, target }) => {
       await queryClient.cancelQueries({ queryKey: LIFT_GOAL_KEY(lift) });
       const previous = queryClient.getQueryData<LiftGoal | null>(LIFT_GOAL_KEY(lift)) ?? null;
+      // Preserve daysPerWeek across goal-target edits — the accessor's
+      // `onConflictDoUpdate` does the same on the persisted row, so the
+      // optimistic shape must match or the goal panel briefly clears the
+      // freq input on the same frame.
       const optimistic: LiftGoal | null =
         target === null
           ? null
@@ -50,6 +54,7 @@ export function useSetLiftGoal() {
               targetValue: target.value,
               unit: target.unit,
               updatedAt: Date.now(),
+              daysPerWeek: previous?.daysPerWeek ?? null,
             };
       queryClient.setQueryData(LIFT_GOAL_KEY(lift), optimistic);
       return { previous };

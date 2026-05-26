@@ -25,7 +25,8 @@ import { and, desc, eq, isNotNull, ne } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
 import { prs, sessions, setLogs } from '../drizzle/schema';
-import { advanceDay, getSettings } from './settings';
+import { advanceLift, getLiftProgress } from './liftProgress';
+import { getSettings } from './settings';
 import { getCurrentTrainingMaxes } from './trainingMax';
 
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
@@ -54,12 +55,15 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
     throw new Error(`createSession: an in-progress session already exists for '${active.lift}'`);
   }
   const settings = await getSettings(db);
+  const progress = await getLiftProgress(db, lift);
   const tms = await getCurrentTrainingMaxes(db);
   const tm = tms.find((t) => t.lift === lift);
   if (!tm) {
     throw new Error(`createSession: no TrainingMax exists for lift '${lift}'`);
   }
-  // Snapshot BOTH units:
+  // Snapshot BOTH units AND this lift's own cycle/week:
+  //   cycle/week ← lift_progress[lift] (per-lift split — each lift moves
+  //     through its own 5/3/1 cycle independently; see liftProgress.ts).
   //   storageUnitSnapshot ← tm.unit  (drives the snap math + writes for
   //     this session — invariant from docs/technical-design.md §4).
   //   displayUnitSnapshot ← settings.displayUnit (drives the render
@@ -67,8 +71,8 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
   //     change which currency this session renders in.
   const row = {
     lift,
-    cycle: settings.currentCycle,
-    week: settings.week,
+    cycle: progress.currentCycle,
+    week: progress.week,
     startedAt: Date.now(),
     status: 'in_progress' as const,
     trainingMaxSnapshot: tm.value,
@@ -116,8 +120,10 @@ export async function getSessions(db: AnyDb): Promise<Session[]> {
 }
 
 /**
- * Mark a session complete and advance the training day (which may wrap into
- * the next week/cycle, bumping TMs — see settings/advanceCycle).
+ * Mark a session complete and advance THIS lift's progress (which may wrap
+ * into the next cycle, bumping that lift's TM — see
+ * `liftProgress.advanceLift`). Other lifts' progress is untouched, because
+ * each lift runs its own 5/3/1 cycle independently.
  *
  * Idempotent — calling on an already-completed (or cancelled, or missing)
  * session is a no-op. Callers do not need to guard on status.
@@ -131,7 +137,7 @@ export async function completeSession(db: AnyDb, sessionId: number): Promise<voi
       .set({ status: 'completed', endedAt: Date.now() })
       .where(eq(sessions.id, sessionId)),
   );
-  await advanceDay(db);
+  await advanceLift(db, row.lift);
 }
 
 /**

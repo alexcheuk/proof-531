@@ -100,7 +100,34 @@ describe('useLiftCarouselSync — listRef effect', () => {
     expect(result.current.listRef.current).toBeNull();
   });
 
-  it('calls scrollToIndex with the new index when selectedLift changes externally', () => {
+  it('skips scrollToIndex on the initial mount (FlatList.initialScrollIndex handles first paint)', () => {
+    const scrollToIndex = jest.fn();
+    const setSelectedLift = jest.fn();
+    type Props = { selectedLift: Lift };
+    const { result, rerender } = renderHook(
+      ({ selectedLift }: Props) =>
+        useLiftCarouselSync({
+          selectedLift,
+          enabledLifts: ENABLED,
+          screenWidth: SCREEN_WIDTH,
+          setSelectedLift,
+        }),
+      { initialProps: { selectedLift: 'bench' as Lift } },
+    );
+
+    (
+      result.current.listRef as { current: { scrollToIndex: typeof scrollToIndex } | null }
+    ).current = { scrollToIndex };
+    // Re-render WITHOUT changing selectedLift to flush the now-attached
+    // ref through the effect — this is the "first run with a non-null
+    // ref" the hook now treats as the initial sync and SKIPS, matching
+    // real-mount semantics (FlatList already positioned at the index).
+    rerender({ selectedLift: 'bench' });
+
+    expect(scrollToIndex).not.toHaveBeenCalled();
+  });
+
+  it('calls scrollToIndex when selectedLift changes externally AFTER the initial sync', () => {
     const scrollToIndex = jest.fn();
     const setSelectedLift = jest.fn();
     type Props = { selectedLift: Lift };
@@ -117,10 +144,10 @@ describe('useLiftCarouselSync — listRef effect', () => {
 
     (
       result.current.listRef as { current: { scrollToIndex: typeof scrollToIndex } | null }
-    ).current = {
-      scrollToIndex,
-    };
-
+    ).current = { scrollToIndex };
+    // Burn the initial-sync skip with a same-value rerender, then change
+    // for real and assert the animated scroll fires.
+    rerender({ selectedLift: 'squat' });
     rerender({ selectedLift: 'deadlift' });
 
     expect(scrollToIndex).toHaveBeenCalledWith({ index: 2, animated: true });
@@ -144,10 +171,10 @@ describe('useLiftCarouselSync — listRef effect', () => {
 
     (
       result.current.listRef as { current: { scrollToIndex: typeof scrollToIndex } | null }
-    ).current = {
-      scrollToIndex,
-    };
-
+    ).current = { scrollToIndex };
+    // Skip the initial-mount sync, then trigger a real change that exercises
+    // the catch path.
+    rerender({ selectedLift: 'squat' });
     expect(() => rerender({ selectedLift: 'bench' })).not.toThrow();
   });
 });

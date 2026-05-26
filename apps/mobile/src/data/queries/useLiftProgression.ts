@@ -24,6 +24,7 @@ import type { Lift, Unit } from '../../domain/types';
 import { convertWeight, displayWeight, round } from '../../domain/units';
 import { useDb } from '../DbProvider';
 import { type LiftGoalKind, getLiftGoal } from '../accessors/liftGoal';
+import { getLiftProgress } from '../accessors/liftProgress';
 import {
   type CompletedSessionWithAmrap,
   getCompletedSessionsWithAmrapForLift,
@@ -86,7 +87,12 @@ export type LiftProgression = {
   tm: number;
   currentCycle: number;
   currentWeek: 1 | 2 | 3 | 4;
-  /** All rendered cycle rows: C1 .. currentCycle + 6, in chronological order. */
+  /**
+   * All rendered cycle rows in chronological order. Range is
+   * `C1 .. currentCycle + max(FUTURE_COUNT, cyclesUntilGoal)` so the chart
+   * always shows at least 6 cycles ahead, and extends further when the
+   * persisted goal lands past that horizon.
+   */
   rows: ProgressionRow[];
   /** Goal — value/unit in DISPLAY units; targetTm in display units too. */
   goal: {
@@ -106,11 +112,12 @@ export function useLiftProgression(lift: Lift) {
   return useQuery({
     queryKey: LIFT_PROGRESSION_KEY(lift),
     queryFn: async (): Promise<LiftProgression> => {
-      const [settings, tms, goalRow, sessions] = await Promise.all([
+      const [settings, tms, goalRow, sessions, progress] = await Promise.all([
         getSettings(db),
         getCurrentTrainingMaxes(db),
         getLiftGoal(db, lift),
         getCompletedSessionsWithAmrapForLift(db, lift),
+        getLiftProgress(db, lift),
       ]);
       const displayU = settings.displayUnit ?? settings.storageUnit;
       const tmRow = tms.find((t) => t.lift === lift);
@@ -120,11 +127,40 @@ export function useLiftProgression(lift: Lift) {
         displayWeight(currentTmStorage, currentTmStorageUnit, displayU),
         displayU,
       );
-      const currentCycle = settings.currentCycle;
-      const currentWeek = clampWeek(settings.week);
+      // Per-lift split: cycle/week come from `lift_progress[lift]`, not
+      // from the global `settings` row (those columns are legacy and only
+      // used to seed new lift_progress rows on first read).
+      const currentCycle = progress.currentCycle;
+      const currentWeek = clampWeek(progress.week);
+
+      // Resolve goal → targetTm (display units) up front so it can drive
+      // the chart's end cycle. Without this the chart would clip the goal
+      // marker when the user's target is more than FUTURE_COUNT cycles out.
+      const goal = goalRow
+        ? (() => {
+            const valueDisplay = round(
+              displayWeight(goalRow.targetValue, goalRow.unit, displayU),
+              displayU,
+            );
+            const targetTm = round(goalTargetTm(goalRow.kind, valueDisplay, displayU), displayU);
+            return { kind: goalRow.kind, value: valueDisplay, unit: displayU, targetTm };
+          })()
+        : null;
+
+      const cyclesUntilGoal = cyclesUntilTmGoal(
+        goal?.targetTm ?? null,
+        tmDisplay,
+        currentCycle,
+        lift,
+        displayU,
+      );
 
       const startCycle = 1;
-      const endCycle = currentCycle + FUTURE_COUNT;
+      // Always show at least FUTURE_COUNT cycles forward; extend further
+      // when the goal is past that horizon so the user can see exactly
+      // which cycle their target lands on.
+      const futureSpan = Math.max(FUTURE_COUNT, cyclesUntilGoal ?? 0);
+      const endCycle = currentCycle + futureSpan;
 
       // Map sessions by cycle then day.
       const byCycleDay = new Map<number, Map<1 | 2 | 3 | 4, CompletedSessionWithAmrap>>();
@@ -229,18 +265,6 @@ export function useLiftProgression(lift: Lift) {
         };
       });
 
-      // Resolve goal → targetTm in display units.
-      const goal = goalRow
-        ? (() => {
-            const valueDisplay = round(
-              displayWeight(goalRow.targetValue, goalRow.unit, displayU),
-              displayU,
-            );
-            const targetTm = round(goalTargetTm(goalRow.kind, valueDisplay, displayU), displayU);
-            return { kind: goalRow.kind, value: valueDisplay, unit: displayU, targetTm };
-          })()
-        : null;
-
       // Mark crossesGoal on the first row (with cycle > currentCycle) whose
       // tm reaches the target. The current cycle is excluded — we treat the
       // goal as a forward-looking target.
@@ -253,14 +277,6 @@ export function useLiftProgression(lift: Lift) {
           }
         }
       }
-
-      const cyclesUntilGoal = cyclesUntilTmGoal(
-        goal?.targetTm ?? null,
-        tmDisplay,
-        currentCycle,
-        lift,
-        displayU,
-      );
 
       return {
         lift,

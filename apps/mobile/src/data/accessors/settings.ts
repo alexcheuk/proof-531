@@ -9,17 +9,22 @@
  * a better-sqlite3-backed db while production callers pass the expo-sqlite-backed
  * `db` from `../drizzle/client`. The Drizzle query API is identical across drivers.
  *
- * Transactional trade-off: the PWA wraps `advanceCycle` / `advanceDay` /
- * `seedDefaultSettings` / `updateSettings` in Dexie transactions. drizzle-orm's
+ * Transactional trade-off: the PWA wraps `seedDefaultSettings` /
+ * `updateSettings` in Dexie transactions. drizzle-orm's
  * `db.transaction((tx) => ...)` exists but its typing varies across drivers and
  * we'd need to thread the tx through `setTrainingMax` / `getCurrentTrainingMaxes`
  * (which take `AnyDb`, not the more specific tx type). Since the mobile DB is
  * single-writer (JS event loop, no concurrent expo-sqlite writers in practice)
  * we skip the wrapper. Each call's reads/writes are still sequential.
+ *
+ * NOTE: the `currentCycle` / `week` / `day` columns on this table are
+ * **legacy** — the per-lift split (see `liftProgress.ts`) is the source of
+ * truth for cycle/week now. These columns survive only to seed new
+ * `lift_progress` rows on first read for users upgrading from the
+ * single-cycle build.
  */
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
-import { tmIncrement } from '../../domain/increments';
 import {
   DEFAULT_SETTINGS,
   type Day,
@@ -30,7 +35,7 @@ import {
 } from '../../domain/types';
 import { trainingMaxFrom } from '../../domain/units';
 import { settings } from '../drizzle/schema';
-import { type TrainingMax, getCurrentTrainingMaxes, setTrainingMax } from './trainingMax';
+import { type TrainingMax, setTrainingMax } from './trainingMax';
 
 // Structural-poly across sqlite drivers — see trainingMax.ts for rationale.
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
@@ -110,8 +115,7 @@ export async function updateSettings(
   patch: Partial<Omit<Settings, 'id'>>,
 ): Promise<Settings> {
   // Single read — the prior version called selectSingleton twice on every
-  // patch, doubling the SQL hit on the hottest write path in the app
-  // (advanceDay fires after every completed session).
+  // patch.
   const current = await selectSingleton(db);
   const base = current ?? { id: 1 as const, ...DEFAULT_SETTINGS };
   const next: Settings = { ...base, ...patch, id: 1 };
@@ -130,50 +134,6 @@ export async function updateSettings(
  */
 export async function setDisplayUnit(db: AnyDb, unit: Unit): Promise<Settings> {
   return updateSettings(db, { displayUnit: unit });
-}
-
-/**
- * Advance to the next training day, wrapping into the next week / cycle.
- * Called after a session is completed.
- */
-export async function advanceDay(db: AnyDb): Promise<Settings> {
-  const current = await getSettings(db);
-  const enabledCount = current.enabledLifts.length || 4;
-  const nextDayRaw = current.day + 1;
-  if (nextDayRaw <= enabledCount) {
-    return updateSettings(db, { day: nextDayRaw as Day });
-  }
-  // Wrap day → 1, advance week.
-  const nextWeekRaw = current.week + 1;
-  if (nextWeekRaw <= 4) {
-    return updateSettings(db, { day: 1, week: nextWeekRaw as Week });
-  }
-  // Wrap week → 1, advance cycle (bumps TMs).
-  return advanceCycle(db);
-}
-
-/**
- * Advance the cycle counter and bump every enabled lift's TM per the 5/3/1
- * progression rules (+5 lbs / +2.5 kg upper body; +10 lbs / +5 kg lower body).
- * Bumps are appended to the training_maxes history (never overwrite).
- */
-export async function advanceCycle(db: AnyDb): Promise<Settings> {
-  const current = await getSettings(db);
-  const tms = await getCurrentTrainingMaxes(db);
-  for (const lift of current.enabledLifts) {
-    const tm = tms.find((t) => t.lift === lift);
-    if (!tm) continue;
-    // Bump is denominated in the row's own unit, not the live Settings unit —
-    // an lb-historical TM keeps bumping in lb even after the user toggled
-    // display to kg.
-    const bump = tmIncrement(tm.unit, lift);
-    await setTrainingMax(db, lift, tm.value + bump, tm.unit);
-  }
-  return updateSettings(db, {
-    currentCycle: current.currentCycle + 1,
-    week: 1,
-    day: 1,
-  });
 }
 
 /**

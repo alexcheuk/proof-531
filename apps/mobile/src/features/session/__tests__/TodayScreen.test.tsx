@@ -70,6 +70,20 @@ jest.mock('@/data/queries/useLatestTm', () => ({
   }),
 }));
 
+jest.mock('@/data/queries/useLiftProgress', () => ({
+  useLiftProgress: (lift: string) => ({
+    data: { lift, currentCycle: 1, week: 1, updatedAt: 1 },
+    isLoading: false,
+    error: null,
+  }),
+  LIFT_PROGRESS_KEY: (lift: string) => ['liftProgress', lift],
+  ALL_LIFT_PROGRESS_KEY: (lifts: readonly string[]) => [
+    'liftProgress',
+    'all',
+    [...lifts].sort().join(','),
+  ],
+}));
+
 jest.mock('@/data/accessors/session', () => ({
   createSession: (...args: unknown[]) => mockCreateSession(...args),
 }));

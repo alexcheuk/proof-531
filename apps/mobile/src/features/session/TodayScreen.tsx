@@ -1,5 +1,6 @@
 import { goTo } from '@/app/routes';
 import { useLatestTm } from '@/data/queries/useLatestTm';
+import { useLiftProgress } from '@/data/queries/useLiftProgress';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
@@ -34,6 +35,9 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const router = useRouter();
   const settings = useSettings();
   const tm = useLatestTm(lift);
+  // Per-lift cycle/week — the preview shows where THIS lift sits in its own
+  // 5/3/1 cycle, independent of any other lift the user is also training.
+  const progress = useLiftProgress(lift);
   const state = useTodayScreenState(lift);
   const { colors } = useTheme();
   // Restart lives on the Today top bar when this lift has an active
@@ -106,8 +110,8 @@ export function TodayScreen({ lift }: { lift: Lift }) {
       >
         <TodayBody
           lift={lift}
-          week={settings.data.week}
-          cycle={settings.data.currentCycle}
+          week={progress.data?.week ?? settings.data.week}
+          cycle={progress.data?.currentCycle ?? settings.data.currentCycle}
           storageUnit={storageUnit}
           displayUnit={displayUnit}
           tm={tm.data.value}

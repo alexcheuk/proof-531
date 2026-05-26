@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Each lift runs its own 5/3/1 cycle now
+
+**Tags:** `architecture`, `data-model`, `progress`, `removal`
+**Files:** `apps/mobile/src/data/accessors/liftProgress.ts` (new), `apps/mobile/src/data/queries/useLiftProgress.ts` (new), `apps/mobile/src/data/accessors/session.ts`, `apps/mobile/src/data/drizzle/schema.ts`, `apps/mobile/src/data/drizzle/migrations/0001_init.{ts,sql}`, `apps/mobile/src/features/{home,progress,session,history,settings}/...`
+
+Cycle and week are now **per-lift**, not global. Completing a bench session advances bench's cycle/week (and on cycle wrap, bumps only bench's training max). Squat, deadlift, and press carry on at whatever positions they were at — independently. New `lift_progress` table (lift PK, current_cycle, week, updated_at), lazily seeded on first read from the legacy `settings.currentCycle`/`settings.week` columns so upgrading users land on the same position they left off. After seeding, the settings columns go stale and are unused by app code.
+
+The session lifecycle moves accordingly: `createSession` stamps `session.cycle`/`session.week` from `lift_progress[lift]`, and `completeSession` calls `advanceLift(db, lift)` instead of the old global `advanceDay`. Home, Today, and Progress all read per-lift progress for whichever lift they're showing. The History caption "Cycle X · N of M sessions" no longer makes sense with independent cycles, so its inputs are now always `undefined` and the caption hides itself. Settings → Cycle progress section deleted entirely (the single 16-cell grid implies global state that no longer exists).
+
+The session creation invariant — "one active session at a time" — was kept as-is. Per-lift cycles do not mean per-lift parallel sessions; the user still finishes one before starting another. The single-session guard in `createSession` is the same constraint as before.
+
+**Why:** the user trains lifts on independent schedules — squat 2× a week, press 1×, deadlift 1× — so a single shared `(cycle, week)` was actively lying. Completing a heavy squat day was advancing the *bench* counter too, and the Progress chart was projecting cycles bench would never run on that timeline. The split is the correct model for how 5/3/1 actually gets trained in practice (Wendler's later books explicitly allow this).
+
+**Trade-off / what we didn't do:** considered hiding behind a feature flag while the surfaces caught up. Rejected — keeping two cycle-tracking systems in parallel for a flag we'd flip in days was strictly worse than tearing the legacy `advanceDay`/`advanceCycle` out in the same pass. Also considered keeping the Settings cycle-progress card and showing one row per enabled lift; rejected as visual debt — the 16-cell grid was load-bearing for the global model, and a per-lift list would have re-invented what the Progress tab already shows per-lift.
+
+**Follow-ups:** the `settings.currentCycle`/`week`/`day` columns survive on the table as legacy + seed source. They can come out once we're sure no install-in-the-wild is still reading them. The "EST. WORK DAYS / WEEK" stepper on the Goal Panel feeds the weeks/months estimate; eventually that stepper could move into the per-lift schedule UI if we ever build one.
+
 ### 2026-05-26 — Dev blog audience rule + retroactive revision of all 31 prior posts
 
 **Tags:** `process`, `dev-blog`, `convention`, `agent`

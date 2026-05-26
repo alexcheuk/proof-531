@@ -15,6 +15,7 @@
 import { goTo } from '@/app/routes';
 import { useActiveSession } from '@/data/queries/useActiveSession';
 import { useLatestTms } from '@/data/queries/useLatestTm';
+import { useAllLiftProgress } from '@/data/queries/useLiftProgress';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -90,6 +91,17 @@ export function HomeScreen() {
   const settingsData = settings.data;
   const tmsData = tms.data;
   const prsData = prs.data;
+  // Per-lift progress (cycle, week): each enabled lift owns its own row.
+  // Read all of them up front so each LiftPage in the carousel can paint
+  // its own (cycle, week) without re-firing per render.
+  const progress = useAllLiftProgress(enabledLifts);
+  const progressByLift = useMemo(() => {
+    const map = new Map<Lift, { currentCycle: number; week: 1 | 2 | 3 | 4 }>();
+    for (const p of progress.data ?? []) {
+      map.set(p.lift, { currentCycle: p.currentCycle, week: p.week });
+    }
+    return map;
+  }, [progress.data]);
   // Set count for the in-progress session — drives the "Resume · set N of 3"
   // CTA copy on the LiftPage for the in-progress lift. Query is gated on
   // the session id so we don't fire it when there's nothing in flight.
@@ -116,12 +128,18 @@ export function HomeScreen() {
       const pr = prsData?.find((p) => p.lift === lift);
       const storageUnit = tmRow?.unit ?? settingsData.storageUnit;
       const displayUnit = settingsData.displayUnit ?? settingsData.storageUnit;
+      const liftProg = progressByLift.get(lift);
+      // First-paint fallback (progress query still loading): legacy global
+      // settings columns are the right seed, since the accessor uses them
+      // to materialize the row anyway.
+      const week = liftProg?.week ?? settingsData.week;
+      const cycle = liftProg?.currentCycle ?? settingsData.currentCycle;
       return (
         <View style={{ width: screenWidth }}>
           <LiftPage
             lift={lift}
-            week={settingsData.week}
-            cycle={settingsData.currentCycle}
+            week={week}
+            cycle={cycle}
             storageUnit={storageUnit}
             displayUnit={displayUnit}
             plateSet={settingsData.plateSet}
@@ -141,6 +159,7 @@ export function HomeScreen() {
       settingsData,
       tmsData,
       prsData,
+      progressByLift,
       inProgressLift,
       inProgressCompletedCount,
       screenWidth,

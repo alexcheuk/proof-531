@@ -73,12 +73,32 @@ export const prs = sqliteTable('prs', {
  * empty state). Created/updated via `setLiftGoal`, removed via
  * `clearLiftGoal`. See `apps/mobile/src/data/accessors/liftGoal.ts`.
  */
+/**
+ * Per-lift progression state. Each lift runs its own 5/3/1 cycle and
+ * week-of-cycle independently — completing a bench session advances bench's
+ * (cycle, week) without touching squat. Replaces the global
+ * `settings.currentCycle` / `settings.week` for app code; the old columns
+ * stay on `settings` as legacy + a migration source until callers stop
+ * reading them. One row per lift; lazily seeded on first read.
+ */
+export const liftProgress = sqliteTable('lift_progress', {
+  lift: text('lift', { enum: ['squat', 'bench', 'deadlift', 'press'] }).primaryKey(),
+  currentCycle: integer('current_cycle').notNull(),
+  week: integer('week').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+});
+
 export const liftGoals = sqliteTable('lift_goals', {
   lift: text('lift', { enum: ['squat', 'bench', 'deadlift', 'press'] }).primaryKey(),
   kind: text('kind', { enum: ['tm', '1rm'] }).notNull(),
   targetValue: real('target_value').notNull(),
   unit: text('unit', { enum: ['lbs', 'kg'] }).notNull(),
   updatedAt: integer('updated_at').notNull(),
+  // Optional per-lift workout frequency. `null` = unset; when set, the
+  // Goal Panel uses it to convert "days until goal" into a weeks/months
+  // estimate. Each lift is independent so a user can train e.g. squat 2x
+  // a week while pressing once.
+  daysPerWeek: integer('days_per_week'),
 });
 
 export const DEFAULT_SETTINGS_VALUES = {

@@ -63,12 +63,17 @@ export interface HistoryScreenData {
   displayUnit: Unit;
   /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek: number;
-  /** Sessions completed in the current 4-week cycle (matches settings.currentCycle). */
-  sessionsThisCycle: number;
-  /** Total target session count for a cycle: enabledLifts × 4 weeks. */
-  cycleTotalSessions: number;
-  /** Current cycle index (1-based). */
-  currentCycle: number;
+  /**
+   * Always `undefined` since the per-lift split — there's no single
+   * current cycle to anchor a history-wide caption against. Kept in the
+   * return shape so existing callers (AchievementStrip) don't lose the
+   * field name; the captions component hides the line when this is unset.
+   */
+  sessionsThisCycle: number | undefined;
+  /** Always `undefined` post-per-lift-split. See `sessionsThisCycle`. */
+  cycleTotalSessions: number | undefined;
+  /** Always `undefined` post-per-lift-split. See `sessionsThisCycle`. */
+  currentCycle: number | undefined;
   /** Filter-applied rows. */
   filteredRows: Session[];
   /** Filtered rows grouped by cycle, first-seen order. */
@@ -120,18 +125,21 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
     return pickBestLift(prsQuery.data ?? [], storageUnit, displayUnit);
   }, [prsQuery.data, settingsQuery.data]);
+  // History list shows past records — in-progress sessions belong on Home
+  // (the lift tile surfaces them with a Resume CTA). Drop them before the
+  // chip-row filter runs so they never appear in the cycle-grouped list.
   const filteredRows = useMemo(
-    () => applyHistoryFilter(rows, filter, prIds),
+    () => applyHistoryFilter(rows, filter, prIds).filter((s) => s.status !== 'in_progress'),
     [rows, filter, prIds],
   );
   const grouped = useMemo(() => groupByCycle(filteredRows), [filteredRows]);
   const thisWeekCount = useMemo(() => sessionsThisWeek(rows), [rows]);
-  const currentCycle = settingsQuery.data?.currentCycle ?? 1;
-  const sessionsThisCycleCount = useMemo(
-    () => rows.filter((r) => r.status === 'completed' && (r.cycle ?? 1) === currentCycle).length,
-    [rows, currentCycle],
-  );
-  const cycleTotalSessions = enabledLifts.length * 4;
+  // Per-lift cycles mean there is no single "current cycle" to anchor a
+  // history caption against — `settings.currentCycle` is legacy and goes
+  // stale once any lift advances independently. Drop the caption inputs.
+  const currentCycle: number | undefined = undefined;
+  const sessionsThisCycleCount: number | undefined = undefined;
+  const cycleTotalSessions: number | undefined = undefined;
 
   const combined = combineQueries(sessions, prIdsQuery);
   const lifetimeVolume = lifetimeVolumeQuery.data ?? 0;

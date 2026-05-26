@@ -70,3 +70,24 @@ export async function setLiftGoal(
 export async function clearLiftGoal(db: AnyDb, lift: Lift): Promise<void> {
   await Promise.resolve(db.delete(liftGoals).where(eq(liftGoals.lift, lift)));
 }
+
+/**
+ * Update the `days_per_week` field on an existing lift_goals row. No-op
+ * when no goal row exists for the lift — the Goal Panel only surfaces the
+ * days/week control once a goal is set, so this shouldn't happen in practice,
+ * but the UPDATE-WHERE shape keeps it safe either way.
+ *
+ * Pass `null` to clear the value (return the estimate to a days-only view).
+ */
+export async function setLiftGoalDaysPerWeek(
+  db: AnyDb,
+  lift: Lift,
+  daysPerWeek: number | null,
+): Promise<void> {
+  await Promise.resolve(
+    db
+      .update(liftGoals)
+      .set({ daysPerWeek, updatedAt: Date.now() })
+      .where(eq(liftGoals.lift, lift)),
+  );
+}

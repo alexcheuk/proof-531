@@ -60,6 +60,14 @@ CREATE TABLE IF NOT EXISTS lift_goals (
   kind TEXT NOT NULL,
   target_value REAL NOT NULL,
   unit TEXT NOT NULL,
+  updated_at INTEGER NOT NULL,
+  days_per_week INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS lift_progress (
+  lift TEXT PRIMARY KEY,
+  current_cycle INTEGER NOT NULL,
+  week INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
 `;

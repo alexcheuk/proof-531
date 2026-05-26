@@ -41,6 +41,7 @@ jest.mock('expo-haptics', () => ({
 }));
 
 const mockSetGoal = jest.fn().mockResolvedValue(null);
+const mockSetDaysPerWeek = jest.fn().mockResolvedValue(undefined);
 jest.mock('@/data/queries/useSettings', () => ({
   useSettings: () => ({
     data: {
@@ -74,6 +75,9 @@ jest.mock('@/data/queries/useLiftGoal', () => ({
 }));
 jest.mock('@/data/queries/useSetLiftGoal', () => ({
   useSetLiftGoal: () => ({ mutateAsync: mockSetGoal, isPending: false }),
+}));
+jest.mock('@/data/queries/useSetLiftGoalDaysPerWeek', () => ({
+  useSetLiftGoalDaysPerWeek: () => ({ mutateAsync: mockSetDaysPerWeek, isPending: false }),
 }));
 jest.mock('@/data/queries/useLiftProgression', () => ({
   useLiftProgression: (lift: string) => ({
@@ -191,6 +195,7 @@ beforeEach(() => {
   mockRouterPush.mockClear();
   mockRouterSetParams.mockClear();
   mockSetGoal.mockClear();
+  mockSetDaysPerWeek.mockClear();
 });
 
 describe('ProgressScreen', () => {

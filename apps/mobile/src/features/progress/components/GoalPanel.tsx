@@ -21,8 +21,15 @@ export type GoalPanelProps = {
   minValue: number;
   /** Cycles until projected TM reaches goal. `0` = already past. `null` = unreachable in lookahead. */
   cyclesUntilGoal: number | null;
+  /**
+   * User's expected workout days per week for THIS lift. `null` = unset.
+   * Drives the secondary "≈ K weeks · M mo" estimate next to the days-left
+   * figure; without it we render days-only.
+   */
+  daysPerWeek: number | null;
   onKindChange: (kind: LiftGoalKind) => void;
   onValueChange: (value: number) => void;
+  onDaysPerWeekChange: (daysPerWeek: number | null) => void;
   /** `true` when no goal is persisted yet — value is a default placeholder. Steppers create the goal on first tap. */
   unset?: boolean;
   testID?: string;
@@ -35,8 +42,10 @@ export function GoalPanel({
   step,
   minValue,
   cyclesUntilGoal,
+  daysPerWeek,
   onKindChange,
   onValueChange,
+  onDaysPerWeekChange,
   unset,
   testID,
 }: GoalPanelProps) {
@@ -50,8 +59,25 @@ export function GoalPanel({
   const dec = () => onStep(-step);
   const inc = () => onStep(step);
 
-  const weeksApprox = cyclesUntilGoal !== null ? cyclesUntilGoal * 4 : 0;
+  // One 5/3/1 "day" = one session for this lift, and a cycle holds 4 such
+  // sessions. So days-until-goal = cycles × 4. When the user has supplied
+  // days/week we can also project that out to calendar time.
+  const daysApprox = cyclesUntilGoal !== null ? cyclesUntilGoal * 4 : 0;
+  const dpw = daysPerWeek && daysPerWeek > 0 ? daysPerWeek : null;
+  const weeksApprox =
+    dpw !== null && daysApprox > 0 ? Math.max(1, Math.round(daysApprox / dpw)) : 0;
   const monthsApprox = weeksApprox > 0 ? Math.max(1, Math.round(weeksApprox / 4.3)) : 0;
+
+  const onDaysPerWeekStep = (delta: number) => {
+    void Haptics.selectionAsync();
+    const current = dpw ?? 0;
+    const next = current + delta;
+    if (next <= 0) {
+      onDaysPerWeekChange(null);
+      return;
+    }
+    onDaysPerWeekChange(Math.min(7, next));
+  };
 
   const cardStyle: ViewStyle = {
     marginHorizontal: layout.gutter - 8,
@@ -186,6 +212,7 @@ export function GoalPanel({
                 : `~${cyclesUntilGoal} cycle${cyclesUntilGoal === 1 ? '' : 's'} away`}
         </RNText>
         <RNText
+          testID={`${testID ?? 'goal-panel'}-estimate`}
           style={{
             fontFamily: `${type.mono}-Medium`,
             fontSize: 10,
@@ -194,12 +221,109 @@ export function GoalPanel({
             color: colors.ink3,
           }}
         >
-          {!unset && cyclesUntilGoal && cyclesUntilGoal > 0
-            ? `≈ ${weeksApprox} weeks · ${monthsApprox}mo`
+          {!unset && cyclesUntilGoal && cyclesUntilGoal > 0 && dpw !== null
+            ? `≈ ${weeksApprox} wks · ${monthsApprox}mo`
             : ''}
         </RNText>
       </View>
+      {!unset ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 10,
+            paddingHorizontal: 16,
+            borderTopWidth: 1,
+            borderTopColor: colors.lineStrong,
+            gap: 12,
+          }}
+          testID={`${testID ?? 'goal-panel'}-dpw-row`}
+        >
+          <RNText
+            style={{
+              fontFamily: `${type.mono}-Bold`,
+              fontSize: 10,
+              letterSpacing: 2.2,
+              textTransform: 'uppercase',
+              color: colors.ink0,
+              flex: 1,
+            }}
+          >
+            Est. work days / week
+          </RNText>
+          <DaysPerWeekStepper
+            glyph="−"
+            onPress={() => onDaysPerWeekStep(-1)}
+            disabled={dpw === null}
+            testID={`${testID ?? 'goal-panel'}-dpw-dec`}
+          />
+          <RNText
+            testID={`${testID ?? 'goal-panel'}-dpw-value`}
+            style={{
+              fontFamily: `${type.mono}-Bold`,
+              fontSize: 14,
+              color: dpw === null ? colors.ink2 : colors.ink0,
+              minWidth: 22,
+              textAlign: 'center',
+              fontVariant: ['tabular-nums', 'lining-nums'],
+            }}
+          >
+            {dpw !== null ? String(dpw) : '—'}
+          </RNText>
+          <DaysPerWeekStepper
+            glyph="+"
+            onPress={() => onDaysPerWeekStep(+1)}
+            disabled={dpw !== null && dpw >= 7}
+            testID={`${testID ?? 'goal-panel'}-dpw-inc`}
+          />
+        </View>
+      ) : null}
     </View>
+  );
+}
+
+function DaysPerWeekStepper({
+  glyph,
+  onPress,
+  disabled,
+  testID,
+}: {
+  glyph: '−' | '+';
+  onPress: () => void;
+  disabled?: boolean;
+  testID?: string;
+}) {
+  const { colors, type } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={glyph === '+' ? 'Increase days per week' : 'Decrease days per week'}
+      accessibilityState={{ disabled }}
+      style={{
+        width: 28,
+        height: 28,
+        borderWidth: 1,
+        borderColor: disabled ? colors.line : colors.ink0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.bg0,
+      }}
+    >
+      <RNText
+        style={{
+          fontFamily: `${type.mono}-Bold`,
+          fontSize: 14,
+          color: disabled ? colors.ink3 : colors.ink0,
+          lineHeight: 14,
+        }}
+      >
+        {glyph}
+      </RNText>
+    </Pressable>
   );
 }
 

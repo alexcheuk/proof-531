@@ -15,6 +15,7 @@ type MigrationTarget =
  * references: prs → set_logs → sessions, then leaves.
  */
 const ALL_TABLES = [
+  'lift_progress',
   'lift_goals',
   'prs',
   'set_logs',
@@ -69,6 +70,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     table: 'settings',
     column: 'bbb_rest_target_seconds',
     ddl: 'ALTER TABLE settings ADD COLUMN bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90',
+  },
+  {
+    table: 'lift_goals',
+    column: 'days_per_week',
+    ddl: 'ALTER TABLE lift_goals ADD COLUMN days_per_week INTEGER',
   },
 ];
 
@@ -171,6 +177,22 @@ export function runMigrations(database: MigrationTarget): void {
         } catch (err) {
           console.warn(
             `[runMigrations] additive ALTER failed for sessions.${additive.column}`,
+            err,
+          );
+        }
+      }
+    }
+  }
+  if (liftGoalsCols && liftGoalsCols.length > 0) {
+    for (const additive of ADDITIVE_COLUMNS) {
+      if (additive.table !== 'lift_goals') continue;
+      if (!liftGoalsCols.includes(additive.column)) {
+        try {
+          exec(database, `${additive.ddl};`);
+          liftGoalsCols.push(additive.column);
+        } catch (err) {
+          console.warn(
+            `[runMigrations] additive ALTER failed for lift_goals.${additive.column}`,
             err,
           );
         }

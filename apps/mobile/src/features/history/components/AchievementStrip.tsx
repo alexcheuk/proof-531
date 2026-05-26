@@ -39,12 +39,14 @@ export type AchievementStripProps = {
   unit?: 'lbs' | 'kg';
   /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek?: number;
-  /** Sessions completed inside the current 4-week cycle. */
-  sessionsThisCycle?: number;
-  /** Total scheduled sessions for the current cycle (enabledLifts × 4). */
-  cycleTotalSessions?: number;
-  /** Current cycle index (1-based). */
-  currentCycle?: number;
+  /**
+   * Always `undefined` post-per-lift-split — kept on the type so existing
+   * callers don't lose the field name; the captions component hides the
+   * line when these are unset.
+   */
+  sessionsThisCycle?: number | undefined;
+  cycleTotalSessions?: number | undefined;
+  currentCycle?: number | undefined;
 };
 
 /**

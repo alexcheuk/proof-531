@@ -168,6 +168,20 @@ jest.mock('@/data/queries/useLatestTm', () => ({
   useLatestTms: () => mockTmsState,
 }));
 
+jest.mock('@/data/queries/useLiftProgress', () => ({
+  useAllLiftProgress: (lifts: ReadonlyArray<string>) => ({
+    data: lifts.map((lift) => ({ lift, currentCycle: 2, week: 1, updatedAt: 1 })),
+    isLoading: false,
+    isError: false,
+  }),
+  LIFT_PROGRESS_KEY: (lift: string) => ['liftProgress', lift],
+  ALL_LIFT_PROGRESS_KEY: (lifts: readonly string[]) => [
+    'liftProgress',
+    'all',
+    [...lifts].sort().join(','),
+  ],
+}));
+
 jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => mockPrsState,
 }));

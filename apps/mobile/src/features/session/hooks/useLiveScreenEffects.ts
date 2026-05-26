@@ -136,13 +136,13 @@ function routeFromCompletePhase(
 }
 
 function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): Promise<unknown> {
-  // completeSession runs advanceDay (mutates settings.week/cycle and, on
-  // wrap, the training_maxes history) and AMRAP saves may have set a new
-  // PR, so we invalidate the broader session-shaped surface alongside the
-  // three core keys. `lifetimeVolume` is included (loop-008) so the
-  // History tab's volume stat refreshes the moment the day closes — the
-  // new working + amrap rows (plus any BBB rows written by BbbPromptScreen)
-  // need to be counted on next render.
+  // completeSession runs advanceLift (advances THIS lift's cycle/week and,
+  // on cycle wrap, bumps THIS lift's TM — see liftProgress.ts) and AMRAP
+  // saves may have set a new PR, so we invalidate the broader session-shaped
+  // surface alongside the three core keys. `lifetimeVolume` is included
+  // (loop-008) so the History tab's volume stat refreshes the moment the day
+  // closes — the new working + amrap rows (plus any BBB rows written by
+  // BbbPromptScreen) need to be counted on next render.
   return Promise.all([
     queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
     queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
@@ -155,7 +155,9 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
     queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
     // Prefix invalidate the Progress screen's per-lift projection cache so
     // the cycle/day grid, e1RM column, and "cycles to goal" all refresh
-    // the moment the user closes a session.
+    // the moment the user closes a session. Same for per-lift progress —
+    // headers reading lift_progress[lift] need the new (cycle, week).
     queryClient.invalidateQueries({ queryKey: ['liftProgression'] }),
+    queryClient.invalidateQueries({ queryKey: ['liftProgress'] }),
   ]);
 }

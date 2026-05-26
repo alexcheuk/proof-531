@@ -25,7 +25,6 @@ import { AboutSection } from './sections/AboutSection';
 import { ActiveLiftsSection } from './sections/ActiveLiftsSection';
 import { Colophon } from './sections/Colophon';
 import { CyclePrescriptionSection } from './sections/CyclePrescriptionSection';
-import { CycleProgressSection } from './sections/CycleProgressSection';
 import { DangerZoneSection } from './sections/DangerZoneSection';
 import { PlateSetSection } from './sections/PlateSetSection';
 import { ProgressionRulesSection } from './sections/ProgressionRulesSection';
@@ -80,8 +79,6 @@ export function SettingsScreen() {
         scrollEventThrottle={scrollEventThrottle}
       >
         <TitleBlock eyebrow="The dials" title="Settings." />
-
-        <CycleProgressSection settings={settings} />
 
         <UnitsSection
           storageUnit={storageUnit}

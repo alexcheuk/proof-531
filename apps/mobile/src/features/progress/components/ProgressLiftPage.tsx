@@ -11,6 +11,7 @@ import { useLiftGoal } from '@/data/queries/useLiftGoal';
 import { type LiftProgression, useLiftProgression } from '@/data/queries/useLiftProgression';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
+import { useSetLiftGoalDaysPerWeek } from '@/data/queries/useSetLiftGoalDaysPerWeek';
 import { useSettings } from '@/data/queries/useSettings';
 import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
@@ -47,6 +48,7 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
   const progression = useLiftProgression(lift);
   const goalQuery = useLiftGoal(lift);
   const setGoal = useSetLiftGoal();
+  const setDaysPerWeek = useSetLiftGoalDaysPerWeek();
   const settings = useSettings();
   const prs = usePrs();
 
@@ -123,6 +125,14 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
     [draftKind, persist],
   );
 
+  const persistedDaysPerWeek = goalRow?.daysPerWeek ?? null;
+  const onDaysPerWeekChange = useCallback(
+    (daysPerWeek: number | null) => {
+      void setDaysPerWeek.mutateAsync({ lift, daysPerWeek });
+    },
+    [setDaysPerWeek, lift],
+  );
+
   const draftTargetTm = useMemo(
     () => goalTargetTm(draftKind, draftValue, displayU),
     [draftKind, draftValue, displayU],
@@ -182,8 +192,10 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
         step={goalStep(displayU)}
         minValue={minGoal}
         cyclesUntilGoal={cyclesUntilDraft}
+        daysPerWeek={persistedDaysPerWeek}
         onKindChange={onKindChange}
         onValueChange={onValueChange}
+        onDaysPerWeekChange={onDaysPerWeekChange}
         unset={unset}
         testID={`goal-panel-${lift}`}
       />

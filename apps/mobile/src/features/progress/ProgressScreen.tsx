@@ -113,6 +113,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
               enabled={enabledLifts}
               selected={selectedLift}
               inProgressLift={null}
+              elevated={mastheadElevated}
               onSelect={updateRouteParam}
             />
           ) : null}

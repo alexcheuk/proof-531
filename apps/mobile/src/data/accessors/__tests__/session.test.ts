@@ -2,6 +2,7 @@ import BetterSqlite3 from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
+import { getLiftProgress } from '../liftProgress';
 import {
   completeSession,
   createSession,
@@ -9,7 +10,7 @@ import {
   getSession,
   getSessions,
 } from '../session';
-import { getSettings, seedDefaultSettings } from '../settings';
+import { seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
 function freshDb() {
@@ -52,18 +53,22 @@ describe('session accessor', () => {
     await expect(createSession(db, 'squat')).rejects.toThrow();
   });
 
-  it('completeSession marks complete and advances day', async () => {
+  it("completeSession marks complete and advances ONLY that lift's progress", async () => {
     const db = freshDb();
     await seedDefaultSettings(db);
     await setTrainingMax(db, 'squat', 250, 'lbs');
+    await setTrainingMax(db, 'bench', 200, 'lbs');
     const s = await createSession(db, 'squat');
     const sessionId = s.id as number;
     await completeSession(db, sessionId);
     const after = await getSession(db, sessionId);
     expect(after?.status).toBe('completed');
     expect(after?.endedAt).toBeGreaterThan(0);
-    const settings = await getSettings(db);
-    expect(settings.day).toBe(2);
+    // Squat moved from week 1 → 2; bench stayed at the seed (week 1).
+    const squat = await getLiftProgress(db, 'squat');
+    const bench = await getLiftProgress(db, 'bench');
+    expect(squat.week).toBe(2);
+    expect(bench.week).toBe(1);
   });
 
   it('completeSession is idempotent', async () => {
@@ -74,8 +79,9 @@ describe('session accessor', () => {
     const sessionId = s.id as number;
     await completeSession(db, sessionId);
     await expect(completeSession(db, sessionId)).resolves.toBeUndefined();
-    const settings = await getSettings(db);
-    expect(settings.day).toBe(2); // not advanced twice
+    // Re-completion is a no-op; lift_progress.week did not double-advance.
+    const squat = await getLiftProgress(db, 'squat');
+    expect(squat.week).toBe(2);
   });
 
   it('getSessions returns all sessions, newest first', async () => {
