@@ -42,6 +42,13 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — CustomTabBar test fixture brought in sync with the 4-tab config
+
+**Tags:** `tests`, `tabs`
+**Files:** `apps/mobile/src/features/tabs/__tests__/CustomTabBar.test.tsx`
+
+The test built `state.routes` with three entries (`index / history / settings`); the actual app has had four since loop-024 (`index / progress / history / settings`). Tests passed because the component renders whatever routes it gets, not because the fixture mirrored prod. Added the `progress` route to the fixture, renamed the labels-rendered assertion to include PROGRESS, shifted the active-tab test's index from 1 → 2 (history's new slot), and asserted on the `tab-progress` accessibilityState. Behavioural coverage held; the fixture is now true.
+
 ### 2026-05-26 — Tab bar switched to `space-around` to accommodate the 4th tab
 
 **Tags:** `fix`, `layout`, `tabs`

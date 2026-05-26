@@ -28,8 +28,10 @@ function makeProps(activeIdx = 0): CustomTabBarProps {
   return {
     state: {
       index: activeIdx,
+      // Mirrors the four tabs registered in `(tabs)/_layout.tsx` (loop-024).
       routes: [
         { key: 'index-1', name: 'index' },
+        { key: 'progress-1', name: 'progress' },
         { key: 'history-1', name: 'history' },
         { key: 'settings-1', name: 'settings' },
       ],
@@ -50,9 +52,10 @@ describe('CustomTabBar', () => {
     mockActiveSession.data = null;
   });
 
-  it('renders TODAY, HISTORY, YOU labels', () => {
+  it('renders TODAY, PROGRESS, HISTORY, YOU labels', () => {
     const { getByText } = renderTabBar(<CustomTabBar {...makeProps()} />);
     expect(getByText('TODAY')).toBeTruthy();
+    expect(getByText('PROGRESS')).toBeTruthy();
     expect(getByText('HISTORY')).toBeTruthy();
     expect(getByText('YOU')).toBeTruthy();
   });
@@ -74,8 +77,10 @@ describe('CustomTabBar', () => {
   });
 
   it('marks the active tab via accessibilityState.selected', () => {
-    const { getByTestId } = renderTabBar(<CustomTabBar {...makeProps(1)} />);
+    // index=2 → history is the active tab in the four-tab layout.
+    const { getByTestId } = renderTabBar(<CustomTabBar {...makeProps(2)} />);
     expect(getByTestId('tab-index').props.accessibilityState).toEqual({ selected: false });
+    expect(getByTestId('tab-progress').props.accessibilityState).toEqual({ selected: false });
     expect(getByTestId('tab-history').props.accessibilityState).toEqual({ selected: true });
     expect(getByTestId('tab-settings').props.accessibilityState).toEqual({ selected: false });
   });
