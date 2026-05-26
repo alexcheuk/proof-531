@@ -13,6 +13,7 @@ import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { tmIncrement } from '@/domain/increments';
+import { barWeight } from '@/domain/plates';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
@@ -68,8 +69,9 @@ export function TmEditSheet({
   const captionVisible = storageUnit !== displayUnit;
   const delta = draft - currentValue;
   const isUnchanged = delta === 0;
-  const isZero = draft <= 0;
-  const saveDisabled = pending || isUnchanged || isZero;
+  const bar = barWeight(storageUnit);
+  const isBelowBar = draft < bar;
+  const saveDisabled = pending || isUnchanged || isBelowBar;
   // Percent change of the delta vs the current TM. Surfaced so the user
   // can sanity-check the edit (Wendler's rule of thumb is +5 lb upper /
   // +10 lb lower per cycle — ≈ 2–5% jumps).
@@ -134,7 +136,7 @@ export function TmEditSheet({
         value={draft}
         unit={storageUnit}
         step={step}
-        min={0}
+        min={bar}
         onChange={setDraft}
       />
 
@@ -146,12 +148,12 @@ export function TmEditSheet({
 
       <CapsLabel
         weight="semibold"
-        color={isZero ? 'ink3' : 'ink1'}
+        color={isBelowBar ? 'ink3' : 'ink1'}
         style={{ letterSpacing: 1.4 }}
         testID="tm-edit-delta"
       >
-        {isZero
-          ? 'Set a positive training max to continue'
+        {isBelowBar
+          ? `Training max can't go below the bar (${bar} ${displayUnitGlyph(storageUnit)})`
           : isUnchanged
             ? 'No change from current'
             : `${delta > 0 ? '+' : ''}${delta} ${displayUnitGlyph(storageUnit)}${

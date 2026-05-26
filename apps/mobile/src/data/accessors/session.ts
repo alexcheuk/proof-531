@@ -141,6 +141,23 @@ export async function completeSession(db: AnyDb, sessionId: number): Promise<voi
 }
 
 /**
+ * Mark a session cancelled. Idempotent — no-ops for missing or already-
+ * finished sessions. Used when the user disables a lift that still has
+ * an in-progress session for it (otherwise that ghost session keeps
+ * stealing every Begin-CTA tap on Home — Discord 1508768403).
+ */
+export async function cancelSession(db: AnyDb, sessionId: number): Promise<void> {
+  const row = await getSession(db, sessionId);
+  if (!row || row.status !== 'in_progress') return;
+  await Promise.resolve(
+    db
+      .update(sessions)
+      .set({ status: 'cancelled', endedAt: Date.now() })
+      .where(eq(sessions.id, sessionId)),
+  );
+}
+
+/**
  * Reset a still-in-progress session: delete every set log for it,
  * stamp a fresh `startedAt`, and rebuild the lift's `prs.bestE1RM`
  * from the remaining (other-session) AMRAP rows. Leaves

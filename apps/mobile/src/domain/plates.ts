@@ -24,6 +24,14 @@ export const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;
 export const BAR_LBS = 45;
 export const BAR_KG = 20;
 
+/**
+ * Floor for any user-entered weight (training max, 1RM, lifted weight).
+ * You can't lift below an empty bar — Discord 1508767813.
+ */
+export function barWeight(unit: Unit): number {
+  return unit === 'kg' ? BAR_KG : BAR_LBS;
+}
+
 export type PlateCalc = {
   /** Plates on ONE side (the bar is symmetric), heaviest first. */
   readonly perSide: readonly number[];

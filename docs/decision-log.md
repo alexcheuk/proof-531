@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Disabling a lift cancels its in-progress session
+
+**Tags:** `bug-postmortem`, `session`, `settings`
+**Files:** `apps/mobile/src/data/accessors/session.ts`, `apps/mobile/src/features/settings/hooks/useToggleLift.ts`, `apps/mobile/src/features/home/HomeScreen.tsx`
+
+Added `cancelSession(db, sessionId)` to the session accessor (marks `'cancelled'`, idempotent) and wired `useToggleLift` to call it when the user toggles off a lift that still owns an in-progress session. Belt-and-braces: `HomeScreen.handleBegin` now ignores `inProgressLift` when it isn't in `enabledLifts`.
+
+**Why:** Discord 1508768403 — toggling squat off while a squat session was in-progress left the Home Begin CTA forever rerouting to a disabled lift (single-session-invariant logic chose the ghost in-progress lift over the user's tap). Cancelling the session at toggle-time is the cleanest UX — the user is explicitly saying "I'm not doing this lift right now"; the History tab already filters cancelled rows out of streaks and volume.
+
+**Trade-off / what we didn't do:** we considered preserving the in-progress session as dormant (so re-enabling restores it), but that left the ghost-lift footgun in too many other places (TodayScreen `preview-other-active` mode, `createSession`'s throw on parallel sessions). Cancelling is destructive; the alternative was leakier.
+
+### 2026-05-26 — Bar weight is the floor for user-entered weights
+
+**Tags:** `domain`, `settings`, `onboarding`
+**Files:** `apps/mobile/src/domain/plates.ts`, `apps/mobile/src/features/settings/components/TmEditSheet.tsx`, `apps/mobile/src/features/onboarding/steps/OneRmEntry/InputFrame.tsx`
+
+Added `barWeight(unit)` helper in `domain/plates.ts` (45 lb / 20 kg). Every NumberStepper that takes a weight (TM editor, 1RM direct entry, lifted-weight entry) now uses this as `min`, and the TM editor's delta strip swaps the "Set a positive training max" copy for a below-bar warning.
+
+**Why:** Discord 1508767813 — "Minimum weight for any lift is the bar". You can't lift an empty bar lighter than its own weight; the steppers were happily counting down to 0.
+
 ### 2026-05-26 — Streak walk switches to calendar arithmetic (DST bug)
 
 **Tags:** `bug-postmortem`, `domain`, `time`

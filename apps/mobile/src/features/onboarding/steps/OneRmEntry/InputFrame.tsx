@@ -1,5 +1,6 @@
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { useTheme } from '@/design/theme';
+import { barWeight } from '@/domain/plates';
 import type { Unit } from '@/domain/types';
 import { View } from 'react-native';
 import type { LiftInput } from '../../hooks/useOnboardingState';
@@ -18,6 +19,7 @@ export type InputFrameProps = {
  */
 export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps) {
   const { spacing } = useTheme();
+  const bar = barWeight(unit);
   if (data.mode === 'direct') {
     return (
       <NumberStepper
@@ -25,7 +27,7 @@ export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps
         value={data.weight}
         unit={unit}
         step={weightStep}
-        min={0}
+        min={bar}
         max={9999}
         onChange={(v) => onChange({ weight: v })}
       />
@@ -38,7 +40,7 @@ export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps
         value={data.weight}
         unit={unit}
         step={weightStep}
-        min={0}
+        min={bar}
         max={9999}
         onChange={(v) => onChange({ weight: v })}
       />

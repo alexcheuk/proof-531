@@ -49,6 +49,10 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `units.formatWeight(n)` (added 2026-05-24) — thousands-separator
   formatting for weights ≥ 1000. Always route 4-digit+ weights through
   this; raw `n.toString()` was the prior convention.
+- `plates.barWeight(unit)` (added 2026-05-26) — single source of truth
+  for the bar's empty weight (45 lb / 20 kg). Use this anywhere a
+  user-entered weight needs a floor (NumberStepper `min`, TM editor,
+  1RM entry). Don't sprinkle the 45/20 ternary in feature files.
 
 ## Dev workflow
 
@@ -167,6 +171,12 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 ## Data accessors (one-stop reference)
 
 - `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.
+  - `cancelSession(db, sessionId)` (added 2026-05-26) — marks an in-progress
+    row as `'cancelled'`. Idempotent. Called from `useToggleLift` when the
+    user disables a lift that still has an in-progress session for it; the
+    History tab's filters already skip cancelled rows. Don't call directly
+    from features — go through `useToggleLift` so the right queries get
+    invalidated.
 - `setLog.ts` — `appendSetLog` (single write), `getSetLogsForSession`, `getSessionIdsWithPrs`, `getLifetimeVolume`, `getPreviousBestE1RM`.
 - `prs.ts` — `getPR` / `_upsertPR` (internal, never called from features directly).
 - `settings.ts` — settings row CRUD.

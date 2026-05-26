@@ -188,6 +188,40 @@ describe('TmEditSheet', () => {
     expect(screen.getByText('editing in lb · displayed as kg')).toBeTruthy();
   });
 
+  it('blocks Save when the draft drops below the bar (legacy below-bar TM)', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="press"
+        currentValue={30}
+        storageUnit="lbs"
+        displayUnit="lbs"
+        onClose={() => {}}
+      />,
+    );
+    // currentValue < bar (45 lb) — the editor opens on a below-bar draft and
+    // refuses to save. The delta strip explains why.
+    expect(screen.getByTestId('tm-edit-delta').props.children).toBe(
+      "Training max can't go below the bar (45 lb)",
+    );
+    fireEvent.press(screen.getByTestId('tm-edit-save'));
+    expect(mockSetTrainingMax).not.toHaveBeenCalled();
+  });
+
+  it('uses the kg bar (20) as the floor when storage is kg', () => {
+    const screen = wrap(
+      <TmEditSheet
+        lift="press"
+        currentValue={15}
+        storageUnit="kg"
+        displayUnit="kg"
+        onClose={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('tm-edit-delta').props.children).toBe(
+      "Training max can't go below the bar (20 kg)",
+    );
+  });
+
   it('fires onClose when Cancel is pressed', () => {
     const onClose = jest.fn();
     const screen = wrap(

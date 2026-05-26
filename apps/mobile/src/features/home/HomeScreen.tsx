@@ -75,10 +75,15 @@ export function HomeScreen() {
       // start a second one. Navigate to that lift instead.
       // Session creation itself happens in TodayScreen (preview mode) so we
       // don't insert a row that an unrelated tap-back leaves orphaned.
-      const target = inProgressLift && inProgressLift !== lift ? inProgressLift : lift;
+      // Skip the redirect when the in-progress lift is no longer enabled —
+      // useToggleLift now cancels that session at toggle-time, but this is
+      // belt-and-braces in case any future code path leaves a ghost.
+      const shouldRedirect =
+        inProgressLift && inProgressLift !== lift && enabledLifts.includes(inProgressLift);
+      const target = shouldRedirect ? inProgressLift : lift;
       goTo.today(router, target);
     },
-    [inProgressLift, router],
+    [inProgressLift, enabledLifts, router],
   );
 
   const handleOpenToday = useCallback(
