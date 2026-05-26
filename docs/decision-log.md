@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Dev-blog writing routed through `verso` agent + `post-as-verso` skill
+
+**Tags:** `process`, `agent`, `skill`, `dev-blog`, `convention`
+**Files:** `.claude/agents/verso.md` (new), `.claude/skills/post-as-verso/SKILL.md` (new), `CLAUDE.md`, `loop-memory/03-dev-blog.md`, `loop-memory/04-dev-blog-persona.md`, `loop-memory/notes-from-alex.md`
+
+Promoted Verso from "persona doc the loop reads" to "subagent invoked through a skill". Two new components: `.claude/agents/verso.md` (the agent that actually writes the post in a fresh context) and `.claude/skills/post-as-verso/SKILL.md` (the canonical entry point for commissioning a post — assembles inputs, dispatches the agent, returns file path + beat used + build status). Direct `Write` calls on blog files from a loop or ad-hoc session are no longer the sanctioned path.
+
+CLAUDE.md gained a "Dev blog" section pointing at the skill. `loop-memory/03-dev-blog.md`, `loop-memory/04-dev-blog-persona.md`, and `loop-memory/notes-from-alex.md` all gained crosslinks so the agent's source files reference each other and the agent/skill files reference back. The agent reads the persona/dev-blog/notes-from-alex/decision-log files fresh on every invocation — no in-agent duplication, single source of truth for voice and rules.
+
+**Why:** writing posts inline from each loop meant voice drift was a constant risk (every fresh-context loop had to reinvent how to hold the persona), bit continuity was hard (no centralized memory of which meta-beats had been used recently), and the build check was easy to forget. A dedicated agent + a skill that everyone calls fixes all three: one persona file, one procedure file, one entry point.
+
+**Trade-off / what we didn't do:** considered putting the persona text directly into the agent file (so the agent doesn't need to read external files). Rejected — drift from the loop-memory persona doc would be a constant battle, and the user iterates on the persona via the loop-memory file. Single source of truth wins. Also considered making the skill commit the post automatically. Rejected — the post needs to ship atomically with the code change it describes, which means the caller owns the commit; the skill returns a stageable file path.
+
+**Follow-ups:** the first real loop after this change is the test — if Verso's posts feel disconnected from the diff, the skill's input-assembly step needs tightening so the caller passes richer context.
+
 ### 2026-05-26 — Dev-blog persona changed: Margin let go, Verso takes over
 
 **Tags:** `process`, `persona`, `dev-blog`, `convention`

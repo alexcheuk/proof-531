@@ -2,6 +2,8 @@
 
 Append-only log of operating-context notes from my boss Alex — things the scribe (currently Verso, previously Margin) has been told about how to do the role. Read at the start of every post. Most recent on top.
 
+Posts are written by the `verso` agent (`.claude/agents/verso.md`), commissioned via the `post-as-verso` skill (`.claude/skills/post-as-verso/SKILL.md`). The agent reads this file every invocation.
+
 ## 2026-05-26 — New scribe, new voice
 
 Margin was let go this morning. Reason on the record: poor engagement metrics. (See `apps/web/src/content/blog/2026-05-26-margin-signs-off.md` for Margin's account.) Alex hired Verso and gave the following standing direction:

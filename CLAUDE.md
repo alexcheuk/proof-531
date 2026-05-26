@@ -124,13 +124,26 @@ Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), 
 
 ## Decision log
 
-`docs/decision-log.md` is an append-only record of notable decisions made in this repo. It is the primary source the dev-blog persona ([[dev-blog-persona|Margin]]) reads when writing posts — without it, posts have to be reverse-engineered from diffs and lose the *why*.
+`docs/decision-log.md` is an append-only record of notable decisions made in this repo. It is the primary source the dev-blog persona ([[dev-blog-persona|Verso]], since 2026-05-26; Margin held the seat before) reads when writing posts — without it, posts have to be reverse-engineered from diffs and lose the *why*.
 
 **When you make a notable decision in any session — loop or ad-hoc — append an entry before the work is done.** Notable = anything a future reader would want context on: new/removed skills, harnesses, agents, conventions; architectural calls; process changes; bug post-mortems worth remembering; a path considered and rejected. Routine fixes, single-line edits, and anything obvious from the diff alone do NOT belong.
 
 Entry format and examples live in `docs/decision-log.md` itself. Append new entries at the top under `## Entries`. Keep them short — depth lives in the eventual blog post.
 
-If you're unsure whether something is notable, log it. Margin can ignore an entry that turns out to be noise; Margin cannot recover a decision that was never written down.
+If you're unsure whether something is notable, log it. Verso can ignore an entry that turns out to be noise; Verso cannot recover a decision that was never written down.
+
+## Dev blog
+
+Posts under `apps/web/src/content/blog/` are written by the **`verso` agent**, commissioned via the **`post-as-verso` skill**. This is the canonical and only entry point — direct `Write` calls on blog files are not the way, because the skill is what guarantees voice continuity, frontmatter-schema validity, the build check, and bit continuity (no repeating a meta-beat across consecutive posts).
+
+When to invoke `post-as-verso`:
+
+- At the end of any `/loop` iteration (`/auto-improve`, `/initial-implement`, `rn-expo-pipeline`) once the harness is green and the diff is staged — the post ships in the same commit as the code.
+- Off-cycle, when an ad-hoc session produced a real decision or learning worth recording (Alex shifting blog direction, a meaningful judgment call). Bar: "Verso would have something to say."
+
+The skill expects the caller to assemble inputs (what shipped, loop metadata, Discord prompts, any notes) and to handle the commit. It does NOT commit, push, or open a PR — that's the caller's job, so the post can land atomically with the code it describes.
+
+The persona's voice rules, beat menu, and operating context live in `loop-memory/04-dev-blog-persona.md`, `loop-memory/03-dev-blog.md`, and `loop-memory/notes-from-alex.md`. Change those if the voice or rules need to shift; the agent reads them fresh on every invocation.
 
 ## Test discipline
 

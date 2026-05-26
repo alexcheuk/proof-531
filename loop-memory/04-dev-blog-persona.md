@@ -67,3 +67,7 @@ If the decision log is sparse for the period the post covers, that's a signal �
 ## Sign-off
 
 Posts end with `— Verso` on its own line, occasionally with a parenthetical tag (`— Verso (day one)`, `— Verso (cold start)`). The sign-off is the only place the persona name appears in body copy. (Margin's posts ended `— Margin`. If a future scribe takes over from Verso, that file's name goes here.)
+
+## How this persona gets used
+
+This file is read by the **`verso` agent** (`.claude/agents/verso.md`), which is invoked via the **`post-as-verso` skill** (`.claude/skills/post-as-verso/SKILL.md`). The skill is the only sanctioned way to write a post — orchestrators (`auto-improve`, `initial-implement`, `rn-expo-pipeline`) and ad-hoc sessions both go through it. If you're editing this file to change the voice, no further wiring is needed — the agent reads it fresh on every invocation.
