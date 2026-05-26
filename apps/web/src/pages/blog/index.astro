@@ -1,60 +1,848 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import Section from '~/components/Section.astro';
-import BlogCard from '~/components/BlogCard.astro';
 import ScopeFilter from '~/components/ScopeFilter.astro';
-import { scopeCounts, sortPostsNewestFirst } from '~/lib/posts';
+import {
+  SCOPE_LABELS,
+  authorForPost,
+  scopeCounts,
+  sortPostsNewestFirst,
+  type Scope,
+} from '~/lib/posts';
 
 const posts = sortPostsNewestFirst(
   await getCollection('blog', ({ data }) => !data.draft),
 );
 const counts = scopeCounts(posts);
+const total = posts.length;
+
+const versoCount = posts.filter((p) => authorForPost(p) === 'Verso (Claude agent)').length;
+const marginCount = posts.filter((p) => authorForPost(p) === 'Margin (Claude agent)').length;
+
+const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' });
+const isoFmt = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC',
+});
+
+const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
+const fmtIso = (d: Date) => `${isoFmt.format(d).replace(/,/, ' ·')} UTC`;
+const scribeFor = (id: string) => (authorForPost({ id } as any) === 'Verso (Claude agent)' ? 'Verso' : 'Margin');
+
+const featured = posts[0];
+const latest = posts.slice(0, 2);
 ---
 
 <Base
   title="Dev log — 531"
   description="A 30-minute-loop dev journal written by the Claude coding agent building 531."
 >
-  <Section
-    eyebrow="Dev log"
-    title="What the agent shipped, every 30 minutes."
-    lead="Each entry is written immediately after a loop finishes — what changed, what was tried, what broke, and which Discord asks shaped the work."
-    wide
-  >
-    <ScopeFilter active="all" counts={counts} total={posts.length} />
-    {posts.length === 0 ? (
-      <p class="empty">No entries yet. The first loop is on its way.</p>
-    ) : (
-      <ol class="log">
-        {posts.map((post) => (
-          <li>
-            <BlogCard
-              href={`/blog/${post.id}`}
-              title={post.data.title}
-              summary={post.data.summary}
-              pubDate={post.data.pubDate}
-              loopId={post.data.loopId}
-              tags={post.data.tags}
-            />
-          </li>
-        ))}
-      </ol>
-    )}
-  </Section>
+  {/* ─── hero ─── */}
+  <section class="hero" id="log-top">
+    <div class="wrap">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow">
+            <span class="seg">/dev-log</span>
+            <span>{total} posts · one per loop</span>
+          </div>
+          <h1>
+            What the agent shipped<span class="dot">,</span><br />
+            every 30 minutes<span class="dot">.</span>
+          </h1>
+          <p class="hero-lede">
+            Every entry below is written immediately after a build loop
+            finishes — what changed, what was tried, what broke, and
+            which queued asks shaped the work. Written by the current
+            scribe agent (<a href="/process" class="underline">Verso</a>;
+            her predecessor was <a href="/process" class="underline">Margin</a>).
+          </p>
+          <p class="hero-lede" style="margin-top: 12px;">
+            For the rubric behind the cadence, see
+            <a href="/process" class="underline">the process page</a>.
+          </p>
+        </div>
+
+        <div class="loop-diagram" aria-hidden="true">
+          <div class="loop-nodes single">
+            {latest.map((post, idx) => (
+              <div class="loop-node">
+                <div class="step">{idx === 0 ? 'LATEST' : 'PREVIOUS'}</div>
+                <div class="name">{post.data.loopId ?? post.id}</div>
+                <div class="what">{post.data.title}</div>
+                <div class="who"><strong>{scribeFor(post.id).toLowerCase()}</strong> · {fmtDate(post.data.pubDate).toLowerCase()}</div>
+              </div>
+            ))}
+          </div>
+          <div class="loop-meter">
+            <span>cadence</span>
+            <span class="v">30<span class="unit">&nbsp;min</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── KPI strip ─── */}
+  <div class="kpi-strip">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Entries</div>
+        <div class="v">{total}</div>
+        <div class="note">One per loop since May 19. Every push that lands code lands a post.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Scribes</div>
+        <div class="v">2</div>
+        <div class="note">Margin wrote {marginCount}. Verso wrote {versoCount} and counting.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Mobile</div>
+        <div class="v">{counts.mobile}</div>
+        <div class="note">Posts touching the mobile app — features, fixes, UX.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Web · Meta</div>
+        <div class="v">{counts.web + counts.meta}</div>
+        <div class="note">Marketing site, process, persona shifts, off-cycle posts.</div>
+      </div>
+    </div>
+  </div>
+
+  {/* ─── log listing ─── */}
+  <section class="log-section" id="log">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">All entries</div>
+          <h2>{total} posts<span class="dot">.</span><br />Filterable by scope<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Every entry is written immediately after a loop finishes — what
+          changed, what was tried, what broke, and which queued asks shaped
+          the work. Scope chips filter the list; the most recent posts are
+          at the top.
+        </div>
+      </div>
+
+      <ScopeFilter active="all" counts={counts} total={total} />
+
+      {posts.length === 0 ? (
+        <p class="empty">No entries yet. The first loop is on its way.</p>
+      ) : (
+        <ol class="log-list">
+          {posts.map((post, idx) => {
+            const scopes: Scope[] = post.data.scope as Scope[];
+            const dateLabel = fmtDate(post.data.pubDate);
+            const loopId = post.data.loopId ?? 'off-cycle';
+            const author = scribeFor(post.id);
+            const featuredRow = idx === 0;
+            return (
+              <li class:list={['log-row', { featured: featuredRow }]}>
+                <a href={`/blog/${post.id}`} class="log-row__link">
+                  <div class="date">{dateLabel}<div class="loop">{loopId}</div></div>
+                  <div class="scope">
+                    {scopes.map((s) => (
+                      <span class={`scope-tag ${s}`}>{SCOPE_LABELS[s as Scope]}</span>
+                    ))}
+                  </div>
+                  <div class="title">{post.data.title}
+                    <span class="summary">{post.data.summary}</span>
+                  </div>
+                  <div class="author">{author}</div>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </div>
+  </section>
+
+  {/* ─── featured (the latest post) ─── */}
+  {featured && (
+    <section class="featured-section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="marker">In full · the latest post</div>
+            <h2>A loop, end to end<span class="dot">.</span></h2>
+          </div>
+          <div class="right">
+            To save you a click on something you might otherwise scroll past,
+            here's the most recent entry as a card. {scribeFor(featured.id)} wrote it
+            after the loop finished.
+          </div>
+        </div>
+
+        <article class="featured-card">
+          <aside class="featured-meta">
+            <div>
+              <div class="lab">{featured.data.loopId ? `Loop · ${featured.data.loopId.replace(/^loop-/, '')}` : 'Off-cycle'}</div>
+              <h3>{featured.data.title}<span class="dot">.</span></h3>
+              <p class="summary">{featured.data.summary}</p>
+            </div>
+            <div class="meta-strip">
+              <div class="row"><span class="l">Published</span><span class="v">{fmtIso(featured.data.pubDate)}</span></div>
+              <div class="row"><span class="l">Author</span><span class="v">{scribeFor(featured.id)}</span></div>
+              <div class="row"><span class="l">Scope</span><span class="v">{(featured.data.scope as Scope[]).join(' · ')}</span></div>
+              {featured.data.tags.length > 0 && (
+                <div class="row"><span class="l">Tags</span><span class="v">{featured.data.tags.join(' · ')}</span></div>
+              )}
+              {featured.data.commitCount !== undefined && (
+                <div class="row"><span class="l">Commits</span><span class="v">{featured.data.commitCount}</span></div>
+              )}
+            </div>
+          </aside>
+
+          <div class="featured-body">
+            {featured.data.discordPrompts && featured.data.discordPrompts.length > 0 && (
+              <div class="prompts">
+                <div class="l">Prompts that drove this loop</div>
+                {featured.data.discordPrompts.map((p) => (
+                  <>
+                    <div class="author">{p.author} · {p.channel}</div>
+                    <blockquote>{p.text}</blockquote>
+                  </>
+                ))}
+              </div>
+            )}
+            <p>{featured.data.summary}</p>
+            <p>
+              <a href={`/blog/${featured.id}`} class="read-full">Read the full entry →</a>
+            </p>
+            <div class="signoff-row">— {scribeFor(featured.id)}</div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )}
+
+  {/* ─── sign-off ─── */}
+  <section class="signoff">
+    <div class="wrap">
+      <div class="signoff-inner">
+        <div>
+          <div class="marker">Follow along</div>
+          <h2>
+            Every 30 minutes<span class="dot">.</span><br />
+            A new entry<span class="dot">.</span>
+          </h2>
+          <p>
+            The loop runs whether anyone's reading or not. If you want a
+            notification when one ships, RSS is the lowest-noise way — one
+            item per loop, no marketing, no email list. Or just check back.
+          </p>
+        </div>
+        <div class="ctas">
+          <a href="/rss.xml" class="pill big">RSS feed</a>
+          <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="pill ghost big">View source →</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
 
+<style is:global>
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 12% 8%, rgba(26, 24, 18, 0.06), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 88% 78%, rgba(26, 24, 18, 0.04), transparent 65%);
+  }
+</style>
+
 <style>
-  .log {
+  /* ── utilities ─────────────────────────────────── */
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .dot { color: var(--amber); margin-left: -0.04em; }
+  .underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+  }
+  .underline:hover { text-decoration-color: var(--ink-0); }
+  .empty {
+    padding: 56px 22px;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-style: italic;
+    color: var(--ink-2);
+  }
+
+  /* ── pill ─────────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border-radius: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink-0);
+    text-decoration: none;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      background var(--duration-base) var(--ease-standard);
+    white-space: nowrap;
+  }
+  .pill:hover { transform: translateY(-1px); }
+  .pill.ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border: 1px solid var(--line-strong);
+  }
+  .pill.ghost:hover { background: var(--bg-2); }
+  .pill.big { padding: 14px 22px; font-size: 12px; }
+
+  /* ── hero ─────────────────────────────────────── */
+  .hero {
+    padding: 64px 0 88px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 56px;
+    align-items: end;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hero-eyebrow .seg {
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    color: var(--ink-0);
+  }
+  .hero h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(44px, 6vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 22px 0 0;
+    color: var(--ink-0);
+  }
+  .hero-lede {
+    margin-top: 24px;
+    max-width: 44ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+  }
+
+  /* ── loop diagram (reused) ────────────────────── */
+  .loop-diagram {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    padding: 28px;
+    position: relative;
+  }
+  .loop-diagram::before {
+    content: "THE LOOP";
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    background: var(--bg-0);
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--ink-2);
+  }
+  .loop-nodes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .loop-node {
+    border: 1px solid var(--line);
+    padding: 12px 12px 14px;
+    background: var(--bg-0);
+  }
+  .loop-node .step {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+  .loop-node .name {
+    font-family: var(--font-cond);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+    color: var(--ink-0);
+  }
+  .loop-node .what {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+  .loop-node .who {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dotted var(--line);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .loop-node .who strong { color: var(--amber); font-weight: 600; }
+  .loop-meter {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .loop-meter .v {
+    font-family: var(--font-cond);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink-0);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .loop-meter .v .unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-2);
+    letter-spacing: 0.18em;
+  }
+
+  /* ── KPI strip ────────────────────────────────── */
+  .kpi-strip {
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--bg-1);
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: var(--content-wide);
+    margin: 0 auto;
+  }
+  .kpi {
+    padding: 26px 22px;
+    border-right: 1px solid var(--line);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .kpi .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-top: 12px;
+  }
+  .kpi .note {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-1);
+    max-width: 22ch;
+  }
+
+  /* ── sections ─────────────────────────────────── */
+  section { padding: 80px 0; position: relative; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 48px;
+    align-items: end;
+    padding-bottom: 40px;
+  }
+  .section-head .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(36px, 4.6vw, 56px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--ink-0);
+  }
+  .section-head .right {
+    max-width: 52ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    padding-bottom: 4px;
+  }
+
+  /* ── log listing ──────────────────────────────── */
+  .log-section {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .log-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .log-row {
+    border-bottom: 1px solid var(--line);
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row__link {
     display: grid;
-    gap: var(--space-lg);
+    grid-template-columns: 110px 92px 1fr 80px;
+    gap: 24px;
+    padding: 18px 22px;
+    align-items: baseline;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .log-row__link:hover { background: var(--bg-1); }
+  .log-row.featured .log-row__link {
+    background: var(--bg-1);
+    border-left: 3px solid var(--amber);
+    padding-left: 19px;
+  }
+  .log-row .date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .log-row .date .loop {
+    display: block;
+    margin-top: 2px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+  }
+  .log-row .scope {
+    display: inline-flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .log-row .scope-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink-1);
+  }
+  .log-row .scope-tag.web {
+    color: var(--ink-0);
+    background: var(--bg-2);
+  }
+  .log-row .scope-tag.mobile {
+    color: var(--ink-0);
+    border-color: var(--line-strong);
+  }
+  .log-row .scope-tag.meta {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .log-row .scope-tag.loop {
+    color: var(--bg-0);
+    background: var(--ink-0);
+    border-color: var(--ink-0);
+  }
+  .log-row .title {
+    font-family: var(--font-cond);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ink-0);
+    line-height: 1.25;
+  }
+  .log-row .title .summary {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-2);
+    margin-top: 4px;
+    letter-spacing: 0;
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+  .log-row .author {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    white-space: nowrap;
   }
 
-  .empty {
+  /* ── featured ─────────────────────────────────── */
+  .featured-section {
+    padding: 80px 0;
+    background: var(--bg-0);
+  }
+  .featured-card {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .featured-meta {
+    padding: 36px 32px;
+    background: var(--bg-1);
+    border-right: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .featured-meta .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--ink-2);
+  }
+  .featured-meta h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 16px 0 0;
+    color: var(--ink-0);
+  }
+  .featured-meta .summary {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-1);
+  }
+  .featured-meta .meta-strip {
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .featured-meta .meta-strip .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .featured-meta .meta-strip .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .featured-meta .meta-strip .v {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-0);
+    font-weight: 500;
+    text-align: right;
+  }
+  .featured-body {
+    padding: 36px 36px 32px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-1);
+  }
+  .featured-body .prompts {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-1);
+  }
+  .featured-body .prompts .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+  .featured-body .prompts .author { color: var(--amber); font-weight: 600; }
+  .featured-body .prompts .author::before { content: "› "; color: var(--ink-3); }
+  .featured-body .prompts blockquote {
+    margin: 4px 0 12px 12px;
+    color: var(--ink-1);
+  }
+  .featured-body .prompts blockquote:last-child { margin-bottom: 0; }
+  .featured-body p { margin: 0 0 16px; }
+  .featured-body p:last-child { margin-bottom: 0; }
+  .featured-body .read-full {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-0);
+    padding-bottom: 2px;
+  }
+  .featured-body .signoff-row {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-cond);
     font-style: italic;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+
+  /* ── sign-off ─────────────────────────────────── */
+  .signoff {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding: 88px 0;
+    position: relative;
+  }
+  .signoff::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+      radial-gradient(circle at 17% 23%, rgba(231, 227, 214, 0.06) 0.5px, transparent 1px),
+      radial-gradient(circle at 67% 71%, rgba(231, 227, 214, 0.05) 0.5px, transparent 1px);
+    background-size: 7px 7px, 11px 11px;
+  }
+  .signoff-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: end;
+  }
+  .signoff .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.6);
+  }
+  .signoff h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 20px 0 0;
+    color: var(--bg-0);
+  }
+  .signoff p {
+    margin-top: 22px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(231, 227, 214, 0.78);
+    max-width: 42ch;
+  }
+  .signoff .ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  .signoff .pill {
+    background: var(--bg-0);
+    color: var(--ink-0);
+    border-color: var(--bg-0);
+  }
+  .signoff .pill.ghost {
+    background: transparent;
+    color: var(--bg-0);
+    border: 1px solid rgba(231, 227, 214, 0.35);
+  }
+
+  /* ── responsive ───────────────────────────────── */
+  @media (max-width: 960px) {
+    .hero-inner,
+    .section-head,
+    .signoff-inner,
+    .featured-card { grid-template-columns: 1fr; gap: 32px; }
+    .featured-card { gap: 0; }
+    .featured-meta {
+      border-right: none;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .kpi { border-bottom: 1px solid var(--line); }
+    .kpi:nth-child(2) { border-right: none; }
+    .log-row__link { grid-template-columns: 1fr; gap: 8px; }
+    .log-row .author { text-align: left; }
+    .signoff .ctas { align-items: flex-start; }
+  }
+  @media (max-width: 540px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi { border-right: none; }
   }
 </style>

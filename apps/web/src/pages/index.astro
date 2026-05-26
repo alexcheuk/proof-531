@@ -1,492 +1,3594 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import Section from '~/components/Section.astro';
-import BlogCard from '~/components/BlogCard.astro';
-import HeroPhone from '~/components/illustrations/HeroPhone.astro';
-import MastheadStrip from '~/components/illustrations/MastheadStrip.astro';
-import PlateBar from '~/components/illustrations/PlateBar.astro';
-import SessionTape from '~/components/illustrations/SessionTape.astro';
-import AmrapMath from '~/components/illustrations/AmrapMath.astro';
-import WeekLedger from '~/components/illustrations/WeekLedger.astro';
+import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
 import { sortPostsNewestFirst } from '~/lib/posts';
 
 const posts = sortPostsNewestFirst(
   await getCollection('blog', ({ data }) => !data.draft),
-).slice(0, 3);
+);
+const postCount = posts.length;
 ---
 
 <Base
-  title="531 — A 5/3/1 + BBB training app for serious lifters"
-  description="A focused 5/3/1 + Boring But Big tracker for iOS and Android. Offline, on-device, free. The dev log is public."
+  title="531 Strength — a 5/3/1 + BBB tracker I built for myself"
+  description="A clean, local-first 5/3/1 + Boring But Big training journal for iOS and Android. Free. Open source. Made because I wanted something nice to log my own lifts."
 >
-  {/* ──────────────────────────────────────────────────────────────
-       HERO — editorial typography poster + tipped-in record card.
-       Replaces the previous left-copy/right-phone split.
-       ────────────────────────────────────────────────────────── */}
+  {/* ─── hero ─── */}
   <section class="hero">
-    <div class="hero__inner">
-      <div class="hero__copy">
-        <span class="eyebrow">5/3/1 + BBB · iOS · Android · free</span>
-        <h1 class="hero__title">
-          Train the program<span class="hero__dot">.</span><br />
-          Skip the spreadsheet<span class="hero__dot">.</span>
-        </h1>
-        <p class="hero__lead">
-          531 owns the math of Jim Wendler's 5/3/1 — warmups, working sets,
-          AMRAPs, Boring But Big, training-max bumps — so the only thing
-          left for you is the bar. One screen per phase. No accounts, no
-          cloud, no telemetry.
-        </p>
-        <div class="hero__actions">
-          <a class="btn btn--primary" href="#anatomy">See it →</a>
-          <a class="btn btn--ghost" href="/blog">Read the dev log</a>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow">
+            <span class="seg">v1.0</span>
+            <span>iOS · Android · free · open source</span>
+          </div>
+          <h1>
+            A 5/3/1 tracker<span class="dot">.</span><br />
+            That I built for myself<span class="dot">.</span>
+          </h1>
+          <p class="hero-lede">
+            I'm a developer, not a fitness coach. I run Wendler's 5/3/1 in my
+            own off-brand way and wanted a nicer way to log it than my notes
+            app. So I made one — and put it on the App Store and Play Store
+            in case anyone else wants to try it.
+          </p>
+          <div class="hero-actions">
+            <a href="#get" class="pill big">Download free →</a>
+            <a href="#program" class="pill ghost big">How it works</a>
+          </div>
+          <dl class="hero-ledger">
+            <div><dt>program</dt><dd>5/3/1 + BBB</dd></div>
+            <div><dt>cycle</dt><dd>4 weeks · 16 sessions</dd></div>
+            <div><dt>data</dt><dd>local only</dd></div>
+            <div><dt>price</dt><dd>$0 · no IAP</dd></div>
+          </dl>
         </div>
-        <dl class="hero__ledger">
-          <div><dt>cycle</dt><dd>16 sessions · 3 working sets · 1 AMRAP</dd></div>
-          <div><dt>bbb</dt><dd>5×10 supplemental, built in</dd></div>
-          <div><dt>data</dt><dd>stays on your phone</dd></div>
-          <div><dt>tracking</dt><dd>none</dd></div>
-        </dl>
-      </div>
 
-      <div class="hero__phone">
-        <HeroPhone />
+        <div class="hero-right">
+          <div class="phone" aria-hidden="true">
+            <div class="phone-screen">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span class="mono">9:41</span>
+                <span class="icons">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" /><rect x="4" y="4" width="2" height="6" /><rect x="8" y="2" width="2" height="8" /><rect x="12" y="0" width="2" height="10" /></svg>
+                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 8.5v.01M3.5 6c.97-.97 2.21-1.5 3.5-1.5s2.53.53 3.5 1.5M1 3.5C2.66 1.84 4.86 1 7 1s4.34.84 6 2.5" /></svg>
+                  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0.5" y="0.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" /><rect x="2" y="2" width="15" height="6" rx="1" /><rect x="19.5" y="3" width="1.5" height="4" rx="0.5" /></svg>
+                </span>
+              </div>
+
+              <div class="scr scr-home">
+                {/* Masthead — `531.` + LEDGER caps, date right */}
+                <div class="scr-masthead">
+                  <div class="phone-wordmark">
+                    <span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span>
+                  </div>
+                  <div class="date">TUE · MAY 19</div>
+                </div>
+
+                {/* LiftTabs — caps mono with ink underline on the active tab */}
+                <div class="scr-lift-tabs">
+                  <div class="lift-tab active">SQUAT</div>
+                  <div class="lift-tab">BENCH</div>
+                  <div class="lift-tab">DEAD</div>
+                </div>
+
+                <div class="scr-body">
+                  <div class="lift-eyebrow">CYCLE 03 · DAY 2</div>
+                  <div class="lift-title">Squat<span class="dot">.</span></div>
+
+                  {/* TopSetBlock mini */}
+                  <div class="topset-block">
+                    <div class="topset-head">
+                      <span class="caps">TOP SET</span>
+                      <span class="caps" style="color: var(--ink-3); letter-spacing: 0.18em;">90% TM · TM 275 LB</span>
+                    </div>
+                    <div class="topset-row">
+                      <span class="topset-weight">250</span>
+                      <span class="topset-unit">LB</span>
+                      <span class="topset-reps">× 3+</span>
+                    </div>
+                    <div class="topset-plate">
+                      <PhonePlateBar weight={250} unit="lb" size="mini" />
+                    </div>
+                  </div>
+
+                  {/* CycleStrip — D1/D2/D3/D4 with active inverted */}
+                  <div class="cycle-strip-label">THIS CYCLE</div>
+                  <div class="cycle-strip">
+                    <div class="cyc-cell done"><div class="w">D1</div><div class="scheme">5·5·5+</div><span class="check">✓</span></div>
+                    <div class="cyc-cell active"><div class="w">D2</div><div class="scheme">3·3·3+</div></div>
+                    <div class="cyc-cell"><div class="w">D3</div><div class="scheme">5·3·1+</div></div>
+                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">DELOAD</div></div>
+                  </div>
+
+                  {/* LiftStats — TM / BEST e1RM / CYCLE */}
+                  <div class="stat-grid">
+                    <div class="stat-cell"><div class="l">TM</div><div class="v">275 <span class="vu">LB</span></div></div>
+                    <div class="stat-cell"><div class="l">BEST e1RM</div><div class="v">310</div></div>
+                    <div class="stat-cell"><div class="l">CYCLE</div><div class="v">3</div><div class="vsub">ROLLING</div></div>
+                  </div>
+
+                  <div class="see-progress">SEE PROGRESS →</div>
+                </div>
+
+                {/* Primary CTA pill */}
+                <div class="cta-pill">
+                  <span>BEGIN SESSION</span>
+                  <span>→</span>
+                </div>
+
+                {/* Bottom tab bar — TODAY / PROGRESS / HISTORY / YOU */}
+                <div class="phone-tabs">
+                  <div class="phone-tab active">TODAY</div>
+                  <div class="phone-tab">PROGRESS</div>
+                  <div class="phone-tab">HISTORY</div>
+                  <div class="phone-tab">YOU</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <MastheadStrip />
+  {/* ─── KPI strip ─── */}
+  <div class="kpi-strip">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Platforms</div>
+        <div class="v">iOS<span class="unit">+ Android</span></div>
+        <div class="note">One React Native codebase. Shipped from a single repo.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Storage</div>
+        <div class="v">100<span class="unit">% local</span></div>
+        <div class="note">SQLite in the app sandbox. No accounts, no cloud, no sync.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Telemetry</div>
+        <div class="v">0<span class="unit">events</span></div>
+        <div class="note">No analytics, no crash reporter, no ad SDKs. Promise.</div>
+      </div>
+      <div class="kpi">
+        <div class="l">Price</div>
+        <div class="v">$0<span class="unit">free</span></div>
+        <div class="note">Open source. No paywall. No "pro" tier. No subscription.</div>
+      </div>
+    </div>
+  </div>
 
-  {/* ──────────────────────────────────────────────────────────────
-       PLATE LOADER — page-native illustration of the bar viz.
-       The headline feature: the app shows you exactly which plates
-       go on, heaviest first, per side.
-       ────────────────────────────────────────────────────────── */}
-  <section class="loader" id="plates">
-    <div class="loader__inner">
-      <header class="loader__head">
-        <span class="eyebrow">Plate loader · auto</span>
-        <h2 class="loader__title">
-          The plates work themselves out<span class="hero__dot">.</span>
-        </h2>
-        <p class="loader__lead">
-          Given a target weight and your gym's plate set, 531 shows the
-          exact stack — heaviest first, closest to the bar. The same
-          visualization the app paints on the rest screen, so you load
-          the next set with your phone on the floor and your eyes on
-          the rack.
-        </p>
-      </header>
+  {/* ─── program ─── */}
+  <section id="program" class="program">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">01 · The program</div>
+          <h2>How a cycle<br />actually goes<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Wendler's 5/3/1 is three working sets off a "training max" — a number
+          slightly lower than your real 1RM. The last set is an AMRAP. Every four
+          weeks the TM bumps. That's basically it. The app does the math; I just
+          wanted a nicer way to see it.
+        </div>
+      </div>
 
-      <div class="loader__primary">
-        <PlateBar
-          weight={345}
-          perSide={[45, 45, 45, 10, 5]}
-          label="ON THE BAR · 95% TM"
-          size="lg"
-        />
+      <div class="ledger-table">
+        <div class="ledger-row head">
+          <div class="ledger-cell">Week</div>
+          <div class="ledger-cell">Set 1</div>
+          <div class="ledger-cell">Set 2</div>
+          <div class="ledger-cell">Set 3</div>
+          <div class="ledger-cell">Scheme</div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-cell"><div class="week-num"><span class="w">Week</span>01</div></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">65%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">75%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">85%</span> <span class="x">×</span> 5<span class="amrap">AMRAP</span></span></div>
+          <div class="ledger-cell"><span class="scheme-tag">5·5·5+</span></div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-cell"><div class="week-num"><span class="w">Week</span>02</div></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">70%</span> <span class="x">×</span> 3</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">80%</span> <span class="x">×</span> 3</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">90%</span> <span class="x">×</span> 3<span class="amrap">AMRAP</span></span></div>
+          <div class="ledger-cell"><span class="scheme-tag">3·3·3+</span></div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-cell"><div class="week-num"><span class="w">Week</span>03</div></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">75%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">85%</span> <span class="x">×</span> 3</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">95%</span> <span class="x">×</span> 1<span class="amrap">AMRAP</span></span></div>
+          <div class="ledger-cell"><span class="scheme-tag">5·3·1+</span></div>
+        </div>
+        <div class="ledger-row deload">
+          <div class="ledger-cell"><div class="week-num"><span class="w">Week</span>04</div></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">40%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">50%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">60%</span> <span class="x">×</span> 5</span></div>
+          <div class="ledger-cell"><span class="scheme-tag">Deload</span></div>
+        </div>
+      </div>
+
+      <div class="progression goal-calc" data-goal-calc>
+        <div class="prog-left">
+          <div class="caps">For this lift</div>
+          <div class="prog-numbers single">
+            <div class="prog-num">
+              <div class="amount">
+                +<span data-bump-lb>10</span><span class="unit">lb</span>
+              </div>
+              <div class="label" data-bump-label>per cycle</div>
+              <div class="kg">or +<span data-bump-kg>5</span> kg</div>
+            </div>
+          </div>
+          <p class="prog-note">
+            A cycle is 4 sessions of this lift — not 4 calendar weeks. Each
+            lift runs its own cycle, so you set your own pace.
+          </p>
+        </div>
+
+        <div class="prog-right calc-card">
+          <div class="caps">Run your numbers</div>
+
+          {/* Lift picker */}
+          <div class="calc-lifts" role="tablist" aria-label="Lift">
+            <button type="button" class="calc-lift active" data-lift="squat" role="tab" aria-selected="true">Squat</button>
+            <button type="button" class="calc-lift" data-lift="bench" role="tab" aria-selected="false">Bench</button>
+            <button type="button" class="calc-lift" data-lift="deadlift" role="tab" aria-selected="false">Dead</button>
+            <button type="button" class="calc-lift" data-lift="press" role="tab" aria-selected="false">Press</button>
+          </div>
+
+          {/* Kind toggle */}
+          <div class="calc-kinds" role="tablist" aria-label="Goal kind">
+            <button type="button" class="calc-kind active" data-kind="tm" role="tab" aria-selected="true">Goal · Training max</button>
+            <button type="button" class="calc-kind" data-kind="1rm" role="tab" aria-selected="false">Goal · One-rep max</button>
+          </div>
+
+          {/* Current value */}
+          <div class="calc-row">
+            <div class="calc-row-l">
+              <div class="caps">Current</div>
+              <div class="calc-sub" data-current-sub>training max</div>
+            </div>
+            <div class="calc-stepper">
+              <button type="button" class="step-btn" data-step="current-dec" aria-label="Decrease current">−</button>
+              <div class="calc-val">
+                <span data-current>225</span><span class="vu">lb</span>
+              </div>
+              <button type="button" class="step-btn" data-step="current-inc" aria-label="Increase current">+</button>
+            </div>
+          </div>
+
+          {/* Goal value */}
+          <div class="calc-row">
+            <div class="calc-row-l">
+              <div class="caps">Goal</div>
+              <div class="calc-sub" data-goal-sub>training max</div>
+            </div>
+            <div class="calc-stepper">
+              <button type="button" class="step-btn" data-step="goal-dec" aria-label="Decrease goal">−</button>
+              <div class="calc-val big">
+                <span data-goal>315</span><span class="vu">lb</span>
+              </div>
+              <button type="button" class="step-btn" data-step="goal-inc" aria-label="Increase goal">+</button>
+            </div>
+          </div>
+
+          {/* Days per week */}
+          <div class="calc-row">
+            <div class="calc-row-l">
+              <div class="caps">Est. work days / week</div>
+              <div class="calc-sub">for this lift</div>
+            </div>
+            <div class="calc-stepper small">
+              <button type="button" class="step-btn small" data-step="dpw-dec" aria-label="Decrease days per week">−</button>
+              <div class="calc-val small"><span data-dpw>3</span></div>
+              <button type="button" class="step-btn small" data-step="dpw-inc" aria-label="Increase days per week">+</button>
+            </div>
+          </div>
+
+          {/* Outcome */}
+          <div class="calc-outcome" aria-live="polite">
+            <div class="o-l" data-outcome-primary>~16 work days away</div>
+            <div class="o-r" data-outcome-secondary>≈ 4 mo at 3/wk</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="program-footer">
+        <div class="item">
+          <div class="l">BBB volume</div>
+          <div class="body"><strong>5 × 10 @ 50% TM</strong> of the main lift. Optional — turn it off if you don't want it.</div>
+        </div>
+        <div class="item">
+          <div class="l">Assistance</div>
+          <div class="body">Whatever you want, or nothing. Free-form notes field per session — no enforced library.</div>
+        </div>
       </div>
     </div>
   </section>
 
-  {/* ──────────────────────────────────────────────────────────────
-       ANATOMY — five-frame storyboard, no phone frames.
-       ────────────────────────────────────────────────────────── */}
-  <Section
-    eyebrow="Anatomy of a session"
-    title="One screen per phase. Five phases, end to end."
-    wide
-    divider
-  >
-    <div id="anatomy" class="anatomy-wrap">
-      <SessionTape />
+  {/* ─── disclaimer ─── */}
+  <div class="disclaimer">
+    <div class="wrap">
+      <div class="disclaimer-box">
+        <div class="lab">Friendly note</div>
+        <div>
+          <p>
+            I'm not affiliated with Jim Wendler and this isn't an officially
+            sanctioned 5/3/1 anything — I just like the program and wanted a
+            clean place to log it. If you're serious about the method, please
+            read <em>5/3/1: The Simplest and Most Effective Training System</em>
+            first. The book is the source of truth.
+          </p>
+          <p>
+            I also took a few liberties — the assistance section is freeform,
+            warm-ups are optional, you can skip BBB. If you're a purist, that
+            might bother you. Sorry.
+          </p>
+        </div>
+      </div>
     </div>
-  </Section>
+  </div>
 
-  {/* ──────────────────────────────────────────────────────────────
-       AMRAP MATH — Epley formula laid out + recent-PR tape.
-       ────────────────────────────────────────────────────────── */}
-  <Section
-    eyebrow="AMRAP · estimated 1RM"
-    title="The math you'd do on the back of a notebook."
-    wide
-    divider
-  >
-    <p class="amrap-lead">
-      The AMRAP rep on the last working set is the whole point of 5/3/1.
-      531 logs it rep-by-rep, runs Epley on it, and shows you whether it
-      cleared your previous best. No spreadsheet. No "PR detection" toggle.
-    </p>
-    <AmrapMath />
-  </Section>
+  {/* ─── pullquote ─── */}
+  <div class="pullquote-section">
+    <div class="pullquote">
+      <div class="qmark">"</div>
+      <blockquote>
+        I wanted a screen that<br />
+        looks like the notebook<span class="neutral"> I was already using.</span>
+      </blockquote>
+      <div class="attribution">why · this · exists</div>
+    </div>
+  </div>
 
-  {/* ──────────────────────────────────────────────────────────────
-       WEEK LEDGER — coach's tear-off sheet view.
-       ────────────────────────────────────────────────────────── */}
-  <Section
-    eyebrow="The cycle"
-    title="Four weeks. Four lifts. Sixteen sessions."
-    wide
-    divider
-  >
-    <p class="week-lead">
-      Every cycle is the same shape — 5s, 3s, 5/3/1+, then deload. After
-      week 3, training maxes bump (+5 lb upper / +10 lb lower, or
-      +2.5 / +5 kg) and the cycle restarts. 531 advances the calendar
-      for you.
-    </p>
-    <WeekLedger />
-  </Section>
+  {/* ─── plate calc ─── */}
+  <section id="plate" class="plate-section compact">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">02 · The plate math</div>
+          <h2>Which plates,<br />which side<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Given a target weight and the plates you own, the app fills heaviest
+          first. Each plate is drawn to its real-life diameter so you can
+          eyeball-confirm the load. Imperial or metric, your bar weight, your
+          plate set — set it once.
+        </div>
+      </div>
 
-  {/* ──────────────────────────────────────────────────────────────
-       SPEC — kept, but tightened into a 3-col stat grid.
-       ────────────────────────────────────────────────────────── */}
-  <Section eyebrow="The promise" title="Built for the lift, not the app store." wide divider>
-    <dl class="specs">
-      <div>
-        <dt>Program</dt>
-        <dd>5/3/1 with BBB assistance. Cycles, weeks, deload. AMRAPs estimated via Epley.</dd>
+      <div class="plate-card">
+        <div class="pc-left">
+          <div>
+            <div class="caps">Target weight</div>
+            <h3>250 <span class="pc-unit">lbs</span></h3>
+          </div>
+          <p class="pc-body">
+            A 45-lb bar plus 2× 45, a 10, and a 2.5 per side. The greedy
+            "heaviest first" decomposition the app actually computes — same
+            order, same plates, same caption format you see between sets.
+          </p>
+          <div class="pc-readout">
+            <div class="item">
+              <div class="l">Per side</div>
+              <div class="v">102.5<span class="unit"> lbs</span></div>
+            </div>
+            <div class="item">
+              <div class="l">Bar</div>
+              <div class="v">45<span class="unit"> lbs</span></div>
+            </div>
+            <div class="item">
+              <div class="l">Plates</div>
+              <div class="v">4<span class="unit"> ea</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="pc-right">
+          <PhonePlateBar weight={250} unit="lb" size="hero" withCaption />
+        </div>
       </div>
-      <div>
-        <dt>Storage</dt>
-        <dd>Stays on your phone. No accounts, no sync, no cloud.</dd>
-      </div>
-      <div>
-        <dt>Tracking</dt>
-        <dd>None. No analytics, no crash reporter, no telemetry.</dd>
-      </div>
-      <div>
-        <dt>Aesthetic</dt>
-        <dd>E-ink paper. One amber accent. Built to read at a glance.</dd>
-      </div>
-      <div>
-        <dt>Price</dt>
-        <dd>Free. Open source. No subscription, no in-app purchase.</dd>
-      </div>
-      <div>
-        <dt>Cadence</dt>
-        <dd>Shipped over-the-air every iteration of the dev loop.</dd>
-      </div>
-    </dl>
-    <p class="cta-row">
-      <a class="btn btn--primary" href="/process">How it's built →</a>
-    </p>
-  </Section>
+    </div>
+  </section>
 
-  {posts.length > 0 && (
-    <Section eyebrow="From the dev log" title="What shipped recently." wide divider>
-      <div class="blog-teaser">
-        {posts.map((post) => (
-          <BlogCard
-            href={`/blog/${post.id}`}
-            title={post.data.title}
-            summary={post.data.summary}
-            pubDate={post.data.pubDate}
-            loopId={post.data.loopId}
-            tags={post.data.tags}
-          />
-        ))}
+  {/* ─── matrix ─── */}
+  <section class="matrix-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">03 · The long view</div>
+          <h2>Cycles<br />stacked<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Every top set you've logged, in order. The training max climbs in the
+          last column. I find this view more useful than any chart — you can see
+          what you actually did, week over week.
+        </div>
       </div>
-      <p class="more">
-        <a href="/blog">All entries →</a>
-        <span class="more__sep" aria-hidden="true">·</span>
-        <a href="/rss.xml">Subscribe via RSS</a>
-      </p>
-    </Section>
-  )}
+
+      <div class="matrix-wrap">
+        <div class="matrix">
+          <div class="matrix-head">
+            <div>Cycle</div>
+            <div>W1<span class="sub">5·5·5+</span></div>
+            <div>W2<span class="sub">3·3·3+</span></div>
+            <div>W3<span class="sub">5·3·1+</span></div>
+            <div>W4<span class="sub">Deload</span></div>
+            <div>TM<span class="sub">→ Next</span></div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell label">C01</div>
+            <div class="matrix-cell filled">215<span class="reps">× 7</span></div>
+            <div class="matrix-cell filled">230<span class="reps">× 4</span></div>
+            <div class="matrix-cell filled">240<span class="reps">× 2</span></div>
+            <div class="matrix-cell filled">155<span class="reps">× 5</span></div>
+            <div class="matrix-cell tm">255<span class="unit">lbs</span></div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell label">C02</div>
+            <div class="matrix-cell filled">225<span class="reps">× 8</span></div>
+            <div class="matrix-cell filled">240<span class="reps">× 5</span></div>
+            <div class="matrix-cell filled">250<span class="reps">× 3</span></div>
+            <div class="matrix-cell filled">160<span class="reps">× 5</span></div>
+            <div class="matrix-cell tm">265<span class="unit">lbs</span></div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell label">C03</div>
+            <div class="matrix-cell filled">235<span class="reps">× 6</span></div>
+            <div class="matrix-cell filled">250<span class="reps">× 3</span></div>
+            <div class="matrix-cell">260<span class="reps">—</span></div>
+            <div class="matrix-cell">165<span class="reps">—</span></div>
+            <div class="matrix-cell tm">275<span class="unit">lbs</span></div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell label">C04</div>
+            <div class="matrix-cell">245<span class="reps">—</span></div>
+            <div class="matrix-cell">260<span class="reps">—</span></div>
+            <div class="matrix-cell">270<span class="reps">—</span></div>
+            <div class="matrix-cell">170<span class="reps">—</span></div>
+            <div class="matrix-cell tm">285<span class="unit">lbs</span></div>
+          </div>
+        </div>
+
+        <div class="matrix-side">
+          <div class="row"><span class="l">Training max</span><span class="v">275<span class="unit"> lbs</span></span></div>
+          <div class="row"><span class="l">Best e1RM</span><span class="v">310<span class="unit"> lbs</span></span></div>
+          <div class="row"><span class="l">Cycle</span><span class="v">03 <span class="unit">rolling</span></span></div>
+          <div class="row"><span class="l">Sessions filed</span><span class="v">32</span></div>
+          <p>
+            The number that matters is whichever number you decide matters.
+            I mostly look at <strong>e1RM</strong>, which the app estimates
+            from your AMRAP using Epley. Your mileage may vary.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── screens rail ─── */}
+  <section id="screens" class="screens-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">04 · The product</div>
+          <h2>The screens<br />themselves<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Three core screens per workout. Pick a lift, lift, log. The rail is
+          scrollable — drag to see iOS and Android side by side.
+        </div>
+      </div>
+    </div>
+
+    <div class="screens-rail-wrap">
+      <div class="screens-rail">
+
+        {/* 01 — Home (Bench page) */}
+        <div class="screen-card">
+          <div class="lab"><span>01 · Home</span><span class="idx">iOS</span></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span class="mono">9:41</span>
+                <span class="icons">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" /><rect x="4" y="4" width="2" height="6" /><rect x="8" y="2" width="2" height="8" /><rect x="12" y="0" width="2" height="10" /></svg>
+                  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0.5" y="0.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" /><rect x="2" y="2" width="15" height="6" rx="1" /></svg>
+                </span>
+              </div>
+              <div class="scr scr-home">
+                <div class="scr-masthead">
+                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
+                  <div class="date">TUE · MAY 19</div>
+                </div>
+                <div class="scr-lift-tabs">
+                  <div class="lift-tab">SQUAT</div>
+                  <div class="lift-tab active">BENCH</div>
+                  <div class="lift-tab">DEAD</div>
+                </div>
+                <div class="scr-body">
+                  <div class="lift-eyebrow">CYCLE 03 · DAY 2</div>
+                  <div class="lift-title">Bench<span class="dot">.</span></div>
+                  <div class="topset-block">
+                    <div class="topset-head">
+                      <span class="caps">TOP SET</span>
+                      <span class="caps" style="color: var(--ink-3); letter-spacing: 0.18em;">90% TM · TM 185 LB</span>
+                    </div>
+                    <div class="topset-row">
+                      <span class="topset-weight">170</span>
+                      <span class="topset-unit">LB</span>
+                      <span class="topset-reps">× 3+</span>
+                    </div>
+                    <div class="topset-plate"><PhonePlateBar weight={170} unit="lb" size="mini" /></div>
+                  </div>
+                  <div class="cycle-strip-label">THIS CYCLE</div>
+                  <div class="cycle-strip">
+                    <div class="cyc-cell done"><div class="w">D1</div><div class="scheme">5·5·5+</div><span class="check">✓</span></div>
+                    <div class="cyc-cell active"><div class="w">D2</div><div class="scheme">3·3·3+</div></div>
+                    <div class="cyc-cell"><div class="w">D3</div><div class="scheme">5·3·1+</div></div>
+                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">DELOAD</div></div>
+                  </div>
+                  <div class="stat-grid">
+                    <div class="stat-cell"><div class="l">TM</div><div class="v">185 <span class="vu">LB</span></div></div>
+                    <div class="stat-cell"><div class="l">BEST e1RM</div><div class="v">215</div></div>
+                    <div class="stat-cell"><div class="l">CYCLE</div><div class="v">3</div><div class="vsub">ROLLING</div></div>
+                  </div>
+                  <div class="see-progress">SEE PROGRESS →</div>
+                </div>
+                <div class="cta-pill"><span>BEGIN SESSION</span><span>→</span></div>
+                <div class="phone-tabs">
+                  <div class="phone-tab active">TODAY</div>
+                  <div class="phone-tab">PROGRESS</div>
+                  <div class="phone-tab">HISTORY</div>
+                  <div class="phone-tab">YOU</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 02 — Live (paper bg, "Squat now.") */}
+        <div class="screen-card">
+          <div class="lab"><span>02 · Live</span><span class="idx">iOS</span></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span class="mono">9:41</span>
+                <span class="icons">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" /><rect x="4" y="4" width="2" height="6" /><rect x="8" y="2" width="2" height="8" /><rect x="12" y="0" width="2" height="10" /></svg>
+                  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0.5" y="0.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" /><rect x="2" y="2" width="15" height="6" rx="1" /></svg>
+                </span>
+              </div>
+              <div class="scr scr-live-v2">
+                {/* SessionTopBar — back chip left */}
+                <div class="session-topbar">
+                  <div class="back-chip">←</div>
+                  <span class="topbar-elapsed">12:34</span>
+                </div>
+                {/* LiveHeader — trimmed: eyebrow + Squat now. + AMRAP chip.
+                    Coaching line dropped for fit; chip alone carries the
+                    "this is the AMRAP set" signal. */}
+                <div class="live-header compact">
+                  <span class="lh-eyebrow lh-eyebrow--final">FINAL SET · 66% DONE</span>
+                  <div class="lh-title">Squat now<span class="dot">.</span></div>
+                  <span class="lh-amrap">AMRAP</span>
+                </div>
+                {/* Divider */}
+                <div class="live-divider"></div>
+                {/* TopSetBlock full — the marketing point of this card.
+                    Plate viz + giant weight + PER SIDE caption all visible. */}
+                <div class="live-topset">
+                  <div class="topset-head">
+                    <span class="caps" style="color: var(--ink-0); letter-spacing: 0.18em;">ON THE BAR · 90% TM</span>
+                  </div>
+                  <div class="topset-row live">
+                    <span class="topset-weight big">250</span>
+                    <span class="topset-unit">LB</span>
+                    <span class="topset-reps big">× 3+</span>
+                  </div>
+                  <div class="topset-plate">
+                    <PhonePlateBar weight={250} unit="lb" size="full" withCaption />
+                  </div>
+                </div>
+                <div style="flex: 1;"></div>
+                {/* Bottom CTA — Log AMRAP */}
+                <div class="cta-pill"><span>LOG AMRAP</span><span>→</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 03 — History */}
+        <div class="screen-card">
+          <div class="lab"><span>03 · History</span><span class="idx">Android</span></div>
+          <div class="phone android">
+            <div class="phone-screen">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span class="mono" style="font-size: 11px;">9:41</span>
+                <span class="icons">
+                  <svg width="14" height="9" viewBox="0 0 14 9" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5l2 2 4-4M8 4.5h5M8 7h5M8 2h5" /></svg>
+                  <svg width="14" height="9" viewBox="0 0 14 9" fill="currentColor"><path d="M2 8L8 2 14 8" /></svg>
+                  <svg width="20" height="9" viewBox="0 0 20 9" fill="currentColor"><rect x="0.5" y="0.5" width="16" height="8" rx="1.5" fill="none" stroke="currentColor" /><rect x="2" y="2" width="13" height="5" /></svg>
+                </span>
+              </div>
+              <div class="scr scr-history-v2">
+                <div class="scr-masthead">
+                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
+                  <div class="date">HISTORY</div>
+                </div>
+                {/* TitleBlock */}
+                <div class="title-block">
+                  <div class="tb-eyebrow">THE RECORD</div>
+                  <div class="tb-title">History<span class="dot">.</span></div>
+                </div>
+                {/* AchievementStrip — 3-cell hero + sparkline */}
+                <div class="ach-strip">
+                  <div class="ach-hero">
+                    <div class="ach-cell"><div class="l">SESSIONS FILED</div><div class="v">32</div></div>
+                    <div class="ach-cell"><div class="l">PERSONAL RECORDS</div><div class="v">5</div></div>
+                    <div class="ach-cell"><div class="l">TOTAL VOLUME</div><div class="v">128<span class="vu">K LB</span></div></div>
+                  </div>
+                  <div class="ach-caption">★ BEST · BENCH 215 LB · 12-DAY STREAK</div>
+                  <div class="ach-spark">
+                    {[0,1,0,1,1,0,1,1,0,1,1,1,0,1].map((v) => (
+                      <div class={`spark-bar ${v ? 'on' : ''}`}></div>
+                    ))}
+                  </div>
+                </div>
+                {/* FilterChips */}
+                <div class="filter-chips">
+                  <div class="fc-chip active">ALL <span class="ct">32</span></div>
+                  <div class="fc-chip">★ PRS <span class="ct">5</span></div>
+                  <div class="fc-chip">SQUAT</div>
+                  <div class="fc-chip">BENCH</div>
+                </div>
+                {/* CycleSection */}
+                <div class="cycle-section">
+                  <div class="cs-head">
+                    <span class="cs-label">CYCLE 03</span>
+                    <span class="cs-hint">3 of 4 done · 1 PR</span>
+                  </div>
+                  <div class="sess-row first">
+                    <div class="sr-l">
+                      <div class="sr-primary">Squat</div>
+                      <div class="sr-sec">TODAY</div>
+                    </div>
+                    <div class="sr-r">
+                      <span class="pr-star">★ PR</span>
+                      <div class="sr-val">
+                        <div class="v">C3 · D2</div>
+                        <div class="sub">47m</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sess-row">
+                    <div class="sr-l">
+                      <div class="sr-primary">Bench</div>
+                      <div class="sr-sec">YESTERDAY</div>
+                    </div>
+                    <div class="sr-r">
+                      <div class="sr-val">
+                        <div class="v">C3 · D2</div>
+                        <div class="sub">38m</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sess-row">
+                    <div class="sr-l">
+                      <div class="sr-primary">Dead</div>
+                      <div class="sr-sec">SAT · MAY 17</div>
+                    </div>
+                    <div class="sr-r">
+                      <div class="sr-val">
+                        <div class="v">C3 · D2</div>
+                        <div class="sub">52m</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="phone-tabs">
+                  <div class="phone-tab">TODAY</div>
+                  <div class="phone-tab">PROGRESS</div>
+                  <div class="phone-tab active">HISTORY</div>
+                  <div class="phone-tab">YOU</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 04 — Plan (Today) */}
+        <div class="screen-card">
+          <div class="lab"><span>04 · Plan</span><span class="idx">Android</span></div>
+          <div class="phone android">
+            <div class="phone-screen">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span class="mono" style="font-size: 11px;">9:41</span>
+                <span class="icons">
+                  <svg width="14" height="9" viewBox="0 0 14 9" fill="currentColor"><path d="M2 8L8 2 14 8" /></svg>
+                  <svg width="20" height="9" viewBox="0 0 20 9" fill="currentColor"><rect x="0.5" y="0.5" width="16" height="8" rx="1.5" fill="none" stroke="currentColor" /><rect x="2" y="2" width="13" height="5" /></svg>
+                </span>
+              </div>
+              <div class="scr scr-plan-v2">
+                {/* SessionTopBar */}
+                <div class="session-topbar">
+                  <div class="back-chip">←</div>
+                </div>
+                {/* Masthead — `531.` LEDGER + C3·D2 right */}
+                <div class="scr-masthead" style="padding-top: 10px;">
+                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
+                  <div class="date">C3 · D2</div>
+                </div>
+                {/* TitleBlock — compact: eyebrow + Squat. */}
+                <div class="title-block compact">
+                  <div class="tb-eyebrow">TUE · MAY 19 · 3·3·3+</div>
+                  <div class="tb-title">Squat<span class="dot">.</span></div>
+                </div>
+                {/* WorkingSetsBand — the marketing point of the Plan card.
+                    Plate viz lives on the Live card; we focus this card
+                    on the prescription ladder so the AMRAP row + CTA fit. */}
+                <div class="ws-band">
+                  <div class="ws-head">
+                    <span class="caps">WORKING SETS</span>
+                    <span class="caps" style="color: var(--ink-3);">TM 275 LB</span>
+                  </div>
+                  <div class="ws-row">
+                    <span class="ws-ix">01</span>
+                    <span class="ws-wt"><span class="num">195</span><span class="u">LB</span></span>
+                    <span class="ws-reps">× 3</span>
+                    <span class="ws-pct">70%</span>
+                  </div>
+                  <div class="ws-row">
+                    <span class="ws-ix">02</span>
+                    <span class="ws-wt"><span class="num">220</span><span class="u">LB</span></span>
+                    <span class="ws-reps">× 3</span>
+                    <span class="ws-pct">80%</span>
+                  </div>
+                  <div class="ws-row next">
+                    <span class="ws-ix">03</span>
+                    <span class="ws-wt"><span class="num">250</span><span class="u">LB</span></span>
+                    <span class="ws-reps">× 3+</span>
+                    <span class="ws-amrap">AMRAP</span>
+                    <span class="ws-pct">90%</span>
+                  </div>
+                </div>
+                {/* BBB band — single-line summary, same shape as the real app */}
+                <div class="ws-band" style="margin-top: 4px;">
+                  <div class="ws-head">
+                    <span class="caps">BBB · OPTIONAL</span>
+                    <span class="caps" style="color: var(--ink-3);">5 × 10 @ 50%</span>
+                  </div>
+                  <div class="ws-row">
+                    <span class="ws-ix">BBB</span>
+                    <span class="ws-wt"><span class="num">140</span><span class="u">LB</span></span>
+                    <span class="ws-reps">× 10</span>
+                    <span class="ws-pct">50%</span>
+                  </div>
+                </div>
+                <div style="flex: 1;"></div>
+                <div class="cta-pill"><span>START SESSION</span><span>→</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {/* ─── built by an agent ─── */}
+  <section id="how-built" class="how-built">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">A note</div>
+          <h2>Not by me<span class="dot">,</span><br />exactly<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Honest disclosure: I don't write most of the code in this app directly.
+          A coding agent does the work on a 30-minute schedule and writes about
+          what changed. I file the asks and review the result. If that's
+          interesting, there are two pages on it.
+        </div>
+      </div>
+
+      <div class="how-built-grid">
+        <a href="/process" class="hb-card hb-card--light">
+          <div class="hb-head">
+            <div class="route">/process</div>
+            <div class="arr">→</div>
+          </div>
+          <div class="hb-title">The rubric<span class="dot">.</span></div>
+          <div class="hb-body">
+            How a 30-minute loop goes, the rules the agent has to keep, and
+            who the scribe is this week.
+          </div>
+        </a>
+        <a href="/blog" class="hb-card hb-card--dark">
+          <div class="hb-head">
+            <div class="route">/dev-log</div>
+            <div class="arr">→</div>
+          </div>
+          <div class="hb-title">The receipts<span class="dot">.</span></div>
+          <div class="hb-body">
+            {postCount} posts, one per loop — what shipped, what was tried, what broke.
+            Updated every half hour, give or take.
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── sign-off ─── */}
+  <section id="get" class="signoff">
+    <div class="wrap">
+      <div class="signoff-inner">
+        <div>
+          <div class="marker">Get it</div>
+          <h2>
+            Free<span class="dot">.</span> Local-first<span class="dot">.</span><br />
+            No nonsense<span class="dot">.</span>
+          </h2>
+          <p>
+            No accounts, no IAP, no upsell. Open source. Lifts in, lifts out —
+            everything you log is yours and lives on your phone.
+          </p>
+        </div>
+        <div class="ctas">
+          <a href="#" class="pill big">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M17.05 12.04c-.03-2.86 2.34-4.24 2.45-4.31-1.34-1.96-3.42-2.23-4.16-2.26-1.77-.18-3.46 1.04-4.36 1.04-.91 0-2.3-1.01-3.78-.98-1.95.03-3.74 1.13-4.74 2.87-2.02 3.5-.52 8.69 1.45 11.54.96 1.39 2.11 2.96 3.6 2.91 1.45-.06 2-.94 3.74-.94s2.24.94 3.77.91c1.56-.03 2.54-1.42 3.49-2.82 1.1-1.62 1.55-3.19 1.58-3.27-.03-.01-3.02-1.16-3.04-4.61zM14.27 4.27c.79-.96 1.33-2.29 1.18-3.62-1.14.05-2.52.76-3.34 1.71-.73.85-1.38 2.22-1.21 3.51 1.28.1 2.58-.65 3.37-1.6z" /></svg>
+            App Store
+          </a>
+          <a href="#" class="pill big">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M3.6 1.8C3.2 2.1 3 2.6 3 3.3v17.4c0 .7.2 1.2.6 1.5l9.4-9.6L3.6 1.8zm10.7 9.7l2.6-2.7L5.2 1.4c-.3-.2-.6-.3-.9-.3l9.9 10.4zm5.4-3.1l-2.3 1.4-2.8 2.7 2.8 2.8 2.3 1.3c1.3-.7 1.3-2.7 0-3.4zM5.2 22.6c.3 0 .6-.1.9-.3l11.7-7.3-2.6-2.7-9.9 10.3z" /></svg>
+            Play Store
+          </a>
+          <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="pill ghost big">View on GitHub →</a>
+          <div class="micro">iOS 16+ · Android 12+ · No sign-up</div>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
 
+<script>
+  // Goal calculator — vanilla, no dependencies. Mirrors the mobile
+  // GoalPanel (TM/1RM toggle, ± stepper, days/week stepper, outcome strip)
+  // plus a lift picker. Math is the same `cyclesUntilTmGoal` shape: integer
+  // cycles of `tmIncrement(lift)` bumps; days = cycles × 4; months use
+  // ~4.345 weeks/month.
+  type Lift = "squat" | "bench" | "deadlift" | "press";
+  type Kind = "tm" | "1rm";
+
+  const LIFT_INCREMENT_LB: Record<Lift, number> = {
+    squat: 10,
+    deadlift: 10,
+    bench: 5,
+    press: 5,
+  };
+  const LIFT_LABEL: Record<Lift, string> = {
+    squat: "per cycle",
+    deadlift: "per cycle",
+    bench: "per cycle",
+    press: "per cycle",
+  };
+
+  // Sensible defaults per lift so the page lands on numbers a lifter
+  // recognises (225 squat → 315 etc.) before they touch anything.
+  const DEFAULTS: Record<Lift, { current: number; goal: number }> = {
+    squat: { current: 225, goal: 315 },
+    bench: { current: 155, goal: 225 },
+    deadlift: { current: 275, goal: 405 },
+    press: { current: 95, goal: 135 },
+  };
+
+  const STEP = 5; // lbs, matches the mobile goalStep('lbs')
+
+  const rootEl = document.querySelector<HTMLElement>("[data-goal-calc]");
+  if (rootEl) {
+    const root: HTMLElement = rootEl;
+    let lift: Lift = "squat";
+    let kind: Kind = "tm";
+    let currentVal = DEFAULTS.squat.current;
+    let goalVal = DEFAULTS.squat.goal;
+    let dpw: number | null = 3;
+
+    // Per-lift state cache so swapping lifts doesn't lose what you typed.
+    const liftState: Record<Lift, { current: number; goal: number }> = {
+      squat: { ...DEFAULTS.squat },
+      bench: { ...DEFAULTS.bench },
+      deadlift: { ...DEFAULTS.deadlift },
+      press: { ...DEFAULTS.press },
+    };
+
+    const $ = <T extends Element = HTMLElement>(sel: string): T | null =>
+      root.querySelector<T>(sel);
+
+    function toTm(value: number): number {
+      if (kind === "tm") return value;
+      // 1RM → TM is 90%, snap to STEP so it's loadable.
+      return Math.round((value * 0.9) / STEP) * STEP;
+    }
+
+    function cyclesUntilGoal(): number | null {
+      const cur = toTm(currentVal);
+      const tgt = toTm(goalVal);
+      if (tgt <= cur) return 0;
+      const inc = LIFT_INCREMENT_LB[lift];
+      const need = Math.ceil((tgt - cur) / inc);
+      return need > 240 ? null : need; // ~10y lookahead like the app
+    }
+
+    function render(): void {
+      // Lift bump callout (left)
+      const bumpLb = $<HTMLElement>("[data-bump-lb]");
+      const bumpKg = $<HTMLElement>("[data-bump-kg]");
+      const bumpLabel = $<HTMLElement>("[data-bump-label]");
+      if (bumpLb) bumpLb.textContent = String(LIFT_INCREMENT_LB[lift]);
+      if (bumpKg) bumpKg.textContent = String(LIFT_INCREMENT_LB[lift] / 2);
+      if (bumpLabel) {
+        const liftCap = lift.charAt(0).toUpperCase() + lift.slice(1);
+        bumpLabel.textContent = `${liftCap} · ${LIFT_LABEL[lift]}`;
+      }
+
+      // Tabs
+      for (const btn of root.querySelectorAll<HTMLButtonElement>(".calc-lift")) {
+        const on = btn.dataset.lift === lift;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", String(on));
+      }
+      for (const btn of root.querySelectorAll<HTMLButtonElement>(".calc-kind")) {
+        const on = btn.dataset.kind === kind;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", String(on));
+      }
+
+      // Stepper labels
+      const sub = kind === "tm" ? "training max" : "one-rep max";
+      const cs = $<HTMLElement>("[data-current-sub]");
+      const gs = $<HTMLElement>("[data-goal-sub]");
+      if (cs) cs.textContent = sub;
+      if (gs) gs.textContent = sub;
+
+      // Values
+      const curEl = $<HTMLElement>("[data-current]");
+      const goalEl = $<HTMLElement>("[data-goal]");
+      const dpwEl = $<HTMLElement>("[data-dpw]");
+      if (curEl) curEl.textContent = String(currentVal);
+      if (goalEl) goalEl.textContent = String(goalVal);
+      if (dpwEl) dpwEl.textContent = dpw === null ? "—" : String(dpw);
+
+      // Outcome
+      const cycles = cyclesUntilGoal();
+      const primary = $<HTMLElement>("[data-outcome-primary]");
+      const secondary = $<HTMLElement>("[data-outcome-secondary]");
+      if (primary) {
+        if (cycles === null) {
+          primary.textContent = "beyond horizon";
+          primary.removeAttribute("data-already");
+        } else if (cycles === 0) {
+          primary.textContent = "already past goal";
+          primary.setAttribute("data-already", "true");
+        } else {
+          const days = cycles * 4;
+          primary.textContent = `~${days} work day${days === 1 ? "" : "s"} away`;
+          primary.removeAttribute("data-already");
+        }
+      }
+      if (secondary) {
+        if (cycles && cycles > 0 && dpw && dpw > 0) {
+          const days = cycles * 4;
+          const months = Math.max(1, Math.round(days / dpw / 4.345));
+          secondary.textContent = `≈ ${months} mo at ${dpw}/wk · ${cycles} cycle${cycles === 1 ? "" : "s"}`;
+        } else {
+          secondary.textContent = "";
+        }
+      }
+    }
+
+    function bump(target: "current-inc" | "current-dec" | "goal-inc" | "goal-dec"): void {
+      const delta = target.endsWith("inc") ? STEP : -STEP;
+      if (target.startsWith("current")) {
+        currentVal = Math.max(STEP, currentVal + delta);
+        liftState[lift].current = currentVal;
+      } else {
+        goalVal = Math.max(STEP, goalVal + delta);
+        liftState[lift].goal = goalVal;
+      }
+    }
+
+    function bumpDpw(delta: number): void {
+      const current = dpw ?? 0;
+      const next = current + delta;
+      if (next <= 0) {
+        dpw = null;
+      } else {
+        dpw = Math.min(7, next);
+      }
+    }
+
+    root.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const liftBtn = target.closest<HTMLButtonElement>("[data-lift]");
+      if (liftBtn) {
+        const nextLift = liftBtn.dataset.lift as Lift;
+        if (nextLift !== lift) {
+          lift = nextLift;
+          currentVal = liftState[lift].current;
+          goalVal = liftState[lift].goal;
+          render();
+        }
+        return;
+      }
+      const kindBtn = target.closest<HTMLButtonElement>("[data-kind]");
+      if (kindBtn) {
+        kind = kindBtn.dataset.kind as Kind;
+        render();
+        return;
+      }
+      const stepBtn = target.closest<HTMLButtonElement>("[data-step]");
+      if (stepBtn) {
+        const step = stepBtn.dataset.step;
+        if (step === "dpw-inc") bumpDpw(+1);
+        else if (step === "dpw-dec") bumpDpw(-1);
+        else if (step) bump(step as "current-inc" | "current-dec" | "goal-inc" | "goal-dec");
+        render();
+      }
+    });
+
+    render();
+  }
+</script>
+
+<style is:global>
+  /* Page-level: subtle paper grain. Applied globally so the body shows
+     it even when content is short. */
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 12% 8%, rgba(26, 24, 18, 0.06), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 88% 78%, rgba(26, 24, 18, 0.04), transparent 65%);
+  }
+</style>
+
 <style>
-  /* ── Hero ── */
+  /* ── shared utilities ─────────────────────────────── */
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .dot { color: var(--amber); margin-left: -0.04em; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .caps {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* ── pills ────────────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border-radius: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink-0);
+    text-decoration: none;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      background var(--duration-base) var(--ease-standard);
+    white-space: nowrap;
+  }
+  .pill:hover { transform: translateY(-1px); }
+  .pill.ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border: 1px solid var(--line-strong);
+  }
+  .pill.ghost:hover { background: var(--bg-2); }
+  .pill.big { padding: 14px 22px; font-size: 12px; }
+  .pill svg { width: 13px; height: 13px; display: block; }
+
+  /* ── hero ─────────────────────────────────────────── */
   .hero {
-    padding-block: var(--space-4xl) var(--space-3xl);
+    padding: 64px 0 88px;
     position: relative;
     overflow: hidden;
   }
-  /* Faint print-grid behind the hero — establishes the ledger
-     aesthetic before any words are read. */
   .hero::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(to right, var(--line-faint) 1px, transparent 1px);
+    background-image: linear-gradient(to right, var(--line-faint) 1px, transparent 1px);
     background-size: 96px 100%;
-    opacity: 0.6;
+    opacity: 0.5;
     pointer-events: none;
   }
-  .hero__inner {
+  .hero-grid {
     position: relative;
-    max-width: var(--content-wide);
-    margin: 0 auto;
-    padding-inline: var(--gutter);
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: var(--space-3xl);
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 56px;
     align-items: end;
   }
-  @media (max-width: 980px) {
-    .hero__inner {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xl);
-      align-items: start;
-    }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
-  .hero__copy {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .hero__title {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: clamp(2.6rem, 7vw, 4.6rem);
-    line-height: 0.98;
-    letter-spacing: -0.035em;
+  .hero-eyebrow .seg {
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
     color: var(--ink-0);
   }
-  .hero__dot {
-    color: var(--amber);
-    margin-left: -0.04em;
+  .hero h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(48px, 6.4vw, 92px);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    margin: 24px 0 0;
+    color: var(--ink-0);
   }
-  .hero__lead {
+  .hero-lede {
+    margin-top: 28px;
+    max-width: 42ch;
+    font-size: 16px;
+    line-height: 1.6;
     color: var(--ink-1);
-    font-size: 1.1rem;
-    line-height: 1.55;
-    max-width: 46ch;
   }
-  .hero__actions {
+  .hero-actions {
+    margin-top: 30px;
     display: flex;
-    gap: var(--space-md);
-    margin-top: var(--space-xs);
+    gap: 10px;
+    align-items: center;
     flex-wrap: wrap;
   }
-  .hero__ledger {
-    margin: var(--space-md) 0 0;
+  .hero-ledger {
+    margin: 32px 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0;
+    grid-template-columns: 1fr 1fr;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
-    max-width: 520px;
+    max-width: 480px;
   }
-  .hero__ledger > div {
+  .hero-ledger > div {
     padding: 10px 0;
     display: flex;
     align-items: baseline;
     gap: 10px;
     border-bottom: 1px dotted var(--line-faint);
   }
-  .hero__ledger > div:nth-last-child(-n+2) { border-bottom: 0; }
-  .hero__ledger > div:nth-child(odd) {
-    padding-right: var(--space-md);
+  .hero-ledger > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .hero-ledger > div:nth-child(odd) {
+    padding-right: 14px;
     border-right: 1px solid var(--line-faint);
   }
-  .hero__ledger > div:nth-child(even) {
-    padding-left: var(--space-md);
-  }
-  .hero__ledger dt {
+  .hero-ledger > div:nth-child(even) { padding-left: 14px; }
+  .hero-ledger dt {
     font-family: var(--font-mono);
-    font-size: 0.66rem;
+    font-size: 10px;
+    font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-3);
     flex-shrink: 0;
-    width: 60px;
+    width: 58px;
+    margin: 0;
   }
-  .hero__ledger dd {
+  .hero-ledger dd {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: 12px;
     color: var(--ink-1);
-    letter-spacing: 0.02em;
   }
-  @media (max-width: 540px) {
-    .hero__ledger {
-      grid-template-columns: 1fr;
-    }
-    .hero__ledger > div:nth-child(odd),
-    .hero__ledger > div:nth-child(even) {
-      padding: 10px 0;
-      border-right: 0;
-    }
-    .hero__ledger > div:not(:last-child) {
-      border-bottom: 1px dotted var(--line-faint);
-    }
-  }
-
-  .hero__phone {
+  .hero-right {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: end;
+    min-width: 0;
   }
 
-  /* ── Buttons ── */
-  .btn {
+  /* ── phone ──────────────────────────────────────────
+     Frame upsized 300×620 → 360×760 so the content inside
+     reads at marketing-page distance. Internal rhythm
+     (paddings, font sizes, gaps) scales proportionally
+     in the rules below. */
+  .phone {
+    width: 360px;
+    height: 760px;
+    background: var(--bg-1);
+    border-radius: 52px;
+    padding: 12px;
+    position: relative;
+    box-shadow:
+      0 0 0 2px rgba(26, 24, 18, 0.18),
+      0 36px 64px -32px rgba(26, 24, 18, 0.42),
+      0 5px 12px -2px rgba(26, 24, 18, 0.14);
+    flex-shrink: 0;
+  }
+  .phone.android { border-radius: 36px; }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-0);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone.android .phone-screen { border-radius: 26px; }
+  .phone-notch {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #0a0a0a;
+    border-radius: 999px;
+    z-index: 3;
+  }
+  .phone.android .phone-notch {
+    width: 9px;
+    height: 9px;
+    top: 12px;
+    right: 18px;
+    left: auto;
+    transform: none;
+    background: #1a1a1a;
+  }
+  .phone-status {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 26px;
+    z-index: 4;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-0);
+  }
+  .phone.android .phone-status { padding: 0 18px; font-size: 12px; }
+  .phone-status .icons { display: inline-flex; align-items: center; gap: 3px; }
+  .phone-status svg { display: block; }
+
+  /* phone wordmark (inside the screen frame) */
+  .phone-wordmark {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 12px 22px;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
+    font-size: 13px;
     display: inline-flex;
-    align-items: center;
-    transition:
-      transform var(--duration-base) var(--ease-standard),
-      background var(--duration-base) var(--ease-standard);
-  }
-  .btn--primary {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-  .btn--primary:hover {
-    transform: translateY(-1px);
-  }
-  .btn--ghost {
-    background: transparent;
+    align-items: baseline;
+    gap: 6px;
     color: var(--ink-0);
-    border: 1px solid var(--line-strong);
   }
-  .btn--ghost:hover {
-    background: var(--bg-2);
-  }
+  .phone-wordmark .mid { color: var(--ink-3); font-weight: 500; }
+  .phone-wordmark .sub { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; color: var(--ink-3); }
 
-  /* ── Plate loader section ── */
-  .loader {
-    padding-block: var(--space-3xl);
-    border-top: 1px solid var(--line-faint);
-    background: var(--bg-0);
-  }
-  .loader__inner {
-    max-width: var(--content-wide);
-    margin: 0 auto;
-    padding-inline: var(--gutter);
-    display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    gap: var(--space-3xl);
-    align-items: center;
-  }
-  @media (max-width: 980px) {
-    .loader__inner {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xl);
-    }
-  }
-  .loader__head {
+  /* ── screen content (home variant) ────────────────── */
+  .scr {
+    padding: 50px 20px 14px;
+    height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
-    max-width: 36ch;
   }
-  .loader__title {
+  .phone.android .scr { padding-top: 36px; }
+  .scr-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .scr-head .date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .scr-tabs {
+    display: flex;
+    gap: 18px;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .scr-tab {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .scr-tab.active {
+    color: var(--ink-0);
+    border-bottom-color: var(--ink-0);
+  }
+  .scr-lift-eyebrow {
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .scr-lift-name {
+    font-family: var(--font-cond);
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-top: 2px;
+    color: var(--ink-0);
+  }
+  .scr-section {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+  .scr-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .scr-topset {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--font-cond);
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    color: var(--ink-0);
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .scr-topset .unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .scr-topset .reps {
+    font-family: var(--font-cond);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink-1);
+    margin-left: 4px;
+  }
+  .barbell { display: block; margin: 12px auto 0; }
+  .scr-week-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .scr-week-cell {
+    border: 1px solid var(--line);
+    padding: 7px 5px 6px;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .scr-week-cell.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border-color: var(--ink-0);
+  }
+  .scr-week-cell.dim { opacity: 0.55; }
+  .scr-week-cell .w {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 2px;
+  }
+  .scr-week-cell.active .w { color: rgba(231, 227, 214, 0.65); }
+  .scr-week-cell .scheme {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--ink-0);
+  }
+  .scr-week-cell.active .scheme { color: var(--bg-0); }
+  .scr-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-top: 16px;
+  }
+  .scr-stat {
+    padding: 10px 4px;
+    border-right: 1px solid var(--line);
+  }
+  .scr-stat:last-child { border-right: none; }
+  .scr-stat .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .scr-stat .v {
+    font-family: var(--font-cond);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+  .scr-stat .vmono {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-top: 2px;
+    letter-spacing: 0.12em;
+  }
+  .scr-cta {
+    margin-top: auto;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 16px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── app-accurate phone screen primitives ────────── */
+
+  .scr-home,
+  .scr-plan-v2,
+  .scr-history-v2,
+  .scr-live-v2 {
+    padding: 58px 0 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-0);
+  }
+  .phone.android .scr-home,
+  .phone.android .scr-plan-v2,
+  .phone.android .scr-history-v2,
+  .phone.android .scr-live-v2 { padding-top: 44px; }
+
+  /* Masthead — `531.` + LEDGER caps + date */
+  .scr-masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px 0;
+  }
+  .phone-wordmark {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0;
+    color: var(--ink-0);
+    line-height: 1;
+  }
+  .phone-wordmark .num { color: var(--ink-0); }
+  .phone-wordmark .mid {
+    color: var(--ink-3);
+    margin: 0 0 0 0;
+  }
+  .phone-wordmark .sub {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    margin-left: 9px;
+  }
+  .scr-masthead .date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* LiftTabs — caps mono row with ink underline on active */
+  .scr-lift-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    padding: 16px 20px 6px;
+  }
+  .lift-tab {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 6px 0 8px;
+    position: relative;
+  }
+  .lift-tab.active { color: var(--ink-0); }
+  .lift-tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: var(--ink-0);
+  }
+
+  /* Body wrapper — between LiftTabs and the CTA */
+  .scr-body {
+    flex: 1;
+    overflow: hidden;
+    padding: 14px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Lift eyebrow — "CYCLE 03 · DAY 2" */
+  .lift-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+
+  /* Lift title — sans bold, huge, with amber period */
+  .lift-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 52px;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--ink-0);
+    margin: 2px 0 0;
+  }
+
+  /* TopSetBlock — eyebrow row + giant weight × reps + plate bar */
+  .topset-block {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0 16px;
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .topset-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .topset-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .topset-weight {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .topset-unit {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .topset-reps {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--ink-1);
+    margin-left: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .topset-plate {
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* CycleStrip — D1/D2/D3/D4 with active inverted */
+  .cycle-strip-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+  .cycle-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line-strong);
+  }
+  .cyc-cell {
+    padding: 8px 4px;
+    text-align: center;
+    border-left: 1px solid var(--line);
+    position: relative;
+  }
+  .cyc-cell:first-child { border-left: none; }
+  .cyc-cell.active {
+    background: var(--ink-0);
+  }
+  .cyc-cell .w {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--ink-3);
+    margin-bottom: 3px;
+  }
+  .cyc-cell.active .w { color: rgba(231, 227, 214, 0.65); }
+  .cyc-cell .scheme {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-3);
+    opacity: 0.7;
+  }
+  .cyc-cell.done .scheme { color: var(--ink-1); opacity: 1; }
+  .cyc-cell.active .scheme { color: var(--bg-0); opacity: 1; }
+  .cyc-cell .check {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-2);
+  }
+
+  /* LiftStats — TM / BEST e1RM / CYCLE */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .stat-cell {
+    padding: 10px 8px;
+    border-left: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .stat-cell:first-child { border-left: none; }
+  .stat-cell .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .stat-cell .v {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-cell .v .vu {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    margin-left: 2px;
+  }
+  .stat-cell .vsub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  /* SecondaryLink — "SEE PROGRESS →" */
+  .see-progress {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: -2px;
+  }
+
+  /* Primary CTA — flat black rectangle, sharp corners.
+     Mirrors apps/mobile/src/design/primitives/PrimaryPillButton which
+     uses borderRadius: 0 despite the name. */
+  .cta-pill {
+    margin: 0 20px 12px;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 16px 22px;
+    border-radius: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Bottom phone tab bar — TODAY / PROGRESS / HISTORY / YOU */
+  .phone-tabs {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 12px 8px;
+    border-top: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .phone-tab {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 4px 2px;
+  }
+  .phone-tab.active { color: var(--ink-0); }
+
+  /* live (inverse) screen */
+  .scr-live {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding: 50px 20px 18px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .scr-live .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .scr-live .top .x {
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(231, 227, 214, 0.3);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-0);
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+  .scr-live .top .ctr {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.6);
+  }
+  .scr-live .amrap-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .scr-live .pct {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.6);
+    margin-top: 8px;
+  }
+  .scr-live .bw {
     font-family: var(--font-cond);
     font-weight: 600;
-    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
-    line-height: 1.05;
+    font-size: 96px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin-top: 4px;
+  }
+  .scr-live .bw .unit {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: rgba(231, 227, 214, 0.55);
+    text-transform: uppercase;
+  }
+  .scr-live .reps-row {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-top: 1px solid rgba(231, 227, 214, 0.18);
+    border-bottom: 1px solid rgba(231, 227, 214, 0.18);
+  }
+  .scr-live .reps-row .b {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(231, 227, 214, 0.3);
+    color: var(--bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 18px;
+  }
+  .scr-live .reps-row .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 32px;
+    text-align: center;
+  }
+  .scr-live .reps-row .v .lbl {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: rgba(231, 227, 214, 0.55);
+    display: block;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .scr-live .e1rm {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.65);
+  }
+  .scr-live .e1rm .pr { color: var(--amber); }
+  .scr-live .done-btn {
+    margin-top: auto;
+    background: var(--bg-0);
+    color: var(--ink-0);
+    padding: 14px 16px;
+    border-radius: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* history screen */
+  .scr-history .scr-h {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 6px 0 0;
+    color: var(--ink-0);
+  }
+  .scr-history .pr-strip {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .scr-history .pr {
+    padding: 12px 4px;
+    border-right: 1px solid var(--line);
+    text-align: center;
+  }
+  .scr-history .pr:last-child { border-right: none; }
+  .scr-history .pr .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .scr-history .pr .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 22px;
+    margin-top: 2px;
+    letter-spacing: -0.025em;
+  }
+  .scr-history .pr .v .u {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-left: 2px;
+  }
+  .scr-history .log {
+    margin-top: 14px;
+    border-top: 1px solid var(--line-strong);
+  }
+  .scr-history .log-row {
+    display: grid;
+    grid-template-columns: 46px 1fr auto;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .scr-history .log-row .date {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .scr-history .log-row .lift {
+    font-family: var(--font-cond);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .scr-history .log-row .lift .pr-tag {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .scr-history .log-row .lift .meta {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-top: 2px;
+    letter-spacing: 0.1em;
+  }
+  .scr-history .log-row .wt {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 16px;
     letter-spacing: -0.02em;
   }
-  .loader__lead {
-    color: var(--ink-1);
-    font-size: 0.98rem;
-    line-height: 1.55;
-  }
-  .loader__primary {
-    background: var(--bg-1);
-    border: 1px solid var(--line);
-    padding: var(--space-2xl) var(--space-xl);
+  .scr-history .log-row .wt .u {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-2);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-left: 2px;
   }
 
-  /* ── Section leads ── */
-  .amrap-lead,
-  .week-lead {
-    max-width: 56ch;
-    color: var(--ink-1);
-    font-size: 1rem;
-    line-height: 1.55;
-    margin-bottom: var(--space-xl);
+  /* plan screen (android) */
+  .scr-plan { padding-top: 42px; }
+  .plan-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    display: flex;
+    justify-content: space-between;
   }
-
-  .anatomy-wrap {
-    margin-top: var(--space-md);
+  .plan-eyebrow .brand { color: var(--ink-1); font-weight: 600; }
+  .plan-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    margin-top: 20px;
   }
-
-  /* ── Specs (unchanged) ── */
-  .specs {
+  .plan-name { font-size: 38px; margin-top: 4px; }
+  .plan-block { margin-top: 18px; }
+  .plan-block .caps { margin-bottom: 10px; }
+  .plan-rows { border-top: 1px solid var(--line); }
+  .plan-row {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-lg) var(--space-xl);
-    margin: 0;
+    grid-template-columns: 26px 1fr 1fr 1fr;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 11px;
   }
-  @media (max-width: 880px) {
-    .specs {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .plan-row .ix { color: var(--ink-3); font-weight: 600; }
+  .plan-row .pct { color: var(--ink-2); }
+  .plan-row .wt {
+    font-family: var(--font-cond);
+    color: var(--ink-0);
+    font-weight: 600;
+    font-size: 15px;
   }
-  @media (max-width: 540px) {
-    .specs {
-      grid-template-columns: 1fr;
-    }
+  .plan-row .wt .u {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-2);
+    letter-spacing: 0.16em;
   }
-  .specs > div {
-    border-top: 1px solid var(--line-faint);
-    padding-top: var(--space-sm);
+  .plan-row .reps { color: var(--ink-1); text-align: right; }
+  .plan-row.hot {
+    background: var(--bg-1);
+    padding: 10px 8px;
+    margin: 0 -8px;
+  }
+  .plan-row .ix.on { color: var(--ink-0); }
+  .plan-row .pct.on { color: var(--ink-1); font-weight: 600; }
+  .plan-row .reps.amrap { color: var(--amber); font-weight: 600; }
+  .plan-bbb {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .plan-bbb .wt {
+    font-family: var(--font-cond);
+    color: var(--ink-0);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .plan-bbb .wt .u {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-2);
+    letter-spacing: 0.18em;
+  }
+  .plan-notes {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* ── Live screen (paper bg, "Squat now.") ────────── */
+  .session-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .back-chip {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-0);
+  }
+  .topbar-elapsed {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .live-header {
+    padding: 14px 18px 14px;
+  }
+  .live-header.compact {
+    padding: 10px 18px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .live-header.compact .lh-title { margin-top: 2px; }
+  .live-header.compact .lh-amrap { margin-top: 2px; }
+  .lh-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .lh-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .lh-eyebrow--final {
+    color: var(--ink-0);
+    font-weight: 700;
+  }
+  .lh-elapsed {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .lh-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+    margin-top: 6px;
+  }
+  .lh-amrap-row {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .lh-amrap {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    border: 1px solid var(--ink-0);
+    padding: 2px 7px;
+  }
+  .lh-coach {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ink-0);
+    max-width: 28ch;
+  }
+  .live-divider {
+    height: 1px;
+    background: var(--line);
+    width: 100%;
+  }
+  .live-topset {
+    padding: 12px 18px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .topset-row.live { gap: 6px; }
+  .topset-weight.big { font-size: 72px; line-height: 0.88; }
+  .topset-reps.big { font-size: 24px; }
+  .plate-change-hint {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* ── History v2 screen ───────────────────────────── */
+  .title-block {
+    padding: 14px 20px 14px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .title-block.compact {
+    padding: 8px 20px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tb-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+  }
+  .tb-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+  }
+  .ach-strip {
+    margin: 8px 14px 4px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ach-hero {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .ach-cell {
+    padding: 0 6px;
+    border-left: 1px solid var(--line);
+  }
+  .ach-cell:first-child { border-left: none; }
+  .ach-cell .l {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .ach-cell .v {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ach-cell .v .vu {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    margin-left: 2px;
+  }
+  .ach-caption {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .ach-spark {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 14px;
+  }
+  .spark-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--line);
+  }
+  .spark-bar.on {
+    height: 12px;
+    background: var(--ink-0);
+  }
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .fc-chip {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    padding: 4px 8px;
+  }
+  .fc-chip.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    border-color: var(--ink-0);
+  }
+  .fc-chip .ct {
+    margin-left: 4px;
+    color: var(--ink-3);
+  }
+  .fc-chip.active .ct { color: rgba(231, 227, 214, 0.6); }
+  .cycle-section {
+    padding: 12px 18px 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .cs-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .cs-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-1);
+  }
+  .cs-hint {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .sess-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    align-items: center;
+  }
+  .sess-row.first { border-top: 1px solid var(--line-strong); }
+  .sr-l { min-width: 0; }
+  .sr-primary {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    color: var(--ink-0);
+  }
+  .sr-sec {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+  .sr-r {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pr-star {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink-0);
+    letter-spacing: 0.12em;
+  }
+  .sr-val {
+    text-align: right;
+  }
+  .sr-val .v {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .sr-val .sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 1px;
+  }
+
+  /* ── Plan v2 — WorkingSetsBand ───────────────────── */
+  .plan-meta {
+    padding: 6px 20px 10px;
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
-  .specs dt {
+  .ws-band {
+    padding: 10px 18px 0;
+  }
+  .ws-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .ws-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+  }
+  .ws-row:last-child { border-bottom: 1px solid var(--line-strong); }
+  .ws-row.next .ws-ix { color: var(--ink-0); }
+  .ws-row.next { border-top: 1px solid var(--line-strong); }
+  .ws-ix {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+  .ws-wt {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .ws-wt .num {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .ws-wt .u {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-2);
   }
-  .specs dd {
-    margin: 0;
+  .ws-reps {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
     color: var(--ink-1);
-    font-size: 1rem;
-    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
   }
-
-  .cta-row {
-    margin-top: var(--space-2xl);
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-  }
-
-  .blog-teaser {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-lg);
-  }
-  @media (max-width: 880px) {
-    .blog-teaser {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .more {
-    margin-top: var(--space-xl);
+  .ws-amrap {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
+    color: var(--ink-0);
+    border: 1px solid var(--ink-0);
+    padding: 2px 5px;
+  }
+  .ws-pct {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  /* ── KPI strip ────────────────────────────────────── */
+  .kpi-strip {
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--bg-1);
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: var(--content-wide);
+    margin: 0 auto;
+  }
+  .kpi {
+    padding: 28px 22px;
+    border-right: 1px solid var(--line);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .kpi .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-top: 12px;
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-md);
+    align-items: baseline;
+    gap: 4px;
+  }
+  .kpi .v .unit {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .kpi .note {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-1);
+    max-width: 22ch;
+  }
+
+  /* ── sections ─────────────────────────────────────── */
+  section { padding: 80px 0; position: relative; }
+  section.compact { padding: 64px 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 48px;
+    align-items: end;
+    padding-bottom: 40px;
+  }
+  .section-head .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+  .section-head h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(36px, 4.6vw, 60px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--ink-0);
+  }
+  .section-head .right {
+    max-width: 52ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    padding-bottom: 4px;
+  }
+
+  /* ── program ──────────────────────────────────────── */
+  .program {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .ledger-table {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 1fr 1.5fr 0.9fr;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row.head {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .ledger-cell {
+    padding: 18px 20px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ledger-cell:last-child { border-right: none; }
+  .ledger-row.head .ledger-cell {
+    padding: 12px 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .ledger-row .week-num {
+    font-family: var(--font-cond);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .ledger-row .week-num .w {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .ledger-row .set {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--ink-0);
+  }
+  .ledger-row .set .pct { color: var(--ink-2); font-size: 13px; }
+  .ledger-row .set .x { color: var(--ink-3); margin: 0 2px; }
+  .ledger-row .scheme-tag {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ink-0);
+  }
+  .ledger-row.deload .set,
+  .ledger-row.deload .scheme-tag { color: var(--ink-2); }
+  .ledger-row .amrap {
+    display: inline-block;
+    padding: 2px 7px;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .program-footer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .program-footer .item .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+  }
+  .program-footer .item .body {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-1);
+  }
+  .program-footer .item .body strong { color: var(--ink-0); font-weight: 600; }
+
+  /* progression callout */
+  .progression {
+    margin-top: 32px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    position: relative;
+  }
+  .progression::before {
+    content: "PROGRESSION";
+    position: absolute;
+    top: -8px;
+    left: 22px;
+    background: var(--bg-1);
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--ink-2);
+  }
+  .prog-left {
+    padding: 32px 32px 28px;
+    border-right: 1px solid var(--line-strong);
+  }
+  .prog-left .caps { margin-bottom: 18px; }
+  .prog-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .prog-num { padding: 4px 0; }
+  .prog-num + .prog-num {
+    padding-left: 22px;
+    border-left: 1px dotted var(--line);
+  }
+  .prog-num .amount {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 64px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--ink-0);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .prog-num .amount .unit {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .prog-num .label {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-1);
+  }
+  .prog-num .kg {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .prog-right {
+    padding: 32px 32px 28px;
+    background: var(--bg-1);
+  }
+  .prog-right .caps { margin-bottom: 18px; }
+  .prog-projection { border-top: 1px solid var(--line); }
+  .prog-projection .row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
     align-items: baseline;
   }
-  .more a {
-    text-decoration: none;
+  .prog-projection .row .lift {
+    font-family: var(--font-cond);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--ink-0);
-    border-bottom: 1px solid var(--line-strong);
-    padding-bottom: 2px;
   }
-  .more__sep {
+  .prog-projection .row .lift .sub {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+  .prog-projection .row .arrow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--amber);
+  }
+  .prog-projection .row .duration {
+    font-family: var(--font-cond);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .prog-projection .row .duration .wk {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .prog-note {
+    margin-top: 16px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    font-style: italic;
+  }
+
+  /* ── goal calculator ─────────────────────────────── */
+  .goal-calc.progression::before { content: "GOAL CALCULATOR"; }
+  .goal-calc .prog-numbers.single { grid-template-columns: 1fr; }
+  .goal-calc .prog-num + .prog-num { padding-left: 0; border-left: none; }
+
+  .calc-card {
+    padding: 0;
+    background: var(--bg-1);
+  }
+  .calc-card > .caps {
+    padding: 24px 32px 0;
+  }
+
+  /* lift picker */
+  .calc-lifts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 14px 0 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .calc-lift {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 12px 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: var(--ink-3);
+    cursor: pointer;
+    transition: color var(--duration-base) var(--ease-standard),
+                background var(--duration-base) var(--ease-standard);
+  }
+  .calc-lift:last-child { border-right: none; }
+  .calc-lift:hover { color: var(--ink-0); }
+  .calc-lift.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+
+  /* kind toggle */
+  .calc-kinds {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--line);
+  }
+  .calc-kind {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 10px 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color var(--duration-base) var(--ease-standard),
+                background var(--duration-base) var(--ease-standard);
+  }
+  .calc-kind:last-child { border-right: none; }
+  .calc-kind:hover { color: var(--ink-0); }
+  .calc-kind.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+
+  /* steppers */
+  .calc-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .calc-row-l { min-width: 0; }
+  .calc-row-l .caps { color: var(--ink-0); margin-bottom: 2px; }
+  .calc-sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .calc-stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .calc-stepper.small { gap: 8px; }
+  .step-btn {
+    appearance: none;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard),
+                color var(--duration-base) var(--ease-standard);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-btn:hover { background: var(--ink-0); color: var(--bg-0); }
+  .step-btn.small {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  .calc-val {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    min-width: 90px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 5px;
+  }
+  .calc-val.big { font-size: 38px; }
+  .calc-val.small {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    min-width: 24px;
+  }
+  .calc-val .vu {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* outcome strip */
+  .calc-outcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 24px;
+    background: var(--bg-0);
+    border-top: 1px solid var(--line-strong);
+    gap: 16px;
+  }
+  .calc-outcome .o-l {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+  }
+  .calc-outcome .o-l[data-already="true"] { color: var(--amber); }
+  .calc-outcome .o-r {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* responsive */
+  @media (max-width: 540px) {
+    .calc-lifts { grid-template-columns: repeat(2, 1fr); }
+    .calc-lift:nth-child(2) { border-right: none; }
+    .calc-lift:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+    .calc-kinds { grid-template-columns: 1fr; }
+    .calc-kind { border-right: none; border-bottom: 1px solid var(--line); }
+    .calc-kind:last-child { border-bottom: none; }
+    .calc-row { padding: 14px 18px; }
+    .calc-val { min-width: 72px; }
+    .calc-val.big { font-size: 32px; }
+  }
+
+  /* disclaimer */
+  .disclaimer {
+    background: var(--bg-0);
+    padding: 56px 0 0;
+  }
+  .disclaimer-box {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .disclaimer-box .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    max-width: 60ch;
+  }
+  .disclaimer-box p + p { margin-top: 12px; }
+  .disclaimer-box em {
+    font-style: italic;
+    color: var(--ink-0);
+  }
+
+  /* pullquote */
+  .pullquote-section {
+    padding: 80px 0;
+    background: var(--bg-0);
+  }
+  .pullquote {
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 var(--gutter);
+  }
+  .pullquote .qmark {
+    font-family: var(--font-cond);
+    font-style: italic;
+    font-size: 72px;
+    color: var(--ink-3);
+    line-height: 1;
+  }
+  .pullquote blockquote {
+    margin: 8px 0 0;
+    font-family: var(--font-cond);
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+  }
+  .pullquote blockquote .neutral { font-style: normal; font-weight: 600; }
+  .pullquote .attribution {
+    margin-top: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .pullquote .attribution::before,
+  .pullquote .attribution::after {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  /* plate calc */
+  .plate-section { background: var(--bg-0); }
+  .plate-card {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+  }
+  .plate-card .pc-left {
+    padding: 44px;
+    border-right: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 420px;
+  }
+  .plate-card h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 16px 0 0;
+    color: var(--ink-0);
+  }
+  .plate-card .pc-unit { color: var(--ink-2); font-weight: 500; }
+  .plate-card .pc-body {
+    margin-top: 22px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    max-width: 42ch;
+  }
+  .plate-card .pc-readout {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .plate-card .pc-readout .item .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .plate-card .pc-readout .item .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.025em;
+    margin-top: 4px;
+    color: var(--ink-0);
+  }
+  .plate-card .pc-readout .item .v .unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .plate-card .pc-right {
+    padding: 44px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(90deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%),
+      var(--bg-0);
+    position: relative;
+    min-width: 0;
+  }
+
+  /* matrix */
+  .matrix-section {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .matrix-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .matrix {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    overflow: hidden;
+  }
+  .matrix-head, .matrix-row {
+    display: grid;
+    grid-template-columns: 70px repeat(4, 1fr) 90px;
+  }
+  .matrix-head {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .matrix-head > div {
+    padding: 12px 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-right: 1px solid var(--line);
+    text-align: center;
+  }
+  .matrix-head > div:last-child { border-right: none; }
+  .matrix-head .sub {
+    display: block;
+    font-size: 9px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .matrix-row { border-bottom: 1px solid var(--line); }
+  .matrix-row:last-child { border-bottom: none; }
+  .matrix-cell {
+    padding: 16px 8px;
+    border-right: 1px solid var(--line);
+    text-align: center;
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--ink-0);
+    letter-spacing: -0.02em;
+  }
+  .matrix-cell:last-child { border-right: none; }
+  .matrix-cell .reps {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-top: 2px;
+    letter-spacing: 0.1em;
+  }
+  .matrix-cell.label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--bg-1);
+  }
+  .matrix-cell.filled {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .matrix-cell.filled .reps { color: rgba(231, 227, 214, 0.65); }
+  .matrix-cell.tm {
+    background: var(--bg-1);
+    font-family: var(--font-cond);
+    font-size: 16px;
+  }
+  .matrix-cell.tm .unit {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: 0.18em;
+    margin-top: 2px;
+  }
+  .matrix-side .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .matrix-side .row:first-child { border-top: 1px solid var(--line); }
+  .matrix-side .row .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .matrix-side .row .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+  .matrix-side .row .v .unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .matrix-side p {
+    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-1);
+  }
+  .matrix-side p strong { color: var(--ink-0); font-weight: 600; }
+
+  /* screens rail — centered when the 4 phones fit the viewport, scrolls
+     horizontally when they don't. The rail's own `padding-inline` does
+     the centering math (not the wrap's), so scroll position stays usable
+     when overflow happens. 1568 = 4×360 (phones) + 3×28 (gaps); when the
+     viewport exceeds that + a 32-px gutter on each side, padding grows
+     to absorb the excess and visually center the rail. */
+  .screens-section { background: var(--bg-0); overflow: hidden; }
+  .screens-rail-wrap {
+    margin-top: 16px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  .screens-rail-wrap::-webkit-scrollbar { display: none; }
+  .screens-rail {
+    display: flex;
+    gap: 28px;
+    padding-block: 8px 56px;
+    padding-inline: max(32px, calc((100vw - 1568px) / 2));
+    width: max-content;
+  }
+  .screen-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .screen-card .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    display: flex;
+    justify-content: space-between;
+    width: 360px;
+  }
+  .screen-card .lab .idx { color: var(--ink-3); }
+
+  /* how-built */
+  .how-built {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 88px 0;
+  }
+  .how-built-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .hb-card {
+    display: block;
+    padding: 28px;
+    text-decoration: none;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .hb-card--light {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    color: var(--ink-0);
+  }
+  .hb-card--light:hover { background: var(--bg-2); }
+  .hb-card--dark {
+    border: 1px solid var(--ink-0);
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .hb-card--dark:hover { background: #000; }
+  .hb-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .hb-head .route {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hb-card--dark .hb-head .route { color: rgba(231, 227, 214, 0.55); }
+  .hb-head .arr {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink-1);
+  }
+  .hb-card--dark .hb-head .arr { color: rgba(231, 227, 214, 0.7); }
+  .hb-title {
+    font-family: var(--font-cond);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-top: 10px;
+  }
+  .hb-body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    margin-top: 6px;
+  }
+  .hb-card--dark .hb-body { color: rgba(231, 227, 214, 0.78); }
+
+  /* sign-off */
+  .signoff {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding: 96px 0;
+    position: relative;
+  }
+  .signoff::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+      radial-gradient(circle at 17% 23%, rgba(231, 227, 214, 0.06) 0.5px, transparent 1px),
+      radial-gradient(circle at 67% 71%, rgba(231, 227, 214, 0.05) 0.5px, transparent 1px),
+      radial-gradient(circle at 41% 88%, rgba(231, 227, 214, 0.06) 0.5px, transparent 1px);
+    background-size: 7px 7px, 11px 11px, 13px 13px;
+  }
+  .signoff-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: end;
+  }
+  .signoff .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.6);
+  }
+  .signoff h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(40px, 5.8vw, 80px);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    margin: 20px 0 0;
+    color: var(--bg-0);
+  }
+  .signoff p {
+    margin-top: 24px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(231, 227, 214, 0.78);
+    max-width: 42ch;
+  }
+  .signoff .ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  .signoff .pill {
+    background: var(--bg-0);
+    color: var(--ink-0);
+    border-color: var(--bg-0);
+  }
+  .signoff .pill:hover { background: #fff; }
+  .signoff .pill.ghost {
+    background: transparent;
+    color: var(--bg-0);
+    border: 1px solid rgba(231, 227, 214, 0.35);
+  }
+  .signoff .micro {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.5);
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  /* ── responsive ───────────────────────────────────── */
+  @media (max-width: 960px) {
+    .hero-grid,
+    .section-head,
+    .matrix-wrap,
+    .signoff-inner,
+    .disclaimer-box {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .plate-card { grid-template-columns: 1fr; }
+    .plate-card .pc-left {
+      border-right: none;
+      border-bottom: 1px solid var(--line-strong);
+      padding: 32px;
+      min-height: auto;
+    }
+    .plate-card .pc-right { padding: 32px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .kpi { border-bottom: 1px solid var(--line); }
+    .kpi:nth-child(2) { border-right: none; }
+    .ledger-row { grid-template-columns: 70px 1fr 1fr; }
+    .ledger-row .ledger-cell:nth-child(4),
+    .ledger-row .ledger-cell:nth-child(5) { display: none; }
+    .matrix-head, .matrix-row { grid-template-columns: 56px repeat(4, 1fr) 70px; }
+    .matrix-cell { padding: 11px 5px; font-size: 16px; }
+    .signoff .ctas { align-items: flex-start; }
+    .hero h1 { font-size: 56px; }
+    .hero-right { justify-content: flex-start; }
+    .how-built-grid { grid-template-columns: 1fr; }
+    .progression { grid-template-columns: 1fr; }
+    .prog-left {
+      border-right: none;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .prog-num .amount { font-size: 52px; }
+  }
+  @media (max-width: 540px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi { border-right: none; }
+    .hero h1 { font-size: 48px; }
+    .ledger-row { grid-template-columns: 60px 1fr; }
+    .ledger-row .ledger-cell:nth-child(3) { display: none; }
+    .matrix-cell.tm,
+    .matrix-head > div:last-child { display: none; }
+    .matrix-head, .matrix-row { grid-template-columns: 50px repeat(4, 1fr); }
+    .hero-ledger { grid-template-columns: 1fr; }
+    .hero-ledger > div:nth-child(odd),
+    .hero-ledger > div:nth-child(even) {
+      padding: 10px 0;
+      border-right: 0;
+    }
+    .disclaimer-box { grid-template-columns: 1fr; }
   }
 </style>

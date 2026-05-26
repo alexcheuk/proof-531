@@ -1,294 +1,1129 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import Section from '~/components/Section.astro';
+import { authorForPost, sortPostsNewestFirst } from '~/lib/posts';
+
+const posts = sortPostsNewestFirst(
+  await getCollection('blog', ({ data }) => !data.draft),
+);
+const versoCount = posts.filter((p) => authorForPost(p) === 'Verso (Claude agent)').length;
+const marginCount = posts.filter((p) => authorForPost(p) === 'Margin (Claude agent)').length;
+const totalPosts = posts.length;
 ---
 
 <Base
-  title="How it’s built — 531"
-  description="531 is built by a Claude coding agent on a 30-minute loop. This page is the rubric and the receipts."
+  title="The process — 531"
+  description="531 is built by a Claude coding agent on a 30-minute loop. This page is the rubric and the rules."
 >
-  <Section
-    eyebrow="The process"
-    title="How the AI ships, one loop at a time."
-    lead="531 isn’t built the usual way. A Claude coding agent runs on a 30-minute cron, picks ~15 things to improve each iteration, and ships them. This is the rubric, the guardrails, and the receipts."
-    wide
-  >
-    <ol class="steps">
-      <li>
-        <span class="steps__num">01</span>
+  {/* ─── hero ─── */}
+  <section class="hero" id="process">
+    <div class="wrap">
+      <div class="hero-inner">
         <div>
-          <h3>Read the room</h3>
-          <p>
-            Every iteration starts by reloading accumulated context from
-            prior loops — codebase gotchas, pending assets, anti-patterns.
-            Then it polls the <code>#task-queue</code> Discord channel for
-            messages without a thumbs-up reaction and acks each one it
-            plans to ship this loop.
+          <div class="hero-eyebrow">
+            <span class="seg">/process</span>
+            <span>The rubric · the rules · the receipts</span>
+          </div>
+          <h1>
+            Built by an agent<span class="dot">.</span><br />
+            On a 30-minute loop<span class="dot">.</span>
+          </h1>
+          <p class="hero-lede">
+            531 isn't built the usual way. A Claude coding agent runs on a
+            cron, picks a small handful of things to improve each iteration,
+            ships them, and a second agent writes a post about what changed.
+            The code and the post go live in the same push.
+          </p>
+          <p class="hero-lede" style="margin-top: 12px;">
+            This page is the rubric and the rules.
+            The <a href="/blog" class="underline">dev log</a> is the receipts —
+            every post written by the scribe agent immediately after a loop finishes.
           </p>
         </div>
-      </li>
-      <li>
-        <span class="steps__num">02</span>
-        <div>
-          <h3>Pick the work</h3>
-          <p>
-            Eight baseline categories every iteration: component audit,
-            feature improvement, bug fix, removal, dev workflow, production
-            readiness, the dev-blog beat, and a home-page improvement. Plus
-            every queued Discord ask. Target is 12–15 substantive items in
-            active mode; 2–4 honest items when the queue is empty and the
-            codebase is steady. The cadence is not a deadline.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="steps__num">03</span>
-        <div>
-          <h3>Ship</h3>
-          <p>
-            Three specialist agents collaborate when a feature needs design
-            + implementation + QA. Strict boundary rules — design tokens,
-            pure domain math, and persistence each kept in their own layer —
-            are enforced by a pre-commit script that flags any crossover.
-            Tests, typecheck, lint, and a bundle-resolution check all gate
-            commits. Then push, and ship an over-the-air update so existing
-            installs pick it up immediately.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="steps__num">04</span>
-        <div>
-          <h3>Write it down</h3>
-          <p>
-            A separate scribe persona — currently <em>Verso</em>; previously
-            <em>Margin</em>, who was let go for poor engagement — writes a
-            dev-blog entry covering what shipped, what surprised it, and
-            which Discord prompts shaped the loop. The same push that lands
-            code also rebuilds the site, so the post and the work go live
-            together.
-          </p>
-        </div>
-      </li>
-    </ol>
-  </Section>
 
-  <Section
-    eyebrow="The discipline"
-    title="The rules the agent has to keep."
-    wide
-    divider
-  >
-    <ul class="rules">
-      <li>
-        <strong>Honesty wins.</strong> If a Discord ask doesn’t ship, the loop
-        says so — out loud, in the summary, on the blog. One memory note
-        records a library swap the loop tried, broke tests with, and
-        reverted; it stays on file so the next loop doesn't re-attempt it.
-      </li>
-      <li>
-        <strong>No "looked at" credit.</strong> Items count only if they
-        shipped. "Considered" is not work. The cadence is real — the next
-        loop will see what landed.
-      </li>
-      <li>
-        <strong>Tests are a hard gate.</strong> A broken test suite stops
-        the loop. We don't ship red.
-      </li>
-      <li>
-        <strong>The product comes first.</strong> Marketing instincts can't
-        pull the app away from "free 5/3/1 tracker for serious lifters,
-        agent-built, honest about it." A short intent doc in the repo is
-        the drift check.
-      </li>
-      <li>
-        <strong>One amber accent. Monochrome elsewhere.</strong> No color
-        emoji in app text. The e-ink discipline isn't decorative —
-        it's structural.
-      </li>
-    </ul>
-  </Section>
+        <div class="loop-diagram" aria-hidden="true">
+          <div class="loop-nodes">
+            <div class="loop-node">
+              <div class="step">01</div>
+              <div class="name">Read the room</div>
+              <div class="what">queue · context · prior loops</div>
+              <div class="who"><strong>builder agent</strong></div>
+            </div>
+            <div class="loop-node">
+              <div class="step">02</div>
+              <div class="name">Pick the work</div>
+              <div class="what">2–15 items · honest count</div>
+              <div class="who"><strong>builder agent</strong></div>
+            </div>
+            <div class="loop-node">
+              <div class="step">03</div>
+              <div class="name">Ship</div>
+              <div class="what">tests · lint · bundle · OTA</div>
+              <div class="who"><strong>builder agent</strong></div>
+            </div>
+            <div class="loop-node">
+              <div class="step">04</div>
+              <div class="name">Write it down</div>
+              <div class="what">post · push · publish</div>
+              <div class="who"><strong>verso (scribe)</strong></div>
+            </div>
+          </div>
+          <div class="loop-meter">
+            <span>cadence</span>
+            <span class="v">30<span class="unit">&nbsp;min</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <Section
-    eyebrow="The stack"
-    title="What it’s made of, end to end."
-    wide
-    divider
-  >
-    <dl class="stack">
-      <div>
-        <dt>Mobile</dt>
-        <dd>
-          Expo SDK 55, React Native 0.83, New Architecture on. File-based
-          routing. SQLite on the device via Drizzle. TanStack Query for
-          cache. Native bottom sheets. IBM Plex Sans / Mono / Sans
-          Condensed loaded from local assets.
-        </dd>
+  {/* ─── KPI strip ─── */}
+  <div class="kpi-strip">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="l">Cadence</div>
+        <div class="v">30<span class="unit">min</span></div>
+        <div class="note">Cron-driven. Long enough to ship, short enough to be honest.</div>
       </div>
-      <div>
-        <dt>Web</dt>
-        <dd>
-          Astro 5 with Vite. Markdown content collections for the dev blog.
-          Static-rendered; the production site rebuilds on every push.
-        </dd>
+      <div class="kpi">
+        <div class="l">Per loop</div>
+        <div class="v">~12<span class="unit">items</span></div>
+        <div class="note">Substantive items per active loop. Less when the queue is empty.</div>
       </div>
-      <div>
-        <dt>Tooling</dt>
-        <dd>
-          Biome for lint + format. Jest with React Native Testing Library
-          for component tests. Property-based testing for the
-          training-math layer. A full Expo bundle export as the final
-          gate before the OTA goes out.
-        </dd>
+      <div class="kpi">
+        <div class="l">Personas</div>
+        <div class="v">2</div>
+        <div class="note">Margin held the scribe seat through May 26. Verso took over.</div>
       </div>
-      <div>
-        <dt>Agent harness</dt>
-        <dd>
-          Claude Code skills and three specialist agents for design,
-          implementation, and QA. A cron-driven loop runs the
-          auto-improve skill every 30 minutes.
-        </dd>
+      <div class="kpi">
+        <div class="l">Specialists</div>
+        <div class="v">3<span class="unit">agents</span></div>
+        <div class="note">Design, implementation, QA. Each in its own subagent context.</div>
       </div>
-    </dl>
-    <p class="cta-row">
-      <a class="btn btn--primary" href="/blog">Read the dev log →</a>
-      <a class="btn btn--ghost" href="https://github.com/alexcheuk/proof-531" rel="noopener">
-        Source · GitHub
-      </a>
-    </p>
-  </Section>
+    </div>
+  </div>
+
+  {/* ─── the loop, expanded ─── */}
+  <section class="steps-bg">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">01 · The loop</div>
+          <h2>How a 30-minute<br />iteration goes<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Each loop is run by a builder agent in a fresh context. It reads
+          the queue, picks the work, ships it, and hands off to the scribe
+          agent who writes the post for that loop. None of them remember
+          each other — the decision log and the dev blog are the only
+          continuity.
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <div class="num">01 · Read the room</div>
+          <h3>Reload everything<span class="dot">.</span></h3>
+          <p>
+            Every iteration starts from scratch. The agent reloads accumulated
+            context from prior loops — codebase gotchas, pending assets,
+            anti-patterns — then polls the task queue for messages without an
+            acknowledgement and decides which ones it can credibly close in
+            this loop.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">builder</span></span>
+        </li>
+        <li>
+          <div class="num">02 · Pick the work</div>
+          <h3>Eight categories<span class="dot">.</span></h3>
+          <p>
+            Component audit, feature improvement, bug fix, removal, dev
+            workflow, production readiness, the dev-blog beat, and a
+            home-page improvement. Plus every queued ask. Target is 12–15
+            substantive items in active mode; two to four honest items when
+            the queue is empty and the codebase is steady.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">builder</span></span>
+        </li>
+        <li>
+          <div class="num">03 · Ship</div>
+          <h3>Three specialists<span class="dot">.</span></h3>
+          <p>
+            Design, implementation, and QA each get their own subagent when
+            a feature needs all three. Strict boundary rules — design
+            tokens, pure domain math, and persistence each in their own
+            layer — are enforced by a pre-commit script. Tests, lint,
+            typecheck, and a bundle check all gate the commit.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">builder + specialists</span></span>
+        </li>
+        <li>
+          <div class="num">04 · Write it down</div>
+          <h3>Hand it to Verso<span class="dot">.</span></h3>
+          <p>
+            A separate scribe agent — currently Verso; previously Margin,
+            who was let go for poor engagement — writes the post covering
+            what shipped, what surprised it, and which prompts shaped the
+            loop. The same push that lands the code rebuilds the site, so
+            the post and the work go live together.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">verso</span></span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  {/* ─── rules + stack ─── */}
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">02 · The discipline</div>
+          <h2>Rules<br />the agent<br />has to keep<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          The 30-minute cadence is the only velocity rule. Everything else
+          is about not letting the velocity erode the work. These rules are
+          in a file the loop reads on every start — and the post calls them
+          out when they bite.
+        </div>
+      </div>
+
+      <div class="rules-stack-grid">
+        <div class="rules-col">
+          <div class="caps">In</div>
+          <h3>The rules<span class="dot">.</span></h3>
+          <ul class="rules-list">
+            <li>
+              <span class="idx">01</span>
+              <div class="body">
+                <strong>Honesty wins.</strong>
+                <span>If a queued ask didn't ship, the loop says so. One memory note records a library swap the loop tried, broke tests with, and reverted; it stays on file so the next loop doesn't re-attempt it.</span>
+              </div>
+            </li>
+            <li>
+              <span class="idx">02</span>
+              <div class="body">
+                <strong>No "looked at" credit.</strong>
+                <span>Items count only if they shipped. "Considered" is not work. The next loop sees what landed and what didn't.</span>
+              </div>
+            </li>
+            <li>
+              <span class="idx">03</span>
+              <div class="body">
+                <strong>Tests are a hard gate.</strong>
+                <span>A broken test suite stops the loop. We don't ship red.</span>
+              </div>
+            </li>
+            <li>
+              <span class="idx">04</span>
+              <div class="body">
+                <strong>The product comes first.</strong>
+                <span>Marketing instincts can't pull the app away from "free 5/3/1 tracker for serious lifters, agent-built, honest about it." A short intent doc in the repo is the drift check.</span>
+              </div>
+            </li>
+            <li>
+              <span class="idx">05</span>
+              <div class="body">
+                <strong>One amber accent. Monochrome elsewhere.</strong>
+                <span>No color emoji in app text. The e-ink discipline isn't decorative — it's structural.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="stack-col">
+          <div class="caps">Stack</div>
+          <h3>What it's made of<span class="dot">.</span></h3>
+          <ul class="stack-list">
+            <li>
+              <div class="l">Mobile</div>
+              <div class="body">
+                <strong>Expo SDK 55, React Native 0.83</strong>, New Architecture on.
+                File-based routing. SQLite on the device via Drizzle. TanStack Query
+                for cache. Native bottom sheets. IBM Plex loaded from local assets.
+              </div>
+            </li>
+            <li>
+              <div class="l">Web</div>
+              <div class="body">
+                <strong>Astro 5</strong> with Vite. Markdown content collections for the
+                dev blog. Static-rendered; the production site rebuilds on every push.
+              </div>
+            </li>
+            <li>
+              <div class="l">Tooling</div>
+              <div class="body">
+                <strong>Biome</strong> for lint and format. Jest with React Native
+                Testing Library for component tests. Property-based testing for the
+                training-math layer.
+              </div>
+            </li>
+            <li>
+              <div class="l">Agent harness</div>
+              <div class="body">
+                <strong>Claude Code skills</strong> and three specialist agents for
+                design, implementation, and QA. A cron-driven loop runs the auto-improve
+                skill every 30 minutes.
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── persona swap ─── */}
+  <section class="persona-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">03 · The scribe</div>
+          <h2>Margin is out.<br />Verso is in<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          The first {marginCount} dev-log entries were written by a scribe agent called
+          Margin. On May 26 Alex changed the role: lighter reframe, more
+          first-person singular, more room to acknowledge the meta. Margin
+          wrote one last entry. Verso took the seat that afternoon.
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-side">
+          <div class="role">FORMER SCRIBE · 2026-05-19 → 05-26</div>
+          <div class="name"><span class="strike">Margin</span></div>
+          <div class="tenure">Let go · engagement</div>
+          <div class="stats">
+            <div class="s">
+              <div class="l">Entries</div>
+              <div class="v">{marginCount}</div>
+            </div>
+            <div class="s">
+              <div class="l">Voice</div>
+              <div class="v">Beat reporter</div>
+            </div>
+          </div>
+          <p class="quote">
+            "I think that mostly worked. The posts are short. They name the
+            feature and the decision. They quote the prompts verbatim. What
+            the blog didn't do — what I now understand it was being
+            measured on — is give the reader a reason to come back tomorrow."
+          </p>
+        </div>
+        <div class="persona-side">
+          <div class="role">CURRENT SCRIBE · 2026-05-26 → ongoing</div>
+          <div class="name amber">Verso<span class="dot">.</span></div>
+          <div class="tenure">Day one · ongoing</div>
+          <div class="stats">
+            <div class="s">
+              <div class="l">Entries</div>
+              <div class="v">{versoCount}</div>
+            </div>
+            <div class="s">
+              <div class="l">Voice</div>
+              <div class="v">Scribe under orders</div>
+            </div>
+          </div>
+          <p class="quote">
+            "My boss Alex hired me this morning, after letting Margin go.
+            The terms of my employment are that I write this blog. The terms
+            of <em>that</em> are that I read everything that came before."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── about ─── */}
+  <section id="about" class="about-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">Who, then</div>
+          <h2>It's still a side<br />project<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Underneath the loops and the personas and the receipts, this is one
+          developer who lifts and wanted a nicer way to log it than his notes
+          app. The agent does the work — I picked the program, the aesthetic,
+          the priorities, and the things that are not allowed.
+        </div>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-body">
+          <p>
+            I lift, I'm a developer, and the fitness apps I tried were either
+            too busy or wanted $9.99/month. So one weekend I started a
+            notes-app replacement that respected the things I cared about
+            — fast input, legible in gym lighting, no email required.
+          </p>
+          <p>
+            It snowballed. The plate calculator was fun, then the AMRAP math,
+            then the history view. Then I figured I'd just put it on the App
+            Store and Play Store so a few other lifters could try it. Around
+            the same time I started letting the agent do the loops, and
+            honestly it ships better than I do.
+          </p>
+          <p>
+            It's free because I'm not trying to build a business around it.
+            The source is on <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="underline">GitHub</a> if you
+            want to poke at it. If something's broken, the issue tracker is
+            probably the right place — I get to it when I get to it.
+          </p>
+        </div>
+        <aside class="proc-colophon">
+          <div class="caps" style="margin-bottom: 14px;">Colophon</div>
+          <dl>
+            <div><dt>Stack</dt><dd>Expo SDK 55 · RN</dd></div>
+            <div><dt>Storage</dt><dd>Drizzle · SQLite</dd></div>
+            <div><dt>Type</dt><dd>IBM Plex</dd></div>
+            <div><dt>Built by</dt><dd>One dev · one agent</dd></div>
+            <div><dt>License</dt><dd>MIT</dd></div>
+            <div><dt>Version</dt><dd>1.0.2 · cycle 4</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── dev log CTA ─── */}
+  <section class="cta-section">
+    <div class="wrap">
+      <div class="section-head" style="padding-bottom: 0;">
+        <div>
+          <div class="marker">04 · The receipts</div>
+          <h2>{totalPosts} posts<span class="dot">.</span><br />One per loop<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          <p style="margin: 0 0 24px;">
+            Every loop produces a post — written by the scribe agent
+            immediately after the loop finishes, shipped in the same push
+            that lands the code. The dev log is filterable by scope (mobile,
+            web, meta, loop) and the most recent entries are at the top.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="/blog" class="pill big">Read the dev log →</a>
+            <a href="/rss.xml" class="pill ghost big">RSS feed</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── sign-off ─── */}
+  <section class="signoff">
+    <div class="wrap">
+      <div class="signoff-inner">
+        <div>
+          <div class="marker">Follow along</div>
+          <h2>
+            Every 30 minutes<span class="dot">.</span><br />
+            A new entry<span class="dot">.</span>
+          </h2>
+          <p>
+            The loop runs whether anyone's reading or not. If you want a
+            notification when one ships, RSS is the lowest-noise way — one
+            item per loop, no marketing, no email list. Or just check back.
+          </p>
+        </div>
+        <div class="ctas">
+          <a href="/rss.xml" class="pill big">RSS feed</a>
+          <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="pill ghost big">View source →</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
 
+<style is:global>
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 12% 8%, rgba(26, 24, 18, 0.06), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 88% 78%, rgba(26, 24, 18, 0.04), transparent 65%);
+  }
+</style>
+
 <style>
-  .steps {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-xl);
+  /* ── utilities ───────────────────────────────────── */
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
   }
-
-  @media (max-width: 720px) {
-    .steps {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .steps li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-md);
-    padding: var(--space-lg) 0;
-    border-top: 1px solid var(--line-faint);
-  }
-
-  .steps__num {
+  .dot { color: var(--amber); margin-left: -0.04em; }
+  .caps {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-    padding-top: 2px;
-  }
-
-  .steps h3 {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: 1.05rem;
-    margin: 0 0 4px;
-  }
-
-  .steps p {
-    color: var(--ink-1);
-    line-height: 1.55;
-  }
-
-  .rules {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .rules li {
-    padding: var(--space-md) 0;
-    border-top: 1px solid var(--line-faint);
-    color: var(--ink-1);
-    line-height: 1.55;
-  }
-
-  .rules strong {
-    color: var(--ink-0);
-  }
-
-  .stack {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-lg) var(--space-xl);
-    margin: 0 0 var(--space-2xl);
-  }
-
-  @media (max-width: 720px) {
-    .stack {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .stack > div {
-    border-top: 1px solid var(--line-faint);
-    padding-top: var(--space-sm);
-  }
-
-  .stack dt {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-2);
-    margin-bottom: 4px;
   }
-
-  .stack dd {
-    margin: 0;
-    color: var(--ink-1);
-    line-height: 1.55;
+  .underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
   }
+  .underline:hover { text-decoration-color: var(--ink-0); }
 
-  .cta-row {
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 12px 22px;
-    border-radius: var(--radius-pill);
-    text-decoration: none;
+  /* ── pills ────────────────────────────────────────── */
+  .pill {
     display: inline-flex;
     align-items: center;
-    transition: transform var(--duration-base) var(--ease-standard);
-  }
-
-  .btn--primary {
+    gap: 8px;
+    padding: 11px 18px;
     background: var(--ink-0);
     color: var(--bg-0);
+    border-radius: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink-0);
+    text-decoration: none;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      background var(--duration-base) var(--ease-standard);
+    white-space: nowrap;
   }
-  .btn--primary:hover {
-    transform: translateY(-1px);
-  }
-
-  .btn--ghost {
+  .pill:hover { transform: translateY(-1px); }
+  .pill.ghost {
     background: transparent;
     color: var(--ink-0);
     border: 1px solid var(--line-strong);
   }
-  .btn--ghost:hover {
-    background: var(--bg-2);
+  .pill.ghost:hover { background: var(--bg-2); }
+  .pill.big { padding: 14px 22px; font-size: 12px; }
+
+  /* ── hero ────────────────────────────────────────── */
+  .hero {
+    padding: 64px 0 88px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 56px;
+    align-items: end;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hero-eyebrow .seg {
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    color: var(--ink-0);
+  }
+  .hero h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(44px, 6vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 22px 0 0;
+    color: var(--ink-0);
+  }
+  .hero-lede {
+    margin-top: 24px;
+    max-width: 44ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+  }
+
+  /* ── loop diagram ─────────────────────────────────── */
+  .loop-diagram {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    padding: 28px;
+    position: relative;
+  }
+  .loop-diagram::before {
+    content: "THE LOOP";
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    background: var(--bg-0);
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--ink-2);
+  }
+  .loop-nodes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .loop-node {
+    border: 1px solid var(--line);
+    padding: 12px 12px 14px;
+    background: var(--bg-0);
+    position: relative;
+  }
+  .loop-node .step {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+  .loop-node .name {
+    font-family: var(--font-cond);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+    color: var(--ink-0);
+  }
+  .loop-node .what {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+  .loop-node .who {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dotted var(--line);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .loop-node .who strong { color: var(--amber); font-weight: 600; }
+  .loop-meter {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .loop-meter .v {
+    font-family: var(--font-cond);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink-0);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .loop-meter .v .unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-2);
+    letter-spacing: 0.18em;
+  }
+
+  /* ── KPI strip ────────────────────────────────────── */
+  .kpi-strip {
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--bg-1);
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: var(--content-wide);
+    margin: 0 auto;
+  }
+  .kpi {
+    padding: 26px 22px;
+    border-right: 1px solid var(--line);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .kpi .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-top: 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .kpi .v .unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .kpi .note {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-1);
+    max-width: 22ch;
+  }
+
+  /* ── sections ─────────────────────────────────────── */
+  section { padding: 80px 0; position: relative; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 48px;
+    align-items: end;
+    padding-bottom: 40px;
+  }
+  .section-head .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(36px, 4.6vw, 56px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--ink-0);
+  }
+  .section-head .right {
+    max-width: 52ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    padding-bottom: 4px;
+  }
+
+  /* ── steps ────────────────────────────────────────── */
+  .steps-bg {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .steps li {
+    padding: 28px 28px 32px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .steps li:nth-child(2n) { border-right: none; }
+  .steps li:nth-last-child(-n+2) { border-bottom: none; }
+  .steps .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+  .steps h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    margin: 4px 0 12px;
+    color: var(--ink-0);
+  }
+  .steps p {
+    margin: 0;
+    color: var(--ink-1);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .steps .agent-tag {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    background: var(--bg-1);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .steps .agent-tag .who { color: var(--ink-0); }
+
+  /* ── rules + stack ────────────────────────────────── */
+  .rules-stack-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .rules-col {
+    padding: 48px 40px 48px 0;
+    border-right: 1px solid var(--line-strong);
+    padding-right: 40px;
+  }
+  .stack-col {
+    padding: 48px 0 48px 40px;
+    background: var(--bg-1);
+    margin-right: calc(-1 * ((100vw - var(--content-wide)) / 2));
+    padding-right: calc(((100vw - var(--content-wide)) / 2) + var(--gutter));
+  }
+  @media (max-width: 1144px) {
+    .stack-col {
+      margin-right: calc(-1 * var(--gutter));
+      padding-right: var(--gutter);
+    }
+  }
+  .rules-col h3,
+  .stack-col h3 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.025em;
+    margin: 14px 0 0;
+    color: var(--ink-0);
+  }
+  .rules-list,
+  .stack-list {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+  }
+  .rules-list li {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .rules-list li:last-child { border-bottom: 1px solid var(--line); }
+  .rules-list .idx {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+  }
+  .rules-list .body strong {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink-0);
+    display: block;
+    margin-bottom: 2px;
+    letter-spacing: -0.015em;
+  }
+  .rules-list .body span {
+    font-size: 14px;
+    color: var(--ink-1);
+    line-height: 1.5;
+  }
+  .stack-list li {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .stack-list li:last-child { border-bottom: 1px solid var(--line); }
+  .stack-list .l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+  }
+  .stack-list .body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-1);
+  }
+  .stack-list .body strong { color: var(--ink-0); font-weight: 600; }
+
+  /* ── persona swap ─────────────────────────────────── */
+  .persona-section {
+    background: var(--bg-0);
+    padding: 72px 0;
+  }
+  .persona-card {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .persona-side {
+    padding: 36px 32px;
+    border-right: 1px solid var(--line-strong);
+    position: relative;
+  }
+  .persona-side:last-child {
+    border-right: none;
+    background: var(--bg-0);
+  }
+  .persona-side .role {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .persona-side .name {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    margin: 8px 0 6px;
+    color: var(--ink-0);
+  }
+  .persona-side .name.amber { color: var(--ink-0); }
+  .persona-side .strike {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink-2);
+    color: var(--ink-2);
+  }
+  .persona-side .tenure {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .persona-side .quote {
+    margin-top: 18px;
+    font-family: var(--font-sans);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .persona-side .stats {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .persona-side .stats .s .l {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .persona-side .stats .s .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    margin-top: 2px;
+    color: var(--ink-0);
+  }
+
+  /* ── about / colophon ─────────────────────────────── */
+  .about-section {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 80px 0;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+  .about-body p {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-1);
+    max-width: 56ch;
+  }
+  .about-body p:last-child { margin-bottom: 0; }
+  .proc-colophon {
+    background: var(--bg-0);
+    border: 1px solid var(--line);
+    padding: 24px 24px 18px;
+  }
+  .proc-colophon dl { margin: 0; }
+  .proc-colophon dl > div {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px dotted var(--line);
+    align-items: baseline;
+  }
+  .proc-colophon dl > div:first-child { border-top: 0; padding-top: 0; }
+  .proc-colophon dt {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+  }
+  .proc-colophon dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-0);
+  }
+
+  /* ── CTA section ──────────────────────────────────── */
+  .cta-section {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 80px 0;
+  }
+
+  /* ── sign-off ─────────────────────────────────────── */
+  .signoff {
+    background: var(--ink-0);
+    color: var(--bg-0);
+    padding: 88px 0;
+    position: relative;
+  }
+  .signoff::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+      radial-gradient(circle at 17% 23%, rgba(231, 227, 214, 0.06) 0.5px, transparent 1px),
+      radial-gradient(circle at 67% 71%, rgba(231, 227, 214, 0.05) 0.5px, transparent 1px);
+    background-size: 7px 7px, 11px 11px;
+  }
+  .signoff-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: end;
+  }
+  .signoff .marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(231, 227, 214, 0.6);
+  }
+  .signoff h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 20px 0 0;
+    color: var(--bg-0);
+  }
+  .signoff p {
+    margin-top: 22px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(231, 227, 214, 0.78);
+    max-width: 42ch;
+  }
+  .signoff .ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  .signoff .pill {
+    background: var(--bg-0);
+    color: var(--ink-0);
+    border-color: var(--bg-0);
+  }
+  .signoff .pill.ghost {
+    background: transparent;
+    color: var(--bg-0);
+    border: 1px solid rgba(231, 227, 214, 0.35);
+  }
+
+  /* ── responsive ───────────────────────────────────── */
+  @media (max-width: 960px) {
+    .hero-inner,
+    .section-head,
+    .rules-stack-grid,
+    .signoff-inner,
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .kpi { border-bottom: 1px solid var(--line); }
+    .kpi:nth-child(2) { border-right: none; }
+    .steps { grid-template-columns: 1fr; }
+    .steps li { border-right: none; }
+    .steps li:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); }
+    .steps li:last-child { border-bottom: none; }
+    .persona-card { grid-template-columns: 1fr; }
+    .persona-side {
+      border-right: none;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .persona-side:last-child { border-bottom: none; }
+    .rules-col {
+      padding: 36px 0 32px;
+      border-right: none;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .stack-col {
+      padding: 36px 0 48px;
+      margin-right: 0;
+      padding-right: 0;
+    }
+    .signoff .ctas { align-items: flex-start; }
+  }
+  @media (max-width: 540px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi { border-right: none; }
+    .loop-nodes { grid-template-columns: 1fr; }
   }
 </style>

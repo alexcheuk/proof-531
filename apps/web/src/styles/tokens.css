@@ -52,7 +52,8 @@
   /* ── Layout ── */
   --gutter: var(--space-xl);
   --content-max: 720px;
-  --content-wide: 960px;
+  --content-wide: 1080px;
+  --content-narrow: 780px;
 
   /* ── Motion ── */
   --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);

@@ -1,0 +1,226 @@
+---
+/**
+ * In-phone plate-bar visualization. Ports apps/mobile/src/design/primitives/
+ * PlateBar/PlateBar.tsx to HTML+CSS — same layout (leftStack | collar |
+ * mid-bar | collar | rightStack), same sizeFor() ramp, same -90° rotated
+ * weight labels inside plates that are tall enough.
+ *
+ * Two visual sizes:
+ *   - `mini`: used inside the Home phone TopSetBlock (H=64, plateW=9)
+ *   - `full`: used inside Live + Plan phones (H=96, plateW=16)
+ *
+ * Tone:
+ *   - `ink` (default): black plates on paper bg (matches every paper-bg screen)
+ *   - `paper`: paper plates on dark bg (only if a dark screen ever appears)
+ */
+import { decompose, groupPlates, sizeFor, plateLabel, type Unit } from '~/lib/plates';
+
+interface Props {
+  /** Target weight on the bar. Per-side is computed via the greedy decompose. */
+  weight: number;
+  unit?: Unit;
+  size?: 'mini' | 'full' | 'hero';
+  tone?: 'ink' | 'paper';
+  /** When true, render the "PER SIDE — 2× 45 + 10 = 100 lb" caption row below. */
+  withCaption?: boolean;
+}
+
+const { weight, unit = 'lb', size = 'full', tone = 'ink', withCaption = false } = Astro.props;
+
+const H = size === 'mini' ? 64 : size === 'hero' ? 140 : 96;
+const plateW = size === 'mini' ? 9 : size === 'hero' ? 22 : 16;
+const sleeveH = size === 'hero' ? 6 : 4;
+const barMidW = size === 'mini' ? 32 : size === 'hero' ? 72 : 48;
+const collarH = H * 0.32;
+
+const { perSide } = decompose(weight, unit);
+const grouped = groupPlates(perSide);
+const perSideTotal = perSide.reduce((sum, p) => sum + p, 0);
+const hasPlates = perSide.length > 0;
+
+const plateColor = tone === 'ink' ? 'var(--ink-0)' : 'var(--bg-0)';
+const labelColor = tone === 'ink' ? 'var(--bg-0)' : 'var(--ink-0)';
+const captionLineColor = tone === 'ink' ? 'var(--line)' : 'rgba(231, 227, 214, 0.18)';
+const captionInk = tone === 'ink' ? 'var(--ink-0)' : 'var(--bg-0)';
+const captionInk2 = tone === 'ink' ? 'var(--ink-2)' : 'rgba(231, 227, 214, 0.6)';
+const captionInk3 = tone === 'ink' ? 'var(--ink-3)' : 'rgba(231, 227, 214, 0.4)';
+---
+
+<div
+  class:list={['plate-bar', `size-${size}`, `tone-${tone}`]}
+  aria-label={hasPlates
+    ? `${weight} ${unit} loaded — bar plus ${perSideTotal} ${unit} per side`
+    : `${weight} ${unit} loaded — bar only`}
+  role="img"
+>
+  <div class="row" style={`height: ${H}px;`}>
+    {/* Left stack — row-reverse so heaviest is closest to the bar */}
+    <div class="stack stack-left">
+      {perSide.map((p) => (
+        <div
+          class="plate"
+          style={`width: ${plateW}px; height: ${H * sizeFor(p, unit)}px; background: ${plateColor};`}
+        >
+          {H * sizeFor(p, unit) >= 30 && plateW >= 10 ? (
+            <span
+              class="plate-label"
+              style={`color: ${labelColor};`}
+            >
+              {plateLabel(p)}
+            </span>
+          ) : null}
+        </div>
+      ))}
+    </div>
+
+    {hasPlates && (
+      <div class="collar" style={`width: 3px; height: ${collarH}px; background: ${plateColor}; margin-left: 2px;`} />
+    )}
+
+    <div class="bar-mid" style={`width: ${barMidW}px; height: ${sleeveH}px; background: ${plateColor};`} />
+
+    {hasPlates && (
+      <div class="collar" style={`width: 3px; height: ${collarH}px; background: ${plateColor}; margin-right: 2px;`} />
+    )}
+
+    <div class="stack stack-right">
+      {perSide.map((p) => (
+        <div
+          class="plate"
+          style={`width: ${plateW}px; height: ${H * sizeFor(p, unit)}px; background: ${plateColor};`}
+        >
+          {H * sizeFor(p, unit) >= 30 && plateW >= 10 ? (
+            <span
+              class="plate-label"
+              style={`color: ${labelColor};`}
+            >
+              {plateLabel(p)}
+            </span>
+          ) : null}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {withCaption && (
+    <div class="caption" style={`border-top: 1px solid ${captionLineColor};`}>
+      <span class="caption-l" style={`color: ${captionInk2};`}>PER SIDE</span>
+      <span class="caption-r">
+        {grouped.length === 0 ? (
+          <span style={`color: ${captionInk2};`}>—</span>
+        ) : (
+          <>
+            {grouped.map((g, i) => (
+              <span class="group">
+                {i > 0 ? <span class="plus" style={`color: ${captionInk3};`}>+</span> : null}
+                {g.count > 1 ? <span class="count" style={`color: ${captionInk2};`}>{`${g.count}×`}</span> : null}
+                <span class="num" style={`color: ${captionInk};`}>{plateLabel(g.weight)}</span>
+              </span>
+            ))}
+            <span class="total" style={`color: ${captionInk};`}>{`= ${perSideTotal} ${unit}`}</span>
+          </>
+        )}
+      </span>
+    </div>
+  )}
+</div>
+
+<style>
+  .plate-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .plate-bar.size-mini { gap: 6px; }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1px;
+  }
+  .stack-left { flex-direction: row-reverse; }
+
+  .plate {
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .plate-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 8px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .plate-bar.size-mini .plate-label {
+    font-size: 7px;
+    line-height: 7px;
+  }
+  .plate-bar.size-hero .plate-label {
+    font-size: 14px;
+    line-height: 12px;
+    letter-spacing: 1.4px;
+  }
+
+  .caption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  .caption-l {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 10px;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .caption-r {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .plus,
+  .num,
+  .total {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 14px;
+    letter-spacing: -0.13px;
+  }
+  .num { font-weight: 500; }
+  .plus { font-weight: 500; }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 500;
+  }
+  .total {
+    font-weight: 700;
+    margin-left: 4px;
+  }
+</style>

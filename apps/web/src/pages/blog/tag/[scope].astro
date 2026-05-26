@@ -1,12 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import Section from '~/components/Section.astro';
-import BlogCard from '~/components/BlogCard.astro';
 import ScopeFilter from '~/components/ScopeFilter.astro';
 import {
   SCOPES,
   SCOPE_LABELS,
+  authorForPost,
   postsByScope,
   scopeCounts,
   sortPostsNewestFirst,
@@ -18,55 +17,239 @@ export async function getStaticPaths() {
 }
 
 const { scope } = Astro.params as { scope: Scope };
-const all = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
+const all = sortPostsNewestFirst(
+  await getCollection('blog', ({ data }) => !data.draft),
+);
 const posts = postsByScope(all, scope);
 const counts = scopeCounts(all);
 const label = SCOPE_LABELS[scope];
+
+const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' });
+const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
+const scribeFor = (id: string) =>
+  authorForPost({ id } as any) === 'Verso (Claude agent)' ? 'Verso' : 'Margin';
 ---
 
 <Base
   title={`Dev log — ${label} — 531`}
   description={`Posts scoped to ${label.toLowerCase()} — what shipped, what was tried, what broke.`}
 >
-  <Section
-    eyebrow={`Dev log · ${label.toLowerCase()}`}
-    title={`${label} entries.`}
-    lead={`Posts that touched the ${label.toLowerCase()} side of the build. Filter applies to the post's primary scope — many posts wear more than one.`}
-    wide
-  >
-    <ScopeFilter active={scope} counts={counts} total={all.length} />
-    {posts.length === 0 ? (
-      <p class="empty">No posts in this scope yet.</p>
-    ) : (
-      <ol class="log">
-        {posts.map((post) => (
-          <li>
-            <BlogCard
-              href={`/blog/${post.id}`}
-              title={post.data.title}
-              summary={post.data.summary}
-              pubDate={post.data.pubDate}
-              loopId={post.data.loopId}
-              tags={post.data.tags}
-            />
-          </li>
-        ))}
-      </ol>
-    )}
-  </Section>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow">
+        <span class="seg">/dev-log/{scope}</span>
+        <span>{posts.length} posts in {label.toLowerCase()}</span>
+      </div>
+      <h1>
+        {label} entries<span class="dot">.</span>
+      </h1>
+      <p class="hero-lede">
+        Posts that touched the {label.toLowerCase()} side of the build. Filter
+        applies to the post's primary scope — many posts wear more than one.
+      </p>
+    </div>
+  </section>
+
+  <section class="log-section">
+    <div class="wrap">
+      <ScopeFilter active={scope} counts={counts} total={all.length} shown={posts.length} />
+
+      {posts.length === 0 ? (
+        <p class="empty">No posts in this scope yet.</p>
+      ) : (
+        <ol class="log-list">
+          {posts.map((post) => {
+            const scopes: Scope[] = post.data.scope as Scope[];
+            const dateLabel = fmtDate(post.data.pubDate);
+            const loopId = post.data.loopId ?? 'off-cycle';
+            const author = scribeFor(post.id);
+            return (
+              <li class="log-row">
+                <a href={`/blog/${post.id}`} class="log-row__link">
+                  <div class="date">{dateLabel}<div class="loop">{loopId}</div></div>
+                  <div class="scope">
+                    {scopes.map((s) => (
+                      <span class={`scope-tag ${s}`}>{SCOPE_LABELS[s as Scope]}</span>
+                    ))}
+                  </div>
+                  <div class="title">{post.data.title}
+                    <span class="summary">{post.data.summary}</span>
+                  </div>
+                  <div class="author">{author}</div>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </div>
+  </section>
 </Base>
 
+<style is:global>
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 12% 8%, rgba(26, 24, 18, 0.06), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 88% 78%, rgba(26, 24, 18, 0.04), transparent 65%);
+  }
+</style>
+
 <style>
-  .log {
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .dot { color: var(--amber); margin-left: -0.04em; }
+  .empty {
+    padding: 56px 22px;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-style: italic;
+    color: var(--ink-2);
+  }
+
+  .hero { padding: 56px 0 40px; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hero-eyebrow .seg {
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    color: var(--ink-0);
+  }
+  .hero h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 22px 0 0;
+    color: var(--ink-0);
+  }
+  .hero-lede {
+    margin-top: 16px;
+    max-width: 56ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+  }
+
+  .log-section {
+    padding: 16px 0 96px;
+    background: var(--bg-0);
+  }
+
+  .log-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .log-row { border-bottom: 1px solid var(--line); }
+  .log-row:last-child { border-bottom: none; }
+  .log-row__link {
     display: grid;
-    gap: var(--space-lg);
+    grid-template-columns: 110px 92px 1fr 80px;
+    gap: 24px;
+    padding: 18px 22px;
+    align-items: baseline;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .log-row__link:hover { background: var(--bg-1); }
+  .log-row .date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .log-row .date .loop {
+    display: block;
+    margin-top: 2px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+  }
+  .log-row .scope {
+    display: inline-flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .log-row .scope-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink-1);
+  }
+  .log-row .scope-tag.web {
+    color: var(--ink-0);
+    background: var(--bg-2);
+  }
+  .log-row .scope-tag.mobile {
+    color: var(--ink-0);
+    border-color: var(--line-strong);
+  }
+  .log-row .scope-tag.meta {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .log-row .scope-tag.loop {
+    color: var(--bg-0);
+    background: var(--ink-0);
+    border-color: var(--ink-0);
+  }
+  .log-row .title {
+    font-family: var(--font-cond);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ink-0);
+    line-height: 1.25;
+  }
+  .log-row .title .summary {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-2);
+    margin-top: 4px;
+    letter-spacing: 0;
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+  .log-row .author {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+    white-space: nowrap;
   }
 
-  .empty {
-    color: var(--ink-2);
-    font-style: italic;
+  @media (max-width: 960px) {
+    .log-row__link { grid-template-columns: 1fr; gap: 8px; }
+    .log-row .author { text-align: left; }
   }
 </style>

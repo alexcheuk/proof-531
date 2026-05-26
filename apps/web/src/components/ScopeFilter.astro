@@ -5,78 +5,105 @@ interface Props {
   active: Scope | 'all';
   counts: Record<Scope, number>;
   total: number;
+  shown?: number;
 }
 
-const { active, counts, total } = Astro.props;
+const { active, counts, total, shown = total } = Astro.props;
+const countLabel =
+  shown === total
+    ? `Showing ${total} of ${total}`
+    : `Showing ${shown} of ${total} · scope ${active}`;
 ---
 
-<nav class="scope-filter" aria-label="Filter posts by scope">
-  <a
-    class={`scope-chip${active === 'all' ? ' scope-chip--active' : ''}`}
-    href="/blog"
-    aria-current={active === 'all' ? 'page' : undefined}
-  >
-    All <span class="scope-chip__count">{total}</span>
-  </a>
-  {SCOPES.map((s) => (
+<div class="log-controls">
+  <nav class="scope-chips" aria-label="Filter posts by scope">
     <a
-      class={`scope-chip${active === s ? ' scope-chip--active' : ''}`}
-      href={`/blog/tag/${s}`}
-      aria-current={active === s ? 'page' : undefined}
+      href="/blog"
+      class:list={['chip', { active: active === 'all' }]}
+      aria-current={active === 'all' ? 'page' : undefined}
     >
-      {SCOPE_LABELS[s]} <span class="scope-chip__count">{counts[s]}</span>
+      All <span class="ct">{total}</span>
     </a>
-  ))}
-</nav>
+    {SCOPES.map((s) => (
+      <a
+        href={`/blog/tag/${s}`}
+        class:list={['chip', { active: active === s }]}
+        aria-current={active === s ? 'page' : undefined}
+      >
+        {SCOPE_LABELS[s]} <span class="ct">{counts[s]}</span>
+      </a>
+    ))}
+  </nav>
+  <div class="log-count">{countLabel}</div>
+</div>
 
 <style>
-  .scope-filter {
+  .log-controls {
+    margin-bottom: 28px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-xl);
-    padding-bottom: var(--space-md);
-    border-bottom: 1px solid var(--line-faint);
-  }
-
-  .scope-chip {
-    font-family: var(--font-mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-1);
-    text-decoration: none;
-    padding: 6px 14px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-pill);
-    background: var(--bg-1);
-    transition:
-      background var(--duration-base) var(--ease-standard),
-      border-color var(--duration-base) var(--ease-standard),
-      color var(--duration-base) var(--ease-standard);
-    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 16px;
   }
 
-  .scope-chip:hover {
-    border-color: var(--line-strong);
-    color: var(--ink-0);
+  .scope-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
   }
 
-  .scope-chip--active {
-    background: var(--ink-0);
-    color: var(--bg-0);
-    border-color: var(--ink-0);
+  .chip {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 4px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    transition: color var(--duration-base) var(--ease-standard);
   }
-
-  .scope-chip__count {
-    font-size: 0.68rem;
+  .chip:first-child { padding-left: 0; }
+  .chip:last-child { border-right: none; }
+  .chip .ct {
+    font-size: 10px;
     color: var(--ink-3);
-    letter-spacing: 0.08em;
+  }
+  .chip:hover { color: var(--ink-0); }
+  .chip.active { color: var(--ink-0); }
+  .chip.active::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-right: 7px;
+    transform: translateY(-1px);
   }
 
-  .scope-chip--active .scope-chip__count {
-    color: var(--bg-2);
+  .log-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 600px) {
+    .chip { padding: 4px 10px; }
   }
 </style>

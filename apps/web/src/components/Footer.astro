@@ -3,74 +3,161 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="footer__inner container container--wide">
-    <div class="footer__col">
-      <span class="eyebrow">531</span>
-      <p class="footer__tag">A 5/3/1 + BBB training tracker, built in the open by an AI agent.</p>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="/" class="wordmark" aria-label="531 ledger home">
+          <span class="num">531</span><span class="mid" aria-hidden="true">·</span><span class="sub">ledger</span>
+        </a>
+        <p class="colophon">
+          A <strong>5/3/1 + BBB</strong> training journal made by one developer
+          who likes the program. Free, open source, local-first. Built by a
+          Claude agent on a 30-minute loop.
+        </p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/#program">Program</a></li>
+          <li><a href="/#plate">Plate calc</a></li>
+          <li><a href="/#screens">Screens</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Code</h4>
+        <ul>
+          <li><a href="https://github.com/alexcheuk/proof-531" rel="noopener">GitHub repo</a></li>
+          <li><a href="/blog">Dev log</a></li>
+          <li><a href="/process">Process</a></li>
+          <li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Et cetera</h4>
+        <ul>
+          <li><a href="https://www.jimwendler.com" rel="noopener">Wendler's book</a></li>
+          <li><a href="mailto:hi@531ledger.app">Email me</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer__col">
-      <span class="eyebrow">Links</span>
-      <ul class="footer__list">
-        <li><a href="/">Overview</a></li>
-        <li><a href="/blog">Dev log</a></li>
-        <li><a href="/rss.xml">RSS</a></li>
-        <li><a href="https://github.com/alexcheuk/proof-531" rel="noopener">Source · GitHub</a></li>
-      </ul>
-    </div>
-    <div class="footer__col">
-      <span class="eyebrow">Colophon</span>
-      <p class="footer__small">
-        Vibe-coded with Claude. Type set in IBM Plex. <br />
-        © {year} — paper aesthetic, ink discipline.
-      </p>
+    <div class="foot-bottom">
+      <div>© {year} · A side project · MIT licensed</div>
+      <div class="right">
+        <span>v 1.0.2</span>
+        <span>Built on paper</span>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
   .footer {
-    border-top: 1px solid var(--line-faint);
-    padding-block: var(--space-3xl);
-    margin-top: var(--space-5xl);
-    background: var(--bg-1);
+    background: var(--bg-0);
+    padding: 48px 0 32px;
+    border-top: 1px solid var(--line);
+    margin-top: var(--space-4xl);
   }
 
-  .footer__inner {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1.5fr;
-    gap: var(--space-2xl);
-    align-items: start;
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
   }
+
+  .wordmark {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--ink-0);
+    margin-bottom: 14px;
+  }
+  .wordmark .num { color: var(--ink-0); }
+  .wordmark .mid { color: var(--ink-3); font-weight: 500; }
+  .wordmark .sub {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--ink-3);
+  }
+
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+    padding-bottom: 40px;
+  }
+
+  .foot-grid h4 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin: 0 0 14px;
+  }
+
+  .foot-grid ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .foot-grid li { padding: 3px 0; }
+  .foot-grid li a {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink-1);
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+  .foot-grid li a:hover {
+    color: var(--ink-0);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--line-strong);
+  }
+
+  .colophon {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 36ch;
+    margin: 0;
+  }
+  .colophon strong { color: var(--ink-0); font-weight: 500; }
+
+  .foot-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .foot-bottom .right { display: flex; gap: 20px; }
 
   @media (max-width: 720px) {
-    .footer__inner {
-      grid-template-columns: 1fr;
-      gap: var(--space-xl);
+    .foot-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
   }
-
-  .footer__col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .footer__tag {
-    color: var(--ink-1);
-    max-width: 32ch;
-  }
-
-  .footer__small {
-    color: var(--ink-2);
-    font-size: 0.88rem;
-  }
-
-  .footer__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+  @media (max-width: 480px) {
+    .foot-grid { grid-template-columns: 1fr; }
+    .foot-bottom { flex-direction: column; gap: 10px; align-items: flex-start; }
   }
 </style>
