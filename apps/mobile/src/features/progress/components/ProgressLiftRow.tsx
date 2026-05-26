@@ -3,6 +3,15 @@ import type { LiftProgression } from '@/data/queries/useLiftProgression';
 import { ProgressGridCell } from '@/design/primitives/ProgressGridCell';
 import { ProgressGridRow } from '@/design/primitives/ProgressGridRow';
 import { TmCell } from '@/design/primitives/TmCell';
+import { useEffect } from 'react';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { GoalRuleRow } from './GoalRuleRow';
 
 type ProgressLiftRowProps = {
@@ -13,7 +22,68 @@ type ProgressLiftRowProps = {
   draftKind: LiftGoalKind;
   draftValue: number;
   draftTargetTm: number;
+  /**
+   * When true, plays a one-time fill-in animation on the row's `last-done`
+   * cell (opacity 0 → 1 + scale 0.85 → 1) and a brief delayed pulse on the
+   * `now` cell (Discord 1508779267 — arriving from a just-completed
+   * session). False on every subsequent visit to Progress.
+   */
+  playLastDoneAnimation?: boolean;
 };
+
+const FILL_IN_DURATION_MS = 480;
+const PULSE_DELAY_MS = FILL_IN_DURATION_MS - 80;
+const PULSE_UP_MS = 220;
+const PULSE_DOWN_MS = 260;
+const PULSE_SCALE = 1.12;
+
+function useFillInStyle(active: boolean) {
+  const opacity = useSharedValue(active ? 0 : 1);
+  const scale = useSharedValue(active ? 0.85 : 1);
+  useEffect(() => {
+    if (!active) {
+      opacity.value = 1;
+      scale.value = 1;
+      return;
+    }
+    opacity.value = withTiming(1, {
+      duration: FILL_IN_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+    });
+    scale.value = withTiming(1, {
+      duration: FILL_IN_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [active, opacity, scale]);
+  return useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+}
+
+function usePulseStyle(active: boolean) {
+  const scale = useSharedValue(1);
+  useEffect(() => {
+    if (!active) {
+      scale.value = 1;
+      return;
+    }
+    scale.value = withDelay(
+      PULSE_DELAY_MS,
+      withSequence(
+        withTiming(PULSE_SCALE, {
+          duration: PULSE_UP_MS,
+          easing: Easing.out(Easing.cubic),
+        }),
+        withTiming(1, {
+          duration: PULSE_DOWN_MS,
+          easing: Easing.inOut(Easing.cubic),
+        }),
+      ),
+    );
+  }, [active, scale]);
+  return useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+}
 
 /**
  * One row of the Progress cycle matrix — four day cells + the cycle's TM,
@@ -31,8 +101,14 @@ export function ProgressLiftRow({
   draftKind,
   draftValue,
   draftTargetTm,
+  playLastDoneAnimation = false,
 }: ProgressLiftRowProps) {
   const placeRuleAbove = goalCycle === row.cycle;
+  // Animated styles are hooks — must run unconditionally for every render.
+  // They no-op (return identity transforms) when the row doesn't actually
+  // hold a last-done or now cell.
+  const fillInStyle = useFillInStyle(playLastDoneAnimation);
+  const pulseStyle = usePulseStyle(playLastDoneAnimation);
   return (
     <>
       {placeRuleAbove ? (
@@ -51,7 +127,7 @@ export function ProgressLiftRow({
       >
         {row.cells.map((cell) => {
           if (cell.kind === 'now') {
-            return (
+            const nowCell = (
               <ProgressGridCell
                 key={`cell-${row.cycle}-${cell.day}`}
                 variant="now"
@@ -59,6 +135,16 @@ export function ProgressLiftRow({
                 accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: next, prescribed ${cell.prescribedWeight} ${unitGlyph}`}
                 testID={`progress-cell-${row.cycle}-${cell.day}`}
               />
+            );
+            return playLastDoneAnimation ? (
+              <Animated.View
+                key={`cell-${row.cycle}-${cell.day}`}
+                style={[{ flex: 1 }, pulseStyle]}
+              >
+                {nowCell}
+              </Animated.View>
+            ) : (
+              nowCell
             );
           }
           if (cell.kind === 'future') {
@@ -76,7 +162,7 @@ export function ProgressLiftRow({
           const variant = cell.kind === 'last-done' ? 'outlined' : 'past';
           const marker = cell.deload ? '✓' : null;
           const a11yPrefix = cell.kind === 'last-done' ? 'Most recent. ' : '';
-          return (
+          const pastCell = (
             <ProgressGridCell
               key={`cell-${row.cycle}-${cell.day}`}
               variant={variant}
@@ -88,6 +174,17 @@ export function ProgressLiftRow({
               testID={`progress-cell-${row.cycle}-${cell.day}`}
             />
           );
+          if (cell.kind === 'last-done' && playLastDoneAnimation) {
+            return (
+              <Animated.View
+                key={`cell-${row.cycle}-${cell.day}`}
+                style={[{ flex: 1 }, fillInStyle]}
+              >
+                {pastCell}
+              </Animated.View>
+            );
+          }
+          return pastCell;
         })}
         <TmCell
           tm={row.tm}

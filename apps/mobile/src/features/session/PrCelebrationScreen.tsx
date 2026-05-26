@@ -5,7 +5,7 @@ import { formatWeight } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -123,7 +123,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const hasComparison = !!v && v.prevE1RMDisplay > 0 && v.e1RMDelta > 0;
   const sequenceReady = !!v;
 
-  const { phase, onTitleTyped, onPrevTyped, onTickComplete } = usePrCelebrationSequence({
+  const { phase, onTitleTyped, onPrevTyped, onTickComplete, skip } = usePrCelebrationSequence({
     hasComparison,
     ready: sequenceReady,
   });
@@ -242,8 +242,20 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     justifyContent: 'center',
   };
 
+  // Discord 1508779690 — tapping during the intro sequence fast-forwards
+  // to the next animated phase. Disabled once we're at `final` so taps
+  // don't shadow the CTA button (which has its own Pressable).
+  const skipEnabled = phase !== 'final';
+
   return (
-    <View style={surfaceStyle} testID="pr-celebration">
+    <Pressable
+      style={surfaceStyle}
+      onPress={skip}
+      disabled={!skipEnabled}
+      testID="pr-celebration"
+      accessibilityRole="button"
+      accessibilityLabel="Skip animation"
+    >
       <StatusBarShim color={colors.ink0} style="light" />
       {/* Corner-tick frame at SCREEN scale (size 28 vs the cert's 14)
        * so the celebration reads as one big certificate. */}
@@ -326,9 +338,13 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
         )}
       </View>
 
-      <Animated.View style={ctaOpacityStyle}>
+      {/* CTA stays in the tree from the start (to reserve its layout
+       * height) but only accepts touches once the intro sequence has
+       * settled. Without this, a tap meant to skip during the intro
+       * would land on the hidden Continue button and bypass everything. */}
+      <Animated.View style={ctaOpacityStyle} pointerEvents={ctaVisible ? 'auto' : 'none'}>
         <PrCelebrationCtas onContinue={onContinue} />
       </Animated.View>
-    </View>
+    </Pressable>
   );
 }

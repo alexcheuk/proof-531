@@ -42,6 +42,35 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Close-the-day routes to Progress with a one-time animation
+
+**Tags:** `feature`, `session`, `progress`, `navigation`
+**Files:** `apps/mobile/src/features/session/SessionCompleteScreen.tsx`, `apps/mobile/src/features/session/sessionCompletedSignal.ts`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftRow.tsx`
+
+The "Close the day" CTA on the session-complete receipt now routes to the Progress tab for the just-completed lift (was routing home). A new module-level subject `sessionCompletedSignal` carries the `{ lift, sessionId }` hand-off across the cross-tab navigation; `ProgressLiftPage` consumes it on mount and passes a one-shot `playLastDoneAnimation` flag to the row. The row plays a fill-in animation on the `last-done` cell (opacity 0 → 1 + scale 0.85 → 1 over ~480 ms) and a delayed pulse on the `now` cell (scale 1 → 1.12 → 1, peak right as the fill-in settles).
+
+**Why:** Discord 1508779267 — closing the day should land somewhere that *shows* the user what they just did (the cycle matrix with the new cell filled in and the next day highlighted), not the home screen which has no signal of the just-completed work. The animation makes the transition feel like a continuation of the receipt, not a context switch.
+
+**Trade-off / what we didn't do:** considered passing the hand-off via URL params (`?justCompleted=1`), but URL params persist across back-navigations and would replay the animation on every return to Progress. The module subject is consumed on mount, so the animation is genuinely one-shot.
+
+### 2026-05-26 — PR celebration animation is tap-to-skip
+
+**Tags:** `feature`, `session`, `ux`
+**Files:** `apps/mobile/src/features/session/components/PrCelebration/usePrCelebrationSequence.ts`, `apps/mobile/src/features/session/PrCelebrationScreen.tsx`
+
+Tapping anywhere on the PR celebration surface now fast-forwards to the next *animated* phase, skipping intermediate holds/settles. Added `skip()` to the sequence hook; wrapped the surface in a Pressable. The CTA gets `pointerEvents="none"` until the sequence reaches `final`, so taps during the intro don't accidentally land on the hidden Continue button.
+
+**Why:** Discord 1508779690 — every PR celebration is the same animation; on the third PR of the week, the user has seen it. They want to acknowledge and move on without watching all four phases.
+
+### 2026-05-26 — Hard reset clears all seven persisted tables
+
+**Tags:** `bug-postmortem`, `data`, `reset`
+**Files:** `apps/mobile/src/data/accessors/reset.ts`, `apps/mobile/src/data/accessors/__tests__/reset.test.ts`
+
+`resetEverything()` was deleting from `prs`, `set_logs`, `sessions`, `training_maxes`, and `settings` but not from `lift_progress` (added loop-024 — per-lift cycle/week) or `lift_goals`. After a hard reset, the next onboarded user landed on whatever cycle/week the prior install had advanced squat to. Added both tables to the delete chain and a test that completes a few cycles, resets, and asserts the next read of squat's progress is back to C1/W1.
+
+**Why:** Discord 1508776628 — "Reset function doesn't reset the current day in lifts". The test gauntlet didn't catch it because the existing reset test asserted on the original five tables only; lift_progress was new and never wired into the assertion.
+
 ### 2026-05-26 — Home-page illustrations now do real arithmetic
 
 **Tags:** `website`, `home-page`, `domain`

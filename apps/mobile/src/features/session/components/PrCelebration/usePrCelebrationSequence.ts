@@ -55,6 +55,12 @@ export type UsePrCelebrationSequenceResult = {
   onPrevTyped: () => void;
   /** Caller passes this to the count-up's onComplete. */
   onTickComplete: () => void;
+  /**
+   * Fast-forward to the next *animated* phase, skipping any holds/settles
+   * along the way. Wired to a tap on the surface (Discord 1508779690).
+   * No-op once we're already at `final`.
+   */
+  skip: () => void;
 };
 
 /** Hold durations in ms. Tuned to feel deliberate without dragging. */
@@ -110,5 +116,30 @@ export function usePrCelebrationSequence({
     setPhase((prev) => (prev === 'tick-up' ? 'numbers-settle' : prev));
   }, []);
 
-  return { phase, onTitleTyped, onPrevTyped, onTickComplete };
+  // Tap-to-skip: jump to the next visible new animation. Holds/settles
+  // collapse into the next animated phase. Mid-typewriter, this lets go
+  // of the partial reveal — rendering already falls back to the full
+  // value once `phase` advances past the type-phase.
+  const skip = useCallback(() => {
+    setPhase((prev) => {
+      switch (prev) {
+        case 'idle':
+          return prev;
+        case 'title-type':
+        case 'title-hold':
+        case 'title-settle':
+          return hasComparison ? 'prev-type' : 'final';
+        case 'prev-type':
+        case 'prev-hold':
+          return 'tick-up';
+        case 'tick-up':
+        case 'numbers-settle':
+          return 'final';
+        case 'final':
+          return prev;
+      }
+    });
+  }, [hasComparison]);
+
+  return { phase, onTitleTyped, onPrevTyped, onTickComplete, skip };
 }

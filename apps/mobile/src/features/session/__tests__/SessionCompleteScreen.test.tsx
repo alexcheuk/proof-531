@@ -316,7 +316,7 @@ describe('SessionCompleteScreen', () => {
     });
   });
 
-  it('"Close the day" CTA calls router.replace("/")', async () => {
+  it('"Close the day" CTA routes to the Progress tab for this lift', async () => {
     setLogsState.rows = buildLogs({ isPR: false });
     const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
 
@@ -328,7 +328,13 @@ describe('SessionCompleteScreen', () => {
       fireEvent.press(screen.getByTestId('session-complete-close'));
     });
 
-    expect(mockReplace).toHaveBeenCalledWith('/');
+    // Discord 1508779267 — closing the day lands on Progress (not Home)
+    // so the one-time fill-in animation can play on the just-completed
+    // cell. Replace, so a back-tap doesn't return to the receipt.
+    expect(mockReplace).toHaveBeenCalledWith({
+      pathname: '/(tabs)/progress',
+      params: { lift: 'squat' },
+    });
   });
 
   describe('origin = "history"', () => {

@@ -20,6 +20,7 @@ import { tmIncrement } from '@/domain/increments';
 import { goalTargetTm } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
 import { displayUnit, displayWeight } from '@/domain/units';
+import { sessionCompletedStore } from '@/features/session/sessionCompletedSignal';
 import { QueryShell } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -143,6 +144,18 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
     onScrolledChange?.(scrolled);
   }, [scrolled, onScrolledChange]);
 
+  // Discord 1508779267 — when this page mounts after the user just
+  // finished a session for this lift, play a one-time fill-in animation
+  // on the last-done cell. Consumed on mount so a later visit to
+  // Progress (or a back-nav into it) doesn't replay.
+  const [playLastDoneAnimation, setPlayLastDoneAnimation] = useState(false);
+  useEffect(() => {
+    const signal = sessionCompletedStore.consume();
+    if (signal?.lift === lift) {
+      setPlayLastDoneAnimation(true);
+    }
+  }, [lift]);
+
   if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;
   }
@@ -259,6 +272,7 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
               draftKind={draftKind}
               draftValue={draftValue}
               draftTargetTm={draftTargetTm}
+              playLastDoneAnimation={playLastDoneAnimation}
             />
           ))}
           {goalBeyondChart ? (

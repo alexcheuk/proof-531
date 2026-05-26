@@ -29,6 +29,7 @@ import { SharePrPill, buildPrShareMessage } from './components/SharePrPill';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
+import { sessionCompletedStore } from './sessionCompletedSignal';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
@@ -85,7 +86,14 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   }
 
   const v = data.view;
-  const handleClose = () => goTo.home(router);
+  const handleClose = () => {
+    // Discord 1508779267 — close the day now lands on Progress with a
+    // one-time fill-in animation on the just-completed cell. Publish the
+    // signal *before* the navigation so ProgressLiftPage sees it on its
+    // own mount and the animation can play in sync with the landing.
+    sessionCompletedStore.publish({ lift: v.session.lift, sessionId });
+    goTo.progress(router, v.session.lift, { replace: true });
+  };
   const handleAdjustTm = () => goTo.settings(router);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
