@@ -28,6 +28,11 @@ function href<T extends object | string>(value: T): AnyHref {
   return value as unknown as AnyHref;
 }
 
+function go(router: Router, target: AnyHref, opts?: { replace?: boolean }): void {
+  if (opts?.replace) router.replace(target);
+  else router.push(target);
+}
+
 export const goTo = {
   home(router: Router): void {
     router.replace(href('/'));
@@ -46,9 +51,7 @@ export const goTo = {
   },
 
   today(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
-    const target = href({ pathname: '/session/today', params: { lift } });
-    if (opts?.replace) router.replace(target);
-    else router.push(target);
+    go(router, href({ pathname: '/session/today', params: { lift } }), opts);
   },
 
   live(router: Router, sessionId: number | string): void {
@@ -56,18 +59,15 @@ export const goTo = {
   },
 
   bbb(router: Router, sessionId: number | string, opts?: { replace?: boolean }): void {
-    const target = href({ pathname: '/session/bbb', params: { sessionId: String(sessionId) } });
-    if (opts?.replace) router.replace(target);
-    else router.push(target);
+    go(router, href({ pathname: '/session/bbb', params: { sessionId: String(sessionId) } }), opts);
   },
 
   prCelebration(router: Router, sessionId: number | string, opts?: { replace?: boolean }): void {
-    const target = href({
-      pathname: '/session/pr-celebration',
-      params: { sessionId: String(sessionId) },
-    });
-    if (opts?.replace) router.replace(target);
-    else router.push(target);
+    go(
+      router,
+      href({ pathname: '/session/pr-celebration', params: { sessionId: String(sessionId) } }),
+      opts,
+    );
   },
 
   complete(
@@ -77,9 +77,7 @@ export const goTo = {
   ): void {
     const params: Record<string, string> = { sessionId: String(sessionId) };
     if (opts?.from) params.from = opts.from;
-    const target = href({ pathname: '/session/complete', params });
-    if (opts?.replace) router.replace(target);
-    else router.push(target);
+    go(router, href({ pathname: '/session/complete', params }), opts);
   },
 
   /**
@@ -89,8 +87,6 @@ export const goTo = {
    * `/progress/squat` work directly.
    */
   progress(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
-    const target = href({ pathname: '/progress/[lift]', params: { lift } });
-    if (opts?.replace) router.replace(target);
-    else router.push(target);
+    go(router, href({ pathname: '/progress/[lift]', params: { lift } }), opts);
   },
 } as const;

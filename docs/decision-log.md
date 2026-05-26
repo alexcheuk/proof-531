@@ -42,6 +42,13 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Routes `goTo` helpers DRY'd via a shared `go(router, target, opts)`
+
+**Tags:** `refactor`, `routes`
+**Files:** `apps/mobile/src/app/routes.ts`
+
+Five of the seven `goTo.*` helpers (`today`, `bbb`, `prCelebration`, `complete`, `progress`) repeated the same three-line `if (opts?.replace) router.replace(target); else router.push(target)` tail. Extracted to a local `go(router, target, opts)` helper; each call site is now one line. No behavioural change, no test changes — purely structural. Found during the steady-state audit pass; the trigger for extraction is "≥3 near-identical fragments" and this was five.
+
 ### 2026-05-26 — Dev-only "REPLAY" button removed from PR celebration; `pnpm check-temp-markers` added
 
 **Tags:** `bug-fix`, `removal`, `tooling`, `production-readiness`
