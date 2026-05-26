@@ -46,25 +46,32 @@ export function ProjectionChip({
   isTiePR = false,
   testID,
 }: ProjectionChipProps) {
-  const emphasized = isPotentialPR || isTiePR;
   // reps = 0 ⇒ no lift ⇒ no estimate. `estimateOneRm` returns 0 here
   // (loop-002 fix), so the predictedE1RM would render `0 lb` — visually
   // noisy and confusing on a fresh sheet open. Show an em-dash placeholder
   // instead so the chip still reserves layout space but doesn't claim a
   // bogus number.
-  const e1rmLabel = reps > 0 ? `${predictedE1RM} ${displayUnit(unit)}` : `— ${displayUnit(unit)}`;
+  const hasProjection = reps > 0;
+  const e1rmLabel = hasProjection
+    ? `${predictedE1RM} ${displayUnit(unit)}`
+    : `— ${displayUnit(unit)}`;
   return (
     <Row gap="sm" align="center" {...(testID !== undefined ? { testID } : {})}>
+      {/* Discord 1508769102 — projection text needed to be more visible.
+          Bumped from sm/semibold/ink1 to md/bold/ink0 so the headline number
+          actually wins the row. The placeholder dash (reps = 0) stays muted. */}
       <CapsLabel
-        weight="semibold"
-        color={emphasized ? 'ink0' : 'ink1'}
+        size="md"
+        weight="bold"
+        color={hasProjection ? 'ink0' : 'ink3'}
         style={{ letterSpacing: 1.4 }}
       >
         {`EST. 1RM ${e1rmLabel}`}
       </CapsLabel>
       {deltaFromBest !== null && reps > 0 ? (
         <CapsLabel
-          weight="semibold"
+          size="md"
+          weight="bold"
           color={deltaFromBest >= 0 ? 'ink0' : 'ink3'}
           style={{ letterSpacing: 1.4 }}
           testID="amrap-delta-chip"

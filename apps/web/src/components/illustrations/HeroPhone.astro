@@ -4,7 +4,7 @@
  * surfaces from `apps/mobile/src/features/session`:
  *
  *   Frame A: SetPhase                 (LiveHeader + TopSetBlock + CTA)
- *   Frame B: RestPhase                (PR variant: "Stronger." + RestTimer)
+ *   Frame B: RestPhase                ("Rest." + RestTimer + next-set preview)
  *   Frame C: PrCelebrationScreen      (full-bleed inverted "Stronger.")
  *   Frame D: SessionCompleteScreen    ("531 · ledger" receipt: "In the / book.")
  *
@@ -66,8 +66,7 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
 
         <div class="hp-pad">
           <div class="hp-caps-row">
-            <span class="hp-caps">TOP SET</span>
-            <span class="hp-caps hp-caps--ink3">95% · TM 365</span>
+            <span class="hp-caps">ON THE BAR · 95% TM</span>
           </div>
 
           <div class="hp-number-row">
@@ -129,8 +128,8 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
         </div>
 
         <div class="hp-pad">
-          <span class="hp-caps hp-caps--amber">SET COMPLETED · NEW PERSONAL RECORD</span>
-          <h3 class="hp-display">Stronger<span class="hp-dot">.</span></h3>
+          <span class="hp-caps hp-caps--strong">SET COMPLETED</span>
+          <h3 class="hp-display">Rest<span class="hp-dot">.</span></h3>
         </div>
 
         <div class="hp-rule"></div>
@@ -160,12 +159,12 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
         <div class="hp-pad">
           <div class="hp-caps-row">
             <span class="hp-caps">NEXT SET</span>
-            <span class="hp-caps hp-caps--ink3">e1RM 412 · +27</span>
+            <span class="hp-caps hp-caps--ink3">85% · TM 365 LB</span>
           </div>
           <div class="hp-number-row">
-            <span class="hp-weight hp-weight--sm">385</span>
+            <span class="hp-weight hp-weight--sm">310</span>
             <span class="hp-unit">LB</span>
-            <span class="hp-reps hp-reps--sm">× 5</span>
+            <span class="hp-reps hp-reps--sm">× 3</span>
           </div>
 
           <div class="hp-platebar hp-platebar--sm">
@@ -459,7 +458,6 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
   .hp-caps--ink1   { color: var(--ink-1); font-weight: 600; }
   .hp-caps--ink2   { color: var(--ink-2); }
   .hp-caps--ink3   { color: var(--ink-3); }
-  .hp-caps--amber  { color: var(--amber); font-weight: 600; }
   .hp-caps--strong { font-weight: 600; }
   .hp-caps--sub    { letter-spacing: 0.12em; font-size: 8px; }
   .hp-caps-row {

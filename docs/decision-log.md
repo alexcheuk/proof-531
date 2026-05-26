@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home-page illustration audit started; HeroPhone drift fixes
+
+**Tags:** `website`, `home-page`, `process`
+**Files:** `apps/web/src/components/illustrations/HeroPhone.astro`, `loop-memory/10-home-page-illustration-audit.md`
+
+Started a running drift audit between the on-page illustrations and the actual mobile app (Discord 1508769707 — "Alot of showcase on home page is not UI accurate"). Three concrete fixes in this loop:
+
+- **Frame A eyebrow** stopped pretending to be the Home variant (`TOP SET` + `95% · TM 365`) and now matches the Live SetPhase form: a single eyebrow line `ON THE BAR · 95% TM`.
+- **Frame B next-set right-meta** was showing `e1RM 412 · +27`, which doesn't appear anywhere in the rest-preview block — replaced with `85% · TM 365 LB` and the prescribed weight/reps recalibrated to 310 × 3 (week-3 set 2).
+- **Frame B was framed as a PR rest** (`SET COMPLETED · NEW PERSONAL RECORD` + amber eyebrow + `Stronger.` headline + a NEXT SET block). That combination is impossible in the actual state machine — a PR only happens on AMRAP, which is week-3's final working set, with BBB next (no next *working* set). Reframed Frame B as a normal between-sets rest (`SET COMPLETED` + `Rest.`), and let Frame C carry the PR celebration on its own.
+
+**Why:** the home page is a flex of taste; if it shows a UI that doesn't exist, the implicit promise to the visiting lifter is broken. Catching this drift earlier means the next loop can spot-check screen-by-screen rather than rebuild trust.
+
+**Follow-ups:** the new audit memory tracks unchecked items — Frames C and D weren't audited this loop, and PlateBar / SessionTape / AmrapMath / WeekLedger / MastheadStrip illustrations haven't been compared to the app yet. The file deletes itself when it's all green.
+
 ### 2026-05-26 — Disabling a lift cancels its in-progress session
 
 **Tags:** `bug-postmortem`, `session`, `settings`
