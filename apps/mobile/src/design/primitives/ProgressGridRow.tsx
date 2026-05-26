@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
@@ -34,7 +34,10 @@ const TM_WIDTH = 54;
 
 export function ProgressGridRow({ cycle, children, state, testID }: ProgressGridRowProps) {
   const { colors, type } = useTheme();
-  const items = Array.isArray(children) ? children : [children];
+  // Flatten across mixed `{array}` + sibling children. Without this, JSX like
+  // `<Row>{cells.map(...)}<TmCell/></Row>` arrives as `[Array<Cell>, TmCell]`
+  // and the per-day wrappers collapse 4 cells into a single column.
+  const items = Children.toArray(children);
 
   const isCurrent = state === 'current';
 
