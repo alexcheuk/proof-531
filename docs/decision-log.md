@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Favicon: inline SVG with the brand mark
+
+**Tags:** `website`, `production-readiness`
+**Files:** `apps/web/public/favicon.svg`, `apps/web/src/layouts/Base.astro`, `loop-memory/02-pending-assets.md`
+
+The site had no favicon — browsers were rendering the default globe icon in the tab. Shipped a single inline SVG: paper background, "531" sans-serif wordmark, the amber brand dot. The SVG ships at every viewport and avoids the font-loading problem at favicon scale (no webfont — falls through to Helvetica/Arial). PNG fallbacks for older browsers and some social-preview tools are still owed; logged to pending-assets so future loops know not to re-attempt without proper image tooling.
+
+**Why:** the tab favicon is the smallest brand surface a visitor sees, and every Astro build was shipping without it. Category 8 "page craft & polish" facet — favicon is in the explicit list.
+
 ### 2026-05-26 — README + home-page small consistency pass
 
 **Tags:** `docs`, `home-page`

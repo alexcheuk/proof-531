@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Paper canvas matches the site's bg-0. -->
+  <rect width="64" height="64" fill="#e7e3d6"/>
+  <!-- "531" wordmark in IBM Plex Sans Condensed Bold weight via the
+       common Helvetica/Arial fallback so it renders without webfont
+       loading. The amber dot is the brand signature. -->
+  <text x="32" y="44"
+        font-family="'IBM Plex Sans Condensed','Helvetica Neue',Arial,sans-serif"
+        font-weight="700"
+        font-size="36"
+        text-anchor="middle"
+        letter-spacing="-1.2"
+        fill="#1a1812">531</text>
+  <circle cx="51" cy="42" r="3.5" fill="#8e5345"/>
+</svg>

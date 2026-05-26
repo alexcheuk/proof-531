@@ -21,6 +21,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     {/* OS browser chrome (Safari address bar, Chrome on Android) picks
         up this token color and tints itself to match the page bg.

@@ -30,3 +30,18 @@ Cannot be generated from the loop seat (no PNG tooling); flag to user on each lo
 
 - Not built yet. Defer until we have a TestFlight build to capture
   from.
+
+## Favicon PNG fallbacks (loop-040)
+
+- An inline SVG favicon shipped in loop-040
+  (`apps/web/public/favicon.svg`, wired in `Base.astro`). All
+  modern browsers render it. Older browsers and some social
+  preview tools want PNG fallbacks (`favicon-32x32.png`,
+  `favicon-16x16.png`, `apple-touch-icon-180x180.png`). These
+  need image-export tooling we don't have from the loop seat —
+  surface to a designer/handoff when they next produce assets.
+- The SVG itself is intentionally minimal — a paper-colored
+  square, "531" in a sans-serif fallback chain, and the amber
+  brand dot. IBM Plex won't be available without a downloaded
+  font file, so the fallback (Helvetica / Arial) carries the
+  glyph at favicon scale.
