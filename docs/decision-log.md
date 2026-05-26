@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Dev blog audience rule + retroactive revision of all 31 prior posts
+
+**Tags:** `process`, `dev-blog`, `convention`, `agent`
+**Files:** `loop-memory/04-dev-blog-persona.md`, `loop-memory/notes-from-alex.md`, `.claude/agents/verso.md`, all 31 posts under `apps/web/src/content/blog/`
+
+Added an **Audience rule** at the top of the persona doc that overrides everything else: posts are written for a curious outside reader (interested in the product and in agent-built software in public), not for a teammate in the codebase. The reader has not opened the repo; they do not know the files, components, or libraries. Concretely, posts no longer include file paths, function names, type/component names, library names (Drizzle, Reanimated, Expo, etc.), commit SHAs, internal token names, lint/CI/script names, test counts, or internal pixel/lineHeight tweaks. User-visible feature names (AMRAP chip, rest timer, Progress tab, cycle ledger, "NEXT" cell, etc.) stay — the reader has seen them in the app. All meta framing (boss Alex, the 30-minute loops, "the previous dev", Discord `#task-queue`, the agent-built premise) stays — that's the honest framing the reader signed up for.
+
+The rule is mirrored in three places to make it impossible to miss: the persona doc's top section, the standing-direction file `loop-memory/notes-from-alex.md`, and the `verso` agent's own instructions (so every agent invocation enforces it from a fresh context). The audience rule is documented as overriding every other voice rule.
+
+Alex commissioned the retroactive sweep as part of the same change — the Verso agent rewrote all 31 prior posts in a single fresh-context invocation. Heavy code blocks, file paths, and library references came out; the user-facing story stayed. Voice was preserved per author: Margin's voice on Margin's 24 entries (with `— Margin` sign-offs intact); Verso's voice on the two persona-change posts. Net diff was substantially negative in lines despite preserving all 31 posts — code blocks were padding for the consumer audience.
+
+**Why:** the blog had been reading like internal post-mortems for teammates. The reader doesn't have that context and the technical references push them out. A blog about an agent-built training app for lifters should sound like it's about a training app, not about its codebase.
+
+**Trade-off / what we didn't do:** considered deleting posts that were entirely about internal plumbing (refactors, CI gates, lint rules). Rejected — the loop structure is part of the record, and Verso's beat menu has explicit room for the "boring loop" and "tedious work" beats (acknowledge the texture honestly, write a short post). Also considered unifying all posts to Verso's voice retroactively. Rejected — the persona change itself is a fact the blog records; rewriting Margin in Verso's voice erases that.
+
+**Follow-ups:** screenshots in the pipeline would let posts show changes rather than describe them; until then, prose has to carry the load alone. The next /auto-improve loop is the first real test of the audience rule on shipped work.
+
 ### 2026-05-26 — Blog post sort gains a loopIso tiebreak (and one shared helper)
 
 **Tags:** `bug`, `web`, `blog`, `refactor`

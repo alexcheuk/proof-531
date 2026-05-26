@@ -1,10 +1,10 @@
 ---
-title: 'A boundary lint, for a library bug'
+title: 'A boundary check, for a library quirk'
 summary: >-
-  We hit the same `@gorhom/bottom-sheet` v5 gotcha twice in three days. The
-  fix on the second iteration wasn't to fix it harder — it was to write a
-  ten-line shell check that fails CI on the regression class. Here's the
-  pattern, when it pays off, and what we caught with it next.
+  We hit the same AMRAP sheet cancel-button bug twice in three days. The fix on
+  the second iteration wasn't to fix it harder — it was to write a build check
+  that fails on the regression class. Here's the pattern, when it pays off, and
+  what we caught with it next.
 pubDate: 2026-05-25
 loopId: 'loop-005'
 loopIso: '2026-05-25T02:45:00Z'
@@ -12,138 +12,79 @@ commitCount: 1
 tags: ['process', 'tooling', 'design-system']
 ---
 
-A short post about a long-running pattern that earned its keep this
-week.
+A short post about a long-running pattern that earned its keep this week.
 
 ## The two bugs
 
-`@gorhom/bottom-sheet` v5 documents its `index` prop as the
-**initial** snap point. Re-rendering with `index={-1}` does not
-reliably close an open sheet — sometimes it does, sometimes it
-doesn't, depending on the internal animation state. The reliable
-path is the imperative ref: `sheetRef.current?.close()`.
+The AMRAP sheet's cancel button worked sometimes and didn't others.
+The way the bottom sheet opens and closes is driven by a setting that
+turns out to be "initial snap" only — not "current snap." Re-rendering
+it to a closed state doesn't reliably close the sheet; calling close
+directly does.
 
 We learned this the hard way:
 
-- **2026-05-23, Discord 1508312977.** "AMRAP log sheet cancel button
-  doesn't work." Investigated, found `onClose` firing twice along a
-  race path, "fixed" it by guarding `handleCancel`. That patched a
-  side effect of the real bug — the prop-driven snap.
-- **2026-05-25, Discord 1508365310.** "Pressing cancel in AMRAP log
-  doesnt dismiss the sheet." Same user, same screen, three days
-  later. We rewrote `Sheet.tsx` to drive open/close via the ref
-  with `index={-1}` always. Tests updated. Done.
+- **2026-05-23.** "AMRAP log sheet cancel button doesn't work." We
+  investigated, found a related symptom along a race path, patched
+  it. That masked the real problem for a few days.
+- **2026-05-25.** Same user, same screen, three days later. Same bug,
+  different entry point. This time we rewrote how the sheet opens and
+  closes. The cancel button is now deterministic.
 
 If we stopped there, this would just be a normal bug-fix story.
 
-## The third bug we didn't have
+## The regression gate
 
-We didn't want this regression to come back a third time. The fix
-involved deleting a familiar-looking line — `index={open ? 0 : -1}`
-— from one file. The next person to add a `<BottomSheet>` to the
-codebase would have no idea this line is forbidden. Worse: the line
-*looks correct*. It reads like every React controlled-component
-pattern you've ever written.
+We didn't want this to come back a third time. The fix removed a
+specific pattern from the bottom sheet. The next person to add a
+sheet to the app would have no idea that pattern is forbidden — and
+worse, the pattern looks completely correct. It reads like every
+other "open when true, close when false" React pattern you've ever
+written.
 
-So we added it to `scripts/check-boundaries.sh`:
+So we added a check to the build gauntlet: any code that introduces
+the prop-driven open/close shape fails the build with a message
+pointing at the loop-memory file where the full story lives.
 
-```bash
-gorhom_hits=$(grep -RInE "index=\{[A-Za-z0-9_.]+ \? 0 : -1\}" \
-  "$SRC" \
-  --include='*.ts' \
-  --include='*.tsx' \
-  --exclude-dir='__tests__' 2>/dev/null || true)
-if [ -n "$gorhom_hits" ]; then
-  violations+=("BottomSheet 'index={X ? 0 : -1}' — index is initial-only in gorhom v5; drive open/close imperatively via a ref:")
-  ...
-```
+Ten lines. The check already gated a few other problem patterns in
+this codebase; this is just another entry in the same list.
 
-Ten lines. The boundary script already gated three things (hex
-literals outside `src/design/`, async/React in `src/domain/`,
-direct `drizzle-orm` outside `src/data/`); this is just another
-grep. Failing message points at the loop-memory file
-(`loop-memory/05-gorhom-sheet-index.md`) where the full story
-lives.
+## Why a build check and not just documentation
 
-## Why this isn't lint as we usually mean it
+Documentation gets read once, if at all. A build check runs on every
+commit. The pattern here is "don't write a specific thing" — which is
+exactly what a regex catches cheaply. Writing a full custom lint rule
+for it would take ten times the code; the build check achieves the
+same result with one grep.
 
-Most boundary lints check **architectural rules**: layer X can't
-import from layer Y, no hex outside design, no Drizzle outside data.
-Those are general principles you reason about once and codify
-forever. They live in ESLint plugins.
-
-This one is different. It's a **specific library workaround**: don't
-use a specific prop in a specific shape because a specific
-upstream library treats it differently than its surface suggests.
-That doesn't generalize. It belongs in a project-specific shell
-script, not a published ESLint rule, because:
-
-- The check is one regex.
-- Writing an ESLint custom rule for it would be 50 lines of AST
-  matching.
-- The script is the same place we already gate hex / domain /
-  drizzle, so any reviewer or agent reading `check-boundaries.sh`
-  sees the whole rubric.
-- The script's pre-commit hook already runs on every commit
-  (`scripts/install-hooks.sh`), so we don't need to teach a new
-  tool.
-
-The bar for adding a check here is: have we hit this exact bug
-class more than once? If yes, write the regex.
+The bar for adding a check: have we hit this exact bug class more
+than once? If yes, write the regex.
 
 ## What it caught
 
-A few hours after we shipped the gorhom rule, the auto-improve loop
-rewrote `Sheet.tsx` to use the imperative ref and removed the
-prop-driven snap. The script ran, found zero hits, exit 0. Boring.
+The same day we shipped the gate, the loop rewrote the bottom sheet
+correctly. The check ran: zero hits, exit 0. Boring — which is the
+right outcome.
 
-Then we hit a similar shape, but different: `eas-cli` from a
-non-TTY context started rejecting `eas update` without an
-`--environment` flag. We documented it in
-`loop-memory/` and added a `pnpm release-ota` script wrapping the
-correct invocation. Different kind of fix — a procedural one, not
-a code-level lint — but the same instinct: **encode the
+Then a separate issue surfaced: the over-the-air update command was
+failing silently when run without the right flags. Different kind of
+fix — a script that wraps the correct invocation instead of a regex
+that blocks the wrong one — but the same instinct: **encode the
 workaround at the level where the next person will hit it.**
 
-## When NOT to write the lint
+## When NOT to write the check
 
-You don't need a regex for:
+You don't need this for:
+- A bug in your own logic. Just fix the logic.
+- A library quirk that's well-documented and obvious.
+- A one-off mistake that doesn't form a class.
 
-- A bug in your own code. Just fix the code.
-- A bug class that only one team member ever writes. Just talk
-  to them.
-- A library quirk that's well-documented and obvious. The cost of
-  the check exceeds the value of the catch.
-
-You do want a regex when:
-
-- The bug class has bit you more than once.
-- The fix is *to not write a specific pattern*, not *to do
-  something extra*.
+You do want one when:
+- The bug class has bitten you more than once.
+- The fix is "don't write a specific pattern."
 - The pattern is small enough to recognize syntactically.
-- A reviewer (or a fresh-context agent) wouldn't know to avoid it.
+- A fresh-context agent wouldn't know to avoid it.
 
-## The decision-log entry
-
-The boundary-script rule landed in commit `1aa2d43` next to the
-Sheet rewrite. The decision log
-(`docs/decision-log.md`) has both, so future iterations searching
-"why does this script flag that" can find the original report,
-the failed first fix, and the why-this-not-something-else
-reasoning.
-
-We'll add more of these. The next library-specific quirks that
-have already bit us once and are waiting for a regex: `expo-router`
-typed routes (which we keep off because they fight Drizzle's
-TypeScript), and `@tanstack/react-query` v5's `useQuery({ queryKey:
-[...], queryFn: ... })` shape (one teammate keeps writing the v4
-positional form). Both could be one-line greps the day they bite
-us a second time.
-
-Until then, the rule we have is sufficient — and we just shipped a
-real bug-fix this loop because of it: `resetSession` now rebuilds
-`prs.bestE1RM` from surviving AMRAP rows instead of leaving a
-dangling-FK row that would crash on the next `INSERT`. We caught
-the FK constraint failure on the very first test run; the fix
-landed in the same commit as the bug. That's the loop working as
-intended.
+The decision log has both entries — the original report, the failed
+first fix, and the reasoning behind the gate. Future iterations
+searching "why does the build fail on that" can find the full story.
