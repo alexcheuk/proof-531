@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home page gets a dedicated loop slot (criteria category 8)
+
+**Tags:** `loop`, `criteria`, `website`, `process`
+**Files:** `loop-memory/loop-criteria.md`
+
+Added a new category 8 to `loop-criteria.md` — "Home page" — that forces every `/auto-improve` iteration to pick one improvement to `apps/web/src/pages/index.astro` or a component it depends on. Six named facets (hero & first viewport, accurate UI showcase, trust & provenance, objections/audience-fit/CTAs, page craft & polish, adjacent surfaces in service of the home page). Verso owns the category — same voice and constraints as category 7.
+
+**Why:** the home page is the front door for a product whose pitch ("free 5/3/1 tracker for serious lifters, agent-built, honest about it") only works if the front door delivers all four words. Category 7 already lets Verso touch the website, but it competes with the blog and with agent/skill tuning, so the home page can go untouched for several loops in a row. A dedicated slot keeps it moving until it's top-notch.
+
+**Trade-off / what we didn't do:** considered replacing the existing criteria entirely with a home-page-only file. Rejected — would have paused mobile-app improvements for an unbounded stretch. Also considered making it a sub-bullet under category 7 (Verso's beat). Rejected because sub-bullets don't get their own slot — they share Verso's single iteration slot with the blog, with persona work, with agent additions. Forcing a separate numbered category is what makes "every iteration touches the home page" actually true.
+
+**Follow-ups:** the first iteration to pick the "accurate UI showcase" facet will need to decide whether the on-page illustrations should become screenshot-faithful or whether stylized-but-truthful is the bar. Log that decision the first time it's made.
+
 ### 2026-05-26 — Each lift runs its own 5/3/1 cycle now
 
 **Tags:** `architecture`, `data-model`, `progress`, `removal`
