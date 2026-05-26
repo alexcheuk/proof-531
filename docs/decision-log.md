@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Home-page illustrations now do real arithmetic
+
+**Tags:** `website`, `home-page`, `domain`
+**Files:** `apps/web/src/components/illustrations/AmrapMath.astro`, `apps/web/src/components/illustrations/HeroPhone.astro`, `loop-memory/10-home-page-illustration-audit.md`
+
+Continuation of the home-page accuracy audit. The AmrapMath formula card showed `345 × (1 + 4 / 30) = 412`, which doesn't compute: 345 × 34/30 = 391. Picked clean numbers — 345 × 6 reps with factor 36/30 = 1.200 produces e1RM 414 exactly — and propagated the same scenario through HeroPhone Frame C (PR celebration → 414 e1RM, +29 delta vs prev 385), Frame D (receipt → top set 345 × 6+, e1RM 414, volume 4,375 = 275×5 + 310×3 + 345×6), and Frame B (next-set caption + plates → 275 × 5 at 75% × TM 365, plates [45, 45, 25]).
+
+**Why:** the home page is a flex of taste, and a flex that miscalculates undermines the implicit promise. The miscalculation also breaks Verso's outside-reader rule from the other side — a reader who *does* know Epley will spot the lie immediately.
+
+**Trade-off / what we didn't do:** could have rebuilt Frame B around weight 310 to match a week-3 set-2 prescription, but 310 lb decomposes into 6 plates per side and looked busy in the mini-bar illustration. Picking week-3 set 1 (275 lb, 3 plates per side) keeps the illustration visually clean and the math correct.
+
 ### 2026-05-26 — Home-page illustration audit started; HeroPhone drift fixes
 
 **Tags:** `website`, `home-page`, `process`

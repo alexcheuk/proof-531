@@ -30,8 +30,8 @@ function sizeFor(plate: number): number {
   const t = Math.max(0, Math.min(1, (plate - 2.5) / (45 - 2.5)));
   return 0.36 + t * 0.64;
 }
-const perSideA: number[] = [45, 45, 45, 10, 5]; // 345 lb on the bar
-const perSideB: number[] = [45, 45, 45, 35];    // 385 lb (next set after the PR)
+const perSideA: number[] = [45, 45, 45, 10, 5]; // 345 lb on the bar (week 3 AMRAP, 95% × TM 365)
+const perSideB: number[] = [45, 45, 25];        // 275 lb on the bar (week 3 set 1, 75% × TM 365)
 
 const platesA = perSideA.map((w) => ({ w, h: Math.round(72 * sizeFor(w)) }));
 const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
@@ -159,12 +159,12 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
         <div class="hp-pad">
           <div class="hp-caps-row">
             <span class="hp-caps">NEXT SET</span>
-            <span class="hp-caps hp-caps--ink3">85% · TM 365 LB</span>
+            <span class="hp-caps hp-caps--ink3">75% · TM 365 LB</span>
           </div>
           <div class="hp-number-row">
-            <span class="hp-weight hp-weight--sm">310</span>
+            <span class="hp-weight hp-weight--sm">275</span>
             <span class="hp-unit">LB</span>
-            <span class="hp-reps hp-reps--sm">× 3</span>
+            <span class="hp-reps hp-reps--sm">× 5</span>
           </div>
 
           <div class="hp-platebar hp-platebar--sm">
@@ -210,7 +210,7 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
           <div class="hp-cert-row hp-cert-row--current">
             <div class="hp-cert-caps">DEADLIFT · ESTIMATED 1RM</div>
             <div class="hp-cert-num-row">
-              <span class="hp-cert-num">412</span>
+              <span class="hp-cert-num">414</span>
               <span class="hp-cert-unit">LB</span>
             </div>
           </div>
@@ -223,7 +223,7 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
             <div class="hp-cert-compare-col hp-cert-compare-col--right">
               <div class="hp-cert-caps hp-cert-caps--sm">Stronger by</div>
               <div class="hp-cert-delta-row">
-                <span class="hp-cert-delta">+27</span>
+                <span class="hp-cert-delta">+29</span>
                 <span class="hp-cert-delta-unit">LB</span>
               </div>
             </div>
@@ -278,15 +278,15 @@ const platesB = perSideB.map((w) => ({ w, h: Math.round(36 * sizeFor(w)) }));
           <div class="hp-receipt-card">
             <div class="hp-receipt-row hp-receipt-row--first">
               <span class="hp-caps hp-caps--strong">Top set</span>
-              <span class="hp-receipt-val">345 × 4+ <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
+              <span class="hp-receipt-val">345 × 6+ <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
             </div>
             <div class="hp-receipt-row">
               <span class="hp-caps hp-caps--strong">Est. 1rm</span>
-              <span class="hp-receipt-val">412 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
+              <span class="hp-receipt-val">414 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb</span></span>
             </div>
             <div class="hp-receipt-row">
               <span class="hp-caps hp-caps--strong">Volume</span>
-              <span class="hp-receipt-val">4,065 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb · working sets</span></span>
+              <span class="hp-receipt-val">4,375 <span class="hp-caps hp-caps--ink3 hp-caps--sub">lb · working sets</span></span>
             </div>
             <div class="hp-receipt-row">
               <span class="hp-caps hp-caps--strong">BBB</span>
