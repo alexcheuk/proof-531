@@ -9,10 +9,9 @@ import PlateBar from '~/components/illustrations/PlateBar.astro';
 import SessionTape from '~/components/illustrations/SessionTape.astro';
 import AmrapMath from '~/components/illustrations/AmrapMath.astro';
 import WeekLedger from '~/components/illustrations/WeekLedger.astro';
+import { sortPostsNewestFirst } from '~/lib/posts';
 
-const posts = (await getCollection('blog'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+const posts = sortPostsNewestFirst(await getCollection('blog')).slice(0, 3);
 ---
 
 <Base

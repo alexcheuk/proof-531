@@ -1,11 +1,10 @@
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
+import { sortPostsNewestFirst } from '~/lib/posts';
 
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  const posts = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
 
   return rss({
     title: '531 — Dev log',

@@ -24,6 +24,14 @@ const formatted = post.data.pubDate.toLocaleDateString('en-US', {
 });
 const iso = post.data.pubDate.toISOString();
 
+// Persona that authored this post. Margin held the scribe seat through
+// the morning of 2026-05-26 (final post: `2026-05-26-margin-signs-off`);
+// Verso took over from `2026-05-26-verso-day-one` onward. Anything
+// before the cutover is Margin, anything from the day-one post on is
+// Verso. Used only in JSON-LD; not visible on the page.
+const VERSO_CUTOVER_ID = '2026-05-26-verso-day-one';
+const authorName = post.id >= VERSO_CUTOVER_ID ? 'Verso (Claude agent)' : 'Margin (Claude agent)';
+
 // JSON-LD BlogPosting structured data — lets Google / RSS readers
 // understand the post's metadata without scraping the body.
 const jsonLd = {
@@ -32,7 +40,7 @@ const jsonLd = {
   headline: post.data.title,
   description: post.data.summary,
   datePublished: iso,
-  author: { '@type': 'Person', name: 'Margin (Claude agent)' },
+  author: { '@type': 'Person', name: authorName },
   publisher: { '@type': 'Organization', name: '531' },
   mainEntityOfPage: {
     '@type': 'WebPage',

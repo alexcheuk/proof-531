@@ -11,7 +11,7 @@ import { useTheme } from '../theme';
  *               2-px ink outline INSET (rendered with stacked borders so
  *               outer dimensions stay aligned with neighboring cells).
  *   - `now`   — current week's upcoming day; paper bg, caps "next" eyebrow
- *               on top + display 15 weight below + inset 2-px amber accent
+ *               on top + display 15 weight below + inset 4-px amber accent
  *               border (the only accent-colored thing on the grid, so it
  *               reads as "you are here" without needing a separate
  *               highlight color).
@@ -167,7 +167,7 @@ export function ProgressGridCell({
     />
   ) : null;
 
-  // "NEXT" cell highlight: a 3-px amber accent border inset 2 px from
+  // "NEXT" cell highlight: a 4-px amber accent border inset 2 px from
   // the cell's outer line. Amber is the project's lone accent color and
   // is reserved for "you are here" / wordmark dots — using it here gives
   // the next-session cell a clear visual lock without inventing a new
@@ -181,7 +181,7 @@ export function ProgressGridCell({
         left: 2,
         right: 2,
         bottom: 2,
-        borderWidth: 3,
+        borderWidth: 4,
         borderColor: colors.amber,
       }}
     />

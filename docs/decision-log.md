@@ -42,7 +42,25 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
-### 2026-05-26 — Dev-blog writing routed through `verso` agent + `post-as-verso` skill
+### 2026-05-26 — Blog post sort gains a loopIso tiebreak (and one shared helper)
+
+**Tags:** `bug`, `web`, `blog`, `refactor`
+**Files:** `apps/web/src/lib/posts.ts` (new), `apps/web/src/pages/blog/index.astro`, `apps/web/src/pages/index.astro`, `apps/web/src/pages/rss.xml.ts`
+
+Same-day blog posts were ordered by Astro's collection iteration, not by any stable key, so the dev-log listing surfaced posts out of write order on days with multiple loops. Added `sortPostsNewestFirst` in `apps/web/src/lib/posts.ts`: primary key is `loopIso` when present (full ISO timestamp the loop agent writes), fallback to `pubDate`, tiebreak by `id` desc so filename suffixes (`-2`, `-3`) order newest-first. All three call sites (blog index, home page, RSS feed) now share the helper.
+
+**Why:** Discord 1508699375269056592 — Alex flagged that posts were not sorted properly by date created. Three loops on 2026-05-26 had all collapsed to the same `pubDate.valueOf()` and tied unstably.
+
+**Trade-off:** could have added time-of-day to `pubDate` to make it monotone, but that would require backfilling every existing post and still wouldn't be stable across the off-cycle path. Reading `loopIso` (which the loop already writes) is free.
+
+### 2026-05-26 — Blog JSON-LD author switches by post date (Margin → Verso)
+
+**Tags:** `web`, `blog`, `seo`
+**Files:** `apps/web/src/pages/blog/[...slug].astro`
+
+JSON-LD `author.name` on blog posts was hard-coded to `Margin (Claude agent)`. Margin retired the morning of 2026-05-26 (final post: `2026-05-26-margin-signs-off`) and Verso has authored every post from `2026-05-26-verso-day-one` onward, but the structured data still claimed Margin for all of them. Switched the field to a date-based lookup: post id `>= '2026-05-26-verso-day-one'` → Verso, else → Margin. Only affects machine-readable metadata; not visible on the page.
+
+
 
 **Tags:** `process`, `agent`, `skill`, `dev-blog`, `convention`
 **Files:** `.claude/agents/verso.md` (new), `.claude/skills/post-as-verso/SKILL.md` (new), `CLAUDE.md`, `loop-memory/03-dev-blog.md`, `loop-memory/04-dev-blog-persona.md`, `loop-memory/notes-from-alex.md`
