@@ -4,9 +4,9 @@
  *
  * Implements the canonical design at
  * `_workspace/00_input/canonical-progress-v3.jsx` (visual + structural
- * source of truth), with one deliberate divergence: lift switching uses a
- * horizontal swipe pager + dots instead of the canonical's full-width tabs
- * (user decision recorded in `_workspace/00_input/brief.md`).
+ * source of truth). Layout mirrors HomeScreen: Masthead + LiftTabs are
+ * fixed at the top; the per-lift content (title block, stats triplet,
+ * goal panel, cycle matrix, footnote) scrolls inside the FlatList page.
  *
  * Composition only — tokens / hex / px literals stay in `src/design/`.
  * Data wiring: `useLiftProgression` for the per-lift view-model,
@@ -21,7 +21,6 @@ import { usePrs } from '@/data/queries/usePrs';
 import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
-import { PagerDots } from '@/design/primitives/PagerDots';
 import { ProgressGridCell } from '@/design/primitives/ProgressGridCell';
 import { ProgressGridRow } from '@/design/primitives/ProgressGridRow';
 import { Skeleton } from '@/design/primitives/Skeleton';
@@ -31,6 +30,7 @@ import { tmIncrement } from '@/domain/increments';
 import { goalTargetTm } from '@/domain/progression';
 import type { Lift, Unit } from '@/domain/types';
 import { displayWeight } from '@/domain/units';
+import { LiftTabs } from '@/features/home/components/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -79,7 +79,7 @@ function ceilToStep(value: number, step: number): number {
 
 export function ProgressScreen({ lift }: ProgressScreenProps) {
   const router = useRouter();
-  const { colors, layout, spacing, type } = useTheme();
+  const { colors } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
 
   const settings = useSettings();
@@ -139,49 +139,13 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
         <ProgressSkeleton />
       ) : (
         <>
-          <View
-            style={{
-              paddingHorizontal: layout.gutter,
-              paddingTop: 14,
-              paddingBottom: 22,
-              borderBottomWidth: 1,
-              borderBottomColor: colors.lineStrong,
-            }}
-          >
-            <RNText
-              style={{
-                fontFamily: `${type.mono}-SemiBold`,
-                fontSize: 10,
-                letterSpacing: 2.2,
-                textTransform: 'uppercase',
-                color: colors.ink2,
-                marginBottom: 8,
-              }}
-            >
-              {`On the ${longLiftName(selectedLift)}`}
-            </RNText>
-            <RNText
-              style={{
-                fontFamily: `${type.sans}-Bold`,
-                fontSize: 56,
-                lineHeight: 52,
-                letterSpacing: -2.24,
-                color: colors.ink0,
-              }}
-            >
-              Progress.
-            </RNText>
-          </View>
           {enabledLifts.length > 1 ? (
-            <View
-              style={{
-                alignItems: 'center',
-                paddingTop: spacing.md,
-                paddingBottom: spacing.sm,
-              }}
-            >
-              <PagerDots count={enabledLifts.length} selectedIndex={selectedIndex} />
-            </View>
+            <LiftTabs
+              enabled={enabledLifts}
+              selected={selectedLift}
+              inProgressLift={null}
+              onSelect={updateRouteParam}
+            />
           ) : null}
           <FlatList
             ref={listRef}
@@ -355,6 +319,40 @@ function ProgressLiftPage({ lift }: { lift: Lift }) {
       contentContainerStyle={{ paddingBottom: spacing.xxl }}
       testID={`progress-lift-${lift}`}
     >
+      <View
+        style={{
+          paddingHorizontal: layout.gutter,
+          paddingTop: 14,
+          paddingBottom: 22,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.lineStrong,
+        }}
+      >
+        <RNText
+          style={{
+            fontFamily: `${type.mono}-SemiBold`,
+            fontSize: 10,
+            letterSpacing: 2.2,
+            textTransform: 'uppercase',
+            color: colors.ink2,
+            marginBottom: 8,
+          }}
+        >
+          {`On the ${longLiftName(lift)}`}
+        </RNText>
+        <RNText
+          style={{
+            fontFamily: `${type.sans}-Bold`,
+            fontSize: 56,
+            lineHeight: 52,
+            letterSpacing: -2.24,
+            color: colors.ink0,
+          }}
+        >
+          Progress.
+        </RNText>
+      </View>
+
       <StatsTriplet
         tm={data.tm}
         bestE1RM={liftPr}
@@ -562,6 +560,7 @@ function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
     { label: 'D4', scheme: 'del' },
   ];
   const headerCell = (
+    key: string,
     label: string,
     sub: string | null,
     flex: number | undefined,
@@ -570,6 +569,7 @@ function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
     withLeftStrongRule: boolean,
   ) => (
     <View
+      key={key}
       style={{
         flex,
         width,
@@ -627,8 +627,8 @@ function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
           borderRightColor: colors.ink0,
         }}
       />
-      {dayLabels.map((d, i) => headerCell(d.label, d.scheme, 1, undefined, i > 0, false))}
-      {headerCell('→ TM', unitGlyph, undefined, 54, false, true)}
+      {dayLabels.map((d, i) => headerCell(d.label, d.label, d.scheme, 1, undefined, i > 0, false))}
+      {headerCell('tm', '→ TM', unitGlyph, undefined, 54, false, true)}
     </View>
   );
 }
