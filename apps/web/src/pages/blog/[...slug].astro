@@ -63,8 +63,16 @@ const jsonLd = {
         )}
       </div>
       <h1 class="entry__title">{post.data.title.replace(/\.$/, '')}<span class="entry__dot" aria-hidden="true">.</span></h1>
-      <p class="entry__summary">{post.data.summary}</p>
     </header>
+
+    {/* TL;DR block — frontmatter `summary` styled as a meta-element so
+        readers can tell it apart from the lede paragraph of the body.
+        Verso's body openings always restate the same thesis, so without
+        a visual distinction the summary reads as a duplicate. */}
+    <aside class="entry__tldr">
+      <span class="eyebrow">TL;DR</span>
+      <p>{post.data.summary}</p>
+    </aside>
 
     {post.data.discordPrompts && post.data.discordPrompts.length > 0 && (
       <aside class="prompts">
@@ -148,10 +156,25 @@ const jsonLd = {
     margin-left: -0.04em;
   }
 
-  .entry__summary {
-    font-size: 1.15rem;
+  /* TL;DR block — sits between the entry header and the body.
+     Caps eyebrow + the post's `summary` in a slightly muted color so
+     the eye reads it as a meta-element, not the post's lede paragraph
+     (the body restates the thesis on purpose). */
+  .entry__tldr {
+    margin-top: var(--space-xl);
+    padding: var(--space-md) 0 var(--space-lg);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .entry__tldr p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
     color: var(--ink-1);
-    line-height: 1.5;
+    max-width: 64ch;
   }
 
   .prompts {
