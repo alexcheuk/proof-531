@@ -3,35 +3,34 @@ import { useCallback, useEffect, useRef } from 'react';
 import type { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 /**
- * Two-way binding between the Progress carousel's horizontal scroll
- * position and the parent component's `selectedLift` state. Mirrors
- * `useHomeCarouselSync` so swiping the Progress pager feels identical
- * to swiping the TODAY pager.
+ * Two-way binding between a horizontal lift carousel's scroll position and
+ * the parent's `selectedLift` state. Shared between HomeScreen and
+ * ProgressScreen — both render the same "one page per enabled lift"
+ * shape and need identical sync behaviour (a momentum-end handler that
+ * dispatches the new lift, plus an effect that `scrollToIndex`'s when the
+ * selection changes externally via LiftTabs / deep-link / route params).
  *
- * Returns a ref to attach to the FlatList and an `onMomentumScrollEnd`
- * handler that converts horizontal offset to a Lift selection. The
- * effect calls `scrollToIndex` when `selectedLift` changes externally
- * (deep link, route param edit) — swallows the "before initial layout"
- * throw the same way the Home hook does.
+ * `scrollToIndex` can throw before initial layout on Expo SDK 55; the
+ * effect swallows that one-shot to keep first paint quiet.
  */
-export type UseProgressCarouselSyncOptions = {
+export type UseLiftCarouselSyncOptions = {
   selectedLift: Lift;
   enabledLifts: Lift[];
   screenWidth: number;
   setSelectedLift: (lift: Lift) => void;
 };
 
-export type UseProgressCarouselSyncResult = {
+export type UseLiftCarouselSyncResult = {
   listRef: React.RefObject<FlatList<Lift> | null>;
   onMomentumScrollEnd: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
-export function useProgressCarouselSync({
+export function useLiftCarouselSync({
   selectedLift,
   enabledLifts,
   screenWidth,
   setSelectedLift,
-}: UseProgressCarouselSyncOptions): UseProgressCarouselSyncResult {
+}: UseLiftCarouselSyncOptions): UseLiftCarouselSyncResult {
   const listRef = useRef<FlatList<Lift>>(null);
 
   useEffect(() => {

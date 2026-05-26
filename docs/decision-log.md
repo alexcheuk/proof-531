@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — `useLiftCarouselSync` extracted to shared; per-screen wrappers deleted
+
+**Tags:** `refactor`, `home`, `progress`, `shared`
+**Files:** `apps/mobile/src/features/shared/hooks/useLiftCarouselSync.ts` (new), `apps/mobile/src/features/shared/hooks/__tests__/useLiftCarouselSync.test.tsx` (new), `apps/mobile/src/features/home/HomeScreen.tsx`, `apps/mobile/src/features/progress/ProgressScreen.tsx`, deleted `apps/mobile/src/features/home/hooks/useHomeCarouselSync.ts`, deleted `apps/mobile/src/features/home/hooks/__tests__/useHomeCarouselSync.test.tsx`, deleted `apps/mobile/src/features/progress/hooks/useProgressCarouselSync.ts`
+
+The two carousel-sync hooks were ~95% identical — same listRef pattern, same momentum-end → setSelectedLift dispatch, same scrollToIndex error swallow. Consolidated to one `useLiftCarouselSync` in `features/shared/hooks/`. The progress hooks directory is now empty and removed. HomeScreen also had a biome-organizer artifact where the file-header docblock was wedged between imports, and a stale comment referring to the removed SEE FULL SESSION CTA — both fixed in the same touch.
+
+**Why:** "three near-identical fragments" is the trigger for extraction; this was two but the divergence pressure was zero (both screens share the same FlatList carousel shape and same `setSelectedLift` signature). Keeping two copies invited drift the next time someone tunes the scroll behaviour.
+
 ### 2026-05-26 — Line-height clipping rule codified as `pnpm check-line-heights`
 
 **Tags:** `bug-class`, `tooling`, `convention`, `process`

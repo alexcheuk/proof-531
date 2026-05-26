@@ -1,13 +1,3 @@
-import { goTo } from '@/app/routes';
-import { useActiveSession } from '@/data/queries/useActiveSession';
-import { useLatestTms } from '@/data/queries/useLatestTm';
-import { usePrs } from '@/data/queries/usePrs';
-import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
-import { useSettings } from '@/data/queries/useSettings';
-import { Masthead } from '@/design/primitives/Masthead';
-import { dateLabel } from '@/domain/labels';
-import type { Lift } from '@/domain/types';
-import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 /**
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
@@ -22,6 +12,17 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
  * Boundary: this file lives under `features/` and composes design
  * primitives + data queries — it never imports drizzle hex directly.
  */
+import { goTo } from '@/app/routes';
+import { useActiveSession } from '@/data/queries/useActiveSession';
+import { useLatestTms } from '@/data/queries/useLatestTm';
+import { usePrs } from '@/data/queries/usePrs';
+import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
+import { useSettings } from '@/data/queries/useSettings';
+import { Masthead } from '@/design/primitives/Masthead';
+import { dateLabel } from '@/domain/labels';
+import type { Lift } from '@/domain/types';
+import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
+import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import { FlatList, type ListRenderItem, View, useWindowDimensions } from 'react-native';
@@ -32,7 +33,6 @@ import { LiftPage } from './components/LiftPage';
 import { LiftTabs } from './components/LiftTabs';
 import { StreakBadge } from './components/StreakBadge';
 import { useActivityStreak } from './hooks/useActivityStreak';
-import { useHomeCarouselSync } from './hooks/useHomeCarouselSync';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {
@@ -57,7 +57,7 @@ export function HomeScreen() {
   const { width: screenWidth } = useWindowDimensions();
   const { streak } = useActivityStreak();
 
-  const { listRef, onMomentumScrollEnd } = useHomeCarouselSync({
+  const { listRef, onMomentumScrollEnd } = useLiftCarouselSync({
     selectedLift,
     enabledLifts,
     screenWidth,
@@ -83,8 +83,6 @@ export function HomeScreen() {
     [inProgressLift, router],
   );
 
-  // Resume and "See full session" both land on the same Today route — they
-  // diverge in the LiftPage's CTA copy, not in the destination. One handler.
   const handleOpenToday = useCallback(
     (lift: Lift) => {
       goTo.today(router, lift);

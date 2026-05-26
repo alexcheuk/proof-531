@@ -13,6 +13,7 @@ import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
 import { LiftTabs } from '@/features/home/components/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
+import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -24,7 +25,6 @@ import {
 } from 'react-native';
 import { ProgressLiftPage } from './components/ProgressLiftPage';
 import { ProgressSkeleton } from './components/ProgressSkeleton';
-import { useProgressCarouselSync } from './hooks/useProgressCarouselSync';
 
 export type ProgressScreenProps = {
   lift: Lift;
@@ -57,7 +57,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
     [router],
   );
 
-  const { listRef, onMomentumScrollEnd } = useProgressCarouselSync({
+  const { listRef, onMomentumScrollEnd } = useLiftCarouselSync({
     selectedLift,
     enabledLifts,
     screenWidth,
