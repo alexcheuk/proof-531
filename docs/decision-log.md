@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — /process page caught up: Verso (not Margin) + outside-reader pass
+
+**Tags:** `website`, `process-page`, `persona`
+**Files:** `apps/web/src/pages/process.astro`
+
+The /process page still named the dev-blog persona as Margin — Margin was let go on 2026-05-26 and Verso took over. Updated step 04 to name Verso, with a one-line nod to the previous tenant. Also did an outside-reader pass on the same page: stripped the most aggressive code-tag usage (`loop-memory/`, `src/design/`, `pnpm test`, `docs/INTENT.md`, `apps/web/src/content/blog/`, `@gorhom/bottom-sheet`, `@testing-library/react-native`, `fast-check`, `expo export`, `.claude/skills/`, `/auto-improve`, `rn-designer/rn-frontend/rn-qa`) and paraphrased the explanations so a curious-but-not-checked-in reader can follow.
+
+Also fixed step 02 — it claimed "seven baseline categories", but the loop has had eight since the home-page-focus category was added in 2026-05-26. And updated the pacing line to mention steady-state mode (2–4 honest items when the queue is empty).
+
+**Why:** the page is the secondary marketing surface — the visitor who clicks "How it's built →" from the home page lands here. Naming a persona who no longer exists undermines the "agent-built, honest about it" framing, and the page-wide file-path code-tag dump was clearly written for a teammate, not a visitor.
+
+**Trade-off / what we didn't do:** kept the named tech stack mentions (Expo, React Native, Drizzle, Astro, Vite, Biome, Jest) — those are honest framework descriptions that a technically-curious visitor recognizes and they sell the "real software, not a toy" story. The line between honest credibility flex and outside-reader violation is fuzzy; the rule of thumb applied here is "names of frameworks and libraries OK, file paths and CLI commands not".
+
 ### 2026-05-26 — Home-page audit pass 4: SessionTape AMRAP UX + numbers; MastheadStrip clean
 
 **Tags:** `website`, `home-page`

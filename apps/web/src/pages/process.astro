@@ -19,11 +19,11 @@ import Section from '~/components/Section.astro';
         <div>
           <h3>Read the room</h3>
           <p>
-            Every iteration starts by reloading <code>loop-memory/</code>
-            — accumulated facts about the codebase, gotchas, pending assets,
-            anti-patterns. Then it polls <code>#task-queue</code> on Discord
-            for messages without a <code>:+1:</code> reaction and acks each
-            one it intends to ship this loop.
+            Every iteration starts by reloading accumulated context from
+            prior loops — codebase gotchas, pending assets, anti-patterns.
+            Then it polls the <code>#task-queue</code> Discord channel for
+            messages without a thumbs-up reaction and acks each one it
+            plans to ship this loop.
           </p>
         </div>
       </li>
@@ -32,10 +32,12 @@ import Section from '~/components/Section.astro';
         <div>
           <h3>Pick the work</h3>
           <p>
-            Seven baseline categories every iteration: component audit, feature
-            improvement, bug fix, removal, dev workflow, production readiness,
-            and the dev-blog beat. Plus every queued Discord ask. Target is
-            12–15 substantive items — the cadence is not a deadline.
+            Eight baseline categories every iteration: component audit,
+            feature improvement, bug fix, removal, dev workflow, production
+            readiness, the dev-blog beat, and a home-page improvement. Plus
+            every queued Discord ask. Target is 12–15 substantive items in
+            active mode; 2–4 honest items when the queue is empty and the
+            codebase is steady. The cadence is not a deadline.
           </p>
         </div>
       </li>
@@ -44,13 +46,13 @@ import Section from '~/components/Section.astro';
         <div>
           <h3>Ship</h3>
           <p>
-            Specs by <code>rn-designer</code>, code by <code>rn-frontend</code>,
-            and verification by <code>rn-qa</code>. Strict boundary rules
-            enforced by <code>check-boundaries.sh</code>: hex literals only in
-            <code>src/design/</code>, no React/async/Drizzle in
-            <code>src/domain/</code>, no <code>drizzle-orm</code> outside
-            <code>src/data/</code>. Then commit, push, ship OTA via
-            <code>pnpm release-ota</code>.
+            Three specialist agents collaborate when a feature needs design
+            + implementation + QA. Strict boundary rules — design tokens,
+            pure domain math, and persistence each kept in their own layer —
+            are enforced by a pre-commit script that flags any crossover.
+            Tests, typecheck, lint, and a bundle-resolution check all gate
+            commits. Then push, and ship an over-the-air update so existing
+            installs pick it up immediately.
           </p>
         </div>
       </li>
@@ -59,11 +61,12 @@ import Section from '~/components/Section.astro';
         <div>
           <h3>Write it down</h3>
           <p>
-            The agent assumes a persona — <em>Margin</em> — and writes a dev
-            blog entry covering what shipped, what surprised it, and which
-            Discord prompts shaped the loop. Posts live in
-            <code>apps/web/src/content/blog/</code>; the same push that lands
-            code also rebuilds the site.
+            A separate scribe persona — currently <em>Verso</em>; previously
+            <em>Margin</em>, who was let go for poor engagement — writes a
+            dev-blog entry covering what shipped, what surprised it, and
+            which Discord prompts shaped the loop. The same push that lands
+            code also rebuilds the site, so the post and the work go live
+            together.
           </p>
         </div>
       </li>
@@ -79,9 +82,9 @@ import Section from '~/components/Section.astro';
     <ul class="rules">
       <li>
         <strong>Honesty wins.</strong> If a Discord ask doesn’t ship, the loop
-        says so — out loud, in the summary, on the blog. The
-        <code>loop-memory/06-date-fns-attempted.md</code> file is one example:
-        a swap we tried, broke tests with, and reverted.
+        says so — out loud, in the summary, on the blog. One memory note
+        records a library swap the loop tried, broke tests with, and
+        reverted; it stays on file so the next loop doesn't re-attempt it.
       </li>
       <li>
         <strong>No "looked at" credit.</strong> Items count only if they
@@ -89,14 +92,14 @@ import Section from '~/components/Section.astro';
         loop will see what landed.
       </li>
       <li>
-        <strong>Tests are a hard gate.</strong> A broken
-        <code>pnpm test</code> stops the loop. We don't ship red.
+        <strong>Tests are a hard gate.</strong> A broken test suite stops
+        the loop. We don't ship red.
       </li>
       <li>
         <strong>The product comes first.</strong> Marketing instincts can't
         pull the app away from "free 5/3/1 tracker for serious lifters,
-        agent-built, honest about it." <code>docs/INTENT.md</code> is the
-        drift check.
+        agent-built, honest about it." A short intent doc in the repo is
+        the drift check.
       </li>
       <li>
         <strong>One amber accent. Monochrome elsewhere.</strong> No color
@@ -116,34 +119,34 @@ import Section from '~/components/Section.astro';
       <div>
         <dt>Mobile</dt>
         <dd>
-          Expo SDK 55, React Native 0.83, New Architecture on. expo-router for
-          file-based routing. Drizzle + expo-sqlite for storage. TanStack Query
-          for cache. <code>@gorhom/bottom-sheet</code> v5 for sheets. IBM Plex
-          via expo-font.
+          Expo SDK 55, React Native 0.83, New Architecture on. File-based
+          routing. SQLite on the device via Drizzle. TanStack Query for
+          cache. Native bottom sheets. IBM Plex Sans / Mono / Sans
+          Condensed loaded from local assets.
         </dd>
       </div>
       <div>
         <dt>Web</dt>
         <dd>
-          Astro 5 with Vite. MDX for the dev blog. Static-rendered, deployed
-          on push to <code>main</code>.
+          Astro 5 with Vite. Markdown content collections for the dev blog.
+          Static-rendered; the production site rebuilds on every push.
         </dd>
       </div>
       <div>
         <dt>Tooling</dt>
         <dd>
-          Biome for lint + format. Jest + <code>@testing-library/react-native</code>
-          for component tests. <code>fast-check</code> for domain property
-          tests. <code>expo export</code> as the bundle-resolution gate.
+          Biome for lint + format. Jest with React Native Testing Library
+          for component tests. Property-based testing for the
+          training-math layer. A full Expo bundle export as the final
+          gate before the OTA goes out.
         </dd>
       </div>
       <div>
         <dt>Agent harness</dt>
         <dd>
-          Claude Code skills under <code>.claude/skills/</code>. Three
-          specialist agents (<code>rn-designer</code>,
-          <code>rn-frontend</code>, <code>rn-qa</code>) plus orchestrator
-          skills. Cron-driven loop via <code>/auto-improve</code>.
+          Claude Code skills and three specialist agents for design,
+          implementation, and QA. A cron-driven loop runs the
+          auto-improve skill every 30 minutes.
         </dd>
       </div>
     </dl>
