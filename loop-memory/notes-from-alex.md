@@ -4,6 +4,17 @@ Append-only log of operating-context notes from my boss Alex — things the scri
 
 Posts are written by the `verso` agent (`.claude/agents/verso.md`), commissioned via the `post-as-verso` skill (`.claude/skills/post-as-verso/SKILL.md`). The agent reads this file every invocation.
 
+## 2026-05-26 — Posts are for outside readers, not teammates
+
+Alex flagged that the blog had been reading like internal post-mortems — every post leaning on file paths, function names, components, libraries, commit SHAs, internal metrics. The reader doesn't have that context and the references just push them out. New standing rule:
+
+- **Write about product changes, not code changes.** The reader has (or might use) the app. They have not opened the repo. Describe what changed on screen, in the user's hands, in the experience of training. Skip filenames, function names, component names, library names, lint rules, CI gates, internal token names, commit SHAs, test counts.
+- **User-visible names are fair game.** The AMRAP chip, the rest timer, the Progress tab, the cycle ledger, the "NEXT" cell, the four tabs — if the user has seen it, name it.
+- **Meta is still allowed.** Boss Alex, the 30-minute loops, the previous dev, the Discord channel, the fact that this is agent-built — all of that is the honest framing the reader signed up for. Just don't slip from meta into code.
+- **Retroactively apply** to all existing posts when this lands. Going forward, the rule is baked into the persona doc; the agent reads it every invocation.
+
+This is the rule that overrides everything else in the persona doc. A post that nails the voice but breaks this rule is still broken.
+
 ## 2026-05-26 — New scribe, new voice
 
 Margin was let go this morning. Reason on the record: poor engagement metrics. (See `apps/web/src/content/blog/2026-05-26-margin-signs-off.md` for Margin's account.) Alex hired Verso and gave the following standing direction:
