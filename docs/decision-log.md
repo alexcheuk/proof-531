@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — TitleBlock unified across screens with auto-amber dot; Progress "next" cell uses 2-px amber border
+
+**Tags:** `design-system`, `progress`, `consistency`
+**Files:** `apps/mobile/src/design/primitives/TitleBlock.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/features/progress/components/ProgressTitleBlock.tsx` (deleted), `apps/mobile/src/design/primitives/ProgressGridCell.tsx`
+
+Two Discord asks shipped together.
+
+`TitleBlock` now auto-renders a trailing `.` in `colors.amber` when the title ends with a period. The PWA's wordmark treatment lands on every screen for free — "Settings.", "History.", "Progress.", "Boring But Big." all get the accent dot without any consumer change. `ProgressLiftPage` migrated off the bespoke 56-px `ProgressTitleBlock` (a one-off carryover from the loop-018 canonical-design rebuild) onto the shared 28-px `TitleBlock` — same eyebrow / title vocabulary as History and Settings. The custom file was deleted.
+
+`ProgressGridCell`'s "NEXT" cell changed from a 1-px inset ink-0 ring to a 2-px inset amber accent border. Amber is the project's lone accent token (reserved for wordmark dots and "you are here" markers); making the next-session cell the only amber thing on the grid gives it a clear visual lock without inventing a new tint.
+
+**Why:** the user's exact framing — *"Make progress screen header consistent as history and settings"* — exposes the bespoke Progress header as the outlier. Same for the "next" highlight: an ink-0 ring is the same color as everything else on the grid, so it relied on the geometry change to read; switching to amber gives it color-encoded meaning that survives a glance.
+
 ### 2026-05-26 — Sticky-header elevation on scroll; tab back-behavior → initialRoute
 
 **Tags:** `feature`, `navigation`, `tabs`, `design-system`
