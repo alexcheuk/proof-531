@@ -1,5 +1,5 @@
 ---
-title: 'The animation that wasn't'
+title: "The animation that wasn't"
 summary: >-
   The PR celebration panel had an animation that registered, ran, and did
   nothing — a later style in the same declaration quietly cancelled it.

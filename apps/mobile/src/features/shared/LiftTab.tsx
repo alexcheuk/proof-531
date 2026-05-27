@@ -3,8 +3,8 @@ import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { useEffect } from 'react';
+import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -124,10 +124,7 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
           // visually cluttered "★ ▪" pair flagged in production review.
           <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} />
         ) : hasPr ? (
-          <Animated.Text
-            style={[starStyle, starFadeStyle]}
-            testID={`lift-tab-${lift}-pr-star`}
-          >
+          <Animated.Text style={[starStyle, starFadeStyle]} testID={`lift-tab-${lift}-pr-star`}>
             ★
           </Animated.Text>
         ) : null}

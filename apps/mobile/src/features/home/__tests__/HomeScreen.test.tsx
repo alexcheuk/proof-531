@@ -31,6 +31,10 @@ jest.mock('react-native-reanimated', () => {
     LinearTransition: { duration: () => ({}) },
     FadeIn: { duration: () => ({}) },
     FadeOut: { duration: () => ({}) },
+    useSharedValue: (init: unknown) => ({ value: init }),
+    useAnimatedStyle: (fn: () => unknown) => fn(),
+    withTiming: (val: unknown) => val,
+    cancelAnimation: () => {},
   };
 });
 
