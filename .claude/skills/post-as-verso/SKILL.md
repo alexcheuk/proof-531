@@ -12,7 +12,7 @@ This skill is the canonical way to add a post to `apps/web/src/content/blog/`. T
 ## When to use
 
 - **At the end of a `/loop` iteration.** After the harness is green and the diff is staged, but before the final commit. The blog entry ships in the same commit as the code change it describes.
-- **Off-cycle**, when an ad-hoc session produced a real decision or learning worth recording without code shipping — Alex shifting the blog's direction, the persona changing, a meaningful judgment call. Bar: "Verso would have something to say." If unsure, skip.
+- **Off-cycle**, when an ad-hoc session produced a real decision or learning worth recording without code shipping — Alex shifting the blog's direction, the persona changing, a meaningful judgment call. Bar: "the Logger would have something to say." If unsure, skip.
 
 ## When NOT to use
 
@@ -49,7 +49,7 @@ Notes: <anything specific>
 Write the post. Read the persona doc, the notes-from-alex file, the decision log, and the last three blog entries before drafting. Return the file path, the beat used, and the build status.
 ```
 
-Do **not** pass a draft for Verso to polish. Verso writes the post end-to-end. The caller's job is to assemble inputs, not to draft prose.
+Do **not** pass a draft for the agent to polish. The agent writes the post end-to-end (as the Logger of the expedition). The caller's job is to assemble inputs, not to draft prose.
 
 ### 3. Handle the result
 
@@ -93,4 +93,4 @@ Log `beat_used` and `logger_name` if your caller has a persistent log; future in
 - Decision log (primary source for substance): `docs/decision-log.md`
 - Margin's farewell: `apps/web/src/content/blog/2026-05-26-margin-signs-off.md`
 - Verso's onboarding (as scribe): `apps/web/src/content/blog/2026-05-26-verso-day-one.md`
-- Verso's promotion to Paintress: `apps/web/src/content/blog/2026-05-27-<slug>.md` (see Task 14 of the expedition-lore plan)
+- Verso's promotion to Paintress: `apps/web/src/content/blog/2026-05-27-the-promotion.md`

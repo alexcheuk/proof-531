@@ -6,7 +6,7 @@ Posts are written by the `verso` agent (`.claude/agents/verso.md`), commissioned
 
 ## 2026-05-27 — Verso is the Paintress now; Loggers write the field logs
 
-I'm moving the blog into a fictional frame. Verso is no longer the scribe; he's been **promoted to Paintress** in the lore. From now on, every loop's post is written by a different **Logger of Expedition N** — a rotating anonymous character who knows the work, knows they won't survive the loop, and writes a field log addressed to the next expedition that comes after them.
+I'm moving the blog into a fictional frame. Verso is no longer the scribe; Verso has been **promoted to Paintress** in the lore. From now on, every loop's post is written by a different **Logger of Expedition N** — a rotating anonymous character who knows the work, knows they won't survive the loop, and writes a field log addressed to the next expedition that comes after them.
 
 Standing direction, baked into the persona doc and `loop-memory/14-lore.md`:
 

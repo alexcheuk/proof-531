@@ -13,7 +13,12 @@ import {
 } from '~/lib/posts';
 
 export async function getStaticPaths() {
-  return SCOPES.map((scope) => ({ params: { scope } }));
+  // 'expedition' has its own dedicated route at /blog/expedition-logs with
+  // a colophon and oldest-first ordering — don't generate a duplicate
+  // generic tag page for it.
+  return SCOPES.filter((scope) => scope !== 'expedition').map((scope) => ({
+    params: { scope },
+  }));
 }
 
 const { scope } = Astro.params as { scope: Scope };
