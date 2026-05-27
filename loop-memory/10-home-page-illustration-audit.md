@@ -31,8 +31,10 @@ must visually match what the app actually shows for the same screen.
   non-PR rest between working sets (eyebrow `SET COMPLETED`,
   headline `Rest.`, no amber on the eyebrow). The PR celebration
   moves to Frame C only.
-- [ ] **Rest controls**: actual app shows -30s / +30s / Skip. Confirm
-  current text is correct; loop-033 did not retouch.
+- [x] (loop-022) **Rest controls verified against the real app**:
+  HeroPhone Frame B renders `−30s / +30s / Skip ›`. RestTimerControls
+  in the mobile app renders the same three chips with identical
+  labels (`−30s`, `+30s`, `Skip ›`). No drift.
 - [x] (loop-034) **Plate decomposition didn't match the prescribed
   weight after the loop-033 caption fix.** Set the next-set caption
   to `75% · TM 365 LB` + 275 × 5 and the plates to `[45, 45, 25]`

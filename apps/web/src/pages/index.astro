@@ -157,6 +157,11 @@ const postCount = posts.length;
         <div class="v">$0<span class="unit">free</span></div>
         <div class="note">Open source. No paywall. No "pro" tier. No subscription.</div>
       </div>
+      <div class="kpi">
+        <div class="l">Units</div>
+        <div class="v">lb<span class="unit">+ kg</span></div>
+        <div class="note">Both unit systems, throughout. Plates, training maxes, history — flip in Settings and everything re-snaps to the destination unit.</div>
+      </div>
     </div>
   </div>
 
@@ -2830,7 +2835,7 @@ const postCount = posts.length;
   }
   .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     max-width: var(--content-wide);
     margin: 0 auto;
   }
@@ -2839,6 +2844,12 @@ const postCount = posts.length;
     border-right: 1px solid var(--line);
   }
   .kpi:last-child { border-right: none; }
+  /* Tighter padding when we have all five tiles on desktop so the
+     condensed digits don't crowd the right border (Discord 1509010001
+     bumped the strip from four to five). */
+  @media (min-width: 1100px) {
+    .kpi { padding: 28px 18px; }
+  }
   .kpi .l {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -3926,7 +3937,13 @@ const postCount = posts.length;
     .plate-card .pc-right { padding: 32px; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .kpi { border-bottom: 1px solid var(--line); }
-    .kpi:nth-child(2) { border-right: none; }
+    .kpi:nth-child(2n) { border-right: none; }
+    /* Five tiles wrap to 2-2-1 at this breakpoint; let the lonely
+       fifth tile span both columns so the strip closes cleanly. */
+    .kpi:last-child {
+      grid-column: span 2;
+      border-right: none;
+    }
     .ledger-row { grid-template-columns: 70px 1fr 1fr; }
     .ledger-row .ledger-cell:nth-child(4),
     .ledger-row .ledger-cell:nth-child(5) { display: none; }

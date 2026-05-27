@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — KPI strip on the home page grows a fifth tile: Units · lb + kg
+
+**Tags:** `web`, `marketing`, `copy`
+**Files:** `apps/web/src/pages/index.astro`, `loop-memory/10-home-page-illustration-audit.md`
+
+The home page's KPI strip went from four tiles to five — added a Units tile (`lb + kg`, with the note "Both unit systems, throughout. Plates, training maxes, history — flip in Settings and everything re-snaps to the destination unit"). Discord 1509010001: "Add to the website, the app support lbs and kg plates and units." The grid switches `repeat(4, 1fr)` → `repeat(5, 1fr)` at desktop with tighter padding above 1100px so condensed numerals don't crowd the right border; the tablet breakpoint wraps to 2-2-1 with the lonely fifth tile spanning both columns to keep the strip closed. Also ticked the loop-038 audit item on HeroPhone Frame B's rest controls (`−30s / +30s / Skip ›`) — verified against the real RestTimerControls; no drift.
+
+**Why:** the lb/kg toggle that shipped last loop on the plate calculator is a feature, but only a visitor who scrolled to the plate section and noticed the toggle would know. Promoting it to the KPI strip — sitting between Telemetry and Price, the strip a first-time visitor reads after the hero — surfaces it as a product fact, not an Easter egg. The deferred goal-calc lb/kg work from loop-021 doesn't change the headline claim; the unit support genuinely covers the user's training-max + plate + history surfaces.
+
 ### 2026-05-27 — Marketing site grows a lb/kg unit toggle on the plate calculator; warmup band on Today collapses by default
 
 **Tags:** `web`, `mobile`, `feature`, `convention`
