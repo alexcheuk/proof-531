@@ -364,21 +364,38 @@ const postCount = posts.length;
         </div>
       </div>
 
-      <div class="plate-card">
+      <div class="plate-card" data-plate-calc>
         <div class="pc-left">
           <div>
             <div class="caps">Target weight</div>
-            <h3>250 <span class="pc-unit">lbs</span></h3>
+            <div class="pc-target">
+              <button
+                type="button"
+                class="pc-step"
+                data-plate-step="dec"
+                aria-label="Decrease target weight"
+              >−</button>
+              <h3>
+                <span data-plate-weight>250</span> <span class="pc-unit">lbs</span>
+              </h3>
+              <button
+                type="button"
+                class="pc-step"
+                data-plate-step="inc"
+                aria-label="Increase target weight"
+              >+</button>
+            </div>
           </div>
           <p class="pc-body">
-            A 45-lb bar plus 2× 45, a 10, and a 2.5 per side. The greedy
-            "heaviest first" decomposition the app actually computes — same
-            order, same plates, same caption format you see between sets.
+            The app fills heaviest-first. Each plate is drawn to its real-life
+            diameter so you can eyeball-confirm the load. The numbers below
+            update as you change the target — same greedy decomposition the
+            real app runs between sets.
           </p>
           <div class="pc-readout">
             <div class="item">
               <div class="l">Per side</div>
-              <div class="v">102.5<span class="unit"> lbs</span></div>
+              <div class="v"><span data-plate-perside>102.5</span><span class="unit"> lbs</span></div>
             </div>
             <div class="item">
               <div class="l">Bar</div>
@@ -386,7 +403,7 @@ const postCount = posts.length;
             </div>
             <div class="item">
               <div class="l">Plates</div>
-              <div class="v">4<span class="unit"> ea</span></div>
+              <div class="v"><span data-plate-count>4</span><span class="unit"> ea</span></div>
             </div>
           </div>
         </div>
@@ -1051,6 +1068,167 @@ const postCount = posts.length;
     });
 
     render();
+  }
+</script>
+
+<script>
+  // Interactive plate calculator — Discord 1508988573. Wraps the
+  // existing PhonePlateBar SSR with vanilla JS that listens for ±
+  // clicks on the new stepper and re-renders the plate stacks +
+  // readout numbers off the shared `~/lib/plates` math.
+  //
+  // We don't re-emit the whole PhonePlateBar template; we keep its
+  // outer chrome (collar, bar-mid) and only swap the two `.stack`
+  // children + the `.caption`. Same classes, same inline styles the
+  // Astro template would have produced for the new weight.
+  import { decompose, groupPlates, sizeFor, plateLabel } from '~/lib/plates';
+
+  const STEP = 5; // lbs — matches the plate set's coarsest meaningful increment
+  const MIN = 45; // empty bar
+  const MAX = 600;
+  const INITIAL = 250;
+
+  const root = document.querySelector<HTMLElement>('[data-plate-calc]');
+  if (root) {
+    const weightEl = root.querySelector<HTMLElement>('[data-plate-weight]');
+    const perSideEl = root.querySelector<HTMLElement>('[data-plate-perside]');
+    const countEl = root.querySelector<HTMLElement>('[data-plate-count]');
+    const decBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="dec"]');
+    const incBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="inc"]');
+    const plateBar = root.querySelector<HTMLElement>('.plate-bar');
+
+    if (weightEl && perSideEl && countEl && decBtn && incBtn && plateBar) {
+      // Hoist into const-locals so the inner closures see the
+      // already-narrowed (non-null) types — astro check doesn't
+      // propagate the outer `&&` guard into nested function bodies.
+      const wEl: HTMLElement = weightEl;
+      const psEl: HTMLElement = perSideEl;
+      const cEl: HTMLElement = countEl;
+      const dBtn: HTMLButtonElement = decBtn;
+      const iBtn: HTMLButtonElement = incBtn;
+      const pBar: HTMLElement = plateBar;
+      const leftStack = pBar.querySelector<HTMLElement>('.stack-left');
+      const rightStack = pBar.querySelector<HTMLElement>('.stack:not(.stack-left)');
+      const collar = pBar.querySelector<HTMLElement>('.collar');
+      const captionR = pBar.querySelector<HTMLElement>('.caption-r');
+      const H = 140; // matches PhonePlateBar size="hero"
+      const plateW = 22;
+
+      let weight = INITIAL;
+
+      function renderPlate(p: number): HTMLDivElement {
+        const el = document.createElement('div');
+        el.className = 'plate';
+        const h = H * sizeFor(p, 'lb');
+        el.setAttribute(
+          'style',
+          `width: ${plateW}px; height: ${h}px; background: var(--ink-0);`,
+        );
+        if (h >= 30 && plateW >= 10) {
+          const label = document.createElement('span');
+          label.className = 'plate-label';
+          label.style.color = 'var(--bg-0)';
+          label.textContent = plateLabel(p);
+          el.appendChild(label);
+        }
+        return el;
+      }
+
+      function renderCaption(perSide: readonly number[]): void {
+        if (!captionR) return;
+        captionR.innerHTML = '';
+        const grouped = groupPlates(perSide);
+        if (grouped.length === 0) {
+          const dash = document.createElement('span');
+          dash.style.color = 'var(--ink-2)';
+          dash.textContent = '—';
+          captionR.appendChild(dash);
+          return;
+        }
+        grouped.forEach((g, i) => {
+          const group = document.createElement('span');
+          group.className = 'group';
+          if (i > 0) {
+            const plus = document.createElement('span');
+            plus.className = 'plus';
+            plus.style.color = 'var(--ink-3)';
+            plus.textContent = '+';
+            group.appendChild(plus);
+          }
+          if (g.count > 1) {
+            const count = document.createElement('span');
+            count.className = 'count';
+            count.style.color = 'var(--ink-2)';
+            count.textContent = `${g.count}×`;
+            group.appendChild(count);
+          }
+          const num = document.createElement('span');
+          num.className = 'num';
+          num.style.color = 'var(--ink-0)';
+          num.textContent = plateLabel(g.weight);
+          group.appendChild(num);
+          captionR.appendChild(group);
+        });
+        const total = document.createElement('span');
+        total.className = 'total';
+        total.style.color = 'var(--ink-0)';
+        const sum = perSide.reduce((s, p) => s + p, 0);
+        total.textContent = `= ${sum} lb`;
+        captionR.appendChild(total);
+      }
+
+      function render(): void {
+        wEl.textContent = String(weight);
+        const { perSide } = decompose(weight, 'lb');
+        const perSideTotal = perSide.reduce((s, p) => s + p, 0);
+
+        psEl.textContent = String(perSideTotal);
+        cEl.textContent = String(perSide.length);
+
+        if (leftStack) {
+          leftStack.innerHTML = '';
+          for (const p of perSide) leftStack.appendChild(renderPlate(p));
+        }
+        if (rightStack) {
+          rightStack.innerHTML = '';
+          for (const p of perSide) rightStack.appendChild(renderPlate(p));
+        }
+
+        // Collar only shows when there are plates loaded. The Astro
+        // template renders/omits it conditionally; in the JS path we
+        // toggle visibility instead of remounting.
+        if (collar) {
+          collar.style.display = perSide.length > 0 ? '' : 'none';
+        }
+
+        renderCaption(perSide);
+
+        dBtn.disabled = weight - STEP < MIN;
+        iBtn.disabled = weight + STEP > MAX;
+
+        pBar.setAttribute(
+          'aria-label',
+          perSide.length > 0
+            ? `${weight} lb loaded — bar plus ${perSideTotal} lb per side`
+            : `${weight} lb loaded — bar only`,
+        );
+      }
+
+      dBtn.addEventListener('click', () => {
+        if (weight - STEP < MIN) return;
+        weight -= STEP;
+        render();
+      });
+      iBtn.addEventListener('click', () => {
+        if (weight + STEP > MAX) return;
+        weight += STEP;
+        render();
+      });
+
+      // Initial sync — guarantees the readout/stacks match the
+      // declared INITIAL even if the SSR snapshot drifts later.
+      render();
+    }
   }
 </script>
 
@@ -3220,11 +3398,53 @@ const postCount = posts.length;
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      linear-gradient(90deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%),
-      var(--bg-0);
+    background: var(--bg-0);
     position: relative;
     min-width: 0;
+  }
+
+  /* Target-weight stepper — surrounds the big condensed weight readout
+     with ± buttons so the section is interactive (Discord 1508988573). */
+  .plate-card .pc-target {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .plate-card .pc-target h3 { margin: 0; min-width: 8ch; }
+  .plate-card .pc-step {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 0;
+    transition:
+      background var(--duration-base) var(--ease-standard),
+      color var(--duration-base) var(--ease-standard);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .plate-card .pc-step:hover { background: var(--ink-0); color: var(--bg-0); }
+  .plate-card .pc-step:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+  .plate-card .pc-step:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .plate-card .pc-step:disabled:hover {
+    background: var(--bg-0);
+    color: var(--ink-0);
   }
 
   /* matrix */

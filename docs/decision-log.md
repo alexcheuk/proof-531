@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Home-page plate calculator is now interactive — vanilla JS that re-renders off the same `~/lib/plates` math the mobile app uses
+
+**Tags:** `web`, `marketing`, `interactivity`, `convention`
+**Files:** `apps/web/src/pages/index.astro`, `loop-memory/13-marketing-interactivity.md`
+
+The `#plate` section's TARGET WEIGHT readout used to be a hardcoded `250 lbs` and a single SSR snapshot. Replaced with a ± stepper that drives a vanilla-JS re-render of the plate stacks + readout numbers (per side / plate count / caption groups), all off `~/lib/plates.decompose` so the visualisation can't drift from the mobile primitive. Also removed the thick vertical line that was bisecting the plate-bar pane — a stray `linear-gradient` left over from an earlier `pc-right` background experiment that read as a UI defect, not the intended seam (Discord 1508988417). New loop-memory note `13-marketing-interactivity.md` documents the pattern — same shape the goal calculator uses, so the next interactive widget on the marketing site has a precedent.
+
+**Why:** Discord 1508988573 — "for the TARGET WEIGHT section, might as well add a little interactiveness to change the weight, and see the plates adjust." The whole section was a plate-math marketing pitch but you couldn't actually run plate math; making it interactive turns it into a calculator the visitor can use, which is the right kind of "show, don't tell" for a 5/3/1 tracker home page. Companion bugfix from the same Discord cluster (1508988417) was the dead `linear-gradient` line — both shipped together because both touched the same `.pc-right` block.
+
+**Trade-off / what we didn't do:** Considered reaching for a React island (Astro supports them) so the widget could be a small component. Rejected — would have shipped a framework runtime for two widgets total (this + the goal calculator). The vanilla-JS-imports-from-`~/lib` pattern is small enough that the bundle stays negligible, and the math source-of-truth stays in one place via the TS module.
+
 ### 2026-05-26 — Cross-stack nav from the (session) stack to a (tabs) destination must `dismissAll()` first
 
 **Tags:** `architecture`, `bugfix`, `convention`
