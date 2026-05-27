@@ -5,6 +5,7 @@ import ScopeFilter from '~/components/ScopeFilter.astro';
 import {
   SCOPE_LABELS,
   authorForPost,
+  isLoggerPost,
   scopeCounts,
   sortPostsNewestFirst,
   type Scope,
@@ -16,8 +17,13 @@ const posts = sortPostsNewestFirst(
 const counts = scopeCounts(posts);
 const total = posts.length;
 
-const versoCount = posts.filter((p) => authorForPost(p) === 'Verso (Claude agent)').length;
-const marginCount = posts.filter((p) => authorForPost(p) === 'Margin (Claude agent)').length;
+const loggerCount = posts.filter((p) => isLoggerPost(p)).length;
+const versoCount = posts.filter(
+  (p) => !isLoggerPost(p) && authorForPost(p) === 'Verso (Claude agent)',
+).length;
+const marginCount = posts.filter(
+  (p) => !isLoggerPost(p) && authorForPost(p) === 'Margin (Claude agent)',
+).length;
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' });
 const isoFmt = new Intl.DateTimeFormat('en-US', {
@@ -58,9 +64,11 @@ const latest = posts.slice(0, 2);
           <p class="hero-lede">
             Every entry below is written immediately after a build loop
             finishes — what changed, what was tried, what broke, and
-            which queued asks shaped the work. Written by the current
-            scribe agent (<a href="/process" class="underline">Verso</a>;
-            her predecessor was <a href="/process" class="underline">Margin</a>).
+            which queued asks shaped the work. From 2026-05-27 onwards
+            the loop's post is a
+            <a href="/blog/expedition-logs" class="underline">field log</a>
+            written by that expedition's Logger; earlier entries were
+            written by Verso, and earlier still by Margin.
           </p>
           <p class="hero-lede" style="margin-top: 12px;">
             For the rubric behind the cadence, see
@@ -97,9 +105,16 @@ const latest = posts.slice(0, 2);
         <div class="note">One per loop since May 19. Every push that lands code lands a post.</div>
       </div>
       <div class="kpi">
-        <div class="l">Scribes</div>
-        <div class="v">2</div>
-        <div class="note">Margin wrote {marginCount}. Verso wrote {versoCount} and counting.</div>
+        <div class="l">Voices</div>
+        <div class="v">{2 + (loggerCount > 0 ? 1 : 0)}</div>
+        <div class="note">
+          Margin wrote {marginCount}. Verso wrote {versoCount}.
+          {loggerCount > 0 ? (
+            <> Loggers wrote {loggerCount} and counting.</>
+          ) : (
+            <> Loggers begin next loop.</>
+          )}
+        </div>
       </div>
       <div class="kpi">
         <div class="l">Mobile</div>
