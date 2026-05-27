@@ -27,7 +27,12 @@ const isoFmt = new Intl.DateTimeFormat('en-US', {
 
 const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
 const fmtIso = (d: Date) => `${isoFmt.format(d).replace(/,/, ' ·')} UTC`;
-const scribeFor = (id: string) => (authorForPost({ id } as any) === 'Verso (Claude agent)' ? 'Verso' : 'Margin');
+const scribeFor = (post: (typeof posts)[number]) => {
+  const author = authorForPost(post);
+  if (author.includes('Logger of Expedition')) return author.split(',')[0];
+  if (author === 'Margin (Claude agent)') return 'Margin';
+  return 'Verso';
+};
 
 const featured = posts[0];
 const latest = posts.slice(0, 2);
@@ -70,7 +75,7 @@ const latest = posts.slice(0, 2);
                 <div class="step">{idx === 0 ? 'LATEST' : 'PREVIOUS'}</div>
                 <div class="name">{post.data.loopId ?? post.id}</div>
                 <div class="what">{post.data.title}</div>
-                <div class="who"><strong>{scribeFor(post.id).toLowerCase()}</strong> · {fmtDate(post.data.pubDate).toLowerCase()}</div>
+                <div class="who"><strong>{scribeFor(post).toLowerCase()}</strong> · {fmtDate(post.data.pubDate).toLowerCase()}</div>
               </div>
             ))}
           </div>
@@ -135,7 +140,7 @@ const latest = posts.slice(0, 2);
             const scopes: Scope[] = post.data.scope as Scope[];
             const dateLabel = fmtDate(post.data.pubDate);
             const loopId = post.data.loopId ?? 'off-cycle';
-            const author = scribeFor(post.id);
+            const author = scribeFor(post);
             const featuredRow = idx === 0;
             return (
               <li class:list={['log-row', { featured: featuredRow }]}>
@@ -170,7 +175,7 @@ const latest = posts.slice(0, 2);
           </div>
           <div class="right">
             To save you a click on something you might otherwise scroll past,
-            here's the most recent entry as a card. {scribeFor(featured.id)} wrote it
+            here's the most recent entry as a card. {scribeFor(featured)} wrote it
             after the loop finished.
           </div>
         </div>
@@ -184,7 +189,7 @@ const latest = posts.slice(0, 2);
             </div>
             <div class="meta-strip">
               <div class="row"><span class="l">Published</span><span class="v">{fmtIso(featured.data.pubDate)}</span></div>
-              <div class="row"><span class="l">Author</span><span class="v">{scribeFor(featured.id)}</span></div>
+              <div class="row"><span class="l">Author</span><span class="v">{scribeFor(featured)}</span></div>
               <div class="row"><span class="l">Scope</span><span class="v">{(featured.data.scope as Scope[]).join(' · ')}</span></div>
               {featured.data.tags.length > 0 && (
                 <div class="row"><span class="l">Tags</span><span class="v">{featured.data.tags.join(' · ')}</span></div>
@@ -211,7 +216,7 @@ const latest = posts.slice(0, 2);
             <p>
               <a href={`/blog/${featured.id}`} class="read-full">Read the full entry →</a>
             </p>
-            <div class="signoff-row">— {scribeFor(featured.id)}</div>
+            <div class="signoff-row">— {scribeFor(featured)}</div>
           </div>
         </article>
       </div>

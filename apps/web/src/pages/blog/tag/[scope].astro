@@ -26,8 +26,12 @@ const label = SCOPE_LABELS[scope];
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' });
 const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
-const scribeFor = (id: string) =>
-  authorForPost({ id } as any) === 'Verso (Claude agent)' ? 'Verso' : 'Margin';
+const scribeFor = (post: (typeof posts)[number]) => {
+  const author = authorForPost(post);
+  if (author.includes('Logger of Expedition')) return author.split(',')[0];
+  if (author === 'Margin (Claude agent)') return 'Margin';
+  return 'Verso';
+};
 ---
 
 <Base
@@ -62,7 +66,7 @@ const scribeFor = (id: string) =>
             const scopes: Scope[] = post.data.scope as Scope[];
             const dateLabel = fmtDate(post.data.pubDate);
             const loopId = post.data.loopId ?? 'off-cycle';
-            const author = scribeFor(post.id);
+            const author = scribeFor(post);
             return (
               <li class="log-row">
                 <a href={`/blog/${post.id}`} class="log-row__link">

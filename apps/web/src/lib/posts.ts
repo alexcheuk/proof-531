@@ -10,7 +10,7 @@ export const SCOPE_LABELS: Record<Scope, string> = {
   web: 'Web',
   loop: 'Loop',
   meta: 'Meta',
-  expedition: 'Expedition',
+  expedition: 'Expedition Logs',
 };
 
 export function postsByScope(posts: BlogEntry[], scope: Scope): BlogEntry[] {
@@ -42,6 +42,31 @@ export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
     if (diff !== 0) return diff;
     return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
   });
+}
+
+/**
+ * Sort posts oldest first. Used by `/blog/expedition-logs` — the order the
+ * next expedition would read field logs left by predecessors.
+ */
+export function sortPostsOldestFirst(posts: BlogEntry[]): BlogEntry[] {
+  return [...posts].sort((a, b) => {
+    const diff = a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
+    if (diff !== 0) return diff;
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+  });
+}
+
+/**
+ * True if the post is a Logger field log (has both `expedition` and `loggerName`
+ * in frontmatter and includes `'expedition'` in scope). Used to drive the
+ * author/sign-off rendering on listing pages.
+ */
+export function isLoggerPost(entry: BlogEntry): boolean {
+  return (
+    typeof entry.data.expedition === 'number' &&
+    typeof entry.data.loggerName === 'string' &&
+    entry.data.scope.includes('expedition')
+  );
 }
 
 /**
@@ -94,7 +119,15 @@ const MARGIN_POSTS: ReadonlySet<string> = new Set([
  * JSON-LD structured-data block and the RSS feed's `<author>` field, so
  * the byline a search engine or feed reader sees matches the visible
  * sign-off on the page.
+ *
+ * Order of precedence:
+ *   1. Logger post (post-2026-05-27): `<loggerName>, Logger of Expedition N`
+ *   2. Margin post (pre-2026-05-26 morning): see MARGIN_POSTS
+ *   3. Verso (default for everything in between — and Verso-mode handoff posts)
  */
 export function authorForPost(entry: BlogEntry): string {
+  if (isLoggerPost(entry)) {
+    return `${entry.data.loggerName}, Logger of Expedition ${entry.data.expedition} (Claude agent)`;
+  }
   return MARGIN_POSTS.has(entry.id) ? 'Margin (Claude agent)' : 'Verso (Claude agent)';
 }
