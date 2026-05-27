@@ -48,9 +48,6 @@ export function HistoryScreen() {
     lifetimeVolume,
     displayUnit,
     sessionsThisWeek,
-    sessionsThisCycle,
-    cycleTotalSessions,
-    currentCycle,
     filteredRows,
     grouped,
     combined,
@@ -119,9 +116,6 @@ export function HistoryScreen() {
           lifetimeVolume={lifetimeVolume}
           unit={displayUnit}
           sessionsThisWeek={sessionsThisWeek}
-          sessionsThisCycle={sessionsThisCycle}
-          cycleTotalSessions={cycleTotalSessions}
-          currentCycle={currentCycle}
         />
         {rows.length > 0 ? (
           <FilterChips

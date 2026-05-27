@@ -39,14 +39,6 @@ export type AchievementStripProps = {
   unit?: 'lbs' | 'kg';
   /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek?: number;
-  /**
-   * Always `undefined` post-per-lift-split — kept on the type so existing
-   * callers don't lose the field name; the captions component hides the
-   * line when these are unset.
-   */
-  sessionsThisCycle?: number | undefined;
-  cycleTotalSessions?: number | undefined;
-  currentCycle?: number | undefined;
 };
 
 /**
@@ -69,9 +61,6 @@ export function AchievementStrip({
   lifetimeVolume,
   unit,
   sessionsThisWeek,
-  sessionsThisCycle,
-  cycleTotalSessions,
-  currentCycle,
 }: AchievementStripProps) {
   const { layout } = useTheme();
   if (filed === 0) return null;
@@ -88,9 +77,6 @@ export function AchievementStrip({
       <AchievementHero filed={filed} prs={prs} volumeDisplay={volumeDisplay} />
       <AchievementCaptions
         sessionsThisWeek={sessionsThisWeek}
-        currentCycle={currentCycle}
-        sessionsThisCycle={sessionsThisCycle}
-        cycleTotalSessions={cycleTotalSessions}
         bestLift={bestLift}
         longestStreak={longestStreak}
         currentStreak={currentStreak}

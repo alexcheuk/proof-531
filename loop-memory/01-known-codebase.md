@@ -116,11 +116,11 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   returns `{ scrolled, onScroll, scrollEventThrottle }` — spread onto the
   ScrollView/FlatList and pass `scrolled` to the masthead. Wired in
   Settings + History as of loop-027.
-- Deferred: Progress (the FlatList carousel renders one ScrollView per
-  lift; cross-page elevation requires lifting per-page scroll state up
-  to the screen-level Masthead, which the simple hook doesn't yet do).
-  Add a module-level subject (mirror `statusBarTint`) if/when the user
-  asks for Progress elevation.
+- Progress elevation IS wired (as of loop-027 or earlier): `ProgressLiftPage`
+  accepts `onScrolledChange` and reports its `scrolled` boolean back; `ProgressScreen`
+  holds a `scrolledByLift` map and reads the selected lift's value to drive
+  `mastheadElevated`. No module-level subject was needed — the carousel's
+  per-item render callback carries the lift identity.
 
 ## Shared cross-feature components (added 2026-05-26)
 

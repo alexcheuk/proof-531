@@ -159,10 +159,14 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
   const [playLastDoneAnimation, setPlayLastDoneAnimation] = useState(false);
   useEffect(() => {
     if (!completedEvent) return;
-    if (completedEvent.lift === lift) {
-      sessionCompletedStore.consume();
-      setPlayLastDoneAnimation(true);
-    }
+    if (completedEvent.lift !== lift) return;
+    sessionCompletedStore.consume();
+    setPlayLastDoneAnimation(true);
+    // Reset after the animation finishes (~880 ms for the full fill + pulse
+    // sequence) so consecutive sessions for the same lift replay the
+    // animation rather than silently no-opping on a true → true state update.
+    const resetTimer = setTimeout(() => setPlayLastDoneAnimation(false), 1200);
+    return () => clearTimeout(resetTimer);
   }, [completedEvent, lift]);
 
   if (progression.isError || goalQuery.isError) {

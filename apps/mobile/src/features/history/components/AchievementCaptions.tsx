@@ -4,9 +4,6 @@ import { AchievementCaption } from './AchievementCaption';
 
 export type AchievementCaptionsProps = {
   sessionsThisWeek?: number | undefined;
-  currentCycle?: number | undefined;
-  sessionsThisCycle?: number | undefined;
-  cycleTotalSessions?: number | undefined;
   bestLift?: BestLift | null | undefined;
   longestStreak?: number | undefined;
   currentStreak?: number | undefined;
@@ -17,22 +14,16 @@ export type AchievementCaptionsProps = {
  * strip. Each caption is independent; they appear/disappear based on
  * whether the user has enough data to make the line meaningful.
  *
- * Order is fixed (week → cycle → best lift → best streak) because the
- * reading hierarchy matters — short-loop signals on top, lifetime
- * milestones below.
+ * Order is fixed (week → best lift → best streak) because the reading
+ * hierarchy matters — short-loop signals on top, lifetime milestones below.
  */
 export function AchievementCaptions({
   sessionsThisWeek,
-  currentCycle,
-  sessionsThisCycle,
-  cycleTotalSessions,
   bestLift,
   longestStreak,
   currentStreak,
 }: AchievementCaptionsProps) {
   const showThisWeek = (sessionsThisWeek ?? 0) >= 1;
-  const showCycleProgress =
-    (sessionsThisCycle ?? 0) >= 1 && (cycleTotalSessions ?? 0) >= 1 && (currentCycle ?? 0) >= 1;
   const showLongest = (longestStreak ?? 0) >= 3;
   const isMatchingBest =
     showLongest && (currentStreak ?? 0) >= 3 && currentStreak === longestStreak;
@@ -41,11 +32,6 @@ export function AchievementCaptions({
       {showThisWeek ? (
         <AchievementCaption testID="history-this-week">
           {`This week · ${sessionsThisWeek} ${sessionsThisWeek === 1 ? 'session' : 'sessions'}`}
-        </AchievementCaption>
-      ) : null}
-      {showCycleProgress ? (
-        <AchievementCaption testID="history-cycle-progress">
-          {`Cycle ${currentCycle} · ${sessionsThisCycle} of ${cycleTotalSessions} sessions`}
         </AchievementCaption>
       ) : null}
       {bestLift ? (

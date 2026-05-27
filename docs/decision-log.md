@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Removed permanently-dead cycle-progress fields from History data layer
+
+**Tags:** `removal`, `history`
+**Files:** `apps/mobile/src/features/history/hooks/useHistoryScreenData.ts`, `apps/mobile/src/features/history/components/AchievementStrip.tsx`, `apps/mobile/src/features/history/components/AchievementCaptions.tsx`, `apps/mobile/src/features/history/HistoryScreen.tsx`
+
+Removed `sessionsThisCycle`, `cycleTotalSessions`, and `currentCycle` from the History data hook's return shape and from every component that accepted them. All three values were always `undefined` — the "cycle progress" caption in `AchievementCaptions` was permanently hidden.
+
+**Why:** Per-lift cycle tracking replaced the legacy single-cycle field. The three fields were left in place with `undefined` values and apologetic comments ("kept so callers don't lose the field name"), which was honest but still dead code. Removing them cuts noise from every call site.
+
+**Trade-off / what we didn't do:** Could have kept them as optional props forever. The convention of "mark undefined, keep the shape" drifts into API pollution — the comments were already signalling the cost.
+
+### 2026-05-27 — Fixed `playLastDoneAnimation` not replaying on consecutive sessions
+
+**Tags:** `bug`, `progress`
+**Files:** `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`
+
+Added a 1200 ms `setTimeout` reset that flips `playLastDoneAnimation` back to `false` after the fill-in + pulse animation finishes (~880 ms). Without the reset, completing a second consecutive session for the same lift called `setPlayLastDoneAnimation(true)` when the value was already `true` — React skips the state update as a no-op, so the animation hooks never re-ran.
+
+**Why:** The fill-in animation is the only feedback that a session was just logged when arriving on the Progress tab. Silently not playing on the second consecutive session made the tab feel stale.
+
 ### 2026-05-27 — Replace all Reanimated `entering` props with explicit hook-based animations
 
 **Tags:** `bug`, `architecture`, `reanimated`

@@ -62,17 +62,6 @@ export interface HistoryScreenData {
   displayUnit: Unit;
   /** Sessions completed in the current ISO week (Mon-Sun). */
   sessionsThisWeek: number;
-  /**
-   * Always `undefined` since the per-lift split — there's no single
-   * current cycle to anchor a history-wide caption against. Kept in the
-   * return shape so existing callers (AchievementStrip) don't lose the
-   * field name; the captions component hides the line when this is unset.
-   */
-  sessionsThisCycle: number | undefined;
-  /** Always `undefined` post-per-lift-split. See `sessionsThisCycle`. */
-  cycleTotalSessions: number | undefined;
-  /** Always `undefined` post-per-lift-split. See `sessionsThisCycle`. */
-  currentCycle: number | undefined;
   /** Filter-applied rows. */
   filteredRows: Session[];
   /** Filtered rows grouped by cycle, first-seen order. */
@@ -133,12 +122,6 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
   );
   const grouped = useMemo(() => groupByCycle(filteredRows), [filteredRows]);
   const thisWeekCount = useMemo(() => sessionsThisWeek(rows), [rows]);
-  // Per-lift cycles mean there is no single "current cycle" to anchor a
-  // history caption against — `settings.currentCycle` is legacy and goes
-  // stale once any lift advances independently. Drop the caption inputs.
-  const currentCycle: number | undefined = undefined;
-  const sessionsThisCycleCount: number | undefined = undefined;
-  const cycleTotalSessions: number | undefined = undefined;
 
   const combined = combineQueries(sessions, prIdsQuery);
   const lifetimeVolume = lifetimeVolumeQuery.data ?? 0;
@@ -159,9 +142,6 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     lifetimeVolume,
     displayUnit,
     sessionsThisWeek: thisWeekCount,
-    sessionsThisCycle: sessionsThisCycleCount,
-    cycleTotalSessions,
-    currentCycle,
     filteredRows,
     grouped,
     combined,
