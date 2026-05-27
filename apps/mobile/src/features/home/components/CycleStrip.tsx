@@ -12,15 +12,15 @@ import type { Week } from '@/domain/types';
  */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 
-type Cell = { w: Week; scheme: string; deload?: boolean };
+// `compact` = use the smaller caps-mono label style (vs the larger bold numeric style).
+// Week 4 is a verbal label ("TM TEST"), not a numeric rep scheme ("5·5·5+").
+type Cell = { w: Week; scheme: string; compact?: boolean };
 
 const CELLS: readonly Cell[] = [
   { w: 1, scheme: '5·5·5+' },
   { w: 2, scheme: '3·3·3+' },
   { w: 3, scheme: '5·3·1+' },
-  // Week 4 is now the TM Test (7th-week protocol). `deload: true` keeps the
-  // existing caps-mono cell treatment; the label text is the only swap.
-  { w: 4, scheme: 'TM TEST', deload: true },
+  { w: 4, scheme: 'TM TEST', compact: true },
 ];
 
 type CycleStripProps = {
@@ -72,7 +72,7 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
               )}
               <RNText
                 style={
-                  c.deload
+                  c.compact
                     ? {
                         fontFamily: `${type.mono}-SemiBold`,
                         fontSize: 10,

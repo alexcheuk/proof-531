@@ -100,7 +100,7 @@ const postCount = posts.length;
                     <div class="cyc-cell done"><div class="w">D1</div><div class="scheme">5·5·5+</div><span class="check">✓</span></div>
                     <div class="cyc-cell active"><div class="w">D2</div><div class="scheme">3·3·3+</div></div>
                     <div class="cyc-cell"><div class="w">D3</div><div class="scheme">5·3·1+</div></div>
-                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">DELOAD</div></div>
+                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">TM TEST</div></div>
                   </div>
 
                   {/* LiftStats — TM / BEST e1RM / CYCLE */}
@@ -210,12 +210,12 @@ const postCount = posts.length;
           <div class="ledger-cell"><span class="set"><span class="pct">95%</span> <span class="x">×</span> 1<span class="amrap">AMRAP</span></span></div>
           <div class="ledger-cell"><span class="scheme-tag">5·3·1+</span></div>
         </div>
-        <div class="ledger-row deload">
+        <div class="ledger-row tm-test">
           <div class="ledger-cell"><div class="week-num"><span class="w">Week</span>04</div></div>
-          <div class="ledger-cell"><span class="set"><span class="pct">40%</span> <span class="x">×</span> 5</span></div>
-          <div class="ledger-cell"><span class="set"><span class="pct">50%</span> <span class="x">×</span> 5</span></div>
-          <div class="ledger-cell"><span class="set"><span class="pct">60%</span> <span class="x">×</span> 5</span></div>
-          <div class="ledger-cell"><span class="scheme-tag">Deload</span></div>
+          <div class="ledger-cell"><span class="set" style="color: var(--ink-3);">—</span></div>
+          <div class="ledger-cell"><span class="set" style="color: var(--ink-3);">—</span></div>
+          <div class="ledger-cell"><span class="set"><span class="pct">100%</span> <span class="x">×</span> 3–5</span></div>
+          <div class="ledger-cell"><span class="scheme-tag">TM Test</span></div>
         </div>
       </div>
 
@@ -464,7 +464,7 @@ const postCount = posts.length;
             <div>W1<span class="sub">5·5·5+</span></div>
             <div>W2<span class="sub">3·3·3+</span></div>
             <div>W3<span class="sub">5·3·1+</span></div>
-            <div>W4<span class="sub">Deload</span></div>
+            <div>W4<span class="sub">TM Test</span></div>
             <div>TM<span class="sub">→ Next</span></div>
           </div>
           <div class="matrix-row">
@@ -472,7 +472,7 @@ const postCount = posts.length;
             <div class="matrix-cell filled">215<span class="reps">× 7</span></div>
             <div class="matrix-cell filled">230<span class="reps">× 4</span></div>
             <div class="matrix-cell filled">240<span class="reps">× 2</span></div>
-            <div class="matrix-cell filled">155<span class="reps">× 5</span></div>
+            <div class="matrix-cell filled">255<span class="reps">× 5</span></div>
             <div class="matrix-cell tm">255<span class="unit">lbs</span></div>
           </div>
           <div class="matrix-row">
@@ -480,7 +480,7 @@ const postCount = posts.length;
             <div class="matrix-cell filled">225<span class="reps">× 8</span></div>
             <div class="matrix-cell filled">240<span class="reps">× 5</span></div>
             <div class="matrix-cell filled">250<span class="reps">× 3</span></div>
-            <div class="matrix-cell filled">160<span class="reps">× 5</span></div>
+            <div class="matrix-cell filled">265<span class="reps">× 5</span></div>
             <div class="matrix-cell tm">265<span class="unit">lbs</span></div>
           </div>
           <div class="matrix-row">
@@ -488,7 +488,7 @@ const postCount = posts.length;
             <div class="matrix-cell filled">235<span class="reps">× 6</span></div>
             <div class="matrix-cell filled">250<span class="reps">× 3</span></div>
             <div class="matrix-cell">260<span class="reps">—</span></div>
-            <div class="matrix-cell">165<span class="reps">—</span></div>
+            <div class="matrix-cell">275<span class="reps">—</span></div>
             <div class="matrix-cell tm">275<span class="unit">lbs</span></div>
           </div>
           <div class="matrix-row">
@@ -496,7 +496,7 @@ const postCount = posts.length;
             <div class="matrix-cell">245<span class="reps">—</span></div>
             <div class="matrix-cell">260<span class="reps">—</span></div>
             <div class="matrix-cell">270<span class="reps">—</span></div>
-            <div class="matrix-cell">170<span class="reps">—</span></div>
+            <div class="matrix-cell">285<span class="reps">—</span></div>
             <div class="matrix-cell tm">285<span class="unit">lbs</span></div>
           </div>
         </div>
@@ -577,7 +577,7 @@ const postCount = posts.length;
                     <div class="cyc-cell done"><div class="w">D1</div><div class="scheme">5·5·5+</div><span class="check">✓</span></div>
                     <div class="cyc-cell active"><div class="w">D2</div><div class="scheme">3·3·3+</div></div>
                     <div class="cyc-cell"><div class="w">D3</div><div class="scheme">5·3·1+</div></div>
-                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">DELOAD</div></div>
+                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">TM TEST</div></div>
                   </div>
                   <div class="stat-grid">
                     <div class="stat-cell"><div class="l">TM</div><div class="v">185 <span class="vu">LB</span></div></div>
@@ -2988,8 +2988,8 @@ const postCount = posts.length;
     font-size: 18px;
     color: var(--ink-0);
   }
-  .ledger-row.deload .set,
-  .ledger-row.deload .scheme-tag { color: var(--ink-2); }
+  .ledger-row.tm-test .set,
+  .ledger-row.tm-test .scheme-tag { color: var(--ink-2); }
   .ledger-row .amrap {
     display: inline-block;
     padding: 2px 7px;

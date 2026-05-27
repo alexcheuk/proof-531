@@ -11,13 +11,13 @@
 type Cell = { reps: string; today?: boolean };
 type Row = { lift: string; cells: Cell[] };
 
-const weeks = ['Week 1', 'Week 2', 'Week 3', 'Deload'] as const;
+const weeks = ['Week 1', 'Week 2', 'Week 3', 'TM Test'] as const;
 
 const rows: Row[] = [
-  { lift: 'Squat',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '5/5/5' }] },
-  { lift: 'Bench',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '5/5/5' }] },
-  { lift: 'Deadlift', cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+', today: true }, { reps: '5/5/5' }] },
-  { lift: 'Press',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '5/5/5' }] },
+  { lift: 'Squat',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '100% TM' }] },
+  { lift: 'Bench',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '100% TM' }] },
+  { lift: 'Deadlift', cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+', today: true }, { reps: '100% TM' }] },
+  { lift: 'Press',    cells: [{ reps: '5/5/5+' }, { reps: '3/3/3+' }, { reps: '5/3/1+' }, { reps: '100% TM' }] },
 ];
 ---
 

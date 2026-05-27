@@ -101,21 +101,14 @@ must visually match what the app actually shows for the same screen.
     the pre-loop-034 values. Updated to 414 / +29 lb so the PR cert
     matches the rest of the marketing-narrative scenario.
 - `AmrapMath.astro` — covered in loop-034 (formula correctness).
-- `WeekLedger.astro` — four-week cycle illustration. Per-week
-  schemes (5/5/5+ → 3/3/3+ → 5/3/1+ → deload 5/5/5) verified
-  against `domain/schemes.ts` in loop-036 — all correct.
-  - [x] (loop-036) Lift row label `OHP` was the only drift; the
-    mobile app surfaces `Press` everywhere (the type itself is
-    `'press'` and `liftDisplayName('press')` returns `'Press'`).
-    Fixed.
-- `MastheadStrip.astro` — vocabulary strip (5/3/1, BBB 5×10, AMRAP,
-  EPLEY 1RM, PER SIDE, WARMUPS, TM BUMP, DELOAD, WK1/2/3
-  percentage triplets). The name is slightly misleading — it's
-  *not* a port of the mobile Masthead primitive; it's a marketing
-  palate cleanser of program-vocabulary tokens. Audited loop-037:
-  every token matches actual program terminology, and the per-week
-  percentages (65/75/85 → 70/80/90 → 75/85/95) match the schemes
-  table verbatim. No drift.
+- `WeekLedger.astro` — four-week cycle illustration.
+  - [x] (loop-036) Lift row label `OHP` fixed → `Press`.
+  - [x] (loop-043) Week 4 header was `Deload`; cells showed `5/5/5`.
+    Updated to `TM Test` header and `100% TM` cells to match the
+    7th-Week Protocol that replaced the deload (2026-05-27).
+- `MastheadStrip.astro` — vocabulary strip of program tokens.
+  - [x] (loop-043) `DELOAD` token replaced with `TM TEST` to match
+    the current Week 4 protocol.
 
 ## Process for the next audit pass
 
