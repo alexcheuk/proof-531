@@ -14,7 +14,7 @@ import type { Lift } from '@/domain/types';
 import { LiftTabs } from '@/features/shared/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
@@ -34,6 +34,21 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   const router = useRouter();
   const { colors } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
+
+  // The just-closed session id arrives as a URL param from
+  // `SessionCompleteScreen.handleClose` → `goTo.progress(..., { justCompleted })`.
+  // It's scoped to the lift in the same URL: only the matching lift's page
+  // receives it (so swiping to a different lift doesn't paint the
+  // animation on the wrong page).
+  const { justCompleted: justCompletedParam, lift: urlLift } = useLocalSearchParams<{
+    justCompleted?: string;
+    lift?: string;
+  }>();
+  const justCompletedSessionId = useMemo(() => {
+    if (typeof justCompletedParam !== 'string') return undefined;
+    const parsed = Number.parseInt(justCompletedParam, 10);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }, [justCompletedParam]);
 
   const settings = useSettings();
   const tms = useLatestTms();
@@ -83,10 +98,13 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
         <ProgressLiftPage
           lift={item}
           onScrolledChange={(scrolled) => reportScrolled(item, scrolled)}
+          // Only forward the just-completed id to the lift it belongs to
+          // (the URL's `lift` param). Other pages render statically.
+          justCompletedSessionId={item === urlLift ? justCompletedSessionId : undefined}
         />
       </View>
     ),
-    [screenWidth, reportScrolled],
+    [screenWidth, reportScrolled, urlLift, justCompletedSessionId],
   );
 
   const combined = combineQueries(settings, tms, prs);

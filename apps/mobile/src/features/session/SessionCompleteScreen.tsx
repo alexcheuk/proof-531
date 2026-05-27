@@ -97,8 +97,13 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     // popping the session stack first reveals the tabs navigator and the
     // subsequent navigate() lands cleanly.
     // See loop-memory/12-cross-stack-navigation.md.
+    //
+    // `justCompleted` is the just-closed session id — the Progress screen
+    // matches it against `cell.sessionId` to mount a one-shot fill-in on
+    // the corresponding cell. Travels as a route param (not a module
+    // singleton) so the trigger is naturally scoped to this navigation.
     if (router.canDismiss()) router.dismissAll();
-    goTo.progress(router, v.session.lift);
+    goTo.progress(router, v.session.lift, { justCompleted: sessionId });
   };
   const handleAdjustTm = () => goTo.settings(router);
 

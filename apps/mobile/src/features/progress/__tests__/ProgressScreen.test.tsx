@@ -30,6 +30,7 @@ jest.mock('expo-router', () => ({
     back: jest.fn(),
     setParams: mockRouterSetParams,
   }),
+  useLocalSearchParams: () => ({}),
 }));
 
 jest.mock('expo-haptics', () => ({

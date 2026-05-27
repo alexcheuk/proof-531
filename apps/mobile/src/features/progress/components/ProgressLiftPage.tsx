@@ -24,8 +24,8 @@ import { displayUnit, displayWeight } from '@/domain/units';
 import { QueryShell } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type LayoutChangeEvent, ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
 import { liftLongName } from '../labels';
 import { BeyondChartFooter } from './BeyondChartFooter';
@@ -41,9 +41,20 @@ export type ProgressLiftPageProps = {
    * (in `ProgressScreen`) can elevate when *this* page — the currently
    * visible one — has been scrolled. */
   onScrolledChange?: (scrolled: boolean) => void;
+  /**
+   * Session id the user just closed for this lift. Travels as a route
+   * param from `SessionCompleteScreen.handleClose`. The matching cell in
+   * the grid mounts a one-shot `JustCompletedAnimator`. Undefined on
+   * every other entry (direct tab tap, cross-lift swipe).
+   */
+  justCompletedSessionId?: number | undefined;
 };
 
-export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPageProps) {
+export function ProgressLiftPage({
+  lift,
+  onScrolledChange,
+  justCompletedSessionId,
+}: ProgressLiftPageProps) {
   const router = useRouter();
   const { colors, layout, spacing } = useTheme();
   const progression = useLiftProgression(lift);
@@ -144,6 +155,40 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
     onScrolledChange?.(scrolled);
   }, [scrolled, onScrolledChange]);
 
+  // Scroll to the active-cycle row once its y offset has been measured.
+  // Row offsets are captured via `onLayout` on the per-row wrapper below;
+  // bumping `layoutTick` from there re-runs the effect after first paint.
+  // We fire the scroll once per `${lift}:${currentCycle}` pair so a swipe
+  // to a different lift (or a cycle advance after a session) re-snaps,
+  // but normal data refetches don't fight the user's manual scroll
+  // position. A small top padding leaves a hint of the row above so the
+  // active row doesn't feel pinned at the edge.
+  const scrollRef = useRef<ScrollView | null>(null);
+  const rowOffsetsRef = useRef<Map<number, number>>(new Map());
+  const lastScrolledKeyRef = useRef<string | null>(null);
+  const [layoutTick, setLayoutTick] = useState(0);
+  const handleRowLayout = useCallback((cycle: number, e: LayoutChangeEvent) => {
+    const prev = rowOffsetsRef.current.get(cycle);
+    const next = e.nativeEvent.layout.y;
+    if (prev === next) return;
+    rowOffsetsRef.current.set(cycle, next);
+    setLayoutTick((t) => t + 1);
+  }, []);
+  const currentCycleForScroll = data?.currentCycle;
+  // `layoutTick` is intentionally in the dep list — it's a re-run trigger
+  // bumped by `handleRowLayout` when row offsets arrive after first
+  // paint. The void reference keeps it read so the dep is non-dead.
+  useEffect(() => {
+    void layoutTick;
+    if (currentCycleForScroll === undefined) return;
+    const key = `${lift}:${currentCycleForScroll}`;
+    if (lastScrolledKeyRef.current === key) return;
+    const offset = rowOffsetsRef.current.get(currentCycleForScroll);
+    if (offset === undefined) return;
+    lastScrolledKeyRef.current = key;
+    scrollRef.current?.scrollTo({ y: Math.max(0, offset - 24), animated: true });
+  }, [lift, currentCycleForScroll, layoutTick]);
+
   if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;
   }
@@ -170,6 +215,7 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
 
   return (
     <ScrollView
+      ref={scrollRef}
       style={{ flex: 1, backgroundColor: colors.bg0 }}
       contentContainerStyle={{ paddingBottom: spacing.xxl }}
       onScroll={onScroll}
@@ -217,21 +263,23 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
         <View style={{ borderWidth: 1, borderColor: colors.ink0 }}>
           <ProgressGridHeader unitGlyph={ugDisplay} />
           {data.rows.map((row) => (
-            <ProgressLiftRow
-              key={`row-${row.cycle}`}
-              lift={lift}
-              unit={displayU}
-              row={row}
-              unitGlyph={ugDisplay}
-              onPastCellPress={(sessionId) => {
-                void Haptics.selectionAsync();
-                goTo.complete(router, sessionId, { from: 'history' });
-              }}
-              goalCycle={goalCycle}
-              draftKind={draftKind}
-              draftValue={draftValue}
-              draftTargetTm={draftTargetTm}
-            />
+            <View key={`row-${row.cycle}`} onLayout={(e) => handleRowLayout(row.cycle, e)}>
+              <ProgressLiftRow
+                lift={lift}
+                unit={displayU}
+                row={row}
+                unitGlyph={ugDisplay}
+                onPastCellPress={(sessionId) => {
+                  void Haptics.selectionAsync();
+                  goTo.complete(router, sessionId, { from: 'history' });
+                }}
+                goalCycle={goalCycle}
+                draftKind={draftKind}
+                draftValue={draftValue}
+                draftTargetTm={draftTargetTm}
+                justCompletedSessionId={justCompletedSessionId}
+              />
+            </View>
           ))}
           {goalBeyondChart ? (
             <BeyondChartFooter

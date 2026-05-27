@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Cut the cross-stack fill-in animation; rebuild it cell-local
+
+**Tags:** `bug`, `architecture`, `removal`, `animation`
+**Files:** `apps/mobile/src/features/session/sessionCompletedSignal.ts` (deleted), `apps/mobile/src/features/progress/components/JustCompletedAnimator.tsx` (new), `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftRow.tsx`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`, `apps/mobile/src/app/routes.ts`
+
+The "black screen on consecutive close-the-day" bug had been "fixed" three times (c379aa5 reversed dismiss/navigate order, 440c63c added a reset timer, fff1cfd reversed back), and the regression returned each time. Per the systematic-debugging skill's 3+ fixes rule, stopped patching and questioned the architecture. The structural fault was a module-level signal store (`sessionCompletedStore`) driving a Reanimated worklet on a tab screen that never unmounts: when progression data refetched mid-navigation, `Animated.View` keys churned around the same shared values, and Reanimated 4 on the New Architecture surfaced this as "Should not already be working" + "passing animated style to a non-animated component" — rendering the Progress tab black.
+
+Two commits:
+1. **Cut** (commit 988dd98) — deleted the signal store, `useFillInStyle`, `usePulseStyle`, the `playLastDoneAnimation` state, and the timer reset. ~200 lines removed, 8 added. Crash gone; Progress cells render statically.
+2. **Rebuild** (this commit) — `goTo.progress(..., { justCompleted: sessionId })` carries the id as a route param. `ProgressScreen` reads it from `useLocalSearchParams` and forwards it only to the lift in the URL. `ProgressLiftRow` wraps the matching cell in a new feature-layer `JustCompletedAnimator` keyed on the sessionId; mount runs the fill-in once, unmount cancels animations. Added `scrollRef` + per-row `onLayout` capture in `ProgressLiftPage` so the active cycle row scrolls into view once measured (keyed by `${lift}:${currentCycle}` so swipes and cycle advances re-snap but data refetches don't fight the user's scroll position).
+
+**Why:** Route params are tied to navigation events, not module state. They don't fire signals mid-stack-dismissal, they're naturally scoped to a single navigation, and they retire automatically when the user navigates again. Cell-local Animated.Views have a clean React lifecycle: new sessionId → new key → fresh mount → fresh animation. There is no across-session state for the Reanimated runtime to confuse.
+
+**Trade-off / what we didn't do:** Considered keeping the module store and patching the reset-timer race directly (Fix #4). Rejected: the runtime crash was downstream of a stable Animated.View instance fighting a key change during navigation, not the timer per se. Three prior fixes had each rearranged surface mechanics without touching that root, and each had regressed. The cut was the only fix that survives future changes to dismiss-order, tab config, or Reanimated upgrades.
+
+**Follow-ups:** None. The "scroll further down to the next-session cell after fill-in" idea was discussed but not built — the active-cycle scroll already lands the just-completed cell in viewport because the just-completed session is in the active cycle.
+
 ### 2026-05-27 — Shared `LogSheetFooter` + `useLogSheetState` extractions (expedition 11)
 
 **Tags:** `refactor`, `architecture`, `removal`

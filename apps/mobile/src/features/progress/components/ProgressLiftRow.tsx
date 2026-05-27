@@ -6,6 +6,7 @@ import { TmCell } from '@/design/primitives/TmCell';
 import { tmAdjustmentSuggestion } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
 import { GoalRuleRow } from './GoalRuleRow';
+import { JustCompletedAnimator } from './JustCompletedAnimator';
 
 type ProgressLiftRowProps = {
   /** Lift owning this row — needed to band-classify TM-test cells. */
@@ -19,6 +20,13 @@ type ProgressLiftRowProps = {
   draftKind: LiftGoalKind;
   draftValue: number;
   draftTargetTm: number;
+  /**
+   * Session id the user just closed. The cell whose `sessionId` matches
+   * gets wrapped in `JustCompletedAnimator` for a one-shot fill-in. The
+   * animator is keyed on the id so a new session remounts a fresh
+   * Animated.View; passing `undefined` (the normal case) wraps nothing.
+   */
+  justCompletedSessionId?: number | undefined;
 };
 
 /**
@@ -39,6 +47,7 @@ export function ProgressLiftRow({
   draftKind,
   draftValue,
   draftTargetTm,
+  justCompletedSessionId,
 }: ProgressLiftRowProps) {
   const placeRuleAbove = goalCycle === row.cycle;
   return (
@@ -105,16 +114,32 @@ export function ProgressLiftRow({
               : cell.deload
                 ? ' deload logged'
                 : '';
+          const cellKey = `progress-cell-${row.cycle}-${cell.day}`;
+          if (justCompletedSessionId === cell.sessionId) {
+            return (
+              <JustCompletedAnimator key={`${cellKey}-anim-${cell.sessionId}`}>
+                <ProgressGridCell
+                  variant={variant}
+                  weight={cell.topWeight}
+                  reps={cell.amrap ? cell.topReps : null}
+                  marker={marker}
+                  onPress={() => onPastCellPress(cell.sessionId)}
+                  accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`}
+                  testID={cellKey}
+                />
+              </JustCompletedAnimator>
+            );
+          }
           return (
             <ProgressGridCell
-              key={`cell-${row.cycle}-${cell.day}`}
+              key={cellKey}
               variant={variant}
               weight={cell.topWeight}
               reps={cell.amrap ? cell.topReps : null}
               marker={marker}
               onPress={() => onPastCellPress(cell.sessionId)}
               accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`}
-              testID={`progress-cell-${row.cycle}-${cell.day}`}
+              testID={cellKey}
             />
           );
         })}

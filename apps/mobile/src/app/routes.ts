@@ -92,16 +92,23 @@ export const goTo = {
    * `(tabs)/progress.tsx`, which falls back to `enabledLifts[0]` if
    * omitted.
    *
+   * Pass `justCompleted` to signal that the user is arriving from a
+   * just-closed session — the matching cell plays a one-shot fill-in
+   * animation. The id travels with the route so a stale mount or a
+   * later tab-tap can't replay the animation.
+   *
    * Default uses `navigate()` (not `push()`) so that navigating from a
    * session stack reuses the `(tabs)` entry already in the root stack
    * instead of pushing a duplicate. Pass `{ replace: true }` only when
    * you need to overwrite the current history entry without going back.
    */
-  progress(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
+  progress(router: Router, lift: Lift, opts?: { replace?: boolean; justCompleted?: number }): void {
+    const params: Record<string, string> = { lift };
+    if (opts?.justCompleted !== undefined) params.justCompleted = String(opts.justCompleted);
     go(
       router,
-      href({ pathname: '/(tabs)/progress', params: { lift } }),
-      opts ?? { navigate: true },
+      href({ pathname: '/(tabs)/progress', params }),
+      opts?.replace ? { replace: true } : { navigate: true },
     );
   },
 } as const;

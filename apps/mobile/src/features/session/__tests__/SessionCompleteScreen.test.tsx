@@ -331,11 +331,13 @@ describe('SessionCompleteScreen', () => {
     // parent navigator (Discord 1509284142 regression), so we dismiss
     // first, then navigate.
     expect(mockDismissAll).toHaveBeenCalled();
-    // Discord 1508779267 — navigate to Progress (not Home) so the one-time
-    // fill-in animation can play on the just-completed cell.
+    // Navigate to Progress with the just-completed session id; the matching
+    // cell on the Progress grid plays a one-shot fill-in animation
+    // (Discord 1508779267). The id travels as a route param (not a module
+    // singleton) so the trigger is scoped to this navigation only.
     expect(mockNavigate).toHaveBeenCalledWith({
       pathname: '/(tabs)/progress',
-      params: { lift: 'squat' },
+      params: { lift: 'squat', justCompleted: '42' },
     });
     expect(mockReplace).not.toHaveBeenCalled();
   });
