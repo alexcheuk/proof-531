@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Replace Week 4 deload with TM Test Week (Wendler's 7th Week Protocol)
+
+**Tags:** `mobile`, `domain`, `architecture`, `5/3/1`
+**Files:** `apps/mobile/src/domain/{schemes,progression,labels,types}.ts`, `apps/mobile/src/data/{drizzle/schema,accessors/liftProgression,queries/useLiftProgression}.ts`, `apps/mobile/src/features/session/components/{TmTestLogSheet,TmTestReceiptBand,TmAdjustmentNote,TodayBody/TmTestNote}.tsx`, `apps/mobile/src/design/primitives/{ProgressGridCell,TopSetBlock}.tsx`, `_workspace/01_design_spec.md`
+
+The Original 5/3/1 deload (40/50/60% × 5 working sets) was mechanically redundant with the warmup ramp (40/50/60% × 5/5/3) — the lifter ramped to 60% × 3, then re-ramped to 60% × 5. Six sets, top weight ~2 reps apart. Replaced Week 4 with the **7th Week TM Test Protocol** from *Forever 5/3/1*: warmups unchanged, then a single bounded set at 100% TM with a 3–5 rep target. BBB hard-skipped on W4. Post-session a calm TM-adjustment note suggests `+5/+10`, `Hold`, or `−10% reset` depending on reps achieved — never auto-applied. New `'tm-test'` `SetKind` joins the enum; legacy `'working'` deload rows kept forward-only (old visual preserved). Migration was zero-SQL — the existing `kind` column has no CHECK constraint, so the union widening is type-only.
+
+**Why:** the user (chasing 225 → 315 bench) noticed mid-session that the deload week's working sets were essentially a second warmup. Confirmed by reading the schemes file — same percentages, ~2 reps apart. The deload was a ghost week. Wendler himself moved away from it in *Forever 5/3/1*; the TM Test gives Week 4 a purpose (verify the TM the lifter has been working off for three weeks) without breaking the calm e-ink-logbook feel.
+
+**Trade-off / what we didn't do:** Considered (a) just skipping warmups on W4 — the smallest possible fix that preserves Original 5/3/1, (b) 5s PRO deload (65/75/85% × 5), (c) recovery-only week, and (d) adding a setting toggle. All rejected. INTENT.md is explicit that the app is for a serious 5/3/1 lifter and we don't ship a menu of options; we pick the version of Week 4 that respects the lifter's time. TM Test is the most opinionated of the realistic options and the one Wendler's own modern writing endorses. The cost: it introduces a "did I pass?" moment that pure 5/3/1 philosophy partly tries to avoid — accepted on the bet that for the target audience (intermediate, goal-driven) the verification beat is welcome.
+
+**Follow-ups:** Manual verification against a physical Expo build before announcing — the pipeline's Metro export was green but visual fidelity wasn't sighted in the simulator. Dev blog post from Verso covering the deload critique + TM Test rationale, ideally referencing INTENT.md's "no menu of options" stance.
+
 ### 2026-05-27 — Home-page plate calculator is now interactive — vanilla JS that re-renders off the same `~/lib/plates` math the mobile app uses
 
 **Tags:** `web`, `marketing`, `interactivity`, `convention`
