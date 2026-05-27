@@ -46,7 +46,7 @@ const totalPosts = posts.length;
             <div class="loop-node">
               <div class="step">01</div>
               <div class="name">Read the room</div>
-              <div class="what">queue · context · prior loops</div>
+              <div class="what">pins · queue · prior loops</div>
               <div class="who"><strong>builder agent</strong></div>
             </div>
             <div class="loop-node">
@@ -112,11 +112,48 @@ const totalPosts = posts.length;
           <h2>Discord in<span class="dot">.</span><br />OTA out<span class="dot">.</span></h2>
         </div>
         <div class="right">
-          On my end the whole thing is two surfaces: a Discord channel and the
-          preview build on my phone. I type what I want — a feature, a bug, a
-          nag about a misaligned line — and watch the loop pick it up. By the
-          next time I open the app, the OTA is already waiting. Then back to
-          the channel.
+          On my end the whole thing is two surfaces: Discord and the preview
+          build on my phone. Three channels do the work — one holds the
+          live rubric (pinned messages), one is a free-form queue, one is
+          where the agent reports back. I type what I want — a feature, a
+          bug, a nag about a misaligned line — pin the rules I want enforced,
+          and by the next time I open the app, the OTA is already waiting.
+        </div>
+      </div>
+
+      <div class="channel-map" aria-label="Discord channels the loop uses">
+        <div class="channel-map-head">
+          <span class="caps">The three channels</span>
+          <span class="channel-map-note">Two read by the agent, one written by it.</span>
+        </div>
+        <div class="channel-map-grid">
+          <div class="channel-cell">
+            <div class="channel-name">#loop-criteria</div>
+            <div class="channel-flow">Alex <span class="arrow">→</span> agent</div>
+            <div class="channel-body">
+              <strong>Pinned messages are the live rubric.</strong>
+              Pin to add a rule, unpin to retire it. Sits on top of the
+              on-disk rubric file in the repo. Bot never writes here.
+            </div>
+          </div>
+          <div class="channel-cell">
+            <div class="channel-name">#task-queue</div>
+            <div class="channel-flow">Alex <span class="arrow">↔</span> agent</div>
+            <div class="channel-body">
+              <strong>One ask per message.</strong>
+              Bot reacts to acknowledge pickup, reacts again when the work
+              ships. Free-form — features, bugs, the number that's off.
+            </div>
+          </div>
+          <div class="channel-cell">
+            <div class="channel-name">#auto-improvements</div>
+            <div class="channel-flow">agent <span class="arrow">→</span> Alex</div>
+            <div class="channel-body">
+              <strong>One summary per loop.</strong>
+              What landed, what got deferred, which pinned criterion is
+              still open and why. Honest, grouped, no changelog dump.
+            </div>
+          </div>
         </div>
       </div>
 
@@ -125,10 +162,11 @@ const totalPosts = posts.length;
           <div class="num">01 · Ask</div>
           <h3>Open Discord<span class="dot">.</span></h3>
           <p>
-            I keep one channel for it. When something on the app bugs me,
-            or I want a new screen, or I notice a number that's off — I
-            type it out like a normal chat message. No format, no template,
-            no tickets.
+            Two channels do all the work. One is a free-form queue —
+            features, bugs, the number that's off, type it like a chat
+            message. The other holds the rubric: a pinned message means
+            "this is a rule right now". Pin to add, unpin to retire. No
+            tickets, no templates.
           </p>
           <span class="agent-tag">Human · <span class="who">me</span></span>
         </li>
@@ -193,19 +231,21 @@ const totalPosts = posts.length;
           <p>
             Every iteration starts from scratch. The agent reloads accumulated
             context from prior loops — codebase gotchas, pending assets,
-            anti-patterns — then polls the task queue for messages without an
-            acknowledgement and decides which ones it can credibly close in
-            this loop.
+            anti-patterns — then reads the pinned rubric (which I can edit
+            live by pinning or unpinning a message) and polls the task queue
+            for unacknowledged asks. Both Discord surfaces are merged with
+            the on-disk rubric before any work is picked.
           </p>
           <span class="agent-tag">Agent · <span class="who">builder</span></span>
         </li>
         <li>
           <div class="num">02 · Pick the work</div>
-          <h3>Eight categories<span class="dot">.</span></h3>
+          <h3>Eight categories, plus pins<span class="dot">.</span></h3>
           <p>
             Component audit, feature improvement, bug fix, removal, dev
             workflow, production readiness, the dev-blog beat, and a
-            home-page improvement. Plus every queued ask. Target is 12–15
+            home-page improvement. Plus every pinned criterion in the live
+            rubric channel, plus every queued ask. Target is 12–15
             substantive items in active mode; two to four honest items when
             the queue is empty and the codebase is steady.
           </p>
@@ -804,6 +844,78 @@ const totalPosts = posts.length;
   }
   .workflow-grid .agent-tag {
     background: var(--bg-0);
+  }
+
+  /* ── channel map ──────────────────────────────────── */
+  .channel-map {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    margin: 0 0 32px;
+  }
+  .channel-map-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .channel-map-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .channel-map-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .channel-cell {
+    padding: 20px 22px 22px;
+    border-right: 1px solid var(--line);
+  }
+  .channel-cell:last-child { border-right: none; }
+  .channel-name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink-0);
+  }
+  .channel-flow {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .channel-flow .arrow {
+    color: var(--amber);
+    margin: 0 4px;
+    letter-spacing: 0;
+  }
+  .channel-body {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--line);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-1);
+  }
+  .channel-body strong {
+    display: block;
+    color: var(--ink-0);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 760px) {
+    .channel-map-grid { grid-template-columns: 1fr; }
+    .channel-cell {
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .channel-cell:last-child { border-bottom: none; }
   }
 
   /* ── steps ────────────────────────────────────────── */

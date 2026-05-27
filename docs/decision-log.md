@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Loop criteria become hybrid: on-disk file + Discord `#loop-criteria` pinned messages
+
+**Tags:** `harness`, `convention`, `process`, `skill`
+**Files:** `.claude/skills/auto-improve/SKILL.md`, `loop-memory/loop-criteria.md`, `loop-memory/discord-channels.md`, `apps/web/src/pages/process.astro`, `docs/discord-loop-cycle.md`
+
+The `/auto-improve` loop now reads its per-iteration rubric from **two surfaces, merged**: the stable categories in `loop-memory/loop-criteria.md` and the **pinned messages** in a new Discord channel `#loop-criteria`. Pin a message to add a criterion, unpin to retire it. The pin list IS the live ruleset; the file is the slow-changing half. On conflict, the pin wins. Pins promoted to permanent shape get moved into the file (and the pin removed) so the channel doesn't accumulate steady-state rules. Channel ID gets discovered + cached into `loop-memory/discord-channels.md` on first run.
+
+Alongside this, `loop-memory/discord-channels.md` now carries the **canonical curl recipes** for every Discord call the loop makes — read pins, read messages, react `:+1:` / `:white_check_mark:`, post to `#auto-improvements`, discover a channel by name. The skill instruction is "copy the recipe, don't re-derive the API surface each loop." Includes the URL-encoded emoji codepoints, the `User-Agent` header that dodges Cloudflare 1010, the `jq -n --arg` pattern that survives commit-subject summary bodies, and `allowed_mentions.parse:[]` to defuse stray `@everyone`. A new `docs/discord-loop-cycle.md` carries a Mermaid diagram of the full cycle so the channel layout is documented once, not re-inferred from the skill. The `/process` page got a "three channels" block + updated step copy to surface the new dynamic-rubric surface to outside readers.
+
+**Why:** the file-only criteria forced Alex to commit + push to change the rubric, which was friction enough that the rubric drifted from current intent between commits. Pins are zero-friction (one click in Discord) and let Alex steer a loop without touching the repo. The curl-recipe consolidation is the same instinct in a different direction — every prior loop spent some attention re-deriving "what's the right Discord endpoint shape" instead of shipping; baking the recipes into the channel cache file kills that tax.
+
+**Trade-off / what we didn't do:** considered a flat `#loop-criteria` channel where every message is a criterion (no pin/unpin), with the bot reacting `:-1:` to retire a rule. Rejected — accumulates noise, requires bot writes to a channel that's supposed to be human-curated, models state Discord already models for free via pins. Considered keeping criteria entirely in the file — rejected for the friction reason above. Considered moving the curl recipes into a shell-script library under `scripts/` — rejected because the skill is the only consumer, the recipes are short, and a markdown file is faster to read mid-loop than to grep across a script library.
+
+**Follow-ups:** first loop that needs the `#loop-criteria` channel ID has to discover it via `GET /guilds/$GUILD_ID/channels` and write the result back into `loop-memory/discord-channels.md`. If pins ever start landing without context that the loop can act on, consider a lightweight "criterion template" sentence pattern; not yet.
+
 ### 2026-05-27 — KPI strip on the home page grows a fifth tile: Units · lb + kg
 
 **Tags:** `web`, `marketing`, `copy`
