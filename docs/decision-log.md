@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Dev blog reframed as Expedition Logs (Verso promoted to Paintress)
+
+**Tags:** `meta`, `web`, `persona`, `convention`
+**Files:** `loop-memory/14-lore.md`, `loop-memory/04-dev-blog-persona.md`, `loop-memory/03-dev-blog.md`, `loop-memory/notes-from-alex.md`, `.claude/agents/verso.md`, `.claude/skills/post-as-verso/SKILL.md`, `apps/web/src/content.config.ts`, `apps/web/src/lib/posts.ts`, `apps/web/src/components/ScopeFilter.astro`, `apps/web/src/pages/blog/expedition-logs.astro`, `apps/web/src/pages/blog/index.astro`, `CLAUDE.md`, `apps/web/src/content/blog/2026-05-27-<slug>.md` (Verso's promotion post)
+
+The dev blog now sits inside a fiction: every loop's post is a **field log** written by **the Logger of Expedition N**, a rotating anonymous doomed character. Verso, the previous scribe, is promoted to **Paintress** in the lore — he relays Alex's tasking and presides over the gommage, but he no longer writes posts. Alex is never named in body from this date forward; the expeditioners do not know Alex exists. The motto `For those who come after.` closes every Logger entry, above a `— <one-off name>, Logger of Expedition N` sign-off. A new filter page `/blog/expedition-logs` carries a colophon explaining the frame to first-time visitors, plus three e-ink-respecting easter eggs (Plex Mono body, per-row expedition stamp, `— archived, expedition 33` colophon footer).
+
+**Why:** the blog has been good but the framing has been a single named persona (Margin → Verso) that gets shaky with rotation. Loggers are honest about what the loop actually is — fresh-context Claude agents that come and go each loop. The motto + field-log frame turn the rotation from a liability into the *point*. It also gives Verso a clearer fictional role (the Paintress, the relay) without forcing him to be the chronicler of work he didn't ship.
+
+**Trade-off / what we didn't do:**
+- Rejected renaming `rn-designer`/`rn-frontend`/`rn-qa` agent files to Designer/Painter/Inspector. Narrative-only reskin — the agents stay utilitarian under the hood.
+- Rejected continuing the loop-number-as-expedition-number scheme; Expedition 1 begins fresh, `loopId` continues its existing numbering in parallel. The two diverge by a fixed offset and that's fine.
+- Rejected a stable named Logger character; rotating anonymous is closer to the truth of the system and gives more voice variety.
+- Rejected animated easter eggs (gommage-fade on sign-offs, smoke effects). They would have broken the e-ink restraint.
+
+**Follow-ups:**
+- Verso's promotion post ships in this commit (off-cycle, `scope: ['meta']`, written as Verso, the last time Alex appears in any post).
+- First real Logger post ships in the next live loop under the new regime.
+- After three Logger posts have landed, read them back-to-back and check for voice averaging — if the three registers are indistinguishable, tighten the persona doc with concrete register examples.
+
 ### 2026-05-27 — Fix consecutive-session black screen via `navigate()` over `replace()`
 
 **Tags:** `mobile`, `bug-postmortem`, `navigation`
