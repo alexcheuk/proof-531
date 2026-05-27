@@ -31,7 +31,6 @@ import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
-import { sessionCompletedStore } from './sessionCompletedSignal';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
@@ -92,17 +91,12 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   const v = data.view;
   const handleClose = () => {
-    // Discord 1508779267 — close the day lands on Progress.
-    // Publish the signal before navigation so ProgressLiftPage can play
-    // the one-time fill-in animation on the just-completed cell.
-    sessionCompletedStore.publish({ lift: v.session.lift, sessionId });
-    // Dismiss the session stack FIRST, then navigate to Progress.
+    // Dismiss the session stack first, then switch to Progress.
     // router.navigate('/(tabs)/progress') from inside the session group
-    // does not reliably switch the active tab in the parent tabs navigator
-    // (the action doesn't propagate to the correct navigator). The correct
-    // pattern is: pop the session stack first, then navigate to the
-    // destination — the tabs navigator is already mounted behind the stack,
-    // so the tab switch lands immediately. (See loop-memory/12-cross-stack-navigation.md)
+    // does not reliably switch the active tab in the parent tabs navigator;
+    // popping the session stack first reveals the tabs navigator and the
+    // subsequent navigate() lands cleanly.
+    // See loop-memory/12-cross-stack-navigation.md.
     if (router.canDismiss()) router.dismissAll();
     goTo.progress(router, v.session.lift);
   };

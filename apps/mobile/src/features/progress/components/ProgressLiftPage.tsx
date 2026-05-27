@@ -21,11 +21,10 @@ import { tmIncrement } from '@/domain/increments';
 import { goalTargetTm } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
 import { displayUnit, displayWeight } from '@/domain/units';
-import { sessionCompletedStore } from '@/features/session/sessionCompletedSignal';
 import { QueryShell } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
 import { isLowerBody, liftLongName } from '../labels';
@@ -145,30 +144,6 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
     onScrolledChange?.(scrolled);
   }, [scrolled, onScrolledChange]);
 
-  // Discord 1508779267 — play a one-time fill-in animation on the
-  // last-done cell when the user just finished a session for this lift.
-  //
-  // `useSyncExternalStore` subscribes to the store so ANY publish fires a
-  // re-render, not just the mount-time check. This handles the second-
-  // consecutive-session case where the page is already mounted and the
-  // mount-only `useEffect([lift])` would never re-fire.
-  const completedEvent = useSyncExternalStore(
-    sessionCompletedStore.subscribe,
-    sessionCompletedStore.getSnapshot,
-  );
-  const [playLastDoneAnimation, setPlayLastDoneAnimation] = useState(false);
-  useEffect(() => {
-    if (!completedEvent) return;
-    if (completedEvent.lift !== lift) return;
-    sessionCompletedStore.consume();
-    setPlayLastDoneAnimation(true);
-    // Reset after the animation finishes (~880 ms for the full fill + pulse
-    // sequence) so consecutive sessions for the same lift replay the
-    // animation rather than silently no-opping on a true → true state update.
-    const resetTimer = setTimeout(() => setPlayLastDoneAnimation(false), 1200);
-    return () => clearTimeout(resetTimer);
-  }, [completedEvent, lift]);
-
   if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;
   }
@@ -256,7 +231,6 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
               draftKind={draftKind}
               draftValue={draftValue}
               draftTargetTm={draftTargetTm}
-              playLastDoneAnimation={playLastDoneAnimation}
             />
           ))}
           {goalBeyondChart ? (
