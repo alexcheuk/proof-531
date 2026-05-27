@@ -1,0 +1,291 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import ScopeFilter from '~/components/ScopeFilter.astro';
+import {
+  SCOPE_LABELS,
+  isLoggerPost,
+  postsByScope,
+  scopeCounts,
+  sortPostsOldestFirst,
+  type Scope,
+} from '~/lib/posts';
+
+const all = sortPostsOldestFirst(
+  await getCollection('blog', ({ data }) => !data.draft),
+);
+const posts = postsByScope(all, 'expedition');
+const counts = scopeCounts(all);
+
+const dateFmt = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric', month: 'short', day: '2-digit',
+});
+const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
+---
+
+<Base
+  title="Expedition Logs — 531"
+  description="Field logs from inside the painting. Each entry is written by an expedition's Logger before the expedition ends, addressed to those who will come after."
+>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow">
+        <span class="seg">/dev-log/expedition-logs</span>
+        <span>{posts.length} field log{posts.length === 1 ? '' : 's'}</span>
+      </div>
+      <h1>
+        Expedition Logs<span class="dot">.</span>
+      </h1>
+
+      <aside class="colophon">
+        <p>
+          Field logs from inside the painting. Each entry is written by
+          an expedition's Logger before the expedition ends, addressed
+          to those who will come after. The Loggers do not know about
+          this page; they write for their successors. We publish what
+          they leave behind.
+        </p>
+        <p class="archive-line">— archived, expedition 33</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="log-section">
+    <div class="wrap">
+      <ScopeFilter active="expedition" counts={counts} total={all.length} shown={posts.length} />
+
+      {posts.length === 0 ? (
+        <p class="empty">
+          No field logs yet. The first expedition is on its way.
+        </p>
+      ) : (
+        <ol class="log-list">
+          {posts.map((post) => {
+            if (!isLoggerPost(post)) return null;
+            const scopes: Scope[] = post.data.scope as Scope[];
+            const dateLabel = fmtDate(post.data.pubDate);
+            const expedition = post.data.expedition!;
+            const loggerName = post.data.loggerName!;
+            return (
+              <li class="log-row">
+                <a href={`/blog/${post.id}`} class="log-row__link">
+                  <div class="stamp">
+                    EXPEDITION {expedition} · FIELD LOG · {dateLabel}
+                  </div>
+                  <div class="title">{post.data.title}
+                    <span class="summary">{post.data.summary}</span>
+                  </div>
+                  <div class="signoff">
+                    — {loggerName}, Logger of Expedition {expedition}
+                  </div>
+                  <div class="scope">
+                    {scopes
+                      .filter((s) => s !== 'expedition')
+                      .map((s) => (
+                        <span class={`scope-tag ${s}`}>{SCOPE_LABELS[s]}</span>
+                      ))}
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 12% 8%, rgba(26, 24, 18, 0.06), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 88% 78%, rgba(26, 24, 18, 0.04), transparent 65%);
+  }
+</style>
+
+<style>
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .dot { color: var(--amber); margin-left: -0.04em; }
+
+  /* page-scoped mono body — the easter egg */
+  .log-list,
+  .log-list * {
+    font-family: var(--font-mono);
+  }
+  /* override mono on the title — Sans-Condensed still carries headlines */
+  .log-list .title {
+    font-family: var(--font-cond);
+  }
+  /* keep the scope-tag mono caps from inheriting any further override */
+  .log-list .scope-tag {
+    font-family: var(--font-mono);
+  }
+
+  .empty {
+    padding: 56px 22px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-style: italic;
+    color: var(--ink-2);
+  }
+
+  .hero { padding: 56px 0 24px; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .hero-eyebrow .seg {
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    color: var(--ink-0);
+  }
+  .hero h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 22px 0 0;
+    color: var(--ink-0);
+  }
+
+  /* colophon */
+  .colophon {
+    margin-top: 28px;
+    padding: 20px 22px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    max-width: 64ch;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-1);
+  }
+  .colophon p { margin: 0 0 12px; }
+  .colophon p:last-child { margin-bottom: 0; }
+  .colophon .archive-line {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--line);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: right;
+  }
+
+  /* log listing */
+  .log-section {
+    padding: 16px 0 96px;
+    background: var(--bg-0);
+  }
+  .log-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .log-row { border-bottom: 1px solid var(--line); }
+  .log-row:last-child { border-bottom: none; }
+  .log-row__link {
+    display: block;
+    padding: 22px 24px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .log-row__link:hover { background: var(--bg-1); }
+
+  /* per-row expedition stamp */
+  .log-row .stamp {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .log-row .title {
+    font-family: var(--font-cond);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ink-0);
+    line-height: 1.25;
+  }
+  .log-row .title .summary {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-2);
+    margin-top: 6px;
+    letter-spacing: 0;
+    line-height: 1.55;
+    max-width: 64ch;
+  }
+  .log-row .signoff {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dotted var(--line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+
+  .log-row .scope {
+    display: inline-flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .log-row .scope-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink-1);
+  }
+  .log-row .scope-tag.web {
+    color: var(--ink-0);
+    background: var(--bg-2);
+  }
+  .log-row .scope-tag.mobile {
+    color: var(--ink-0);
+    border-color: var(--line-strong);
+  }
+  .log-row .scope-tag.meta {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .log-row .scope-tag.loop {
+    color: var(--bg-0);
+    background: var(--ink-0);
+    border-color: var(--ink-0);
+  }
+
+  @media (max-width: 960px) {
+    .colophon { max-width: 100%; }
+  }
+</style>
