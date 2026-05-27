@@ -4,8 +4,10 @@ import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
+import { StatusBarShim } from '@/design/primitives/StatusBarShim';
 import { Text } from '@/design/primitives/Text';
-import { useTheme } from '@/design/theme';
+import { ThemeProvider, useTheme } from '@/design/theme';
+import { colors as baseColors } from '@/design/tokens';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose, defaultPlateSet } from '@/domain/plates';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
@@ -30,6 +32,18 @@ export type LiveScreenProps = {
 };
 
 export function LiveScreen({ sessionId }: LiveScreenProps) {
+  const settingsQuery = useSettings();
+  const inverted = settingsQuery.data?.liveScreenInverted ?? false;
+  return (
+    <ThemeProvider invert={inverted}>
+      <LiveScreenBody sessionId={sessionId} inverted={inverted} />
+    </ThemeProvider>
+  );
+}
+
+type LiveScreenBodyProps = LiveScreenProps & { inverted: boolean };
+
+function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   const router = useRouter();
   const { colors } = useTheme();
   const sessionQuery = useSession(sessionId);
@@ -63,7 +77,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
   if (!sessionQuery.data) {
     return (
       <SessionLayout testID="live-loading">
-        <StatusBar style="dark" />
+        <LiveStatusBar inverted={inverted} />
         <SessionTopBar onBack={() => goTo.home(router)} backLabel="Back to plan" />
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text variant="mono" weight="medium" size={11} color="ink3" style={{ letterSpacing: 2 }}>
@@ -111,7 +125,7 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
 
   return (
     <SessionLayout>
-      <StatusBar style="dark" />
+      <LiveStatusBar inverted={inverted} />
       <SessionTopBar
         onBack={() => goTo.today(router, lift, { replace: true })}
         backLabel="Back to plan"
@@ -198,4 +212,19 @@ export function LiveScreen({ sessionId }: LiveScreenProps) {
       />
     </SessionLayout>
   );
+}
+
+/**
+ * Status-bar treatment for Live. Defaults to dark glyphs on the paper
+ * canvas; when the user has opted into the inverted Live screen
+ * (Discord 1508984314) we paint the safe-area strip ink-0 and ask the
+ * OS for light glyphs so the notch area stays continuous with the
+ * surface.
+ */
+function LiveStatusBar({ inverted }: { inverted: boolean }) {
+  // Read from the base palette so the strip color is the literal ink-0
+  // (the inverted theme would itself swap bg0 ↔ ink0, but the strip
+  // lives outside the themed subtree via the global tint store).
+  if (inverted) return <StatusBarShim color={baseColors.ink0} style="light" />;
+  return <StatusBar style="dark" />;
 }

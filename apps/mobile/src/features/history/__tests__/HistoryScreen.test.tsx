@@ -72,6 +72,7 @@ jest.mock('@/data/queries/useSettings', () => ({
       day: 1,
       restTargetSeconds: 90,
       bbbRestTargetSeconds: 90,
+      liveScreenInverted: false,
     },
     isLoading: false,
     isError: false,

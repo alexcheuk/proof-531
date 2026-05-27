@@ -77,6 +77,13 @@ export interface Settings {
    * band hint.
    */
   bbbRestTargetSeconds: number;
+  /**
+   * Render the live set / rest screens in inverted colors (ink-0 surface,
+   * paper ink) — same palette family the PR celebration screen uses.
+   * Default `false`. Persisted as `live_screen_inverted` (additive
+   * column; defaults `0` on existing installs). Discord 1508984314.
+   */
+  liveScreenInverted: boolean;
 }
 
 /**
@@ -94,4 +101,5 @@ export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
   day: 1,
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
+  liveScreenInverted: false,
 };

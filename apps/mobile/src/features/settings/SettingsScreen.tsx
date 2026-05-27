@@ -26,6 +26,7 @@ import { ActiveLiftsSection } from './sections/ActiveLiftsSection';
 import { Colophon } from './sections/Colophon';
 import { CyclePrescriptionSection } from './sections/CyclePrescriptionSection';
 import { DangerZoneSection } from './sections/DangerZoneSection';
+import { LiveScreenLookSection } from './sections/LiveScreenLookSection';
 import { PlateSetSection } from './sections/PlateSetSection';
 import { ProgressionRulesSection } from './sections/ProgressionRulesSection';
 import { ReleaseSection } from './sections/ReleaseSection';
@@ -104,6 +105,8 @@ export function SettingsScreen() {
           restTargetSeconds={settings.restTargetSeconds}
           bbbRestTargetSeconds={settings.bbbRestTargetSeconds}
         />
+
+        <LiveScreenLookSection inverted={settings.liveScreenInverted} />
 
         <AboutSection />
 

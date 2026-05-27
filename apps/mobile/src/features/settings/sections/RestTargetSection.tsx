@@ -1,11 +1,8 @@
-import { useDb } from '@/data/DbProvider';
-import { updateSettings } from '@/data/accessors/settings';
-import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import { LabeledSegRail } from '@/design/primitives/LabeledSegRail';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { SegRail } from '@/design/primitives/SegRail';
 import { formatMmSs } from '@/domain/time';
-import { useQueryClient } from '@tanstack/react-query';
+import { useUpdateSettings } from '../hooks/useUpdateSettings';
 
 type RestPreset = '60' | '90' | '120' | '180' | '240';
 
@@ -26,19 +23,16 @@ export function RestTargetSection({
   restTargetSeconds,
   bbbRestTargetSeconds,
 }: RestTargetSectionProps) {
-  const db = useDb();
-  const queryClient = useQueryClient();
+  const updateSettings = useUpdateSettings();
   const currentWorking = String(restTargetSeconds) as RestPreset;
   const currentBbb = String(bbbRestTargetSeconds) as RestPreset;
 
   async function commitRestTarget(next: RestPreset) {
-    await updateSettings(db, { restTargetSeconds: Number(next) });
-    await queryClient.invalidateQueries({ queryKey: SETTINGS_KEY });
+    await updateSettings({ restTargetSeconds: Number(next) });
   }
 
   async function commitBbbRestTarget(next: RestPreset) {
-    await updateSettings(db, { bbbRestTargetSeconds: Number(next) });
-    await queryClient.invalidateQueries({ queryKey: SETTINGS_KEY });
+    await updateSettings({ bbbRestTargetSeconds: Number(next) });
   }
 
   return (

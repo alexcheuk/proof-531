@@ -21,8 +21,17 @@ export type SessionCompleteData = {
   ready: boolean;
   /** True while the underlying session row has not arrived. */
   loading: boolean;
-  /** True if the session exists but is not yet `completed` (caller should bounce). */
-  notCompleted: boolean;
+  /**
+   * True if the session exists but its status is something we cannot
+   * render a receipt for (`'cancelled'`). A stale `'in_progress'` read
+   * is NOT included here — it is treated as a transient cache fluke that
+   * the next refetch resolves. Bouncing on `'in_progress'` was the root
+   * of Discord 1508935260, where the AMRAP→BBB→Close flow occasionally
+   * landed the user on Home because the per-session cache had not yet
+   * been re-read between screens (BBB's `Mark complete` invalidates the
+   * set-logs/sessions list but not `SESSION_KEY`).
+   */
+  cancelled: boolean;
   /** True if the session lookup returned null (caller should bounce home). */
   missing: boolean;
   view: SessionCompleteView | null;
@@ -89,7 +98,7 @@ export function useSessionCompleteData(sessionId: number): SessionCompleteData {
     ready: !!view,
     loading: sessionQuery.isLoading,
     missing: sessionQuery.data === null,
-    notCompleted: !!session && session.status !== 'completed',
+    cancelled: !!session && session.status === 'cancelled',
     view,
   };
 }

@@ -1,10 +1,7 @@
-import { useDb } from '@/data/DbProvider';
-import { updateSettings } from '@/data/accessors/settings';
-import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { SegRail } from '@/design/primitives/SegRail';
 import type { Settings } from '@/domain/types';
-import { useQueryClient } from '@tanstack/react-query';
+import { useUpdateSettings } from '../hooks/useUpdateSettings';
 import { type PlateSetUi, schemaToUiPlateSet, uiToSchemaPlateSet } from '../plateSetMapping';
 
 const PLATE_OPTIONS = [
@@ -18,15 +15,13 @@ export type PlateSetSectionProps = {
 };
 
 export function PlateSetSection({ plateSet }: PlateSetSectionProps) {
-  const db = useDb();
-  const queryClient = useQueryClient();
+  const updateSettings = useUpdateSettings();
   const uiPlateSet: PlateSetUi = schemaToUiPlateSet(plateSet);
 
   async function commitPlateSet(next: PlateSetUi) {
     const schemaValue = uiToSchemaPlateSet(next);
     if (schemaValue == null) return;
-    await updateSettings(db, { plateSet: schemaValue });
-    await queryClient.invalidateQueries({ queryKey: SETTINGS_KEY });
+    await updateSettings({ plateSet: schemaValue });
   }
 
   return (

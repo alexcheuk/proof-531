@@ -66,6 +66,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
           day: existing.day as Settings['day'],
           restTargetSeconds: existing.restTargetSeconds,
           bbbRestTargetSeconds: existing.bbbRestTargetSeconds,
+          liveScreenInverted: !!existing.liveScreenInverted,
         }
       : { id: 1 as const, ...DEFAULT_SETTINGS }),
     storageUnit: input.unit,
@@ -84,6 +85,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     day: next.day,
     restTargetSeconds: next.restTargetSeconds,
     bbbRestTargetSeconds: next.bbbRestTargetSeconds,
+    liveScreenInverted: next.liveScreenInverted ? 1 : 0,
   };
 
   if (existing) {

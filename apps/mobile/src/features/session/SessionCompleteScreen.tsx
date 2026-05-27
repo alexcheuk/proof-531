@@ -51,15 +51,18 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   usePrSuccessHaptic(data.view?.hasPR ?? false);
 
-  // Defense in depth: deep-link / manual route into this screen for a
-  // cancelled or in-progress session bounces home rather than rendering the
-  // success masthead over a non-completed session.
+  // Defense in depth: a missing or explicitly cancelled session can't
+  // render a receipt, so bounce home. A stale `'in_progress'` read from
+  // the per-session cache is NOT a bounce trigger — see the
+  // `cancelled` field on `SessionCompleteData` for why. The view stays
+  // null until status flips to `'completed'`, so the screen renders its
+  // loading chrome while we wait.
   useEffect(() => {
     if (data.loading) return;
-    if (data.missing || data.notCompleted) {
+    if (data.missing || data.cancelled) {
       goTo.home(router);
     }
-  }, [data.loading, data.missing, data.notCompleted, router]);
+  }, [data.loading, data.missing, data.cancelled, router]);
 
   // CRITICAL: all hooks must run on every render — keep this above any
   // early return so the React Hook rules hold. Previously `useCallback`
@@ -92,6 +95,12 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     // signal *before* the navigation so ProgressLiftPage sees it on its
     // own mount and the animation can play in sync with the landing.
     sessionCompletedStore.publish({ lift: v.session.lift, sessionId });
+    // Pop the entire (session) stack before switching to the Progress
+    // tab. Without this, `router.replace('/(tabs)/progress')` is a
+    // cross-stack hop that leaves the session stack's other screens
+    // mounted underneath the tab — Discord 1508935241 reported this as
+    // a "black screen that can't be dismissed" after Close the day.
+    if (router.canDismiss()) router.dismissAll();
     goTo.progress(router, v.session.lift, { replace: true });
   };
   const handleAdjustTm = () => goTo.settings(router);

@@ -17,6 +17,11 @@ export const settings = sqliteTable('settings', {
   // wasted time. Default 90s. Additive column; see ADDITIVE_COLUMNS in
   // runMigrations.ts so existing installs pick it up via ALTER TABLE.
   bbbRestTargetSeconds: integer('bbb_rest_target_seconds').notNull(),
+  // Flips Live set + rest screens to inverted (ink-0 surface, paper
+  // text), matching the PR celebration palette. Default 0 (off).
+  // Additive column; existing installs pick it up via ALTER TABLE in
+  // `runMigrations.ts`. Discord 1508984314.
+  liveScreenInverted: integer('live_screen_inverted').notNull(),
 });
 
 export const trainingMaxes = sqliteTable('training_maxes', {
@@ -112,4 +117,5 @@ export const DEFAULT_SETTINGS_VALUES = {
   day: 1,
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
+  liveScreenInverted: 0 as 0 | 1,
 };

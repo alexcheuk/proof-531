@@ -45,6 +45,7 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'day',
   'rest_target_seconds',
   'bbb_rest_target_seconds',
+  'live_screen_inverted',
 ] as const;
 
 const REQUIRED_LIFT_GOALS_COLUMNS = ['kind', 'target_value', 'unit'] as const;
@@ -75,6 +76,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     table: 'lift_goals',
     column: 'days_per_week',
     ddl: 'ALTER TABLE lift_goals ADD COLUMN days_per_week INTEGER',
+  },
+  {
+    table: 'settings',
+    column: 'live_screen_inverted',
+    ddl: 'ALTER TABLE settings ADD COLUMN live_screen_inverted INTEGER NOT NULL DEFAULT 0',
   },
 ];
 

@@ -1,5 +1,4 @@
 import type { Lift } from '@/domain/types';
-import { useSyncExternalStore } from 'react';
 
 /**
  * Module-level subject for "the user just finished a session and tapped
@@ -50,16 +49,3 @@ export const sessionCompletedStore = {
     return snapshot;
   },
 };
-
-export function useSessionCompletedSignal(): SessionCompletedEvent | null {
-  return useSyncExternalStore(
-    sessionCompletedStore.subscribe,
-    sessionCompletedStore.getSnapshot,
-    sessionCompletedStore.getSnapshot,
-  );
-}
-
-export function _resetSessionCompletedSignalForTests(): void {
-  current = null;
-  listeners.clear();
-}

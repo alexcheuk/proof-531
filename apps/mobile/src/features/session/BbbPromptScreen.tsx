@@ -2,7 +2,7 @@ import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { appendSetLog } from '@/data/accessors/setLog';
 import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
-import { useSession } from '@/data/queries/useSession';
+import { SESSION_KEY, useSession } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -115,10 +115,14 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
       }
       // Refresh the session-shaped surface so the receipt's volume +
       // History tab's lifetime-volume stat pick up the new rows on
-      // arrival.
+      // arrival. `SESSION_KEY` is also re-invalidated so the per-session
+      // cache cannot land at /session/complete with a stale
+      // `'in_progress'` status (Discord 1508935260 root cause —
+      // `SessionCompleteScreen` used to bounce home on a stale read).
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
         queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
+        queryClient.invalidateQueries({ queryKey: SESSION_KEY(sessionId) }),
         queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
       ]);
     } catch (err) {

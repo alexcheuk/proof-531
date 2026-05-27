@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS settings (
   week INTEGER NOT NULL,
   day INTEGER NOT NULL,
   rest_target_seconds INTEGER NOT NULL DEFAULT 90,
-  bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90
+  bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90,
+  live_screen_inverted INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS training_maxes (

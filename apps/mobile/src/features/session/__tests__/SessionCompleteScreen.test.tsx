@@ -18,8 +18,10 @@ import type { ReactElement } from 'react';
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockBack = jest.fn();
+const mockDismissAll = jest.fn();
 const mockNotificationAsync = jest.fn();
 const routerCanGoBack = { value: true };
+const routerCanDismiss = { value: true };
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({
@@ -27,6 +29,8 @@ jest.mock('expo-router', () => ({
     push: mockPush,
     back: mockBack,
     canGoBack: () => routerCanGoBack.value,
+    canDismiss: () => routerCanDismiss.value,
+    dismissAll: mockDismissAll,
   }),
   useLocalSearchParams: () => ({}),
 }));
@@ -143,6 +147,7 @@ jest.mock('@/data/queries/useSettings', () => ({
       week: 1,
       restTargetSeconds: 90,
       bbbRestTargetSeconds: 90,
+      liveScreenInverted: false,
     },
     isLoading: false,
     error: null,
@@ -196,6 +201,8 @@ const buildLogs = (opts: { isPR: boolean }) => [
 describe('SessionCompleteScreen', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockDismissAll.mockClear();
+    routerCanDismiss.value = true;
     mockPush.mockClear();
     mockBack.mockClear();
     mockNotificationAsync.mockClear();
@@ -335,6 +342,11 @@ describe('SessionCompleteScreen', () => {
       pathname: '/(tabs)/progress',
       params: { lift: 'squat' },
     });
+    // Discord 1508935241 — the session stack is popped first so the
+    // cross-stack hop to the Progress tab doesn't leave a hidden
+    // /session/* screen mounted underneath (the "black screen that
+    // can't be dismissed" symptom).
+    expect(mockDismissAll).toHaveBeenCalled();
   });
 
   describe('origin = "history"', () => {

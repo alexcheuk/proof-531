@@ -129,6 +129,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         day: 1,
         restTargetSeconds: 90,
         bbbRestTargetSeconds: 90,
+        liveScreenInverted: false,
       },
       prevBestStorage: 0,
     });

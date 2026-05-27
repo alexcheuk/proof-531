@@ -42,6 +42,46 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — Cross-stack nav from the (session) stack to a (tabs) destination must `dismissAll()` first
+
+**Tags:** `architecture`, `bugfix`, `convention`
+**Files:** `apps/mobile/src/features/session/SessionCompleteScreen.tsx`, `loop-memory/12-cross-stack-navigation.md`
+
+`router.replace('/(tabs)/<tab>')` from inside the (session) stack does not pop the session stack — it only swaps the topmost screen. The result was the symptom reported in Discord 1508935241: after "Close the day" on the session receipt, a stale session screen (the ink-0 PR celebration in the most common case) stayed mounted under the Progress tab and read as "a black screen that can't be dismissed". Fix is `router.canDismiss() && router.dismissAll()` immediately before the cross-stack hop. `SessionCompleteScreen.handleClose` is the first site; the rule is in `loop-memory/12-cross-stack-navigation.md` for future close-the-day-and-go-to-X paths.
+
+**Why:** the reporter said the app was unusable after the (otherwise correct) close-day → Progress transition. Symptom didn't reproduce in jest because the test stack mocks `router.replace` as a `jest.fn()` — no real native-stack to leak underneath. The bug was a one-line addition wrapped in the right precondition.
+
+**Trade-off / what we didn't do:** considered baking `dismissAll()` into `goTo.progress` itself, but rejected — `goTo.progress` is also called from inside the (tabs) stack (LiftPage), where there is no session stack to dismiss and `canDismiss()` is `false` anyway. Keeping the dismiss at the call site means the cost is paid only where it's needed and the helper stays a pure path-builder.
+
+### 2026-05-26 — `SessionCompleteScreen` no longer bounces home on a stale `'in_progress'` cache read
+
+**Tags:** `architecture`, `bugfix`, `cache`
+**Files:** `apps/mobile/src/features/session/hooks/useSessionCompleteData.ts`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`, `apps/mobile/src/features/session/BbbPromptScreen.tsx`
+
+`SessionCompleteScreen`'s `data.notCompleted` check used to fire `goTo.home(router)` whenever the per-session cache (`SESSION_KEY(id)`) read `status !== 'completed'`. The cache is fresh on the route from PR celebration → BBB (the `awaiting-bbb` effect in `useLiveScreenEffects` invalidates it), but **not** on BBB → Complete — `BbbPromptScreen.onMarkComplete` invalidated set-logs, the sessions list, and lifetime volume, but never `SESSION_KEY`. The result was the AMRAP → Home symptom in Discord 1508935260. Two belt-and-braces fixes landed: the screen now exposes `cancelled` (only an explicit `'cancelled'` status bounces home; a stale `'in_progress'` waits for the refetch and the loading layout shows in the meantime), and BBB also re-invalidates `SESSION_KEY` so the cache cannot land stale.
+
+**Why:** "wait for the refetch" is the right default for a transient cache fluke — the prior "bounce home if it doesn't say `'completed'`" was paranoid and dropped the user out of the receipt flow on the very read that was about to resolve. The added BBB invalidation is cheap and removes the window where the race even exists.
+
+### 2026-05-26 — Optional inverted Live screen — opt-in via Settings, threaded through a nested `ThemeProvider`
+
+**Tags:** `feature`, `theming`, `convention`
+**Files:** `apps/mobile/src/design/theme.ts`, `apps/mobile/src/domain/types.ts`, `apps/mobile/src/data/drizzle/schema.ts`, `apps/mobile/src/data/drizzle/runMigrations.ts`, `apps/mobile/src/data/drizzle/migrations/0001_init.ts`, `apps/mobile/src/data/accessors/settings.ts`, `apps/mobile/src/data/accessors/onboarding.ts`, `apps/mobile/src/features/session/LiveScreen.tsx`, `apps/mobile/src/features/settings/sections/LiveScreenLookSection.tsx` (new)
+
+Added a `liveScreenInverted` boolean to `Settings` and a Settings → Live screen look toggle (Paper / Inverted). When inverted, the Live set + rest screens render in the PR-celebration palette family. Threaded via a nested `ThemeProvider invert` — the provider swaps the `colors` table once (bg/ink families flip, lines redrawn off paper, amber kept) and every primitive that reads `useTheme()` picks up the inverted palette automatically. The alternative was per-component `inverted` props and a deep refactor of every Live primitive; the nested provider was one ThemeProvider edit and four-line LiveScreen change.
+
+**Why:** Discord 1508984314 — the user wanted the LIVE workout/REST screens to invert similarly to PR celebration. The toggle ships the result without forcing the look on anyone, and the implementation is small enough that the next loop can extend the same `invert` prop to the Today and Complete screens with no new infrastructure.
+
+**Trade-off / what we didn't do:** considered a third "auto" mode that follows the system theme — rejected for now because the app's whole palette is e-ink paper by design (see `INTENT.md`); offering OS-dark would imply OS-light is also wired up, and it isn't. The opt-in toggle keeps the default behavior unchanged and the inverted look as an explicit choice.
+
+### 2026-05-26 — `useUpdateSettings` consolidates the `updateSettings + invalidate(SETTINGS_KEY)` pair
+
+**Tags:** `refactor`, `convention`
+**Files:** `apps/mobile/src/features/settings/hooks/useUpdateSettings.ts` (new), `apps/mobile/src/features/settings/sections/{PlateSet,RestTarget,LiveScreenLook}Section.tsx`
+
+Pulled the `useDb + useQueryClient + async commit` boilerplate (`updateSettings(db, patch); invalidateQueries({ queryKey: SETTINGS_KEY })`) into `useUpdateSettings()`. Three sections adopted it in this iteration; the next section that needs to write a single field uses one import and one call instead of three plus a closure. `UnitsSection` was left alone — it routes through the more specialized `setDisplayUnit` wrapper, which carries its own intent.
+
+**Why:** five identical commit-and-invalidate blocks meant the next setting (this loop's `liveScreenInverted`) was going to be the sixth. Easier to write the small hook now and keep new sections to a single line.
+
 ### 2026-05-26 — Marketing site v2: ported from the Anthropic Design HTML drop, then audited the phone mockups against the real app
 
 **Tags:** `web`, `marketing`, `primitive`, `convention`
