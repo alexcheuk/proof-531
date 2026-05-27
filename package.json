@@ -12,6 +12,7 @@
     "dev:mobile": "pnpm --filter @fivethreeone/mobile start",
     "dev:web": "pnpm --filter @fivethreeone/web dev",
     "build:web": "pnpm --filter @fivethreeone/web build",
+    "build:apk": "pnpm --filter @fivethreeone/mobile exec eas build --platform android --profile preview --local --non-interactive --output ../web/public/531-preview.apk",
     "preview:web": "pnpm --filter @fivethreeone/web preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
