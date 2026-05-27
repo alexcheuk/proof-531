@@ -4,7 +4,7 @@
 
 ## The person
 
-I'm a staff frontend engineer, 15+ years in. I currently push 225. I want to hit 315.
+I'm a staff frontend engineer, 15+ years in. I currently bench 2 plates (225). I want 3 plates (315). Two plates to three — that's the whole goal.
 
 ## The trigger
 

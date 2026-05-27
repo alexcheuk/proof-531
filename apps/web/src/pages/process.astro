@@ -103,12 +103,78 @@ const totalPosts = posts.length;
     </div>
   </div>
 
+  {/* ─── workflow (the human side of the loop) ─── */}
+  <section class="workflow-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">01 · The workflow</div>
+          <h2>Discord in<span class="dot">.</span><br />OTA out<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          On my end the whole thing is two surfaces: a Discord channel and the
+          preview build on my phone. I type what I want — a feature, a bug, a
+          nag about a misaligned line — and watch the loop pick it up. By the
+          next time I open the app, the OTA is already waiting. Then back to
+          the channel.
+        </div>
+      </div>
+
+      <ol class="steps workflow-grid">
+        <li>
+          <div class="num">01 · Ask</div>
+          <h3>Open Discord<span class="dot">.</span></h3>
+          <p>
+            I keep one channel for it. When something on the app bugs me,
+            or I want a new screen, or I notice a number that's off — I
+            type it out like a normal chat message. No format, no template,
+            no tickets.
+          </p>
+          <span class="agent-tag">Human · <span class="who">me</span></span>
+        </li>
+        <li>
+          <div class="num">02 · Picked up</div>
+          <h3>The loop reads it<span class="dot">.</span></h3>
+          <p>
+            The next loop firing scans the channel for unacked messages and
+            decides which ones it can credibly close this iteration. The
+            post for that loop quotes the prompt verbatim, so I can see what
+            it heard versus what I meant.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">builder</span></span>
+        </li>
+        <li>
+          <div class="num">03 · Shipped</div>
+          <h3>OTA to the preview<span class="dot">.</span></h3>
+          <p>
+            The same loop that does the work pushes an OTA to the preview
+            channel. No App Store delay, no waiting on review — the bits
+            land within minutes of the commit, on the development build
+            sitting in my pocket.
+          </p>
+          <span class="agent-tag">Agent · <span class="who">builder</span></span>
+        </li>
+        <li>
+          <div class="num">04 · Reviewed</div>
+          <h3>I open the app<span class="dot">.</span></h3>
+          <p>
+            Next time I launch the preview build, Expo Updates checks in and
+            swaps the JS bundle. The thing I asked for is right there. If
+            it's wrong, I drop another Discord message — and the loop
+            starts again.
+          </p>
+          <span class="agent-tag">Human · <span class="who">me</span></span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
   {/* ─── the loop, expanded ─── */}
   <section class="steps-bg">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="marker">01 · The loop</div>
+          <div class="marker">02 · The loop</div>
           <h2>How a 30-minute<br />iteration goes<span class="dot">.</span></h2>
         </div>
         <div class="right">
@@ -178,7 +244,7 @@ const totalPosts = posts.length;
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="marker">02 · The discipline</div>
+          <div class="marker">03 · The discipline</div>
           <h2>Rules<br />the agent<br />has to keep<span class="dot">.</span></h2>
         </div>
         <div class="right">
@@ -278,7 +344,7 @@ const totalPosts = posts.length;
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="marker">03 · The scribe</div>
+          <div class="marker">04 · The scribe</div>
           <h2>Margin is out.<br />Verso is in<span class="dot">.</span></h2>
         </div>
         <div class="right">
@@ -393,7 +459,7 @@ const totalPosts = posts.length;
     <div class="wrap">
       <div class="section-head" style="padding-bottom: 0;">
         <div>
-          <div class="marker">04 · The receipts</div>
+          <div class="marker">05 · The receipts</div>
           <h2>{totalPosts} posts<span class="dot">.</span><br />One per loop<span class="dot">.</span></h2>
         </div>
         <div class="right">
@@ -723,6 +789,21 @@ const totalPosts = posts.length;
     line-height: 1.6;
     color: var(--ink-1);
     padding-bottom: 4px;
+  }
+
+  /* ── workflow (Alex's loop) ───────────────────────── */
+  .workflow-section {
+    padding: 80px 0;
+    border-top: 1px solid var(--line);
+  }
+  .workflow-grid {
+    background: var(--bg-1);
+  }
+  .workflow-grid li {
+    background: var(--bg-1);
+  }
+  .workflow-grid .agent-tag {
+    background: var(--bg-0);
   }
 
   /* ── steps ────────────────────────────────────────── */
