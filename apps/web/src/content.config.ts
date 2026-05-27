@@ -28,12 +28,21 @@ const blog = defineCollection({
       )
       .optional(),
     commitCount: z.number().optional(),
+    // Logger-only fields (added 2026-05-27 with the Verso→Paintress shift).
+    // `expedition` is the narrative counter that runs in parallel to `loopId`:
+    // Logger posts get the next sequential expedition number; off-cycle and
+    // Verso-mode posts omit it. `loggerName` is the one-off given name the
+    // Logger signed with — see loop-memory/04-dev-blog-persona.md.
+    expedition: z.number().int().positive().optional(),
+    loggerName: z.string().optional(),
     tags: z.array(z.string()).default([]),
     // Scope is the structural dimension we filter `/blog` on: which surface(s)
     // the post is primarily about. `tags` stays for fine-grained content tags
     // (session, design, bug-postmortem, etc.). Multi-value because a single
-    // loop often ships across mobile + web.
-    scope: z.array(z.enum(['mobile', 'web', 'loop', 'meta'])).min(1),
+    // loop often ships across mobile + web. The `expedition` value joined the
+    // enum on 2026-05-27 — every Logger post carries it alongside its surface
+    // scope; older Verso/Margin posts do not.
+    scope: z.array(z.enum(['mobile', 'web', 'loop', 'meta', 'expedition'])).min(1),
     draft: z.boolean().default(false),
   }),
 });

@@ -2,7 +2,7 @@ import type { CollectionEntry } from 'astro:content';
 
 type BlogEntry = CollectionEntry<'blog'>;
 
-export const SCOPES = ['mobile', 'web', 'loop', 'meta'] as const;
+export const SCOPES = ['mobile', 'web', 'loop', 'meta', 'expedition'] as const;
 export type Scope = (typeof SCOPES)[number];
 
 export const SCOPE_LABELS: Record<Scope, string> = {
@@ -10,6 +10,7 @@ export const SCOPE_LABELS: Record<Scope, string> = {
   web: 'Web',
   loop: 'Loop',
   meta: 'Meta',
+  expedition: 'Expedition',
 };
 
 export function postsByScope(posts: BlogEntry[], scope: Scope): BlogEntry[] {
@@ -17,7 +18,7 @@ export function postsByScope(posts: BlogEntry[], scope: Scope): BlogEntry[] {
 }
 
 export function scopeCounts(posts: BlogEntry[]): Record<Scope, number> {
-  const counts: Record<Scope, number> = { mobile: 0, web: 0, loop: 0, meta: 0 };
+  const counts: Record<Scope, number> = { mobile: 0, web: 0, loop: 0, meta: 0, expedition: 0 };
   for (const p of posts) {
     for (const s of p.data.scope) counts[s] += 1;
   }
