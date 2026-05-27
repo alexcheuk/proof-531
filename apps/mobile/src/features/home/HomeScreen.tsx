@@ -22,6 +22,7 @@ import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
 import { dateLabel } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
+import { LiftTabs } from '@/features/shared/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 import { useRouter } from 'expo-router';
@@ -31,7 +32,6 @@ import { DateBadge } from './components/DateBadge';
 import { HomeContainer } from './components/HomeContainer';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { LiftPage } from './components/LiftPage';
-import { LiftTabs } from '@/features/shared/LiftTabs';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {
