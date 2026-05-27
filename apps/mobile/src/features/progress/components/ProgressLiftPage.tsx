@@ -25,7 +25,7 @@ import { sessionCompletedStore } from '@/features/session/sessionCompletedSignal
 import { QueryShell } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
 import { isLowerBody, liftLongName } from '../labels';
@@ -145,17 +145,25 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
     onScrolledChange?.(scrolled);
   }, [scrolled, onScrolledChange]);
 
-  // Discord 1508779267 — when this page mounts after the user just
-  // finished a session for this lift, play a one-time fill-in animation
-  // on the last-done cell. Consumed on mount so a later visit to
-  // Progress (or a back-nav into it) doesn't replay.
+  // Discord 1508779267 — play a one-time fill-in animation on the
+  // last-done cell when the user just finished a session for this lift.
+  //
+  // `useSyncExternalStore` subscribes to the store so ANY publish fires a
+  // re-render, not just the mount-time check. This handles the second-
+  // consecutive-session case where the page is already mounted and the
+  // mount-only `useEffect([lift])` would never re-fire.
+  const completedEvent = useSyncExternalStore(
+    sessionCompletedStore.subscribe,
+    sessionCompletedStore.getSnapshot,
+  );
   const [playLastDoneAnimation, setPlayLastDoneAnimation] = useState(false);
   useEffect(() => {
-    const signal = sessionCompletedStore.consume();
-    if (signal?.lift === lift) {
+    if (!completedEvent) return;
+    if (completedEvent.lift === lift) {
+      sessionCompletedStore.consume();
       setPlayLastDoneAnimation(true);
     }
-  }, [lift]);
+  }, [completedEvent, lift]);
 
   if (progression.isError || goalQuery.isError) {
     return <QueryShell query={progression}>{null}</QueryShell>;

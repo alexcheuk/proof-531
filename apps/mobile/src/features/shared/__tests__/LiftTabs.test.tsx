@@ -6,22 +6,20 @@
  *  - The 5×5 in-progress dot appears ONLY next to the lift named by
  *    `inProgressLift` and is absent for every other tab.
  *  - Tapping a non-active tab calls `onSelect(lift)` with the tapped lift.
- *  - The ★ PR glyph wraps in Animated.Text with a FadeIn entrance.
+ *  - The ★ PR glyph appears when `hasPr` is true (now via explicit animation,
+ *    not Reanimated's `entering` prop).
  */
-// Star uses Reanimated's Animated.Text + FadeIn entrance — stub the worklets
-// bridge so jest doesn't crash on import.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text },
-    FadeIn: { duration: () => ({}) },
     useSharedValue: (v: unknown) => ({ value: v }),
     useAnimatedStyle: () => ({}),
     withTiming: (v: unknown) => v,
     withRepeat: (v: unknown) => v,
     cancelAnimation: () => {},
-    Easing: { inOut: () => () => 0, ease: () => 0 },
+    Easing: { inOut: () => () => 0, ease: () => 0, out: () => () => 0 },
   };
 });
 

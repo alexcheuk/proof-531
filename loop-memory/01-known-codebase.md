@@ -204,6 +204,31 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `/session/complete` — receipt + CTA
 - `/onboarding` — first-launch
 
+## Reanimated animation rules (added 2026-05-27)
+
+- **Never use `entering={FadeIn/FadeInDown/ZoomIn/...}` on any component
+  that can remount across sessions.** The Reanimated layout-animation
+  registry is stateful; a second mount before the first cleanup throws
+  "Should not already be working." and produces a black screen.
+- **Use explicit hooks instead:**
+  ```ts
+  const opacity = useSharedValue(0);
+  useEffect(() => {
+    opacity.value = withTiming(1, { duration: 200 });
+    return () => cancelAnimation(opacity);
+  }, [opacity]);
+  const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  ```
+  This pattern is safe on every remount because `cancelAnimation` in the
+  cleanup is surgical (cancels only this value, not the whole registry).
+- `LinearTransition` (layout reflow animation, not an entering animation)
+  is NOT the same. `layout={LinearTransition}` is a layout prop, not an
+  entry prop, and is safe to keep.
+- `PrCelebrationSkeleton` has a muted final opacity (0.45): animate to the
+  target value directly (`withTiming(0.45)`) and put `fadeStyle` LAST in
+  the style array so the animated value is not shadowed by an inline
+  `opacity` property that comes after it.
+
 ## Data accessors (one-stop reference)
 
 - `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.

@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Replace all Reanimated `entering` props with explicit hook-based animations
+
+**Tags:** `bug`, `architecture`, `reanimated`
+**Files:** `apps/mobile/src/features/session/components/PRCertificate/PRCertificate.tsx`, `apps/mobile/src/features/session/components/PrCelebration/PrCelebrationSkeleton.tsx`, `apps/mobile/src/features/shared/LiftTab.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftRow.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`
+
+Replaced all uses of the `entering={FadeIn/FadeInDown}` declarative prop with explicit `useSharedValue` + `useEffect` + `cancelAnimation` animations throughout the session and progress surfaces. Also fixed `ProgressLiftPage` to use `useSyncExternalStore` for post-session animation instead of a `useEffect([lift])` that silently no-ops on second consecutive sessions.
+
+**Why:** Production crash: "Should not already be working." Reanimated's layout-animation registry is stateful. When `PRCertificate` unmounts mid-navigation (user navigates away during a session) and remounts on the *next* session, the registry still holds the prior entry. On second mount the `entering` prop tries to re-register — the registry refuses. Explicit animations with `cancelAnimation` in their cleanup have no registry and can re-run cleanly on every mount.
+
+**Trade-off / what we didn't do:** Considered patching via `LayoutAnimationConfig.skipEntering(true)` before the problematic remounts — rejected because it's a global flag with imprecise timing and would suppress other valid animations. Explicit hooks are surgical and testable.
+
+**Follow-ups:** If any future component needs an entrance animation, use `useSharedValue + useEffect + cancelAnimation` — not the `entering={}` prop.
+
 ### 2026-05-27 — Website hero updated for iOS/Android equal emphasis; hero copy fixed
 
 **Tags:** `web`, `convention`

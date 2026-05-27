@@ -45,14 +45,23 @@ const PULSE_DOWN_MS = 260;
 const PULSE_SCALE = 1.12;
 
 function useFillInStyle(active: boolean) {
-  const opacity = useSharedValue(active ? 0 : 1);
-  const scale = useSharedValue(active ? 0.85 : 1);
+  // Always start at full opacity/scale. When `active` flips to true, snap
+  // to the "from" state first (0, 0.85) then animate to (1, 1). Without
+  // the explicit snap, the shared values stay at 1 (their initial value
+  // while active=false) and the withTiming call is a 1→1 no-op — making
+  // the animation invisible.
+  const opacity = useSharedValue(1);
+  const scale = useSharedValue(1);
   useEffect(() => {
     if (!active) {
+      cancelAnimation(opacity);
+      cancelAnimation(scale);
       opacity.value = 1;
       scale.value = 1;
       return;
     }
+    opacity.value = 0;
+    scale.value = 0.85;
     opacity.value = withTiming(1, {
       duration: FILL_IN_DURATION_MS,
       easing: Easing.out(Easing.cubic),

@@ -51,31 +51,16 @@ jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: ({ children }: any) => children,
 }));
 
-// PRCertificate uses Reanimated's FadeInDown for its mount animation; under
-// jest the Worklets native module is absent, so swap Animated.View for a
-// plain RN View.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
-  // Chainable no-op so any combination of `.duration().easing().delay()…`
-  // resolves cleanly across the eyebrow / hero / cert / band animations.
-  const chain = () => {
-    const obj = {
-      duration: () => obj,
-      delay: () => obj,
-      springify: () => obj,
-      damping: () => obj,
-      easing: () => obj,
-    };
-    return obj;
-  };
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
-    FadeIn: chain(),
-    FadeInDown: chain(),
-    FadeOut: chain(),
-    ZoomIn: chain(),
-    LinearTransition: chain(),
+    useSharedValue: (v: unknown) => ({ value: v }),
+    useAnimatedStyle: () => ({}),
+    withTiming: (v: unknown) => v,
+    withDelay: (_d: unknown, v: unknown) => v,
+    cancelAnimation: () => {},
     Easing: {
       out: () => () => 0,
       inOut: () => () => 0,

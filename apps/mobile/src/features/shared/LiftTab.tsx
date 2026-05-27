@@ -4,7 +4,13 @@ import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 const TAB_FONT_SIZE = 11;
 // PWA `tracking-[0.22em]` × 11px = 2.42 letter spacing.
@@ -77,6 +83,20 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
     onSelect(lift);
   };
 
+  // Explicit fade-in for the PR star — avoids Reanimated's layout-animation
+  // registry which can throw "Should not already be working" when the tab
+  // bar is re-mounted (e.g. after app foreground or a navigation reset).
+  const starOpacity = useSharedValue(hasPr ? 0 : 1);
+  useEffect(() => {
+    if (!hasPr) {
+      starOpacity.value = 0;
+      return;
+    }
+    starOpacity.value = withTiming(1, { duration: 280 });
+    return () => cancelAnimation(starOpacity);
+  }, [hasPr, starOpacity]);
+  const starFadeStyle = useAnimatedStyle(() => ({ opacity: starOpacity.value }));
+
   const a11yLabel = [
     liftDisplayName(lift),
     inProgress ? 'session in progress' : null,
@@ -105,9 +125,8 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
           <View style={dotStyle} testID={`lift-tab-${lift}-progress-dot`} />
         ) : hasPr ? (
           <Animated.Text
-            style={starStyle}
+            style={[starStyle, starFadeStyle]}
             testID={`lift-tab-${lift}-pr-star`}
-            entering={FadeIn.duration(280)}
           >
             ★
           </Animated.Text>

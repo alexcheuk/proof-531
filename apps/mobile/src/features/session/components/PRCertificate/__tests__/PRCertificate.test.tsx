@@ -9,26 +9,16 @@ import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
-// Reanimated stub — return a chainable no-op so any combination of
-// `.duration().easing().delay().springify().damping()` resolves cleanly.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
-  const chain = () => {
-    const obj = {
-      duration: () => obj,
-      delay: () => obj,
-      springify: () => obj,
-      damping: () => obj,
-      easing: () => obj,
-    };
-    return obj;
-  };
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text },
-    FadeIn: chain(),
-    FadeInDown: chain(),
-    ZoomIn: chain(),
+    useSharedValue: (v: unknown) => ({ value: v }),
+    useAnimatedStyle: () => ({}),
+    withTiming: (v: unknown) => v,
+    withDelay: (_d: unknown, v: unknown) => v,
+    cancelAnimation: () => {},
     Easing: {
       out: () => () => 0,
       inOut: () => () => 0,

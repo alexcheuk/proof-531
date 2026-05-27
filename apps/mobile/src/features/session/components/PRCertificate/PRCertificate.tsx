@@ -12,8 +12,15 @@ import { useTheme } from '@/design/theme';
  * Render gate lives in the parent (see SessionCompleteScreen). This component
  * trusts its props.
  */
+import { useEffect } from 'react';
 import { Text as RNText, View, type ViewStyle } from 'react-native';
-import Animated, { Easing, FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { ComparisonRow } from './ComparisonRow';
 import { CornerTicks } from './CornerTicks';
 import { HeroNumberRow } from './HeroNumberRow';
@@ -44,6 +51,28 @@ export function PRCertificate({
 }: PRCertificateProps) {
   const { colors, spacing, type } = useTheme();
 
+  // Impact entrance — slides in fast, lands on a hard cubic-out, no spring
+  // bounce. Uses explicit shared-value animation instead of Reanimated's
+  // `entering` prop because the layout-animation registry is stateful and
+  // can throw "Should not already be working" when PRCertificate remounts
+  // on a second consecutive session (the prior entry isn't cleaned up
+  // before the next mount tries to register the same animation).
+  const translateY = useSharedValue(16);
+  const opacity = useSharedValue(0);
+  useEffect(() => {
+    const cfg = { duration: 180, easing: Easing.out(Easing.cubic) };
+    translateY.value = withTiming(0, cfg);
+    opacity.value = withTiming(1, cfg);
+    return () => {
+      cancelAnimation(translateY);
+      cancelAnimation(opacity);
+    };
+  }, [translateY, opacity]);
+  const enterStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   const panelStyle: ViewStyle = {
     marginHorizontal: spacing.lg,
     marginTop: spacing.lg,
@@ -55,14 +84,8 @@ export function PRCertificate({
 
   return (
     <Animated.View
-      // Impact entrance — slides in fast, lands on a hard cubic-out, no
-      // spring bounce. Mirrors the PR celebration screen's no-bounce
-      // pacing (Discord 1508386070: "impact instead of bouncy"). Earlier
-      // springify(14) still drifted past the resting position before
-      // settling, which read as a wobble on the receipt panel.
-      entering={FadeInDown.duration(180).easing(Easing.out(Easing.cubic))}
       testID={testID}
-      style={panelStyle}
+      style={[panelStyle, enterStyle]}
       accessibilityRole="summary"
       accessibilityLabel={`A new record on the ${liftLabel}: ${e1RM} ${unit} estimated 1RM, stronger by ${delta}.`}
     >
