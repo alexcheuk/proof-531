@@ -108,6 +108,13 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   Add a module-level subject (mirror `statusBarTint`) if/when the user
   asks for Progress elevation.
 
+## Shared cross-feature components (added 2026-05-26)
+
+- `LiftTabs` and `LiftTab` live at `features/shared/LiftTabs.tsx` and
+  `features/shared/LiftTab.tsx`. Both HomeScreen and ProgressScreen import
+  from there. Previously in `home/components/` — moved to fix the
+  cross-feature boundary violation.
+
 ## Color palette (e-ink paper)
 
 - `bg0` / `paper`: `#E7E3D6` — main canvas
