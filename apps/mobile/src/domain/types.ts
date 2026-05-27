@@ -25,8 +25,11 @@ export const LIFTS: readonly Lift[] = ['press', 'deadlift', 'bench', 'squat'] as
  *   - `amrap`      — the final "+" set with AMRAP reps.
  *   - `bbb`        — Boring But Big assistance set (5×10 at 50%/60%).
  *   - `assistance` — generic assistance row (push/pull/core lifts).
+ *   - `tm-test`    — Week-4 7th-Week-Protocol TM verification set (100% TM,
+ *                    target 3–5 reps). Single set; no PR rebuild; bounded by
+ *                    definition.
  */
-export type SetLogKind = 'warmup' | 'working' | 'amrap' | 'bbb' | 'assistance';
+export type SetLogKind = 'warmup' | 'working' | 'amrap' | 'bbb' | 'assistance' | 'tm-test';
 
 /**
  * A persisted set log row. Shape mirrors the PWA Dexie schema closely enough

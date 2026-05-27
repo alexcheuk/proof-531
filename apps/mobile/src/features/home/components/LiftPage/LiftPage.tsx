@@ -105,8 +105,11 @@ export function LiftPage({
       <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
       <LiftPageTitle lift={lift} onPress={openProgress} />
       {week === 4 ? (
+        // Test-week callout — testID still uses `deload-callout` to preserve
+        // any existing test references; the copy itself shifts to the TM
+        // test framing.
         <LiftPageHint testID={`lift-page-${lift}-deload-callout`}>
-          DELOAD DAY · EASE OFF, BUILD THE NEXT CYCLE
+          TM TEST · VERIFY THE TRAINING MAX
         </LiftPageHint>
       ) : null}
       {lastTrainedHint ? (

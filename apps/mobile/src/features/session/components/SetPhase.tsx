@@ -19,6 +19,12 @@ import { LiveHeader } from './LiveHeader';
 export type SetPhaseProps = {
   setIndex: 0 | 1 | 2;
   isAmrap: boolean;
+  /**
+   * True when the current set is the Week-4 TM Test set. Drives the live
+   * eyebrow copy (`TM TEST · TARGET 3–5`) and the rep glyph (range
+   * "3–5" instead of a single number with a trailing "+").
+   */
+  isTmTest?: boolean;
   liftLabel: string;
   elapsedSeconds: number;
   /** Top-set weight already converted into the display unit. */
@@ -38,6 +44,7 @@ export type SetPhaseProps = {
 export function SetPhase({
   setIndex,
   isAmrap,
+  isTmTest = false,
   liftLabel,
   elapsedSeconds,
   weight,
@@ -49,11 +56,14 @@ export function SetPhase({
 }: SetPhaseProps) {
   const { spacing, layout } = useTheme();
 
+  const eyebrow = isTmTest ? 'On the bar · 100% TM' : `On the bar · ${Math.round(pct * 100)}% TM`;
+
   return (
     <>
       <LiveHeader
         setIndex={setIndex}
         isAmrap={isAmrap}
+        isTmTest={isTmTest}
         testID="live-header"
         lift={liftLabel}
         elapsedSeconds={elapsedSeconds}
@@ -63,11 +73,12 @@ export function SetPhase({
 
       <View style={{ paddingHorizontal: layout.gutter, paddingVertical: spacing.lg }}>
         <TopSetBlock
-          eyebrow={`On the bar · ${Math.round(pct * 100)}% TM`}
+          eyebrow={eyebrow}
           weight={weight}
           unitGlyph={displayUnitGlyph(unit)}
           reps={reps}
-          amrap={isAmrap}
+          amrap={isAmrap && !isTmTest}
+          {...(isTmTest ? { repsRange: [3, 5] as const } : {})}
           perSide={perSide}
           plateVariant="full"
           bordered={false}

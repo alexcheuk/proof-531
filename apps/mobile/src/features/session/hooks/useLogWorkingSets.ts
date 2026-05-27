@@ -46,6 +46,15 @@ export type UseLogWorkingSetsOptions = {
 export type UseLogWorkingSetsResult = {
   onLogWorkingSet: () => Promise<void>;
   onSaveAmrap: (reps: number) => Promise<void>;
+  /**
+   * Persist a Week-4 TM Test set log. Terminal: writes one `'tm-test'` row,
+   * marks the session complete, and transitions the live screen to
+   * `'complete'`. No PR check (TM tests are bounded by definition and never
+   * produce e1RM PRs — the existing AMRAP-only filter in `appendSetLog`
+   * does the right thing implicitly, but TM-test rows are written directly
+   * without re-entering the AMRAP branch).
+   */
+  onSaveTmTest: (reps: number) => Promise<void>;
 };
 
 export function useLogWorkingSets({
@@ -163,7 +172,40 @@ export function useLogWorkingSets({
     ],
   );
 
-  return { onLogWorkingSet, onSaveAmrap };
+  const onSaveTmTest = useCallback(
+    async (reps: number) => {
+      if (sessionId == null) return;
+      try {
+        await appendSetLog(db, {
+          sessionId,
+          index: 0,
+          kind: 'tm-test',
+          prescribedWeight,
+          prescribedReps,
+          actualReps: reps,
+        });
+        await queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) });
+        // TM test is a single-set session — no rest, no celebration. Set the
+        // snapshot for any chrome that reads `lastLogged` and immediately
+        // complete the session.
+        setLastLogged({
+          weight: prescribedWeight,
+          reps,
+          estimated1RM: undefined,
+          isAmrap: false,
+        });
+        clearRestSnapshot(sessionId);
+        await completeSession(db, sessionId);
+        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+        setPhase('complete');
+      } catch (err) {
+        console.error('useLogWorkingSets.onSaveTmTest failed', err);
+      }
+    },
+    [db, prescribedReps, prescribedWeight, queryClient, sessionId, setLastLogged, setPhase],
+  );
+
+  return { onLogWorkingSet, onSaveAmrap, onSaveTmTest };
 }
 
 /**

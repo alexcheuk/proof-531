@@ -15,11 +15,12 @@ import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { dateLabel, liftDisplayName, weekIntent, weekLabel } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
-import { prescription } from '@/domain/schemes';
+import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayUnit } from '@/domain/units';
 import { View } from 'react-native';
 import { BbbBand } from './BbbBand';
+import { TmTestNote } from './TmTestNote';
 import { TopSetHero } from './TopSetHero';
 import { WarmupsBand } from './WarmupsBand';
 import { WorkingSetsBand } from './WorkingSetsBand';
@@ -68,16 +69,22 @@ export function TodayBody({
   bbbRestTargetSeconds,
 }: TodayBodyProps) {
   const { colors, layout, spacing } = useTheme();
-  const sets = prescription(week);
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
   const tmInDisplay = Math.round(convertWeight(tm, storageUnit, renderUnit));
   const lastTrained = useLastCompletedSessionForLift(lift);
 
-  // Hero shows the NEXT SET to work on. `prescription(week)` always returns a
-  // 3-tuple; we still narrow via a runtime guard to satisfy strict-null types.
-  const heroZeroBased = (nextSetIndex - 1) as 0 | 1 | 2;
-  const heroSet = sets[heroZeroBased];
+  const isTmTestWeek = week === 4;
+  // Week 4 prescription is a single tm-test set; weeks 1–3 are the classic
+  // 3-set scheme. Route via the dedicated helper on week 4 so the
+  // index-based API on weeks 1–3 stays unchanged.
+  const heroSet = isTmTestWeek
+    ? tmTestSet()
+    : (() => {
+        const sets = prescription(week);
+        const heroZeroBased = (nextSetIndex - 1) as 0 | 1 | 2;
+        return sets[heroZeroBased] ?? null;
+      })();
   if (!heroSet) return null;
 
   return (
@@ -114,6 +121,9 @@ export function TodayBody({
         unitGlyph={unitGlyph}
         tmInDisplay={tmInDisplay}
         plateSet={plateSet}
+        {...(isTmTestWeek
+          ? { eyebrow: 'TM TEST', pctLabel: '100% TM', repsRange: [3, 5] as const }
+          : {})}
       />
 
       <WarmupsBand
@@ -123,24 +133,32 @@ export function TodayBody({
         unitGlyph={unitGlyph}
       />
 
-      <WorkingSetsBand
-        sets={sets}
-        tm={tm}
-        storageUnit={storageUnit}
-        renderUnit={renderUnit}
-        unitGlyph={unitGlyph}
-        tmInDisplay={tmInDisplay}
-        nextSetIndex={nextSetIndex}
-        completedIndices={completedIndices}
-      />
+      {isTmTestWeek ? (
+        // Week 4: TM test set IS the work. No 3-set scheme, no BBB. The
+        // guidance card replaces the BBB band's visual weight.
+        <TmTestNote />
+      ) : (
+        <>
+          <WorkingSetsBand
+            sets={prescription(week)}
+            tm={tm}
+            storageUnit={storageUnit}
+            renderUnit={renderUnit}
+            unitGlyph={unitGlyph}
+            tmInDisplay={tmInDisplay}
+            nextSetIndex={nextSetIndex}
+            completedIndices={completedIndices}
+          />
 
-      <BbbBand
-        tm={tm}
-        storageUnit={storageUnit}
-        renderUnit={renderUnit}
-        unitGlyph={unitGlyph}
-        {...(bbbRestTargetSeconds !== undefined ? { bbbRestTargetSeconds } : {})}
-      />
+          <BbbBand
+            tm={tm}
+            storageUnit={storageUnit}
+            renderUnit={renderUnit}
+            unitGlyph={unitGlyph}
+            {...(bbbRestTargetSeconds !== undefined ? { bbbRestTargetSeconds } : {})}
+          />
+        </>
+      )}
 
       <CapsLabel
         size="xs"

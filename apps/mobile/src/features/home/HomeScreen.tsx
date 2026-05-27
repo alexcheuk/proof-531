@@ -117,7 +117,9 @@ export function HomeScreen() {
     if (activeSessionId === null) return 0;
     const logs = activeSetLogs.data ?? [];
     const completed = new Set(
-      logs.filter((l) => l.kind === 'working' || l.kind === 'amrap').map((l) => l.index),
+      logs
+        .filter((l) => l.kind === 'working' || l.kind === 'amrap' || l.kind === 'tm-test')
+        .map((l) => l.index),
     );
     return completed.size;
   }, [activeSessionId, activeSetLogs.data]);

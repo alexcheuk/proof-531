@@ -77,7 +77,13 @@ export function projectTmForCycle(
  * Projected top-set weight for a `(cycle, day)` cell.
  *
  * Day 1/2/3 → week-3 prescription (5/3/1+ scheme; D1=0.75, D2=0.85, D3=0.95
- * of TM). Day 4 (deload) → 0.60 × TM. Plate-snapped to the unit's step.
+ * of TM). Day 4 (TM test) → 100% × TM (the TM test itself). Plate-snapped to
+ * the unit's step.
+ *
+ * Day-4 was 0.60 × TM under the legacy Wendler deload; the value changed in
+ * the TM-Test-Week migration (`_workspace/01_design_spec.md`). The Progress
+ * grid's future column-4 cells now project the TM the test will use, not a
+ * deload top-set weight.
  */
 export function projectTopSetWeight(
   futureCycle: number,
@@ -88,7 +94,7 @@ export function projectTopSetWeight(
   unit: Unit,
 ): number {
   const tm = projectTmForCycle(currentTm, currentCycle, futureCycle, lift, unit);
-  if (day === 4) return round(tm * 0.6, unit);
+  if (day === 4) return round(tm, unit);
   const week3 = setsForWeek(3);
   const set = week3[day - 1];
   if (!set) return 0;
@@ -141,6 +147,51 @@ export function cyclesUntilTmGoal(
     if (tm >= targetTm) return k;
   }
   return null;
+}
+
+/**
+ * Discriminated union returned by {@link tmAdjustmentSuggestion}.
+ *
+ *   - `increment` — TM was conservative; bump it next cycle. `delta` carries
+ *     the magnitude in the lift's own unit (same convention as
+ *     {@link tmIncrement}: +5 upper / +10 lower in lbs; +2.5 / +5 in kg).
+ *   - `hold`      — TM is honest; no change this cycle.
+ *   - `reset`     — TM is too high; recommend resetting to `resetPct × TM`
+ *     (currently always 0.9, i.e. −10%).
+ */
+export type TmAdjustmentKind = 'increment' | 'hold' | 'reset';
+
+export type TmAdjustmentSuggestion =
+  | { kind: 'increment'; delta: number }
+  | { kind: 'hold' }
+  | { kind: 'reset'; resetPct: number };
+
+/**
+ * Map reps achieved on the Week-4 TM test set to a suggested next-cycle TM
+ * adjustment. Bands are from Wendler's Forever 5/3/1 7th-Week Protocol:
+ *
+ *   reps ≥ 5  → increment  (+tmIncrement(unit, lift))
+ *   reps 3–4  → hold       (TM is honest; no change)
+ *   reps 0–2  → reset      (−10%, resetPct = 0.9)
+ *
+ * Negative reps fall through to the reset band defensively (a missed test).
+ *
+ * Pure: no React, no async, no DB. Total function over all integer rep
+ * counts. The `delta` field on `increment` is expressed in the lift's own
+ * unit — same convention as {@link tmIncrement}.
+ */
+export function tmAdjustmentSuggestion(
+  repsAchieved: number,
+  lift: Lift,
+  unit: Unit,
+): TmAdjustmentSuggestion {
+  if (repsAchieved >= 5) {
+    return { kind: 'increment', delta: tmIncrement(unit, lift) };
+  }
+  if (repsAchieved >= 3) {
+    return { kind: 'hold' };
+  }
+  return { kind: 'reset', resetPct: 0.9 };
 }
 
 /**

@@ -21,6 +21,7 @@ import { RestPhase } from './components/RestPhase';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
 import { SetPhase } from './components/SetPhase';
+import { TmTestLogSheet } from './components/TmTestLogSheet';
 import { useElapsedSeconds } from './hooks/useElapsedSeconds';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
@@ -119,8 +120,9 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // Set surface is visible during 'set' and 'amrap-log'.
-  const showSetSurface = live.phase === 'set' || live.phase === 'amrap-log';
+  // Set surface is visible during 'set', 'amrap-log', and 'tm-test-log'.
+  const showSetSurface =
+    live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'tm-test-log';
   const showRestSurface = live.phase === 'rest';
 
   return (
@@ -176,6 +178,7 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
           <SetPhase
             setIndex={live.setIndex}
             isAmrap={live.isAmrap}
+            isTmTest={live.isTmTest}
             liftLabel={liftDisplayName(lift)}
             elapsedSeconds={elapsedSeconds}
             weight={prescribedDisplay}
@@ -193,8 +196,10 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
           phase={live.phase}
           setIndex={live.setIndex}
           isAmrap={live.isAmrap}
+          isTmTest={live.isTmTest}
           onAdvanceFromRest={live.onAdvanceFromRest}
           onOpenAmrapSheet={live.onOpenAmrapSheet}
+          onOpenTmTestSheet={live.onOpenTmTestSheet}
           onLogWorkingSet={live.onLogWorkingSet}
         />
       </CtaBar>
@@ -209,6 +214,16 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
         onCancel={live.onCancelAmrapSheet}
         onSave={live.onSaveAmrap}
         testID="amrap-sheet"
+      />
+
+      <TmTestLogSheet
+        open={live.phase === 'tm-test-log'}
+        lift={lift}
+        tm={prescribedDisplay}
+        unit={unit}
+        onCancel={live.onCancelTmTestSheet}
+        onSave={live.onSaveTmTest}
+        testID="tm-test-sheet"
       />
     </SessionLayout>
   );

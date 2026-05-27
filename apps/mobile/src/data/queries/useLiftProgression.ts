@@ -44,7 +44,16 @@ type ProgressionCellPast = {
   topReps: number;
   /** True when the cell is the AMRAP top set. Deload sessions have no AMRAP. */
   amrap: boolean;
-  /** True for the week-4 deload column. */
+  /**
+   * Set-kind of the top-set row this cell summarises, when one is present.
+   *   - `'amrap'`   — weeks 1–3 AMRAP top set.
+   *   - `'tm-test'` — week-4 TM Test set (post-migration).
+   *   - `null`      — no top set logged. Legacy week-4 `'working'` deload
+   *                    sessions land here; the cell renders the existing
+   *                    deload `✓` glyph rather than a TM-test band marker.
+   */
+  topSetKind: 'amrap' | 'tm-test' | null;
+  /** True for the week-4 column (formerly the deload column). */
   deload: boolean;
 };
 
@@ -315,11 +324,26 @@ function makePastCell(
   displayU: Unit,
 ): ProgressionCellPast {
   const storageU = s.storageUnitSnapshot ?? currentTmStorageUnit;
+  // Top-set weight resolution:
+  //   - AMRAP / TM-test rows → use the row's prescribed weight (already
+  //     plate-snapped at log time).
+  //   - Legacy week-4 'working' deload sessions → fall back to the historical
+  //     0.6×TM display (preserves the pre-migration visual; no retroactive
+  //     re-labelling).
+  const isLegacyDeload = day === 4 && s.amrap === null;
   const weight =
     s.amrap !== null
       ? convertWeight(s.amrap.prescribedWeight, storageU, displayU)
-      : round(convertWeight(s.trainingMaxSnapshot * 0.6, storageU, displayU), displayU);
+      : isLegacyDeload
+        ? round(convertWeight(s.trainingMaxSnapshot * 0.6, storageU, displayU), displayU)
+        : 0;
   const reps = s.amrap ? s.amrap.actualReps : 5;
+  // `amrap: true` historically meant "AMRAP top set" specifically. The
+  // Progress grid uses it to drive `× N` reps under the weight (vs. a deload
+  // ✓ marker). TM-test cells render through a band marker (↑/=/↓) instead of
+  // `× N`, so they intentionally pass `amrap: false` here even though
+  // `topSetKind === 'tm-test'`.
+  const isAmrap = s.amrap?.kind === 'amrap';
   return {
     cycle,
     day,
@@ -327,7 +351,8 @@ function makePastCell(
     sessionId: s.sessionId,
     topWeight: round(weight, displayU),
     topReps: reps,
-    amrap: !!s.amrap,
+    amrap: isAmrap,
+    topSetKind: s.amrap?.kind ?? null,
     deload: day === 4,
   };
 }

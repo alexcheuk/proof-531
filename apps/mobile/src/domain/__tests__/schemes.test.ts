@@ -4,6 +4,7 @@ import {
   isAmrapSet,
   nextWorkingSetIndex,
   prescription,
+  tmTestSet,
 } from '../schemes';
 
 describe('prescription', () => {
@@ -29,11 +30,13 @@ describe('prescription', () => {
     expect(sets[2]?.amrap).toBe(true);
   });
 
-  it('week 4 deload: 40/50/60 × 5/5/5, NO amrap', () => {
+  it('week 4 TM test: single set at 100% TM, 5 reps (top of band), NO amrap', () => {
     const sets = prescription(4);
-    expect(sets.map((s) => s.pct)).toEqual([0.4, 0.5, 0.6]);
-    expect(sets.map((s) => s.reps)).toEqual([5, 5, 5]);
-    expect(sets.every((s) => !s.amrap)).toBe(true);
+    expect(sets).toHaveLength(1);
+    expect(sets[0]?.pct).toBe(1.0);
+    expect(sets[0]?.reps).toBe(5);
+    expect(sets[0]?.kind).toBe('tm-test');
+    expect(sets[0]?.amrap).toBeFalsy();
   });
 
   it('returns fresh array — mutation does not leak', () => {
@@ -50,10 +53,18 @@ describe('isAmrapSet', () => {
     expect(isAmrapSet(2, 2)).toBe(true);
     expect(isAmrapSet(3, 2)).toBe(true);
   });
-  it('false everywhere on week 4', () => {
+  it('false on week 4 (TM test is not an AMRAP)', () => {
     expect(isAmrapSet(4, 0)).toBe(false);
-    expect(isAmrapSet(4, 1)).toBe(false);
-    expect(isAmrapSet(4, 2)).toBe(false);
+  });
+});
+
+describe('tmTestSet', () => {
+  it('returns the week-4 TM test set spec: 100% TM × 5 reps, kind tm-test', () => {
+    const s = tmTestSet();
+    expect(s.pct).toBe(1.0);
+    expect(s.reps).toBe(5);
+    expect(s.kind).toBe('tm-test');
+    expect(s.amrap).toBeFalsy();
   });
 });
 
@@ -69,6 +80,16 @@ describe('nextWorkingSetIndex', () => {
 describe('getWorkingSetByIndex', () => {
   it('throws on invalid index', () => {
     expect(() => getWorkingSetByIndex(1, 3 as 0)).toThrow(RangeError);
+  });
+  it('returns the tm-test set for (week 4, index 0)', () => {
+    const s = getWorkingSetByIndex(4, 0);
+    expect(s.kind).toBe('tm-test');
+    expect(s.pct).toBe(1.0);
+    expect(s.reps).toBe(5);
+  });
+  it('throws on (week 4, index 1) — week 4 only has the test set', () => {
+    expect(() => getWorkingSetByIndex(4, 1)).toThrow(RangeError);
+    expect(() => getWorkingSetByIndex(4, 2)).toThrow(RangeError);
   });
 });
 

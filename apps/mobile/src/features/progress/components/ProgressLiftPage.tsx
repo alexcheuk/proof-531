@@ -262,6 +262,8 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
           {data.rows.map((row) => (
             <ProgressLiftRow
               key={`row-${row.cycle}`}
+              lift={lift}
+              unit={displayU}
               row={row}
               unitGlyph={ugDisplay}
               onPastCellPress={(sessionId) => {

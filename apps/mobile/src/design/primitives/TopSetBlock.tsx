@@ -30,6 +30,13 @@ export type TopSetBlockProps = {
   /** When true, render the AMRAP "+" marker after `reps`. */
   amrap: boolean;
   /**
+   * Optional rep-range tuple `[lo, hi]`. When set, the reps glyph renders as
+   * `lo–hi` (e.g. "3–5") instead of the single `reps` value. Used by the
+   * Week-4 TM-test surface where the prescription is a band, not a single
+   * target. Mutually exclusive with `amrap` (a range cannot also be a "+").
+   */
+  repsRange?: readonly [number, number];
+  /**
    * Right-side eyebrow meta — e.g. "85%". When both `pctLabel` and `tmLabel`
    * are omitted the right meta cell is hidden, so the eyebrow can carry all
    * the context.
@@ -57,6 +64,7 @@ export function TopSetBlock({
   unitGlyph,
   reps,
   amrap,
+  repsRange,
   pctLabel,
   tmLabel,
   perSide,
@@ -123,8 +131,8 @@ export function TopSetBlock({
           </CapsLabel>
         </Row>
         <RNText style={repsStyle} testID={testID ? `${testID}-reps` : undefined}>
-          × {reps}
-          {amrap ? '+' : ''}
+          × {repsRange ? `${repsRange[0]}–${repsRange[1]}` : reps}
+          {!repsRange && amrap ? '+' : ''}
         </RNText>
       </Row>
 

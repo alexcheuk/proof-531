@@ -77,11 +77,19 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
   // don't pull rows that don't belong to the screen.
   const setLogs = useSetLogsForSession(sessionForLift?.id ?? null);
   const workingIndices = (setLogs.data ?? [])
-    .filter((l) => l.kind === 'working' || l.kind === 'amrap')
+    .filter((l) => l.kind === 'working' || l.kind === 'amrap' || l.kind === 'tm-test')
     .map((l) => l.index)
     .filter((i): i is WorkingSetIndex => i === 0 || i === 1 || i === 2);
   const uniqueCompleted = Array.from(new Set(workingIndices));
   const completedCount = sessionForLift ? uniqueCompleted.length : 0;
+  // `nextWorkingSetIndex` defaults to the 3-slot contract for weeks 1–3 when
+  // `week` is omitted. The Today screen does not branch its CTA copy on
+  // week-4 specifically (see TodayScreen.tsx — week 4 still routes through
+  // the same Begin → Live flow), so leaving the call signature unchanged is
+  // intentional. On an in-flight week-4 session, `uniqueCompleted` is either
+  // [] (not started) or [0] (test logged → session is `completed` and lives
+  // in active-session-store no more), so the legacy 3-slot iteration is
+  // harmless.
   const nextSetIndex = sessionForLift ? nextWorkingSetIndex(uniqueCompleted) : null;
 
   const mode: TodayMode = sessionForLift

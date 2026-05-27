@@ -3,6 +3,8 @@ import type { LiftProgression } from '@/data/queries/useLiftProgression';
 import { ProgressGridCell } from '@/design/primitives/ProgressGridCell';
 import { ProgressGridRow } from '@/design/primitives/ProgressGridRow';
 import { TmCell } from '@/design/primitives/TmCell';
+import { tmAdjustmentSuggestion } from '@/domain/progression';
+import type { Lift } from '@/domain/types';
 import { useEffect } from 'react';
 import Animated, {
   Easing,
@@ -15,6 +17,10 @@ import Animated, {
 import { GoalRuleRow } from './GoalRuleRow';
 
 type ProgressLiftRowProps = {
+  /** Lift owning this row — needed to band-classify TM-test cells. */
+  lift: Lift;
+  /** Display unit — passed to `tmAdjustmentSuggestion` for TM-test cells. */
+  unit: 'lbs' | 'kg';
   row: LiftProgression['rows'][number];
   unitGlyph: 'lb' | 'kg';
   onPastCellPress: (sessionId: number) => void;
@@ -94,6 +100,8 @@ function usePulseStyle(active: boolean) {
  * *grid* row composed of grid cells, not a generic flex row.
  */
 export function ProgressLiftRow({
+  lift,
+  unit,
   row,
   unitGlyph,
   onPastCellPress,
@@ -160,8 +168,29 @@ export function ProgressLiftRow({
             );
           }
           const variant = cell.kind === 'last-done' ? 'outlined' : 'past';
-          const marker = cell.deload ? '✓' : null;
+          // Marker derivation. Three cases on the deload column:
+          //   1. TM-test session → band glyph (↑ / = / ↓) from rep count.
+          //   2. Legacy 'working' deload (pre-migration) → existing ✓.
+          //   3. Non-deload day → no marker (rep count or weight only).
+          const tmTestBand =
+            cell.topSetKind === 'tm-test' ? tmAdjustmentSuggestion(cell.topReps, lift, unit) : null;
+          const marker: '✓' | '↑' | '↓' | '=' | '─' | null = tmTestBand
+            ? tmTestBand.kind === 'increment'
+              ? '↑'
+              : tmTestBand.kind === 'hold'
+                ? '='
+                : '↓'
+            : cell.deload
+              ? '✓'
+              : null;
           const a11yPrefix = cell.kind === 'last-done' ? 'Most recent. ' : '';
+          const a11ySuffix = cell.amrap
+            ? ` for ${cell.topReps} reps`
+            : tmTestBand
+              ? `, TM test ${cell.topReps} reps, suggests ${tmTestBand.kind}`
+              : cell.deload
+                ? ' deload logged'
+                : '';
           const pastCell = (
             <ProgressGridCell
               key={`cell-${row.cycle}-${cell.day}`}
@@ -170,7 +199,7 @@ export function ProgressLiftRow({
               reps={cell.amrap ? cell.topReps : null}
               marker={marker}
               onPress={() => onPastCellPress(cell.sessionId)}
-              accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${cell.amrap ? ` for ${cell.topReps} reps` : cell.deload ? ' deload logged' : ''}`}
+              accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`}
               testID={`progress-cell-${row.cycle}-${cell.day}`}
             />
           );
