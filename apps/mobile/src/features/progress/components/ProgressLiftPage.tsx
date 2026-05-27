@@ -14,6 +14,7 @@ import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSetLiftGoalDaysPerWeek } from '@/data/queries/useSetLiftGoalDaysPerWeek';
 import { useSettings } from '@/data/queries/useSettings';
 import { useScrolledPast } from '@/design/hooks/useScrolledPast';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
 import { tmIncrement } from '@/domain/increments';
@@ -25,7 +26,7 @@ import { QueryShell } from '@/features/shared/QueryShell';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Text as RNText, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
 import { isLowerBody, liftLongName } from '../labels';
 import { BeyondChartFooter } from './BeyondChartFooter';
@@ -45,7 +46,7 @@ export type ProgressLiftPageProps = {
 
 export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPageProps) {
   const router = useRouter();
-  const { colors, layout, spacing, type } = useTheme();
+  const { colors, layout, spacing } = useTheme();
   const progression = useLiftProgression(lift);
   const goalQuery = useLiftGoal(lift);
   const setGoal = useSetLiftGoal();
@@ -213,51 +214,20 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
         testID={`goal-panel-${lift}`}
       />
 
-      <View style={{ paddingHorizontal: 16, paddingTop: 24 }}>
+      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.xl }}>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'baseline',
-            marginBottom: 10,
+            marginBottom: spacing.md,
           }}
         >
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 10,
-              letterSpacing: 2.2,
-              textTransform: 'uppercase',
-              color: colors.ink2,
-            }}
-          >
-            Cycle matrix
-          </RNText>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-Medium`,
-              fontSize: 9,
-              letterSpacing: 1.62,
-              textTransform: 'uppercase',
-              color: colors.ink3,
-            }}
-          >
-            {`weight · amreps · ${ugDisplay}`}
-          </RNText>
+          <CapsLabel weight="semibold">Cycle matrix</CapsLabel>
+          <CapsLabel size="xs" color="ink3">{`weight · amreps · ${ugDisplay}`}</CapsLabel>
         </View>
 
-        <View
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: colors.ink0,
-            borderLeftWidth: 1,
-            borderLeftColor: colors.ink0,
-            borderRightWidth: 1,
-            borderRightColor: colors.ink0,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.ink0,
-          }}
-        >
+        <View style={{ borderWidth: 1, borderColor: colors.ink0 }}>
           <ProgressGridHeader unitGlyph={ugDisplay} />
           {data.rows.map((row) => (
             <ProgressLiftRow
@@ -288,18 +258,12 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
         </View>
       </View>
 
-      <View style={{ paddingHorizontal: layout.gutter, paddingTop: 28, alignItems: 'center' }}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Medium`,
-            fontSize: 9,
-            letterSpacing: 2.88,
-            textTransform: 'uppercase',
-            color: colors.ink3,
-          }}
-        >
+      <View
+        style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.xxl, alignItems: 'center' }}
+      >
+        <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 2.88 }}>
           {`+${tmStep} per cycle · ${isLowerBody(lift) ? 'lower body' : 'upper body'}`}
-        </RNText>
+        </CapsLabel>
       </View>
     </ScrollView>
   );

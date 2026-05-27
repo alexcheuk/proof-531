@@ -97,15 +97,19 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     // signal *before* the navigation so ProgressLiftPage sees it on its
     // own mount and the animation can play in sync with the landing.
     sessionCompletedStore.publish({ lift: v.session.lift, sessionId });
-    // Pop the session stack's interim screens before crossing to the
-    // Progress tab (Discord 1508935241). dismissAll() here operates on
-    // the nearest Stack (the session group), popping back to today.
-    // goTo.progress() then calls navigate() (the new default), which
-    // finds the (tabs) route already in the root stack and goes back to
-    // it — rather than replace(), which pushed a duplicate (tabs) entry
-    // and caused a black screen on consecutive sessions (Discord 1509038579).
-    if (router.canDismiss()) router.dismissAll();
+    // Navigate to the Progress tab FIRST so the tabs navigator is already
+    // showing the correct tab before the session stack dismisses. This
+    // avoids a brief blank/black frame that appeared between dismissAll()
+    // and navigate() when the order was reversed — dismissAll() left the
+    // session group mounted with an empty stack for one render tick before
+    // navigate() replaced the view. (Discord 1509123493)
+    //
+    // navigate() uses the existing (tabs) entry in the root stack and
+    // switches the active tab without pushing a duplicate — safe to call
+    // while the session stack is still on top. dismissAll() then removes
+    // the session stack, revealing the already-configured Progress tab.
     goTo.progress(router, v.session.lift);
+    if (router.canDismiss()) router.dismissAll();
   };
   const handleAdjustTm = () => goTo.settings(router);
 

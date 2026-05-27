@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Text as RNText, View } from 'react-native';
 import Animated, {
   Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -55,6 +56,9 @@ function useLeftEntryStyle(visible: boolean, delayMs: number) {
     } else {
       progress.value = 0;
     }
+    return () => {
+      cancelAnimation(progress);
+    };
   }, [visible, delayMs, progress]);
   return useAnimatedStyle(() => ({
     opacity: progress.value,
@@ -69,6 +73,9 @@ function useFadeOpacityStyle(visible: boolean) {
       duration: ENTRY_DURATION_MS,
       easing: Easing.out(Easing.cubic),
     });
+    return () => {
+      cancelAnimation(progress);
+    };
   }, [visible, progress]);
   return useAnimatedStyle(() => ({ opacity: progress.value }));
 }

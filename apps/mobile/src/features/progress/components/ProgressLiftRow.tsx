@@ -8,6 +8,7 @@ import type { Lift } from '@/domain/types';
 import { useEffect } from 'react';
 import Animated, {
   Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -60,6 +61,10 @@ function useFillInStyle(active: boolean) {
       duration: FILL_IN_DURATION_MS,
       easing: Easing.out(Easing.cubic),
     });
+    return () => {
+      cancelAnimation(opacity);
+      cancelAnimation(scale);
+    };
   }, [active, opacity, scale]);
   return useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -87,6 +92,9 @@ function usePulseStyle(active: boolean) {
         }),
       ),
     );
+    return () => {
+      cancelAnimation(scale);
+    };
   }, [active, scale]);
   return useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 }
