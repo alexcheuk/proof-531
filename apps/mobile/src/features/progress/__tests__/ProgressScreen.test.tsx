@@ -15,17 +15,9 @@ jest.mock('react-native-reanimated', () => {
   return {
     __esModule: true,
     default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
-    LinearTransition: { duration: () => ({}) },
-    FadeIn: { duration: () => ({}) },
-    FadeOut: { duration: () => ({}) },
     useSharedValue: (v: unknown) => ({ value: v }),
     useAnimatedStyle: () => ({}),
     withTiming: (v: unknown) => v,
-    withDelay: (_d: unknown, v: unknown) => v,
-    withSequence: (...v: unknown[]) => v[0],
-    withRepeat: (v: unknown) => v,
-    cancelAnimation: () => {},
-    Easing: { inOut: () => () => 0, in: () => () => 0, out: () => () => 0, cubic: () => 0 },
   };
 });
 

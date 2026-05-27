@@ -19,7 +19,3 @@ export function liftLongName(lift: Lift): string {
       return 'overhead press';
   }
 }
-
-export function isLowerBody(lift: Lift): boolean {
-  return lift === 'squat' || lift === 'deadlift';
-}

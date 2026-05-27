@@ -17,7 +17,7 @@ import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
-import { tmIncrement } from '@/domain/increments';
+import { LOWER_BODY, tmIncrement } from '@/domain/increments';
 import { goalTargetTm } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
 import { displayUnit, displayWeight } from '@/domain/units';
@@ -27,7 +27,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ceilToStep, defaultBumpStep, goalStep } from '../goalDefaults';
-import { isLowerBody, liftLongName } from '../labels';
+import { liftLongName } from '../labels';
 import { BeyondChartFooter } from './BeyondChartFooter';
 import { GoalPanel } from './GoalPanel';
 import { ProgressGridHeader } from './ProgressGridHeader';
@@ -248,7 +248,7 @@ export function ProgressLiftPage({ lift, onScrolledChange }: ProgressLiftPagePro
         style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.xxl, alignItems: 'center' }}
       >
         <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 2.88 }}>
-          {`+${tmStep} per cycle · ${isLowerBody(lift) ? 'lower body' : 'upper body'}`}
+          {`+${tmStep} per cycle · ${LOWER_BODY.has(lift) ? 'lower body' : 'upper body'}`}
         </CapsLabel>
       </View>
     </ScrollView>
