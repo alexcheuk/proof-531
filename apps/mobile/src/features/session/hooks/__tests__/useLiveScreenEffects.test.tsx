@@ -8,6 +8,7 @@ const mockDeactivate = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
+  useIsFocused: () => true,
 }));
 
 jest.mock('expo-keep-awake', () => ({

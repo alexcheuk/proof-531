@@ -32,6 +32,7 @@ const mockNotificationAsync = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({}),
+  useIsFocused: () => true,
 }));
 
 jest.mock('expo-haptics', () => ({

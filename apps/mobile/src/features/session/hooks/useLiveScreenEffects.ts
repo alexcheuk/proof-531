@@ -6,7 +6,7 @@ import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
-import { type Router, useRouter } from 'expo-router';
+import { type Router, useIsFocused, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import type { LivePhase } from './useLiveScreenState';
 
@@ -44,6 +44,17 @@ export function useLiveScreenEffects({
 }: UseLiveScreenEffectsOptions): void {
   const router = useRouter();
   const queryClient = useQueryClient();
+  // A LiveScreen pushed beneath a newer screen (e.g., a stack-duplicate
+  // created by a fast double-tap on the Begin CTA) keeps its hooks running
+  // — including this exit gate. Without the focus check, the hidden Live's
+  // sessionStatus would flip to 'completed' on the next SESSION_KEY
+  // invalidation and the gate would `router.replace('/')` over whatever
+  // route is actually visible (BBB / Complete / Progress), bouncing the
+  // user back to Home. The Today CTA also has a synchronous ref guard
+  // that prevents the duplicate push in the first place; this is
+  // defense-in-depth so any other future duplicate-stack path still can't
+  // re-enter the bug.
+  const isFocused = useIsFocused();
 
   // Keep the screen awake for the entire session. Activate on mount,
   // deactivate on unmount. `activateKeepAwakeAsync` replaces the deprecated
@@ -111,6 +122,7 @@ export function useLiveScreenEffects({
   // goTo.home in the same render window and the user lands on Home
   // instead of BBB.
   useEffect(() => {
+    if (!isFocused) return;
     if (sessionLoading) return;
     if (phase === 'complete' || phase === 'awaiting-bbb' || phase === 'pr-celebration') return;
     if (sessionMissing) {
@@ -120,7 +132,7 @@ export function useLiveScreenEffects({
     if (sessionStatus && sessionStatus !== 'in_progress') {
       goTo.home(router);
     }
-  }, [sessionLoading, sessionMissing, sessionStatus, phase, router]);
+  }, [isFocused, sessionLoading, sessionMissing, sessionStatus, phase, router]);
 }
 
 function routeFromCompletePhase(

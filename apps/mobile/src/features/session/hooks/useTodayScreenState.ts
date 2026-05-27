@@ -31,7 +31,7 @@ import { useQueryClient } from '@tanstack/react-query';
  * once at least one working/AMRAP set is logged).
  */
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type TodayMode = 'preview' | 'preview-other-active' | 'active';
 
@@ -67,6 +67,15 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [starting, setStarting] = useState(false);
+  // Synchronous re-entrancy guard. `starting` is a React state value, so
+  // setStarting(true) only takes effect on the next render — two taps within
+  // a single render cycle both see `starting === false` and both fire. The
+  // ref flips synchronously inside the handler, so the second tap reads
+  // `true` no matter how fast it arrives. Without this, spam-tapping the
+  // Begin CTA pushed duplicate /session/live entries with the same
+  // sessionId; the hidden lower Live's exit gate later replace()'d the
+  // active route with '/' and bounced the user to Home from BBB / Complete.
+  const inFlightRef = useRef(false);
 
   const activeSession = useActiveSession();
   const activeData = activeSession.data ?? null;
@@ -99,25 +108,25 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
       : 'preview';
 
   const onPressCta = async () => {
-    if (starting) return;
-
-    if (mode === 'preview-other-active' && otherLift) {
-      goTo.today(router, otherLift, { replace: true });
-      return;
-    }
-
-    if (mode === 'active' && sessionForLift) {
-      // `push` (not `replace`) so the back stack stays
-      // home → today → live and a Back tap from Live returns to the
-      // session plan instead of skipping past it to home.
-      goTo.live(router, sessionForLift.id);
-      return;
-    }
-
-    // preview — create the session, invalidate so Home/Today/History see the
-    // new row, then route to Live.
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     setStarting(true);
     try {
+      if (mode === 'preview-other-active' && otherLift) {
+        goTo.today(router, otherLift, { replace: true });
+        return;
+      }
+
+      if (mode === 'active' && sessionForLift) {
+        // `push` (not `replace`) so the back stack stays
+        // home → today → live and a Back tap from Live returns to the
+        // session plan instead of skipping past it to home.
+        goTo.live(router, sessionForLift.id);
+        return;
+      }
+
+      // preview — create the session, invalidate so Home/Today/History see the
+      // new row, then route to Live.
       const session = await createSession(db, lift);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
@@ -128,10 +137,11 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
     } catch (err) {
       console.error('TodayScreen.onPressCta createSession failed', err);
     } finally {
-      // Reset starting on BOTH success and failure paths. The success-only
-      // reset previously relied on the screen unmounting; when the user
-      // taps Back from Live, this screen stays mounted (stack pop) and the
-      // CTA would otherwise stay disabled.
+      // Reset on BOTH success and failure paths. The success-only reset
+      // previously relied on the screen unmounting; when the user taps
+      // Back from Live, this screen stays mounted (stack pop) and the CTA
+      // would otherwise stay disabled.
+      inFlightRef.current = false;
       setStarting(false);
     }
   };
