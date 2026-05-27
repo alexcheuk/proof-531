@@ -6,7 +6,7 @@
  *   - When a set log carries `isPR === true`, `Haptics.notificationAsync` is
  *     called with the `success` notification type exactly once.
  *   - When no log carries a PR, the success haptic is NOT called.
- *   - The "Close the day" CTA calls `router.replace('/')`.
+ *   - The "Close the day" CTA calls `router.navigate()` to Progress (navigate, not replace, to avoid duplicate tabs entries on consecutive sessions).
  *
  * Every cross-cutting dependency is mocked so the screen renders headless
  * under jest-expo.
@@ -16,6 +16,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
+const mockNavigate = jest.fn();
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 const mockDismissAll = jest.fn();
@@ -26,6 +27,7 @@ const routerCanDismiss = { value: true };
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     replace: mockReplace,
+    navigate: mockNavigate,
     push: mockPush,
     back: mockBack,
     canGoBack: () => routerCanGoBack.value,
@@ -201,6 +203,7 @@ const buildLogs = (opts: { isPR: boolean }) => [
 describe('SessionCompleteScreen', () => {
   beforeEach(() => {
     mockReplace.mockClear();
+    mockNavigate.mockClear();
     mockDismissAll.mockClear();
     routerCanDismiss.value = true;
     mockPush.mockClear();
@@ -337,15 +340,17 @@ describe('SessionCompleteScreen', () => {
 
     // Discord 1508779267 — closing the day lands on Progress (not Home)
     // so the one-time fill-in animation can play on the just-completed
-    // cell. Replace, so a back-tap doesn't return to the receipt.
-    expect(mockReplace).toHaveBeenCalledWith({
+    // cell. navigate() reuses the existing (tabs) stack entry rather than
+    // pushing a duplicate — avoids the consecutive-session black screen
+    // (Discord 1509038579).
+    expect(mockNavigate).toHaveBeenCalledWith({
       pathname: '/(tabs)/progress',
       params: { lift: 'squat' },
     });
+    expect(mockReplace).not.toHaveBeenCalled();
     // Discord 1508935241 — the session stack is popped first so the
     // cross-stack hop to the Progress tab doesn't leave a hidden
-    // /session/* screen mounted underneath (the "black screen that
-    // can't be dismissed" symptom).
+    // /session/* screen mounted underneath.
     expect(mockDismissAll).toHaveBeenCalled();
   });
 

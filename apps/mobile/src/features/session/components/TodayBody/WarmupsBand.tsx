@@ -57,14 +57,7 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
         <Row justify="space-between" align="center" style={{ marginBottom: 6 }}>
           <Row align="center" style={{ gap: 8 }}>
             <CapsLabel>WARMUPS</CapsLabel>
-            <CapsLabel
-              size="xs"
-              color="ink3"
-              testID="warmups-chevron"
-              // Monochrome unicode caret — no color emoji on app text
-              // (e-ink aesthetic, loop-memory rule).
-              style={{ color: colors.ink3 }}
-            >
+            <CapsLabel size="xs" testID="warmups-chevron" style={{ color: colors.ink1 }}>
               {expanded ? '▾' : '▸'}
             </CapsLabel>
           </Row>

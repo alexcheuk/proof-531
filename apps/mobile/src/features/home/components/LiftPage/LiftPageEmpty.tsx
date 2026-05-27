@@ -1,3 +1,4 @@
+import { goTo } from '@/app/routes';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
 import { Text } from '@/design/primitives/Text';
@@ -25,7 +26,7 @@ export function LiftPageEmpty({ testIDPrefix }: LiftPageEmptyProps) {
         NO TRAINING MAX SET
       </CapsLabel>
       <Pressable
-        onPress={() => router.push('/onboarding')}
+        onPress={() => goTo.onboarding(router)}
         accessibilityRole="button"
         accessibilityLabel="Open onboarding to set a training max"
         testID={testIDPrefix ? `${testIDPrefix}-open-settings` : undefined}
