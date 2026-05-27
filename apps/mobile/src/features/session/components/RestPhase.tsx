@@ -24,10 +24,6 @@ import { RestTimer } from './RestTimer';
 export type RestPhaseProps = {
   /** Display unit (`'lbs' | 'kg'` — rendered via `displayUnit()` as `lb | kg`). */
   loggedUnit: Unit;
-  /** Optional estimated 1RM (AMRAP only). Currently surfaced inside the timer card; reserved for future on-RestPhase callouts. */
-  estimated1RM?: number | undefined;
-  /** True if the just-logged set was an AMRAP set. Reserved for future PR-specific copy. */
-  isAmrap?: boolean;
   /** True if the just-logged set is a PR (drives celebratory copy). */
   isPR?: boolean;
   /** Seconds remaining in the countdown (forwarded to RestTimer). */

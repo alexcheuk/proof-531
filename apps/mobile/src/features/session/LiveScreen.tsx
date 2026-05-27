@@ -146,12 +146,6 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
         {showRestSurface ? (
           <RestPhase
             loggedUnit={unit}
-            isAmrap={live.lastLogged?.isAmrap ?? false}
-            estimated1RM={
-              live.lastLogged?.estimated1RM !== undefined
-                ? Math.round(convertWeight(live.lastLogged.estimated1RM, storageUnit, unit))
-                : undefined
-            }
             remaining={live.restRemaining}
             target={live.restTarget}
             onAddRest={live.onAddRest}

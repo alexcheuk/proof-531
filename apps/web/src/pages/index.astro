@@ -30,13 +30,14 @@ const postCount = posts.length;
           <p class="hero-lede">
             I'm a developer, not a fitness coach. I run Wendler's 5/3/1 in my
             own off-brand way and wanted a nicer way to log it than my notes
-            app. So I made one — and put it on the App Store and Play Store
-            in case anyone else wants to try it.
+            app. So I built one — Android APK is live now, iOS App Store
+            submission is in progress.
           </p>
           <div class="hero-actions">
-            <a href="/531-preview.apk" class="pill big" download>Download Android Preview →</a>
-            <a href="#program" class="pill ghost big">How it works</a>
+            <a href="/531-preview.apk" class="pill big" download>Android Preview APK →</a>
+            <span class="pill ghost big platform-soon" aria-label="iOS App Store coming soon">iOS · App Store Soon</span>
           </div>
+          <div class="platform-note">Android APK available now · iOS App Store submission pending</div>
           <dl class="hero-ledger">
             <div><dt>program</dt><dd>5/3/1 + BBB</dd></div>
             <div><dt>cycle</dt><dd>4 weeks · 16 sessions</dd></div>
@@ -888,9 +889,8 @@ const postCount = posts.length;
             everything you log is yours and lives on your phone.
           </p>
           <p class="signoff-state">
-            <span class="caps">Today</span> &nbsp;Android preview APK above. App
-            Store and Play Store listings aren't live yet — the dev log will
-            announce when they are.
+            One codebase, two platforms. Android preview APK is live now.
+            iOS App Store submission is next — the dev log announces when it lands.
           </p>
         </div>
         <div class="ctas">
@@ -898,12 +898,10 @@ const postCount = posts.length;
             <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
             Android Preview APK
           </a>
-          <a href="/blog" class="pill ghost big">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M3 5h18M3 12h18M3 19h12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
-            Follow the dev log
-          </a>
+          <span class="pill ghost big platform-soon-inv">iOS · App Store Soon</span>
+          <a href="/blog" class="pill ghost big">Follow the dev log</a>
           <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="pill ghost big">View on GitHub →</a>
-          <div class="micro">iOS 16+ · Android 12+ · No sign-up · APK is install-only — App Store + Play Store soon</div>
+          <div class="micro">Android 12+ available now · iOS 16+ App Store coming · No sign-up required</div>
         </div>
       </div>
     </div>
@@ -1451,6 +1449,24 @@ const postCount = posts.length;
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
+  }
+  .platform-soon {
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .platform-soon-inv {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .platform-note {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
   .hero-ledger {
     margin: 32px 0 0;

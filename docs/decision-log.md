@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Website hero updated for iOS/Android equal emphasis; hero copy fixed
+
+**Tags:** `web`, `convention`
+**Files:** `apps/web/src/pages/index.astro`, `apps/web/src/pages/process.astro`
+
+Added an "iOS · App Store Soon" ghost pill alongside the Android APK download in the hero and sign-off sections so both platforms get equal visual weight. Updated the hero lede copy to say "iOS App Store submission is in progress" instead of the previous claim that it was already on the App Store and Play Store. Also fixed the hardcoded "1.0.2 · cycle 4" version in `process.astro`'s colophon (actual version is 1.0.0).
+
+**Why:** Discord task: "iOS and Android should be the same emphasis." The prior design buried iOS in body text while Android got a concrete download CTA. Equal emphasis = both get a pill-shaped affordance of equal visual weight.
+
 ### 2026-05-27 — Official app name "531 Strength" applied across website meta + app.json
 
 **Tags:** `web`, `convention`, `store`
