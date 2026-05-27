@@ -13,6 +13,28 @@ This skill ships one full iteration of improvements to the 531 app. It is meant 
 
 Do these in order. The first two steps are the only ones that touch external state before you start work, so they're cheap and worth front-loading.
 
+### 0. Announce the expedition (TTS)
+
+Before doing anything else, speak the departure line through the homelab speaker so the cron tick is audible as ambient theater rather than silent CI churn. Fire-and-forget — never block the loop on this.
+
+Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist). Then:
+
+```bash
+NEXT_EXPEDITION="$(grep -hE '^expedition:[[:space:]]+[0-9]+' apps/web/src/content/blog/*.md 2>/dev/null \
+  | awk '{print $2}' | sort -n | tail -1)"
+NEXT_EXPEDITION=$(( ${NEXT_EXPEDITION:-0} + 1 ))
+
+curl -sS -X POST "https://home-tts.yikeslab.com/say" \
+  -H "Content-Type: application/json" \
+  --max-time 5 \
+  -d "{\"message\":\"Expedition $NEXT_EXPEDITION departs.\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
+  >/dev/null 2>&1 || true
+```
+
+The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own.
+
+If the curl fails (speaker offline, DNS, network), keep going. The iteration must not depend on the speaker being reachable.
+
 ### 1. Load criteria (file + Discord pins)
 
 Loop criteria comes from **two sources** that the agent must merge every iteration:

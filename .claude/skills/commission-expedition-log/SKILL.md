@@ -60,7 +60,36 @@ The agent returns a structured result with `post_path`, `mode`, `beat_used`, `lo
 - **`build_status: pass`** — stage the post file (`git add <post_path>`) alongside the code diff, then commit and push as normal.
 - **`build_status: fail`** — re-invoke the agent with the build error message and `notes: fix the build failure: <error>`. Don't bypass the build check; the schema gate exists for a reason.
 
-### 4. Don't post-process
+### 4. Speak the log (TTS)
+
+After the post is staged but before (or alongside) the commit, send a compressed read-aloud of the post through the homelab speaker. This is the gommage moment — the Logger's last act before they're erased. Fire-and-forget; never block the commit on TTS.
+
+**Compose the read-aloud.** Two short sentences, no more than ~30 words total. The first sentence is what shipped (in the Logger's voice, not a commit-message summary). The second is the closing beat — what the post is *really* about. Strip code, file paths, and jargon — this is heard, not read. Sign off with the Logger's name if it carries: *"This was Caelin."*
+
+**Pick the voice and style for *this Logger*.** The agent returned `logger_name` and you can read the post itself for tone. Match them:
+
+- **Voice** — pick from the API's catalog (`Algenib`, `Achernar`, `Charon`, `Despina`, `Erinome`, `Iapetus`, `Kore`, `Orus`, `Puck`, `Sadachbia`, `Sulafat`, `Vindemiatrix`, `Zephyr`, etc — Gemini-style names). Avoid `Algenib`; that one is reserved for the Paintress's departure line. Pick something that fits the Logger's character on the page.
+- **Style** — short stage direction in plain English. *"Say like a confession"*, *"Say with quiet exhaustion"*, *"Say as if reading their own epitaph"*, *"Say slowly, like the words cost something"*, *"Say with a small private joke"*. Match the post's beat.
+
+If two consecutive Loggers feel similar in tone, push the second one further — different voice, different style — so the ambient track stays varied instead of becoming a drone.
+
+**Fire it.**
+
+```bash
+curl -sS -X POST "https://home-tts.yikeslab.com/say" \
+  -H "Content-Type: application/json" \
+  --max-time 8 \
+  -d "$(jq -nc \
+    --arg m "<the two-sentence read-aloud>" \
+    --arg v "<voice picked for this Logger>" \
+    --arg s "<style line picked for this Logger>" \
+    '{message:$m, device:"kitchen", voice:$v, style:$s}')" \
+  >/dev/null 2>&1 || true
+```
+
+For off-cycle handoff posts (Verso-mode farewell, persona shifts) where `logger_name` is `n/a`, use voice `Algenib` and style `"Say solemnly"` — that's the Paintress speaking in her own register.
+
+### 5. Don't post-process
 
 - Don't rewrite the prose. The voice is the deliverable; you'll flatten it.
 - Don't add to or remove from the frontmatter — the agent wrote what the schema accepted.
