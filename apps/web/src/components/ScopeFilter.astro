@@ -24,15 +24,22 @@ const countLabel =
     >
       All <span class="ct">{total}</span>
     </a>
-    {SCOPES.map((s) => (
-      <a
-        href={`/blog/tag/${s}`}
-        class:list={['chip', { active: active === s }]}
-        aria-current={active === s ? 'page' : undefined}
-      >
-        {SCOPE_LABELS[s]} <span class="ct">{counts[s]}</span>
-      </a>
-    ))}
+    {SCOPES.map((s) => {
+      const href = s === 'expedition' ? '/blog/expedition-logs' : `/blog/tag/${s}`;
+      const isSpecial = s === 'expedition';
+      return (
+        <>
+          {isSpecial && <span class="chip-separator" aria-hidden="true">·</span>}
+          <a
+            href={href}
+            class:list={['chip', { active: active === s, special: isSpecial }]}
+            aria-current={active === s ? 'page' : undefined}
+          >
+            {SCOPE_LABELS[s]} <span class="ct">{counts[s]}</span>
+          </a>
+        </>
+      );
+    })}
   </nav>
   <div class="log-count">{countLabel}</div>
 </div>
@@ -93,6 +100,25 @@ const countLabel =
     margin-right: 7px;
     transform: translateY(-1px);
   }
+
+  .chip-separator {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    border-right: 1px solid var(--line);
+    user-select: none;
+  }
+
+  .chip.special {
+    color: var(--ink-2);
+    font-style: italic;
+    letter-spacing: 0.12em;
+  }
+  .chip.special:hover { color: var(--ink-0); }
+  .chip.special.active { color: var(--ink-0); }
 
   .log-count {
     font-family: var(--font-mono);
