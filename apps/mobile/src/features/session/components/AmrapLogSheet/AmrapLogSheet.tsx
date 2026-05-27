@@ -14,12 +14,12 @@ import { displayUnit } from '@/domain/units';
  * Structural port of `~/Development/531-pwa/src/features/session/components/
  * AmrapLogSheet.tsx`. Composition shell — rep/pending state lives in
  * `useAmrapLogState`, the e1RM caption is `ProjectionChip`, and the
- * Save/Cancel button pair is `AmrapFooter`.
+ * Save/Cancel button pair is `LogSheetFooter`.
  */
 import { View, type ViewStyle } from 'react-native';
 import { useAmrapLogState } from '../../hooks/useAmrapLogState';
 import { useAmrapPrEdgeHaptic } from '../../hooks/useAmrapPrEdgeHaptic';
-import { AmrapFooter } from './AmrapFooter';
+import { LogSheetFooter } from '../LogSheetFooter';
 import { ProjectionChip } from './ProjectionChip';
 
 export type AmrapLogSheetProps = {
@@ -143,7 +143,15 @@ export function AmrapLogSheet({
           </CapsLabel>
         ) : null}
 
-        <AmrapFooter pending={pending} onCancel={handleCancel} onSave={handleSave} />
+        <LogSheetFooter
+          pending={pending}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          cancelTestID="amrap-cancel"
+          saveTestID="amrap-save"
+          cancelA11yLabel="Cancel and close the AMRAP sheet"
+          saveA11yLabel="Save AMRAP reps"
+        />
       </View>
     </Sheet>
   );

@@ -13,6 +13,18 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `src/features/` — composition. Each feature has `components/`, `hooks/`, sometimes `sections/`. Tests colocated.
 - `src/app/` — expo-router routes, thin shells.
 
+## Log sheet hooks (expedition 11)
+
+- `useLogSheetState` (`features/session/hooks/useLogSheetState.ts`) — shared
+  state for bottom-sheet rep loggers. Takes `open`, `initialReps`, `onSave`,
+  `onCancel`. Resets reps + pending on each `open=true`, guards handleCancel
+  against gorhom auto-dismiss after save.
+- `useAmrapLogState` — thin wrapper; seeds at `prescribedReps`.
+- `useTmTestLogState` — thin wrapper; seeds at 0.
+- `LogSheetFooter` (`features/session/components/LogSheetFooter.tsx`) — shared
+  Cancel + Save button pair. Takes `cancelTestID`, `saveTestID`, and a11y
+  labels as props. Both AMRAP and TM Test sheets use this directly.
+
 ## Key primitives (don't re-invent these)
 
 - `StatGrid` — 3-up "label / value / sub" grid. See `LiftStats.tsx` for usage.

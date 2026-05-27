@@ -1,12 +1,13 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { WARMUPS } from '@/domain/schemes';
 import type { Unit } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SetRow } from '../SetRow';
 
 export type WarmupsBandProps = {
@@ -23,7 +24,7 @@ export type WarmupsBandProps = {
  * When collapsed, the right side reads "TAP TO OPEN" (Discord 1509060717).
  */
 export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsBandProps) {
-  const { colors, layout, spacing, type } = useTheme();
+  const { layout, spacing } = useTheme();
   const [expanded, setExpanded] = useState(false);
 
   const toggle = () => {
@@ -45,12 +46,9 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
           <Row align="center" style={{ gap: 10 }}>
             <CapsLabel>WARMUPS</CapsLabel>
             {/* Larger chevron so the affordance is visually obvious */}
-            <RNText
-              testID="warmups-chevron"
-              style={{ color: colors.ink1, fontSize: 14, fontFamily: type.mono }}
-            >
+            <Text testID="warmups-chevron" variant="mono" weight="regular" size={14} color="ink1">
               {expanded ? '▾' : '▸'}
-            </RNText>
+            </Text>
           </Row>
           <CapsLabel size="xs" color="ink3">
             {expanded ? '40 · 50 · 60% TM' : 'TAP TO OPEN'}

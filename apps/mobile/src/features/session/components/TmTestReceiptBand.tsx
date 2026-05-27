@@ -1,7 +1,8 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { SectionBand } from '@/design/primitives/SectionBand';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
-import { Text as RNText, type TextStyle, View } from 'react-native';
+import { View } from 'react-native';
 import { ReceiptRow } from './ReceiptRow';
 
 export type TmTestReceiptBandProps = {
@@ -42,22 +43,16 @@ export function TmTestReceiptBand({
   elapsedReady,
   elapsedValue,
 }: TmTestReceiptBandProps) {
-  const { colors, layout, type } = useTheme();
-  const sectionHeader: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink2,
-    marginBottom: 8,
-  };
+  const { layout } = useTheme();
 
   return (
     <View
       style={{ paddingTop: 24, paddingHorizontal: layout.gutter }}
       testID="session-complete-tm-test-receipt"
     >
-      <RNText style={sectionHeader}>The record</RNText>
+      <CapsLabel weight="semibold" style={{ marginBottom: 8 }}>
+        The record
+      </CapsLabel>
 
       <SectionBand testID="session-complete-tm-test-band" tone="strong" padding="none">
         <ReceiptRow

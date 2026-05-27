@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Shared `LogSheetFooter` + `useLogSheetState` extractions (expedition 11)
+
+**Tags:** `refactor`, `architecture`, `removal`
+**Files:** `apps/mobile/src/features/session/components/LogSheetFooter.tsx`, `apps/mobile/src/features/session/hooks/useLogSheetState.ts`
+
+Extracted a shared `LogSheetFooter` component (Cancel + Save button pair) that both the AMRAP sheet and the TM Test sheet now use — they were identical except for testID strings and accessibility labels. Also extracted `useLogSheetState` as the shared hook body; `useAmrapLogState` and `useTmTestLogState` are now thin wrappers that differ only in `initialReps` (prescribed vs. 0). Removed `AmrapFooter.tsx` and `TmTestFooter.tsx`. Also replaced the identical `sectionHeader` raw-RNText style in `ReceiptCard` and `TmTestReceiptBand` with the `CapsLabel` primitive.
+
+**Why:** The TM Test Week feature (expedition 10) correctly modeled itself after the AMRAP sheet for consistency, but the copy-then-diverge approach left four files with near-identical implementations. A future change to the button style or the save guard would have needed four edits instead of one.
+
+**Trade-off / what we didn't do:** Considered keeping `AmrapFooter` and `TmTestFooter` as thin wrappers over `LogSheetFooter` to avoid updating callers. Rejected — the wrappers would still be duplicate files with no independent value. Updating the two call sites is cheaper than carrying three files forever.
+
+### 2026-05-27 — `useRef` guard against spam-tap on Begin CTA (expedition 11 pre-work)
+
+**Tags:** `bug`, `session`, `concurrency`
+**Files:** `apps/mobile/src/features/session/hooks/useTodayScreenState.ts`, `apps/mobile/src/features/session/hooks/useLiveScreenEffects.ts`
+
+Added a synchronous `useRef` guard (`inFlightRef`) to `useTodayScreenState.onPressCta`. Two taps within a single render cycle both saw `starting === false` (React state is async) and both ran the preview branch, pushing duplicate `/session/live` entries with the same `sessionId`. After AMRAP save, the hidden lower `LiveScreen`'s exit gate saw `sessionStatus` flip to `'completed'` and `replace()`'d the visible route back to `/`, bouncing the user home. Added `useIsFocused()` guard in `useLiveScreenEffects` as defense-in-depth so any future duplicate-stack path can't trigger the exit gate from a non-focused screen.
+
+**Why:** Discord 1508935260 — "if I press Begin session and every CTA until the AMRAP logging, it goes straight back to Home screen instead of completion screen." The root cause was React state not being synchronous; the fix is a ref that flips synchronously inside the handler.
+
+**Trade-off / what we didn't do:** The `starting` state stays (drives the disabled-button UI); the `inFlightRef` is the actual concurrency lock. Two sources of truth for "is a session starting" is a small smell, but the alternatives (`useReducer`, a context-level lock, optimistic routing) were heavier than the symptom warranted.
+
 ### 2026-05-27 — Reverted session→tabs navigation order: dismiss-first, then navigate
 
 **Tags:** `bug`, `navigation`, `session`

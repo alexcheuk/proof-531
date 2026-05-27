@@ -3,17 +3,33 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { Pressable, type ViewStyle } from 'react-native';
 
-export type AmrapFooterProps = {
+export type LogSheetFooterProps = {
   pending: boolean;
   onCancel: () => void;
   onSave: () => void;
+  cancelTestID: string;
+  saveTestID: string;
+  cancelA11yLabel: string;
+  saveA11yLabel: string;
 };
 
 /**
- * Cancel + Save button pair shown at the bottom of the AMRAP sheet.
- * Both fade to 60% opacity while a save is in flight.
+ * Shared Cancel + Save button pair for bottom-sheet rep loggers.
+ *
+ * Both the AMRAP sheet and the TM Test sheet use this exact visual shape —
+ * two full-width bordered buttons side by side, ghost left and filled right,
+ * both disabled at 60% opacity while a save is in flight. The only difference
+ * between the two sheets is the testID and accessibility label strings.
  */
-export function AmrapFooter({ pending, onCancel, onSave }: AmrapFooterProps) {
+export function LogSheetFooter({
+  pending,
+  onCancel,
+  onSave,
+  cancelTestID,
+  saveTestID,
+  cancelA11yLabel,
+  saveA11yLabel,
+}: LogSheetFooterProps) {
   const { colors, spacing } = useTheme();
   const button = (variant: 'primary' | 'ghost'): ViewStyle => ({
     flex: 1,
@@ -29,9 +45,9 @@ export function AmrapFooter({ pending, onCancel, onSave }: AmrapFooterProps) {
   return (
     <Row gap="md" style={{ marginTop: spacing.lg }}>
       <Pressable
-        testID="amrap-cancel"
+        testID={cancelTestID}
         accessibilityRole="button"
-        accessibilityLabel="Cancel and close the AMRAP sheet"
+        accessibilityLabel={cancelA11yLabel}
         disabled={pending}
         onPress={onCancel}
         style={button('ghost')}
@@ -47,9 +63,9 @@ export function AmrapFooter({ pending, onCancel, onSave }: AmrapFooterProps) {
         </Text>
       </Pressable>
       <Pressable
-        testID="amrap-save"
+        testID={saveTestID}
         accessibilityRole="button"
-        accessibilityLabel="Save AMRAP reps"
+        accessibilityLabel={saveA11yLabel}
         disabled={pending}
         onPress={onSave}
         style={button('primary')}

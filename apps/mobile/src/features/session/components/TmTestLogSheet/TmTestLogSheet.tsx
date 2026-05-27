@@ -9,9 +9,9 @@ import type { Lift, Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 import { View, type ViewStyle } from 'react-native';
 import { useTmTestLogState } from '../../hooks/useTmTestLogState';
+import { LogSheetFooter } from '../LogSheetFooter';
 import { TmTestBandChip } from './TmTestBandChip';
 import { TmTestCaption } from './TmTestCaption';
-import { TmTestFooter } from './TmTestFooter';
 
 /**
  * Bottom-sheet TM Test rep logger — sibling to {@link AmrapLogSheet} but
@@ -112,7 +112,15 @@ export function TmTestLogSheet({
 
         <TmTestCaption reps={reps} lift={lift} unit={unit} />
 
-        <TmTestFooter pending={pending} onCancel={handleCancel} onSave={handleSave} />
+        <LogSheetFooter
+          pending={pending}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          cancelTestID="tm-test-cancel"
+          saveTestID="tm-test-save"
+          cancelA11yLabel="Cancel and close the TM test sheet"
+          saveA11yLabel="Save TM test reps"
+        />
       </View>
     </Sheet>
   );
