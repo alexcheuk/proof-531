@@ -1,11 +1,9 @@
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
-import { tmIncrement } from '@/domain/increments';
-import type { Lift, Unit } from '@/domain/types';
+import { LOWER_BODY, tmIncrement } from '@/domain/increments';
+import type { Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { LIFT_META, LIFT_ORDER } from '../lifts';
-
-const LOWER_BODY: ReadonlySet<Lift> = new Set<Lift>(['squat', 'deadlift']);
 
 export type ProgressionRulesSectionProps = {
   storageUnit: Unit;

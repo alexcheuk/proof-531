@@ -42,6 +42,33 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — `LOWER_BODY` exported from domain; duplicate feature-level definitions removed
+
+**Tags:** `domain`, `refactor`, `removal`
+**Files:** `apps/mobile/src/domain/increments.ts`, `apps/mobile/src/features/settings/sections/ActiveLiftsSection.tsx`, `apps/mobile/src/features/settings/sections/ProgressionRulesSection.tsx`
+
+Exported `LOWER_BODY` (the `Set<Lift>` encoding which lifts use larger cycle increments) from `domain/increments.ts` and removed the two identical private copies in `ActiveLiftsSection` and `ProgressionRulesSection`. Both feature files already imported `tmIncrement` from the same domain module — the local set was pure duplication.
+
+**Why:** Three identical `ReadonlySet<Lift>` literals with the same values. Any future change to what counts as "lower body" (e.g. OHP were moved) required three edits. Domain constants belong in domain.
+
+### 2026-05-27 — Dead `LIFTS` export removed from `domain/types.ts`; `DEFAULT_LIFTS` in history screen replaced with canonical import
+
+**Tags:** `removal`, `domain`
+**Files:** `apps/mobile/src/domain/types.ts`, `apps/mobile/src/features/history/hooks/useHistoryScreenData.ts`
+
+`domain/types.ts` exported `LIFTS` in 5/3/1 programming order (`['press', 'deadlift', 'bench', 'squat']`) — a different ordering from `domain/labels.ts`'s `LIFTS`. No feature code imported the types.ts version. Removed it. `DEFAULT_LIFTS` in the history screen (an inline `['squat', 'bench', 'deadlift', 'press']`) replaced with an import of `LIFTS` from `domain/labels`.
+
+**Why:** Two exports with the same name and different values in peer domain modules is a trap. The types.ts version had no importers (confirmed by grep). Dead code removed; inline fallback consolidated with the canonical label-ordered `LIFTS`.
+
+### 2026-05-27 — Privacy policy page added at `/privacy`
+
+**Tags:** `web`, `store`
+**Files:** `apps/web/src/pages/privacy.astro`, `apps/web/src/components/Footer.astro`
+
+Added a simple privacy policy page at `/privacy` describing the app's data posture (none — local SQLite only, no analytics, no accounts, OTA-update metadata only). Added link to the footer's "Et cetera" column.
+
+**Why:** App Store and Play Store require a privacy policy URL for any submitted app. Without it, store review is blocked.
+
 ### 2026-05-27 — Git commit email changed to GitHub noreply format to unblock Vercel
 
 **Tags:** `process`, `deployment`

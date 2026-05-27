@@ -18,6 +18,7 @@ import { usePrs } from '@/data/queries/usePrs';
 import { useSessionPrIds } from '@/data/queries/useSessionPrIds';
 import { useSessions } from '@/data/queries/useSessions';
 import { useSettings } from '@/data/queries/useSettings';
+import { LIFTS } from '@/domain/labels';
 import type { Lift, Unit } from '@/domain/types';
 import { type QueryLike, combineQueries } from '@/features/shared/QueryShell';
 import { useCallback, useMemo } from 'react';
@@ -33,8 +34,6 @@ import {
 import { type BestLift, pickBestLift } from '../bestLift';
 import { type HistoryFilter, applyHistoryFilter } from '../filter';
 import { type CycleGroup, groupByCycle } from '../grouping';
-
-const DEFAULT_LIFTS: ReadonlyArray<Lift> = ['squat', 'bench', 'deadlift', 'press'];
 
 export interface HistoryScreenData {
   /** All sessions, newest first. Defaults to `[]` while the query is pending. */
@@ -112,7 +111,7 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
 
   const rows = sessions.data ?? [];
   const prIds = prIdsQuery.data ?? new Set<number>();
-  const enabledLifts = settingsQuery.data?.enabledLifts ?? DEFAULT_LIFTS;
+  const enabledLifts = settingsQuery.data?.enabledLifts ?? LIFTS;
 
   const stats = useMemo(() => computeHistoryStats(rows, prIds), [rows, prIds]);
   const activity = useMemo(() => recentActivity(rows), [rows]);

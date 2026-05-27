@@ -9,7 +9,8 @@
 
 import type { Lift, Unit } from './types';
 
-const LOWER_BODY: ReadonlySet<Lift> = new Set<Lift>(['squat', 'deadlift']);
+/** Lifts that use lower-body TM increments (10 lb / 5 kg per cycle). */
+export const LOWER_BODY: ReadonlySet<Lift> = new Set<Lift>(['squat', 'deadlift']);
 
 /** Per-cycle TM bump magnitude, in the lift's own unit. */
 export function tmIncrement(unit: Unit, lift: Lift): number {

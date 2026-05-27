@@ -1,0 +1,149 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+
+<Base
+  title="Privacy policy — 531 Strength"
+  description="531 Strength collects no personal data. All training data is stored locally on your device."
+>
+  <section class="policy">
+    <div class="wrap">
+      <div class="eyebrow">Privacy Policy · Effective May 27, 2026</div>
+      <h1>No data collected<span class="dot">.</span></h1>
+      <p class="lede">
+        531 Strength is a local-first training tracker. Your data stays on your
+        device. There are no accounts, no servers, and no analytics.
+      </p>
+
+      <div class="body">
+        <section class="block">
+          <h2>What we collect</h2>
+          <p>Nothing. The app does not collect, transmit, or store any personal
+          information on external servers. All training logs, settings, and
+          program data live in a local database on your device only.</p>
+        </section>
+
+        <section class="block">
+          <h2>Local storage only</h2>
+          <p>Your training data — lifts, training maxes, set logs, PRs — is
+          written to a SQLite database on your device. It never leaves your
+          device. Uninstalling the app deletes all of it.</p>
+        </section>
+
+        <section class="block">
+          <h2>No account required</h2>
+          <p>There is no sign-in, no profile, and no account creation. The app
+          works entirely offline. Your data is yours and only yours.</p>
+        </section>
+
+        <section class="block">
+          <h2>Over-the-air updates</h2>
+          <p>The app may receive over-the-air JavaScript updates via EAS Update
+          (Expo Application Services). These update checks transmit your device's
+          app version and platform — no personal information. You can disable
+          network access for the app entirely in your device settings; the core
+          training functionality works without it.</p>
+        </section>
+
+        <section class="block">
+          <h2>Third-party services</h2>
+          <p>None. The app does not integrate with analytics platforms, crash
+          reporters, advertising networks, or any external service that would
+          receive your data.</p>
+        </section>
+
+        <section class="block">
+          <h2>Open source</h2>
+          <p>The complete source code is publicly available. You can inspect
+          exactly what the app does with your data (nothing) at
+          <a href="https://github.com/alexcheuk/proof-531" rel="noopener">github.com/alexcheuk/proof-531</a>.</p>
+        </section>
+
+        <section class="block">
+          <h2>Contact</h2>
+          <p>Questions about this policy? Email
+          <a href="mailto:hi@531ledger.app">hi@531ledger.app</a> or
+          <a href="https://github.com/alexcheuk/proof-531/issues" rel="noopener">open a GitHub issue</a>.</p>
+        </section>
+
+        <div class="footer-note">
+          This policy applies to the 531 Strength iOS and Android apps and this
+          website. The policy may be updated; the effective date at the top
+          will reflect the most recent revision.
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .policy {
+    padding: var(--space-5xl) 0 var(--space-4xl);
+  }
+
+  .wrap {
+    max-width: var(--content-narrow);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: var(--space-lg);
+  }
+
+  h1 {
+    margin-bottom: var(--space-xl);
+  }
+
+  .dot {
+    color: var(--amber);
+  }
+
+  .lede {
+    font-size: 1.1rem;
+    color: var(--ink-1);
+    line-height: 1.6;
+    max-width: 60ch;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-2xl);
+  }
+
+  .block h2 {
+    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    margin-bottom: var(--space-sm);
+  }
+
+  .block p {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--ink-1);
+    max-width: 68ch;
+  }
+
+  .footer-note {
+    font-size: 0.88rem;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    line-height: 1.6;
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--line);
+  }
+</style>

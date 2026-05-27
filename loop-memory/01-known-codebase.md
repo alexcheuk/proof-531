@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-24)
+# Codebase facts (updated 2026-05-27)
 
 ## Architecture
 
@@ -37,6 +37,20 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `Box` — generic spacing wrapper. Removed 2026-05-24. Use `Row`/`Card`/inline `View`.
 - `Button` — generic shadcn-style variants. Removed 2026-05-24. Use `PrimaryPillButton`.
 - `SectionHeader` — Removed 2026-05-24. Use `TitleBlock` for hero/display titles.
+
+## Domain exports (updated 2026-05-27)
+
+- `domain/increments.ts` exports `LOWER_BODY: ReadonlySet<Lift>` — the set of lifts
+  that use larger cycle TM increments (10 lb / 5 kg). Import this; don't re-define locally.
+- `domain/types.ts` does NOT export `LIFTS` (removed as dead code — no importers).
+  Use `LIFTS` from `domain/labels` for the display-order array `['squat', 'bench', 'deadlift', 'press']`.
+- `domain/labels.ts` exports `LIFTS: readonly Lift[]` in display order (squat, bench, deadlift, press)
+  and `isLift(v)` type guard for route param validation.
+
+## Web pages
+
+- `/privacy` — simple privacy policy (no data collection, local SQLite only). Required for store listings.
+- `/support` — support page with GitHub Issues link + email. Required for App Store listings.
 
 ## Pure helpers (domain/)
 
