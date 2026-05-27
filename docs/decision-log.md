@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Fix consecutive-session black screen via `navigate()` over `replace()`
+
+**Tags:** `mobile`, `bug-postmortem`, `navigation`
+**Files:** `apps/mobile/src/app/routes.ts`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+`goTo.progress()` was using `router.replace()` to land on the Progress tab after closing a session. On the second consecutive session, `dismissAll()` popped back to `/session/today` and `replace()` pushed a second `/(tabs)` entry into the root stack — two mounted tab navigators, black screen. Fixed by switching the default to `router.navigate()`, which finds the existing `(tabs)` entry in the root stack and routes to it rather than pushing a duplicate.
+
+**Why:** `replace()` always creates a new history entry; `navigate()` deduplicates by finding the existing route in the stack first. The bug only appeared on the second consecutive session because the first session built the root stack correctly; it was the re-entry that clobbered it.
+
+**Trade-off / what we didn't do:** Considered clearing the whole root stack first, but that would kill any "back" affordance from the Progress tab to the home screen. `navigate()` is the minimal change.
+
+---
+
 ### 2026-05-27 — Replace Week 4 deload with TM Test Week (Wendler's 7th Week Protocol)
 
 **Tags:** `mobile`, `domain`, `architecture`, `5/3/1`

@@ -20,8 +20,14 @@ jest.mock('react-native-reanimated', () => {
 });
 
 const mockRouterPush = jest.fn();
+const mockRouterNavigate = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockRouterPush, replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({
+    push: mockRouterPush,
+    navigate: mockRouterNavigate,
+    replace: jest.fn(),
+    back: jest.fn(),
+  }),
 }));
 
 jest.mock('expo-haptics', () => ({
@@ -63,6 +69,7 @@ const baseProps: RequiredProps = {
 describe('LiftPage', () => {
   beforeEach(() => {
     mockRouterPush.mockClear();
+    mockRouterNavigate.mockClear();
     mockLastTrained.startedAt = null;
   });
 
@@ -120,8 +127,10 @@ describe('LiftPage', () => {
   it('routes to the Progress tab when the "SEE PROGRESS" link is pressed', () => {
     const screen = wrap(<LiftPage {...baseProps} />);
     fireEvent.press(screen.getByTestId('lift-page-squat-see-progress'));
-    expect(mockRouterPush).toHaveBeenCalledTimes(1);
-    expect(mockRouterPush).toHaveBeenCalledWith(
+    // goTo.progress() uses router.navigate() (not push) to reuse the existing
+    // (tabs) stack entry and avoid duplicate tab navigators on consecutive sessions.
+    expect(mockRouterNavigate).toHaveBeenCalledTimes(1);
+    expect(mockRouterNavigate).toHaveBeenCalledWith(
       expect.objectContaining({ pathname: '/(tabs)/progress', params: { lift: 'squat' } }),
     );
   });

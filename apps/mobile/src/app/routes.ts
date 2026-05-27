@@ -28,8 +28,13 @@ function href<T extends object | string>(value: T): AnyHref {
   return value as unknown as AnyHref;
 }
 
-function go(router: Router, target: AnyHref, opts?: { replace?: boolean }): void {
+function go(
+  router: Router,
+  target: AnyHref,
+  opts?: { replace?: boolean; navigate?: boolean },
+): void {
   if (opts?.replace) router.replace(target);
+  else if (opts?.navigate) router.navigate(target);
   else router.push(target);
 }
 
@@ -86,8 +91,17 @@ export const goTo = {
    * stack-pushing a sub-screen. The `lift` param is consumed by
    * `(tabs)/progress.tsx`, which falls back to `enabledLifts[0]` if
    * omitted.
+   *
+   * Default uses `navigate()` (not `push()`) so that navigating from a
+   * session stack reuses the `(tabs)` entry already in the root stack
+   * instead of pushing a duplicate. Pass `{ replace: true }` only when
+   * you need to overwrite the current history entry without going back.
    */
   progress(router: Router, lift: Lift, opts?: { replace?: boolean }): void {
-    go(router, href({ pathname: '/(tabs)/progress', params: { lift } }), opts);
+    go(
+      router,
+      href({ pathname: '/(tabs)/progress', params: { lift } }),
+      opts ?? { navigate: true },
+    );
   },
 } as const;
