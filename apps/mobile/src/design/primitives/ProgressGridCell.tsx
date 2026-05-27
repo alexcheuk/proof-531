@@ -32,8 +32,18 @@ export type ProgressGridCellProps = {
   weight: number;
   /** AMRAP/working reps. Pass null for deload variants or future cells. */
   reps?: number | null;
-  /** Deload glyph (✓ for done deload, ─ for projected deload). */
-  marker?: '✓' | '─' | null;
+  /**
+   * Secondary glyph that replaces the reps line. The set widens by one
+   * triplet on Week 4 TM-test cells (added 2026-05-27 per
+   * `_workspace/01_design_spec.md`):
+   *
+   *   - `✓` — legacy week-4 deload completion (kept for forward-only history).
+   *   - `─` — projected future deload-style cell.
+   *   - `↑` — TM test passed strong (≥5 reps, increment band).
+   *   - `=` — TM test held (3–4 reps, hold band).
+   *   - `↓` — TM test reset (0–2 reps, reset band).
+   */
+  marker?: '✓' | '↑' | '↓' | '=' | '─' | null;
   onPress?: () => void;
   accessibilityLabel?: string;
   testID?: string;

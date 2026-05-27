@@ -27,7 +27,8 @@ describe('CycleStrip', () => {
     expect(screen.getByText('5·5·5+')).toBeTruthy();
     expect(screen.getByText('3·3·3+')).toBeTruthy();
     expect(screen.getByText('5·3·1+')).toBeTruthy();
-    expect(screen.getByText('Deload')).toBeTruthy();
+    // Week 4 is the TM Test (replaces the classic Wendler deload).
+    expect(screen.getByText('TM TEST')).toBeTruthy();
   });
 
   it('renders D1..D4 day labels', () => {

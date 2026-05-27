@@ -37,6 +37,25 @@ describe('useLiftPageState', () => {
     expect(2 * perSideTotal).toBe(215 - 45); // 170 lb in plates total
   });
 
+  it('week 4: top set is the TM test (100% TM, kind tm-test)', () => {
+    const { result } = renderHook(() =>
+      useLiftPageState({
+        week: 4,
+        storageUnit: 'lbs',
+        displayUnit: 'lbs',
+        plateSet: 'standard',
+        tm: 250,
+      }),
+    );
+    if (result.current.empty) {
+      throw new Error('expected non-empty');
+    }
+    expect(result.current.topSet.pct).toBe(1.0);
+    expect(result.current.topSet.kind).toBe('tm-test');
+    // 100% of 250 lb TM is 250 lb (already snapped).
+    expect(result.current.topWeight).toBe(250);
+  });
+
   it('snaps on storage then converts for display (kg storage, lbs display)', () => {
     // 100 kg TM at 85% = 85 kg, snapped to 2.5 kg.
     const { result } = renderHook(() =>

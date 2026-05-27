@@ -11,7 +11,8 @@ export function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
     { label: 'D1', scheme: '5+' },
     { label: 'D2', scheme: '3+' },
     { label: 'D3', scheme: '1+' },
-    { label: 'D4', scheme: 'del' },
+    // Day 4 was the deload (`del`); the TM Test replaces it (`TM`).
+    { label: 'D4', scheme: 'TM' },
   ];
 
   const headerCell = (

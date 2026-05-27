@@ -26,6 +26,8 @@ import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
 import { SharePrPill, buildPrShareMessage } from './components/SharePrPill';
+import { TmAdjustmentNote } from './components/TmAdjustmentNote';
+import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
@@ -131,40 +133,62 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
         {v.isCycleComplete ? <CycleCompleteBand cycle={v.session.cycle ?? 1} /> : null}
 
-        {v.showCertificate ? (
+        {v.isTmTestSession ? (
           <>
-            <PRCertificate
-              testID="session-complete-cert"
-              e1RM={v.e1RMDisplay}
-              prevE1RM={v.prevE1RMDisplay}
-              delta={v.e1RMDelta}
-              unit={v.unitGlyph}
-              liftLabel={v.liftLower}
+            {v.tmAdjustment ? (
+              <TmAdjustmentNote
+                suggestion={v.tmAdjustment}
+                tmDisplay={v.tmTestWeight}
+                unit={v.renderUnit}
+                onPress={handleAdjustTm}
+              />
+            ) : null}
+            <TmTestReceiptBand
+              tmDisplay={v.tmTestWeight}
+              reps={v.tmTestReps}
+              unitGlyph={v.unitGlyph}
+              elapsedReady={v.elapsedReady}
+              elapsedValue={v.elapsedValue}
             />
-            <SharePrPill
-              message={buildPrShareMessage({
-                liftLabel: v.liftLower,
-                e1RM: v.e1RMDisplay,
-                delta: v.e1RMDelta,
-                unit: v.unitGlyph,
-              })}
-            />
-            <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={handleAdjustTm} />
           </>
-        ) : null}
+        ) : (
+          <>
+            {v.showCertificate ? (
+              <>
+                <PRCertificate
+                  testID="session-complete-cert"
+                  e1RM={v.e1RMDisplay}
+                  prevE1RM={v.prevE1RMDisplay}
+                  delta={v.e1RMDelta}
+                  unit={v.unitGlyph}
+                  liftLabel={v.liftLower}
+                />
+                <SharePrPill
+                  message={buildPrShareMessage({
+                    liftLabel: v.liftLower,
+                    e1RM: v.e1RMDisplay,
+                    delta: v.e1RMDelta,
+                    unit: v.unitGlyph,
+                  })}
+                />
+                <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={handleAdjustTm} />
+              </>
+            ) : null}
 
-        <ReceiptCard
-          topWeight={v.topWeight}
-          topReps={v.topReps}
-          topIsAmrap={v.topIsAmrap}
-          e1RMDisplay={v.e1RMDisplay}
-          workingVolume={v.workingVolume}
-          elapsedReady={v.elapsedReady}
-          elapsedValue={v.elapsedValue}
-          unitGlyph={v.unitGlyph}
-          bbbSetsCompleted={v.bbbSetsCompleted}
-          bbbWeightDisplay={v.bbbWeightDisplay}
-        />
+            <ReceiptCard
+              topWeight={v.topWeight}
+              topReps={v.topReps}
+              topIsAmrap={v.topIsAmrap}
+              e1RMDisplay={v.e1RMDisplay}
+              workingVolume={v.workingVolume}
+              elapsedReady={v.elapsedReady}
+              elapsedValue={v.elapsedValue}
+              unitGlyph={v.unitGlyph}
+              bbbSetsCompleted={v.bbbSetsCompleted}
+              bbbWeightDisplay={v.bbbWeightDisplay}
+            />
+          </>
+        )}
 
         <CycleGrid
           cycle={v.session.cycle ?? 1}

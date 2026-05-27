@@ -8,6 +8,7 @@ import {
   type WorkingSetIndex,
   getWorkingSetByIndex,
   isAmrapSet,
+  isTmTestSet,
   nextWorkingSetIndex,
 } from '@/domain/schemes';
 import { round as snapWeight } from '@/domain/units';
@@ -50,6 +51,7 @@ import { useRestTimer } from './useRestTimer';
 export type LivePhase =
   | 'set'
   | 'amrap-log'
+  | 'tm-test-log'
   | 'rest'
   | 'pr-celebration'
   | 'awaiting-bbb'
@@ -122,6 +124,8 @@ export type UseLiveScreenStateResult = {
   lastLogged: LastLoggedSet | null;
   /** True if the current working set is the AMRAP top set. */
   isAmrap: boolean;
+  /** True if the current set is the Week-4 TM Test set. */
+  isTmTest: boolean;
   /** Prescribed weight for the current set, snapped to the session's storage unit. */
   prescribedWeight: number;
   prescribedReps: number;
@@ -134,6 +138,12 @@ export type UseLiveScreenStateResult = {
   onOpenAmrapSheet: () => void;
   onSaveAmrap: (reps: number) => Promise<void>;
   onCancelAmrapSheet: () => void;
+  /** Open the TM Test rep-entry sheet (Week-4 sessions only). */
+  onOpenTmTestSheet: () => void;
+  /** Persist the TM Test reps (Week-4 sessions only). */
+  onSaveTmTest: (reps: number) => Promise<void>;
+  /** Dismiss the TM Test sheet without saving. */
+  onCancelTmTestSheet: () => void;
   onAdvanceFromRest: () => void;
   /**
    * Roll back the most recent `working` set log for this session and return
@@ -178,13 +188,14 @@ function defaultFireDoneHaptic() {
 
 function computeNextSetIndex(
   logs: ReadonlyArray<{ kind: string; index: number }> | undefined,
+  week: 1 | 2 | 3 | 4,
 ): WorkingSetIndex | null {
   if (!logs) return 0;
   const completed = logs
-    .filter((l) => l.kind === 'working' || l.kind === 'amrap')
+    .filter((l) => l.kind === 'working' || l.kind === 'amrap' || l.kind === 'tm-test')
     .map((l) => l.index)
     .filter((i): i is WorkingSetIndex => i === 0 || i === 1 || i === 2);
-  return nextWorkingSetIndex(Array.from(new Set(completed)));
+  return nextWorkingSetIndex(Array.from(new Set(completed)), week);
 }
 
 export function useLiveScreenState(
@@ -259,7 +270,8 @@ export function useLiveScreenState(
     if (bootstrappedRef.current) return;
     if (setLogsData === undefined) return; // still loading
     bootstrappedRef.current = true;
-    const next = computeNextSetIndex(setLogsData);
+    const weekForCompute = (session?.week ?? 1) as 1 | 2 | 3 | 4;
+    const next = computeNextSetIndex(setLogsData, weekForCompute);
     // A restored snapshot already seeded setIndex above (the set after the
     // most recent log). When restoring rest, trust the snapshot — the user
     // is mid-rest, so we don't want to bounce them back to the set surface
@@ -279,24 +291,29 @@ export function useLiveScreenState(
       return;
     }
     setSetIndex(next);
-  }, [setLogsData, session?.id, db]);
+  }, [setLogsData, session?.id, session?.week, db]);
 
   // Per-set view model — derived from the session week + current index.
   // Defaults are safe (week=1, snapshot=0) so the hook never throws while
   // the session row is still loading.
   const week = (session?.week ?? 1) as 1 | 2 | 3 | 4;
-  const workingSet = getWorkingSetByIndex(week, setIndex);
+  // Week 4 has a single set at index 0 (the TM test). Clamp to 0 defensively
+  // so a stale setIndex carried over from a week-1–3 session doesn't fault
+  // `getWorkingSetByIndex(4, 1|2)`.
+  const safeSetIndex: WorkingSetIndex = week === 4 ? 0 : setIndex;
+  const workingSet = getWorkingSetByIndex(week, safeSetIndex);
   const storageUnit = session?.storageUnitSnapshot ?? 'lbs';
   const prescribedWeight = session
     ? snapWeight(session.trainingMaxSnapshot * workingSet.pct, storageUnit)
     : 0;
   const prescribedReps = workingSet.reps;
   const pct = workingSet.pct;
-  const isAmrap = isAmrapSet(week, setIndex);
+  const isAmrap = isAmrapSet(week, safeSetIndex);
+  const isTmTest = isTmTestSet(week, safeSetIndex);
 
   const undoLastWorkingSet = useUndoLastWorkingSet();
 
-  const { onLogWorkingSet, onSaveAmrap } = useLogWorkingSets({
+  const { onLogWorkingSet, onSaveAmrap, onSaveTmTest } = useLogWorkingSets({
     sessionId: session?.id ?? null,
     setIndex,
     prescribedWeight,
@@ -312,6 +329,14 @@ export function useLiveScreenState(
   }, []);
 
   const onCancelAmrapSheet = useCallback(() => {
+    setPhase('set');
+  }, []);
+
+  const onOpenTmTestSheet = useCallback(() => {
+    setPhase('tm-test-log');
+  }, []);
+
+  const onCancelTmTestSheet = useCallback(() => {
     setPhase('set');
   }, []);
 
@@ -394,11 +419,12 @@ export function useLiveScreenState(
 
   return {
     phase,
-    setIndex,
+    setIndex: safeSetIndex,
     restRemaining: restTimer.remaining,
     restTarget: restSeconds,
     lastLogged,
     isAmrap,
+    isTmTest,
     prescribedWeight,
     prescribedReps,
     pct,
@@ -407,6 +433,9 @@ export function useLiveScreenState(
     onOpenAmrapSheet,
     onSaveAmrap,
     onCancelAmrapSheet,
+    onOpenTmTestSheet,
+    onSaveTmTest,
+    onCancelTmTestSheet,
     onAdvanceFromRest,
     onAddRest: restTimer.addTime,
     onSubRest: restTimer.subtractTime,

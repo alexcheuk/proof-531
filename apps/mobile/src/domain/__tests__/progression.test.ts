@@ -9,6 +9,7 @@ import {
   projectTmForCycle,
   projectTopSetWeight,
   rollingAmrapMargin,
+  tmAdjustmentSuggestion,
   tmFromOneRm,
 } from '../progression';
 import type { Lift, Unit } from '../types';
@@ -110,9 +111,13 @@ describe('projectTopSetWeight', () => {
     expect(projectTopSetWeight(8, 3, 230, 7, 'squat', 'lbs')).toBe(230);
   });
 
-  it('day 4 (deload) uses 0.60 TM', () => {
-    // squat TM 230 at current cycle → 230 × 0.60 = 138 → 140.
-    expect(projectTopSetWeight(7, 4, 230, 7, 'squat', 'lbs')).toBe(140);
+  it('day 4 (TM test) uses 100% TM (snapped)', () => {
+    // squat TM 230 at current cycle → 230 × 1.0 = 230 (already snapped).
+    expect(projectTopSetWeight(7, 4, 230, 7, 'squat', 'lbs')).toBe(230);
+    // Future cycle 8 → projected TM 240; tm-test set is 100% of that.
+    expect(projectTopSetWeight(8, 4, 230, 7, 'squat', 'lbs')).toBe(240);
+    // Bench TM 185 in kg unit (5kg step) — still 100% TM, snapped.
+    expect(projectTopSetWeight(5, 4, 100, 5, 'bench', 'kg')).toBe(round(100, 'kg'));
   });
 
   it('property: plate-snapped to the unit step', () => {
@@ -242,5 +247,99 @@ describe('integration sanity', () => {
         expect(projectTmForCycle(200, 5, 12, lift, unit)).toBeCloseTo(200 + 7 * inc, 5);
       }
     }
+  });
+});
+
+describe('tmAdjustmentSuggestion', () => {
+  it('reps ≥ 5 → increment with delta = tmIncrement(unit, lift)', () => {
+    // Upper-body lbs: +5
+    expect(tmAdjustmentSuggestion(5, 'bench', 'lbs')).toEqual({ kind: 'increment', delta: 5 });
+    expect(tmAdjustmentSuggestion(10, 'press', 'lbs')).toEqual({ kind: 'increment', delta: 5 });
+    // Lower-body lbs: +10
+    expect(tmAdjustmentSuggestion(5, 'squat', 'lbs')).toEqual({ kind: 'increment', delta: 10 });
+    expect(tmAdjustmentSuggestion(7, 'deadlift', 'lbs')).toEqual({ kind: 'increment', delta: 10 });
+    // Upper-body kg: +2.5
+    expect(tmAdjustmentSuggestion(5, 'bench', 'kg')).toEqual({ kind: 'increment', delta: 2.5 });
+    // Lower-body kg: +5
+    expect(tmAdjustmentSuggestion(5, 'squat', 'kg')).toEqual({ kind: 'increment', delta: 5 });
+  });
+
+  it('reps 3–4 → hold (no delta)', () => {
+    expect(tmAdjustmentSuggestion(3, 'bench', 'lbs')).toEqual({ kind: 'hold' });
+    expect(tmAdjustmentSuggestion(4, 'squat', 'kg')).toEqual({ kind: 'hold' });
+  });
+
+  it('reps 0–2 → reset at 0.9 (−10%)', () => {
+    expect(tmAdjustmentSuggestion(0, 'bench', 'lbs')).toEqual({ kind: 'reset', resetPct: 0.9 });
+    expect(tmAdjustmentSuggestion(1, 'squat', 'kg')).toEqual({ kind: 'reset', resetPct: 0.9 });
+    expect(tmAdjustmentSuggestion(2, 'deadlift', 'lbs')).toEqual({ kind: 'reset', resetPct: 0.9 });
+  });
+
+  it('negative reps default to reset (defensive)', () => {
+    expect(tmAdjustmentSuggestion(-1, 'bench', 'lbs')).toEqual({ kind: 'reset', resetPct: 0.9 });
+    expect(tmAdjustmentSuggestion(-10, 'squat', 'lbs')).toEqual({ kind: 'reset', resetPct: 0.9 });
+  });
+
+  it('property: band closure — total function over reps [-5..50]', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: -5, max: 50 }),
+        fc.constantFrom(...LIFTS),
+        fc.constantFrom(...UNITS),
+        (reps, lift, unit) => {
+          const r = tmAdjustmentSuggestion(reps, lift, unit);
+          if (r.kind === 'increment') return r.delta > 0;
+          if (r.kind === 'hold') return true;
+          if (r.kind === 'reset') return r.resetPct > 0 && r.resetPct < 1;
+          return false;
+        },
+      ),
+    );
+  });
+
+  it('property: band boundaries are monotone', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 0, max: 30 }),
+        fc.constantFrom(...LIFTS),
+        fc.constantFrom(...UNITS),
+        (reps, lift, unit) => {
+          const r = tmAdjustmentSuggestion(reps, lift, unit);
+          if (reps >= 5) return r.kind === 'increment';
+          if (reps >= 3) return r.kind === 'hold';
+          return r.kind === 'reset';
+        },
+      ),
+    );
+  });
+
+  it('property: increment.delta === tmIncrement(unit, lift) on the increment band', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 5, max: 30 }),
+        fc.constantFrom(...LIFTS),
+        fc.constantFrom(...UNITS),
+        (reps, lift, unit) => {
+          const r = tmAdjustmentSuggestion(reps, lift, unit);
+          if (r.kind !== 'increment') return false;
+          return r.delta === tmIncrement(unit, lift);
+        },
+      ),
+    );
+  });
+
+  it('property: reset.resetPct is constant 0.9 across reset band', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: -5, max: 2 }),
+        fc.constantFrom(...LIFTS),
+        fc.constantFrom(...UNITS),
+        (reps, lift, unit) => {
+          const r = tmAdjustmentSuggestion(reps, lift, unit);
+          if (r.kind !== 'reset') return false;
+          return r.resetPct === 0.9;
+        },
+      ),
+    );
   });
 });

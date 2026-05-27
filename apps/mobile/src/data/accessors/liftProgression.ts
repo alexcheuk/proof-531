@@ -19,13 +19,31 @@
  * include working sets too, but the Progress feature only needs the
  * AMRAP top per (session, day).
  */
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
 import { sessions, setLogs } from '../drizzle/schema';
 
 // biome-ignore lint/suspicious/noExplicitAny: structural typing for cross-driver drizzle
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
+
+/**
+ * Per-cycle "headline" set surfaced to the Progress grid. AMRAP for weeks
+ * 1–3; TM test for week 4 (post-migration); `null` when the session was
+ * logged without one (interrupted session, legacy `'working'` deload).
+ *
+ * `kind` distinguishes AMRAP rows from TM-test rows so the Progress grid
+ * can render the right marker glyph (band-derived for tm-test; rep count
+ * for AMRAP).
+ */
+export type CompletedSessionTopSet = {
+  setLogId: number;
+  kind: 'amrap' | 'tm-test';
+  prescribedWeight: number;
+  prescribedReps: number;
+  actualReps: number;
+  estimated1RM: number | null;
+};
 
 export type CompletedSessionWithAmrap = {
   sessionId: number;
@@ -36,13 +54,16 @@ export type CompletedSessionWithAmrap = {
   trainingMaxSnapshot: number;
   storageUnitSnapshot: 'lbs' | 'kg' | null;
   displayUnitSnapshot: 'lbs' | 'kg' | null;
-  amrap: {
-    setLogId: number;
-    prescribedWeight: number;
-    prescribedReps: number;
-    actualReps: number;
-    estimated1RM: number | null;
-  } | null;
+  /**
+   * AMRAP set for weeks 1–3 (`kind === 'amrap'`). On week-4 TM-test sessions
+   * (post-migration) the same field surfaces the tm-test top set
+   * (`kind === 'tm-test'`). Legacy `'working'` deload sessions still resolve
+   * to `null` — they had no AMRAP and predate the TM test.
+   *
+   * Field name unchanged for backward compatibility with the consumer; the
+   * Progress grid branches on the inner `kind` to pick the right cell shape.
+   */
+  amrap: CompletedSessionTopSet | null;
 };
 
 /**
@@ -71,13 +92,17 @@ export async function getCompletedSessionsWithAmrapForLift(
         storageUnitSnapshot: sessions.storageUnitSnapshot,
         displayUnitSnapshot: sessions.displayUnitSnapshot,
         setLogId: setLogs.id,
+        setLogKind: setLogs.kind,
         prescribedWeight: setLogs.prescribedWeight,
         prescribedReps: setLogs.prescribedReps,
         actualReps: setLogs.actualReps,
         estimated1RM: setLogs.estimated1RM,
       })
       .from(sessions)
-      .leftJoin(setLogs, and(eq(setLogs.sessionId, sessions.id), eq(setLogs.kind, 'amrap')))
+      .leftJoin(
+        setLogs,
+        and(eq(setLogs.sessionId, sessions.id), inArray(setLogs.kind, ['amrap', 'tm-test'])),
+      )
       .where(and(eq(sessions.lift, lift), eq(sessions.status, 'completed')))
       .orderBy(desc(sessions.startedAt), desc(sessions.id)),
   )) as Array<{
@@ -90,25 +115,29 @@ export async function getCompletedSessionsWithAmrapForLift(
     storageUnitSnapshot: 'lbs' | 'kg' | null;
     displayUnitSnapshot: 'lbs' | 'kg' | null;
     setLogId: number | null;
+    setLogKind: 'amrap' | 'tm-test' | null;
     prescribedWeight: number | null;
     prescribedReps: number | null;
     actualReps: number | null;
     estimated1RM: number | null;
   }>;
 
-  // Multiple amrap rows per session are possible in pathological data; pick
-  // the highest-e1RM row per session to surface the best AMRAP attempt.
-  // Same `sessionId` could appear multiple times in the join; collapse.
+  // Multiple top-set rows per session are possible in pathological data
+  // (e.g. an amrap re-attempt; a session that somehow logged both kinds).
+  // Pick the row with the highest e1RM-equivalent magnitude per session.
+  // Same `sessionId` can appear multiple times in the join; collapse.
   const bySessionId = new Map<number, CompletedSessionWithAmrap>();
   for (const r of rows) {
     const existing = bySessionId.get(r.sessionId);
-    const amrap =
+    const topSet: CompletedSessionTopSet | null =
       r.setLogId !== null &&
+      r.setLogKind !== null &&
       r.prescribedWeight !== null &&
       r.prescribedReps !== null &&
       r.actualReps !== null
         ? {
             setLogId: r.setLogId,
+            kind: r.setLogKind,
             prescribedWeight: r.prescribedWeight,
             prescribedReps: r.prescribedReps,
             actualReps: r.actualReps,
@@ -125,16 +154,20 @@ export async function getCompletedSessionsWithAmrapForLift(
         trainingMaxSnapshot: r.trainingMaxSnapshot,
         storageUnitSnapshot: r.storageUnitSnapshot,
         displayUnitSnapshot: r.displayUnitSnapshot,
-        amrap,
+        amrap: topSet,
       });
       continue;
     }
-    // Replace amrap if this row beats the prior one.
+    // Replace the existing top set when this row's e1RM is strictly higher.
+    // tm-test rows carry `estimated1RM === null` (no PR semantics), so the
+    // existing amrap row wins ties — keeping the AMRAP preference on the
+    // pathological "both kinds logged for one session" path. A session that
+    // only logged a tm-test stores it via the !existing branch above.
     if (
-      amrap !== null &&
-      (existing.amrap === null || (amrap.estimated1RM ?? 0) > (existing.amrap.estimated1RM ?? 0))
+      topSet !== null &&
+      (existing.amrap === null || (topSet.estimated1RM ?? 0) > (existing.amrap.estimated1RM ?? 0))
     ) {
-      existing.amrap = amrap;
+      existing.amrap = topSet;
     }
   }
   return Array.from(bySessionId.values()).sort(

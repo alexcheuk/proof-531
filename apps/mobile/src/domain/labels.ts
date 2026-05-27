@@ -39,7 +39,10 @@ export function liftDisplayName(lift: Lift): string {
 
 /**
  * Week scheme glyph for the title eyebrow.
- *   1 → 5/5/5+   2 → 3/3/3+   3 → 5/3/1+   4 → DELOAD
+ *   1 → 5/5/5+   2 → 3/3/3+   3 → 5/3/1+   4 → TM TEST
+ *
+ * Week 4 was the classic Wendler deload; replaced (forever-forward) with
+ * the 7th Week Protocol TM test. See `_workspace/01_design_spec.md`.
  */
 export function weekLabel(week: Week): string {
   switch (week) {
@@ -50,7 +53,7 @@ export function weekLabel(week: Week): string {
     case 3:
       return '5/3/1+';
     case 4:
-      return 'DELOAD';
+      return 'TM TEST';
   }
 }
 
@@ -68,7 +71,7 @@ export function weekIntent(week: Week): string {
     case 3:
       return 'Top single · grind the +';
     case 4:
-      return 'Deload · stay sharp, recover';
+      return 'Verify the TM · 3 to 5 clean reps';
   }
 }
 

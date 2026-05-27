@@ -18,7 +18,9 @@ const CELLS: readonly Cell[] = [
   { w: 1, scheme: '5·5·5+' },
   { w: 2, scheme: '3·3·3+' },
   { w: 3, scheme: '5·3·1+' },
-  { w: 4, scheme: 'Deload', deload: true },
+  // Week 4 is now the TM Test (7th-week protocol). `deload: true` keeps the
+  // existing caps-mono cell treatment; the label text is the only swap.
+  { w: 4, scheme: 'TM TEST', deload: true },
 ];
 
 type CycleStripProps = {

@@ -66,6 +66,29 @@ describe('getCompletedSessionsWithAmrapForLift', () => {
     expect(rows[0]?.amrap).toBeNull();
   });
 
+  it('surfaces a tm-test top set on week-4 sessions', async () => {
+    const db = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 250, 'lbs');
+
+    const session = await createSession(db, 'squat');
+    await appendSetLog(db, {
+      sessionId: session.id,
+      index: 0,
+      kind: 'tm-test',
+      prescribedWeight: 250,
+      prescribedReps: 5,
+      actualReps: 5,
+    });
+    await completeSession(db, session.id);
+
+    const rows = await getCompletedSessionsWithAmrapForLift(db, 'squat');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.amrap?.kind).toBe('tm-test');
+    expect(rows[0]?.amrap?.actualReps).toBe(5);
+    expect(rows[0]?.amrap?.prescribedWeight).toBe(250);
+  });
+
   it('does not return sessions for other lifts', async () => {
     const db = freshDb();
     await seedDefaultSettings(db);

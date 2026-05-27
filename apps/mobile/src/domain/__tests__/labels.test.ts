@@ -39,7 +39,7 @@ describe('weekLabel', () => {
     expect(weekLabel(1)).toBe('5/5/5+');
     expect(weekLabel(2)).toBe('3/3/3+');
     expect(weekLabel(3)).toBe('5/3/1+');
-    expect(weekLabel(4)).toBe('DELOAD');
+    expect(weekLabel(4)).toBe('TM TEST');
   });
 });
 
@@ -48,7 +48,7 @@ describe('weekIntent', () => {
     expect(weekIntent(1)).toBe('Easy 5s · build the groove');
     expect(weekIntent(2)).toBe('Heavy 3s · trust the system');
     expect(weekIntent(3)).toBe('Top single · grind the +');
-    expect(weekIntent(4)).toBe('Deload · stay sharp, recover');
+    expect(weekIntent(4)).toBe('Verify the TM · 3 to 5 clean reps');
   });
 });
 

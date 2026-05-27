@@ -52,7 +52,9 @@ export const setLogs = sqliteTable('set_logs', {
     .notNull()
     .references(() => sessions.id),
   index: integer('index').notNull(),
-  kind: text('kind', { enum: ['warmup', 'working', 'amrap', 'bbb', 'assistance'] }).notNull(),
+  kind: text('kind', {
+    enum: ['warmup', 'working', 'amrap', 'bbb', 'assistance', 'tm-test'],
+  }).notNull(),
   prescribedWeight: real('prescribed_weight').notNull(),
   prescribedReps: integer('prescribed_reps').notNull(),
   actualReps: integer('actual_reps').notNull(),

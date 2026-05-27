@@ -1,5 +1,5 @@
 import { decompose } from '@/domain/plates';
-import { type WorkingSet, prescription } from '@/domain/schemes';
+import { type WorkingSet, prescription, tmTestSet } from '@/domain/schemes';
 import type { PlateSet, Unit, Week } from '@/domain/types';
 import { convert, round } from '@/domain/units';
 import { useMemo } from 'react';
@@ -41,8 +41,11 @@ export function useLiftPageState({
   tm,
 }: UseLiftPageStateOptions): UseLiftPageStateResult {
   return useMemo<UseLiftPageStateResult>(() => {
-    const sets = prescription(week);
-    const topSet = sets[2];
+    // Week 1–3 → top of the working triple (`sets[2]`, the AMRAP).
+    // Week 4 → the TM test set (100% × 5, kind 'tm-test'). Both shapes
+    // satisfy `WorkingSet`; the LiftPage mini-card renders whichever the
+    // current week prescribes.
+    const topSet = week === 4 ? tmTestSet() : prescription(week)[2];
     if (tm == null || topSet == null) return { empty: true };
 
     // Snap in storage units, then convert for render — keeps the snap to

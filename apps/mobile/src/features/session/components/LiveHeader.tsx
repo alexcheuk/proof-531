@@ -23,6 +23,12 @@ const TITLE_LINE_HEIGHT = 74;
 export type LiveHeaderProps = {
   setIndex: 0 | 1 | 2;
   isAmrap: boolean;
+  /**
+   * True when the current set is the Week-4 TM Test set. Replaces the
+   * "SET N OF 3" eyebrow with "TM TEST · TARGET 3–5" and swaps the
+   * AMRAP coaching line for TM-test guidance.
+   */
+  isTmTest?: boolean;
   testID?: string;
   lift: string;
   /**
@@ -32,7 +38,14 @@ export type LiveHeaderProps = {
   elapsedSeconds?: number;
 };
 
-export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: LiveHeaderProps) {
+export function LiveHeader({
+  setIndex,
+  isAmrap,
+  isTmTest = false,
+  testID,
+  lift,
+  elapsedSeconds,
+}: LiveHeaderProps) {
   const { spacing } = useTheme();
   const oneBased = setIndex + 1;
 
@@ -55,15 +68,17 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
     <View testID={testID} style={container}>
       <Row justify="space-between" align="baseline">
         <CapsLabel
-          weight={setIndex === 2 ? 'bold' : 'medium'}
-          color={setIndex === 2 ? 'ink0' : 'ink2'}
+          weight={isTmTest || setIndex === 2 ? 'bold' : 'medium'}
+          color={isTmTest || setIndex === 2 ? 'ink0' : 'ink2'}
           {...(eyebrowTestID ? { testID: eyebrowTestID } : {})}
         >
-          {setIndex === 2
-            ? 'FINAL SET · 66% done'
-            : setIndex === 1
-              ? 'SET 2 OF 3 · 33% done'
-              : `SET ${oneBased} OF 3`}
+          {isTmTest
+            ? 'TM TEST · TARGET 3–5'
+            : setIndex === 2
+              ? 'FINAL SET · 66% done'
+              : setIndex === 1
+                ? 'SET 2 OF 3 · 33% done'
+                : `SET ${oneBased} OF 3`}
         </CapsLabel>
         {elapsedSeconds !== undefined ? (
           <CapsLabel
@@ -97,7 +112,21 @@ export function LiveHeader({ setIndex, isAmrap, testID, lift, elapsedSeconds }: 
         </Text>
       </View>
 
-      {isAmrap ? (
+      {isTmTest ? (
+        <View style={{ marginTop: spacing.sm, alignItems: 'flex-start' }}>
+          <MonoBadge>TM TEST</MonoBadge>
+          <Text
+            variant="sans"
+            weight="semibold"
+            size={15}
+            color="ink0"
+            style={{ marginTop: spacing.xs, lineHeight: 20 }}
+            testID="live-tm-test-coaching"
+          >
+            Aim for 3 to 5 clean reps. Stop when bar speed drops.
+          </Text>
+        </View>
+      ) : isAmrap ? (
         <View style={{ marginTop: spacing.sm, alignItems: 'flex-start' }}>
           <MonoBadge>AMRAP</MonoBadge>
           <Text

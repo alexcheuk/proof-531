@@ -3,6 +3,7 @@ import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
+import { type TmAdjustmentSuggestion, tmAdjustmentSuggestion } from '@/domain/progression';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
 import type { Lift, SetLog, Unit } from '@/domain/types';
 import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
@@ -70,6 +71,24 @@ export type SessionCompleteView = {
   // remains a real distinction on the receipt.
   bbbSetsCompleted: number;
   bbbWeightDisplay: number;
+  /**
+   * True when this Session Complete is a Week-4 TM Test session (a logged
+   * `'tm-test'` row exists). Drives the variant pivot: no PRCertificate,
+   * no AdjustTmCta, no standard ReceiptCard — instead, the TmTestReceiptBand
+   * + TmAdjustmentNote render. Legacy `'working'` week-4 deload sessions
+   * (pre-migration) resolve to `false` here and render under the legacy
+   * receipt — the forward-only contract.
+   */
+  isTmTestSession: boolean;
+  /** Reps logged on the TM test set; only meaningful when `isTmTestSession`. */
+  tmTestReps: number;
+  /** TM at test time in display units; only meaningful when `isTmTestSession`. */
+  tmTestWeight: number;
+  /**
+   * TM adjustment suggestion derived from `tmAdjustmentSuggestion(reps, lift,
+   * unit)`. Null outside TM-test sessions.
+   */
+  tmAdjustment: TmAdjustmentSuggestion | null;
 };
 
 export function useSessionCompleteData(sessionId: number): SessionCompleteData {
@@ -135,6 +154,8 @@ export function deriveView({
     ...(l.estimated1RM != null ? { estimated1RM: l.estimated1RM } : {}),
   }));
   const workingLogs = logs.filter((l) => l.kind === 'working' || l.kind === 'amrap');
+  const tmTestLog = logs.find((l) => l.kind === 'tm-test') ?? null;
+  const isTmTestSession = tmTestLog !== null;
   const hasPR = workingLogs.some((l) => l.isPR === true);
 
   // Date stamp parts — `endedAt` is set on the happy path.
@@ -189,6 +210,15 @@ export function deriveView({
   const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
   const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorageRow, storageUnit, renderUnit));
 
+  // TM Test rollup — when present, drives the week-4 receipt + adjustment
+  // surface in place of the standard PR / receipt / adjust-tm chrome.
+  const tmTestReps = tmTestLog?.actualReps ?? 0;
+  const tmTestWeightStorage = tmTestLog?.prescribedWeight ?? 0;
+  const tmTestWeight = Math.round(convertWeight(tmTestWeightStorage, storageUnit, renderUnit));
+  const tmAdjustment: TmAdjustmentSuggestion | null = isTmTestSession
+    ? tmAdjustmentSuggestion(tmTestReps, lift, renderUnit)
+    : null;
+
   // Cycle position math — falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
   // grid ceiling cannot disagree.
@@ -240,5 +270,9 @@ export function deriveView({
     elapsedValue,
     bbbSetsCompleted,
     bbbWeightDisplay,
+    isTmTestSession,
+    tmTestReps,
+    tmTestWeight,
+    tmAdjustment,
   };
 }

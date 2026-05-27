@@ -14,6 +14,23 @@ export type TopSetHeroProps = {
   unitGlyph: 'lb' | 'kg';
   tmInDisplay: number;
   plateSet: PlateSet;
+  /**
+   * Optional eyebrow override (defaults to "NEXT SET"). Week-4 TM-test
+   * sessions pass "TM TEST" so the hero reads consistently with the strip.
+   */
+  eyebrow?: string;
+  /**
+   * Optional pct-label override. Defaults to `Math.round(set.pct * 100)%`.
+   * Week-4 passes `"100% TM"` to make the percentage and TM context one
+   * caption rather than two ("100%" + "TM 245 lb" reads as redundant when
+   * pct is exactly 100).
+   */
+  pctLabel?: string;
+  /**
+   * Optional rep-range tuple. When set, the hero renders `× lo–hi` instead
+   * of `× reps`. Week-4 passes `[3, 5]` to communicate the TM test band.
+   */
+  repsRange?: readonly [number, number];
 };
 
 /**
@@ -29,6 +46,9 @@ export function TopSetHero({
   unitGlyph,
   tmInDisplay,
   plateSet,
+  eyebrow,
+  pctLabel,
+  repsRange,
 }: TopSetHeroProps) {
   const { colors, layout, spacing } = useTheme();
   const heroStyle: ViewStyle = {
@@ -46,12 +66,13 @@ export function TopSetHero({
   return (
     <View style={heroStyle}>
       <TopSetBlock
-        eyebrow="NEXT SET"
+        eyebrow={eyebrow ?? 'NEXT SET'}
         weight={heroWeight}
         unitGlyph={unitGlyph}
         reps={set.reps}
         amrap={!!set.amrap}
-        pctLabel={`${Math.round(set.pct * 100)}%`}
+        {...(repsRange ? { repsRange } : {})}
+        pctLabel={pctLabel ?? `${Math.round(set.pct * 100)}%`}
         tmLabel={`TM ${tmInDisplay} ${unitGlyph}`}
         perSide={heroDecomposed.perSide}
         plateVariant="full"
