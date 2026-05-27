@@ -5,19 +5,32 @@
 set -u
 
 HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+LOG_FILE="$HOOK_DIR/.log"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+log() {
+  printf '{"ts":"%s","hook":"on-loop-start","status":"%s","note":"%s"}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" "${2:-}" \
+    >>"$LOG_FILE" 2>/dev/null || true
+}
 
 INPUT="$(cat)"
 
-# Hook payload includes the submitted prompt under .prompt. Bail unless this
-# is an auto-improve invocation.
-PROMPT="$(printf '%s' "$INPUT" | jq -r '.prompt // empty' 2>/dev/null)"
+# Prefer jq; fall back to a grep that finds the prompt field in the JSON.
+if command -v jq >/dev/null 2>&1; then
+  PROMPT="$(printf '%s' "$INPUT" | jq -r '.prompt // empty' 2>/dev/null)"
+else
+  PROMPT="$(printf '%s' "$INPUT" | grep -oE '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed -E 's/.*"prompt"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/')"
+fi
+
 case "$PROMPT" in
-  */auto-improve*) ;;
-  *) exit 0 ;;
+  *auto-improve*) ;;
+  *)
+    log "skip-no-match" "prompt=$(printf '%s' "$PROMPT" | head -c 80)"
+    exit 0
+    ;;
 esac
 
-# Compute next expedition number = 1 + max(expedition: N) across blog posts.
 NEXT=1
 BLOG_DIR="$REPO_ROOT/apps/web/src/content/blog"
 if [ -d "$BLOG_DIR" ]; then
@@ -26,6 +39,7 @@ if [ -d "$BLOG_DIR" ]; then
   if [ -n "$MAX" ]; then NEXT=$((MAX + 1)); fi
 fi
 
+log "fire" "expedition=$NEXT"
 "$HOOK_DIR/tts-say.sh" "Expedition $NEXT departs."
 
 exit 0
