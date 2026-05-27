@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Reverted session→tabs navigation order: dismiss-first, then navigate
+
+**Tags:** `bug`, `navigation`, `session`
+**Files:** `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+Restored the dismiss-first pattern for the "Close the day" CTA in `SessionCompleteScreen`. A prior fix (loop-017, Discord 1509123493) reversed the order to `navigate() first, dismissAll() after` to avoid a brief flash, but `router.navigate('/(tabs)/progress')` from inside the `session` group does not reliably switch the active tab in the parent `(tabs)` navigator — the navigation action doesn't propagate to the right navigator scope.
+
+**Why:** Discord 1509284142 — "A recent change makes completing a session no longer go to the Progress page." The dismiss-first rule was already documented in `loop-memory/12-cross-stack-navigation.md` but the loop-017 fix violated it anyway in pursuit of the UX polish.
+
+**Trade-off / what we didn't do:** The brief flash after dismissAll but before the tab switch is back. Investigated `router.navigate()` with `segments`/`relativeToDirectory` options — Expo Router v3 does not expose those reliably from a nested group context. Dismiss-first is the documented correct pattern.
+
 ### 2026-05-27 — Removed permanently-dead cycle-progress fields from History data layer
 
 **Tags:** `removal`, `history`

@@ -7,7 +7,6 @@ import {
   displayUnit,
   displayWeight,
   round,
-  snapWeight,
   trainingMaxFrom,
 } from '../units';
 
@@ -89,10 +88,6 @@ describe('trainingMaxFrom', () => {
 });
 
 describe('PWA back-compat aliases', () => {
-  it('snapWeight === round', () => {
-    expect(snapWeight).toBe(round);
-  });
-
   it('convertAndSnap matches convert with snap=true', () => {
     expect(convertAndSnap(225, 'lbs', 'kg')).toBe(convert(225, 'lbs', 'kg', { snap: true }));
     expect(convertAndSnap(100, 'kg', 'lbs')).toBe(220);

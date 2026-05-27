@@ -16,7 +16,7 @@
 
 import { estimateOneRm } from './epley';
 import { tmIncrement } from './increments';
-import { setsForWeek } from './schemes';
+import { prescription } from './schemes';
 import type { Lift, SetLogKind, Unit } from './types';
 import { round } from './units';
 
@@ -95,7 +95,7 @@ export function projectTopSetWeight(
 ): number {
   const tm = projectTmForCycle(currentTm, currentCycle, futureCycle, lift, unit);
   if (day === 4) return round(tm, unit);
-  const week3 = setsForWeek(3);
+  const week3 = prescription(3);
   const set = week3[day - 1];
   if (!set) return 0;
   return round(tm * set.pct, unit);

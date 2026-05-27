@@ -52,7 +52,7 @@ export function LiftTabs({
           // Numbers match Masthead so the two stacked surfaces share one
           // shadow language — anything heavier reads as Material, which
           // is wrong for the e-ink-paper aesthetic.
-          shadowColor: '#000',
+          shadowColor: colors.ink0,
           shadowOpacity: 0.08,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },

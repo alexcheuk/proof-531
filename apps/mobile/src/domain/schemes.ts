@@ -83,9 +83,6 @@ export function tmTestSet(): WorkingSet {
   return { ...s };
 }
 
-/** Alias preserving PWA naming for callers porting verbatim. */
-export const setsForWeek = prescription;
-
 /**
  * Thin lookup for a single working set by (week, index). Throws on out-of-range.
  *

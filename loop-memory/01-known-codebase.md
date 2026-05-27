@@ -229,6 +229,33 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   the style array so the animated value is not shadowed by an inline
   `opacity` property that comes after it.
 
+## Cross-stack navigation (session → tabs) — expedition-010 fix
+
+- Rule: from inside the `session` group, dismiss first, THEN navigate.
+  `router.navigate('/(tabs)/progress')` from inside a nested group does
+  NOT reliably switch the active tab in the parent navigator. The correct
+  pattern:
+  ```ts
+  if (router.canDismiss()) router.dismissAll();
+  goTo.progress(router, lift);   // router.navigate()
+  ```
+- The reversed order (navigate first, dismiss after) was tried in
+  loop-017 to avoid a brief flash, but it caused a regression where
+  Progress was never reached (Discord 1509284142). Reverted in
+  expedition-010.
+
+## Native module rebuild after Node upgrade
+
+- `better-sqlite3` (used by Jest for DB accessor tests) must be rebuilt
+  when the Node.js major version changes. After a Node upgrade, all DB
+  accessor tests fail with "NODE_MODULE_VERSION mismatch". Fix:
+  ```bash
+  cd node_modules/.pnpm/better-sqlite3@<ver>/node_modules/better-sqlite3
+  npm rebuild
+  ```
+  This is a one-time step per Node major version bump; tests return to
+  green immediately after.
+
 ## Data accessors (one-stop reference)
 
 - `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.

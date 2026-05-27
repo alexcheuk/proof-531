@@ -3,20 +3,13 @@
  *
  * This module is part of `src/domain/` — pure math, no React, no async,
  * no Drizzle. Mirrors the PWA's `features/session/domain/units.ts` (see
- * `~/Development/531-pwa/src/features/session/domain/units.ts`), but the
- * RN port renames the two primary verbs:
- *   - `round`   ≡ PWA's `snapWeight`
- *   - `convert` ≡ PWA's `convertWeight` / `convertAndSnap` (unified via
- *                 `options.snap`)
- *
- * The PWA names remain available as named back-compat aliases so call
- * sites ported verbatim keep working.
+ * `~/Development/531-pwa/src/features/session/domain/units.ts`).
  */
 import type { Unit } from './types';
 
 /** NIST exact conversion: 1 lb = 0.45359237 kg. */
-export const KG_PER_LB = 0.45359237;
-export const LB_PER_KG = 1 / KG_PER_LB; // ≈ 2.20462262
+const KG_PER_LB = 0.45359237;
+const LB_PER_KG = 1 / KG_PER_LB; // ≈ 2.20462262
 
 /**
  * Snap a weight to the nearest loadable increment for its unit.
@@ -61,12 +54,6 @@ export function convert(
   const inToUnit = fromUnit === 'lbs' ? value * KG_PER_LB : value * LB_PER_KG;
   return snap ? round(inToUnit, toUnit) : inToUnit;
 }
-
-/**
- * Back-compat alias for code ported from the PWA, where snapping was the
- * sole shape of the API.
- */
-export const snapWeight = round;
 
 /**
  * PWA back-compat: snapping conversion. Equivalent to `convert(...)`
