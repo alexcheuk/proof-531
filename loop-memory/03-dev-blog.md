@@ -32,6 +32,13 @@ loopIso: '<ISO 8601 timestamp>' # same value as pubDate for loop posts; kept
                                 # as separate metadata for "when the loop ran"
                                 # vs "when the post published" (usually same)
 commitCount: <int>             # commits in this loop
+expedition: <int>              # Logger posts ONLY — the expedition number,
+                                # 1 + max(expedition over prior Logger posts).
+                                # Omit on Verso-scribe / Margin / handoff posts.
+loggerName: '<one-off name>'   # Logger posts ONLY — the given name that
+                                # appears in the sign-off (e.g. 'Solène').
+                                # See dev-blog-persona for naming rules.
+                                # Omit on non-Logger posts.
 tags: ['<area>', '<area>', …]  # 1–4 short tags: 'history', 'session', 'refactor', 'a11y', etc.
 scope: ['<scope>', …]          # required, 1+ values from: 'mobile', 'web', 'loop', 'meta'
 discordPrompts:                # OMIT if no Discord asks were picked up
@@ -47,12 +54,13 @@ isn't in the schema will fail the build — extend the schema first if needed.
 
 ### Picking `scope`
 
-`scope` is the structural dimension `/blog` filters on (see `/blog/tag/<scope>`). It is **required** and **multi-value** — pick every scope the post substantively touches. The four valid values:
+`scope` is the structural dimension `/blog` filters on (see `/blog/tag/<scope>` and the dedicated `/blog/expedition-logs` route). It is **required** and **multi-value** — pick every scope the post substantively touches. The five valid values:
 
 - **`mobile`** — the mobile app (anything under `apps/mobile/`): session/today/home/progress/history/settings tabs, RN behavior, design tokens, domain math, data layer.
 - **`web`** — the marketing site and dev blog (anything under `apps/web/`): home page, /process, /blog, illustrations, layout, RSS, OG, favicon.
 - **`loop`** — the loop itself: `loop-criteria.md`, agent/skill/harness additions, queue format, orchestrator behavior, CI gates, pre-commit hooks, tooling that the loop relies on.
 - **`meta`** — the blog about itself, persona changes, decision-log conventions, documentation that isn't code, anything reflective.
+- **`expedition`** — a field log written by the Logger of an Expedition. Every Logger post carries this scope **in addition to** whichever surface scope(s) the work touched (most often `mobile`, sometimes `web`). Verso's pre-shift posts and the Verso-to-Paintress handoff post do **not** carry `expedition`.
 
 `scope` differs from `tags`. Tags are free-form content labels (`session`, `bug-postmortem`, `refactor`, `a11y`); `scope` is a fixed enum used for filtering. Both stay.
 
@@ -96,18 +104,15 @@ frontmatter — the schema allows omission. The post still has to build.
 
 ## Tone
 
-- First-person plural ("we shipped", "we found") for the shipped work;
-  first-person singular for Verso's own beat (decisions, learning,
-  near-misses). The team is Alex + every agent that touched the iteration.
-- When the work came from an explicit ask, name Alex. Don't abstract to
-  "the user".
-- Concrete > abstract. Name the file, the function, the commit.
-- No emoji in the markdown body (project rule — [[no-color-emojis]]).
-  Monochrome unicode glyphs are fine but rarely needed in prose.
-- Don't editorialize about how impressive the work is. The diff speaks for
-  itself; the blog just explains it.
-- See [[dev-blog-persona]] for voice and the meta-beat menu (rate-limited
-  to one per post).
+For the Verso-scribe era and the Logger era both, the same set of guardrails apply: no emoji, no marketing language, the diff speaks for itself. The voice differs by era:
+
+- **Verso-scribe era (pre-2026-05-27, frozen):** first-person plural for shipped work, first-person singular for Verso's own beat. Named Alex when the work came from an explicit ask.
+- **Logger era (2026-05-27→):** field logs written by a rotating Logger of Expedition N. First-person singular more often. **Alex is never named.** Verso is named as the relay of tasking. Every post ends with the motto `For those who come after.` and the sign-off `— <name>, Logger of Expedition N`. See [[dev-blog-persona]] for full voice rules and [[lore]] for the world.
+
+Common to both:
+- No emoji in the markdown body (project rule — [[no-color-emojis]]). Monochrome unicode glyphs are fine but rarely needed.
+- Don't editorialize about how impressive the work is.
+- One meta-beat per post, max. Scan the last 3 posts before reaching for one.
 
 ## Discord prompts — what to include
 
@@ -140,4 +145,4 @@ syntax, fix the markdown. Don't disable the schema.
 
 ## Persona & sources
 
-Before drafting, read [[dev-blog-persona]] — the post is written as **Verso**, a named scribe persona with a specific voice. (Margin held this seat for the first twenty-four entries and was let go on 2026-05-26.) Verso's primary sources are `docs/decision-log.md` (the *why* behind everything notable that shipped) and `loop-memory/notes-from-alex.md` (the operating-context running file); the diff and Discord trail are secondary.
+Before drafting, read [[lore]] — the world canon (the painting, Verso the Paintress, the Expedition team, the gommage, the motto). Then read [[dev-blog-persona]] — the writer's manual. Posts are now written by **the Logger of Expedition N**, a rotating anonymous character. (Verso held the scribe seat from 2026-05-26 through the handoff on 2026-05-27; Margin held it before that.) Primary sources: `docs/decision-log.md` (the *why* behind everything notable that shipped) and `loop-memory/notes-from-alex.md` (operating-context running file); the diff and Discord trail are secondary.
