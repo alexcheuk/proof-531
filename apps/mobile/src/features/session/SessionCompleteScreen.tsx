@@ -14,7 +14,7 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, type ViewStyle } from 'react-native';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleCompleteBand } from './components/CycleCompleteBand';
@@ -27,6 +27,7 @@ import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
 import { SharePrPill, buildPrShareMessage } from './components/SharePrPill';
 import { TmAdjustmentNote } from './components/TmAdjustmentNote';
+import { TmApplySheet } from './components/TmApplySheet';
 import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
@@ -105,7 +106,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     if (router.canDismiss()) router.dismissAll();
     goTo.progress(router, v.session.lift, { justCompleted: sessionId });
   };
-  const handleAdjustTm = () => goTo.settings(router);
+
+  const [tmApplyOpen, setTmApplyOpen] = useState(false);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
@@ -136,12 +138,23 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
         {v.isTmTestSession ? (
           <>
             {v.tmAdjustment ? (
-              <TmAdjustmentNote
-                suggestion={v.tmAdjustment}
-                tmDisplay={v.tmTestWeight}
-                unit={v.renderUnit}
-                onPress={handleAdjustTm}
-              />
+              <>
+                <TmAdjustmentNote
+                  suggestion={v.tmAdjustment}
+                  tmDisplay={v.tmTestWeight}
+                  unit={v.renderUnit}
+                  onPress={() => setTmApplyOpen(true)}
+                />
+                <TmApplySheet
+                  open={tmApplyOpen}
+                  lift={v.lift}
+                  suggestion={v.tmAdjustment}
+                  tmDisplay={v.tmTestWeight}
+                  unit={v.renderUnit}
+                  storageUnit={v.storageUnit}
+                  onClose={() => setTmApplyOpen(false)}
+                />
+              </>
             ) : null}
             <TmTestReceiptBand
               tmDisplay={v.tmTestWeight}
@@ -171,7 +184,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
                     unit: v.unitGlyph,
                   })}
                 />
-                <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={handleAdjustTm} />
+                <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={() => goTo.settings(router)} />
               </>
             ) : null}
 

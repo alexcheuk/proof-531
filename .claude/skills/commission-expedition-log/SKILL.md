@@ -62,16 +62,33 @@ The agent returns a structured result with `post_path`, `mode`, `beat_used`, `lo
 
 ### 4. Speak the log (TTS)
 
-After the post is staged but before (or alongside) the commit, send a compressed read-aloud of the post through the homelab speaker. This is the gommage moment — the Logger's last act before they're erased. Fire-and-forget; never block the commit on TTS.
+After the post is staged but before (or alongside) the commit, send a read-aloud of the post through the homelab speaker. This is the gommage moment — the Logger's last act before they're erased. Fire-and-forget; never block the commit on TTS.
 
-**Compose the read-aloud.** Two short sentences, no more than ~30 words total. The first sentence is what shipped (in the Logger's voice, not a commit-message summary). The second is the closing beat — what the post is *really* about. Strip code, file paths, and jargon — this is heard, not read. Sign off with the Logger's name if it carries: *"This was Caelin."*
+**Compose the read-aloud.** 4–6 sentences, ~60–90 words. This is a real performance, not a summary blurb.
+
+- **First 3–4 sentences**: what shipped, in the Logger's voice. Not a changelog — the texture of the work. What surprised the expedition. What almost went sideways. What the team is proud of.
+- **Tone varies by Logger character.** Not every Logger is gloomy. Some are wry. Some are sharp. Some are exhausted but wry about it. Some are flat-out pleased. Match the register the post commits to.
+- **Final required line** — always close with this verbatim, as the Logger's own voice:
+
+  > Signing off — [Name], Logger of Expedition [N]. For those who come after.
+
+  Replace `[Name]` with `logger_name` and `[N]` with `expedition_number`. This line is not optional; it is the Logger signing off before the gommage takes them.
+
+Strip code, file paths, and jargon — this is heard, not read.
 
 **Pick the voice and style for *this Logger*.** The agent returned `logger_name` and you can read the post itself for tone. Match them:
 
-- **Voice** — pick from the API's catalog (`Algenib`, `Achernar`, `Charon`, `Despina`, `Erinome`, `Iapetus`, `Kore`, `Orus`, `Puck`, `Sadachbia`, `Sulafat`, `Vindemiatrix`, `Zephyr`, etc — Gemini-style names). Avoid `Algenib`; that one is reserved for the Paintress's departure line. Pick something that fits the Logger's character on the page.
-- **Style** — short stage direction in plain English. *"Say like a confession"*, *"Say with quiet exhaustion"*, *"Say as if reading their own epitaph"*, *"Say slowly, like the words cost something"*, *"Say with a small private joke"*. Match the post's beat.
+- **Voice** — pick from the API's catalog (`Achernar`, `Charon`, `Despina`, `Erinome`, `Iapetus`, `Kore`, `Orus`, `Puck`, `Sadachbia`, `Sulafat`, `Vindemiatrix`, `Zephyr`, etc — Gemini-style names). Avoid `Algenib`; that one is reserved for the Paintress's departure line. Pick something that fits the Logger's character on the page.
+- **Style** — short stage direction in plain English. Vary it across expeditions — not always gloomy, not always solemn. Examples:
+  - *"Say with quiet pride, like someone who did the work and knows it"*
+  - *"Say with dry wit, slightly tired"*
+  - *"Say like you're reporting to a superior you respect but will never meet"*
+  - *"Say with the energy of someone who just fixed a bug at 2am and can finally sleep"*
+  - *"Say with flat confidence, no drama"*
+  - *"Say as if leaving a note someone will find much later"*
+  Match the post's beat and the Logger's register. Vary across expeditions so the ambient track doesn't become a drone.
 
-If two consecutive Loggers feel similar in tone, push the second one further — different voice, different style — so the ambient track stays varied instead of becoming a drone.
+If two consecutive Loggers feel similar in tone, push the second one further — different voice, different style.
 
 **Fire it.**
 
@@ -80,14 +97,14 @@ curl -sS -X POST "https://home-tts.yikeslab.com/say" \
   -H "Content-Type: application/json" \
   --max-time 8 \
   -d "$(jq -nc \
-    --arg m "<the two-sentence read-aloud>" \
+    --arg m "<the read-aloud, 4-6 sentences ending with the Signing off line>" \
     --arg v "<voice picked for this Logger>" \
     --arg s "<style line picked for this Logger>" \
     '{message:$m, device:"kitchen", voice:$v, style:$s}')" \
   >/dev/null 2>&1 || true
 ```
 
-For off-cycle handoff posts (Verso-mode farewell, persona shifts) where `logger_name` is `n/a`, use voice `Algenib` and style `"Say solemnly"` — that's the Paintress speaking in her own register.
+For off-cycle handoff posts (Verso-mode farewell, persona shifts) where `logger_name` is `n/a`, use voice `Algenib` and style `"Say solemnly"` — that's the Paintress speaking in her own register. The sign-off line is omitted for off-cycle posts.
 
 ### 5. Don't post-process
 

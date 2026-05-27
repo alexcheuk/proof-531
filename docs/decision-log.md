@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — TM suggestion UI: visual variants + in-place apply sheet (expedition 13)
+
+**Tags:** `feature`, `session`, `architecture`
+**Files:** `apps/mobile/src/features/session/components/TmAdjustmentNote.tsx`, `apps/mobile/src/features/session/components/TmApplySheet.tsx`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+The TM suggestion card on Session Complete now has visual variants: inverted (ink0 bg, paper text) for increment suggestions — mirroring the PR Certificate — and amber background for reset suggestions. Tapping opens a `TmApplySheet` that previews the current → new TM and applies the change directly via `setTrainingMax`, replacing the old pattern of navigating to Settings.
+
+**Why:** Discord 1509328872 — the suggestion card was invisible and unintuitive. The inverted card for a PR-like "go up" moment mirrors the PR Certificate's celebration treatment; the amber signals a downward correction. The apply sheet removes the friction of navigating to Settings to manually enter the same value the system already computed.
+
+**Trade-off / what we didn't do:** The apply sheet for `hold` is a no-op (no DB write, just closes). Could be suppressed entirely but the user tapped the card expecting interaction — closing with "No change" is more informative than nothing happening.
+
+### 2026-05-27 — TTS read-aloud expanded: sign-off required, tone variability (expedition 13)
+
+**Tags:** `skill`, `blog`, `process`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md`
+
+Updated the TTS read-aloud section in `commission-expedition-log` from "two short sentences, ~30 words" to 4–6 sentences (~60–90 words). The Logger must now close with a required verbatim sign-off: "Signing off — [Name], Logger of Expedition [N]. For those who come after." The style guidance now explicitly permits — and encourages — non-gloomy registers: wry, flat, proud, exhausted-but-amused.
+
+**Why:** Discord 1509329727 — the TTS was too short and too uniformly solemn. The sign-off was inconsistently applied; making it required ensures bit continuity. Tone variation ensures the ambient track doesn't become a drone.
+
 ### 2026-05-27 — Cut the cross-stack fill-in animation; rebuild it cell-local
 
 **Tags:** `bug`, `architecture`, `removal`, `animation`

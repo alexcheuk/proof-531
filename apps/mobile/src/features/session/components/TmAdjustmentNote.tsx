@@ -5,7 +5,6 @@ import { displayUnit, round } from '@/domain/units';
 import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 
 export type TmAdjustmentNoteProps = {
-  /** The suggestion derived from `tmAdjustmentSuggestion(reps, lift, unit)`. */
   suggestion: TmAdjustmentSuggestion;
   /** Current TM in display units — drives the reset target on the reset variant. */
   tmDisplay: number;
@@ -15,17 +14,13 @@ export type TmAdjustmentNoteProps = {
 };
 
 /**
- * "Suggested TM · next cycle" pressable note shown on Week-4 Session Complete
- * in place of the AMRAP-week `AdjustTmCta`. Same visual chassis (bordered
- * Pressable, ink/paper, no color); three content variants:
+ * "Suggested TM · next cycle" pressable note on Week-4 Session Complete.
+ * Tapping opens a sheet (TmApplySheet) where the user can apply or dismiss.
  *
- *   increment → "+5 lb"                     (delta in lift's unit)
- *   hold      → "Hold"
- *   reset     → "−10% · reset to <Y> <unit>"
- *
- * Critical: this never auto-applies the change. The brief is emphatic that
- * the lifter is the decision-maker. The Pressable routes to Settings →
- * Training Max so the user types the new value themselves.
+ * Visual variants:
+ *   increment → inverted (ink0 bg, paper text) — mirrors the PR Certificate
+ *   reset     → amber bg, paper text — signals a downward correction
+ *   hold      → default (paper bg, ink text) — no visual emphasis needed
  */
 export function TmAdjustmentNote({
   suggestion,
@@ -36,13 +31,25 @@ export function TmAdjustmentNote({
 }: TmAdjustmentNoteProps) {
   const { colors, spacing, type } = useTheme();
 
+  const isInverted = suggestion.kind === 'increment';
+  const isAmber = suggestion.kind === 'reset';
+  const hasDarkBg = isInverted || isAmber;
+
+  const bgColor = isInverted ? colors.ink0 : isAmber ? colors.amber : undefined;
+  const borderColor = hasDarkBg ? 'transparent' : colors.lineStrong;
+  const eyebrowColor = hasDarkBg ? colors.paperMuted : colors.ink2;
+  const valueColor = hasDarkBg ? colors.paper : colors.ink0;
+  const captionColor = hasDarkBg ? colors.paperMuted : colors.ink3;
+  const chevronColor = hasDarkBg ? colors.paper : colors.ink0;
+
   const ctaStyle: ViewStyle = {
     marginHorizontal: spacing.lg,
     marginTop: spacing.md + 2,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
-    borderColor: colors.lineStrong,
+    borderColor,
+    backgroundColor: bgColor,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -52,27 +59,27 @@ export function TmAdjustmentNote({
     fontSize: 10,
     letterSpacing: 1.8,
     textTransform: 'uppercase',
-    color: colors.ink2,
+    color: eyebrowColor,
     marginBottom: 4,
   };
   const valueStyle: TextStyle = {
     fontFamily: `${type.sans}-Bold`,
     fontSize: 17,
     letterSpacing: -0.34,
-    color: colors.ink0,
+    color: valueColor,
   };
   const captionStyle: TextStyle = {
     fontFamily: `${type.mono}-Medium`,
     fontSize: 9,
     letterSpacing: 1.62,
     textTransform: 'uppercase',
-    color: colors.ink3,
+    color: captionColor,
     marginTop: 4,
   };
   const chevronStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
     fontSize: 16,
-    color: colors.ink0,
+    color: chevronColor,
   };
 
   const u = displayUnit(unit);
@@ -95,17 +102,17 @@ export function TmAdjustmentNote({
     <Pressable
       testID={testID}
       accessibilityRole="button"
-      accessibilityLabel={`Suggested training max change: ${a11yValue}. Tap to open settings.`}
-      accessibilityHint="Opens the training max section of settings."
+      accessibilityLabel={`Suggested training max change: ${a11yValue}. Tap to apply.`}
+      accessibilityHint="Opens a sheet to apply or dismiss this suggestion."
       onPress={onPress}
-      style={({ pressed }) => [ctaStyle, pressed ? { opacity: 0.6 } : null]}
+      style={({ pressed }) => [ctaStyle, pressed ? { opacity: 0.7 } : null]}
     >
       <View>
         <RNText style={eyebrowStyle}>Suggested TM · next cycle</RNText>
         <RNText style={valueStyle} testID="tm-adjustment-value">
           {value}
         </RNText>
-        <RNText style={captionStyle}>Your call — open settings to apply</RNText>
+        <RNText style={captionStyle}>Tap to apply</RNText>
       </View>
       <RNText style={chevronStyle}>›</RNText>
     </Pressable>
