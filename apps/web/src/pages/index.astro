@@ -367,7 +367,29 @@ const postCount = posts.length;
       <div class="plate-card" data-plate-calc>
         <div class="pc-left">
           <div>
-            <div class="caps">Target weight</div>
+            <div class="pc-head">
+              <div class="caps">Target weight</div>
+              <div
+                class="pc-unit-toggle"
+                role="tablist"
+                aria-label="Plate calculator units"
+              >
+                <button
+                  type="button"
+                  class="pc-unit-opt active"
+                  data-plate-unit="lb"
+                  role="tab"
+                  aria-selected="true"
+                >LB</button>
+                <button
+                  type="button"
+                  class="pc-unit-opt"
+                  data-plate-unit="kg"
+                  role="tab"
+                  aria-selected="false"
+                >KG</button>
+              </div>
+            </div>
             <div class="pc-target">
               <button
                 type="button"
@@ -376,7 +398,8 @@ const postCount = posts.length;
                 aria-label="Decrease target weight"
               >−</button>
               <h3>
-                <span data-plate-weight>250</span> <span class="pc-unit">lbs</span>
+                <span data-plate-weight>250</span>
+                <span class="pc-unit"><span data-plate-unit-label>lbs</span></span>
               </h3>
               <button
                 type="button"
@@ -395,11 +418,11 @@ const postCount = posts.length;
           <div class="pc-readout">
             <div class="item">
               <div class="l">Per side</div>
-              <div class="v"><span data-plate-perside>102.5</span><span class="unit"> lbs</span></div>
+              <div class="v"><span data-plate-perside>102.5</span><span class="unit"> <span data-plate-unit-label>lbs</span></span></div>
             </div>
             <div class="item">
               <div class="l">Bar</div>
-              <div class="v">45<span class="unit"> lbs</span></div>
+              <div class="v"><span data-plate-bar>45</span><span class="unit"> <span data-plate-unit-label>lbs</span></span></div>
             </div>
             <div class="item">
               <div class="l">Plates</div>
@@ -1081,28 +1104,39 @@ const postCount = posts.length;
   // outer chrome (collar, bar-mid) and only swap the two `.stack`
   // children + the `.caption`. Same classes, same inline styles the
   // Astro template would have produced for the new weight.
-  import { decompose, groupPlates, sizeFor, plateLabel } from '~/lib/plates';
+  import {
+    barWeight,
+    convertWeight,
+    decompose,
+    groupPlates,
+    plateLabel,
+    sizeFor,
+    stepFor,
+    type Unit,
+  } from '~/lib/plates';
 
-  const STEP = 5; // lbs — matches the plate set's coarsest meaningful increment
-  const MIN = 45; // empty bar
-  const MAX = 600;
-  const INITIAL = 250;
+  const MAX_BY_UNIT: Record<Unit, number> = { lb: 600, kg: 275 };
+  const INITIAL_WEIGHT_LB = 250;
 
   const root = document.querySelector<HTMLElement>('[data-plate-calc]');
   if (root) {
     const weightEl = root.querySelector<HTMLElement>('[data-plate-weight]');
     const perSideEl = root.querySelector<HTMLElement>('[data-plate-perside]');
+    const barEl = root.querySelector<HTMLElement>('[data-plate-bar]');
     const countEl = root.querySelector<HTMLElement>('[data-plate-count]');
     const decBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="dec"]');
     const incBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="inc"]');
     const plateBar = root.querySelector<HTMLElement>('.plate-bar');
+    const unitLabels = root.querySelectorAll<HTMLElement>('[data-plate-unit-label]');
+    const unitOpts = root.querySelectorAll<HTMLButtonElement>('[data-plate-unit]');
 
-    if (weightEl && perSideEl && countEl && decBtn && incBtn && plateBar) {
+    if (weightEl && perSideEl && barEl && countEl && decBtn && incBtn && plateBar) {
       // Hoist into const-locals so the inner closures see the
       // already-narrowed (non-null) types — astro check doesn't
       // propagate the outer `&&` guard into nested function bodies.
       const wEl: HTMLElement = weightEl;
       const psEl: HTMLElement = perSideEl;
+      const brEl: HTMLElement = barEl;
       const cEl: HTMLElement = countEl;
       const dBtn: HTMLButtonElement = decBtn;
       const iBtn: HTMLButtonElement = incBtn;
@@ -1114,12 +1148,13 @@ const postCount = posts.length;
       const H = 140; // matches PhonePlateBar size="hero"
       const plateW = 22;
 
-      let weight = INITIAL;
+      let unit: Unit = 'lb';
+      let weight = INITIAL_WEIGHT_LB;
 
       function renderPlate(p: number): HTMLDivElement {
         const el = document.createElement('div');
         el.className = 'plate';
-        const h = H * sizeFor(p, 'lb');
+        const h = H * sizeFor(p, unit);
         // Plate layout (border-radius / display:flex / centered children) is
         // also scoped inside PhonePlateBar.astro — inline it here so the
         // rotated label sits centered on the JS-injected plate the same
@@ -1169,6 +1204,8 @@ const postCount = posts.length;
         if (!captionR) return;
         captionR.innerHTML = '';
         const grouped = groupPlates(perSide);
+        // Local reference so the IIFE below sees a stable unit.
+        const u = unit;
         if (grouped.length === 0) {
           const dash = document.createElement('span');
           dash.style.color = 'var(--ink-2)';
@@ -1204,13 +1241,18 @@ const postCount = posts.length;
         total.className = 'total';
         total.style.color = 'var(--ink-0)';
         const sum = perSide.reduce((s, p) => s + p, 0);
-        total.textContent = `= ${sum} lb`;
+        total.textContent = `= ${sum} ${u}`;
         captionR.appendChild(total);
       }
 
       function render(): void {
+        const step = stepFor(unit);
+        const min = barWeight(unit);
+        const max = MAX_BY_UNIT[unit];
         wEl.textContent = String(weight);
-        const { perSide } = decompose(weight, 'lb');
+        for (const lbl of unitLabels) lbl.textContent = unit === 'lb' ? 'lbs' : 'kg';
+        brEl.textContent = String(min);
+        const { perSide } = decompose(weight, unit);
         const perSideTotal = perSide.reduce((s, p) => s + p, 0);
 
         psEl.textContent = String(perSideTotal);
@@ -1234,27 +1276,48 @@ const postCount = posts.length;
 
         renderCaption(perSide);
 
-        dBtn.disabled = weight - STEP < MIN;
-        iBtn.disabled = weight + STEP > MAX;
+        dBtn.disabled = weight - step < min;
+        iBtn.disabled = weight + step > max;
+
+        for (const opt of unitOpts) {
+          const on = opt.dataset.plateUnit === unit;
+          opt.classList.toggle('active', on);
+          opt.setAttribute('aria-selected', String(on));
+        }
 
         pBar.setAttribute(
           'aria-label',
           perSide.length > 0
-            ? `${weight} lb loaded — bar plus ${perSideTotal} lb per side`
-            : `${weight} lb loaded — bar only`,
+            ? `${weight} ${unit} loaded — bar plus ${perSideTotal} ${unit} per side`
+            : `${weight} ${unit} loaded — bar only`,
         );
       }
 
       dBtn.addEventListener('click', () => {
-        if (weight - STEP < MIN) return;
-        weight -= STEP;
+        const step = stepFor(unit);
+        if (weight - step < barWeight(unit)) return;
+        weight -= step;
         render();
       });
       iBtn.addEventListener('click', () => {
-        if (weight + STEP > MAX) return;
-        weight += STEP;
+        const step = stepFor(unit);
+        if (weight + step > MAX_BY_UNIT[unit]) return;
+        weight += step;
         render();
       });
+
+      for (const opt of unitOpts) {
+        opt.addEventListener('click', () => {
+          const next = opt.dataset.plateUnit as Unit | undefined;
+          if (!next || next === unit) return;
+          // Convert + snap so the visible weight is plate-loadable
+          // in the destination unit. `convertWeight` rounds to the
+          // target unit's step (5 lb / 2.5 kg).
+          weight = Math.max(barWeight(next), convertWeight(weight, unit, next));
+          unit = next;
+          render();
+        });
+      }
 
       // Initial sync — guarantees the readout/stacks match the
       // declared INITIAL even if the SSR snapshot drifts later.
@@ -3432,6 +3495,45 @@ const postCount = posts.length;
     background: var(--bg-0);
     position: relative;
     min-width: 0;
+  }
+
+  /* Plate-card header row: caps label on the left, lb/kg segmented
+     toggle on the right (Discord 1509000979). */
+  .plate-card .pc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .plate-card .pc-unit-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .plate-card .pc-unit-opt {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition:
+      background var(--duration-base) var(--ease-standard),
+      color var(--duration-base) var(--ease-standard);
+  }
+  .plate-card .pc-unit-opt:hover { color: var(--ink-0); }
+  .plate-card .pc-unit-opt.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+  .plate-card .pc-unit-opt:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
   }
 
   /* Target-weight stepper — surrounds the big condensed weight readout

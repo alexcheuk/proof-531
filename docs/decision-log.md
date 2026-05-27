@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Marketing site grows a lb/kg unit toggle on the plate calculator; warmup band on Today collapses by default
+
+**Tags:** `web`, `mobile`, `feature`, `convention`
+**Files:** `apps/web/src/pages/index.astro`, `apps/web/src/lib/plates.ts`, `apps/mobile/src/features/session/components/TodayBody/WarmupsBand.tsx`, `apps/mobile/src/features/session/__tests__/TodayScreen.test.tsx`
+
+Two Discord asks from the same cluster shipped together.
+
+The plate calculator now has a LB / KG segmented toggle in its header (Discord 1509000979). Flipping the toggle converts + snaps the displayed weight to the destination unit (250 lb → 115 kg, snapped to a plate-loadable 2.5-kg increment), updates every readout label (per side / bar / per-side caption), and re-decomposes the plates against the new unit's plate set (`PLATES_KG` / `BAR_KG`). `convertWeight`, `barWeight`, and `stepFor` helpers live in `~/lib/plates` so the snap rule stays in one place. The goal calculator was NOT extended this iteration — it shows "+10 lb per cycle (or +5 kg)" as a static caption today and a full toggle there is its own design question (do the steppers also flip? do the lift-specific TM defaults swap to kg-sensible numbers?). Noted as a follow-up.
+
+The Today screen's warmups band on mobile now defaults to collapsed (Discord 1508998906). The header (caps "WARMUPS · 40 · 50 · 60% TM") stays visible and is tappable to expand into the three SetRow lines + the "Same bar · lb" hint. State is per-mount (re-collapses on next visit) so the default is always "out of the way".
+
+**Why:** the plate-math marketing pitch is in lbs everywhere on the site, which silently filters out the kg half of the audience — adding the toggle is the smallest move that makes the section work for both. The warmup-band collapse is about screen real estate: the three rows live between the masthead and the working sets, which on taller phones pushes the actual work below the fold; a tappable header keeps the cheat sheet one tap away without making it the loudest thing on the screen.
+
+**Trade-off / what we didn't do:** considered a global lb/kg pref in the TopBar that affects every interactive thing on every page; rejected for now because the toggle only does anything on the home page (the only page with interactive numeric widgets). The plate-card-local toggle is cheaper to ship and the bar for graduating it to global is "we have a second interactive widget that needs it".
+
 ### 2026-05-27 — Astro `<style>` is scoped; JS-injected elements need their layout-critical styles inlined
 
 **Tags:** `web`, `bugfix`, `gotcha`

@@ -69,3 +69,35 @@ export function groupPlates(perSide: readonly number[]): PlateGroup[] {
 export function plateLabel(n: number): string {
   return Number.isInteger(n) ? String(n) : String(n);
 }
+
+/**
+ * Convert a weight between units, snapping the result to the target
+ * unit's coarsest meaningful step (5 lb / 2.5 kg) so the destination
+ * value remains plate-loadable. Identity when from === to.
+ *
+ * Used by the marketing site's plate calculator (Discord 1509000979)
+ * to keep the displayed weight sensible when the visitor flips the
+ * lb / kg toggle — flipping 250 lb to kg lands on 115 kg (the snap)
+ * rather than 113.4 kg (the literal conversion).
+ */
+const LB_PER_KG = 2.2046226218;
+const STEP_BY_UNIT: Record<Unit, number> = { lb: 5, kg: 2.5 };
+const BAR_BY_UNIT: Record<Unit, number> = { lb: BAR_LBS, kg: BAR_KG };
+
+export function convertWeight(value: number, from: Unit, to: Unit): number {
+  if (from === to) return value;
+  const inLb = from === 'lb' ? value : value * LB_PER_KG;
+  const out = to === 'lb' ? inLb : inLb / LB_PER_KG;
+  const step = STEP_BY_UNIT[to];
+  return Math.round(out / step) * step;
+}
+
+/** Empty-bar weight in the given unit. */
+export function barWeight(unit: Unit): number {
+  return BAR_BY_UNIT[unit];
+}
+
+/** Stepper increment for the given unit. */
+export function stepFor(unit: Unit): number {
+  return STEP_BY_UNIT[unit];
+}

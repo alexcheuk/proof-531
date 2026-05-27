@@ -164,13 +164,22 @@ describe('TodayScreen', () => {
     expect(screen.getByText('Begin session')).toBeTruthy();
   });
 
-  it('renders the warmups band (3 rows at 40/50/60% TM, loop-010)', () => {
+  it('renders the warmups band collapsed by default; tapping expands to 3 rows (loop-021)', () => {
     // squat TM 300 → 40% = 120, 50% = 150, 60% = 180 — all lb-snapped.
     const screen = renderScreen(<TodayScreen lift="squat" />);
+    // Header is always visible.
+    expect(screen.getByText('WARMUPS')).toBeTruthy();
+    expect(screen.getByTestId('warmups-toggle')).toBeTruthy();
+    // Collapsed: the three rows are absent until the user taps to expand
+    // (Discord 1508998906).
+    expect(screen.queryByTestId('warmup-row-0')).toBeNull();
+    expect(screen.queryByTestId('warmup-row-1')).toBeNull();
+    expect(screen.queryByTestId('warmup-row-2')).toBeNull();
+    // Expand and re-check.
+    fireEvent.press(screen.getByTestId('warmups-toggle'));
     expect(screen.getByTestId('warmup-row-0')).toBeTruthy();
     expect(screen.getByTestId('warmup-row-1')).toBeTruthy();
     expect(screen.getByTestId('warmup-row-2')).toBeTruthy();
-    expect(screen.getByText('WARMUPS')).toBeTruthy();
   });
 
   it('renders the top-set PlateBar hero and a numeric-only BBB band (no inline plate viz)', () => {
