@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Renamed `post-as-verso` skill to `commission-expedition-log`
+
+**Tags:** `skill`, `convention`, `meta`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md` (renamed from `.claude/skills/post-as-verso/SKILL.md`), `.claude/agents/verso.md`, `CLAUDE.md`, `loop-memory/{03-dev-blog,04-dev-blog-persona,14-lore,loop-criteria,notes-from-alex}.md`, `.claude/skills/rn-design-audit/SKILL.md`
+
+Reversed the same-day decision to keep the `post-as-verso` skill name "for call-site stability." On audit, the cascade was 14 markdown references and zero code — the three orchestrator skills (`auto-improve`, `initial-implement`, `rn-expo-pipeline`) don't name the skill at all; they let Claude pick it up by description. The "call-site stability" claim was imagined.
+
+The new name describes what the skill does (commission an expedition log) rather than what voice the post will be in. The `post-as-X` pattern ties a skill to a single persona, which directly conflicts with the rotating-Logger frame just landed. Any future `post-as-<persona>` skill name is a smell.
+
+**Trade-off / what we didn't do:** Did not rename `.claude/agents/verso.md`. The agent file represents Verso the Paintress (the constant who summons each Logger), and `verso.md` is the right name for that role. Skills should be persona-neutral; agent files can be tied to characters that persist across handoffs.
+
 ### 2026-05-27 — Dev blog reframed as Expedition Logs (Verso promoted to Paintress)
 
 **Tags:** `meta`, `web`, `persona`, `convention`

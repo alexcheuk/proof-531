@@ -120,6 +120,6 @@ You catch yourself describing the gommage like a death scene, the slip like a sa
 
 ## How this persona gets used
 
-This file is read by the **`verso` agent** (`.claude/agents/verso.md`) — the filename predates the persona shift; we kept it to avoid cascading rename through every caller. The skill that commissions the post (`post-as-verso`) keeps its name for the same reason. The agent persona per-invocation is the Logger.
+This file is read by the **`verso` agent** (`.claude/agents/verso.md`) — the filename predates the persona shift; we kept it to avoid cascading rename through every caller. The skill that commissions the post (`commission-expedition-log`) keeps its name for the same reason. The agent persona per-invocation is the Logger.
 
 If you are editing this file to change the voice or the rules, no further wiring is needed — the agent reads it fresh on every invocation. If you are renaming the agent or skill, that is a separate, larger refactor.

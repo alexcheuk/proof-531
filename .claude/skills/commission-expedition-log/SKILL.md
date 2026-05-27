@@ -1,13 +1,15 @@
 ---
-name: post-as-verso
-description: Commission a dev-blog post — written by the Logger of Expedition N inside the `verso` agent file. The canonical entry point for any code path that needs a post written under apps/web/src/content/blog/ — used at the end of /loop iterations (auto-improve, initial-implement, rn-expo-pipeline) and for off-cycle posts when an ad-hoc session produced a real decision worth recording. Direct Write calls on blog files are no longer the way; go through this skill so voice continuity, frontmatter schema, and build verification all happen consistently. Skill filename predates the 2026-05-27 promotion of Verso to Paintress; kept for call-site stability.
+name: commission-expedition-log
+description: Commission a dev-blog post — written by the Logger of Expedition N inside the `verso` agent file. The canonical entry point for any code path that needs a post written under apps/web/src/content/blog/ — used at the end of /loop iterations (auto-improve, initial-implement, rn-expo-pipeline) and for off-cycle posts when an ad-hoc session produced a real decision worth recording. Direct Write calls on blog files are no longer the way; go through this skill so voice continuity, frontmatter schema, and build verification all happen consistently.
 ---
 
-# /post-as-verso — Commission a dev-blog post
+# /commission-expedition-log — Commission a dev-blog post
 
 This skill is the canonical way to add a post to `apps/web/src/content/blog/`. The work happens in the `verso` subagent (`.claude/agents/verso.md`); this skill is the protocol the caller follows to invoke it correctly.
 
-> **Note on naming.** This skill is called `post-as-verso` because that's what it was called when Verso was the scribe. As of 2026-05-27, Verso has been promoted to **Paintress** in the lore and the per-invocation persona inside the agent file is **the Logger of Expedition N**. The skill name is preserved to avoid cascading through every caller (`auto-improve`, `initial-implement`, `rn-expo-pipeline`). The contract is unchanged; the output adds two fields.
+The agent's per-invocation persona is **the Logger of Expedition N** — a rotating anonymous character (see `loop-memory/14-lore.md` and `loop-memory/04-dev-blog-persona.md`). The agent *file* keeps the name `verso.md` because the agent's role in the fiction is "the one Verso the Paintress summons"; the Logger appears for one expedition and disappears. The skill itself is persona-neutral — that's why it's `commission-expedition-log`, not `post-as-<persona>`.
+
+(Predecessor name: `post-as-verso`. Renamed 2026-05-27 alongside the Verso-to-Paintress promotion; the old name tied the skill to a single persona, which is exactly what the Logger rotation stopped doing.)
 
 ## When to use
 
@@ -24,7 +26,7 @@ This skill is the canonical way to add a post to `apps/web/src/content/blog/`. T
 
 ### 1. Gather the inputs
 
-Before invoking the agent, collect these so the prompt is self-contained (Verso runs in a fresh context and won't see your conversation):
+Before invoking the agent, collect these so the prompt is self-contained (the agent runs in a fresh context and won't see your conversation):
 
 - **Mode** — `loop` or `off-cycle`.
 - **What shipped (or what was decided)** — a short summary. For loop mode, roughly the commit subjects in the window plus any new decision-log entries. For off-cycle, a description of the conversation or decision being recorded.
@@ -33,7 +35,7 @@ Before invoking the agent, collect these so the prompt is self-contained (Verso 
 - **Discord prompts** — verbatim text + author + channel for any `#task-queue` items the loop picked up this iteration. Skip if none.
 - **Caller notes** — anything specific to surface or avoid (e.g., "this reverses last week's slip from Verso — try the reversal beat", or "the last two posts used the gommage-in-sight beat; pick something else").
 
-If you don't have one of these, pass what you have. Verso reads the diff, decision log, and recent posts to fill gaps.
+If you don't have one of these, pass what you have. The agent reads the diff, decision log, and recent posts to fill gaps.
 
 ### 2. Invoke the agent
 
@@ -46,7 +48,7 @@ What shipped: <summary of the diff and decision-log entries>
 Discord: <verbatim prompts, or "none">
 Notes: <anything specific>
 
-Write the post. Read the persona doc, the notes-from-alex file, the decision log, and the last three blog entries before drafting. Return the file path, the beat used, and the build status.
+Write the post. Read the lore, the persona doc, the notes-from-alex file, the decision log, and the last five blog entries before drafting. Return the file path, the beat used, the Logger's name, the expedition number, and the build status.
 ```
 
 Do **not** pass a draft for the agent to polish. The agent writes the post end-to-end (as the Logger of the expedition). The caller's job is to assemble inputs, not to draft prose.
@@ -56,13 +58,13 @@ Do **not** pass a draft for the agent to polish. The agent writes the post end-t
 The agent returns a structured result with `post_path`, `mode`, `beat_used`, `logger_name`, `expedition_number`, `build_status`, and `summary`. `logger_name` and `expedition_number` are populated for Logger posts (loop mode) and may be `n/a` for off-cycle handoff posts.
 
 - **`build_status: pass`** — stage the post file (`git add <post_path>`) alongside the code diff, then commit and push as normal.
-- **`build_status: fail`** — re-invoke Verso with the build error message and `notes: fix the build failure: <error>`. Don't bypass the build check; the schema gate exists for a reason.
+- **`build_status: fail`** — re-invoke the agent with the build error message and `notes: fix the build failure: <error>`. Don't bypass the build check; the schema gate exists for a reason.
 
 ### 4. Don't post-process
 
 - Don't rewrite the prose. The voice is the deliverable; you'll flatten it.
-- Don't add to or remove from the frontmatter — Verso wrote what the schema accepted.
-- If you genuinely disagree with the post's content, regenerate (re-invoke Verso with a `notes` field pointing at what's off) — don't edit-in-place.
+- Don't add to or remove from the frontmatter — the agent wrote what the schema accepted.
+- If you genuinely disagree with the post's content, regenerate (re-invoke the agent with a `notes` field pointing at what's off) — don't edit-in-place.
 
 ## What this skill explicitly does NOT do
 

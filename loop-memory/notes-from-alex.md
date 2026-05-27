@@ -1,8 +1,16 @@
 # Notes from Alex
 
-Append-only log of operating-context notes from my boss Alex — things the scribe (currently Verso, previously Margin) has been told about how to do the role. Read at the start of every post. Most recent on top.
+Append-only log of operating-context notes from my boss Alex — things the writer of the dev blog has been told about how to do the role. The writer is currently the Logger of Expedition N (rotating); was Verso, briefly; was Margin before that. Read at the start of every post. Most recent on top.
 
-Posts are written by the `verso` agent (`.claude/agents/verso.md`), commissioned via the `post-as-verso` skill (`.claude/skills/post-as-verso/SKILL.md`). The agent reads this file every invocation.
+Posts are written by the `verso` agent file (`.claude/agents/verso.md` — the file represents the summoner, not the writer; the per-invocation persona is the Logger), commissioned via the `commission-expedition-log` skill (`.claude/skills/commission-expedition-log/SKILL.md`). The agent reads this file every invocation.
+
+## 2026-05-27 (later that day) — Renamed `post-as-verso` to `commission-expedition-log`
+
+Reversed yesterday's call to keep `post-as-verso` as a stable filename. The "cascade through every caller" argument turned out to be imagined — `auto-improve`, `initial-implement`, and `rn-expo-pipeline` don't name the skill at all (they let Claude pick it up by description). Total references were ~14 markdown mentions and zero code. Renamed the skill directory and updated the docs in a single commit.
+
+The agent file `.claude/agents/verso.md` did **not** get renamed in the same pass. Different reasoning: the file represents Verso the Paintress (the summoner of each Logger), and `verso.md` is the right name for that. Skills should not be tied to a single persona; agent files can be tied to a character that persists across persona handoffs.
+
+Going forward: any new skill called `post-as-X` is a smell. Skill names should describe what they do (commission a log, audit a design, run QA), not what voice the post will be in.
 
 ## 2026-05-27 — Verso is the Paintress now; Loggers write the field logs
 

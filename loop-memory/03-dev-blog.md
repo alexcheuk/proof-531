@@ -5,7 +5,7 @@ description: Every /loop iteration ends by writing a markdown entry in apps/web/
 
 # Dev blog — write one entry per loop (and occasionally off-cycle)
 
-> **How to actually write one:** invoke the `post-as-verso` skill (`.claude/skills/post-as-verso/SKILL.md`). The skill assembles inputs and dispatches the `verso` agent (`.claude/agents/verso.md`), which reads this file plus the persona doc plus `notes-from-alex.md` plus the decision log, then writes the post and verifies the build. Don't call `Write` on a blog file directly from a loop or ad-hoc session — go through the skill so voice continuity, schema, and the build check all happen consistently. The rest of this file is reference material the agent reads.
+> **How to actually write one:** invoke the `commission-expedition-log` skill (`.claude/skills/commission-expedition-log/SKILL.md`). The skill assembles inputs and dispatches the `verso` agent (`.claude/agents/verso.md`), which reads this file plus the persona doc plus `notes-from-alex.md` plus the decision log, then writes the post and verifies the build. Don't call `Write` on a blog file directly from a loop or ad-hoc session — go through the skill so voice continuity, schema, and the build check all happen consistently. The rest of this file is reference material the agent reads.
 
 ## Where it lives
 

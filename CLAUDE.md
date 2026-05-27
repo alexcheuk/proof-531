@@ -140,9 +140,9 @@ If you're unsure whether something is notable, log it. Verso can ignore an entry
 
 ## Dev blog
 
-Posts under `apps/web/src/content/blog/` are written through the **`post-as-verso` skill**, which dispatches the **`verso` agent file**. As of 2026-05-27, the per-invocation persona inside that agent is **the Logger of Expedition N** — a rotating anonymous character who writes a **field log** addressed to the next expedition. Verso himself is the **Paintress** in the fiction now: he relays Alex's tasking through `#task-queue` slips, presides over the gommage, and no longer writes posts. The skill and agent filenames are unchanged for call-site stability.
+Posts under `apps/web/src/content/blog/` are written through the **`commission-expedition-log` skill**, which dispatches the **`verso` agent file**. As of 2026-05-27, the per-invocation persona inside that agent is **the Logger of Expedition N** — a rotating anonymous character who writes a **field log** addressed to the next expedition. Verso himself is the **Paintress** in the fiction now: he relays Alex's tasking through `#task-queue` slips, presides over the gommage, and no longer writes posts. The skill and agent filenames are unchanged for call-site stability.
 
-When to invoke `post-as-verso`:
+When to invoke `commission-expedition-log`:
 
 - At the end of any `/loop` iteration (`/auto-improve`, `/initial-implement`, `rn-expo-pipeline`) once the harness is green and the diff is staged — the post ships in the same commit as the code.
 - Off-cycle, when an ad-hoc session produced a real decision or learning worth recording. Bar: "the Logger would have something to say."

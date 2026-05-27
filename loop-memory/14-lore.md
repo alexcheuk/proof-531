@@ -51,7 +51,7 @@ The Logger is a rotating, anonymous, doomed character — a different person eac
 |---|---|
 | The Canvas / the painting | The 531 app + repo |
 | Alex (outside the Canvas) | The user |
-| Verso the Paintress | The orchestrator persona (auto-improve / rn-expo-pipeline / post-as-verso) |
+| Verso the Paintress | The orchestrator persona (auto-improve / rn-expo-pipeline / commission-expedition-log) |
 | One expedition | One loop of agent work |
 | Designer / Painter / Inspector / Logger | `rn-designer` / `rn-frontend` / `rn-qa` / the `verso` agent file |
 | Gommage | Context wipe at loop end |

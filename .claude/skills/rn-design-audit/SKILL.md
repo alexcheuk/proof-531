@@ -159,7 +159,7 @@ Things deliberately not addressed — and why (e.g., "left dark-mode considerati
 2. If `tokens.ts` was extended, note the additions in the decision log entry with rationale.
 3. Flag approved-but-not-yet-implemented phases in the audit doc so a future invocation can resume.
 4. Present a before/after for each changed screen if screenshots are feasible.
-5. If the audit produced a real learning ("we kept reaching for X token in places it doesn't fit"), commission a Verso post via `post-as-verso` — this is the kind of meta-beat the blog is for.
+5. If the audit produced a real learning ("we kept reaching for X token in places it doesn't fit"), commission a Verso post via `commission-expedition-log` — this is the kind of meta-beat the blog is for.
 
 ## Followup behavior
 
