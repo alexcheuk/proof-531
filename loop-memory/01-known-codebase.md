@@ -268,6 +268,19 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   This is a one-time step per Node major version bump; tests return to
   green immediately after.
 
+## TM suggestion UI contract (expedition 13)
+
+- `TmAdjustmentNote` (`features/session/components/TmAdjustmentNote.tsx`) — visual
+  variants based on `suggestion.kind`: increment = inverted (ink0 bg), reset = amber
+  bg, hold = default. `onPress` prop opens the apply sheet. Caption changed from
+  "Your call — open settings to apply" to "Tap to apply".
+- `TmApplySheet` (`features/session/components/TmApplySheet.tsx`) — inline apply sheet.
+  Takes `open`, `lift`, `suggestion`, `tmDisplay` (display units), `unit` (display unit),
+  `storageUnit` (for DB write), `onClose`. Calls `setTrainingMax` on confirm; no-op close
+  for `hold`. Invalidates `TM_KEY` after successful save.
+- `SessionCompleteScreen` — holds `[tmApplyOpen, setTmApplyOpen]` state; passes
+  `onPress={() => setTmApplyOpen(true)}` to `TmAdjustmentNote`.
+
 ## Data accessors (one-stop reference)
 
 - `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.
