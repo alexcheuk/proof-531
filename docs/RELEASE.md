@@ -44,19 +44,22 @@ Bump rule of thumb:
 ## Cutting a build
 
 ```bash
-# 1. Bump version + build numbers in apps/mobile/app.json. Commit on main.
+# 1. Bump version in apps/mobile/app.json (versionCode is managed remotely
+#    by EAS — see appVersionSource: "remote" in eas.json).
 git add apps/mobile/app.json
-git commit -m "chore(release): vX.Y.Z (build N)"
+git commit -m "chore(release): vX.Y.Z"
 git push origin main
 
-# 2. EAS — preview profile for internal testing, production for the stores.
+# 2. EAS — preview for internal testing, production for the stores.
+#    Android has pnpm shortcuts; the equivalent iOS commands are below.
+pnpm release:android:preview                                                  # .apk, internal distribution
+pnpm release:android:production                                               # .aab for Play Store
 pnpm --filter @fivethreeone/mobile exec eas build --profile preview --platform ios
-pnpm --filter @fivethreeone/mobile exec eas build --profile preview --platform android
-
-# Or for the App Store / Play Store:
 pnpm --filter @fivethreeone/mobile exec eas build --profile production --platform ios
-pnpm --filter @fivethreeone/mobile exec eas build --profile production --platform android
 ```
+
+For the full Android flow (one-time setup, submit, hotfix), see
+`docs/ANDROID_RELEASE.md`.
 
 The first ~2 minutes upload assets; the build itself takes 10-20 minutes
 on EAS Build's free tier. Watch the dashboard or hit Ctrl-C — the build
@@ -74,10 +77,15 @@ upload a new version line.
 
 ## Play Console internal track (Android)
 
-1. EAS finishes → `eas submit --platform android`.
-2. Play Console → Testing → Internal testing → Releases → review +
-   rollout.
+1. EAS finishes → `pnpm release:android:submit` (uploads the latest
+   production build to the Internal track via the service-account
+   credentials in `apps/mobile/.eas-credentials/play-service-account.json`).
+2. Play Console → Testing → Internal testing → Releases → confirm the
+   build appears.
 3. Add testers via email list or the internal-track opt-in URL.
+
+Full setup (Play account, keystore, service account) lives in
+`docs/ANDROID_RELEASE.md`.
 
 Internal-track promotions to closed / open / production happen inside
 the Play Console; we do not rebuild for those.

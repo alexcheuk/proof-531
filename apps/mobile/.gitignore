@@ -18,6 +18,10 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# EAS Submit — Google Play service-account key (referenced by eas.json
+# submit.production.android.serviceAccountKeyPath). NEVER commit.
+.eas-credentials/
+
 # Metro
 .metro-health-check*
 

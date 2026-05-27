@@ -28,7 +28,12 @@
     "draft-release-notes": "bash scripts/draft-release-notes.sh",
     "ci": "pnpm typecheck && pnpm lint && pnpm check-boundaries && pnpm check-line-heights && pnpm check-temp-markers && pnpm test",
     "verify": "pnpm run ci && pnpm bundle-check && pnpm build:web",
-    "release-ota": "pnpm --filter @fivethreeone/mobile exec eas update --branch main --platform android --environment production --non-interactive --message \"$(git log -1 --pretty=%s)\""
+    "release-ota": "pnpm --filter @fivethreeone/mobile exec eas update --branch main --platform android --environment production --non-interactive --message \"$(git log -1 --pretty=%s)\"",
+    "release:android:preview": "pnpm --filter @fivethreeone/mobile exec eas build --profile preview --platform android",
+    "release:android:production": "pnpm --filter @fivethreeone/mobile exec eas build --profile production --platform android",
+    "release:android:submit": "pnpm --filter @fivethreeone/mobile exec eas submit --platform android --latest",
+    "release:android:status": "pnpm --filter @fivethreeone/mobile exec eas build:list --platform android --limit 5",
+    "release:android:credentials": "pnpm --filter @fivethreeone/mobile exec eas credentials --platform android"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"

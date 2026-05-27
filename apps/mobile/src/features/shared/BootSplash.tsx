@@ -1,15 +1,13 @@
-import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
+
+const SPLASH_IMAGE_WIDTH = 140;
 
 /**
- * In-app boot screen rendered between the OS splash (a paper-colored
- * canvas) and the first real screen. Paints the 531 wordmark in the
- * already-loaded Plex Display Condensed face so the cold-start handoff
- * feels branded even before the splash PNG carries the mark.
- *
- * Kept intentionally tiny — just the wordmark on the paper canvas. The
- * status bar / safe areas wrap this from RootLayout.
+ * In-app boot screen rendered between the OS splash and the first real
+ * screen. Renders the same splash-icon.png and target width as the
+ * expo-splash-screen plugin config in app.json, so the cold-start handoff
+ * from native splash to first React frame is pixel-identical.
  */
 export function BootSplash({ testID = 'boot-splash' }: { testID?: string }) {
   const { colors } = useTheme();
@@ -23,18 +21,11 @@ export function BootSplash({ testID = 'boot-splash' }: { testID?: string }) {
         backgroundColor: colors.bg0,
       }}
     >
-      <Text variant="condensed" weight="bold" size={72} color="ink0" style={{ letterSpacing: -2 }}>
-        531
-      </Text>
-      <Text
-        variant="mono"
-        weight="medium"
-        size={10}
-        color="ink3"
-        style={{ marginTop: 6, letterSpacing: 3 }}
-      >
-        STRENGTH
-      </Text>
+      <Image
+        source={require('../../../assets/images/splash-icon.png')}
+        style={{ width: SPLASH_IMAGE_WIDTH, height: SPLASH_IMAGE_WIDTH }}
+        resizeMode="contain"
+      />
     </View>
   );
 }
