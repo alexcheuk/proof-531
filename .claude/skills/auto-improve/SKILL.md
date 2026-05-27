@@ -1,6 +1,6 @@
 ---
 name: auto-improve
-description: Autonomous staff-frontend-engineer improvement loop for the 531 app. Picks 12–15 things to improve in one iteration (refactors, features, bugs, removals, dev-workflow, prod-readiness — categories live in loop-memory/loop-criteria.md), pulls Discord #task-queue items, ships them end-to-end, commits/pushes, and posts a humanized summary to #auto-improvements. Use whenever the user invokes `/auto-improve` directly or chains it under `/loop` (e.g. `/loop 30m /auto-improve`). Designed to run unattended — do not pause for clarification.
+description: Autonomous staff-frontend-engineer improvement loop for the 531 app. Picks 12–15 things to improve in one iteration (refactors, features, bugs, removals, dev-workflow, prod-readiness — categories live in loop-memory/loop-criteria.md, with live overrides pinned in Discord #loop-criteria), pulls Discord #task-queue items, ships them end-to-end, commits/pushes, and posts a humanized summary to #auto-improvements. Use whenever the user invokes `/auto-improve` directly or chains it under `/loop` (e.g. `/loop 30m /auto-improve`). Designed to run unattended — do not pause for clarification.
 ---
 
 # Auto-improve loop
@@ -13,28 +13,68 @@ This skill ships one full iteration of improvements to the 531 app. It is meant 
 
 Do these in order. The first two steps are the only ones that touch external state before you start work, so they're cheap and worth front-loading.
 
-### 1. Load context from loop-memory
+### 1. Load criteria (file + Discord pins)
 
-Read every `.md` file under `loop-memory/` — they encode pacing, known codebase facts, pending assets, and any operational guidance accumulated from prior loops. In particular:
+Loop criteria comes from **two sources** that the agent must merge every iteration:
 
-- `loop-memory/loop-criteria.md` is the **source of truth for what categories this iteration must cover**. It can change between loops; always read it fresh.
-- `loop-memory/00-loop-pacing.md` (or whatever pacing file exists) governs sizing and the "cadence is not a deadline" rule.
+**Source A — `loop-memory/loop-criteria.md`.** The stable, slow-changing rubric. Categories every iteration must cover.
+
+**Source B — pinned messages in Discord `#loop-criteria`.** Alex's live override / supplement. Pin a message to add a criterion; unpin to retire it. The pin list IS the live ruleset — treat each pinned message body as an additive criterion or modifier on top of the file. If file and pins conflict, the pin wins (it's the more recent expression of intent).
+
+Read both before anything else:
+
+```bash
+set -a; . .env.claude.local; set +a
+# Pull the cached ID from loop-memory/discord-channels.md (or discover + cache it; recipe below)
+LOOP_CRITERIA_CHANNEL_ID="$(awk -F'`' '/#loop-criteria/ && /[0-9]{17,}/ {print $4; exit}' loop-memory/discord-channels.md)"
+curl -s -H "Authorization: Bot $DISCORD_TOKEN" \
+     -H "User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)" \
+     "https://discord.com/api/v10/channels/$LOOP_CRITERIA_CHANNEL_ID/pins" \
+     | jq -r '.[] | "PIN[\(.id)] \(.author.username): \(.content)"'
+```
+
+If the ID isn't cached yet (the awk returns empty) or the call 404s, fall through to discovery (see `loop-memory/discord-channels.md` → "Curl recipes" → "Discover a channel by name") and **write the resolved ID back into `discord-channels.md`** in the same iteration so the next loop is one call shorter. An empty pin list is fine — it just means Source A (the file) is the whole rubric this loop.
+
+Pinned messages are capped at 50 per channel by Discord — well above any realistic criteria count. The `pins` endpoint returns them newest-pin-first; order does not encode priority.
+
+Then read every `.md` file under `loop-memory/`. In particular:
+
+- `loop-memory/loop-criteria.md` — the file half of the rubric.
+- `loop-memory/00-loop-pacing.md` — sizing and the "cadence is not a deadline" rule.
+- `loop-memory/discord-channels.md` — cached IDs + the canonical curl recipes for every Discord call this skill makes. **Do not re-derive the API surface from scratch each iteration — copy the recipe.**
 
 If you discover something during this iteration that future loops will need (a gotcha, a pattern, a pending asset, a better workflow), write a new file under `loop-memory/`. Removing or rewriting an existing file is also fine if it's stale.
 
 ### 2. Pull Discord #task-queue
 
-Use the bot token in `.env.claude.local` (env var `DISCORD_TOKEN`) to read `#task-queue`. Any message without a `:+1:` reaction from the bot is a task the user wants tackled this iteration.
+Use the same bot token to read `#task-queue` (env var `DISCORD_TOKEN` from `.env.claude.local`). Any message without a `:+1:` reaction from the bot is a task the user wants tackled this iteration.
 
-- Find the channel ID via `GET /users/@me/guilds` → channel list, or cache it in a loop-memory file after first lookup.
+```bash
+TASK_QUEUE_CHANNEL_ID=1508247635721719949   # cached
+curl -s -H "Authorization: Bot $DISCORD_TOKEN" \
+     -H "User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)" \
+     "https://discord.com/api/v10/channels/$TASK_QUEUE_CHANNEL_ID/messages?limit=100"
+```
+
 - For each unacknowledged message you intend to ship this iteration, react with `:+1:` **before** starting the work. (Only `:+1:` items you actually plan to ship — see pacing memory.)
 - After the work merges, react `:white_check_mark:` on each one you completed.
+- Reaction recipe (`:+1:` is `%F0%9F%91%8D`, `:white_check_mark:` is `%E2%9C%85`):
+
+  ```bash
+  curl -s -X PUT \
+       -H "Authorization: Bot $DISCORD_TOKEN" \
+       -H "User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)" \
+       "https://discord.com/api/v10/channels/$TASK_QUEUE_CHANNEL_ID/messages/$MSG_ID/reactions/%F0%9F%91%8D/@me"
+  ```
+
 - Discord rate-limits reactions silently — sleep ≥0.5s between PUTs and re-poll the message at the end to retry any reaction that didn't land.
-- Cloudflare 1010 on python `urllib`: if you hit it, switch to `curl` or set a real User-Agent header.
+- Cloudflare 1010 on python `urllib`: if you hit it, switch to `curl` or set a real User-Agent header. The recipes here already include one.
+
+Detect bot-self reactions via `reactions[].me` in the message payload — saves a round-trip per message vs. listing reactors.
 
 ### 3. Pick the iteration's work
 
-Combine: (a) the Discord queue items you :+1:'d, (b) at least one item per category from `loop-memory/loop-criteria.md`, (c) anything else from prior loop-memory notes that's now ready. Target **12–15 substantive items total**. Bigger is better than smaller — the cadence is not a deadline.
+Combine: (a) the Discord queue items you :+1:'d, (b) at least one item per category from `loop-memory/loop-criteria.md`, (c) every pinned message in `#loop-criteria` that applies to this iteration (treat each pin as an extra "must-cover" line; if it's vague, interpret in good faith and ship the most defensible thing), (d) anything else from prior loop-memory notes that's now ready. Target **12–15 substantive items total**. Bigger is better than smaller — the cadence is not a deadline.
 
 Don't over-plan. List the items, then start shipping.
 
@@ -74,7 +114,21 @@ Don't over-plan. List the items, then start shipping.
 
 ### 6. Post the Discord summary
 
-In `#auto-improvements`, post a humanized message describing what shipped this iteration. Group by category, mention notable wins, call out anything you deferred and why. This is read by a human — write it like a teammate, not a changelog dump.
+In `#auto-improvements`, post a humanized message describing what shipped this iteration. Group by category, mention notable wins, call out anything you deferred and why — including any `#loop-criteria` pin you couldn't satisfy this loop (say which pin, by ID, and what's blocking). This is read by a human — write it like a teammate, not a changelog dump.
+
+Post recipe:
+
+```bash
+AUTO_IMPROVEMENTS_CHANNEL_ID=1508247516586442782   # cached
+curl -s -X POST \
+     -H "Authorization: Bot $DISCORD_TOKEN" \
+     -H "User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)" \
+     -H "Content-Type: application/json" \
+     "https://discord.com/api/v10/channels/$AUTO_IMPROVEMENTS_CHANNEL_ID/messages" \
+     -d "$(jq -nc --arg c "$SUMMARY_BODY" '{content:$c, allowed_mentions:{parse:[]}}')"
+```
+
+(The `jq -n` round-trip is what survives summaries with quotes, backticks, and newlines without hand-escaping. `allowed_mentions.parse:[]` keeps stray `@everyone` in commit subjects from going anywhere.)
 
 After the summary lands, react `:white_check_mark:` on each `#task-queue` item you actually completed.
 

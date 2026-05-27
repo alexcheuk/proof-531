@@ -9,6 +9,16 @@ Every `/auto-improve` iteration MUST include at least one item in each category 
 
 If a category genuinely has nothing to do this iteration, say so explicitly in the Discord summary — don't silently skip.
 
+## Live criteria from Discord `#loop-criteria`
+
+This file is the **stable half** of the rubric. The **live half** is the pinned-message list in the Discord `#loop-criteria` channel — Alex pins a message to add a criterion, unpins to retire it. The auto-improve skill reads the pin list every iteration and merges those criteria with the categories below.
+
+- A pin is additive by default — extra "must-cover this loop" guidance on top of the categories below.
+- If a pin and a category conflict, the **pin wins** (it's the more recent expression of intent).
+- If a pin makes a category permanently obsolete, promote the pin into this file (delete the category, add the new shape, log it in `docs/decision-log.md`) and unpin the message — pins are for live experiments, not the new steady state.
+
+The curl recipe + cached channel ID live in `loop-memory/discord-channels.md`. See `.claude/skills/auto-improve/SKILL.md` § 1 for how the merge happens.
+
 ## Categories
 
 1. **Component audit / refactor** — repeated patterns to consolidate, large components to split, dead code / useless comments to remove, in-component logic to extract into hooks. Enforce one-component-per-file; promote frequently-edited components into their own directory with co-located hooks/tests and an `index.ts` barrel.
