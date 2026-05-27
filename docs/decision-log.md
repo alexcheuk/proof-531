@@ -42,6 +42,33 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Official app name "531 Strength" applied across website meta + app.json
+
+**Tags:** `web`, `convention`, `store`
+**Files:** `apps/web/src/layouts/Base.astro`, `apps/web/src/pages/rss.xml.ts`, `apps/web/src/components/TopBar.astro`, `apps/web/src/components/Footer.astro`, `apps/mobile/app.json`, `apps/web/src/pages/process.astro`, `apps/web/src/pages/blog/expedition-logs.astro`
+
+The official product name is "531 Strength". Updated `og:site_name`, RSS feed title, page `<title>` tags, default meta description, and `app.json` to use the full name consistently. The website wordmark ("531·LEDGER") is a design-identity element for the site and was intentionally left unchanged.
+
+**Why:** User confirmed the name via Discord. The website had a mix of "531" and "531 Strength" — the OG social-sharing card in particular still said just "531".
+
+### 2026-05-27 — `SessionCompleteTitle` prop renamed `week` → `cycleDay`; text fixed to say "day N"
+
+**Tags:** `convention`, `refactor`
+**Files:** `apps/mobile/src/features/session/components/SessionCompleteTitle.tsx`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+Renamed the `week` prop to `cycleDay` to match the UI terminology change (cycles use "days" not "weeks"). Fixed the rendered text from "squat day, week 1" to "squat day, day 1" for consistency with the rest of the UI (CycleStrip, Settings section, Progress grid).
+
+**Why:** Prior loop changed Settings and Progress to say "days" but missed the session complete screen. The prop name "week" was also semantically off — it holds a cycle-day number (1–4), and naming it "week" would mislead any future reader.
+
+### 2026-05-27 — Removed unused `PagerDots` design primitive
+
+**Tags:** `removal`
+**Files:** `apps/mobile/src/design/primitives/PagerDots.tsx`, `apps/mobile/src/design/primitives/index.ts`
+
+Deleted `PagerDots` from the design system. The primitive was exported in the barrel but had zero feature-level importers (confirmed by grep). No test, no usage.
+
+**Why:** Dead surface area in the design system. Keeping unused primitives misleads future engineers into thinking the component is used or maintained. Deletion is reversible if a real consumer appears.
+
 ### 2026-05-27 — `LOWER_BODY` exported from domain; duplicate feature-level definitions removed
 
 **Tags:** `domain`, `refactor`, `removal`

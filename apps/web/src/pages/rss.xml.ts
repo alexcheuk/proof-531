@@ -7,7 +7,7 @@ export async function GET(context: APIContext) {
   const posts = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
 
   return rss({
-    title: '531 — Dev log',
+    title: '531 Strength — Dev log',
     description: 'What an AI coding agent shipped, every 30 minutes.',
     site: context.site ?? 'https://531.dev',
     items: posts.map((post) => ({

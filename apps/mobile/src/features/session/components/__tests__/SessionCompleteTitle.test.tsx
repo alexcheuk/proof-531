@@ -12,7 +12,7 @@ const BASE = {
   dateLine: 'MAY 24',
   year: '2026',
   liftLower: 'squat',
-  week: 1 as const,
+  cycleDay: 1,
 };
 
 describe('SessionCompleteTitle', () => {
@@ -30,7 +30,7 @@ describe('SessionCompleteTitle', () => {
   it('renders the standard subtext on a non-PR session', () => {
     const screen = renderTitle(<SessionCompleteTitle {...BASE} showCertificate={false} />);
     expect(
-      screen.getByText(/squat day, week 1\. work done, weight moved, page turned\./),
+      screen.getByText(/squat day, day 1\. work done, weight moved, page turned\./),
     ).toBeTruthy();
   });
 

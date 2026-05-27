@@ -9,7 +9,7 @@ interface Props {
   ogImage?: string;
 }
 
-const { title, description = '531 — a 5/3/1 + BBB training tracker, built in the open by an AI coding agent.', ogImage } = Astro.props;
+const { title, description = '531 Strength — a 5/3/1 + BBB training tracker, built in the open by an AI coding agent.', ogImage } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
@@ -37,7 +37,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <meta name="description" content={description} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="531" />
+    <meta property="og:site_name" content="531 Strength" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -49,7 +49,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
 
-    <link rel="alternate" type="application/rss+xml" title="531 dev blog" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="531 Strength dev blog" href="/rss.xml" />
   </head>
   <body>
     {/* Skip-to-content link — first focusable element, visually hidden

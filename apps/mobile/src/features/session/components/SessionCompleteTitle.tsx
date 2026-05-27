@@ -14,7 +14,8 @@ export type SessionCompleteTitleProps = {
   /** When true, renders "★ NEW RECORD ★" on the DateStamp arc. */
   showCertificate: boolean;
   liftLower: string;
-  week: number;
+  /** The cycle day number (1–4). Called `week` in the raw session row for legacy reasons. */
+  cycleDay: number;
 };
 
 /**
@@ -30,7 +31,7 @@ export function SessionCompleteTitle({
   year,
   showCertificate,
   liftLower,
-  week,
+  cycleDay,
 }: SessionCompleteTitleProps) {
   const { colors, layout, type } = useTheme();
 
@@ -83,12 +84,12 @@ export function SessionCompleteTitle({
       <RNText style={titleSubtext}>
         {showCertificate ? (
           <>
-            {`${liftLower} day, week ${week}. `}
+            {`${liftLower} day, day ${cycleDay}. `}
             <RNText style={titleSubtextStrong}>{`a new estimated 1RM on the ${liftLower}`}</RNText>
             {' — the bar moved further today than ever before.'}
           </>
         ) : (
-          `${liftLower} day, week ${week}. work done, weight moved, page turned.`
+          `${liftLower} day, day ${cycleDay}. work done, weight moved, page turned.`
         )}
       </RNText>
     </View>

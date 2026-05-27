@@ -130,7 +130,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
           year={v.stampParts.year}
           showCertificate={v.showCertificate}
           liftLower={v.liftLower}
-          week={v.session.week}
+          cycleDay={v.session.week}
         />
 
         {v.isCycleComplete ? <CycleCompleteBand cycle={v.session.cycle ?? 1} /> : null}

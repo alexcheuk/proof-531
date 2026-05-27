@@ -40,4 +40,3 @@ export {
   PROGRESS_GRID_ROW_HEIGHT,
 } from './ProgressGridRow';
 export { TmCell, type TmCellProps } from './TmCell';
-export { PagerDots, type PagerDotsProps } from './PagerDots';
