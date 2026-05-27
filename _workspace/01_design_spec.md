@@ -662,4 +662,18 @@ These need user input before implementation. The pipeline pauses while these are
 
 ## Revision history
 
-(none — initial spec on 2026-05-27)
+### 2026-05-27 — Open questions resolved (spec now implementation-ready)
+
+All 7 open questions answered. Decisions locked:
+
+1. **CycleStrip + Today + Live label** → `TM TEST` everywhere (parallel, unambiguous, fits the strip cell).
+2. **Today title-block eyebrow** → `WEEK 4 · TM TEST` (parallel with strip and set eyebrow).
+3. **`TmTestLogSheet` rep stepper cap** → `10` (honest data without ceremony; lets a really-conservative-TM lifter record the actual number).
+4. **Default rep value in `TmTestLogSheet`** → `0` (deliberate count entry; no editorial pressure from a pre-filled top-of-band).
+5. **`TmAdjustmentSuggestion` field name** → rename `deltaLb` → `delta` with JSDoc noting "value is in the lift's unit, same convention as `tmIncrement`."
+6. **BBB on Week 4** → **hard skip**. `BbbBand` does not render on week-4 sessions. Cycle BBB volume bookkeeping treats week 4 as a zero-volume day. Lifters who want BBB anyway run it un-tracked, same model as assistance work today.
+7. **PR-rebuild guard for `tm-test`** → confirmed: the rebuild stays `kind = 'amrap'`-only. TM Test sets are bounded by definition and cannot produce a max-effort e1RM PR. One-line filter remains unchanged; new kind is invisible to PR logic.
+
+No structural changes to the spec — all answers either confirmed proposed defaults or were single-field renames. Implementation can proceed against this document as-is.
+
+### 2026-05-27 — Initial spec written.
