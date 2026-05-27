@@ -146,10 +146,7 @@ export function TmApplySheet({
               <RNText style={arrowStyle}>→</RNText>
               <View style={{ alignItems: 'flex-end' }}>
                 <RNText style={labelStyle}>New TM</RNText>
-                <RNText
-                  style={[valueStyle, { color: colors.ink0 }]}
-                  testID="tm-apply-new"
-                >
+                <RNText style={[valueStyle, { color: colors.ink0 }]} testID="tm-apply-new">
                   {newTmDisplay} {u}
                 </RNText>
               </View>

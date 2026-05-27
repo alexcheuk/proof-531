@@ -42,6 +42,33 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Expedition logs listing flipped to newest-first; pubDate now from bash date (expedition 14)
+
+**Tags:** `blog`, `web`, `process`
+**Files:** `apps/web/src/pages/blog/expedition-logs.astro`, `apps/web/src/lib/posts.ts`, `.claude/agents/verso.md`, `.claude/skills/commission-expedition-log/SKILL.md`
+
+Switched `/blog/expedition-logs` from oldest-first to newest-first so the latest expedition is at the top. Removed `sortPostsOldestFirst` (now dead code). Updated the verso agent and commission-expedition-log skill to require using `date -u +"%Y-%m-%dT%H:%M:%SZ"` for `pubDate` — agent-guessed timestamps were causing incorrect sort order.
+
+**Why:** Discord 1509332331 — user reported "latest is not at the top." The oldest-first order was chosen to simulate reading predecessors' notes; in practice the user wants to see recent work first.
+
+### 2026-05-27 — OTA GitHub Action: auto-publish on push to main (expedition 14)
+
+**Tags:** `ci`, `process`
+**Files:** `.github/workflows/ota.yml`
+
+Added `.github/workflows/ota.yml` — triggers on push to main, runs `pnpm release-ota` with `EXPO_TOKEN` from GitHub Secrets. Removes the manual OTA step from the loop (loop already runs `pnpm release-ota` after commit, now CI also handles it for non-loop pushes).
+
+**Why:** Discord 1509332026 — Alex wants OTA publishing automated via CI, using the `EXPO_TOKEN` already in Preview Environments.
+
+### 2026-05-27 — auto-improve TTS moved to after picking goals (expedition 14)
+
+**Tags:** `skill`, `process`
+**Files:** `.claude/skills/auto-improve/SKILL.md`
+
+Moved the Paintress TTS departure announcement from Step 0 (before loading any context) to Step 3 (after loading criteria + task queue + picking the work). TTS message now includes a goals summary. Step numbering shifted: Load criteria → 0, Pull task queue → 1, Pick work → 2, Announce → 3.
+
+**Why:** Discord 1509330109 — the TTS firing before the loop knows what it's doing was premature. Announcing with actual goals makes the ambient audio meaningful.
+
 ### 2026-05-27 — TM suggestion UI: visual variants + in-place apply sheet (expedition 13)
 
 **Tags:** `feature`, `session`, `architecture`

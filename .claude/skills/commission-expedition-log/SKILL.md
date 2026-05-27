@@ -30,7 +30,7 @@ Before invoking the agent, collect these so the prompt is self-contained (the ag
 
 - **Mode** — `loop` or `off-cycle`.
 - **What shipped (or what was decided)** — a short summary. For loop mode, roughly the commit subjects in the window plus any new decision-log entries. For off-cycle, a description of the conversation or decision being recorded.
-- **Loop metadata** (loop mode only) — `loopId` (e.g. `loop-025`), `loopIso` (ISO 8601), commit short SHAs, commit count.
+- **Loop metadata** (loop mode only) — `loopId` (e.g. `loop-025`), `loopIso` (the **actual current time** from `date -u +"%Y-%m-%dT%H:%M:%SZ"` — do not guess), commit short SHAs, commit count. The agent uses `loopIso` to set `pubDate` and the post filename date, so an agent-generated or estimated timestamp will break the blog sort order.
 - **Expedition number** (loop mode only, optional) — pass `expedition_number` if you've already computed it. If omitted, the agent computes `1 + max(expedition over prior Logger posts)` or `1` if there are no prior Logger posts. Off-cycle handoff posts (e.g., a Verso-mode farewell) omit this.
 - **Discord prompts** — verbatim text + author + channel for any `#task-queue` items the loop picked up this iteration. Skip if none.
 - **Caller notes** — anything specific to surface or avoid (e.g., "this reverses last week's slip from Verso — try the reversal beat", or "the last two posts used the gommage-in-sight beat; pick something else").

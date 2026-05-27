@@ -45,18 +45,6 @@ export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
 }
 
 /**
- * Sort posts oldest first. Used by `/blog/expedition-logs` — the order the
- * next expedition would read field logs left by predecessors.
- */
-export function sortPostsOldestFirst(posts: BlogEntry[]): BlogEntry[] {
-  return [...posts].sort((a, b) => {
-    const diff = a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
-    if (diff !== 0) return diff;
-    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-  });
-}
-
-/**
  * True if the post is a Logger field log (has both `expedition` and `loggerName`
  * in frontmatter and includes `'expedition'` in scope). Used to drive the
  * author/sign-off rendering on listing pages.

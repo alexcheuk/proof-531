@@ -82,6 +82,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   useHistoryBackHandler({ enabled: origin === 'history', onBack: handleBackToHistory });
 
+  const [tmApplyOpen, setTmApplyOpen] = useState(false);
+
   if (!data.view) {
     return (
       <SessionLayout>
@@ -106,8 +108,6 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     if (router.canDismiss()) router.dismissAll();
     goTo.progress(router, v.session.lift, { justCompleted: sessionId });
   };
-
-  const [tmApplyOpen, setTmApplyOpen] = useState(false);
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
@@ -184,7 +184,11 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
                     unit: v.unitGlyph,
                   })}
                 />
-                <AdjustTmCta delta={v.e1RMDelta} unitGlyph={v.unitGlyph} onPress={() => goTo.settings(router)} />
+                <AdjustTmCta
+                  delta={v.e1RMDelta}
+                  unitGlyph={v.unitGlyph}
+                  onPress={() => goTo.settings(router)}
+                />
               </>
             ) : null}
 

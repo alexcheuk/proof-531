@@ -76,6 +76,21 @@ jest.mock('@/data/DbProvider', () => ({
   useDb: () => ({ __stub: 'db' }),
 }));
 
+// @gorhom/bottom-sheet stub — requires Reanimated worklets bridge which
+// is not available in Jest. Render children passthrough is enough for
+// behavioral tests on the screen that hosts TmApplySheet.
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = jest.requireActual('react');
+  return {
+    __esModule: true,
+    // biome-ignore lint/suspicious/noExplicitAny: test stub
+    default: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    BottomSheetBackdrop: () => null,
+    // biome-ignore lint/suspicious/noExplicitAny: test stub
+    BottomSheetView: ({ children }: any) => React.createElement(React.Fragment, null, children),
+  };
+});
+
 // Session row — happy path: endedAt set, lift = squat, week 1, lbs.
 // startedAt + endedAt give a 30s elapsed for the receipt row.
 const startedAt = 1_700_000_000_000;

@@ -11,31 +11,9 @@ This skill ships one full iteration of improvements to the 531 app. It is meant 
 
 ## Order of operations
 
-Do these in order. The first two steps are the only ones that touch external state before you start work, so they're cheap and worth front-loading.
+Do these in order.
 
-### 0. Announce the expedition (TTS)
-
-Before doing anything else, speak the departure line through the homelab speaker so the cron tick is audible as ambient theater rather than silent CI churn. Fire-and-forget — never block the loop on this.
-
-Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist). Then:
-
-```bash
-NEXT_EXPEDITION="$(grep -hE '^expedition:[[:space:]]+[0-9]+' apps/web/src/content/blog/*.md 2>/dev/null \
-  | awk '{print $2}' | sort -n | tail -1)"
-NEXT_EXPEDITION=$(( ${NEXT_EXPEDITION:-0} + 1 ))
-
-curl -sS -X POST "https://home-tts.yikeslab.com/say" \
-  -H "Content-Type: application/json" \
-  --max-time 5 \
-  -d "{\"message\":\"Expedition $NEXT_EXPEDITION departs.\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
-  >/dev/null 2>&1 || true
-```
-
-The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own.
-
-If the curl fails (speaker offline, DNS, network), keep going. The iteration must not depend on the speaker being reachable.
-
-### 1. Load criteria (file + Discord pins)
+### 0. Load criteria (file + Discord pins)
 
 Loop criteria comes from **two sources** that the agent must merge every iteration:
 
@@ -67,7 +45,7 @@ Then read every `.md` file under `loop-memory/`. In particular:
 
 If you discover something during this iteration that future loops will need (a gotcha, a pattern, a pending asset, a better workflow), write a new file under `loop-memory/`. Removing or rewriting an existing file is also fine if it's stale.
 
-### 2. Pull Discord #task-queue
+### 1. Pull Discord #task-queue
 
 Use the same bot token to read `#task-queue` (env var `DISCORD_TOKEN` from `.env.claude.local`). Any message without a `:+1:` reaction from the bot is a task the user wants tackled this iteration.
 
@@ -94,11 +72,35 @@ curl -s -H "Authorization: Bot $DISCORD_TOKEN" \
 
 Detect bot-self reactions via `reactions[].me` in the message payload — saves a round-trip per message vs. listing reactors.
 
-### 3. Pick the iteration's work
+### 2. Pick the iteration's work
 
 Combine: (a) the Discord queue items you :+1:'d, (b) at least one item per category from `loop-memory/loop-criteria.md`, (c) every pinned message in `#loop-criteria` that applies to this iteration (treat each pin as an extra "must-cover" line; if it's vague, interpret in good faith and ship the most defensible thing), (d) anything else from prior loop-memory notes that's now ready. Target **12–15 substantive items total**. Bigger is better than smaller — the cadence is not a deadline.
 
 Don't over-plan. List the items, then start shipping.
+
+### 3. Announce the expedition (TTS)
+
+Now that you know what this expedition is about, speak the departure line through the homelab speaker so the cron tick is audible as ambient theater. Fire-and-forget — never block the loop on this.
+
+Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist). Build a one-sentence goal summary from the items you just picked (3–5 goals, plain English). Then:
+
+```bash
+NEXT_EXPEDITION="$(grep -hE '^expedition:[[:space:]]+[0-9]+' apps/web/src/content/blog/*.md 2>/dev/null \
+  | awk '{print $2}' | sort -n | tail -1)"
+NEXT_EXPEDITION=$(( ${NEXT_EXPEDITION:-0} + 1 ))
+# GOALS_SUMMARY = "fix blog sorting, add OTA action, move TTS timing, and clean the repo."
+# (compose inline from your picked item list — 3-5 items, plain English)
+
+curl -sS -X POST "https://home-tts.yikeslab.com/say" \
+  -H "Content-Type: application/json" \
+  --max-time 5 \
+  -d "{\"message\":\"Expedition $NEXT_EXPEDITION departs. Goals: $GOALS_SUMMARY\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
+  >/dev/null 2>&1 || true
+```
+
+The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own.
+
+If the curl fails (speaker offline, DNS, network), keep going. The iteration must not depend on the speaker being reachable.
 
 ### 4. Ship the work
 

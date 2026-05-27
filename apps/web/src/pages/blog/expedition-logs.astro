@@ -7,11 +7,11 @@ import {
   isLoggerPost,
   postsByScope,
   scopeCounts,
-  sortPostsOldestFirst,
+  sortPostsNewestFirst,
   type Scope,
 } from '~/lib/posts';
 
-const all = sortPostsOldestFirst(
+const all = sortPostsNewestFirst(
   await getCollection('blog', ({ data }) => !data.draft),
 );
 const posts = postsByScope(all, 'expedition');

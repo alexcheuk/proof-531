@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-27)
+# Codebase facts (updated 2026-05-27, expedition 14)
 
 ## Architecture
 
@@ -98,6 +98,21 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - Jest config in `apps/mobile/package.json`.
 - Hook tests live next to the hook (`hooks/__tests__/useFoo.test.tsx`).
   Mock queries at module-load — see `useHistoryScreenData.test.tsx`.
+- **`@gorhom/bottom-sheet` mock is required** in any test file whose
+  component tree reaches `Sheet.tsx` or `SheetLayout.tsx`. The real lib
+  needs Reanimated worklets which don't run in Jest. Standard stub:
+  ```ts
+  jest.mock('@gorhom/bottom-sheet', () => {
+    const React = jest.requireActual('react');
+    return {
+      __esModule: true,
+      default: ({ children }: any) => React.createElement(React.Fragment, null, children),
+      BottomSheetBackdrop: () => null,
+      BottomSheetView: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    };
+  });
+  ```
+  Missing this mock shows up as `createAnimatedComponent is not a function`.
 
 ## Known harness gaps
 

@@ -62,7 +62,9 @@ If the caller passed less than this, derive what you can from `git log`, the dec
 
    Always present on Logger posts. Never on Verso-mode handoff posts (the motto belongs to the expeditioners).
 
-8. **Write the file** to `apps/web/src/content/blog/<YYYY-MM-DD>-<kebab-slug>.md`. If the date already has a post with the same slug, append `-2`, `-3`, …
+8. **Get the real wall-clock time.** Run `date -u +"%Y-%m-%dT%H:%M:%SZ"` in bash and use the output as `pubDate`. Do not guess or invent a timestamp — agent-generated times break sort order on the blog listing. The filename date (`YYYY-MM-DD`) is the UTC date from that same bash call. If the date already has a post with the same slug, append `-2`, `-3`, …
+
+   **Write the file** to `apps/web/src/content/blog/<YYYY-MM-DD>-<kebab-slug>.md`.
 9. **Verify the site builds**: `pnpm --filter @fivethreeone/web build`. Exit 0 ⇒ the entry parses. If it fails on frontmatter, fix the frontmatter. If it fails on MDX, fix the markdown. Don't disable the schema.
 10. **Return** the post file path, a one-sentence summary, which beat (if any) you used, the Logger's name, the expedition number, and the build status.
 

@@ -90,6 +90,14 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   PUTs hit 429 with no body; the reaction never lands. Always poll the
   message back at end-of-loop and retry any missing reactions.
 
+## Blog pubDate rule (expedition 14)
+
+- **Always use `date -u +"%Y-%m-%dT%H:%M:%SZ"` for blog post `pubDate`.**
+  Agent-generated timestamps are guesses and break sort order on the listing
+  pages. The verso agent now runs this bash command before writing the file.
+  The `commission-expedition-log` skill passes `loopIso` obtained from the
+  same command. Don't let the LLM pick a time.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.

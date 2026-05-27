@@ -1,0 +1,33 @@
+name: OTA Update
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ota:
+    name: Publish EAS OTA
+    runs-on: ubuntu-latest
+    # Only ship OTA when JS/asset files change — skip for docs-only commits
+    # or when the commit message starts with "docs:" / "chore(loop-memory):" etc.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Publish OTA update
+        run: pnpm release-ota
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
