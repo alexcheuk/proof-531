@@ -1120,14 +1120,45 @@ const postCount = posts.length;
         const el = document.createElement('div');
         el.className = 'plate';
         const h = H * sizeFor(p, 'lb');
+        // Plate layout (border-radius / display:flex / centered children) is
+        // also scoped inside PhonePlateBar.astro — inline it here so the
+        // rotated label sits centered on the JS-injected plate the same
+        // way it does on the SSR'd ones.
         el.setAttribute(
           'style',
-          `width: ${plateW}px; height: ${h}px; background: var(--ink-0);`,
+          [
+            `width: ${plateW}px`,
+            `height: ${h}px`,
+            'background: var(--ink-0)',
+            'border-radius: 1px',
+            'display: flex',
+            'align-items: center',
+            'justify-content: center',
+            'position: relative',
+          ].join('; '),
         );
         if (h >= 30 && plateW >= 10) {
           const label = document.createElement('span');
           label.className = 'plate-label';
-          label.style.color = 'var(--bg-0)';
+          // Inline the rotated label typography because Astro scopes
+          // PhonePlateBar's `<style>` block to its own SSR'd elements.
+          // Dynamically-injected spans don't inherit the scope and would
+          // otherwise render as flat, un-rotated text (Discord
+          // 1508997365 — "the plate number is wrong, should be vertical
+          // aligned + rotated, style it like the actual app"). Numbers
+          // here match the `size-hero` block in PhonePlateBar.astro.
+          label.style.cssText = [
+            'font-family: var(--font-mono)',
+            'font-size: 14px',
+            'line-height: 12px',
+            'letter-spacing: 1.4px',
+            'font-weight: 700',
+            'transform: rotate(-90deg)',
+            'transform-origin: center',
+            'white-space: nowrap',
+            'pointer-events: none',
+            'color: var(--bg-0)',
+          ].join('; ');
           label.textContent = plateLabel(p);
           el.appendChild(label);
         }

@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Astro `<style>` is scoped; JS-injected elements need their layout-critical styles inlined
+
+**Tags:** `web`, `bugfix`, `gotcha`
+**Files:** `apps/web/src/pages/index.astro`, `loop-memory/13-marketing-interactivity.md`
+
+The plate-calculator interactivity that shipped one loop ago had a follow-up: the SSR'd plates rendered with rotated labels (the typewriter `-90°` you see between sets in the real app), but the moment the user tapped the ± stepper, the JS-rebuilt plates rendered the labels flat. Discord 1508997365 caught this immediately ("the plate number is wrong, should be vertical aligned + rotated, style it like the actual app"). Root cause: Astro `<style>` blocks are scoped by default — selectors like `.plate-label { transform: rotate(-90deg); }` in `PhonePlateBar.astro` get a generated `data-astro-cid-*` attr that the SSR'd elements carry but dynamically-injected spans do not. Fix: inline rotation + font + layout styles on the JS-created label and plate elements via `style.cssText` so they don't depend on the scoped class. Rule + escape route written into `loop-memory/13-marketing-interactivity.md` so the next interactive widget on the marketing site doesn't relearn this.
+
+**Why:** the symptom was small (a number that pointed the wrong way) but the bug class is the kind you fix once and then never see again if it's documented. The previous "dev" — me, an hour earlier — shipped the JS path without testing past the first paint, which is exactly the failure mode worth pinning to memory.
+
+**Trade-off / what we didn't do:** considered making the `PhonePlateBar.astro` style block `is:global` so the JS path would pick up the same rules. Rejected — `is:global` leaks selectors like `.plate-label` to every page on the site and breaks the whole point of Astro's scoped styles. Inlining the four layout-critical rules on JS-rendered elements is local, explicit, and survives any future restructuring of the source component's styles.
+
 ### 2026-05-27 — Home-page plate calculator is now interactive — vanilla JS that re-renders off the same `~/lib/plates` math the mobile app uses
 
 **Tags:** `web`, `marketing`, `interactivity`, `convention`

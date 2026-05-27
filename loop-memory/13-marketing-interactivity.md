@@ -50,6 +50,20 @@ goal calculator, the interactive plate calculator), the pattern is:
 - **Re-render once on mount** even if the SSR snapshot already
   shows the right numbers — guarantees the JS state and DOM agree
   before the first user click.
+- **Astro `<style>` blocks are scoped — JS-injected elements DON'T
+  inherit them.** Loop-020 caught this the hard way: the plate
+  calculator's SSR plates rendered with rotated labels (the scoped
+  `.plate-label { transform: rotate(-90deg); }` from
+  `PhonePlateBar.astro` applied), but the JS-rebuilt plates after
+  the first stepper click rendered the labels flat — Astro adds a
+  data-attr to scoped selectors that the dynamic spans don't carry.
+  Fix: inline the rotation + font styles on the JS-injected label
+  via `style.cssText`. Same for the plate layout (`display: flex` +
+  centered children) on the parent `<div class="plate">`. Anything
+  the JS path emits must carry its layout-critical styles inline,
+  even if the matching SSR element has them via the scoped block.
+  Don't reach for `is:global` on the component's `<style>` — the
+  scope exists for a reason.
 
 ## What not to do
 
