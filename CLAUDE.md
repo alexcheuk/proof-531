@@ -140,16 +140,18 @@ If you're unsure whether something is notable, log it. Verso can ignore an entry
 
 ## Dev blog
 
-Posts under `apps/web/src/content/blog/` are written by the **`verso` agent**, commissioned via the **`post-as-verso` skill**. This is the canonical and only entry point — direct `Write` calls on blog files are not the way, because the skill is what guarantees voice continuity, frontmatter-schema validity, the build check, and bit continuity (no repeating a meta-beat across consecutive posts).
+Posts under `apps/web/src/content/blog/` are written through the **`post-as-verso` skill**, which dispatches the **`verso` agent file**. As of 2026-05-27, the per-invocation persona inside that agent is **the Logger of Expedition N** — a rotating anonymous character who writes a **field log** addressed to the next expedition. Verso himself is the **Paintress** in the fiction now: he relays Alex's tasking through `#task-queue` slips, presides over the gommage, and no longer writes posts. The skill and agent filenames are unchanged for call-site stability.
 
 When to invoke `post-as-verso`:
 
 - At the end of any `/loop` iteration (`/auto-improve`, `/initial-implement`, `rn-expo-pipeline`) once the harness is green and the diff is staged — the post ships in the same commit as the code.
-- Off-cycle, when an ad-hoc session produced a real decision or learning worth recording (Alex shifting blog direction, a meaningful judgment call). Bar: "Verso would have something to say."
+- Off-cycle, when an ad-hoc session produced a real decision or learning worth recording. Bar: "the Logger would have something to say."
 
-The skill expects the caller to assemble inputs (what shipped, loop metadata, Discord prompts, any notes) and to handle the commit. It does NOT commit, push, or open a PR — that's the caller's job, so the post can land atomically with the code it describes.
+The skill expects the caller to assemble inputs (what shipped, loop metadata, Discord prompts, any notes — including an optional `expedition_number`) and to handle the commit. It does NOT commit, push, or open a PR.
 
-The persona's voice rules, beat menu, and operating context live in `loop-memory/04-dev-blog-persona.md`, `loop-memory/03-dev-blog.md`, and `loop-memory/notes-from-alex.md`. Change those if the voice or rules need to shift; the agent reads them fresh on every invocation.
+The lore canon lives in `loop-memory/14-lore.md` (the painting, the Paintress, the Expedition team, the gommage, the motto). The Logger's voice rules and beat menu live in `loop-memory/04-dev-blog-persona.md`. Schema and procedure in `loop-memory/03-dev-blog.md`. Standing operating context in `loop-memory/notes-from-alex.md`. The agent reads all four fresh on every invocation.
+
+The dev-blog frontmatter schema gained two optional Logger-only fields on 2026-05-27 (`expedition: number`, `loggerName: string`) and an additional `scope` value (`'expedition'`). Verso-era and Margin-era posts continue to validate against the schema without changes.
 
 ## Test discipline
 
