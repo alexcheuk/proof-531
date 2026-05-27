@@ -42,6 +42,24 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-26 — `LiftTabs` moved from `home` to `shared` (boundary violation fix)
+
+**Tags:** `architecture`, `refactor`
+**Files:** `apps/mobile/src/features/shared/LiftTabs.tsx`, `apps/mobile/src/features/shared/LiftTab.tsx`, `apps/mobile/src/features/shared/__tests__/LiftTabs.test.tsx`
+
+`ProgressScreen` was importing `LiftTabs` from `features/home/components/` — a cross-feature import that violated the one-way boundary rule. Moved both components and the test to `features/shared/`. Both `HomeScreen` and `ProgressScreen` now import from `@/features/shared/LiftTabs`.
+
+**Why:** the CLAUDE.md boundary rules say features are peers; a feature importing from another feature creates an implicit dependency that makes the codebase fragile to refactors.
+
+### 2026-05-26 — Reanimated black screen fix: `cancelAnimation` on unmount
+
+**Tags:** `bug`, `session`, `animation`
+**Files:** `apps/mobile/src/features/session/PrCelebrationScreen.tsx`
+
+Added `cancelAnimation(scale)` / `cancelAnimation(opacity)` in the cleanup return of `useScaleStyle` and `useFadeStyle` hooks. Without cleanup, in-flight `withTiming` animations were left running after the screen unmounted, causing a `ReanimatedError: Perhaps you are trying to pass an...` crash on the second consecutive PR session.
+
+**Why:** Reanimated 4 is stricter about orphaned shared-value animations. The crash manifested only on the 2nd+ session because the first session's animations had time to settle before unmount; back-to-back sessions hit the edge case reliably.
+
 ### 2026-05-27 — Renamed `post-as-verso` skill to `commission-expedition-log`
 
 **Tags:** `skill`, `convention`, `meta`

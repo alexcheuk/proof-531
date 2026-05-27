@@ -16,6 +16,9 @@ const all = sortPostsOldestFirst(
 );
 const posts = postsByScope(all, 'expedition');
 const counts = scopeCounts(all);
+const latestExpedition = posts.length > 0
+  ? Math.max(...posts.map(p => p.data.expedition ?? 0))
+  : 0;
 
 const dateFmt = new Intl.DateTimeFormat('en-US', {
   year: 'numeric', month: 'short', day: '2-digit',
@@ -45,7 +48,9 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
           this page; they write for their successors. We publish what
           they leave behind.
         </p>
-        <p class="archive-line">— archived, expedition 33</p>
+        {latestExpedition > 0 && (
+          <p class="archive-line">— archived through expedition {latestExpedition}</p>
+        )}
       </aside>
     </div>
   </section>

@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -95,6 +96,11 @@ function useScaleStyle(target: number, durationMs = SCALE_MS) {
       duration: durationMs,
       easing: Easing.out(Easing.cubic),
     });
+    // Cancel in-flight withTiming on unmount so Reanimated doesn't try to
+    // drive a detached shared value on the 2nd+ session mount.
+    return () => {
+      cancelAnimation(scale);
+    };
   }, [target, durationMs, scale]);
   return useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 }
@@ -103,6 +109,9 @@ function useFadeStyle(visible: boolean, durationMs = FADE_MS) {
   const opacity = useSharedValue(visible ? 1 : 0);
   useEffect(() => {
     opacity.value = withTiming(visible ? 1 : 0, { duration: durationMs });
+    return () => {
+      cancelAnimation(opacity);
+    };
   }, [visible, durationMs, opacity]);
   return useAnimatedStyle(() => ({ opacity: opacity.value }));
 }

@@ -6,7 +6,7 @@ import type { Unit } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text as RNText, View } from 'react-native';
 import { SetRow } from '../SetRow';
 
 export type WarmupsBandProps = {
@@ -19,24 +19,11 @@ export type WarmupsBandProps = {
 /**
  * "WARMUPS · 40/50/60% × 5/5/3" preview band above the working sets.
  *
- * Read-only — warmups are prescribed by `WARMUPS` from `domain/schemes`
- * and are the same on every session. The band lets a lifter see the
- * ramp + know what plates to start with without doing the percent math
- * in their head between sets.
- *
- * Warmups are NOT tracked in `set_logs` (kind: 'warmup' is reserved in
- * the schema but not yet written by any code path) — the band is a
- * cheat sheet, not a checkbox. If users start asking to check them off,
- * we revisit.
- *
- * Collapsed by default (Discord 1508998906): the band's three rows
- * sit between the masthead and the working-set ladder, which pushes
- * the actual work below the fold for taller phones. Tap the header
- * to expand; expansion state is per-mount (the user re-collapses by
- * leaving the screen) so the default stays "out of the way".
+ * Collapsed by default (Discord 1508998906). Tap the header to expand.
+ * When collapsed, the right side reads "TAP TO OPEN" (Discord 1509060717).
  */
 export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsBandProps) {
-  const { colors, layout, spacing } = useTheme();
+  const { colors, layout, spacing, type } = useTheme();
   const [expanded, setExpanded] = useState(false);
 
   const toggle = () => {
@@ -52,17 +39,21 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
         accessibilityLabel={expanded ? 'Collapse warmup sets' : 'Expand warmup sets'}
         accessibilityState={{ expanded }}
         testID="warmups-toggle"
-        hitSlop={{ top: 6, bottom: 6, left: 0, right: 0 }}
+        hitSlop={{ top: 8, bottom: 8, left: 0, right: 0 }}
       >
         <Row justify="space-between" align="center" style={{ marginBottom: 6 }}>
-          <Row align="center" style={{ gap: 8 }}>
+          <Row align="center" style={{ gap: 10 }}>
             <CapsLabel>WARMUPS</CapsLabel>
-            <CapsLabel size="xs" testID="warmups-chevron" style={{ color: colors.ink1 }}>
+            {/* Larger chevron so the affordance is visually obvious */}
+            <RNText
+              testID="warmups-chevron"
+              style={{ color: colors.ink1, fontSize: 14, fontFamily: type.mono }}
+            >
               {expanded ? '▾' : '▸'}
-            </CapsLabel>
+            </RNText>
           </Row>
           <CapsLabel size="xs" color="ink3">
-            40 · 50 · 60% TM
+            {expanded ? '40 · 50 · 60% TM' : 'TAP TO OPEN'}
           </CapsLabel>
         </Row>
       </Pressable>
@@ -72,7 +63,6 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
             {WARMUPS.map((s, i) => {
               const wStorage = round(tm * s.pct, storageUnit);
               const w = displayWeight(wStorage, storageUnit, renderUnit);
-              // (pct, reps) is stable per warmup index — fine as a key.
               const key = `warmup-${s.pct}-${s.reps}`;
               return (
                 <SetRow
@@ -89,9 +79,6 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
               );
             })}
           </View>
-          {/* Single-line note about the unit so the user doesn't have to
-              guess what the SetRow weights are denominated in (matches
-              WorkingSetsBand's "TM N lb" eyebrow on the right). */}
           <CapsLabel size="xs" color="ink3" style={{ marginTop: 4 }}>
             {`Same bar · ${unitGlyph}`}
           </CapsLabel>

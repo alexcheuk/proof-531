@@ -11,7 +11,7 @@ import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
 import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
-import { LiftTabs } from '@/features/home/components/LiftTabs';
+import { LiftTabs } from '@/features/shared/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 import { useRouter } from 'expo-router';

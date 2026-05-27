@@ -31,7 +31,7 @@ import { DateBadge } from './components/DateBadge';
 import { HomeContainer } from './components/HomeContainer';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { LiftPage } from './components/LiftPage';
-import { LiftTabs } from './components/LiftTabs';
+import { LiftTabs } from '@/features/shared/LiftTabs';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {

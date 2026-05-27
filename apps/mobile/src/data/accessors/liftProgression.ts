@@ -36,7 +36,7 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
  * can render the right marker glyph (band-derived for tm-test; rep count
  * for AMRAP).
  */
-export type CompletedSessionTopSet = {
+type CompletedSessionTopSet = {
   setLogId: number;
   kind: 'amrap' | 'tm-test';
   prescribedWeight: number;
