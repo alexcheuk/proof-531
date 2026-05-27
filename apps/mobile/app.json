@@ -13,7 +13,6 @@
       "url": "https://u.expo.dev/17bd8745-c34c-4448-bd19-9319a1e5b474"
     },
     "ios": {
-      "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.alexcheuk.fivethreeone",
       "supportsTablet": false
     },
