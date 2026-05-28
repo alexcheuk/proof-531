@@ -122,31 +122,11 @@ The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the
 - Respect every project rule in `CLAUDE.md` (boundary rules, forbidden paths, commit prefix conventions).
 - For each item, leave the repo greener than you found it: dead code out, comments only where they explain *why*, primitives extracted when three near-identical fragments exist.
 
-### 5. Commit, push, ship OTA
+### 5. Commit and push
 
 - Conventional commits. One commit per logical change is fine; squashing a related cluster into one commit is also fine. Do **not** prefix with `[auto]` (that's reserved for the queue orchestrator).
 - `git push` after each iteration finishes. If a pre-commit/pre-push hook fails, fix it and commit again — never bypass with `--no-verify`.
-- **Ship an EAS OTA update so existing installs pick the iteration up immediately.** Run this after the push:
-
-  ```bash
-  pnpm release-ota
-  ```
-
-  That root script (added 2026-05-25) wraps the full
-  `eas update --branch main --platform android --environment production
-  --non-interactive --message "$(git log -1 --pretty=%s)"` invocation
-  so the loop doesn't have to remember the flag set. The flags exist
-  because newer eas-cli versions refuse non-TTY runs without
-  `--environment production` + `--non-interactive`, and the message
-  uses only the commit subject (`%s`) since the full body
-  (`%B`) often contains unbalanced quotes / backticks that break
-  eas-cli's argument parsing — and the EAS dashboard surfaces only the
-  first line anyway.
-
-  If EAS fails (auth, network, native-incompatible change), surface
-  the error in the Discord summary and continue — code is already on
-  `main`, so the iteration is not lost; the OTA just has to wait for
-  the next push.
+- **OTA is now handled by CI.** The GitHub Actions workflow `.github/workflows/ota.yml` fires on every push to `main` and runs `pnpm release-ota` automatically. Do not run it manually from the loop — CI has the `EXPO_TOKEN` secret and will publish within minutes of the push.
 
 ### 6. Post the Discord summary
 

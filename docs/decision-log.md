@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — OTA publishing moved from loop skill to CI
+
+**Tags:** `process`, `skill`, `removal`
+**Files:** `.claude/skills/auto-improve/SKILL.md`, `.github/workflows/ota.yml`, `docs/ARCHITECTURE.md`, `docs/RELEASE.md`
+
+Removed the `pnpm release-ota` step from the auto-improve loop skill. The GitHub Actions workflow `ota.yml` (added previously) already fires on every push to `main` and publishes OTA automatically — the loop was double-publishing.
+
+**Why:** Alex flagged the redundancy via Discord. CI has the `EXPO_TOKEN` secret; the loop doesn't need it, and having two publishers is confusing and wastes EAS quota.
+
+**Trade-off / what we didn't do:** Kept `pnpm release-ota` in the root scripts and documented it as a manual emergency fallback (CI down). Did not remove the script itself since it's legitimately useful for out-of-band hotfixes.
+
 ### 2026-05-28 — Completed 4-layer CLAUDE.md orientation set
 
 **Tags:** `convention`, `process`, `architecture`

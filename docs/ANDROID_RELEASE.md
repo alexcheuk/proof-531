@@ -147,7 +147,8 @@ For pure-JS regressions to an already-shipped build:
 ```bash
 git commit -m "fix(<area>): <one-line summary>"
 git push origin main
-pnpm release-ota                  # eas update on the production channel
+# CI handles OTA automatically via .github/workflows/ota.yml.
+# Manual fallback (CI down): pnpm release-ota
 ```
 
 `runtimeVersion: { policy: "fingerprint" }` means OTA updates only land

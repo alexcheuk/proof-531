@@ -28,13 +28,13 @@ flowchart TD
     OutChan[#auto-improvements<br/>summary post]:::channel
 
     CritFile[loop-memory/<br/>loop-criteria.md]:::artifact
-    Repo[531 repo<br/>code + OTA]:::artifact
+    Repo[531 repo<br/>code on main]:::artifact
 
     LoadCrit{{1. Load criteria<br/>GET /channels/loop-criteria/pins<br/>+ read file}}:::bot
     LoadQueue{{2. Pull queue<br/>GET /channels/task-queue/messages}}:::bot
     Pick{{3. Pick work<br/>file ∪ pins ∪ queue<br/>target 12-15 items}}:::bot
     Plus1{{4a. React :+1:<br/>PUT .../reactions/👍/@me}}:::bot
-    Ship{{4b. Ship the work<br/>code · test · OTA}}:::bot
+    Ship{{4b. Ship the work<br/>code · test · push}}:::bot
     Check{{5a. React ✅<br/>PUT .../reactions/✅/@me}}:::bot
     Summary{{5b. Post summary<br/>POST .../messages}}:::bot
 
@@ -51,7 +51,7 @@ flowchart TD
     Pick --> Plus1
     Plus1 -- "I'm on it" --> QueueChan
     Plus1 --> Ship
-    Ship -- "commit · push · OTA" --> Repo
+    Ship -- "commit · push" --> Repo
 
     Ship --> Check
     Check -- "shipped" --> QueueChan
@@ -69,7 +69,7 @@ flowchart TD
 
 3. **Pick work.** Union the criteria categories (file + pins) with the queue messages the loop intends to close. Target 12–15 substantive items. Bigger > smaller — the 30-minute cadence is not a deadline.
 
-4. **Ship.** Before starting each queued item, react `:+1:` (`PUT /channels/<id>/messages/<id>/reactions/%F0%9F%91%8D/@me`) so Alex can see the bot picked it up. Then write the code: design + frontend + QA via the agent harness, with typecheck/lint/test/bundle-check in the background. Commit, push, ship the OTA via `pnpm release-ota`.
+4. **Ship.** Before starting each queued item, react `:+1:` (`PUT /channels/<id>/messages/<id>/reactions/%F0%9F%91%8D/@me`) so Alex can see the bot picked it up. Then write the code: design + frontend + QA via the agent harness, with typecheck/lint/test/bundle-check in the background. Commit, push. OTA is published automatically by the CI workflow on push to `main`.
 
 5. **Close the loop.** For every queued item that actually shipped, react `:white_check_mark:` (`%E2%9C%85`). Then post a humanized summary to `#auto-improvements` — `POST /channels/<id>/messages` with `allowed_mentions.parse:[]` so a stray `@everyone` in a commit subject doesn't ping the world. The summary calls out wins, anything deferred, and any pinned criterion the loop couldn't satisfy (by pin ID + reason).
 

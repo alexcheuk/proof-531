@@ -103,7 +103,7 @@ Tests are TDD-discipline for `src/domain/` (red → green → commit). Skipped t
 
 ## Build & release
 
-OTA updates are the day-to-day delivery channel, shipped via EAS Update on every loop. The wrapper script is `pnpm release-ota` (run from the repo root); it calls `eas update --branch main --platform android --environment production --non-interactive` with the commit subject as the message. `runtimeVersion: { policy: "fingerprint" }` means changes to native deps (adding/removing a module with autolinked code) advance the runtime version — existing installs stay on the prior OTA until a fresh native build ships.
+OTA updates are the day-to-day delivery channel, published automatically by the GitHub Actions workflow `.github/workflows/ota.yml` on every push to `main`. The workflow calls `pnpm release-ota`, which wraps `eas update --branch main --platform android --environment production --non-interactive` with the commit subject as the message. `runtimeVersion: { policy: "fingerprint" }` means changes to native deps (adding/removing a module with autolinked code) advance the runtime version — existing installs stay on the prior OTA until a fresh native build ships.
 
 EAS Build profiles in `eas.json` (development / preview / production) build APKs or IPAs for each track. The dev-client profile produces the `expo-dev-client` APK needed for local development. Preview and production are for store distribution.
 
@@ -134,7 +134,7 @@ Branch protection: no merge without green.
 
 Three entry points, each with its own orchestrator:
 
-- **`/auto-improve`** — the standing 30-minute loop. Polls Discord `#task-queue`, picks queue items + at least one item per category from `loop-memory/loop-criteria.md`, ships them, commits, pushes, ships an OTA. Pacing rules in `loop-memory/00-loop-pacing.md`.
+- **`/auto-improve`** — the standing 30-minute loop. Polls Discord `#task-queue`, picks queue items + at least one item per category from `loop-memory/loop-criteria.md`, ships them, commits, and pushes. OTA is published automatically by CI on the push. Pacing rules in `loop-memory/00-loop-pacing.md`.
 - **`rn-expo-pipeline`** — idea-driven feature work. A coordinated design / frontend / QA team (`rn-designer` → `rn-frontend` → `rn-qa`) takes an idea or wireframe and produces a PR-ready commit on `feat/<slug>`.
 - **`/initial-implement`** — queue-driven backlog drain. Picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents inside a per-task git worktree, then squash-merges to `main` as `[auto] <task-id> <title>`. Used when a spec + plan already exist.
 

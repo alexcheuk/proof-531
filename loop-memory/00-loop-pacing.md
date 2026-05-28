@@ -52,6 +52,15 @@ pnpm bundle-check
 
 If a fail, fix and re-run before committing. Never commit red.
 
+## OTA is now CI-handled (expedition 32)
+
+- **Do NOT run `pnpm release-ota` from the loop.** The GitHub Actions workflow
+  `.github/workflows/ota.yml` fires on every push to `main` and handles OTA
+  automatically. Step 5 of the auto-improve skill no longer has an OTA block.
+- CI has the `EXPO_TOKEN` secret. The loop doesn't and shouldn't need it.
+- Manual fallback (CI down): `pnpm release-ota` still works but is not the
+  normal path.
+
 ## Expo SDK 55 — read the docs first
 
 CLAUDE.md says Expo has changed. Before touching any Expo plugin / config / native import, fetch the versioned docs: https://docs.expo.dev/versions/v55.0.0/

@@ -112,12 +112,16 @@ If any of those flows feels off, that's a release blocker.
 ## Hotfix flow (JS-only emergency)
 
 For pure-JS regressions you can ship an OTA update without going through
-the stores. The standing `/auto-improve` loop does this on every iteration
-via the wrapper script:
+the stores. Push to `main` and the CI OTA workflow (`.github/workflows/ota.yml`)
+publishes it automatically within minutes — no manual step needed.
+
+If you need to force an OTA immediately without waiting for CI (e.g. CI is
+down), run the wrapper script manually:
 
 ```bash
 git commit -m "fix(<area>): <one-line summary>"
 git push origin main
+# CI handles OTA automatically; manual fallback:
 pnpm release-ota                  # eas update --branch main --platform android --environment production --non-interactive
 ```
 
