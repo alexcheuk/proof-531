@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Moved `liftLongName` to domain/labels; fixed GoalPanel dec button
+
+**Tags:** `removal`, `domain`, `bug`
+**Files:** `apps/mobile/src/domain/labels.ts`, `apps/mobile/src/features/progress/components/GoalPanel.tsx`, `apps/mobile/src/domain/__tests__/labels.test.ts`
+
+Moved `liftLongName` ("back squat", "bench press", etc.) from `features/progress/labels.ts` into `domain/labels.ts` alongside `liftDisplayName`, deleted the now-empty feature-local file, and added a test. Separately fixed a bug in `GoalPanel`: the decrement stepper for the goal value had no `disabled` guard — pressing it at `minValue` fired haptic feedback but applied no change, giving false tactile confirmation of a no-op.
+
+**Why:** `liftLongName` is a pure `Lift → string` function with no React, no async, no DB. It belongs in the domain layer with the other lift-name helpers. The `GoalPanel` dec button bug was found during the same audit — inconsistent with the `daysPerWeek` stepper, which correctly disables at its bounds.
+
+**Trade-off / what we didn't do:** Did not move `goalStep` / `defaultBumpStep` / `ceilToStep` from `features/progress/goalDefaults.ts` — those are UI-configuration helpers (stepper granularity, default-seed rounding) tightly coupled to the GoalPanel UX, not general-purpose math.
+
 ### 2026-05-28 — Extracted `cycleGoalEstimate` to domain; merged GoalPanel steppers
 
 **Tags:** `architecture`, `refactor`, `domain`

@@ -1,6 +1,6 @@
 # 531 Strength — Privacy Policy
 
-**Last updated:** May 24, 2026
+**Last updated:** May 27, 2026
 
 531 Strength is a single-user lifting journal. It runs entirely on your
 device. The privacy story is deliberately simple because the data

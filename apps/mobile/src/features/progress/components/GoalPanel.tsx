@@ -143,7 +143,13 @@ export function GoalPanel({
           gap: 12,
         }}
       >
-        <StepperBtn glyph="−" size="lg" onPress={dec} testID={`${testID ?? 'goal-panel'}-dec`} />
+        <StepperBtn
+          glyph="−"
+          size="lg"
+          onPress={dec}
+          disabled={value <= minValue}
+          testID={`${testID ?? 'goal-panel'}-dec`}
+        />
         <View
           style={{
             flex: 1,

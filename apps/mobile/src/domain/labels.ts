@@ -41,7 +41,7 @@ export function liftDisplayName(lift: Lift): string {
  *   1 → 5/5/5+   2 → 3/3/3+   3 → 5/3/1+   4 → TM TEST
  *
  * Week 4 was the classic Wendler deload; replaced (forever-forward) with
- * the 7th Week Protocol TM test. See `_workspace/01_design_spec.md`.
+ * the 7th Week Protocol TM test.
  */
 export function weekLabel(week: Week): string {
   switch (week) {
@@ -101,6 +101,23 @@ export function dateLabel(date: Date): string {
   const month = MONTH_ABBR[date.getMonth()];
   const day = date.getDate();
   return `${weekday} · ${month} ${day}`;
+}
+
+/**
+ * Colloquial lift name used in the Progress screen hero ("on the back squat").
+ * Lower-case — caps/text-transform is applied at render time.
+ */
+export function liftLongName(lift: Lift): string {
+  switch (lift) {
+    case 'squat':
+      return 'back squat';
+    case 'bench':
+      return 'bench press';
+    case 'deadlift':
+      return 'deadlift';
+    case 'press':
+      return 'overhead press';
+  }
 }
 
 /**

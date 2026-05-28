@@ -14,14 +14,16 @@ new component, or a layout update. Catch visual regressions before they land.
 For each screen affected by the change, take **before/after screenshots**:
 
 1. **Before** — boot the app on a device or iOS Simulator at the last
-   green commit (`git stash`, scan QR / press `i`). Navigate to the
-   affected screen. Screenshot.
+   green commit (`git stash`, start Metro, connect via dev-client). Navigate
+   to the affected screen. Screenshot.
 
 2. **After** — apply the change (or `git stash pop`), restart Metro,
    navigate to the same screen. Screenshot.
 
-Boot Metro: `pnpm --filter @fivethreeone/mobile start`, then scan the QR
-with Expo Go or press `i` for iOS Simulator.
+Boot Metro: `pnpm --filter @fivethreeone/mobile start`, then open the
+dev-client APK on device/emulator and connect. iOS Simulator: press `i`
+after Metro starts (requires the dev-client build — Expo Go does not run
+this app; see README for build instructions).
 
 Save comparison pairs under `docs/screenshots/<screen>/before.png` and
 `docs/screenshots/<screen>/after.png` for any PR that touches layout

@@ -77,7 +77,7 @@ Privacy policy lives at `docs/PRIVACY.md` and is ready for store submission — 
 
 ## Launch checklist
 
-- [x] App icon — `apps/mobile/assets/images/icon.png` carries the **531** wordmark on `#E7E3D6` paper with rounded corners. Source: `~/Development/531-pwa/public/icons/icon-512.png`. Re-sync via `bash scripts/sync-pwa-assets.sh`.
+- [x] App icon — `apps/mobile/assets/images/icon.png` carries the **531** wordmark on `#E7E3D6` paper with rounded corners. Asset is committed to the repo; re-sync from source only needed if the wordmark changes (see `scripts/sync-pwa-assets.sh`).
 - [x] Splash screen — paper bg + 531 wordmark at 76pt on `#E7E3D6` (dark variant on `#1A1812`). Configured via the `expo-splash-screen` plugin in `app.json`.
 - [ ] App Store screenshots — 6.7" (iPhone 15 Pro Max) + 6.1" (iPhone 15 Pro), light + dark.
 - [ ] Play Store feature graphic — 1024×500.
@@ -95,5 +95,5 @@ Privacy policy lives at `docs/PRIVACY.md` and is ready for store submission — 
 ## Asset sources
 
 - Fonts: IBM Plex Sans / Mono / Sans-Condensed (Apache 2.0). Bundled via expo-font.
-- Icon glyph: in-house **531** wordmark, source in `~/Development/531-pwa/public/icons/`. Sync via `bash scripts/sync-pwa-assets.sh`.
+- Icon glyph: in-house **531** wordmark. Committed to `apps/mobile/assets/images/`. See `scripts/sync-pwa-assets.sh` if the wordmark ever needs re-export.
 - Splash: same wordmark, paper background `#E7E3D6` / ink `#1A1812`.

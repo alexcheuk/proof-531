@@ -4,6 +4,7 @@ import {
   historyDateLabel,
   isLift,
   liftDisplayName,
+  liftLongName,
   weekIntent,
   weekLabel,
 } from '../labels';
@@ -31,6 +32,15 @@ describe('liftDisplayName', () => {
     expect(liftDisplayName('bench')).toBe('Bench');
     expect(liftDisplayName('deadlift')).toBe('Deadlift');
     expect(liftDisplayName('press')).toBe('Press');
+  });
+});
+
+describe('liftLongName', () => {
+  it('returns colloquial coach-voice name for each lift', () => {
+    expect(liftLongName('squat')).toBe('back squat');
+    expect(liftLongName('bench')).toBe('bench press');
+    expect(liftLongName('deadlift')).toBe('deadlift');
+    expect(liftLongName('press')).toBe('overhead press');
   });
 });
 
