@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Completed 4-layer CLAUDE.md orientation set
+
+**Tags:** `convention`, `process`, `architecture`
+**Files:** `apps/mobile/src/data/CLAUDE.md`, `apps/mobile/src/features/CLAUDE.md`
+
+Added CLAUDE.md orientation files to the `data/` and `features/` layers, completing the set that already existed for `domain/` and `design/`. Each file documents the layer's boundary rules, what lives there, testing approach, and what counts as a violation. Cross-references added to ARCHITECTURE.md and CONTRIBUTING.md.
+
+**Why:** External contributors (and subagents) had no machine-readable orientation for the two layers most likely to introduce boundary violations — `data/` (the "is Drizzle allowed here?" question) and `features/` (the "can I import across feature folders?" question). The other two layers had CLAUDE.md files; the gap was noticeable.
+
+**Trade-off / what we didn't do:** Did not add a CLAUDE.md to `lib/` — it has no boundary rules, just helpers, and the existing docs cover it.
+
 ### 2026-05-28 — Extracted `useGoalState`; removed Expo Go dead guard
 
 **Tags:** `architecture`, `refactor`, `removal`

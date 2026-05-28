@@ -102,9 +102,7 @@ export function SetRow({
             >
               {weight}
             </Heading>
-            <CapsLabel size="xs" style={{ letterSpacing: 1.62 }}>
-              {displayUnit(unit)}
-            </CapsLabel>
+            <CapsLabel size="xs">{displayUnit(unit)}</CapsLabel>
           </Row>
 
           <Text
