@@ -120,6 +120,10 @@ export type UseLiveScreenStateResult = {
   onAddRest: () => void;
   /** Subtract 30s from the running countdown (floored at -overtime allowed) — no-op outside `rest`. */
   onSubRest: () => void;
+  /** Read the live rest deadline (ms, or null) — consumed by the notification layer. */
+  getRestDeadlineMs: () => number | null;
+  /** Re-anchor the rest countdown to a deadline copied back from the notification. */
+  syncRestDeadline: (endsAtMs: number) => void;
   /** Snapshot of the most recently logged set. Cleared between sessions; null until the first log of this session. */
   lastLogged: LastLoggedSet | null;
   /** True if the current working set is the AMRAP top set. */
@@ -439,6 +443,8 @@ export function useLiveScreenState(
     onAdvanceFromRest,
     onAddRest: restTimer.addTime,
     onSubRest: restTimer.subtractTime,
+    getRestDeadlineMs: restTimer.getDeadlineMs,
+    syncRestDeadline: restTimer.setDeadline,
     onUndoLastSet,
     onRequestReset,
     onConfirmResetFirstTap,

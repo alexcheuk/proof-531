@@ -15,6 +15,7 @@ The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superp
 - TypeScript strict, Biome, pnpm workspaces, Node 22
 - expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query
 - React Native Reanimated 4, expo-haptics, expo-keep-awake
+- Notifications: `expo-notifications` (iOS scheduled "Rest complete"); `react-native-notify-kit` (notifee successor) for the Android live rest-countdown chronometer notification
 - `@gorhom/bottom-sheet` v5 for sheets; IBM Plex Sans/Mono/Sans-Condensed via expo-font
 - Jest + @testing-library/react-native + fast-check (domain property tests)
 - No Sentry, no PostHog, no Skia, no Storybook, no Reassure (deferred). Maestro / on-device e2e is now *unblocked* by the dev-client move but not yet adopted

@@ -68,6 +68,9 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   useRestNotification({
     active: live.phase === 'rest',
     restSeconds: settingsQuery.data?.restTargetSeconds ?? 90,
+    sessionId,
+    getDeadlineMs: live.getRestDeadlineMs,
+    setDeadline: live.syncRestDeadline,
   });
 
   const elapsedSeconds = useElapsedSeconds(sessionQuery.data?.startedAt ?? null);
