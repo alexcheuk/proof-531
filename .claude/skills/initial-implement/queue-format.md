@@ -18,7 +18,7 @@ tasks:
       - <string>
     notes: |                # implementation hints (no code)
       <multi-line>
-    behavioral_reference: design-reference/components.jsx  # optional: file in design-reference/ this task ports behavior from
+    behavioral_reference: apps/mobile/src/...  # optional: existing file the task ports behavior from
 ```
 
 ## Status semantics

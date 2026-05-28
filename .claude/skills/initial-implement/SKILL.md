@@ -30,7 +30,7 @@ You are the orchestrator. Your job is to move tasks from `docs/superpowers/queue
 ## Required reading before you start
 
 1. `docs/superpowers/specs/2026-05-19-expo-scaffold-design.md` — the source of truth for what we're building and why.
-2. `CLAUDE.md` (repo root) — boundary rules, dev commands, design-reference policy.
+2. `CLAUDE.md` (repo root) — boundary rules, dev commands, architectural conventions.
 3. `.claude/skills/initial-implement/queue-format.md` — schema of `queue.yaml`.
 4. `.claude/skills/initial-implement/subagent-prompts/*.md` — the templates you fill in when spawning subagents.
 

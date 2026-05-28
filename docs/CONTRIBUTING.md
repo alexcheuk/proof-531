@@ -118,8 +118,7 @@ To add work:
        - "src/design/primitives/PressButton.tsx exists"
        - "jest test for accessibility role passes"
      notes: |
-       Port behavior from design-reference/PressButton.jsx.
-     behavioral_reference: design-reference/PressButton.jsx
+       Match the existing PressButton interaction model on the live app.
    ```
 
 3. See [`.claude/skills/initial-implement/queue-format.md`](../.claude/skills/initial-implement/queue-format.md)
@@ -196,7 +195,6 @@ one run lands in the same directory:
 
 The orchestrator and its subagents must never edit:
 
-- `design-reference/` — behavioral source of truth, hand-curated.
 - `docs/superpowers/specs/` — the engineering spec is frozen for a task.
 - `docs/superpowers/plans/` — planner output is read-only for the implementer.
 

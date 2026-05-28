@@ -1,5 +1,5 @@
 import { useSettings } from '@/data/queries/useSettings';
-import { isLift } from '@/domain/labels';
+import { LIFTS, isLift } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { ProgressScreen } from '@/features/progress/ProgressScreen';
 import { useLocalSearchParams } from 'expo-router';
@@ -14,7 +14,7 @@ import { useLocalSearchParams } from 'expo-router';
 export default function ProgressTab() {
   const { lift: liftParam } = useLocalSearchParams<{ lift?: string }>();
   const settings = useSettings();
-  const enabled: Lift[] = settings.data?.enabledLifts ?? ['squat', 'bench', 'deadlift', 'press'];
+  const enabled: Lift[] = settings.data?.enabledLifts ?? [...LIFTS];
   const lift: Lift = isLift(liftParam) ? liftParam : (enabled[0] ?? 'squat');
   return <ProgressScreen lift={lift} />;
 }

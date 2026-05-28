@@ -1,7 +1,7 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { tmIncrement } from '@/domain/increments';
+import { LOWER_BODY, tmIncrement } from '@/domain/increments';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 /**
@@ -36,7 +36,7 @@ export function LiftToggleRow({
 }: LiftToggleRowProps) {
   const { colors } = useTheme();
   const meta = LIFT_META[lift];
-  const isLower = lift === 'squat' || lift === 'deadlift';
+  const isLower = LOWER_BODY.has(lift);
   const bump = tmIncrement(unit, lift);
   const description = isLower
     ? `+${bump} ${displayUnit(unit)} / cycle · lower`

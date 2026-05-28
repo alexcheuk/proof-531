@@ -3,6 +3,7 @@ import { useSession } from '@/data/queries/useSession';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
+import { LIFTS } from '@/domain/labels';
 import { type TmAdjustmentSuggestion, tmAdjustmentSuggestion } from '@/domain/progression';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
 import type { Lift, SetLog, Unit } from '@/domain/types';
@@ -222,7 +223,7 @@ export function deriveView({
   // Cycle position math — falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
   // grid ceiling cannot disagree.
-  const enabledLifts = settingsData?.enabledLifts ?? ['squat', 'bench', 'deadlift', 'press'];
+  const enabledLifts = settingsData?.enabledLifts ?? [...LIFTS];
   const liftsPerCycle = enabledLifts.length || 4;
   const sessionsInCycle = liftsPerCycle * 4;
   const indexInWeek = enabledLifts.indexOf(lift);

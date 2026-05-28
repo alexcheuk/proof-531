@@ -10,6 +10,7 @@ import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
 import { Masthead } from '@/design/primitives/Masthead';
 import { useTheme } from '@/design/theme';
+import { LIFTS } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { LiftTabs } from '@/features/shared/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
@@ -55,7 +56,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   const prs = usePrs();
 
   const enabledLifts = useMemo<Lift[]>(
-    () => settings.data?.enabledLifts ?? ['squat', 'bench', 'deadlift', 'press'],
+    () => settings.data?.enabledLifts ?? [...LIFTS],
     [settings.data?.enabledLifts],
   );
 

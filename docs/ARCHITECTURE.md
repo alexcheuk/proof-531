@@ -19,7 +19,7 @@ A short tour of how `531` is laid out and why. For the full rationale — includ
 | Navigation | expo-router (file-based) |
 | Persistence | `expo-sqlite` + Drizzle ORM |
 | Data layer | TanStack Query |
-| UI state | React state + module-level subjects via `useSyncExternalStore`; no Zustand (removed loop-043) |
+| UI state | React state + module-level subjects via `useSyncExternalStore`; no Zustand |
 | Animation | Reanimated 4 + react-native-gesture-handler (no Skia — deferred until dev-client build) |
 | Haptics / fonts / notifications | `expo-haptics`, `expo-keep-awake`, `expo-font` (IBM Plex Sans / Mono / Sans-Condensed bundled), `expo-notifications` (rest-timer background alerts) |
 | Sheets | `@gorhom/bottom-sheet` v5 |
@@ -94,7 +94,7 @@ Nine harness layers in total ([spec §4](./superpowers/specs/2026-05-19-expo-sca
 
 - **Unit + property** — Jest + `@testing-library/react-native`, `fast-check` for plate calc and 5/3/1 math. The original spec set a 95% coverage gate on `src/domain/`; the current harness runs the suite without enforcing the threshold (the gate is deferred along with the broader CI build).
 - **Accessor tests** — Drizzle accessors run against a `:memory:` better-sqlite3 driver so test code can call the real query API without an Expo runtime.
-- **Component tests** — assert behavior and accessibility roles, not pixels. Visual fidelity is checked manually against the PWA reference (screenshot pairs attached to each PR — see spec §7).
+- **Component tests** — assert behavior and accessibility roles, not pixels. Visual fidelity is checked manually against the running mobile app (before/after screenshots; procedure in `docs/screenshot-audit-procedure.md`).
 - **Bundle resolution** — `pnpm bundle-check` runs `expo export --platform ios` to spot-check that every import resolves in Metro; this gate exists because `pnpm test` doesn't exercise the bundler and a missing transitive dep can pass test green while breaking `expo start`.
 
 Deferred until a dev-client build is needed: Storybook on device, Maestro E2E flows, Reassure perf budgets.
