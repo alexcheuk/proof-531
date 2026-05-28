@@ -9,14 +9,8 @@ import { goTo } from '@/lib/routes';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
  *
- * Thin shell for the Today session preview. Delegates state to useTodayScreenState.
- * The mobile MVP shows the preview surface and a Start CTA. Active-session UI
- * ships in a follow-up task.
- *
- * Boundary: this file composes design primitives + data query hooks + the
- * feature-local `useTodayScreenState` hook. No drizzle imports, no hex
- * literals. The route shell at `apps/mobile/src/app/session/today.tsx` is a
- * thin wrapper that parses `:lift` from the URL.
+ * Thin composition shell. Delegates state to `useTodayScreenState`.
+ * Boundary: design primitives + data query hooks only; no drizzle, no hex.
  */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

@@ -10,6 +10,14 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Android · live rest-countdown notification** — on Android, backgrounding the
+  app mid-rest now posts an OS-ticked chronometer notification that counts down
+  in the system tray. At T-0 it swaps to a "Rest complete" heads-up with
+  vibration. A "+30s" action button extends the deadline without relaunching the
+  app. Foreground tap on the notification opens the live session screen and
+  re-anchors the in-app timer to the same deadline. Powered by
+  `react-native-notify-kit`; requires a dev-client rebuild (native module).
+  iOS keeps the existing scheduled `expo-notifications` alert unchanged.
 - **Haptic feedback on session completion** — a Heavy impact fires when the session receipt loads, giving every completed workout a satisfying buzz. PR sessions also keep their existing Success notification haptic on the PR celebration screen.
 - **Week 4 · TM Test** (7th Week Protocol from _Forever 5/3/1_) — replaces the
   classic deload with a single top set at 100% TM for 3–5 reps. Warmups are
@@ -56,6 +64,10 @@ build N" section covers what landed on `main` between two preview builds.
   BbbPromptScreen and TodayBody's BBB band both read the new field.
 
 ### Fixed
+- **Progress · Goal panel · dec button** — pressing the decrement stepper at
+  the minimum goal value previously fired haptic feedback but applied no change.
+  The button is now properly disabled at the lower bound so it gives no false
+  tactile confirmation.
 - **Lifetime volume refresh** — `useLiveScreenEffects`'s session-surface
   invalidator now hits `LIFETIME_VOLUME_KEY` on every session close, so
   the History tab's volume stat updates the moment the day finishes.

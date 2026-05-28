@@ -147,3 +147,5 @@ Forbidden paths for orchestrator-run tasks: `docs/superpowers/specs/`, `docs/sup
 - [`CLAUDE.md`](../CLAUDE.md) — agent orientation (boundary rules, dev commands)
 - [`apps/mobile/src/domain/CLAUDE.md`](../apps/mobile/src/domain/CLAUDE.md) — domain-layer rules
 - [`apps/mobile/src/design/CLAUDE.md`](../apps/mobile/src/design/CLAUDE.md) — design-system rules
+- [`apps/mobile/src/data/CLAUDE.md`](../apps/mobile/src/data/CLAUDE.md) — data-layer rules
+- [`apps/mobile/src/features/CLAUDE.md`](../apps/mobile/src/features/CLAUDE.md) — features-layer rules

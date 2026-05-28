@@ -96,8 +96,8 @@ For the full picture see:
 
 - [`CLAUDE.md`](../CLAUDE.md) — root, boundary rules + dev commands
 - [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md) — layer responsibilities
-- `src/domain/CLAUDE.md`, `src/design/CLAUDE.md` — folder-scoped rules the
-  reviewer enforces
+- `src/domain/CLAUDE.md`, `src/design/CLAUDE.md`, `src/data/CLAUDE.md`,
+  `src/features/CLAUDE.md` — folder-scoped rules the reviewer enforces
 
 ## Adding a task to the queue
 
