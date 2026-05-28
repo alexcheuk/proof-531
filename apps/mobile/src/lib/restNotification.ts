@@ -1,19 +1,12 @@
-import { isRunningInExpoGo } from 'expo';
 import { Platform } from 'react-native';
 
 type NotificationsModule = typeof import('expo-notifications');
 
-// Android Expo Go (SDK 53+) ships without the expo-notifications native module:
-// merely importing the package runs `requireNativeModule('ExpoPushTokenManager')`
-// at top level, which throws. A static import would therefore crash the route
-// that mounts this (the live session screen). We only use local notifications,
-// so lazy-require behind a guard: Android Expo Go no-ops, every other target
-// (iOS Expo Go, dev/standalone builds) keeps full notification support.
-const unavailable = Platform.OS === 'android' && isRunningInExpoGo();
-
+// Android uses react-native-notify-kit (restChronometer.ts) instead.
+// Lazy-require so the iOS module isn't loaded until first use.
 let cached: NotificationsModule | null = null;
 function getNotifications(): NotificationsModule | null {
-  if (unavailable) return null;
+  if (Platform.OS === 'android') return null;
   if (!cached) cached = require('expo-notifications') as NotificationsModule;
   return cached;
 }

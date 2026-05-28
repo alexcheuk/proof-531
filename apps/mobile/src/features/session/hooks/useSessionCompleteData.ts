@@ -139,7 +139,7 @@ export function deriveView({
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
   const renderUnit: Unit = session.displayUnitSnapshot ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
-  const liftLower = lift === 'deadlift' ? 'deadlift' : lift;
+  const liftLower = lift;
 
   const rawLogs = setLogsData ?? [];
   const logs: SetLog[] = rawLogs.map((l) => ({

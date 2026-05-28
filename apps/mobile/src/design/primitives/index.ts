@@ -12,6 +12,13 @@ export { MonoBadge } from './MonoBadge';
 export { NumberStepper } from './NumberStepper';
 export { SectionBand } from './SectionBand';
 export { SegRail } from './SegRail';
+export { LabeledSegRail, type LabeledSegRailProps } from './LabeledSegRail';
+export {
+  CtaBarReserve,
+  type CtaBarReserveProps,
+  CTA_BAR_RESERVE_HEIGHTS,
+  type CtaBarReserveSize,
+} from './CtaBarReserve';
 export { StatGrid, type StatCell, type StatGridProps } from './StatGrid';
 export { TitleBlock } from './TitleBlock';
 export { LedgerRow, LedgerRowLabel, LedgerRowValue } from './LedgerRow';

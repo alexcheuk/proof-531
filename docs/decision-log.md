@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Extracted `useGoalState`; removed Expo Go dead guard
+
+**Tags:** `architecture`, `refactor`, `removal`
+**Files:** `apps/mobile/src/features/progress/hooks/useGoalState.ts`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/lib/restNotification.ts`
+
+Extracted ~80 lines of goal-panel state management (draft kind/value, sync effect, persist callbacks, TM-target computation) out of `ProgressLiftPage.tsx` into a new `useGoalState` hook. Separately removed the `isRunningInExpoGo` dead-code guard from `restNotification.ts`: Expo Go was retired 2026-05-28 so the `Platform.OS === 'android' && isRunningInExpoGo()` check reduced to a simple Android guard (that file is iOS-only anyway).
+
+**Why:** `ProgressLiftPage` was 296 lines and growing. The goal logic (three queries, two local-state pieces, a sync effect, three callbacks, a memo) was large enough to understand and test independently. The `isRunningInExpoGo` import was dead weight following the Expo Go retirement announcement in CLAUDE.md.
+
+**Trade-off / what we didn't do:** `GoalState` type is fully exported; if goal logic needs further splitting (e.g. the kind-conversion arithmetic) it's now one extraction step away. Did not merge the two `import type … from '@/domain/types'` lines into one in the original implementation — caught and fixed in the same session.
+
 ### 2026-05-28 — Added `liftProperName` to domain; wired boundary checks into CI
 
 **Tags:** `domain`, `process`, `convention`

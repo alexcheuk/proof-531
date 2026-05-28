@@ -68,8 +68,9 @@ a new primitive, check the catalog — odds are something close already exists:
 | Tap targets       | `PrimaryPillButton`, `SecondaryLink`, `PillChip`, `CheckboxLedger`, `SegRail`, `LabeledSegRail` |
 | Numeric input     | `NumberStepper`, `StatGrid`                                |
 | Sheets / surfaces | `Sheet`, `SheetLayout`                                     |
+| Session layout    | `CtaBar`, `CtaBarReserve`                                  |
 | Top bar pills (session-local) | `TopBarPill` (+ `UndoPill`, `ResetPill`, `CancelPill`, `CompletePill` thin wrappers) |
-| Domain composites | `LedgerRow`, `LedgerSection`, `TopSetBlock`, `PlateBar`    |
+| Domain composites | `LedgerRow`, `LedgerSection`, `TopSetBlock`, `PlateBar`, `ProgressGridCell`, `ProgressGridRow`, `TmCell` |
 
 If your change extends a primitive, prefer adding a variant prop over copying
 the file. Drift between near-identical components is the single biggest cause

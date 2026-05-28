@@ -21,7 +21,7 @@ export type SharePrPillProps = {
 };
 
 export function SharePrPill({ message, testID = 'session-complete-share-pr' }: SharePrPillProps) {
-  const { colors, layout, spacing, type } = useTheme();
+  const { colors, layout, spacing } = useTheme();
 
   const onPress = useCallback(async () => {
     void Haptics.selectionAsync();
@@ -66,7 +66,7 @@ export function SharePrPill({ message, testID = 'session-complete-share-pr' }: S
         weight="regular"
         size={9}
         color="ink3"
-        style={{ marginTop: 2, letterSpacing: 1.2, fontFamily: `${type.mono}-Regular` }}
+        style={{ marginTop: 2, letterSpacing: 1.2 }}
       >
         OPENS YOUR SHARE SHEET
       </Text>
