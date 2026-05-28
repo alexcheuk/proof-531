@@ -1,10 +1,28 @@
-import * as Notifications from 'expo-notifications';
+import { isRunningInExpoGo } from 'expo';
+import { Platform } from 'react-native';
+
+type NotificationsModule = typeof import('expo-notifications');
+
+// Android Expo Go (SDK 53+) ships without the expo-notifications native module:
+// merely importing the package runs `requireNativeModule('ExpoPushTokenManager')`
+// at top level, which throws. A static import would therefore crash the route
+// that mounts this (the live session screen). We only use local notifications,
+// so lazy-require behind a guard: Android Expo Go no-ops, every other target
+// (iOS Expo Go, dev/standalone builds) keeps full notification support.
+const unavailable = Platform.OS === 'android' && isRunningInExpoGo();
+
+let cached: NotificationsModule | null = null;
+function getNotifications(): NotificationsModule | null {
+  if (unavailable) return null;
+  if (!cached) cached = require('expo-notifications') as NotificationsModule;
+  return cached;
+}
 
 // Configure notification presentation behavior (show while app is foregrounded).
-Notifications.setNotificationHandler({
+getNotifications()?.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,
-    shouldShowAlert: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
@@ -15,6 +33,8 @@ Notifications.setNotificationHandler({
  * Returns true if granted; false if denied or irrelevant.
  */
 export async function requestNotificationPermissions(): Promise<boolean> {
+  const Notifications = getNotifications();
+  if (!Notifications) return false;
   const { status } = await Notifications.requestPermissionsAsync({
     ios: {
       allowAlert: true,
@@ -34,6 +54,8 @@ export async function requestNotificationPermissions(): Promise<boolean> {
  * is off, alerting the user that their rest period has ended.
  */
 export async function scheduleRestDoneNotification(seconds: number): Promise<string | null> {
+  const Notifications = getNotifications();
+  if (!Notifications) return null;
   try {
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== 'granted') {
@@ -65,9 +87,11 @@ export async function scheduleRestDoneNotification(seconds: number): Promise<str
  */
 export async function cancelRestDoneNotification(id: string | null): Promise<void> {
   if (!id) return;
+  const Notifications = getNotifications();
+  if (!Notifications) return;
   try {
     await Notifications.cancelScheduledNotificationAsync(id);
   } catch {
-    // Already fired or invalid id — not an error.
+    // Already fired or invalid id: not an error.
   }
 }

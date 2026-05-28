@@ -42,6 +42,43 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Retired Expo Go for a custom dev-client workflow
+
+**Tags:** `architecture`, `process`, `convention`
+**Files:** `apps/mobile/package.json`, `apps/mobile/app.config.ts`, `apps/mobile/eas.json`, `CLAUDE.md`
+
+Added `expo-dev-client` and switched the daily dev loop from Expo Go (scan-QR) to a custom dev-client build (`eas build --profile development`, then `expo start --dev-client`). The EAS `development`/`preview`/`production` profiles already existed; only `expo-dev-client` and the docs were missing. Also added an `app.config.ts` layered over `app.json`: when `APP_VARIANT=development` (set in the `development` EAS profile and the `start` script) the build gets id `…​.dev` + name "531 Strength (Dev)" so the dev client installs alongside, not over, preview/production. Local `start` must carry the same `APP_VARIANT` or the `fingerprint` runtimeVersion mismatches and the dev client rejects the bundle.
+
+**Why:** Expo Go (SDK 53+) ships without several native modules. Notifications are the immediate driver: on Android Expo Go the module is absent and importing it throws (see [[#2026-05-27]]). Expo Go was a real ceiling on what the app could be, and the user wants the rest-timer notification experience (foreground-service / chronometer notification) that only a native build can deliver.
+
+**Trade-off / what we didn't do:** Dev now requires a one-time cloud build and a rebuild whenever native modules change, versus Expo Go's instant QR. Accepted: the app already distributes via EAS, so this is a small marginal cost for removing the native-module ceiling. Did not adopt Maestro/Sentry/PostHog now (the move *unblocks* them; adopting is separate scope).
+
+**Follow-ups:** User runs `eas build --profile development -p android` to get the dev client on-device. The clock-app-style live-countdown rest notification (needs `notifee` or a custom native chronometer notification + foreground service) is now buildable and is the next feature to spec.
+
+### 2026-05-28 — Rest timer is wall-clock anchored, not tick-decremented
+
+**Tags:** `bug`
+**Files:** `apps/mobile/src/features/session/hooks/useRestTimer.ts`
+
+Rewrote `useRestTimer` to derive `remaining` from an absolute deadline (`Date.now() + remaining`) recomputed each tick, plus an `AppState` listener that resyncs on foreground, instead of decrementing a counter once per `setInterval` tick.
+
+**Why:** On Android the JS thread is suspended while the app is backgrounded, so the `setInterval` froze and the rest countdown effectively *paused* when the user switched apps, then resumed mid-count, drifting from real elapsed time. A serious lifter backgrounds the app during rest constantly, so the timer was wrong exactly when it mattered. (`useElapsedSeconds` was already wall-clock based and unaffected.)
+
+**Trade-off / what we didn't do:** Did not persist the deadline to storage, so an app *kill* mid-rest still loses the timer; the existing in-memory rest snapshot already covers remount, and surviving a full kill wasn't asked for.
+
+### 2026-05-27 — expo-notifications must be lazy-required in Expo Go
+
+**Tags:** `bug`, `convention`
+**Files:** `apps/mobile/src/lib/restNotification.ts`, `apps/mobile/package.json`
+
+Bumped `expo-notifications` to the SDK-55 version line (`~55.0.23`; it had been pinned to the pre-rename `~0.30.0`) and made `restNotification.ts` lazy-require the package behind an `isRunningInExpoGo() && Platform.OS === 'android'` guard instead of a static top-level import. Also migrated the notification handler from the deprecated `shouldShowAlert` to `shouldShowBanner` + `shouldShowList` (SDK 53 split).
+
+**Why:** Android Expo Go (SDK 53+) ships without the expo-notifications native module. Importing the package runs `requireNativeModule('ExpoPushTokenManager')` at module top level, which throws. Because `live.tsx` imports it transitively (via `LiveScreen` then `useRestNotification`), that throw aborted the live-session route's module evaluation, so expo-router logged "Route ./session/live.tsx is missing the required default export" and the screen rendered nothing on Android. We only use local notifications, so guarding the import lets Android Expo Go no-op while iOS Expo Go and dev/standalone builds keep full support.
+
+**Trade-off / what we didn't do:** Initially kept the Expo Go workflow and accepted that rest notifications don't fire on Android Expo Go. Same-day follow-up reversed this: we retired Expo Go for a dev client (see the 2026-05-28 dev-client entry). The guard stays as a harmless safety net (`isRunningInExpoGo()` is false in a dev client, so the import runs normally).
+
+**Follow-ups:** `src/app/routes.ts` still warns "missing default export" because it's a non-route helper living in `src/app/`; harmless, fix by relocating out of the router tree if the noise matters.
+
 ### 2026-05-28 — Public repo cleanup pass (expedition 20)
 
 **Tags:** `process`, `docs`, `convention`

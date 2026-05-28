@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 
 /**
  * Standalone rest-timer driver.
@@ -9,6 +10,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * latch re-arms whenever `addTime` pushes `remaining` back above the
  * threshold so users adding time mid-rest get the warning again on their
  * second pass through T-3s.
+ *
+ * Wall-clock anchored: the countdown is derived from an absolute deadline
+ * (`Date.now() + remaining`), not by decrementing a counter each tick. On
+ * Android the JS thread is suspended while the app is backgrounded, so a
+ * tick-decrement timer freezes and resumes mid-count (the rest period
+ * effectively pauses). Anchoring to a deadline means each tick recomputes
+ * from real time, so the timer stays correct across backgrounding; an
+ * AppState listener resyncs the instant the app returns to the foreground.
  *
  * Optionally also fires `fireDoneHaptic` exactly once when `remaining`
  * crosses 0 — a stronger "GO" cue at the moment rest ends so the user
@@ -76,13 +85,20 @@ export function useRestTimer({
   // restored snapshot) does not retroactively reseed the running timer.
   const initialRemainingRef = useRef(initialRemaining);
   initialRemainingRef.current = initialRemaining;
+  // Absolute wall-clock ms at which `remaining` reaches 0. The single source
+  // of truth for the countdown; ticks and foreground resyncs both derive
+  // `remaining` from it. Null while inactive.
+  const deadlineRef = useRef<number | null>(null);
 
   // Reset + tick. When `active` becomes true we seed `initialRemaining` (if
   // restoring a paused timer) else `seconds`, and arm the warning latch; the
   // interval decrements each second. When `active` flips back to false the
   // cleanup tears down the interval (next start will re-seed).
   useEffect(() => {
-    if (!active) return;
+    if (!active) {
+      deadlineRef.current = null;
+      return;
+    }
     warningFiredRef.current = false;
     doneFiredRef.current = false;
     const seed = initialRemainingRef.current ?? seconds;
@@ -94,12 +110,22 @@ export function useRestTimer({
     if (seed <= 0) {
       doneFiredRef.current = true;
     }
+    deadlineRef.current = Date.now() + seed * 1000;
     setRemaining(seed);
-    const id = setInterval(() => {
-      setRemaining((prev) => prev - 1);
-    }, 1000);
+    const recompute = () => {
+      if (deadlineRef.current == null) return;
+      setRemaining(Math.round((deadlineRef.current - Date.now()) / 1000));
+    };
+    const id = setInterval(recompute, 1000);
+    // Resync immediately on foreground: the interval was suspended while
+    // backgrounded, so the first post-resume value would otherwise lag by up
+    // to a second (and the done haptic would be late).
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') recompute();
+    });
     return () => {
       clearInterval(id);
+      sub.remove();
     };
   }, [active, seconds, warningThresholdSeconds]);
 
@@ -127,36 +153,35 @@ export function useRestTimer({
   }, [active, remaining, warningThresholdSeconds, fireWarningHaptic, fireDoneHaptic]);
 
   const addTime = useCallback(() => {
-    if (!active) return;
-    setRemaining((prev) => {
-      const next = prev + STEP_SECONDS;
-      // Re-arm the warning latch so the haptic fires again the next time
-      // the user drifts back down through the threshold. Without this the
-      // first T-3s pass disables the haptic for the rest of the session,
-      // which is the opposite of the contract stated in the docstring.
-      if (next > warningThresholdSeconds) {
-        warningFiredRef.current = false;
-      }
-      if (next > 0) {
-        doneFiredRef.current = false;
-      }
-      return next;
-    });
+    if (!active || deadlineRef.current == null) return;
+    deadlineRef.current += STEP_SECONDS * 1000;
+    const next = Math.round((deadlineRef.current - Date.now()) / 1000);
+    // Re-arm the warning latch so the haptic fires again the next time
+    // the user drifts back down through the threshold. Without this the
+    // first T-3s pass disables the haptic for the rest of the session,
+    // which is the opposite of the contract stated in the docstring.
+    if (next > warningThresholdSeconds) {
+      warningFiredRef.current = false;
+    }
+    if (next > 0) {
+      doneFiredRef.current = false;
+    }
+    setRemaining(next);
   }, [active, warningThresholdSeconds]);
 
   const subtractTime = useCallback(() => {
-    if (!active) return;
+    if (!active || deadlineRef.current == null) return;
     // Floor at 1s — leaving 0/negative would re-fire the warning haptic at
     // the next T-threshold once the user adds time again.
-    setRemaining((prev) => {
-      const next = Math.max(1, prev - STEP_SECONDS);
-      if (next > warningThresholdSeconds) {
-        warningFiredRef.current = false;
-      }
-      // Floor at 1 means `next` is always > 0 — done latch stays armed
-      // until the timer naturally hits 0 again.
-      return next;
-    });
+    const current = Math.round((deadlineRef.current - Date.now()) / 1000);
+    const next = Math.max(1, current - STEP_SECONDS);
+    deadlineRef.current = Date.now() + next * 1000;
+    if (next > warningThresholdSeconds) {
+      warningFiredRef.current = false;
+    }
+    // Floor at 1 means `next` is always > 0 — done latch stays armed
+    // until the timer naturally hits 0 again.
+    setRemaining(next);
   }, [active, warningThresholdSeconds]);
 
   return { remaining, addTime, subtractTime };

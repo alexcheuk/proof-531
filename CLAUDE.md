@@ -11,13 +11,13 @@ The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superp
 
 ## Stack
 
-- Expo SDK 55, React Native 0.83+ (New Architecture on), **Expo Go workflow** (no custom dev client)
+- Expo SDK 55, React Native 0.83+ (New Architecture on), **custom dev-client workflow** (`expo-dev-client`; Expo Go was retired 2026-05-28 because it can't run native modules like notifications on Android)
 - TypeScript strict, Biome, pnpm workspaces, Node 22
 - expo-router (file-based), Drizzle ORM + expo-sqlite, TanStack Query
 - React Native Reanimated 4, expo-haptics, expo-keep-awake
 - `@gorhom/bottom-sheet` v5 for sheets; IBM Plex Sans/Mono/Sans-Condensed via expo-font
 - Jest + @testing-library/react-native + fast-check (domain property tests)
-- No Sentry, no PostHog, no Skia, no Storybook, no Maestro, no Reassure (all deferred until dev-client build)
+- No Sentry, no PostHog, no Skia, no Storybook, no Reassure (deferred). Maestro / on-device e2e is now *unblocked* by the dev-client move but not yet adopted
 
 ## Layout
 
@@ -51,13 +51,18 @@ The original port was from a local PWA (`~/Development/531-pwa`) that served as 
 
 ```bash
 pnpm install                                    # workspace install
-pnpm --filter @fivethreeone/mobile start           # boot Expo Go (scan QR with Expo Go app)
+eas build --profile development -p android      # build the dev client in the cloud (needs `eas login`)
+pnpm build:dev                                  # OR build it locally → apps/mobile/531-dev.apk (needs Android SDK + JDK 17)
+pnpm build:prod                                 # local release-signed APK → apps/mobile/531-prod.apk (production-apk profile, for on-device QA)
+pnpm --filter @fivethreeone/mobile start           # Metro for the dev client (sets APP_VARIANT=development, --dev-client)
 pnpm typecheck                                  # tsc --noEmit across workspace
 pnpm lint                                       # biome
 pnpm test                                       # jest
 pnpm expo-doctor                                # expo doctor (renamed to dodge pnpm's `doctor` builtin)
 pnpm run ci                                     # full chain (use `run` — `ci` is a pnpm builtin)
 ```
+
+The dev client is a real native build (the `development` profile in `eas.json`), so it must be rebuilt only when native modules change (a new `expo-*` package, a config-plugin change). Pure JS/TS edits hot-reload over `--dev-client` with no rebuild.
 
 ### pnpm builtins to avoid
 
@@ -82,7 +87,7 @@ Exit 0 ⇒ Metro resolved every import.
 - **pnpm 9.15+** (auto-installed via Corepack: `corepack enable && corepack prepare pnpm@latest --activate`)
 - **bash 4+** for the orchestrator scripts (`mapfile`, `declare -A`). macOS ships bash 3.2 — install via `brew install bash`.
 - **yq v4** (mikefarah/yq) for queue scripts: `brew install yq` on macOS, or download from https://github.com/mikefarah/yq/releases on Linux/CI.
-- **Expo Go** installed on a physical device, or iOS Simulator / Android Emulator if doing JS-only work.
+- A **custom dev-client build** installed on a physical device or simulator/emulator (`eas build --profile development`). Expo Go no longer runs this app: native modules (notifications) are absent there, and on Android importing them throws.
 
 ## How work happens
 

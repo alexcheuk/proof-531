@@ -141,4 +141,44 @@ describe('useRestTimer', () => {
     });
     expect(result.current.remaining).toBe(0);
   });
+
+  it('tracks wall-clock time, not tick count, when the JS clock jumps ahead', () => {
+    // Reproduces the Android background bug: while the app is backgrounded the
+    // JS thread (and thus setInterval) is suspended, but real time keeps
+    // passing. On the next tick the timer must reflect *elapsed wall-clock
+    // time*, not the number of intervals that happened to fire. A tick-count
+    // timer would read 9 here (one decrement); a wall-clock timer reads ~2.
+    const { result } = renderHook(() =>
+      useRestTimer({ active: true, seconds: 10, fireWarningHaptic: jest.fn() }),
+    );
+    expect(result.current.remaining).toBe(10);
+
+    act(() => {
+      jest.setSystemTime(Date.now() + 7000); // 7s passed while backgrounded
+      jest.advanceTimersByTime(1000); // one tick after returning to foreground (8s total)
+    });
+
+    expect(result.current.remaining).toBe(2);
+  });
+
+  it('fires the done haptic when rest elapsed entirely while the clock was frozen', () => {
+    const done = jest.fn();
+    const { result } = renderHook(() =>
+      useRestTimer({
+        active: true,
+        seconds: 5,
+        fireWarningHaptic: jest.fn(),
+        fireDoneHaptic: done,
+      }),
+    );
+    expect(result.current.remaining).toBe(5);
+
+    act(() => {
+      jest.setSystemTime(Date.now() + 9000); // rest fully elapsed in background
+      jest.advanceTimersByTime(1000);
+    });
+
+    expect(result.current.remaining).toBeLessThanOrEqual(0);
+    expect(done).toHaveBeenCalledTimes(1);
+  });
 });
