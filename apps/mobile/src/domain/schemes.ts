@@ -2,7 +2,6 @@
  * 5/3/1 working-set schemes.
  *
  * Pure domain — no React, no async, no DB.
- * Ported from `the PWA reference`.
  */
 
 import type { Week } from './types';
@@ -52,8 +51,8 @@ const WEEK_SETS: Record<Week, readonly WorkingSet[]> = {
     { pct: 0.95, reps: 1, amrap: true, kind: 'amrap' },
   ],
   // Week 4 is the 7th-Week-Protocol TM test (Forever 5/3/1): a single set at
-  // 100% TM with a 3–5 rep target. Replaces the classic Wendler deload. See
-  // `_workspace/01_design_spec.md` and `docs/INTENT.md` for the rationale.
+  // 100% TM with a 3–5 rep target. Replaces the classic Wendler deload.
+  // See `docs/INTENT.md` for the rationale.
   4: [{ pct: 1.0, reps: 5, kind: 'tm-test' }],
 };
 

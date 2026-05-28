@@ -71,7 +71,7 @@ The dev client is a real native build (the `development` profile in `eas.json`),
 
 ### Known harness gap: Metro bundler is not exercised
 
-`pnpm run ci` runs `typecheck && lint && test`. None of those load the Metro bundler, so a runtime npm dep that's missing from the install graph (e.g., a third-party package that declares a needed dep only as a `devDependency`) will pass CI green but break `expo start`. We hit this with `ts-dedent` (transitive of `@storybook/react-native-ui`).
+`pnpm run ci` runs `typecheck && lint && check-boundaries && check-line-heights && check-temp-markers && test`. None of those load the Metro bundler, so a runtime npm dep that's missing from the install graph (e.g., a third-party package that declares a needed dep only as a `devDependency`) will pass CI green but break `expo start`. We hit this with `ts-dedent` (transitive of `@storybook/react-native-ui`).
 
 If a task touches the import graph in non-trivial ways (adds a primitive that pulls in a new npm package, modifies storybook plumbing, edits route entry points), spot-check with:
 

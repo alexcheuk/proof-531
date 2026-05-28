@@ -7,7 +7,7 @@ import { View } from 'react-native';
 /**
  * Single line item on the session-complete "receipt".
  *
- * Structural port of `the PWA reference`. Caps eyebrow on the left, numeric cluster on the right.
+ * Caps eyebrow on the left, numeric cluster on the right.
  *
  *   - `label`  — caps eyebrow on the left (e.g. `Top set`).
  *   - `value`  — the big display string (already formatted, e.g. `255 × 8+`).

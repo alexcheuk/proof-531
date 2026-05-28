@@ -3,9 +3,7 @@
  *
  * This module is part of `src/domain/` — a pure domain layer.
  * No framework imports, no asynchronous work, no database access.
- * Definitions here mirror the PWA schema verbatim (see
- * `the PWA reference`) and are the single source of
- * truth for these primitives across the mobile app.
+ * These are the single source of truth for these primitives across the mobile app.
  */
 
 export type Lift = 'squat' | 'bench' | 'deadlift' | 'press';
@@ -15,8 +13,7 @@ export type Week = 1 | 2 | 3 | 4;
 export type Day = 1 | 2 | 3 | 4;
 
 /**
- * Kind of a logged set. Mirrors the PWA `SetLog.kind` column verbatim — see
- * `the PWA reference`.
+ * Kind of a logged set.
  *   - `warmup`     — pre-work ramp sets (not counted in volume).
  *   - `working`    — the first two prescribed 5/3/1 work sets.
  *   - `amrap`      — the final "+" set with AMRAP reps.
@@ -47,8 +44,7 @@ export type SetLog = {
 };
 
 /**
- * The singleton settings row. Mirrors the PWA's `Settings` interface verbatim
- * (see `the PWA reference`).
+ * The singleton settings row.
  *
  * Persisted by the `settings` Drizzle table (id = 1, always). `enabledLifts`
  * is stored as a JSON-encoded TEXT column at the data layer; this shape is
@@ -88,7 +84,7 @@ export interface Settings {
 
 /**
  * Defaults inserted into the `settings` row on first boot — mirrors the PWA's
- * `DEFAULT_SETTINGS` constant (see `the PWA reference`).
+ * `DEFAULT_SETTINGS` constant.
  * Excludes `id` since the row is always keyed at `id = 1`.
  */
 export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {

@@ -7,7 +7,6 @@ import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 /**
  * Step 1 — Intro screen. Welcome copy + unit picker + Begin CTA.
- * Ported from `the PWA reference`.
  */
 import { View, type ViewStyle } from 'react-native';
 import { OnboardingShell } from '../components/OnboardingShell';

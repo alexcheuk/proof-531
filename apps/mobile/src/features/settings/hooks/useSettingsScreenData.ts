@@ -3,9 +3,7 @@ import type { TrainingMax } from '@/data/accessors/trainingMax';
  * Combined Settings-screen read surface. Wraps `useSettings()` and
  * `useLatestTms()` so the screen has a single load/undefined check.
  *
- * Ported from `the PWA reference`.
- * The mobile port collapses the PWA's `tmsByLift` Map shape (built from
- * Dexie's `useLiveQuery`) to the TanStack Query data, indexed by Lift.
+ * Collapses the `tmsByLift` Map shape to TanStack Query data, indexed by Lift.
  */
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { useSettings } from '@/data/queries/useSettings';

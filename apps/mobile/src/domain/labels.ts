@@ -1,7 +1,6 @@
 /**
  * String labels for 5/3/1 sessions — lift names, week scheme glyphs, and
- * locale-stable date headers. Ported from the PWA `features/session/domain/
- * labels.ts` (read-only reference at `the PWA reference`).
+ * locale-stable date headers.
  *
  * Pure: no React, no async, no DB. Safe to call from any layer.
  */

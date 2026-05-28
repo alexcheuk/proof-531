@@ -6,8 +6,6 @@
  * currently mid-session displays the dot next to its name; lifts that
  * have ever set a PR get a small ★ glyph after their name — always-on
  * visual reinforcement of the user's records.
- *
- * Ported from `the PWA reference`.
  */
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';

@@ -14,8 +14,7 @@ import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
  *
- * Ported from `the PWA reference`. The
- * PWA uses a CSS-snap horizontal scroll container; the RN port uses a
+ * Uses a
  * `pagingEnabled` horizontal `FlatList` keyed on the lift, with
  * `onMomentumScrollEnd` driving `setSelectedLift` and a `scrollToIndex`
  * effect that re-syncs when the selected lift changes externally (e.g. via

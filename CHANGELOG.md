@@ -10,6 +10,7 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Haptic feedback on session completion** — a Heavy impact fires when the session receipt loads, giving every completed workout a satisfying buzz. PR sessions also keep their existing Success notification haptic on the PR celebration screen.
 - **Week 4 · TM Test** (7th Week Protocol from _Forever 5/3/1_) — replaces the
   classic deload with a single top set at 100% TM for 3–5 reps. Warmups are
   unchanged (40/50/60% × 5/5/3); BBB is skipped on test week. After the set,

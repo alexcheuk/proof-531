@@ -1,8 +1,6 @@
 /**
  * Plate-set UI ↔ schema mapping.
  *
- * Ported from `the PWA reference`.
- *
  * The schema only knows `'standard' | 'kg-standard'` but the SegRail renders
  * three segments; the third (`'custom'`) is a disabled "soon" affordance and
  * is never persisted.

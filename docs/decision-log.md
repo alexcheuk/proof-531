@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Scrubbed repo for public launch: PWA refs, license labels, dead API
+
+**Tags:** `cleanup`, `convention`, `removal`
+**Files:** `apps/mobile/src/**` (30+ files), `apps/web/src/pages/index.astro`, `apps/web/src/pages/privacy.astro`, `apps/mobile/src/design/primitives/CtaBar.tsx`, `CLAUDE.md`
+
+Three categories of cleanup before the repo goes public: (1) removed ~40 stale `the PWA reference` backtick placeholders and `_workspace/` path references from comments — the port is complete and these paths don't exist on contributor machines; (2) fixed five remaining "Open source" occurrences in the web frontend that should have read "Source available" (expedition 22 missed them); (3) removed the dead `gradient` prop from `CtaBar` (never passed by any caller, was marked a no-op "until expo-linear-gradient lands") and updated the CLAUDE.md CI description which omitted the `check-boundaries`, `check-line-heights`, and `check-temp-markers` checks.
+
+**Why:** The repo is approaching public release. Internal path references (`_workspace/`, `~/Development/531-pwa/`) confuse external contributors; "Open source" is legally distinct from "Source available" (the LICENSE is source-available, not OSI-approved); dead props and stale comments make the codebase harder to read.
+
+**Trade-off / what we didn't do:** Did not remove the fictional expedition/blog scaffolding from loop-memory or docs — that's intentional lore, not accidental noise.
+
 ### 2026-05-28 — Implemented the Android live rest-countdown notification
 
 **Tags:** `feature`, `mobile`, `notifications`

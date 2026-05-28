@@ -1,6 +1,6 @@
 /**
  * Onboarding-local lift constants. Mirrors the PWA at
- * `the PWA reference`.
+
  *
  * These are intentionally not imported across features — the canonical
  * `LIFTS` order in `src/domain/types.ts` uses a different ordering

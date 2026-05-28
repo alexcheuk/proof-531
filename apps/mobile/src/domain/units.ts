@@ -2,8 +2,7 @@
  * Unit conversion + plate-step snapping for the 531 Strength domain.
  *
  * This module is part of `src/domain/` — pure math, no React, no async,
- * no Drizzle. Mirrors the PWA's `features/session/domain/units.ts` (see
- * `the PWA reference`).
+ * no Drizzle.
  */
 import type { Unit } from './types';
 

@@ -1,7 +1,6 @@
 /**
  * Confirm sheet for the destructive storage-unit migration.
  *
- * Ported from `the PWA reference`.
  * Preview table lists each enabled lift's current TM and its converted value
  * at the target storage unit, so the user sees what's about to be rewritten.
  */

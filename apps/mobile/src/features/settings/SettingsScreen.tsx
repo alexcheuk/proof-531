@@ -1,7 +1,6 @@
 /**
  * Settings screen — composition shell for the LEDGER register.
  *
- * Ported from `the PWA reference`.
  * All section bodies live under `./sections/`; dialog state (TM editor, unit
  * migration, destructive reset) is owned by `useSettingsDialogs`. This file
  * is intentionally thin so the section order is the first thing a reader sees.

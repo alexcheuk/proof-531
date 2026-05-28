@@ -5,10 +5,8 @@
  *   BEST e1RM — best estimated 1RM from a logged AMRAP (em-dash when none)
  *   CYCLE     — rolling cycle number from settings
  *
- * Ported from `the PWA reference`,
- * adjusted to the cell labels documented in `docs/superpowers/plans/PE-03-home`
- * (the PWA shows "Last / Best / Cycle"; the RN port shows
- * "TM / BEST e1RM / CYCLE" until the Last-session-stats backing query lands).
+ * Cell labels are documented in `docs/superpowers/plans/PE-03-home`:
+ * shows "TM / BEST e1RM / CYCLE" until the Last-session-stats backing query lands.
  */
 import { StatGrid } from '@/design/primitives/StatGrid';
 import type { Unit } from '@/domain/types';

@@ -2,8 +2,7 @@ import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
 /**
- * Single Progress-grid cell. Four visual variants matching the canonical
- * design (see `_workspace/00_input/canonical-progress-v3.jsx`):
+ * Single Progress-grid cell. Four visual variants:
  *
  *   - `past`  — completed day; ink-filled (bg `ink0`, fg `bg0`). Shows
  *               weight (display 17) on top + `× N` (mono 9, .78 alpha) below.
@@ -34,8 +33,7 @@ export type ProgressGridCellProps = {
   reps?: number | null;
   /**
    * Secondary glyph that replaces the reps line. The set widens by one
-   * triplet on Week 4 TM-test cells (added 2026-05-27 per
-   * `_workspace/01_design_spec.md`):
+   * triplet on Week 4 TM-test cells:
    *
    *   - `✓` — legacy week-4 deload completion (kept for forward-only history).
    *   - `─` — projected future deload-style cell.

@@ -1,7 +1,7 @@
 /**
  * SetLog accessors.
  *
- * Mirrors the PWA accessors at `the PWA reference`.
+ * Mirrors the PWA accessors.
  *
  * `appendSetLog` is the single write path for the `set_logs` table. For AMRAP
  * sets it additionally:

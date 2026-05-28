@@ -2,10 +2,10 @@ import { useTheme } from '@/design/theme';
 /**
  * Wet-ink circular date stamp for the session-complete receipt.
  *
- * Structural port of `the PWA reference`. The PWA renders an SVG with arc-text on a circular path
+ * The original web implementation rendered an SVG with arc-text on a circular path
  * (`textPath`). React Native ships without `react-native-svg`, and we are
  * holding the line on extra native deps for the Expo-Go scaffold — so this
- * port approximates the wet-stamp character with a bordered circle + three
+ * implementation approximates the wet-stamp character with a bordered circle + three
  * stacked caps-mono labels (top arc, weekday + date center, year footer).
  *
  * Pure presentational. The parent feeds pre-formatted strings from

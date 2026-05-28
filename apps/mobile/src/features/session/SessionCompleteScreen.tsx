@@ -8,8 +8,9 @@ import { useTheme } from '@/design/theme';
  *
  * Composition shell only — view derivation lives in
  * `useSessionCompleteData`, sub-blocks (masthead, title, PR certificate,
- * receipt, cycle grid) live in their own files. The PR success haptic is
- * fired by `usePrSuccessHaptic`.
+ * receipt, cycle grid) live in their own files. Two haptics fire on load:
+ * a Heavy impact for all completions (`useSessionCompleteHaptic`) and a
+ * Success notification for PR sessions (`usePrSuccessHaptic`).
  */
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
@@ -32,6 +33,7 @@ import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
+import { useSessionCompleteHaptic } from './hooks/useSessionCompleteHaptic';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
@@ -51,6 +53,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   const { colors } = useTheme();
   const data = useSessionCompleteData(sessionId);
 
+  useSessionCompleteHaptic(data.view !== null && data.view !== undefined);
   usePrSuccessHaptic(data.view?.hasPR ?? false);
 
   // Defense in depth: a missing or explicitly cancelled session can't

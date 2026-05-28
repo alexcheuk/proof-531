@@ -6,7 +6,6 @@ import type { Lift, Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 /**
  * One row in the Step 2 lift-picker. Tap anywhere on the row to toggle.
- * Ported from `the PWA reference`.
  */
 import { Pressable, View, type ViewStyle } from 'react-native';
 import { LIFT_META } from '../lifts';

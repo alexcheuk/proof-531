@@ -12,8 +12,7 @@ const CYCLE_ROWS: readonly CycleRow[] = [
   { label: 'Day 2', pct: '70 · 80 · 90', reps: '3 / 3 / 3+' },
   { label: 'Day 3', pct: '75 · 85 · 95', reps: '5 / 3 / 1+' },
   // Day 4 is the 7th-Week-Protocol TM test (replaces the classic Wendler
-  // deload). Single set at 100% TM with a 3–5 rep target. See
-  // `_workspace/01_design_spec.md`.
+  // deload): one set at 100% TM, 3–5 rep target.
   { label: 'Day 4', pct: '100', reps: 'TM × 3–5 · test' },
 ];
 

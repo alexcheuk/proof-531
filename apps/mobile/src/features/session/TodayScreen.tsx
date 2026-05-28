@@ -9,9 +9,9 @@ import { goTo } from '@/lib/routes';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
  *
- * Ported (lightly trimmed) from `the PWA reference`. The PWA hosts a full state machine (preview / active /
- * preview-other-active / empty) here; the mobile MVP shows the preview surface
- * and a Start CTA. Active-session UI ships in a follow-up task.
+ * Thin shell for the Today session preview. Delegates state to useTodayScreenState.
+ * The mobile MVP shows the preview surface and a Start CTA. Active-session UI
+ * ships in a follow-up task.
  *
  * Boundary: this file composes design primitives + data query hooks + the
  * feature-local `useTodayScreenState` hook. No drizzle imports, no hex
@@ -75,7 +75,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // CTA copy mirrors the PWA reference bottom-CTA matrix:
+  // CTA copy:
   //   preview                → "Begin session"
   //   active (no logs yet)   → "Start session"
   //   active (>=1 log)       → "Resume · set N of 3" (surfaces partial

@@ -81,7 +81,7 @@ export function projectTmForCycle(
  * the unit's step.
  *
  * Day-4 was 0.60 × TM under the legacy Wendler deload; the value changed in
- * the TM-Test-Week migration (`_workspace/01_design_spec.md`). The Progress
+ * the TM-Test-Week migration to the 7th-Week Protocol. The Progress
  * grid's future column-4 cells now project the TM the test will use, not a
  * deload top-set weight.
  */

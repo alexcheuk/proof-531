@@ -5,8 +5,7 @@ import { View, type ViewStyle } from 'react-native';
 import { OnboardingHeader } from './OnboardingHeader';
 
 /**
- * Shared chrome for all four onboarding steps. Ported from
- * `the PWA reference`.
+ * Shared chrome for all four onboarding steps.
  *
  * Layout (top-to-bottom):
  *   - sticky-ish header strip with optional back-arrow (or wordmark), label,
@@ -46,7 +45,7 @@ export function OnboardingShell({
     <View style={containerStyle}>
       <OnboardingHeader onBack={onBack} label={label} step={step} total={total} />
       <View style={{ flex: 1 }}>{children}</View>
-      {footer ? <CtaBar gradient={false}>{footer}</CtaBar> : null}
+      {footer ? <CtaBar>{footer}</CtaBar> : null}
     </View>
   );
 }

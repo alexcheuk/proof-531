@@ -2,7 +2,7 @@
  * Storage-unit migration accessor.
  *
  * Mirrors the PWA accessor at
- * `the PWA reference`.
+
  *
  * Switch the *storage* unit (the currency that future TM bumps and session
  * snapshots are denominated in). For each lift whose current TM is NOT

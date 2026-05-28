@@ -1,7 +1,7 @@
 /**
  * PR (personal record) accessors.
  *
- * Mirrors the PWA accessors at `the PWA reference`.
+ * Mirrors the PWA accessors.
  * The `prs` table holds at most one row per lift, keyed by `lift`. The row
  * records the best estimated 1RM observed (via the Epley formula on AMRAP
  * sets) along with a pointer to the `set_logs` row that produced it.

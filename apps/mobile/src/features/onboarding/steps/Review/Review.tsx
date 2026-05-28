@@ -4,8 +4,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
- * Step 4 — Review the computed training maxes and commit. Ported from
- * `the PWA reference`.
+ * Step 4 — Review the computed training maxes and commit.
  */
 import { View } from 'react-native';
 import { OnboardingShell } from '../../components/OnboardingShell';

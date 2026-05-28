@@ -1,8 +1,6 @@
 /**
  * Pure helper: compute the next `enabledLifts` array after toggling one lift.
  *
- * Ported from `the PWA reference`.
- *
  * Rules:
  * - Toggling an off lift adds it; the result preserves canonical LIFT_ORDER
  *   ordering (NOT insertion order).

@@ -3,8 +3,6 @@ import { useDb } from '@/data/DbProvider';
  * Bottom-sheet TM editor. Tapping a Training max row in SettingsScreen opens
  * this sheet; Save appends a new TrainingMax row via `setTrainingMax` (PD-04
  * append-only contract — never UPDATE).
- *
- * Ported from `the PWA reference`.
  */
 import { setTrainingMax } from '@/data/accessors/trainingMax';
 import { TM_KEY } from '@/data/queries/useLatestTm';
