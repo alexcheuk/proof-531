@@ -113,6 +113,14 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   will not receive the OTA update. Expo Go testers are unaffected. Note this
   in the Discord summary whenever a native module is added.
 
+## `jq` not available (expedition 19)
+
+- **`jq` is not installed in the loop environment.** Use Python for all JSON parsing:
+  ```bash
+  curl ... | python3 -c "import json,sys; data=json.load(sys.stdin); ..."
+  ```
+  The Discord channel recipes in `discord-channels.md` use `jq` — mentally substitute the Python pattern above. All other Discord curl recipes are fine; only the JSON parsing step needs Python.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.

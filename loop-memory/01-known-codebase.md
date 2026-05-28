@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-27, expedition 17)
+# Codebase facts (updated 2026-05-28, expedition 19)
 
 ## Architecture
 
@@ -230,6 +230,21 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `/session/live` — in-session (rest timer, AMRAP sheet, cancel-confirm sheet)
 - `/session/complete` — receipt + CTA
 - `/onboarding` — first-launch
+
+## React Compiler experiment (expedition 19)
+
+- **`reactCompiler: true` in `app.json` experiments is REMOVED and must not be re-enabled without a full audit.**
+  The Babel transform rewrites component closures in ways that break Reanimated 4 worklets in production Hermes builds.
+  The app crashes on open — no error message, just a failed launch. The compiler is a candidate to re-enable
+  only after every component that uses `useAnimatedStyle`, `useSharedValue`, or `useAnimatedProps` is audited
+  for compatibility.
+
+## EAS channel contract (expedition 19)
+
+- Preview profile (`eas.json`) uses `channel: "main"` (changed from `channel: "preview"` in expedition 19).
+  All OTA updates are published to `"main"`. Preview and production APKs both subscribe to `"main"`.
+  **Do not reintroduce a separate `"preview"` channel** without also adding a CI step that publishes to it;
+  a channel mismatch silently prevents all fixes from reaching the device.
 
 ## Reanimated animation rules (added 2026-05-27)
 
