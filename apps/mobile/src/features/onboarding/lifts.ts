@@ -1,12 +1,10 @@
 /**
- * Onboarding-local lift constants. Mirrors the PWA at
-
+ * Onboarding-local lift constants.
  *
- * These are intentionally not imported across features — the canonical
- * `LIFTS` order in `src/domain/types.ts` uses a different ordering
- * (`press, deadlift, bench, squat`) optimized for cycle scheduling. The
- * onboarding wizard surfaces the lifts in their conventional reading
- * order: squat → bench → deadlift → press.
+ * Not imported across features — cross-feature imports violate the boundary
+ * rules. `domain/labels.LIFTS` exposes the same squat → bench → deadlift →
+ * press order, but features that need only the display metadata should keep
+ * their own copy rather than depending on domain/labels for a UI concern.
  */
 import type { Lift } from '@/domain/types';
 

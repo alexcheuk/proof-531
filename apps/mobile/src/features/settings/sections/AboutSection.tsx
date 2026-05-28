@@ -15,7 +15,7 @@ export function AboutSection() {
   return (
     <LedgerSection title="About">
       <LedgerRow first>
-        <LedgerRowLabel primary="Program" secondary="Jim Wendler · 5/3/1 for beginners" />
+        <LedgerRowLabel primary="Program" secondary="Jim Wendler · 5/3/1 + BBB" />
         <LedgerRowValue value="v3.0" />
       </LedgerRow>
       <LedgerRow>
