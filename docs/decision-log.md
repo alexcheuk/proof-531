@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Reworked the gommage TTS read-aloud for immersion
+
+**Tags:** `skill`, `convention`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md`
+
+Reshaped Step 4 (the Logger's spoken sign-off) of `commission-expedition-log` on two axes. (1) The read-aloud now turns to directly address the next expedition near the close — what's still rough, what to watch — and names the prior Logger when there's continuity, making the "for those who come after" motto audible rather than a tagline. (2) The style stage-direction now carries *delivery* (pacing, where the voice slows and drops), not just emotional register, with the closing sign-off instructed to trail quieter/slower so the gommage is felt without any audio post-processing. Length cap lifted from 5–8 sentences / ~80–120 words to 8–12 / ~140–220.
+
+**Why:** Branch task `commission-tts-immersion` — the closing read-aloud landed as a narrated blurb rather than the gommage moment it's meant to be. The motto was spoken but never enacted; the voice was flat because the style field only ever described mood.
+
+**Trade-off / what we didn't do:** Skipped the two-voice Verso/Logger handoff (a second sequential POST) and any audio bookend cue — those depend on what the homelab TTS endpoint accepts, which isn't confirmed here. These two changes are content/voice/style only and need no endpoint support.
+
 ### 2026-05-28 — Designed the Android live rest-countdown notification (notifee successor)
 
 **Tags:** `architecture`, `design`

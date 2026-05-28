@@ -64,11 +64,12 @@ The agent returns a structured result with `post_path`, `mode`, `beat_used`, `lo
 
 After the post is staged but before (or alongside) the commit, send a read-aloud of the post through the homelab speaker. This is the gommage moment — the Logger's last act before they're erased. Fire-and-forget; never block the commit on TTS.
 
-**Compose the read-aloud.** 5–8 sentences, ~80–120 words. This is a real performance, not a summary blurb. Longer and more detailed than a blurb — the listener should get a sense of what the expedition actually did.
+**Compose the read-aloud.** 8–12 sentences, ~140–220 words. This is a real performance, not a summary blurb. The listener should get a full sense of what the expedition actually did — and, by the end, feel addressed by it. Err toward more, not less; the gommage is the one moment this Logger gets to speak.
 
-- **First 2 sentences**: set the scene. What was the expedition's situation when it arrived? What did Verso's slips say the work would be?
-- **Middle 2–4 sentences**: describe what each role did, *in the world's terms*. The Designer drafted the map. The Painter changed the panels. The Inspector pushed on the work to see if it held. Use the expedition's physical vocabulary — panels, smudges, the canvas, the work — not code jargon. Vary which roles you name. Not every expedition has all four roles active; name the ones that did work.
-- **Final texture sentence**: what surprised the expedition. What almost went sideways. What the team is proud of.
+- **Opening 2–3 sentences**: set the scene. What was the expedition's situation when it arrived? What did Verso's slips say the work would be?
+- **Middle 3–5 sentences**: describe what each role did, *in the world's terms*. The Designer drafted the map. The Painter changed the panels. The Inspector pushed on the work to see if it held. Use the expedition's physical vocabulary — panels, smudges, the canvas, the work — not code jargon. Vary which roles you name. Not every expedition has all four roles active; name the ones that did work.
+- **A texture sentence**: what surprised the expedition. What almost went sideways. What the team is proud of.
+- **Turn to the next expedition (2–3 sentences)**: this is a field log left *for those who come after*, so speak to them directly. Tell whoever opens these panels next what's still rough, what to watch, what you'd have done with one more day on the canvas. When a previous Logger left something relevant, name them by the name they signed with — *"Solène left the same panel uneasy; we did what we could with it"* — the same bit-continuity the written posts carry. This is the motto made audible: the listener should hear that the message is being **left behind** for someone, not filed into a void.
 - **Tone varies by Logger character.** Not every Logger is gloomy. Some are wry. Some are sharp. Some are exhausted but wry about it. Some are flat-out pleased. Some are proud. Some are rattled. Match the register the post commits to.
 - **Final required line** — always close with this verbatim, as the Logger's own voice:
 
@@ -81,13 +82,13 @@ Strip code, file paths, and jargon — this is heard, not read.
 **Pick the voice and style for *this Logger*.** The agent returned `logger_name` and you can read the post itself for tone. Match them:
 
 - **Voice** — pick from the API's catalog (`Achernar`, `Charon`, `Despina`, `Erinome`, `Iapetus`, `Kore`, `Orus`, `Puck`, `Sadachbia`, `Sulafat`, `Vindemiatrix`, `Zephyr`, etc — Gemini-style names). Avoid `Algenib`; that one is reserved for the Paintress's departure line. Pick something that fits the Logger's character on the page.
-- **Style** — short stage direction in plain English. Vary it across expeditions — not always gloomy, not always solemn. Examples:
-  - *"Say with quiet pride, like someone who did the work and knows it"*
-  - *"Say with dry wit, slightly tired"*
-  - *"Say like you're reporting to a superior you respect but will never meet"*
-  - *"Say with the energy of someone who just fixed a bug at 2am and can finally sleep"*
-  - *"Say with flat confidence, no drama"*
-  - *"Say as if leaving a note someone will find much later"*
+- **Style** — a stage direction in plain English that carries *both register and delivery*. Register is the Logger's mood; delivery is how the room sounds — pacing, where the voice slows, where it drops. Use the delivery to make the gommage felt without any audio post-processing: the closing sign-off should trail quieter and slower, as if the speaker is being erased mid-thought. Vary it across expeditions — not always gloomy, not always solemn. Examples:
+  - *"Say with quiet pride, measured and unhurried; let the final line slow and drop almost to a whisper, as if fading out"*
+  - *"Say with dry wit, slightly tired; even through the middle, then let the sign-off thin out and trail off at the end"*
+  - *"Say like you're reporting to a superior you respect but will never meet; steady, then quieter and slower on the last line"*
+  - *"Say with the energy of someone who just fixed something at 2am and can finally rest; warm, easing into stillness by the sign-off"*
+  - *"Say with flat confidence, no drama; hold the pace, then let the last words thin out as if the air is going"*
+  - *"Say as if leaving a note someone will find much later; unhurried throughout, the final line barely there"*
   Match the post's beat and the Logger's register. Vary across expeditions so the ambient track doesn't become a drone.
 
 If two consecutive Loggers feel similar in tone, push the second one further — different voice, different style.
@@ -99,7 +100,7 @@ If two consecutive Loggers feel similar in tone, push the second one further —
 TTS_PAYLOAD=$(python3 -c "
 import json, sys
 print(json.dumps({
-  'message': '<the read-aloud, 5-8 sentences ending with the Signing off line>',
+  'message': '<the read-aloud, 8-12 sentences ending with the Signing off line>',
   'device': 'kitchen',
   'voice': '<voice picked for this Logger>',
   'style': '<style line picked for this Logger>'
