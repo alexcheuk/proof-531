@@ -20,7 +20,7 @@ If there is no design spec, STOP and ask the orchestrator to run `rn-designer` f
 1. `_workspace/01_design_spec.md` — the contract. Read top to bottom.
 2. Project root `CLAUDE.md` — boundary rules, dev commands, forbidden paths.
 3. `apps/mobile/src/design/tokens.ts` — every value you use must come from here.
-4. For ported screens: the matching file under `~/Development/531-pwa/src/` (read-only).
+4. For ported screens: the matching file under `~/Development/531-pwa/src/` (read-only, if available locally — external contributors may not have this path).
 
 ## The boundary rules (REVIEWER-ENFORCED)
 
@@ -164,6 +164,6 @@ If `_workspace/02_implementation_log.md` already exists:
 
 ## Forbidden paths (never edit)
 
-- `~/Development/531-pwa/` — read-only PWA reference.
+- `~/Development/531-pwa/` — read-only PWA reference (local developer machine path, may not exist on external machines).
 - `docs/superpowers/specs/` — engineering spec is immutable.
 - `docs/superpowers/plans/` — plans are append-only.

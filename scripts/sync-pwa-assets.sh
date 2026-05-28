@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
-# Sync the 531 wordmark assets from the PWA repo into the mobile app.
+# Sync the 531 wordmark assets from the original PWA repo into the mobile app.
 #
-# The PWA lives at ~/Development/531-pwa and is the canonical source for
-# the brand mark + icon variants (see CLAUDE.md — "behavioral source of
-# truth"). Re-run this script when the wordmark changes upstream; the
-# mobile app picks up the new artwork on the next Metro restart.
+# NOTE: This is a developer-machine script. The brand assets (icon.png,
+# splash-icon.png, android-icon-foreground.png) are already committed to
+# apps/mobile/assets/images/ — external contributors do NOT need to run
+# this script. Only run it if the wordmark changes and you have access to
+# the original PWA repo.
+#
+# The original PWA repo lives at ~/Development/531-pwa by default. Pass
+# --pwa /path/to/pwa to override. The port is complete; this script is
+# now rarely needed.
 #
 # Usage:
 #   bash scripts/sync-pwa-assets.sh
 #   bash scripts/sync-pwa-assets.sh --pwa /some/other/path/to/531-pwa
 #
 # Safe to re-run — overwrites the destination files in place. Does NOT
-# modify the PWA repo.
+# modify the source repo.
 
 set -euo pipefail
 

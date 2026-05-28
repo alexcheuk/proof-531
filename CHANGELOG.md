@@ -60,16 +60,14 @@ build N" section covers what landed on `main` between two preview builds.
   the History tab's volume stat updates the moment the day finishes.
   Previously the stat read from a stale cache until something else
   invalidated it.
-- **App icon + splash · real 531 wordmark** — copied the canonical PWA mark
-  (`~/Development/531-pwa/public/icons/icon-512.png` + the maskable variant)
-  into `apps/mobile/assets/images/`. Replaces the placeholder Expo "A" icon.
-- **`scripts/sync-pwa-assets.sh`** — one-command sync of the PWA brand
-  assets into the mobile app's images dir. Safe to re-run.
+- **App icon + splash · real 531 wordmark** — replaced the placeholder Expo "A"
+  icon with the canonical 531 wordmark (icon-512 + maskable variant) in
+  `apps/mobile/assets/images/`.
+- **`scripts/sync-pwa-assets.sh`** — one-command sync of the brand assets
+  into the mobile app's images dir. Safe to re-run.
 - **PR Celebration · loading skeleton** — pre-data state now shows a paper-
   tint placeholder for the eyebrow + hero number instead of a half-empty
   screen with only the "Stronger." headline.
-
-### Fixed
 - **Sheet vertical-stack CTA gap closed** — `SheetLayout` previously rendered
   primary + cancel as separate flex children of the body, so the body's
   `gap` opened a hairline between an outlined cancel and its primary CTA

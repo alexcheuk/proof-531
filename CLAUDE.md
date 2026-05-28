@@ -43,9 +43,9 @@ apps/mobile/
 
 ## Design reference
 
-`~/Development/531-pwa` is the **behavioral source of truth** for visuals, interactions, and screen flow. When porting a screen or component, open the matching file under `~/Development/531-pwa/src/` and port faithfully — do not reinvent.
+The **running mobile app** is the behavioral source of truth for all current work. When making a visual or interaction change, look at the matching live screen and port faithfully — do not reinvent.
 
-The PWA repo is **never modified** by orchestrator-run tasks. Treat it as read-only reference.
+The original port was from a local PWA (`~/Development/531-pwa`) that served as the reference during the initial build. That directory is not part of this repository and won't exist on external contributors' machines. The port is complete; the mobile app is now self-referential.
 
 ## Dev commands
 
@@ -106,7 +106,7 @@ See `.claude/skills/initial-implement/SKILL.md` for the orchestrator's full beha
 
 ### Forbidden paths
 
-Never edit, regardless of plan: `~/Development/531-pwa/` (read-only reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
+Never edit, regardless of plan: `docs/superpowers/specs/`, `docs/superpowers/plans/`. Authorized paths: any file the active plan's `## Files` section lists.
 
 ### Skill scoping
 

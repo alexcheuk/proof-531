@@ -46,8 +46,13 @@ or process any of that.
 ## Permissions the app requests
 
 531 Strength does not request location, microphone, camera, contacts,
-photo library, or motion sensors. The only platform integration is
-**haptic feedback** (vibration) for set-completion and rest-timer cues.
+photo library, or motion sensors. Platform integrations are:
+
+- **Haptic feedback** (vibration) — for set-completion and rest-timer cues.
+- **Local notifications** — optionally requested to alert you when a rest
+  period ends, so you can leave the app open in the background. No remote
+  notifications are sent; everything is scheduled locally on-device and
+  never leaves the device.
 
 ## Children
 

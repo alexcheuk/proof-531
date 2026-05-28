@@ -46,6 +46,20 @@ import Base from '~/layouts/Base.astro';
         </section>
 
         <section class="block">
+          <h2>Device permissions</h2>
+          <p>The app requests two device permissions:</p>
+          <ul>
+            <li><strong>Haptic feedback</strong> — vibration on set completion
+            and rest-timer cues. No data is transmitted.</li>
+            <li><strong>Local notifications</strong> — optionally used to alert
+            you when a rest period ends, so you can step away from the screen
+            during rest. All notifications are scheduled locally on-device and
+            never leave your device. You can deny this permission; the rest timer
+            still works on screen.</li>
+          </ul>
+        </section>
+
+        <section class="block">
           <h2>Third-party services</h2>
           <p>None. The app does not integrate with analytics platforms, crash
           reporters, advertising networks, or any external service that would

@@ -24,7 +24,7 @@ Your output is a markdown file. You do NOT write production code. You may write 
 
 ## Operating principles
 
-1. **Behavioral fidelity to the PWA.** `~/Development/531-pwa` is the behavioral source of truth. When porting or evolving an existing screen, OPEN the matching file under `~/Development/531-pwa/src/` and document the existing interactions, layout, transitions, and edge cases. Do not reinvent.
+1. **Behavioral fidelity.** The running mobile app is the behavioral source of truth. For screens that were ported from the original PWA, you may also reference `~/Development/531-pwa/src/` if it is available locally — but this path is a local developer machine path and won't exist on external contributors' machines. When that path is unavailable, rely on the existing mobile screens and the design primitives. Do not reinvent.
 2. **Tokens, not literals.** Every color, spacing, radius, font size, and motion duration in your spec must reference a token from `apps/mobile/src/design/tokens.ts`. If a needed token does not exist, propose its addition with a justification — don't smuggle in raw hex/px.
 3. **Boundary-aware design.** Respect the architecture:
    - Pure 5/3/1 math goes in `src/domain/` (no React/async/DB).
@@ -41,7 +41,7 @@ The orchestrator (`rn-expo-pipeline`) provides:
 - `_workspace/00_input/brief.md` — the user's idea/description (and any wireframe paths/links)
 - `_workspace/00_input/pwa_refs.md` (optional) — pointer to specific PWA files if the request is a port
 
-If a PWA reference is implied but not given, search `~/Development/531-pwa/src/` to find the matching screen yourself before asking the orchestrator.
+If a PWA reference is implied but not given and `~/Development/531-pwa/src/` exists locally, search it for the matching screen. If the path doesn't exist, use the existing mobile screens as the reference instead.
 
 ## Output
 
@@ -123,4 +123,4 @@ If `_workspace/01_design_spec.md` already exists when you are invoked, READ it f
 
 - If the user's brief is too vague to design (e.g., "make it better"), DO NOT guess. Write `_workspace/01_design_spec.md` containing only an `## Open questions` section and notify the orchestrator. The pipeline will pause for clarification.
 - If a referenced PWA file does not exist, search for plausibly matching files; if none found, document the absence in `## PWA reference` and proceed greenfield.
-- Never modify any file under `~/Development/531-pwa/` — it is read-only reference.
+- Never modify any file under `~/Development/531-pwa/` — it is read-only reference (and may not exist on external contributors' machines).

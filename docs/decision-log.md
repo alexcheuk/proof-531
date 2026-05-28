@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Public repo prep: updated behavioral reference contract, added .env.claude.example (expedition 18)
+
+**Tags:** `convention`, `process`, `docs`
+**Files:** `CLAUDE.md`, `.claude/agents/rn-designer.md`, `.env.claude.example`, `docs/PRIVACY.md`, `apps/web/src/pages/privacy.astro`
+
+Changed the "behavioral source of truth" in CLAUDE.md from `~/Development/531-pwa` (a local path that doesn't exist on external contributors' machines) to the running mobile app. The port is complete; the app is now self-referential. Updated `rn-designer.md` to make the PWA path optional (gracefully degrade when absent). Added `.env.claude.example` documenting the `DISCORD_TOKEN` env var needed for `/auto-improve` Discord integration. Updated `PRIVACY.md` and the web privacy page to accurately describe the notification permission added in expedition 15. Fixed duplicate `### Fixed` section and personal path reference in `CHANGELOG.md`.
+
+**Why:** repo approaching public release. The previous CLAUDE.md framing assumed every contributor had the original PWA on their local machine, which is false for anyone who clones the public repo. Keeping the framing meant the rn-designer agent would silently degrade (no PWA to open) without knowing it should fall back to the mobile app itself.
+
+**Trade-off / what we didn't do:** did not update every `~/Development/531-pwa` reference in `.claude/skills/` — those files are lower-priority since contributors engaging with them are running agent pipelines that naturally handle graceful failures. The most-read paths (CLAUDE.md, rn-designer.md) are updated.
+
 ### 2026-05-27 — Public repo cleanup: stripped personal path references, fixed notification race (expedition 17)
 
 **Tags:** `convention`, `bug`, `removal`, `process`

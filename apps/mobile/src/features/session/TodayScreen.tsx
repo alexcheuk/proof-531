@@ -75,8 +75,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // CTA copy mirrors the PWA's bottom-CTA matrix
-  // (`531-pwa/src/features/session/TodayScreen.tsx`):
+  // CTA copy mirrors the PWA reference bottom-CTA matrix:
   //   preview                → "Begin session"
   //   active (no logs yet)   → "Start session"
   //   active (>=1 log)       → "Resume · set N of 3" (surfaces partial

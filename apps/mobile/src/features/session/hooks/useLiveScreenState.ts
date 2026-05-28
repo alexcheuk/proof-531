@@ -21,9 +21,12 @@ import { round as snapWeight } from '@/domain/units';
  * T-0 has no audio cue — expo-av was removed in SDK 55).
  *
  * Phases:
- *   - `set`             — show the working set; CTA logs working (or opens AMRAP).
+ *   - `set`             — show the working set; CTA logs working (or opens AMRAP/TM-test).
  *   - `amrap-log`       — bottom sheet open for AMRAP rep entry.
+ *   - `tm-test-log`     — bottom sheet open for TM test rep entry (week 4).
  *   - `rest`            — countdown between sets.
+ *   - `pr-celebration`  — full-screen PR celebration after a new PR.
+ *   - `awaiting-bbb`    — post-AMRAP prompt to mark BBB complete or skip.
  *   - `complete`        — session finished, parent should route away.
  *   - `reset-confirm`   — bottom sheet open for Restart confirmation.
  *
