@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Designed the Android live rest-countdown notification (notifee successor)
+
+**Tags:** `architecture`, `design`
+**Files:** `docs/superpowers/specs/2026-05-28-android-rest-countdown-notification-design.md`
+
+Specced a clock-app-style live rest-countdown notification for Android: an ongoing OS-ticked chronometer notification that appears when the app is backgrounded mid-rest, swaps to a heads-up "Rest complete" alert at T-0, offers a +30s action, and opens the live screen on tap. iOS keeps its existing single scheduled notification (a live countdown there needs Live Activities; deferred). Design only — not yet implemented.
+
+**Why:** The rest timer's value is highest exactly when the user leaves the app between sets, which is where a notification beats an in-app timer. Expo Go couldn't do notifications on Android at all; now that we're on a dev client, a real native notification path is possible.
+
+**Trade-off / what we didn't do:** Chose `react-native-notify-kit` (the maintained, New-Architecture successor the archived notifee repo points to) over the archived `@notifee/react-native` and the narrower `@psync/notifee` fork, and over a custom native module. Picked **approach B** (ongoing chronometer + same-id timestamp-trigger swap) over a foreground service, to dodge the Android 14 foreground-service-type Play-policy liability. Risk noted: notify-kit is young/fast-moving, isolated behind a `lib/restChronometer.ts` wrapper so it's swappable.
+
+**Follow-ups:** Implement per the spec; native behavior is manual-device-only (CI/Expo Go can't verify it). Confirm same-id swap and `USE_EXACT_ALARM` posture on-device.
+
 ### 2026-05-28 — Disabled Android release lint via a local config plugin
 
 **Tags:** `architecture`, `convention`
