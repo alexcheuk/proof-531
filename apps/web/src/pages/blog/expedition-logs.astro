@@ -72,11 +72,13 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
             const dateLabel = fmtDate(post.data.pubDate);
             const expedition = post.data.expedition!;
             const loggerName = post.data.loggerName!;
+            const hasAudio = Boolean(post.data.audio);
             return (
               <li class="log-row">
                 <a href={`/blog/${post.id}`} class="log-row__link">
                   <div class="stamp">
                     EXPEDITION {expedition} · FIELD LOG · {dateLabel}
+                    {hasAudio && <span class="audio-badge" title="Gommage recording attached">&#9654; AUDIO</span>}
                   </div>
                   <div class="title">{post.data.title}
                     <span class="summary">{post.data.summary}</span>
@@ -217,6 +219,9 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
 
   /* per-row expedition stamp */
   .log-row .stamp {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
@@ -224,6 +229,19 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
     text-transform: uppercase;
     color: var(--ink-3);
     margin-bottom: 10px;
+  }
+  .audio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 7px;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    letter-spacing: 0.16em;
+    font-size: 9px;
+    font-weight: 600;
+    border-radius: 2px;
+    white-space: nowrap;
   }
 
   .log-row .title {

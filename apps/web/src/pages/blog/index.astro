@@ -157,10 +157,15 @@ const latest = posts.slice(0, 2);
             const loopId = post.data.loopId ?? 'off-cycle';
             const author = scribeFor(post);
             const featuredRow = idx === 0;
+            const hasAudio = Boolean(post.data.audio);
             return (
               <li class:list={['log-row', { featured: featuredRow }]}>
                 <a href={`/blog/${post.id}`} class="log-row__link">
-                  <div class="date">{dateLabel}<div class="loop">{loopId}</div></div>
+                  <div class="date">
+                    {dateLabel}
+                    <div class="loop">{loopId}</div>
+                    {hasAudio && <span class="audio-chip">&#9654;</span>}
+                  </div>
                   <div class="scope">
                     {scopes.map((s) => (
                       <span class={`scope-tag ${s}`}>{SCOPE_LABELS[s as Scope]}</span>
@@ -586,6 +591,14 @@ const latest = posts.slice(0, 2);
     color: var(--ink-3);
     font-weight: 500;
     letter-spacing: 0.16em;
+  }
+  .audio-chip {
+    display: block;
+    margin-top: 4px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    font-weight: 600;
   }
   .log-row .scope {
     display: inline-flex;
