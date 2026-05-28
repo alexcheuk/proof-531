@@ -132,7 +132,9 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
 
 ## Public repo cleanup checklist (expedition 20, updated expedition 29)
 
-**Expedition 29 status:** dead `design-reference/` path references cleaned from all contributor docs and skill files. `docs/screenshots/` placeholder directory removed. Internal loop-tracking labels stripped from public ARCHITECTURE.md. Three hardcoded `['squat','bench','deadlift','press']` fallback arrays replaced with `[...LIFTS]`; one `lift === 'squat' || lift === 'deadlift'` check replaced with `LOWER_BODY.has(lift)`. The "design-reference/" ghost is fully exorcised — don't re-introduce it.
+**Expedition 29 status:** dead `design-reference/` path references cleaned from all contributor docs and skill files. `docs/screenshots/` placeholder directory removed. Internal loop-tracking labels stripped from public ARCHITECTURE.md. Three hardcoded `['squat','bench','deadlift','press']` fallback arrays replaced with `[...LIFTS]`; one `lift === 'squat' || lift === 'deadlift'` check replaced with `LOWER_BODY.has(lint)`. The "design-reference/" ghost is fully exorcised — don't re-introduce it.
+
+**Expedition 33 status (public repo hygiene for imminent open-source release):** Added GitHub issue templates (bug_report.yml, feature_request.yml, config.yml), PR template (.github/PULL_REQUEST_TEMPLATE.md), and SECURITY.md. Full credential/secret audit passed clean — no tokens, personal paths, or sensitive URLs in tracked files. All 4 layer CLAUDE.md files exist. License label is correct (Source Available) in web pages and footer. The `_workspace_archive/` is not tracked. All homelab refs in skill files are guarded by optional env vars. The checklist items from expedition 20 are all satisfied.
 
 ## Public repo cleanup checklist (expedition 20)
 
