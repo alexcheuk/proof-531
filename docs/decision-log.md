@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Added public-repo hygiene files ahead of open-source release
+
+**Tags:** `process`, `convention`
+**Files:** `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml`, `.github/ISSUE_TEMPLATE/config.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `SECURITY.md`
+
+Added GitHub issue templates (bug report, feature request), a PR template, and a SECURITY.md ahead of making the repo public. The feature-request template links to `docs/INTENT.md` to front-load the scope constraints so contributors understand the product is deliberately narrow before filing.
+
+**Why:** Alex pinned a loop-criteria item asking to clean the repo for imminent public release. The repo had no structured way for external contributors to file bugs or PRs — they'd land blank issues without the context needed to reproduce anything.
+
+**Trade-off / what we didn't do:** Did not add CODE_OF_CONDUCT.md (small project, not worth the overhead yet). Did not add CODEOWNERS (no second reviewer). The SECURITY.md points to GitHub Issues for disclosure since there is no backend attack surface — the app is local-only SQLite.
+
 ### 2026-05-28 — OTA publishing moved from loop skill to CI
 
 **Tags:** `process`, `skill`, `removal`

@@ -1,0 +1,67 @@
+name: Feature request
+description: Suggest something new for the 531 Strength app or the dev toolchain.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **531 Strength is a focused 5/3/1 + BBB tracker.** Feature requests are welcome, but the product is deliberately narrow — one program done right. Requests that would grow the scope significantly (support for other programs, social features, coaching tools) are unlikely to be accepted; that's by design, not oversight.
+
+        Read [docs/INTENT.md](../docs/INTENT.md) for the product vision before filing.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the gap in the current app. Concrete use cases work better than abstract feature descriptions.
+      placeholder: "When I finish a heavy squat session, I want to log how I felt about the top set, but there's no place to do that."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you build? Sketches, screenshots from other apps, or written descriptions are all fine.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app does this touch?
+      multiple: true
+      options:
+        - Home / Today screen
+        - Live session / AMRAP logger
+        - Rest timer
+        - Progress tab
+        - History tab
+        - Settings
+        - PR celebration
+        - Notifications
+        - Units / plates
+        - Build / toolchain
+        - Marketing site / dev blog
+        - Other
+    validations:
+      required: false
+
+  - type: dropdown
+    id: willing-to-contribute
+    attributes:
+      label: Would you be willing to open a PR for this?
+      options:
+        - "Yes — I'll take a crack at it"
+        - "Maybe — depends on scope"
+        - "No — just filing the idea"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this hasn't been requested yet.
+          required: true
