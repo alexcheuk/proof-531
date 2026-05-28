@@ -104,6 +104,23 @@ export function dateLabel(date: Date): string {
 }
 
 /**
+ * Full proper-noun name used in settings rows and table headers.
+ * Title-case — unlike `liftLongName` which is lower-case for use in prose.
+ */
+export function liftProperName(lift: Lift): string {
+  switch (lift) {
+    case 'squat':
+      return 'Back squat';
+    case 'bench':
+      return 'Bench press';
+    case 'deadlift':
+      return 'Deadlift';
+    case 'press':
+      return 'Overhead press';
+  }
+}
+
+/**
  * Colloquial lift name used in the Progress screen hero ("on the back squat").
  * Lower-case — caps/text-transform is applied at render time.
  */

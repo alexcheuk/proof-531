@@ -36,6 +36,15 @@ jobs:
       - name: TypeScript
         run: pnpm typecheck
 
+      - name: Boundary rules
+        run: pnpm check-boundaries
+
+      - name: Line-height safety
+        run: pnpm check-line-heights
+
+      - name: Temp markers
+        run: pnpm check-temp-markers
+
       - name: expo-doctor
         run: pnpm run expo-doctor
 

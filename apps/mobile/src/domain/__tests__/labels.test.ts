@@ -5,6 +5,7 @@ import {
   isLift,
   liftDisplayName,
   liftLongName,
+  liftProperName,
   weekIntent,
   weekLabel,
 } from '../labels';
@@ -32,6 +33,15 @@ describe('liftDisplayName', () => {
     expect(liftDisplayName('bench')).toBe('Bench');
     expect(liftDisplayName('deadlift')).toBe('Deadlift');
     expect(liftDisplayName('press')).toBe('Press');
+  });
+});
+
+describe('liftProperName', () => {
+  it('returns title-case proper names matching settings row labels', () => {
+    expect(liftProperName('squat')).toBe('Back squat');
+    expect(liftProperName('bench')).toBe('Bench press');
+    expect(liftProperName('deadlift')).toBe('Deadlift');
+    expect(liftProperName('press')).toBe('Overhead press');
   });
 });
 

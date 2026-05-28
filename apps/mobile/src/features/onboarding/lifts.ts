@@ -2,10 +2,11 @@
  * Onboarding-local lift constants.
  *
  * Not imported across features — cross-feature imports violate the boundary
- * rules. `domain/labels.LIFTS` exposes the same squat → bench → deadlift →
- * press order, but features that need only the display metadata should keep
- * their own copy rather than depending on domain/labels for a UI concern.
+ * rules. Display labels delegate to `liftProperName` from domain/labels
+ * rather than duplicating the strings; the `italic` subtitle is onboarding-
+ * specific and stays local.
  */
+import { liftProperName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 
 /**
@@ -22,8 +23,8 @@ export interface LiftMeta {
 }
 
 export const LIFT_META: Record<Lift, LiftMeta> = {
-  squat: { label: 'Back squat', italic: 'the foundation' },
-  bench: { label: 'Bench press', italic: 'press from your chest' },
-  deadlift: { label: 'Deadlift', italic: 'pick it up' },
-  press: { label: 'Overhead press', italic: 'press over your head' },
+  squat: { label: liftProperName('squat'), italic: 'the foundation' },
+  bench: { label: liftProperName('bench'), italic: 'press from your chest' },
+  deadlift: { label: liftProperName('deadlift'), italic: 'pick it up' },
+  press: { label: liftProperName('press'), italic: 'press over your head' },
 };

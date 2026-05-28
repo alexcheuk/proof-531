@@ -118,10 +118,13 @@ GitHub Actions on every PR:
 1. `pnpm install --frozen-lockfile`
 2. `biome ci`
 3. `tsc --noEmit` (root + all workspaces)
-4. `expo-doctor`
-5. `jest`
-6. `pnpm bundle-check` (Metro export, catches missing transitive deps that `jest` doesn't)
-7. `pnpm --filter @fivethreeone/web build` (Astro static-build smoke)
+4. `pnpm check-boundaries` (hex outside `src/design/`, React/async in `src/domain/`, Drizzle outside `src/data/`)
+5. `pnpm check-line-heights` (fontSize + lineHeight pairs — catches clipped descenders before a screenshot PR)
+6. `pnpm check-temp-markers` (TEMP:/FIXME markers left in non-test files)
+7. `expo-doctor`
+8. `jest`
+9. `pnpm bundle-check` (Metro export, catches missing transitive deps that `jest` doesn't)
+10. `pnpm --filter @fivethreeone/web build` (Astro static-build smoke)
 
 Maestro flows + Reassure regression checks are deferred.
 

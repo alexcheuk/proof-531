@@ -51,7 +51,7 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `Button` — generic shadcn-style variants. Removed 2026-05-24. Use `PrimaryPillButton`.
 - `SectionHeader` — Removed 2026-05-24. Use `TitleBlock` for hero/display titles.
 
-## Domain exports (updated 2026-05-28, expedition 26)
+## Domain exports (updated 2026-05-28, expedition 28)
 
 - `domain/increments.ts` exports `LOWER_BODY: ReadonlySet<Lift>` — the set of lifts
   that use larger cycle TM increments (10 lb / 5 kg). Import this; don't re-define locally.
@@ -62,6 +62,7 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   - `isLift(v)` type guard for route param validation
   - `liftDisplayName(lift)` — title-case short name ("Squat", "Bench")
   - `liftLongName(lift)` — colloquial coach-voice name ("back squat", "bench press"); moved from `features/progress/labels.ts` in expedition 26
+  - `liftProperName(lift)` — title-case proper noun ("Back squat", "Bench press"); added expedition 28. Use this for settings rows and table headers; use `liftLongName` for prose.
 - `features/progress/labels.ts` — DELETED in expedition 26. `liftLongName` now lives in `domain/labels`.
 
 ## Web pages

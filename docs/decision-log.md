@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Added `liftProperName` to domain; wired boundary checks into CI
+
+**Tags:** `domain`, `process`, `convention`
+**Files:** `apps/mobile/src/domain/labels.ts`, `apps/mobile/src/features/settings/lifts.ts`, `apps/mobile/src/features/onboarding/lifts.ts`, `.github/workflows/ci.yml`, `docs/ARCHITECTURE.md`
+
+Added `liftProperName(lift)` to `domain/labels.ts` — returns title-case proper names ("Back squat", "Bench press", "Deadlift", "Overhead press") that both `settings/lifts.ts` and `onboarding/lifts.ts` now delegate to instead of carrying duplicate string literals. Separately, added `check-boundaries`, `check-line-heights`, and `check-temp-markers` steps to the GitHub Actions CI workflow; these three scripts ran in `pnpm run ci` locally but were missing from the remote job, so boundary violations could have passed CI while failing locally.
+
+**Why:** The duplicate label strings in two feature files were a maintenance trap — a lift name change would require updates in three places (domain, settings, onboarding). The CI gap was found while auditing the repo for public release: the ARCHITECTURE.md listed the three checks in the CI description, but they were not actually in the workflow file.
+
+**Trade-off / what we didn't do:** Kept `LIFT_ORDER` as a local alias in both feature files rather than replacing it with a direct import of `LIFTS` from domain — the net gain is small (four letters) and the churn touches every consumer file.
+
 ### 2026-05-28 — Moved `liftLongName` to domain/labels; fixed GoalPanel dec button
 
 **Tags:** `removal`, `domain`, `bug`
