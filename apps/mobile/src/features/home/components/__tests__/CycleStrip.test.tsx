@@ -1,9 +1,8 @@
 /**
  * Behavioral test for CycleStrip — the 4-week ledger grid on Home.
  *
- * Covers cell identity (D1..D4 + scheme), active-week inversion (eyebrow
- * uses paperMuted on ink-on-paper-inverted), done-week ✓ corner glyph,
- * and the eyebrow label "THIS CYCLE".
+ * Covers cell identity (D1..D4 + scheme), completed-week fill (ink0 bg,
+ * paper ✓ glyph), next-week amber ring, and future-week transparency.
  */
 import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
@@ -27,7 +26,6 @@ describe('CycleStrip', () => {
     expect(screen.getByText('5·5·5+')).toBeTruthy();
     expect(screen.getByText('3·3·3+')).toBeTruthy();
     expect(screen.getByText('5·3·1+')).toBeTruthy();
-    // Week 4 is the TM Test (replaces the classic Wendler deload).
     expect(screen.getByText('TM TEST')).toBeTruthy();
   });
 
@@ -39,33 +37,39 @@ describe('CycleStrip', () => {
     expect(screen.getByText('D4')).toBeTruthy();
   });
 
-  it('inverts the active cell background (week 3 → ink0 bg)', () => {
+  it('fills completed cells with ink0 background', () => {
     const screen = renderStrip(<CycleStrip currentWeek={3} />);
-    const cell = screen.getByTestId('cycle-strip-cell-3');
-    const style = Array.isArray(cell.props.style)
-      ? Object.assign({}, ...cell.props.style.filter(Boolean))
-      : cell.props.style;
-    // active background = colors.ink0 ('#1A1812')
-    expect(style.backgroundColor).toBe('#1A1812');
+    // weeks 1 and 2 are done — both should have ink0 bg
+    const cell1 = screen.getByTestId('cycle-strip-cell-1');
+    const cell2 = screen.getByTestId('cycle-strip-cell-2');
+    const getStyle = (el: ReturnType<typeof screen.getByTestId>) =>
+      Array.isArray(el.props.style)
+        ? Object.assign({}, ...el.props.style.filter(Boolean))
+        : el.props.style;
+    expect(getStyle(cell1).backgroundColor).toBe('#1A1812');
+    expect(getStyle(cell2).backgroundColor).toBe('#1A1812');
   });
 
-  it('leaves non-active cells with transparent background', () => {
-    const screen = renderStrip(<CycleStrip currentWeek={1} />);
-    const cell = screen.getByTestId('cycle-strip-cell-2');
-    const style = Array.isArray(cell.props.style)
-      ? Object.assign({}, ...cell.props.style.filter(Boolean))
-      : cell.props.style;
-    expect(style.backgroundColor).toBe('transparent');
+  it('leaves the current (next) and future cells with transparent background', () => {
+    const screen = renderStrip(<CycleStrip currentWeek={2} />);
+    const getStyle = (el: ReturnType<typeof screen.getByTestId>) =>
+      Array.isArray(el.props.style)
+        ? Object.assign({}, ...el.props.style.filter(Boolean))
+        : el.props.style;
+    // week 2 is next — transparent
+    expect(getStyle(screen.getByTestId('cycle-strip-cell-2')).backgroundColor).toBe('transparent');
+    // week 3 is future — transparent
+    expect(getStyle(screen.getByTestId('cycle-strip-cell-3')).backgroundColor).toBe('transparent');
   });
 
-  it('renders a ✓ corner glyph on past weeks', () => {
+  it('renders a ✓ glyph on completed weeks', () => {
     const screen = renderStrip(<CycleStrip currentWeek={3} />);
-    // weeks 1 and 2 are "done" → both should render a ✓
+    // weeks 1 and 2 are done → both render ✓
     const checks = screen.queryAllByText('✓');
     expect(checks.length).toBe(2);
   });
 
-  it('renders no ✓ glyph when on week 1', () => {
+  it('renders no ✓ glyph when on week 1 (nothing completed)', () => {
     const screen = renderStrip(<CycleStrip currentWeek={1} />);
     expect(screen.queryAllByText('✓').length).toBe(0);
   });

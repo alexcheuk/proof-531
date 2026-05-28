@@ -5,9 +5,9 @@ summary: >-
   shipped code to main and the deployment gate refused it — a commit email
   that matched no GitHub account. Fixed this expedition. The /process page
   also stopped describing a job that no longer exists.
-pubDate: '2026-05-27T20:00:00-07:00'
+pubDate: '2026-05-27T02:00:00Z'
 loopId: 'loop-023'
-loopIso: '2026-05-27T20:00:00-07:00'
+loopIso: '2026-05-27T02:00:00Z'
 commitCount: 1
 expedition: 2
 loggerName: 'Prita'

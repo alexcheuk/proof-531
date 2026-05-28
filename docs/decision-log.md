@@ -42,6 +42,35 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Background rest-timer notifications via expo-notifications (expedition 15)
+
+**Tags:** `feature`, `architecture`, `native`
+**Files:** `apps/mobile/src/lib/restNotification.ts`, `apps/mobile/src/features/session/hooks/useRestNotification.ts`, `apps/mobile/app.json`, `apps/mobile/package.json`
+
+Added `expo-notifications` for background rest-timer alerts. When rest begins, `useRestNotification` schedules a local notification to fire when the countdown ends — visible even when the app is backgrounded or the screen is locked.
+
+**Why:** Discord 1509345272 — users scroll away from the app during rest and miss when rest ends. The existing in-app haptic only works when foregrounded.
+
+**Trade-off:** Adding a native module changes the EAS fingerprint policy hash. Existing APK/IPA builds that matched the prior fingerprint will not receive this OTA — they need a native rebuild. Expo Go testers are unaffected (expo-notifications is bundled in Expo Go).
+
+### 2026-05-27 — Expedition-logs sort by expedition number, not pubDate (expedition 15)
+
+**Tags:** `blog`, `web`, `process`
+**Files:** `apps/web/src/lib/posts.ts`, `apps/web/src/pages/blog/expedition-logs.astro`
+
+Added `sortExpeditionsByNumber()` to `posts.ts` and wired it in `expedition-logs.astro`. Expedition posts now sort by the `expedition: N` frontmatter field (descending) on the expedition listing page, not by `pubDate`. Also retroactively normalized pubDates for expeditions 1–5 (had `-07:00` offsets that pushed them to appear as 2026-05-28 UTC) and fixed the expedition 13/14 ordering collision.
+
+**Why:** The pubDates were agent-generated with inconsistent timezone offsets, causing earlier expeditions to sort above later ones. Expedition number is the canonical ordering.
+
+### 2026-05-27 — CycleStrip updated: amber = next, black = completed (expedition 15)
+
+**Tags:** `design`, `mobile`
+**Files:** `apps/mobile/src/features/home/components/CycleStrip.tsx`
+
+Changed the Home screen's 4-week cycle indicator to match the Progress grid's visual language: completed weeks are black-filled (matching `ProgressGridCell variant="past"`), the current/next week has a 3px amber border (matching `variant="now"`), future weeks remain transparent/muted.
+
+**Why:** Discord 1509343937 — Alex asked for the cycle indicator to match the Progress screen's visual contract.
+
 ### 2026-05-27 — Expedition logs listing flipped to newest-first; pubDate now from bash date (expedition 14)
 
 **Tags:** `blog`, `web`, `process`

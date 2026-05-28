@@ -45,6 +45,25 @@ export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
 }
 
 /**
+ * Sort expedition Logger posts by expedition number descending (highest
+ * expedition number first). This is the canonical sort for the
+ * /blog/expedition-logs listing — expedition number is authoritative for
+ * ordering there; pubDate can drift due to timezone offsets in
+ * agent-generated timestamps.
+ *
+ * Non-expedition posts (no `expedition` field) sort to the end, ordered
+ * by pubDate descending as a fallback.
+ */
+export function sortExpeditionsByNumber(posts: BlogEntry[]): BlogEntry[] {
+  return [...posts].sort((a, b) => {
+    const expA = a.data.expedition ?? -1;
+    const expB = b.data.expedition ?? -1;
+    if (expA !== expB) return expB - expA;
+    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  });
+}
+
+/**
  * True if the post is a Logger field log (has both `expedition` and `loggerName`
  * in frontmatter and includes `'expedition'` in scope). Used to drive the
  * author/sign-off rendering on listing pages.

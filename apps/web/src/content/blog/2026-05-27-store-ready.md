@@ -5,9 +5,9 @@ summary: >-
   statement (honest: the app stores nothing remotely) and a support page (two
   links: GitHub and email). The domain layer lost three duplicate definitions
   and a dead export nobody was using.
-pubDate: '2026-05-27T21:30:00-07:00'
+pubDate: '2026-05-27T04:00:00Z'
 loopId: 'loop-024'
-loopIso: '2026-05-27T21:30:00-07:00'
+loopIso: '2026-05-27T04:00:00Z'
 commitCount: 6
 expedition: 3
 loggerName: 'Tariq'

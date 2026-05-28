@@ -43,7 +43,17 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/splash-icon.png",
+          "color": "#1A1812",
+          "sounds": [],
+          "androidMode": "default",
+          "androidCollapsedTitle": "531 Strength"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false,

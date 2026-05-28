@@ -21,7 +21,7 @@ A short tour of how `531` is laid out and why. For the full rationale — includ
 | Data layer | TanStack Query |
 | UI state | React state + module-level subjects via `useSyncExternalStore`; no Zustand (removed loop-043) |
 | Animation | Reanimated 4 + react-native-gesture-handler (no Skia — deferred until dev-client build) |
-| Haptics / fonts | `expo-haptics`, `expo-keep-awake`, `expo-font` (IBM Plex Sans / Mono / Sans-Condensed bundled) |
+| Haptics / fonts / notifications | `expo-haptics`, `expo-keep-awake`, `expo-font` (IBM Plex Sans / Mono / Sans-Condensed bundled), `expo-notifications` (rest-timer background alerts) |
 | Sheets | `@gorhom/bottom-sheet` v5 |
 | Lint + format | Biome (single tool) |
 | Tests | Jest + `@testing-library/react-native`, `fast-check` (domain property tests). No E2E / Storybook / Reassure on Expo Go. |

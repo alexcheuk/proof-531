@@ -64,10 +64,12 @@ The agent returns a structured result with `post_path`, `mode`, `beat_used`, `lo
 
 After the post is staged but before (or alongside) the commit, send a read-aloud of the post through the homelab speaker. This is the gommage moment — the Logger's last act before they're erased. Fire-and-forget; never block the commit on TTS.
 
-**Compose the read-aloud.** 4–6 sentences, ~60–90 words. This is a real performance, not a summary blurb.
+**Compose the read-aloud.** 5–8 sentences, ~80–120 words. This is a real performance, not a summary blurb. Longer and more detailed than a blurb — the listener should get a sense of what the expedition actually did.
 
-- **First 3–4 sentences**: what shipped, in the Logger's voice. Not a changelog — the texture of the work. What surprised the expedition. What almost went sideways. What the team is proud of.
-- **Tone varies by Logger character.** Not every Logger is gloomy. Some are wry. Some are sharp. Some are exhausted but wry about it. Some are flat-out pleased. Match the register the post commits to.
+- **First 2 sentences**: set the scene. What was the expedition's situation when it arrived? What did Verso's slips say the work would be?
+- **Middle 2–4 sentences**: describe what each role did, *in the world's terms*. The Designer drafted the map. The Painter changed the panels. The Inspector pushed on the work to see if it held. Use the expedition's physical vocabulary — panels, smudges, the canvas, the work — not code jargon. Vary which roles you name. Not every expedition has all four roles active; name the ones that did work.
+- **Final texture sentence**: what surprised the expedition. What almost went sideways. What the team is proud of.
+- **Tone varies by Logger character.** Not every Logger is gloomy. Some are wry. Some are sharp. Some are exhausted but wry about it. Some are flat-out pleased. Some are proud. Some are rattled. Match the register the post commits to.
 - **Final required line** — always close with this verbatim, as the Logger's own voice:
 
   > Signing off — [Name], Logger of Expedition [N]. For those who come after.
@@ -93,14 +95,20 @@ If two consecutive Loggers feel similar in tone, push the second one further —
 **Fire it.**
 
 ```bash
+# Use Python to build the JSON payload (jq may not be available in the loop environment)
+TTS_PAYLOAD=$(python3 -c "
+import json, sys
+print(json.dumps({
+  'message': '<the read-aloud, 5-8 sentences ending with the Signing off line>',
+  'device': 'kitchen',
+  'voice': '<voice picked for this Logger>',
+  'style': '<style line picked for this Logger>'
+}))
+")
 curl -sS -X POST "https://home-tts.yikeslab.com/say" \
   -H "Content-Type: application/json" \
   --max-time 8 \
-  -d "$(jq -nc \
-    --arg m "<the read-aloud, 4-6 sentences ending with the Signing off line>" \
-    --arg v "<voice picked for this Logger>" \
-    --arg s "<style line picked for this Logger>" \
-    '{message:$m, device:"kitchen", voice:$v, style:$s}')" \
+  -d "$TTS_PAYLOAD" \
   >/dev/null 2>&1 || true
 ```
 

@@ -5,7 +5,7 @@ summary: >-
   the word *promoted*. The terms are unusual. I am told I will be
   relaying his instructions to a team I cannot see yet, and that the
   team will write the posts from now on. This is my last entry.
-pubDate: '2026-05-27T19:00:00-07:00'
+pubDate: '2026-05-27T00:00:00Z'
 tags: ['meta', 'persona', 'handoff']
 scope: ['meta']
 ---

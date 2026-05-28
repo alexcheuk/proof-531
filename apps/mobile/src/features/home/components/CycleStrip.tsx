@@ -3,17 +3,17 @@ import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import type { Week } from '@/domain/types';
 /**
- * 4-week ledger grid showing the current cycle's set schemes. Active week
- * inverted (ink-on-paper); past weeks decorated with a corner ✓.
+ * 4-week ledger grid showing the current cycle's set schemes.
+ *
+ * Visual contract mirrors the Progress grid:
+ *   - Completed weeks (< currentWeek): ink-filled black bg, paper text, ✓ glyph.
+ *   - Current/next week (= currentWeek): paper bg + 3-px inset amber accent border.
+ *   - Future weeks (> currentWeek): transparent bg, muted text.
  *
  * Ported from `~/Development/531-pwa/src/features/home/components/CycleStrip.tsx`.
- *
- * Pure read-only; no haptics, no router.
  */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 
-// `compact` = use the smaller caps-mono label style (vs the larger bold numeric style).
-// Week 4 is a verbal label ("TM TEST"), not a numeric rep scheme ("5·5·5+").
 type Cell = { w: Week; scheme: string; compact?: boolean };
 
 const CELLS: readonly Cell[] = [
@@ -35,41 +35,27 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
       <CapsLabel style={{ marginBottom: spacing.sm }}>THIS CYCLE</CapsLabel>
       <Row style={{ borderWidth: 1, borderColor: colors.lineStrong }} align="stretch">
         {CELLS.map((c, i) => {
-          const active = c.w === currentWeek;
-          const done = c.w < currentWeek && !active;
+          const isNext = c.w === currentWeek;
+          const isDone = c.w < currentWeek;
           const cellStyle: ViewStyle = {
             flex: 1,
             alignItems: 'center',
             paddingVertical: 10,
             paddingHorizontal: 6,
             gap: 4,
-            backgroundColor: active ? colors.ink0 : 'transparent',
+            backgroundColor: isDone ? colors.ink0 : 'transparent',
             borderLeftWidth: i > 0 ? 1 : 0,
             borderLeftColor: colors.line,
             position: 'relative',
           };
 
-          const schemeColor = active ? colors.bg0 : done ? colors.ink1 : colors.ink3;
+          const schemeColor = isDone ? colors.bg0 : isNext ? colors.ink0 : colors.ink3;
 
           return (
             <View key={c.w} style={cellStyle} testID={`cycle-strip-cell-${c.w}`}>
-              {active ? (
-                <RNText
-                  style={{
-                    fontFamily: `${type.mono}-SemiBold`,
-                    fontSize: 9,
-                    letterSpacing: 1.98,
-                    textTransform: 'uppercase',
-                    color: colors.paperMuted,
-                  }}
-                >
-                  D{c.w}
-                </RNText>
-              ) : (
-                <CapsLabel size="xs" weight="semibold" color="ink3">
-                  {`D${c.w}`}
-                </CapsLabel>
-              )}
+              <CapsLabel size="xs" weight="semibold" color={isDone ? 'paperMuted' : 'ink3'}>
+                {`D${c.w}`}
+              </CapsLabel>
               <RNText
                 style={
                   c.compact
@@ -85,13 +71,13 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
                         fontSize: 12,
                         letterSpacing: 0.24,
                         color: schemeColor,
-                        opacity: active || done ? 1 : 0.7,
+                        opacity: isDone || isNext ? 1 : 0.7,
                       }
                 }
               >
                 {c.scheme}
               </RNText>
-              {done ? (
+              {isDone ? (
                 <RNText
                   style={{
                     position: 'absolute',
@@ -99,11 +85,25 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
                     right: 4,
                     fontFamily: `${type.mono}-Regular`,
                     fontSize: 9,
-                    color: colors.ink2,
+                    color: colors.bg0,
                   }}
                 >
                   ✓
                 </RNText>
+              ) : null}
+              {isNext ? (
+                <View
+                  pointerEvents="none"
+                  style={{
+                    position: 'absolute',
+                    top: 2,
+                    left: 2,
+                    right: 2,
+                    bottom: 2,
+                    borderWidth: 3,
+                    borderColor: colors.amber,
+                  }}
+                />
               ) : null}
             </View>
           );

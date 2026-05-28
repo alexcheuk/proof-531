@@ -85,9 +85,20 @@ Now that you know what this expedition is about, speak the departure line throug
 Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist). Build a one-sentence goal summary from the items you just picked (3–5 goals, plain English). Then:
 
 ```bash
-NEXT_EXPEDITION="$(grep -hE '^expedition:[[:space:]]+[0-9]+' apps/web/src/content/blog/*.md 2>/dev/null \
-  | awk '{print $2}' | sort -n | tail -1)"
-NEXT_EXPEDITION=$(( ${NEXT_EXPEDITION:-0} + 1 ))
+# grep only reads the first 512 bytes by default in some implementations.
+# Some blog posts have long summaries that push `expedition:` past byte 500.
+# Use Python with a larger read window to be reliable.
+NEXT_EXPEDITION=$(python3 -c "
+import os, re
+blog_dir = 'apps/web/src/content/blog'
+max_exp = 0
+for f in os.listdir(blog_dir):
+    with open(os.path.join(blog_dir, f)) as fp:
+        content = fp.read(1000)
+    m = re.search(r'^expedition:\s*(\d+)', content, re.M)
+    if m: max_exp = max(max_exp, int(m.group(1)))
+print(max_exp + 1)
+")
 # GOALS_SUMMARY = "fix blog sorting, add OTA action, move TTS timing, and clean the repo."
 # (compose inline from your picked item list — 3-5 items, plain English)
 

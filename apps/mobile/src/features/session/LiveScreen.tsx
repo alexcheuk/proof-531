@@ -26,6 +26,7 @@ import { useElapsedSeconds } from './hooks/useElapsedSeconds';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useLiveScreenEffects } from './hooks/useLiveScreenEffects';
 import { useLiveScreenState } from './hooks/useLiveScreenState';
+import { useRestNotification } from './hooks/useRestNotification';
 import { derivePlateChangeHint } from './livePlateHint';
 
 export type LiveScreenProps = {
@@ -60,6 +61,13 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
     sessionStatus,
     sessionLoading: sessionQuery.isLoading,
     sessionMissing: sessionQuery.data === null,
+  });
+
+  // Schedule a "rest complete" local notification when rest starts so
+  // users get alerted even if they navigate away during rest.
+  useRestNotification({
+    active: live.phase === 'rest',
+    restSeconds: settingsQuery.data?.restTargetSeconds ?? 90,
   });
 
   const elapsedSeconds = useElapsedSeconds(sessionQuery.data?.startedAt ?? null);

@@ -7,6 +7,7 @@ import {
   isLoggerPost,
   postsByScope,
   scopeCounts,
+  sortExpeditionsByNumber,
   sortPostsNewestFirst,
   type Scope,
 } from '~/lib/posts';
@@ -14,7 +15,7 @@ import {
 const all = sortPostsNewestFirst(
   await getCollection('blog', ({ data }) => !data.draft),
 );
-const posts = postsByScope(all, 'expedition');
+const posts = sortExpeditionsByNumber(postsByScope(all, 'expedition'));
 const counts = scopeCounts(all);
 const latestExpedition = posts.length > 0
   ? Math.max(...posts.map(p => p.data.expedition ?? 0))

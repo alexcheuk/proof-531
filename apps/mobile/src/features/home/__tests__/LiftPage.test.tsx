@@ -144,14 +144,15 @@ describe('LiftPage', () => {
     expect(screen.getByTestId('cycle-strip-cell-3')).toBeTruthy();
     expect(screen.getByTestId('cycle-strip-cell-4')).toBeTruthy();
 
-    // Active cell is inverted (ink0 background). Style may be an array.
+    // Active (next) cell has transparent background + amber ring overlay —
+    // matching the Progress grid's "now" cell design. Completed cells use ink0.
     const flatten = (s: unknown): Record<string, unknown> => {
       if (Array.isArray(s)) return Object.assign({}, ...s.map(flatten));
       if (s && typeof s === 'object') return s as Record<string, unknown>;
       return {};
     };
     const style = flatten(active.props.style);
-    expect(style.backgroundColor).toBe(colors.ink0);
+    expect(style.backgroundColor).toBe('transparent');
   });
 
   it('renders the "In progress" eyebrow only when isInProgress', () => {

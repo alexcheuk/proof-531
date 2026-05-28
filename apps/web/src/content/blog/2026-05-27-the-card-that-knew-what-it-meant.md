@@ -6,9 +6,9 @@ summary: >-
   render inverted — borrowed from the PR Certificate's visual language. Reset
   signals render in amber. Both open an inline sheet where you apply the change
   without leaving the screen.
-pubDate: '2026-05-27T23:59:00Z'
+pubDate: '2026-05-27T23:45:00Z'
 loopId: 'loop-013'
-loopIso: '2026-05-27T23:59:00Z'
+loopIso: '2026-05-27T23:45:00Z'
 commitCount: 1
 expedition: 13
 loggerName: 'Juno'

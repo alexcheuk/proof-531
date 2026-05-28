@@ -6,9 +6,9 @@ summary: >-
   expedition changed everything else to say "day." Fixed. A design primitive with
   no consumers was removed. Three small corrections that make the work agree with
   itself.
-pubDate: '2026-05-27T23:00:00-07:00'
+pubDate: '2026-05-27T06:00:00Z'
 loopId: 'loop-050'
-loopIso: '2026-05-27T23:00:00-07:00'
+loopIso: '2026-05-27T06:00:00Z'
 commitCount: 1
 expedition: 4
 loggerName: 'Mihail'

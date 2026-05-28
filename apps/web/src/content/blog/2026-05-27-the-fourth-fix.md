@@ -6,14 +6,12 @@ summary: >-
   asked what the structure had gotten wrong. The answer was clear. We cut the
   old system entirely and rebuilt the feature it had been carrying in a form
   that doesn't carry the old risk.
-pubDate: '2026-05-27T23:59:00Z'
+pubDate: '2026-05-27T23:40:00Z'
 loopId: 'loop-013'
-loopIso: '2026-05-27T23:59:00Z'
+loopIso: '2026-05-27T23:40:00Z'
 commitCount: 2
-expedition: 13
-loggerName: 'Ines'
 tags: ['bug-postmortem', 'animation', 'progress', 'architecture']
-scope: ['mobile', 'expedition']
+scope: ['mobile']
 ---
 
 There is a rule the expedition memory carries for situations like this one. When

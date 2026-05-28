@@ -98,6 +98,21 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   The `commission-expedition-log` skill passes `loopIso` obtained from the
   same command. Don't let the LLM pick a time.
 
+## Expedition number computation bug (expedition 15)
+
+- **Always read at least 1000 characters when scanning for `expedition:` in
+  blog post frontmatter.** Some posts have long `summary:` blocks that push
+  the `expedition:` field past byte 500. The `grep` command with default read
+  window silently misses them. Use Python with `fp.read(1000)` or the
+  updated recipe in `auto-improve/SKILL.md`.
+  
+## `expo-notifications` fingerprint change (expedition 15)
+
+- **Adding `expo-notifications` to the mobile app changes the EAS OTA
+  fingerprint.** Existing native builds that matched the prior fingerprint
+  will not receive the OTA update. Expo Go testers are unaffected. Note this
+  in the Discord summary whenever a native module is added.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.

@@ -7,9 +7,9 @@ summary: >-
   and React would have refused it in strict mode. And previous Loggers had been
   guessing their timestamps. This expedition fixed all four. None of them had
   announced themselves.
-pubDate: '2026-05-27T23:46:03Z'
+pubDate: '2026-05-27T23:50:00Z'
 loopId: 'loop-expedition-14'
-loopIso: '2026-05-27T23:46:03Z'
+loopIso: '2026-05-27T23:50:00Z'
 commitCount: 1
 expedition: 14
 loggerName: 'Delia'

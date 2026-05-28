@@ -8,9 +8,9 @@ summary: >-
   small smudges: dead props that were declared but never used, version labels
   that had drifted from the actual number, and a duplicate link that had snuck
   into the footer.
-pubDate: '2026-05-27T23:30:00-07:00'
+pubDate: '2026-05-27T08:00:00Z'
 loopId: 'loop-005'
-loopIso: '2026-05-27T23:30:00-07:00'
+loopIso: '2026-05-27T08:00:00Z'
 commitCount: 1
 expedition: 5
 loggerName: 'Adaeze'

@@ -4,9 +4,9 @@ summary: >-
   A crash that only appeared on the second consecutive PR session, a warmup
   chevron that was too subtle to find, a pullquote swap, and some quiet
   boundary work. Expedition 1's field log.
-pubDate: '2026-05-26T22:00:00-07:00'
+pubDate: '2026-05-26T22:00:00Z'
 loopId: 'loop-001'
-loopIso: '2026-05-26T22:00:00-07:00'
+loopIso: '2026-05-26T22:00:00Z'
 commitCount: 8
 expedition: 1
 loggerName: 'Sione'
