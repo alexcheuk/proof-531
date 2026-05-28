@@ -1,58 +1,46 @@
-# Screenshot-pair audit procedure
+# Screenshot audit procedure
 
-> Spec ref: `docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md` §7.
-> Tracking task: `PF-04-screenshot-pairs` (queue.yaml).
-
-The autonomous orchestrator commits screen ports direct to `main` with `done_when`
-checklists in the commit body — there are no per-feature PRs to attach screenshots
-to. This document defines the **post-merge visual audit** that the spec asks for.
-It is a human-in-the-loop process; the orchestrator cannot run it end-to-end.
+The port from the original PWA reference is complete. The mobile app is now
+self-referential — new screen work is compared against the running mobile app,
+not the PWA.
 
 ## When to do an audit
 
-After any of the following land on `main`:
-
-- Onboarding flow (`PE-02-onboarding`).
-- Home (`PE-03-home`).
-- Today / Live / Session-complete (`PE-04`, `PE-05`, `PE-06`).
-- History (`PE-07-history`).
-- Settings (`PE-08-settings`).
-- Any later change that touches a primitive's visual API.
+After any change that touches a screen's visual API — a primitive change, a
+new component, or a layout update. Catch visual regressions before they land.
 
 ## What to capture
 
-For each screen above, capture a **pair** of screenshots:
+For each screen affected by the change, take **before/after screenshots**:
 
-1. **PWA reference** — open `~/Development/531-pwa` in the desktop browser, navigate
-   to the matching screen, set the viewport to **390 × 844** (iPhone 14), take a
-   full-screen PNG. Save under `docs/screenshots/<screen>/pwa.png`.
+1. **Before** — boot the app on a device or iOS Simulator at the last
+   green commit (`git stash`, scan QR / press `i`). Navigate to the
+   affected screen. Screenshot.
 
-2. **RN port** — boot the mobile app in Expo Go on a device or the iOS Simulator
-   (`pnpm --filter @fivethreeone/mobile start`, then scan the QR or press `i`).
-   Navigate to the matching screen. Take a screenshot. Save under
-   `docs/screenshots/<screen>/rn.png`.
+2. **After** — apply the change (or `git stash pop`), restart Metro,
+   navigate to the same screen. Screenshot.
 
-The expected screens and their seed states are listed in
-`docs/screenshots/README.md`.
+Boot Metro: `pnpm --filter @fivethreeone/mobile start`, then scan the QR
+with Expo Go or press `i` for iOS Simulator.
+
+Save comparison pairs under `docs/screenshots/<screen>/before.png` and
+`docs/screenshots/<screen>/after.png` for any PR that touches layout
+or primitives.
 
 ## Acceptance criteria
 
-A screen passes the audit when:
+A screen change passes when:
 
-- The pair is committed under `docs/screenshots/<screen>/` (both PNGs).
-- A maintainer has reviewed the pair and signed off in the screen-pair changelog
-  (`docs/screenshots/CHANGELOG.md`) with their initials + a one-line note. Major
-  divergences from PWA must be either fixed or explicitly justified in the
-  changelog entry.
+- Before/after screenshots are committed under `docs/screenshots/<screen>/`.
+- A maintainer confirms the after shot matches the intended design.
+- Any divergence from the intended behavior is either fixed or explicitly
+  noted in the PR description.
 
-## Common divergences to expect (and accept)
+## Common platform divergences (expected, not regressions)
 
-- **Native status bar.** RN renders the OS status bar; the PWA does not.
-- **Native bottom safe-area inset.** RN screens reserve home-indicator space.
-- **System fonts at 100% scale.** If `IBM Plex` fails to load, RN falls back to
-  the system family — flag and re-test.
-- **Paper grain.** The PWA's multi-layer radial-gradient grain is omitted in RN
-  (deferred to a later Skia task).
-
-If you see divergences outside this list, open a follow-up task before
-signing off.
+- **Native status bar** — Expo renders the OS status bar; adjust using
+  `StatusBar` component from `expo-status-bar`.
+- **Native bottom safe-area inset** — screens reserve home-indicator
+  space via `useSafeAreaInsets`.
+- **System fonts at 100% scale** — if IBM Plex fails to load, the app
+  falls back to system fonts. Flag and re-test with a clean Metro cache.

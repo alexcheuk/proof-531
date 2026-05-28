@@ -62,7 +62,7 @@ export function Masthead({
           // heavier reads as a Material elevation, which is wrong for an
           // e-ink-paper aesthetic. Shadow extends outside the box so the
           // box geometry stays identical between elevated/non-elevated.
-          shadowColor: '#000',
+          shadowColor: colors.ink0,
           shadowOpacity: 0.08,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },

@@ -102,7 +102,8 @@ print(max_exp + 1)
 # GOALS_SUMMARY = "fix blog sorting, add OTA action, move TTS timing, and clean the repo."
 # (compose inline from your picked item list — 3-5 items, plain English)
 
-curl -sS -X POST "https://home-tts.yikeslab.com/say" \
+# HOME_TTS_URL is set in .env.claude.local — not required; curl || true if absent.
+[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL" \
   -H "Content-Type: application/json" \
   --max-time 5 \
   -d "{\"message\":\"Expedition $NEXT_EXPEDITION departs. Goals: $GOALS_SUMMARY\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
@@ -111,7 +112,7 @@ curl -sS -X POST "https://home-tts.yikeslab.com/say" \
 
 The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own.
 
-If the curl fails (speaker offline, DNS, network), keep going. The iteration must not depend on the speaker being reachable.
+`HOME_TTS_URL` is a personal homelab endpoint (see `.env.claude.example`). If unset, this block is a no-op. The iteration must not depend on the speaker being reachable.
 
 ### 4. Ship the work
 

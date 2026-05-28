@@ -105,7 +105,8 @@ print(json.dumps({
   'style': '<style line picked for this Logger>'
 }))
 ")
-curl -sS -X POST "https://home-tts.yikeslab.com/say" \
+# HOME_TTS_URL is set in .env.claude.local — not required; skip if absent.
+[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL" \
   -H "Content-Type: application/json" \
   --max-time 8 \
   -d "$TTS_PAYLOAD" \

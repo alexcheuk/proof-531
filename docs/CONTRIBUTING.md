@@ -19,8 +19,8 @@ document picks up where that leaves off.
 ### Bootstrap
 
 ```bash
-git clone <repo>
-cd 531
+git clone https://github.com/alexcheuk/proof-531.git
+cd proof-531
 nvm use            # or: fnm use
 corepack enable
 pnpm install

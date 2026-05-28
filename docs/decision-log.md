@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Public repo cleanup pass (expedition 20)
+
+**Tags:** `process`, `docs`, `convention`
+**Files:** `.claude/skills/auto-improve/SKILL.md`, `.claude/skills/commission-expedition-log/SKILL.md`, `apps/mobile/src/domain/CLAUDE.md`, `apps/mobile/src/design/CLAUDE.md`, `apps/web/src/components/Footer.astro`, `apps/web/src/pages/process.astro`, `docs/CONTRIBUTING.md`, `docs/screenshot-audit-procedure.md`
+
+Removed `_workspace_archive/` from git tracking (was committed despite being gitignored). Replaced hardcoded `yikeslab.com` homelab TTS URL with `$HOME_TTS_URL` env var in both skill files. Created missing `CLAUDE.md` files for `src/domain/` and `src/design/` (referenced in ARCHITECTURE.md but not present). Fixed "MIT licensed" → "Source available" in website Footer and Process page (incorrect license label). Fixed `git clone <repo>` placeholder in CONTRIBUTING.md. Updated screenshot audit procedure — port is complete, PWA is no longer the reference. Fixed `shadowColor: '#000'` boundary violation in `Masthead.tsx`.
+
+**Why:** Repo is expected to go public soon. A clean public-facing first impression matters: broken doc links, wrong license labels, and hardcoded personal endpoints are all embarrassing for external contributors to encounter.
+
+**Trade-off / what we didn't do:** `loop-memory/` stays tracked — it's useful public context showing how the loop works. Discord channel IDs in `discord-channels.md` are not credentials and are fine to be public.
+
 ### 2026-05-28 — APK crash fixes: removed reactCompiler experiment, fixed OTA channel mismatch (expedition 19)
 
 **Tags:** `bug`, `build`, `process`

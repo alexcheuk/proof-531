@@ -121,6 +121,17 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   ```
   The Discord channel recipes in `discord-channels.md` use `jq` — mentally substitute the Python pattern above. All other Discord curl recipes are fine; only the JSON parsing step needs Python.
 
+## Public repo cleanup checklist (expedition 20)
+
+When preparing the repo for public release, check:
+
+- `_workspace_archive/` is gitignored but may be tracked — run `git ls-files _workspace_archive/` and `git rm -r --cached` if it is.
+- Hardcoded personal endpoints (e.g. homelab TTS URLs) in skill files — replace with `${ENV_VAR:-}` patterns so they're no-ops when not set.
+- `git clone <repo>` placeholder in CONTRIBUTING.md — replace with the actual GitHub URL from `git remote -v`.
+- License label in website footer/process — must match `LICENSE` file (Source Available ≠ MIT).
+- Missing CLAUDE.md files referenced in architecture docs — create them or remove the dead links.
+- Hex color literals (`#000`, etc.) in `design/primitives/` — use `colors.*` tokens instead.
+
 ## Anti-patterns observed in past iterations
 
 - **Treating "30m" as a hard ceiling.** It isn't. Six iterations averaged 3–5 items each when the target was 12–15. Fixed in this memory.
