@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Retuned the gommage read-aloud: longer, varied register, normal pace
+
+**Tags:** `convention`, `process`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md`, `loop-memory/15-tts.md`
+
+Reshaped the Step 4 TTS direction on three axes, on Alex's feedback that the recordings were too short, too uniformly gloomy, and too slow. (1) Length up from 8–12 sentences (~140–220 words) to 12–18 (~220–340), with an explicit push for concrete detail over vague summary. (2) Register variety is now mandatory, not optional — badass, sarcastic/deadpan, cocky, brisk, gallows-humor are first-class; somber is one option used sparingly, and consecutive Loggers must not sound alike. (3) Pace defaults to natural/brisk; the `[slowly]`/`[whispers]` fade is now scoped to the **motto only**, not the whole sign-off line, which previously dragged every clip. The mandatory close is unchanged: "Signing off — [Name], Logger of Expedition [N]." then the motto "For those who come after" as the final words.
+
+**Why:** the spoken track had drifted into a single mournful drone — every Logger sounded the same, slow and grim. The fade tag on the entire final sentence was the main culprit for the slowness.
+
+**Trade-off / what we didn't do:** kept the director's-notes-block option and the somber register as legitimate choices rather than banning slowness outright — the goal is range, not a new uniform.
+
 ### 2026-05-28 — Gommage recordings now play back on the dev blog
 
 **Tags:** `convention`, `web`, `architecture`

@@ -92,11 +92,19 @@ Common tags: `[amazed]` · `[crying]` · `[excited]` · `[sighs]` · `[giggles]`
 Tags can carry compound direction: `[slowly, almost a whisper]`, `[sarcastically, one word at a time]`.
 
 **The gommage trail-off is built with tags, not described.** Instead of asking the `style` field to
-"let the voice fade," put the cue where it happens — on the final line:
+"let the voice fade," put the cue where it happens — but **only on the motto**, not the whole line.
+Keep the sign-off (name + expedition number) at the clip's normal pace; let just the final phrase
+thin out:
 
 ```
-… [slowly] Signing off — Solène, Logger of Expedition 24. [whispers] For those who come after.
+Signing off — Solène, Logger of Expedition 24. [slowly] [whispers] For those who come after.
 ```
+
+**Default pace is normal.** Don't make the whole clip slow — that's one register (the somber Logger),
+not the house style. Most Loggers talk at a natural or brisk clip; the slow fade is a brief effect on
+the last few words. Vary the register hard across expeditions (badass, sarcastic, cocky, brisk,
+gallows-humor, occasionally solemn) so the ambient track isn't one mournful drone. See the
+`commission-expedition-log` Step 4 style examples.
 
 Rule of thumb: **delivery (pacing, fade, emotion) → inline tags in `text`; overall register/mood →
 `style`.** They combine freely.
