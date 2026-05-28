@@ -42,7 +42,16 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
-### 2026-05-28 — Retired Expo Go for a custom dev-client workflow
+### 2026-05-28 — Disabled Android release lint via a local config plugin
+
+**Tags:** `architecture`, `convention`
+**Files:** `apps/mobile/plugins/withDisableReleaseLint.js`, `apps/mobile/app.json`
+
+`pnpm build:prod` failed in `:react-native-screens:lintVitalAnalyzeRelease` with an `OutOfMemoryError: Metaspace` while the Android lint daemon analyzed third-party Kotlin. Added a local Expo config plugin (`withDisableReleaseLint`) that injects `lint { checkReleaseBuilds false; abortOnError false }` into the generated `app/build.gradle`, removing the `lintVital*Release` tasks from the release graph. `build:dev` was always green because lint runs only on release builds.
+
+**Why:** the crash is inside a dependency's lint pass, not our code, and our real quality gates are typecheck + biome + jest. Android lint over dependency code is pure overhead in this project, so the right move is to stop running it on release rather than keep feeding the lint daemon memory.
+
+**Trade-off / what we didn't do:** considered bumping `org.gradle.jvmargs` metaspace instead, but that's machine-fragile and still spends build time linting code we don't own. A local plugin is needed regardless because `android/` is generated (managed workflow) and `expo-build-properties` has no lint toggle.
 
 **Tags:** `architecture`, `process`, `convention`
 **Files:** `apps/mobile/package.json`, `apps/mobile/app.config.ts`, `apps/mobile/eas.json`, `CLAUDE.md`

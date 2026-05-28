@@ -27,6 +27,7 @@
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
+      "./plugins/withDisableReleaseLint",
       "expo-router",
       "expo-font",
       [
