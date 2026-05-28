@@ -121,6 +121,10 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   ```
   The Discord channel recipes in `discord-channels.md` use `jq` — mentally substitute the Python pattern above. All other Discord curl recipes are fine; only the JSON parsing step needs Python.
 
+## Public repo cleanup checklist (expedition 20, updated expedition 29)
+
+**Expedition 29 status:** dead `design-reference/` path references cleaned from all contributor docs and skill files. `docs/screenshots/` placeholder directory removed. Internal loop-tracking labels stripped from public ARCHITECTURE.md. Three hardcoded `['squat','bench','deadlift','press']` fallback arrays replaced with `[...LIFTS]`; one `lift === 'squat' || lift === 'deadlift'` check replaced with `LOWER_BODY.has(lift)`. The "design-reference/" ghost is fully exorcised — don't re-introduce it.
+
 ## Public repo cleanup checklist (expedition 20)
 
 When preparing the repo for public release, check:

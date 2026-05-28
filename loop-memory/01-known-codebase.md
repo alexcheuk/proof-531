@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-28, expedition 22)
+# Codebase facts (updated 2026-05-28, expedition 29)
 
 ## Architecture
 
