@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Removed Reassure perf job from CI; fixed EAS CLI in OTA workflow (expedition 16)
+
+**Tags:** `ci`, `process`, `removal`
+**Files:** `.github/workflows/ci.yml`, `.github/workflows/ota.yml`
+
+Removed the `perf` job from `ci.yml` — it referenced `pnpm run perf:baseline` and `pnpm run perf` scripts that don't exist in the mobile package (Reassure is deferred until a dev-client build per CLAUDE.md). The job would have failed on every push to `main`. Added `expo/expo-github-action@v8` to `ota.yml` so the EAS CLI is available when `pnpm release-ota` runs. Also added a `paths` filter to the OTA workflow so doc-only and web-only commits don't trigger unnecessary OTA publishes.
+
+**Why:** The `perf` job was added speculatively before the Reassure deferral decision was documented. The EAS failure came from GitHub Actions not having `eas-cli` installed (it's not in any `package.json` because local OTA work goes through the global EAS CLI on the developer's machine).
+
+**Trade-off / what we didn't do:** Adding `@expo/eas-cli` as a dev dependency would also solve the CLI availability problem, but it would bloat the install on developer machines and tie the project to a specific version. Using `expo/expo-github-action` with `eas-version: latest` is the idiomatic CI approach — let EAS manage its own installation on the build machine.
+
 ### 2026-05-27 — Background rest-timer notifications via expo-notifications (expedition 15)
 
 **Tags:** `feature`, `architecture`, `native`

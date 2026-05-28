@@ -3,6 +3,10 @@ name: OTA Update
 on:
   push:
     branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 permissions:
   contents: read
@@ -11,8 +15,6 @@ jobs:
   ota:
     name: Publish EAS OTA
     runs-on: ubuntu-latest
-    # Only ship OTA when JS/asset files change — skip for docs-only commits
-    # or when the commit message starts with "docs:" / "chore(loop-memory):" etc.
     steps:
       - uses: actions/checkout@v4
 
@@ -24,6 +26,11 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - run: pnpm install --frozen-lockfile
 

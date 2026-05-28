@@ -44,7 +44,6 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
   }),
 }));
 
-import { colors } from '@/design/tokens';
 // Import after mocks.
 import { LiftPage } from '../components/LiftPage';
 

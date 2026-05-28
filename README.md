@@ -1,35 +1,39 @@
 # 531 Strength
 
-A production scaffold for a 5/3/1 + BBB + assistance training tracker. Expo SDK 55, React Native New Architecture, iOS + Android. The goal is a polished, native-feeling lifting app that ships to TestFlight and Play Console internal track from day one.
+A 5/3/1 + Boring But Big training tracker for iOS and Android. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop. Free and open source.
 
+- **App**: [531.dev](https://531.dev)
+- **Dev blog**: [531.dev/blog](https://531.dev/blog)
 - **Changelog**: [`CHANGELOG.md`](./CHANGELOG.md)
-- **Marketing source**: [`docs/MARKETING.md`](./docs/MARKETING.md)
-- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — single user, local-only, no tracking.
+- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — local-only, no tracking.
 
-## Project goal
+## What it is
 
-The 5/3/1 program math, plate calculator, e1RM, and PR detection are pure modules under `src/domain/` — well-tested and easy to reason about. The on-device experience is built from a small typed design system (`src/design/`) and composed in `src/features/`. Persistence is Drizzle ORM + expo-sqlite (`src/data/`). The whole thing is wired through an orchestrator (`/initial-implement`) that picks the next task from a queue, dispatches subagents, runs the harness, and commits.
+A focused 5/3/1 training log. Enter your training maxes, follow the program, log your AMRAP sets. The math handles the rest — percentages, plate calculator, cycle progression, PR tracking.
+
+The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice.
 
 ## Quick start
 
 ```bash
-# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+, bash 4+, yq v4
+# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+
 corepack enable && corepack prepare pnpm@latest --activate
 
 pnpm install                                # workspace install
-pnpm --filter @fivethreeone/mobile start       # boot Metro
+pnpm --filter @fivethreeone/mobile start    # boot Metro (scan QR with Expo Go)
 ```
 
-This project uses the **Expo Go workflow** — no custom dev client. Scan the QR code with the Expo Go app on a physical device, or press `i` / `a` for iOS Simulator / Android Emulator. EAS is used for OTA updates and store builds, not for local development.
+This project uses the **Expo Go workflow** — no custom dev client needed. Scan the QR code with the Expo Go app on a physical device, or press `i` / `a` for iOS Simulator / Android Emulator.
 
 ### Daily commands
 
 ```bash
 pnpm typecheck                              # tsc --noEmit across workspace
 pnpm lint                                   # biome
-pnpm test                                   # jest (with --coverage on src/domain/, gate 95%)
+pnpm test                                   # jest
 pnpm expo-doctor                            # expo doctor (renamed to dodge pnpm's `doctor` builtin)
 pnpm run ci                                 # full chain (use `run` — `ci` is also a pnpm builtin)
+pnpm verify                                 # ci + Metro bundle check + web build
 ```
 
 ## Documentation
@@ -39,38 +43,21 @@ pnpm run ci                                 # full chain (use `run` — `ci` is 
 | [`docs/DESIGN.md`](docs/DESIGN.md) | Product + visual design spec |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Stack, layout, boundary rules |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to add a task, run the orchestrator, conventional commits |
-| [`docs/superpowers/specs/`](docs/superpowers/specs/) | Engineering specs |
-| [`docs/superpowers/plans/`](docs/superpowers/plans/) | Implementation plans |
-| [`docs/superpowers/queue.yaml`](docs/superpowers/queue.yaml) | Orchestrator backlog |
-| [`CLAUDE.md`](CLAUDE.md) | Agent orientation (root); see also `apps/mobile/src/{design,domain}/CLAUDE.md` |
+| [`docs/decision-log.md`](docs/decision-log.md) | Notable decisions and why they were made |
+| [`CLAUDE.md`](CLAUDE.md) | Agent orientation — start here if you're a Claude agent |
 
 ## How work happens
 
-Three entry points, each with its own orchestrator. Pick the one that matches the input.
+The primary day-to-day driver is the `/auto-improve` loop — a Claude agent running on a 30-minute cron that reads the task queue, picks 12–15 items to improve, ships them, and writes a dev-blog post about what changed. The loop is fully automated; the agent does the design, implementation, QA, and publishing in one go.
 
-### `/auto-improve` — the standing 30-minute loop
+For new features, the `rn-expo-pipeline` skill runs a coordinated `rn-designer` → `rn-frontend` → `rn-qa` agent team and produces a PR-ready commit.
 
-The primary day-to-day driver. Reads `loop-memory/`, polls the `#task-queue` Discord channel for unacknowledged messages, picks 12–15 substantive items (or 2–4 in steady state when the queue is empty), ships them, commits, pushes, ships OTA, writes a Verso dev-blog entry. Usually invoked via `/loop 30m /auto-improve`. See [`.claude/skills/auto-improve/`](.claude/skills/auto-improve/) for the skill source and `loop-memory/00-loop-pacing.md` for the pacing rules.
+See [`.claude/skills/`](.claude/skills/) for the orchestrator source and [`loop-memory/`](loop-memory/) for the loop's cross-iteration memory.
 
-### `rn-expo-pipeline` — idea-driven feature work
+## Note on the PWA reference
 
-Triggered when an idea, description, or wireframe comes in. Runs a coordinated design / frontend / QA team (`rn-designer` → `rn-frontend` → `rn-qa`) to ship a PR-ready commit on `feat/<slug>`. See [`.claude/skills/rn-expo-pipeline/`](.claude/skills/rn-expo-pipeline/).
-
-### `/initial-implement` — queue-driven backlog drain
-
-For when a spec + plan already exist in `docs/superpowers/`. Picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents, runs the full harness, squash-merges to `main`.
-
-```bash
-/initial-implement                     # one ready task
-/initial-implement --batch             # loop until queue empty / 2 blocked / --max-tasks
-/initial-implement --batch --max-tasks 20
-/initial-implement --task P2-01-program-math   # specific task
-/initial-implement --retry P4-05-maestro-home  # re-run blocked task
-/initial-implement --status            # print queue
-```
-
-See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for the full flow.
+Some internal docs (particularly in `docs/superpowers/`) reference `~/Development/531-pwa` — a separate web app that served as the behavioral reference during the initial port. That directory is not part of this repository. For current design work, the running mobile app itself is the reference.
 
 ## License
 
-UNLICENSED (portfolio piece — open for inspection, not for redistribution).
+Open for inspection. The app is free to use; redistribution and commercial use require explicit permission. See [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling.
