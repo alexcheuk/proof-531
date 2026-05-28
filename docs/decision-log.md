@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Adopted the `/compose` TTS endpoint for the loop's spoken theater
+
+**Tags:** `skill`, `convention`, `process`
+**Files:** `loop-memory/15-tts.md`, `.claude/skills/commission-expedition-log/SKILL.md`, `.claude/skills/auto-improve/SKILL.md`, `.env.claude.example`
+
+Moved both spoken moments (the departure announcement and the Logger's gommage sign-off) from the simple `/say` shape to the richer **`/compose`** endpoint. The gommage trail-off is now built with **inline audio tags** (`[slowly]`, `[whispers]`, `[tired]`) placed in the transcript instead of a `style`-field *description* of fading; `style` now carries register/mood only. A director's-notes block is available for fully shaped delivery. Extracted the whole `/compose` surface (voice catalog, tags, casting canon, payload recipe) into a new canonical reference `loop-memory/15-tts.md` so the two skills link to one source instead of duplicating the API. Also changed the env-var convention: `HOME_TTS_URL` is now the **base URL** (no path) and callers append `/compose`.
+
+**Why:** the 2026-05-28 "Reworked the gommage TTS read-aloud" entry deferred the delivery work as "depends on what the homelab TTS endpoint accepts, which isn't confirmed here." `/compose` confirms it — audio tags make the fade reliable rather than a hint the model may ignore. Duplication across two skills was already drifting.
+
+**Trade-off / what we didn't do:** `/compose` supports up to 2 speakers, which tempts a two-voice Verso/Logger gommage handoff. Declined it — not on capability grounds anymore, but on **canon**: `loop-memory/14-lore.md` says Verso does not speak in dialogue, and there's one Logger per expedition, so every clip stays single-voice. The "endpoint can't" reason became "canon won't." Adopted immersion lever is audio tags + director's notes only.
+
 ### 2026-05-28 — Added public-repo hygiene files ahead of open-source release
 
 **Tags:** `process`, `convention`

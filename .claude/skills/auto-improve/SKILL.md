@@ -102,15 +102,16 @@ print(max_exp + 1)
 # GOALS_SUMMARY = "fix blog sorting, add OTA action, move TTS timing, and clean the repo."
 # (compose inline from your picked item list — 3-5 items, plain English)
 
-# HOME_TTS_URL is set in .env.claude.local — not required; curl || true if absent.
-[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL" \
+# Fired through /compose (full reference: loop-memory/15-tts.md). HOME_TTS_URL is the
+# BASE url (set in .env.claude.local); we append /compose. Not required — curl || true if absent.
+[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL/compose" \
   -H "Content-Type: application/json" \
   --max-time 5 \
-  -d "{\"message\":\"Expedition $NEXT_EXPEDITION departs. Goals: $GOALS_SUMMARY\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
+  -d "{\"text\":\"[slowly] Expedition $NEXT_EXPEDITION departs. [serious] Goals: $GOALS_SUMMARY\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
   >/dev/null 2>&1 || true
 ```
 
-The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own.
+The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own. The inline `[slowly]` / `[serious]` audio tags shape the delivery directly; see `loop-memory/15-tts.md` for the full tag and voice catalog.
 
 `HOME_TTS_URL` is a personal homelab endpoint (see `.env.claude.example`). If unset, this block is a no-op. The iteration must not depend on the speaker being reachable.
 

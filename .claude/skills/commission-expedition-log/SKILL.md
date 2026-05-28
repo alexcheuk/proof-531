@@ -79,42 +79,44 @@ After the post is staged but before (or alongside) the commit, send a read-aloud
 
 Strip code, file paths, and jargon — this is heard, not read.
 
+This goes out through the **`/compose`** endpoint. The full reference — voice catalog, audio tags, the casting canon, the payload recipe — lives in **`loop-memory/15-tts.md`**. Read it once; the essentials for this step are below.
+
 **Pick the voice and style for *this Logger*.** The agent returned `logger_name` and you can read the post itself for tone. Match them:
 
-- **Voice** — pick from the API's catalog (`Achernar`, `Charon`, `Despina`, `Erinome`, `Iapetus`, `Kore`, `Orus`, `Puck`, `Sadachbia`, `Sulafat`, `Vindemiatrix`, `Zephyr`, etc — Gemini-style names). Avoid `Algenib`; that one is reserved for the Paintress's departure line. Pick something that fits the Logger's character on the page.
-- **Style** — a stage direction in plain English that carries *both register and delivery*. Register is the Logger's mood; delivery is how the room sounds — pacing, where the voice slows, where it drops. Use the delivery to make the gommage felt without any audio post-processing: the closing sign-off should trail quieter and slower, as if the speaker is being erased mid-thought. Vary it across expeditions — not always gloomy, not always solemn. Examples:
-  - *"Say with quiet pride, measured and unhurried; let the final line slow and drop almost to a whisper, as if fading out"*
-  - *"Say with dry wit, slightly tired; even through the middle, then let the sign-off thin out and trail off at the end"*
-  - *"Say like you're reporting to a superior you respect but will never meet; steady, then quieter and slower on the last line"*
-  - *"Say with the energy of someone who just fixed something at 2am and can finally rest; warm, easing into stillness by the sign-off"*
-  - *"Say with flat confidence, no drama; hold the pace, then let the last words thin out as if the air is going"*
-  - *"Say as if leaving a note someone will find much later; unhurried throughout, the final line barely there"*
-  Match the post's beat and the Logger's register. Vary across expeditions so the ambient track doesn't become a drone.
+- **Voice** — pick from the catalog in `loop-memory/15-tts.md` (30 Gemini voices) something that fits the Logger's character on the page. **Avoid `Algenib`** — that one is reserved for the Paintress. If two consecutive Loggers feel similar, push the second to a different voice.
+- **Style** — a stage direction in plain English carrying the Logger's overall *register* (mood). Vary it across expeditions — not always gloomy, not always solemn. Examples:
+  - *"Say with quiet pride, measured and unhurried"*
+  - *"Say with dry wit, slightly tired"*
+  - *"Say like you're reporting to a superior you respect but will never meet — steady, plain"*
+  - *"Say with the energy of someone who just fixed something at 2am and can finally rest — warm"*
+  - *"Say with flat confidence, no drama"*
+  - *"Say as if leaving a note someone will find much later — unhurried"*
+- **Delivery / the gommage fade** — make it *real* with inline audio tags in the transcript, not a request to the style field. The gommage is felt by tagging the close: lead the final line with `[slowly]` and tag the motto `[whispers]` so the voice thins as the speaker is erased mid-thought. Sprinkle a `[tired]` / `[sighs]` mid-transcript where the post's register asks for it. For a fully shaped delivery, you can instead drop a director's-notes block at the top of `text` and leave `style` empty — see `loop-memory/15-tts.md`. The sign-off line, tagged, looks like:
 
-If two consecutive Loggers feel similar in tone, push the second one further — different voice, different style.
+  > … [slowly] Signing off — [Name], Logger of Expedition [N]. [whispers] For those who come after.
 
 **Fire it.**
 
 ```bash
-# Use Python to build the JSON payload (jq may not be available in the loop environment)
+# /compose; build JSON with Python (jq may be absent in the loop environment).
+# HOME_TTS_URL is the BASE url (set in .env.claude.local); we append /compose.
 TTS_PAYLOAD=$(python3 -c "
-import json, sys
+import json
 print(json.dumps({
-  'message': '<the read-aloud, 8-12 sentences ending with the Signing off line>',
+  'text':   '<the read-aloud, 8-12 sentences, inline [audio tags], ending with the tagged Signing off line>',
   'device': 'kitchen',
-  'voice': '<voice picked for this Logger>',
-  'style': '<style line picked for this Logger>'
+  'voice':  '<voice picked for this Logger>',
+  'style':  '<register/mood for this Logger; omit if using a director\'s-notes block in text>',
 }))
 ")
-# HOME_TTS_URL is set in .env.claude.local — not required; skip if absent.
-[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL" \
+[ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL/compose" \
   -H "Content-Type: application/json" \
-  --max-time 8 \
+  --max-time 10 \
   -d "$TTS_PAYLOAD" \
   >/dev/null 2>&1 || true
 ```
 
-For off-cycle handoff posts (Verso-mode farewell, persona shifts) where `logger_name` is `n/a`, use voice `Algenib` and style `"Say solemnly"` — that's the Paintress speaking in her own register. The sign-off line is omitted for off-cycle posts.
+For off-cycle handoff posts (Verso-mode farewell, persona shifts) where `logger_name` is `n/a`, use voice `Algenib` with style `"Say solemnly"` (optionally a leading `[slowly]` tag) — that's the Paintress speaking in her own register. The sign-off line is omitted for off-cycle posts.
 
 ### 5. Don't post-process
 
@@ -147,6 +149,7 @@ Log `beat_used` and `logger_name` if your caller has a persistent log; future in
 - World canon (the painting, the Paintress, the Expedition): `loop-memory/14-lore.md`
 - Persona (voice rules for the Logger): `loop-memory/04-dev-blog-persona.md`
 - Schema and procedure: `loop-memory/03-dev-blog.md`
+- TTS / `/compose` reference (voices, audio tags, payload): `loop-memory/15-tts.md`
 - Operating context from Alex: `loop-memory/notes-from-alex.md`
 - Decision log (primary source for substance): `docs/decision-log.md`
 - Margin's farewell: `apps/web/src/content/blog/2026-05-26-margin-signs-off.md`
