@@ -1,3 +1,4 @@
+import '@/lib/registerRestBackgroundHandler';
 import { DbProvider } from '@/data/DbProvider';
 import { db, expoDb } from '@/data/drizzle/client';
 import { runMigrations } from '@/data/drizzle/runMigrations';
@@ -8,11 +9,12 @@ import { ThemeProvider } from '@/design/theme';
 import { colors } from '@/design/tokens';
 import { BootSplash } from '@/features/shared/BootSplash';
 import { OtaUpdateBanner } from '@/features/shared/OtaUpdateBanner';
+import { goTo } from '@/lib/routes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Slot } from 'expo-router';
+import { Slot, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Text as RNText, View } from 'react-native';
+import { Platform, Text as RNText, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -79,6 +81,29 @@ export default function RootLayout() {
     } catch (err) {
       setMigrationError(err as Error);
     }
+  }, []);
+
+  // Open the live session when a rest notification is tapped — on cold start
+  // (getInitialNotification) and while running (foreground press). Android only;
+  // the native module is lazy-required so iOS / jest never load it.
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const mod = require('react-native-notify-kit') as typeof import('react-native-notify-kit');
+    const routeFromData = (data: Record<string, string | number | object> | undefined) => {
+      const sessionId = data?.sessionId;
+      if (typeof sessionId === 'string') goTo.live(router, sessionId);
+    };
+    let cancelled = false;
+    mod.default.getInitialNotification().then((initial) => {
+      if (!cancelled && initial) routeFromData(initial.notification?.data);
+    });
+    const unsubscribe = mod.default.onForegroundEvent(({ type, detail }) => {
+      if (type === mod.EventType.PRESS) routeFromData(detail.notification?.data);
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   if (!fontsLoaded && !fontError) {

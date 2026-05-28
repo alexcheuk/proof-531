@@ -60,6 +60,17 @@ export type UseRestTimerResult = {
   addTime: () => void;
   /** Subtract 30s (floored at 1). No-op when not `active`. */
   subtractTime: () => void;
+  /**
+   * Current absolute deadline in ms (or null when inactive). Stable callback so
+   * a sibling effect can read the live value at event time (e.g. when the app
+   * backgrounds and the rest notification needs the deadline to count down to).
+   */
+  getDeadlineMs: () => number | null;
+  /**
+   * Re-anchor the countdown to an absolute deadline. Used to copy a deadline
+   * back from the notification on foreground (e.g. after a backgrounded +30s).
+   */
+  setDeadline: (endsAtMs: number) => void;
 };
 
 const DEFAULT_WARNING_THRESHOLD = 3;
@@ -184,5 +195,20 @@ export function useRestTimer({
     setRemaining(next);
   }, [active, warningThresholdSeconds]);
 
-  return { remaining, addTime, subtractTime };
+  const getDeadlineMs = useCallback(() => deadlineRef.current, []);
+
+  const setDeadline = useCallback(
+    (endsAtMs: number) => {
+      deadlineRef.current = endsAtMs;
+      const next = Math.round((endsAtMs - Date.now()) / 1000);
+      // Re-arm latches so a re-anchor that lands above the thresholds can still
+      // fire the warning / done cues on the way down.
+      if (next > warningThresholdSeconds) warningFiredRef.current = false;
+      if (next > 0) doneFiredRef.current = false;
+      setRemaining(next);
+    },
+    [warningThresholdSeconds],
+  );
+
+  return { remaining, addTime, subtractTime, getDeadlineMs, setDeadline };
 }

@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Implemented the Android live rest-countdown notification
+
+**Tags:** `feature`, `mobile`, `notifications`
+**Files:** `apps/mobile/src/lib/restChronometer.ts`, `apps/mobile/src/lib/registerRestBackgroundHandler.ts`, `apps/mobile/src/features/session/hooks/useRestNotification.ts`, `apps/mobile/src/domain/restDeadline.ts`, `apps/mobile/src/app/_layout.tsx`
+
+Built the spec from the design entry below. `react-native-notify-kit` posts an ongoing OS-ticked chronometer notification when the app backgrounds mid-rest; a same-id timestamp trigger swaps it to a heads-up "Rest complete" alert at T-0; a +30s action extends the deadline (handled even after process death via a module-scope background handler). Deadline lives in the notification's `data` payload as the cross-process carrier; on foreground the orchestrator reads it back and re-anchors the in-app timer through new `useRestTimer.getDeadlineMs`/`setDeadline` accessors. One-directional deadline copy per context (in-app owns it foregrounded, notification owns it backgrounded) sidesteps bidirectional sync. iOS unchanged. (Landed on top of the routes relocation below — the +30s tap routing imports `goTo` from `@/lib/routes`.)
+
+**Why:** Closes the loop the design opened — the rest timer's value is highest when the user leaves the app, now that the dev-client move made native notifications possible.
+
+**Trade-off / what we didn't do:** Native runtime is unverified by CI — typecheck (against real notify-kit types), lint, 979 tests (notify-kit jest-mocked), the Android Metro bundle, and `expo config --type prebuild` (plugin applies) all pass, but the chronometer render, same-id swap, exact-alarm timing, and headless +30s are device-only. smallIcon is `ic_launcher` for now (a monochrome status-bar icon is a follow-up). Needs a dev-client rebuild to test on-device before it truly ships.
+
 ### 2026-05-28 — Reworked the gommage TTS read-aloud for immersion
 
 **Tags:** `skill`, `convention`

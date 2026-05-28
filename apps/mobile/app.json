@@ -54,7 +54,8 @@
           "androidMode": "default",
           "androidCollapsedTitle": "531 Strength"
         }
-      ]
+      ],
+      "react-native-notify-kit"
     ],
     "experiments": {
       "typedRoutes": false
