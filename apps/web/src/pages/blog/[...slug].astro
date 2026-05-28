@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Base from '~/layouts/Base.astro';
-import { authorForPost } from '~/lib/posts';
+import { authorForPost, isLoggerPost } from '~/lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -28,6 +28,7 @@ const iso = post.data.pubDate.toISOString();
 // Persona attribution is sourced from `lib/posts.ts` so the byline a
 // search crawler reads here matches the byline the RSS feed advertises.
 const authorName = authorForPost(post);
+const isLogger = isLoggerPost(post);
 
 // JSON-LD BlogPosting structured data — lets Google / RSS readers
 // understand the post's metadata without scraping the body.
@@ -50,11 +51,17 @@ const jsonLd = {
 <Base title={`${post.data.title} — 531 dev log`} description={post.data.summary}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="entry container">
-    <a class="back" href="/blog">← Dev log</a>
+    {isLogger
+      ? <a class="back" href="/blog/expedition-logs">← Expedition logs</a>
+      : <a class="back" href="/blog">← Dev log</a>
+    }
 
     <header class="entry__head">
       <div class="entry__meta">
         <time datetime={iso}>{formatted}</time>
+        {isLogger && post.data.expedition !== undefined && (
+          <span class="entry__expedition">Expedition {post.data.expedition}</span>
+        )}
         {post.data.loopId && <span class="entry__loop">{post.data.loopId}</span>}
         {post.data.commitCount !== undefined && (
           <span class="entry__commits">
@@ -62,6 +69,11 @@ const jsonLd = {
           </span>
         )}
       </div>
+      {isLogger && post.data.loggerName && (
+        <div class="entry__logger">
+          Field log · {post.data.loggerName}, Logger of Expedition {post.data.expedition}
+        </div>
+      )}
       <h1 class="entry__title">{post.data.title.replace(/\.$/, '')}<span class="entry__dot" aria-hidden="true">.</span></h1>
     </header>
 
@@ -145,10 +157,24 @@ const jsonLd = {
   }
 
   .entry__loop,
-  .entry__commits {
+  .entry__commits,
+  .entry__expedition {
     border: 1px solid var(--line);
     padding: 1px 8px;
     border-radius: var(--radius-pill);
+  }
+
+  .entry__expedition {
+    border-color: var(--amber);
+    color: var(--ink-1);
+  }
+
+  .entry__logger {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
 
   .entry__title {

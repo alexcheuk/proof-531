@@ -1,5 +1,6 @@
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
 import { useTheme } from '@/design/theme';
+import { cycleGoalEstimate } from '@/domain/progression';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 
@@ -59,14 +60,11 @@ export function GoalPanel({
   const dec = () => onStep(-step);
   const inc = () => onStep(step);
 
-  // One 5/3/1 "day" = one session for this lift, and a cycle holds 4 such
-  // sessions. So days-until-goal = cycles × 4. When the user has supplied
-  // days/week we can also project that out to calendar months — weeks are
-  // not a concept the user cares about here.
-  const daysApprox = cyclesUntilGoal !== null ? cyclesUntilGoal * 4 : 0;
+  const { days: daysApprox, months: monthsApprox } = cycleGoalEstimate(
+    cyclesUntilGoal,
+    daysPerWeek,
+  );
   const dpw = daysPerWeek && daysPerWeek > 0 ? daysPerWeek : null;
-  const monthsApprox =
-    dpw !== null && daysApprox > 0 ? Math.max(1, Math.round(daysApprox / dpw / 4.345)) : 0;
 
   const onDaysPerWeekStep = (delta: number) => {
     void Haptics.selectionAsync();
@@ -145,7 +143,7 @@ export function GoalPanel({
           gap: 12,
         }}
       >
-        <StepperButton glyph="−" onPress={dec} testID={`${testID ?? 'goal-panel'}-dec`} />
+        <StepperBtn glyph="−" size="lg" onPress={dec} testID={`${testID ?? 'goal-panel'}-dec`} />
         <View
           style={{
             flex: 1,
@@ -180,7 +178,7 @@ export function GoalPanel({
             {unitGlyph}
           </RNText>
         </View>
-        <StepperButton glyph="+" onPress={inc} testID={`${testID ?? 'goal-panel'}-inc`} />
+        <StepperBtn glyph="+" size="lg" onPress={inc} testID={`${testID ?? 'goal-panel'}-inc`} />
       </View>
 
       <View
@@ -221,7 +219,7 @@ export function GoalPanel({
             color: colors.ink3,
           }}
         >
-          {!unset && cyclesUntilGoal && cyclesUntilGoal > 0 && dpw !== null
+          {!unset && monthsApprox !== null && dpw !== null
             ? `≈ ${monthsApprox} mo at ${dpw}/wk`
             : ''}
         </RNText>
@@ -252,8 +250,9 @@ export function GoalPanel({
           >
             Est. work days / week
           </RNText>
-          <DaysPerWeekStepper
+          <StepperBtn
             glyph="−"
+            size="sm"
             onPress={() => onDaysPerWeekStep(-1)}
             disabled={dpw === null}
             testID={`${testID ?? 'goal-panel'}-dpw-dec`}
@@ -271,8 +270,9 @@ export function GoalPanel({
           >
             {dpw !== null ? String(dpw) : '—'}
           </RNText>
-          <DaysPerWeekStepper
+          <StepperBtn
             glyph="+"
+            size="sm"
             onPress={() => onDaysPerWeekStep(+1)}
             disabled={dpw !== null && dpw >= 7}
             testID={`${testID ?? 'goal-panel'}-dpw-inc`}
@@ -283,31 +283,44 @@ export function GoalPanel({
   );
 }
 
-function DaysPerWeekStepper({
+function StepperBtn({
   glyph,
+  size,
   onPress,
   disabled,
   testID,
 }: {
   glyph: '−' | '+';
+  size: 'lg' | 'sm';
   onPress: () => void;
   disabled?: boolean;
   testID?: string;
 }) {
   const { colors, type } = useTheme();
+  const dim = size === 'lg' ? 44 : 28;
+  const fontSize = size === 'lg' ? 20 : 14;
+  const isDisabled = disabled ?? false;
+  const label =
+    glyph === '+'
+      ? size === 'lg'
+        ? 'Increase goal'
+        : 'Increase days per week'
+      : size === 'lg'
+        ? 'Decrease goal'
+        : 'Decrease days per week';
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={isDisabled}
       testID={testID}
       accessibilityRole="button"
-      accessibilityLabel={glyph === '+' ? 'Increase days per week' : 'Decrease days per week'}
-      accessibilityState={{ disabled }}
+      accessibilityLabel={label}
+      accessibilityState={isDisabled ? { disabled: true } : undefined}
       style={{
-        width: 28,
-        height: 28,
+        width: dim,
+        height: dim,
         borderWidth: 1,
-        borderColor: disabled ? colors.line : colors.ink0,
+        borderColor: isDisabled ? colors.line : colors.ink0,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.bg0,
@@ -316,49 +329,9 @@ function DaysPerWeekStepper({
       <RNText
         style={{
           fontFamily: `${type.mono}-Bold`,
-          fontSize: 14,
-          color: disabled ? colors.ink3 : colors.ink0,
-          lineHeight: 14,
-        }}
-      >
-        {glyph}
-      </RNText>
-    </Pressable>
-  );
-}
-
-function StepperButton({
-  glyph,
-  onPress,
-  testID,
-}: {
-  glyph: '−' | '+';
-  onPress: () => void;
-  testID?: string;
-}) {
-  const { colors, type } = useTheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      testID={testID}
-      accessibilityRole="button"
-      accessibilityLabel={glyph === '+' ? 'Increase goal' : 'Decrease goal'}
-      style={{
-        width: 44,
-        height: 44,
-        borderWidth: 1,
-        borderColor: colors.ink0,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: colors.bg0,
-      }}
-    >
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize: 20,
-          color: colors.ink0,
-          lineHeight: 20,
+          fontSize,
+          color: isDisabled ? colors.ink3 : colors.ink0,
+          lineHeight: fontSize,
         }}
       >
         {glyph}

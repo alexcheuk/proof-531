@@ -259,6 +259,21 @@ describe('ProgressScreen', () => {
     );
   });
 
+  it('renders DPW stepper when a goal is persisted and tapping inc calls setDaysPerWeek', () => {
+    // Override the goal query for this test so unset=false (DPW row renders).
+    const useLiftGoalMod = require('@/data/queries/useLiftGoal');
+    const spy = jest.spyOn(useLiftGoalMod, 'useLiftGoal').mockReturnValue({
+      data: { lift: 'squat', kind: 'tm', targetValue: 300, targetUnit: 'lbs', daysPerWeek: null },
+      isLoading: false,
+      isError: false,
+    });
+    const screen = wrap(<ProgressScreen lift="squat" />);
+    expect(screen.getByTestId('goal-panel-squat-dpw-row')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('goal-panel-squat-dpw-inc'));
+    expect(mockSetDaysPerWeek).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
+  });
+
   it('routes to SessionComplete when a past cell is tapped', () => {
     const screen = wrap(<ProgressScreen lift="squat" />);
     fireEvent.press(screen.getByTestId('progress-cell-1-1'));

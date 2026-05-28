@@ -3,6 +3,7 @@ import { estimateOneRm } from '../epley';
 import { tmIncrement } from '../increments';
 import {
   bestE1RMForCycle,
+  cycleGoalEstimate,
   cyclesUntilTmGoal,
   goalTargetTm,
   projectCycleRows,
@@ -339,6 +340,47 @@ describe('tmAdjustmentSuggestion', () => {
           if (r.kind !== 'reset') return false;
           return r.resetPct === 0.9;
         },
+      ),
+    );
+  });
+});
+
+describe('cycleGoalEstimate', () => {
+  it('returns zero days and null months when cyclesUntilGoal is null', () => {
+    expect(cycleGoalEstimate(null, 3)).toEqual({ days: 0, months: null });
+  });
+
+  it('returns zero days and null months when goal is already reached (0 cycles)', () => {
+    expect(cycleGoalEstimate(0, 3)).toEqual({ days: 0, months: null });
+  });
+
+  it('computes days as cycles × 4', () => {
+    expect(cycleGoalEstimate(5, null).days).toBe(20);
+    expect(cycleGoalEstimate(1, null).days).toBe(4);
+  });
+
+  it('returns null months when daysPerWeek is not set', () => {
+    expect(cycleGoalEstimate(10, null).months).toBeNull();
+  });
+
+  it('returns null months when daysPerWeek is 0', () => {
+    expect(cycleGoalEstimate(10, 0).months).toBeNull();
+  });
+
+  it('computes months as ceil(days / dpw / 4.345), minimum 1', () => {
+    // 4 cycles × 4 days = 16 days; at 2/wk: 16 / 2 / 4.345 ≈ 1.84 → 2
+    expect(cycleGoalEstimate(4, 2).months).toBe(2);
+    // 1 cycle × 4 days = 4 days; at 3/wk: 4 / 3 / 4.345 ≈ 0.31 → min 1
+    expect(cycleGoalEstimate(1, 3).months).toBe(1);
+    // 12 cycles × 4 days = 48 days; at 3/wk: 48 / 3 / 4.345 ≈ 3.68 → 4
+    expect(cycleGoalEstimate(12, 3).months).toBe(4);
+  });
+
+  it('property: days is always cycles × 4 for positive inputs', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 200 }),
+        (cycles) => cycleGoalEstimate(cycles, null).days === cycles * 4,
       ),
     );
   });

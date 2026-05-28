@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Extracted `cycleGoalEstimate` to domain; merged GoalPanel steppers
+
+**Tags:** `architecture`, `refactor`, `domain`
+**Files:** `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/features/progress/components/GoalPanel.tsx`, `apps/mobile/src/domain/__tests__/progression.test.ts`
+
+The `daysApprox`/`monthsApprox` calculation in `GoalPanel` (cycles × 4 days; months ≈ days / dpw / 4.345) was non-trivial business logic living inside a view component. Extracted as `cycleGoalEstimate(cycles, daysPerWeek)` in `domain/progression.ts` and added 8 unit + property tests. Separately merged the two private `StepperButton` / `DaysPerWeekStepper` components into a single `StepperBtn(size: 'lg'|'sm')` — both rendered pressable +/− buttons differing only in size and `disabled` support.
+
+**Why:** the estimate math belongs in the domain layer where it can be property-tested and reused. The duplicate stepper components were a maintenance burden (future styling changes needed in two places).
+
+**Trade-off:** didn't extract the `GoalPanel` itself into a presentational primitive — it's still tightly bound to its parent's data shape and the `LiftGoalKind` type. Premature extraction would require threading types across the design boundary.
+
 ### 2026-05-28 — Scrubbed repo for public launch: PWA refs, license labels, dead API
 
 **Tags:** `cleanup`, `convention`, `removal`

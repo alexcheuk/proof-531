@@ -15,31 +15,14 @@ import { round as snapWeight } from '@/domain/units';
 /**
  * Live screen state machine + rest-timer driver.
  *
- * The PWA modeled the screen as `ready` vs `rest` keyed on persisted SetLog
- * rows. This port uses an explicit phase tag so the AMRAP rep-entry sheet is
- * a first-class state, and the rest timer counts DOWN (T-3s warning haptic;
- * T-0 has no audio cue — expo-av was removed in SDK 55).
+ * `setIndex` is bootstrapped from persisted `set_logs` rows so back-nav + resume
+ * picks up where the user left off. The index then advances via local state for
+ * phase transitions (set → rest → set); queries are invalidated so the receipt
+ * and Today's "resume" CTA stay in sync.
  *
- * Phases:
- *   - `set`             — show the working set; CTA logs working (or opens AMRAP/TM-test).
- *   - `amrap-log`       — bottom sheet open for AMRAP rep entry.
- *   - `tm-test-log`     — bottom sheet open for TM test rep entry (week 4).
- *   - `rest`            — countdown between sets.
- *   - `pr-celebration`  — full-screen PR celebration after a new PR.
- *   - `awaiting-bbb`    — post-AMRAP prompt to mark BBB complete or skip.
- *   - `complete`        — session finished, parent should route away.
- *   - `reset-confirm`   — bottom sheet open for Restart confirmation.
- *
- * `setIndex` is **derived from the persisted `set_logs` rows on bootstrap**
- * — when the user backs out of Live and resumes, the next-unfinished set is
- * computed from the database, not from stale React state. After bootstrap
- * the index advances via local state for transient phase transitions
- * (set → rest → set), and the query is invalidated so other surfaces (Today's
- * "Resume working set N" CTA, SessionComplete's receipt) see the new row.
- *
- * Rest duration is configurable in Settings (default `REST_SECONDS` =
- * 180s). The warning haptic at T-3s fires deterministically off the
- * countdown so it can be asserted by advancing fake timers in tests.
+ * Rest duration defaults to `REST_SECONDS` (180 s, configurable in Settings).
+ * The T-3s warning haptic fires deterministically off the countdown and is
+ * assert-able by advancing fake timers in tests.
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';

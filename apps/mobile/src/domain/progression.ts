@@ -150,6 +150,28 @@ export function cyclesUntilTmGoal(
 }
 
 /**
+ * Convert a cycle count + optional days-per-week figure into the
+ * human-readable estimate displayed in the GoalPanel footer.
+ *
+ * One 5/3/1 cycle = 4 sessions for a given lift. When `daysPerWeek` is
+ * provided the function also computes a rough calendar-month estimate
+ * (using 4.345 weeks/month). Returns `null` for `months` when
+ * `daysPerWeek` is not set or the goal is already reached.
+ */
+export function cycleGoalEstimate(
+  cyclesUntilGoal: number | null,
+  daysPerWeek: number | null,
+): { days: number; months: number | null } {
+  if (cyclesUntilGoal === null || cyclesUntilGoal === 0) {
+    return { days: 0, months: null };
+  }
+  const days = cyclesUntilGoal * 4;
+  const dpw = daysPerWeek && daysPerWeek > 0 ? daysPerWeek : null;
+  const months = dpw !== null ? Math.max(1, Math.round(days / dpw / 4.345)) : null;
+  return { days, months };
+}
+
+/**
  * Discriminated union returned by {@link tmAdjustmentSuggestion}.
  *
  *   - `increment` — TM was conservative; bump it next cycle. `delta` carries
