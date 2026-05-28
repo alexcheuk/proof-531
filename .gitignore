@@ -35,6 +35,7 @@ android/local.properties
 
 # Harness workspace — design specs, implementation logs, QA reports from agent runs
 _workspace/
+_workspace_archive/
 
 # Claude Code EnterWorktree tool puts session worktrees here
 .claude/worktrees/

@@ -220,10 +220,10 @@ the `done_when` checklist and a link to the run log in the body.
 
 - **TDD for `src/domain/`**: red → green → commit. Property tests via
   [`fast-check`](https://github.com/dubzzz/fast-check) where applicable.
-- **Component tests assert behavior, not pixels.** Pixel fidelity is checked
-  manually against the PWA reference (screenshot pairs attached to each PR).
-  Storybook + Maestro screenshot harnesses from the original spec are
-  deferred until a dev-client build is needed.
+- **Component tests assert behavior, not pixels.** Visual fidelity is checked
+  manually against the running mobile app (the port from the PWA reference is
+  complete; the mobile app is now self-referential). Storybook + Maestro
+  screenshot harnesses are deferred until a dev-client build is needed.
 - **No skipped tests** without a comment linking to a tracking issue.
 
 ## Pre-commit and PR review

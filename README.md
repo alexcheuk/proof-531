@@ -60,4 +60,4 @@ Some internal docs (particularly in `docs/superpowers/`) reference `~/Developmen
 
 ## License
 
-Open for inspection. The app is free to use; redistribution and commercial use require explicit permission. See [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling.
+Source available — free to run for personal use; redistribution and commercial use require explicit permission. See [`LICENSE`](./LICENSE) for the full terms and [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling.

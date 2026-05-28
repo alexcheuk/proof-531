@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — APK crash fixes: removed reactCompiler experiment, fixed OTA channel mismatch (expedition 19)
+
+**Tags:** `bug`, `build`, `process`
+**Files:** `apps/mobile/app.json`, `apps/mobile/eas.json`, `apps/mobile/src/app/_layout.tsx`
+
+Removed `reactCompiler: true` from `app.json` experiments. Changed `eas.json` preview profile `channel` from `"preview"` to `"main"`. Added a proper migration error screen in `_layout.tsx` instead of silently falling through to a broken DB render.
+
+**Why:** The preview APK crashed on open. Two root causes: (1) `reactCompiler: true` is experimental and its Babel transforms conflict with Reanimated's worklet system in production Hermes builds — the Compiler changes component closure semantics that worklets rely on. (2) OTA updates published to `channel: "main"` by CI never reached the preview APK, which subscribed to `channel: "preview"`. Every bug fixed on main was invisible to the device install, leaving it stuck on the crash. The migration error case was also a latent bug: if `runMigrations` threw, the layout fell through to the full app render with a broken DB instead of showing a recoverable error.
+
+**Trade-off / what we didn't do:** Re-enabling the React Compiler after a full audit for Reanimated compatibility is a future option. Preview and production OTA streams are now unified (both `channel: "main"`); splitting them back out makes sense once there are external beta testers.
+
 ### 2026-05-27 — Public repo prep: updated behavioral reference contract, added .env.claude.example (expedition 18)
 
 **Tags:** `convention`, `process`, `docs`

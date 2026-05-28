@@ -71,7 +71,7 @@ Rejected alternatives (Nativewind, WatermelonDB, MMKV, raw React Navigation) and
 └── README.md
 ```
 
-The `~/Development/531-pwa/` directory (outside this repo) is the read-only behavioral source of truth for visuals — never modified by orchestrator-run tasks.
+The original port referenced `~/Development/531-pwa/` (a local PWA) as the visual and behavioral source of truth. That port is complete — the mobile app is now self-referential. The PWA directory is not part of this repository and will not exist on contributor machines.
 
 See [spec §3 — Architecture](./superpowers/specs/2026-05-19-expo-scaffold-design.md#3--architecture) for the long-form rationale.
 

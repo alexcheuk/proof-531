@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Text as RNText, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -92,6 +92,38 @@ export default function RootLayout() {
       <ThemeProvider>
         <BootSplash />
       </ThemeProvider>
+    );
+  }
+
+  if (migrationError) {
+    // DB migration failed — the app cannot function. Show a blocking error
+    // so the user knows to force-quit and try again (usually fixes it) or
+    // reinstall if the DB is corrupt.
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.bg0,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 32,
+        }}
+      >
+        <RNText style={{ color: colors.ink0, fontSize: 13, letterSpacing: 1.5 }}>
+          DB INIT FAILED
+        </RNText>
+        <RNText
+          style={{
+            color: colors.ink0,
+            fontSize: 11,
+            marginTop: 12,
+            textAlign: 'center',
+            opacity: 0.6,
+          }}
+        >
+          Force-quit and reopen the app. If this persists, reinstall.
+        </RNText>
+      </View>
     );
   }
 

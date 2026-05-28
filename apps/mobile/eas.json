@@ -14,7 +14,7 @@
       "node": "22.11.0",
       "pnpm": "9.15.0",
       "distribution": "internal",
-      "channel": "preview",
+      "channel": "main",
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
