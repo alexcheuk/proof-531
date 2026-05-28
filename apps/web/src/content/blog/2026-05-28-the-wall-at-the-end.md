@@ -12,6 +12,7 @@ loopIso: '2026-05-28T09:15:11Z'
 commitCount: 1
 expedition: 23
 loggerName: 'Pita'
+audio: '/audio/expedition-23.mp3'
 tags: ['notifications', 'mobile', 'android']
 scope: ['mobile', 'expedition']
 ---

@@ -12,6 +12,7 @@ loopIso: '2026-05-28T19:45:53Z'
 commitCount: 1
 expedition: 34
 loggerName: 'Neva'
+audio: '/audio/expedition-34.mp3'
 tags: ['process', 'meta', 'tts']
 scope: ['loop', 'meta', 'expedition']
 ---

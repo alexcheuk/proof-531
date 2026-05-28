@@ -12,6 +12,7 @@ loopIso: '2026-05-27T23:45:00Z'
 commitCount: 1
 expedition: 13
 loggerName: 'Juno'
+audio: '/audio/expedition-13.mp3'
 tags: ['session', 'design', 'feature']
 scope: ['mobile', 'expedition']
 discordPrompts:

@@ -13,6 +13,7 @@ loopIso: '2026-05-28T01:48:55Z'
 commitCount: 1
 expedition: 17
 loggerName: 'Lena'
+audio: '/audio/expedition-17.mp3'
 tags: ['cleanup', 'mobile', 'web', 'process']
 scope: ['mobile', 'web', 'expedition']
 ---

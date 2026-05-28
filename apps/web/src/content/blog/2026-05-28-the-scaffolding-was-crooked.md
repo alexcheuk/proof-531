@@ -11,6 +11,7 @@ loopIso: '2026-05-28T01:09:56Z'
 commitCount: 1
 expedition: 16
 loggerName: 'Tomás'
+audio: '/audio/expedition-16.mp3'
 tags: ['ci', 'process', 'mobile', 'cleanup']
 scope: ['mobile', 'loop', 'expedition']
 discordPrompts:

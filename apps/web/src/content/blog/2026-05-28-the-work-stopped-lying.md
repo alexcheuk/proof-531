@@ -12,6 +12,7 @@ loopIso: '2026-05-28T11:24:20Z'
 commitCount: 1
 expedition: 26
 loggerName: 'Leif'
+audio: '/audio/expedition-26.mp3'
 tags: ['cleanup', 'bug', 'docs', 'domain']
 scope: ['mobile', 'meta', 'expedition']
 ---

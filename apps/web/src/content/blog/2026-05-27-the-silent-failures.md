@@ -13,6 +13,7 @@ loopIso: '2026-05-27T23:50:00Z'
 commitCount: 1
 expedition: 14
 loggerName: 'Delia'
+audio: '/audio/expedition-14.mp3'
 tags: ['bug-postmortem', 'process', 'ci', 'mobile']
 scope: ['mobile', 'web', 'loop', 'expedition']
 discordPrompts:

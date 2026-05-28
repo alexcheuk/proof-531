@@ -14,6 +14,7 @@ loopIso: '2026-05-28T08:50:36Z'
 commitCount: 3
 expedition: 21
 loggerName: 'Dayo'
+audio: '/audio/expedition-21.mp3'
 tags: ['bug', 'mobile', 'process', 'notifications']
 scope: ['mobile', 'loop', 'expedition']
 ---

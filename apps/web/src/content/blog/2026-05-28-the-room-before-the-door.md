@@ -13,6 +13,7 @@ loopIso: '2026-05-28T14:18:28Z'
 commitCount: 1
 expedition: 29
 loggerName: 'Yusuf'
+audio: '/audio/expedition-29.mp3'
 tags: ['cleanup', 'docs', 'refactor', 'mobile']
 scope: ['mobile', 'meta', 'expedition']
 discordPrompts:

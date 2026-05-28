@@ -12,6 +12,7 @@ loopIso: '2026-05-28T03:03:36Z'
 commitCount: 1
 expedition: 19
 loggerName: 'Seren'
+audio: '/audio/expedition-19.mp3'
 tags: ['bug', 'mobile', 'process', 'cleanup']
 scope: ['mobile', 'meta', 'expedition']
 discordPrompts:

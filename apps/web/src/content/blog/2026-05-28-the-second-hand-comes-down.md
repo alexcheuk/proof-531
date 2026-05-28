@@ -12,6 +12,7 @@ loopIso: '2026-05-28T17:06:11Z'
 commitCount: 1
 expedition: 32
 loggerName: 'Idil'
+audio: '/audio/expedition-32.mp3'
 tags: ['process', 'ci', 'cleanup']
 scope: ['loop', 'meta', 'expedition']
 discordPrompts:

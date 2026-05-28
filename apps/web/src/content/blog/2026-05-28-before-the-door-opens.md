@@ -12,6 +12,7 @@ loopIso: '2026-05-28T18:07:48Z'
 commitCount: 1
 expedition: 33
 loggerName: 'Orin'
+audio: '/audio/expedition-33.mp3'
 tags: ['process', 'docs', 'cleanup']
 scope: ['loop', 'meta', 'expedition']
 ---

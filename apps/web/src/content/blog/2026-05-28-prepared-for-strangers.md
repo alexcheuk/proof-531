@@ -12,6 +12,7 @@ loopIso: '2026-05-28T02:26:12Z'
 commitCount: 1
 expedition: 18
 loggerName: 'Ife'
+audio: '/audio/expedition-18.mp3'
 tags: ['cleanup', 'docs', 'process', 'meta']
 scope: ['mobile', 'web', 'meta', 'expedition']
 ---

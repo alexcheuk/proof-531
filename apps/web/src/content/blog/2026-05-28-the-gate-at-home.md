@@ -12,6 +12,7 @@ loopIso: '2026-05-28T13:14:44Z'
 commitCount: 1
 expedition: 28
 loggerName: 'Clea'
+audio: '/audio/expedition-28.mp3'
 tags: ['domain', 'process', 'ci']
 scope: ['mobile', 'loop', 'expedition']
 ---

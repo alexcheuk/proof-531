@@ -12,6 +12,7 @@ loopIso: '2026-05-28T00:40:00Z'
 commitCount: 1
 expedition: 15
 loggerName: 'Nour'
+audio: '/audio/expedition-15.mp3'
 tags: ['mobile', 'web', 'process', 'notifications']
 scope: ['mobile', 'web', 'loop', 'expedition']
 discordPrompts:
