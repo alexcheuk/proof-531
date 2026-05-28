@@ -4,7 +4,7 @@
  * This module is part of `src/domain/` — a pure domain layer.
  * No framework imports, no asynchronous work, no database access.
  * Definitions here mirror the PWA schema verbatim (see
- * `~/Development/531-pwa/src/db/schema.ts`) and are the single source of
+ * `the PWA reference`) and are the single source of
  * truth for these primitives across the mobile app.
  */
 
@@ -16,7 +16,7 @@ export type Day = 1 | 2 | 3 | 4;
 
 /**
  * Kind of a logged set. Mirrors the PWA `SetLog.kind` column verbatim — see
- * `~/Development/531-pwa/src/db/schema.ts`.
+ * `the PWA reference`.
  *   - `warmup`     — pre-work ramp sets (not counted in volume).
  *   - `working`    — the first two prescribed 5/3/1 work sets.
  *   - `amrap`      — the final "+" set with AMRAP reps.
@@ -48,7 +48,7 @@ export type SetLog = {
 
 /**
  * The singleton settings row. Mirrors the PWA's `Settings` interface verbatim
- * (see `~/Development/531-pwa/src/db/schema.ts`).
+ * (see `the PWA reference`).
  *
  * Persisted by the `settings` Drizzle table (id = 1, always). `enabledLifts`
  * is stored as a JSON-encoded TEXT column at the data layer; this shape is
@@ -88,7 +88,7 @@ export interface Settings {
 
 /**
  * Defaults inserted into the `settings` row on first boot — mirrors the PWA's
- * `DEFAULT_SETTINGS` constant (see `~/Development/531-pwa/src/db/schema.ts`).
+ * `DEFAULT_SETTINGS` constant (see `the PWA reference`).
  * Excludes `id` since the row is always keyed at `id = 1`.
  */
 export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {

@@ -4,7 +4,7 @@ import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedS
  * + BBB band + colophon. Composition shell over four sub-components.
  *
  * Pure presentation; the parent owns the data fetch + Start handler. Ported
- * from `~/Development/531-pwa/src/features/session/components/TodayBody.tsx`.
+ * from `the PWA reference`.
  *
  * Plate visualization lives only in the top-set hero (matching the PWA).
  * Working sets and BBB show numerics only.

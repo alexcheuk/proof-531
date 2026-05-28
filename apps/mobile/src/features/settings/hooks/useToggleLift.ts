@@ -4,7 +4,7 @@ import { useDb } from '@/data/DbProvider';
  * `Settings.enabledLifts`, preserving LIFT_ORDER and no-opping if the toggle
  * would empty the set.
  *
- * Ported from `~/Development/531-pwa/src/features/settings/hooks/useToggleLift.ts`.
+ * Ported from `the PWA reference`.
  * Reads via a one-shot `getSettings()` await (not a closure over the query
  * cache) so the write uses the value at toggle-time.
  *

@@ -58,7 +58,9 @@ Intermediate-to-advanced lifters running Jim Wendler's **5/3/1** linear-periodiz
 | 1    | 65% × 5 | 75% × 5 | 85% × 5+ | "5/5/5+" |
 | 2    | 70% × 3 | 80% × 3 | 90% × 3+ | "3/3/3+" |
 | 3    | 75% × 5 | 85% × 3 | 95% × 1+ | "5/3/1+" |
-| 4    | 40% × 5 | 50% × 5 | 60% × 5  | Deload     |
+| 4    | —       | —       | 100% × 3–5  | TM test ("7th Week Protocol") |
+
+Week 4 replaces the classic deload with a single verification set at 100% of your Training Max for 3–5 reps. Warmups are unchanged. BBB is skipped. The app computes a TM-adjustment suggestion from the reps you log — increment, hold, or reset — and surfaces it as a calm tappable note on the receipt. You apply it when you're ready; the app never forces a change.
 
 Percentages are of **Training Max** (90% of true 1RM, never of true 1RM itself — Wendler's whole point).
 

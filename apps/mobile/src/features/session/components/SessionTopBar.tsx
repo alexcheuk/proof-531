@@ -2,8 +2,7 @@ import { useTheme } from '@/design/theme';
 /**
  * Sticky top action row for session screens (Today / Live).
  *
- * Ported from the PWA `~/Development/531-pwa/src/features/session/components/
- * SessionTopBar.tsx`. Back chip on the left, optional right-side action:
+ * Ported from the PWA reference. Back chip on the left, optional right-side action:
  * nothing or a Complete-session pill (see `CompletePill`).
  *
  * Visual contract:

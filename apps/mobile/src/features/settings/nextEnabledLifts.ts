@@ -1,7 +1,7 @@
 /**
  * Pure helper: compute the next `enabledLifts` array after toggling one lift.
  *
- * Ported from `~/Development/531-pwa/src/features/settings/nextEnabledLifts.ts`.
+ * Ported from `the PWA reference`.
  *
  * Rules:
  * - Toggling an off lift adds it; the result preserves canonical LIFT_ORDER

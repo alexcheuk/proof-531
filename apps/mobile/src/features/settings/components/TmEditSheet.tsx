@@ -4,7 +4,7 @@ import { useDb } from '@/data/DbProvider';
  * this sheet; Save appends a new TrainingMax row via `setTrainingMax` (PD-04
  * append-only contract — never UPDATE).
  *
- * Ported from `~/Development/531-pwa/src/features/settings/components/TmEditSheet.tsx`.
+ * Ported from `the PWA reference`.
  */
 import { setTrainingMax } from '@/data/accessors/trainingMax';
 import { TM_KEY } from '@/data/queries/useLatestTm';

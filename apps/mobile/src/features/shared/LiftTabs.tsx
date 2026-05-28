@@ -7,7 +7,7 @@
  * have ever set a PR get a small ★ glyph after their name — always-on
  * visual reinforcement of the user's records.
  *
- * Ported from `~/Development/531-pwa/src/features/home/components/LiftTabs.tsx`.
+ * Ported from `the PWA reference`.
  */
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';

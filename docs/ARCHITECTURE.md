@@ -135,7 +135,7 @@ Three entry points, each with its own orchestrator:
 - **`rn-expo-pipeline`** — idea-driven feature work. A coordinated design / frontend / QA team (`rn-designer` → `rn-frontend` → `rn-qa`) takes an idea or wireframe and produces a PR-ready commit on `feat/<slug>`.
 - **`/initial-implement`** — queue-driven backlog drain. Picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents inside a per-task git worktree, then squash-merges to `main` as `[auto] <task-id> <title>`. Used when a spec + plan already exist.
 
-Forbidden paths for orchestrator-run tasks: `~/Development/531-pwa/` (read-only behavioral reference), `docs/superpowers/specs/`, `docs/superpowers/plans/`. The PWA directory is the behavioral source of truth for visuals — port faithfully, do not reinvent.
+Forbidden paths for orchestrator-run tasks: `docs/superpowers/specs/`, `docs/superpowers/plans/`. The running mobile app itself is the behavioral reference for any new work — port the existing interaction model faithfully, do not reinvent.
 
 ## See also
 

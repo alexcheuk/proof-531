@@ -1,7 +1,7 @@
 /**
  * Hard-reset accessor.
  *
- * Mirrors the PWA accessor at `~/Development/531-pwa/src/db/accessors/reset.ts`
+ * Mirrors the PWA accessor at `the PWA reference`
  * (which wraps a Dexie `rw` transaction over all five tables). drizzle-orm's
  * cross-driver transaction typing is inconvenient and the mobile DB is
  * single-writer (JS event loop, no concurrent expo-sqlite writers in practice)

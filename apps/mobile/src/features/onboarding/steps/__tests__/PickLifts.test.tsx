@@ -2,7 +2,7 @@
  * Behavioral tests for the PickLifts onboarding step.
  *
  * Covers the dashed callout copy + dynamic CTA copy paths from the
- * PWA reference (`~/Development/531-pwa/src/features/onboarding/steps/PickLifts.tsx`).
+ * PWA reference (`the PWA reference`).
  *
  * Mocks:
  *  - `expo-haptics`                       — silence native binding

@@ -11,8 +11,7 @@ import { displayUnit } from '@/domain/units';
 /**
  * Bottom-sheet AMRAP rep logger.
  *
- * Structural port of `~/Development/531-pwa/src/features/session/components/
- * AmrapLogSheet.tsx`. Composition shell — rep/pending state lives in
+ * Structural port of `the PWA reference`. Composition shell — rep/pending state lives in
  * `useAmrapLogState`, the e1RM caption is `ProjectionChip`, and the
  * Save/Cancel button pair is `LogSheetFooter`.
  */

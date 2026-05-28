@@ -1,7 +1,7 @@
 /**
  * Onboarding accessor.
  *
- * Mirrors the PWA accessor at `~/Development/531-pwa/src/db/accessors/onboarding.ts`
+ * Mirrors the PWA accessor at `the PWA reference`
  * (PWA name: `finishOnboarding`). Patches the singleton Settings row with the
  * user's chosen unit + enabled lifts, then appends one TrainingMax row per
  * enabled lift (TM = 90 % of the supplied 1RM, snapped to the unit step).

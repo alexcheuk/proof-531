@@ -6,7 +6,7 @@ import { OnboardingHeader } from './OnboardingHeader';
 
 /**
  * Shared chrome for all four onboarding steps. Ported from
- * `~/Development/531-pwa/src/features/onboarding/components/OnboardingShell.tsx`.
+ * `the PWA reference`.
  *
  * Layout (top-to-bottom):
  *   - sticky-ish header strip with optional back-arrow (or wordmark), label,

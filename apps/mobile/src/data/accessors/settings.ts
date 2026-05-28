@@ -1,7 +1,7 @@
 /**
  * Settings accessors.
  *
- * Mirrors the PWA accessors at `~/Development/531-pwa/src/db/accessors/settings.ts`.
+ * Mirrors the PWA accessors at `the PWA reference`.
  * The `settings` table is a **singleton** — `id` is always 1. The `enabled_lifts`
  * column is stored as JSON-encoded TEXT and round-tripped via `toRow` / `fromRow`.
  *

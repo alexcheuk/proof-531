@@ -9,8 +9,7 @@ import type { Lift } from '@/domain/types';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
  *
- * Ported (lightly trimmed) from `~/Development/531-pwa/src/features/session/
- * TodayScreen.tsx`. The PWA hosts a full state machine (preview / active /
+ * Ported (lightly trimmed) from `the PWA reference`. The PWA hosts a full state machine (preview / active /
  * preview-other-active / empty) here; the mobile MVP shows the preview surface
  * and a Start CTA. Active-session UI ships in a follow-up task.
  *

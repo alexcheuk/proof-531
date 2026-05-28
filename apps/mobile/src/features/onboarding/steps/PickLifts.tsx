@@ -6,7 +6,7 @@ import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Step 2 — Pick the lifts you want to train. Ported from
- * `~/Development/531-pwa/src/features/onboarding/steps/PickLifts.tsx`.
+ * `the PWA reference`.
  */
 import { View } from 'react-native';
 import { LiftToggleRow } from '../components/LiftToggleRow';

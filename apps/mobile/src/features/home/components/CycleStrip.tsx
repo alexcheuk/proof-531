@@ -10,7 +10,7 @@ import type { Week } from '@/domain/types';
  *   - Current/next week (= currentWeek): paper bg + 3-px inset amber accent border.
  *   - Future weeks (> currentWeek): transparent bg, muted text.
  *
- * Ported from `~/Development/531-pwa/src/features/home/components/CycleStrip.tsx`.
+ * Ported from `the PWA reference`.
  */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 

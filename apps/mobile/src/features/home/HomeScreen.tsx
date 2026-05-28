@@ -2,7 +2,7 @@
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
  *
- * Ported from `~/Development/531-pwa/src/features/home/HomeScreen.tsx`. The
+ * Ported from `the PWA reference`. The
  * PWA uses a CSS-snap horizontal scroll container; the RN port uses a
  * `pagingEnabled` horizontal `FlatList` keyed on the lift, with
  * `onMomentumScrollEnd` driving `setSelectedLift` and a `scrollToIndex`

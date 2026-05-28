@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-27, expedition 14)
+# Codebase facts (updated 2026-05-27, expedition 17)
 
 ## Architecture
 
@@ -296,6 +296,49 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `SessionCompleteScreen` — holds `[tmApplyOpen, setTmApplyOpen]` state; passes
   `onPress={() => setTmApplyOpen(true)}` to `TmAdjustmentNote`.
 
+## TM test week (Week 4 / 7th Week Protocol) — expedition 13
+
+- Week 4 deload replaced with a single TM-verification top set at 100% TM,
+  3–5 rep target. `kind: 'tm-test'` in the set-kind discriminated union.
+- Domain: `isTmTestSet(set)` guard in `schemes.ts`. `computeTmSuggestion(reps)` in
+  `progression.ts` returns `{ kind: 'increment' | 'hold' | 'reset', delta: number }`.
+- After logging a TM test, `useLiveScreenState` transitions to `'awaiting-bbb'`
+  (prompt screen with two CTAs) and eventually to `'complete'`.
+- Receipt shows `TmTestReceiptBand` and `TmAdjustmentNote` with the suggestion.
+- User applies TM change via `TmApplySheet` — never automatic.
+
+## Background rest notifications (expedition 14)
+
+- `expo-notifications` added for rest-timer background alerts.
+- When rest starts, a local notification is scheduled for `endsAtMs`. Cancelled
+  immediately if the user returns to the live screen. Permission prompt fires on
+  first use via `requestPermissionsAsync()`.
+- `useNotifications` accessor in `data/queries/` manages scheduling +
+  cancellation. The native module addition changes the EAS fingerprint — OTA
+  updates after this addition won't reach existing installs without a rebuild.
+
+## Progress · Goal panel (expedition 14)
+
+- `GoalPanel` (`features/progress/components/GoalPanel.tsx`) — TM/1RM toggle
+  + stepper + projection strip. Saves to `lift_goals` table via `useLiftGoal()`.
+- `GoalRuleRow` (`features/progress/components/GoalRuleRow.tsx`) — 2px+1px ink
+  rules spanning the cycle grid to mark when the projected TM crosses the goal.
+- `lift_goals` schema: `target_value` + `kind ∈ ('tm','1rm')`.
+
+## PR celebration · tap-to-skip (expedition 15)
+
+- Tapping anywhere on `PrCelebrationScreen` calls `skipToEnd()` on the
+  `usePrCelebrationSequence` hook, which advances all animation values to their
+  final state immediately. Implemented via a `Pressable` wrapper over the scroll
+  view content area.
+
+## JustCompletedAnimator (expedition 16)
+
+- `features/progress/components/JustCompletedAnimator.tsx` — wraps the cycle
+  grid and briefly animates the just-completed session cell filling in after
+  "Close the day" routes to the Progress tab. Driven by a one-shot ref that
+  clears after the animation resolves.
+
 ## Data accessors (one-stop reference)
 
 - `session.ts` — create/cancel/complete + `useSession`, `useSessions`, `useActiveSession`, `useLastCompletedSessionForLift`.
@@ -309,3 +352,4 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `prs.ts` — `getPR` / `_upsertPR` (internal, never called from features directly).
 - `settings.ts` — settings row CRUD.
 - `tm.ts` — training-max history.
+- `liftGoal.ts` — `getLiftGoal`, `setLiftGoal`. Used by `useLiftGoal()` TanStack Query hook.

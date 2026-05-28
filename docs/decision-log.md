@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-27 — Public repo cleanup: stripped personal path references, fixed notification race (expedition 17)
+
+**Tags:** `convention`, `bug`, `removal`, `process`
+**Files:** `apps/mobile/src/**` (46 files), `apps/mobile/src/features/session/hooks/useRestNotification.ts`, `CHANGELOG.md`, `docs/DESIGN.md`, `docs/ARCHITECTURE.md`
+
+Removed 46 occurrences of `~/Development/531-pwa/...` from source-file comments (replaced with "the PWA reference"). Also fixed a race condition in `useRestNotification` where unmounting the component before `scheduleRestDoneNotification` resolved would leave a notification scheduled with no way to cancel it. Updated CHANGELOG with TM Test week and other missing features; updated DESIGN.md Week 4 table.
+
+**Why:** repo is approaching public release. Personal absolute paths in comments don't belong in a public codebase — they confuse new contributors and expose a local machine layout. The notification race was surfaced during the cleanup scan; the original `let cancelled = true` guard prevented the ID from being stored but didn't cancel the in-flight schedule.
+
+**Trade-off / what we didn't do:** considered deleting the "Ported from..." comment lines entirely (the port is complete; provenance is in git history). Kept the "Ported from the PWA reference" framing because it signals intent (faithful port, not invention) and helps reviewers understand the design lineage without git-blaming every file.
+
 ### 2026-05-27 — Removed Reassure perf job from CI; fixed EAS CLI in OTA workflow (expedition 16)
 
 **Tags:** `ci`, `process`, `removal`

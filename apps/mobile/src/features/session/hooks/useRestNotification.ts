@@ -27,14 +27,21 @@ export function useRestNotification({
       return;
     }
 
-    let cancelled = false;
-    scheduleRestDoneNotification(restSeconds).then((id) => {
-      if (!cancelled) notificationIdRef.current = id;
+    // Capture the promise so the cleanup can cancel even if the async
+    // scheduleRestDoneNotification hasn't resolved by the time the component
+    // unmounts (race: active→inactive transition during schedule flight).
+    const promise = scheduleRestDoneNotification(restSeconds);
+    promise.then((id) => {
+      notificationIdRef.current = id;
     });
 
     return () => {
-      cancelled = true;
+      // Cancel immediately if the ID is already resolved.
       cancelRestDoneNotification(notificationIdRef.current);
+      // Also cancel whichever ID the in-flight promise resolves to.
+      promise.then((id) => {
+        cancelRestDoneNotification(id);
+      });
       notificationIdRef.current = null;
     };
   }, [active, restSeconds]);

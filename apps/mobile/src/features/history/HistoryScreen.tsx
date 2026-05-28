@@ -3,7 +3,7 @@
  * a chip-row filter + a cycle-grouped list of past sessions, all inside a
  * pull-to-refresh ScrollView.
  *
- * Ported from `~/Development/531-pwa/src/features/history/HistoryScreen.tsx`.
+ * Ported from `the PWA reference`.
  * The mobile port adds PR markers (`★ PR` chip on rows) + a lifetime stats
  * strip ("N sessions filed · M PRs") + a 14-day activity sparkline + an
  * "All / PRs / per-lift" filter so the page rewards consistency, not just

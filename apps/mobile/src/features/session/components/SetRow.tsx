@@ -11,8 +11,7 @@ import { displayUnit } from '@/domain/units';
  *
  * Built on `LedgerRow`-shaped chrome: hairline top border (strong on the first
  * row of the section), label cluster on the left, weight × reps cluster on
- * the right. Behaves like the PWA `~/Development/531-pwa/src/features/session/
- * components/SetRow.tsx`, but uses the mobile design primitives.
+ * the right. Behaves like the PWA reference, but uses the mobile design primitives.
  *
  * Today's working-set rows are NEVER interactive (Rev 3, 2026-05-22). Entry
  * into Live happens exclusively via the bottom `Start/Resume working set N`

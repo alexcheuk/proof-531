@@ -5,7 +5,7 @@
  *   BEST e1RM — best estimated 1RM from a logged AMRAP (em-dash when none)
  *   CYCLE     — rolling cycle number from settings
  *
- * Ported from `~/Development/531-pwa/src/features/home/components/LiftStats.tsx`,
+ * Ported from `the PWA reference`,
  * adjusted to the cell labels documented in `docs/superpowers/plans/PE-03-home`
  * (the PWA shows "Last / Best / Cycle"; the RN port shows
  * "TM / BEST e1RM / CYCLE" until the Last-session-stats backing query lands).

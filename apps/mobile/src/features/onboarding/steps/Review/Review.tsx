@@ -5,7 +5,7 @@ import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Step 4 — Review the computed training maxes and commit. Ported from
- * `~/Development/531-pwa/src/features/onboarding/steps/Review.tsx`.
+ * `the PWA reference`.
  */
 import { View } from 'react-native';
 import { OnboardingShell } from '../../components/OnboardingShell';

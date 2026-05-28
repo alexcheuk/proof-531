@@ -3,7 +3,7 @@
  * layout when the selected lift changes (swap-out → swap-in feels like a
  * smooth strip, not a hard cut).
  *
- * Ported from `~/Development/531-pwa/src/features/home/components/LiftPage.tsx`.
+ * Ported from `the PWA reference`.
  * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
  * with a "NO TRAINING MAX SET" strip pointing at onboarding.
  */

@@ -3,7 +3,7 @@
  *
  * This module is part of `src/domain/` — pure math, no React, no async,
  * no Drizzle. Mirrors the PWA's `features/session/domain/units.ts` (see
- * `~/Development/531-pwa/src/features/session/domain/units.ts`).
+ * `the PWA reference`).
  */
 import type { Unit } from './types';
 

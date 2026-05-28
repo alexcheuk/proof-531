@@ -10,6 +10,27 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Week 4 · TM Test** (7th Week Protocol from _Forever 5/3/1_) — replaces the
+  classic deload with a single top set at 100% TM for 3–5 reps. Warmups are
+  unchanged (40/50/60% × 5/5/3); BBB is skipped on test week. After the set,
+  the app computes a calm TM-adjustment suggestion: +5/+10 lb if you hit 5+
+  reps (TM was conservative), hold if 3–4 (TM is honest), −10% if ≤2 (TM
+  is too high). The suggestion appears as a tappable note on the receipt — you
+  apply it when you're ready, the app never forces a change.
+- **Background rest-timer notifications** — when a rest period starts, the app
+  schedules a local notification ("Rest over — time to lift") so the user can
+  lock their phone and not watch the countdown. The notification is cancelled
+  immediately if the user returns to the live screen. Powered by
+  `expo-notifications`; requires the notification permission prompt on first use.
+- **Progress · Goal panel** — TM / 1RM goal toggle with a live stepper that
+  shows cycles-until-goal and an optional "work days per week" input for
+  calendar-month projections. Saves per-lift to `lift_goals` table.
+- **Progress · Completion animator** — tapping "Close the day" from the session
+  receipt navigates to the Progress tab and briefly animates the just-completed
+  session cell filling in, then highlights the next session cell.
+- **PR celebration · tap-to-skip** — tapping anywhere on the PR celebration screen
+  cuts the current animation phase to its end state, so impatient lifters
+  aren't forced to sit through the full staged reveal before hitting the receipt.
 - **Warmups band on Today** — read-only preview of the 5/3/1 warmup ramp
   (40/50/60% TM × 5/5/3) above the working sets, so the lifter can see
   the on-ramp + start loading plates without doing percent math between
@@ -178,6 +199,21 @@ build N" section covers what landed on `main` between two preview builds.
   the e-ink aesthetic.
 
 ### Changed
+- **Progress is now a tab** — promoted from a stack-pushed route to a
+  dedicated tab (Today / Progress / History / Settings). Accessible from
+  anywhere in the app; the lift carousel and goal panel are always one tap
+  from the tab bar.
+- **Android hardware back** from any non-Today tab now routes to Today
+  (`backBehavior="initialRoute"`); from Today it exits the app. Previously
+  back navigated to whichever screen the user most recently visited, which
+  felt non-deterministic.
+- **Session → Progress cross-stack navigation** — "Close the day" from the
+  session receipt correctly dismisses the session stack before navigating to
+  the Progress tab. The reversed order (navigate first, dismiss after) caused
+  a regression where Progress was never reached.
+- **Disabled-lift session cleanup** — disabling a lift in Settings now
+  cancels any in-progress session for that lift, so the History tab's
+  filters see a clean state.
 - **Back nav** on Live + Today is deterministic: Live → Today (with
   current lift), Today → Home. Visible back chip + Android hardware
   back match. Replaces stack-default `router.back()` which landed on

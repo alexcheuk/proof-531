@@ -8,8 +8,7 @@ import { displayUnit } from '@/domain/units';
 /**
  * Full-body rendering of the Live screen's `rest` phase.
  *
- * Structural port of `~/Development/531-pwa/src/features/session/components/
- * RestPhase.tsx`. Layout: caps eyebrow ("SET COMPLETED · NEW PERSONAL
+ * Structural port of `the PWA reference`. Layout: caps eyebrow ("SET COMPLETED · NEW PERSONAL
  * RECORD"), display headline ("Rest." or "Stronger." on a PR), hairline
  * divider, the count-up RestTimer, and an optional NEXT SET preview block
  * so the user can prep plates while the timer ticks.

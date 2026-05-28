@@ -1,7 +1,7 @@
 /**
  * Training-max accessors.
  *
- * Mirrors the PWA accessors at `~/Development/531-pwa/src/db/accessors/trainingMax.ts`.
+ * Mirrors the PWA accessors at `the PWA reference`.
  * TM history is **append-only** per locked planner decision — `setTrainingMax`
  * always INSERTs a new row, never overwrites an existing one. The "current" TM
  * for a lift is the most recently inserted row for that lift.

@@ -2,7 +2,7 @@
  * 5/3/1 working-set schemes.
  *
  * Pure domain — no React, no async, no DB.
- * Ported from `~/Development/531-pwa/src/features/session/domain/schemes.ts`.
+ * Ported from `the PWA reference`.
  */
 
 import type { Week } from './types';

@@ -2,7 +2,7 @@
  * Storage-unit migration accessor.
  *
  * Mirrors the PWA accessor at
- * `~/Development/531-pwa/src/db/accessors/migrateStorageUnit.ts`.
+ * `the PWA reference`.
  *
  * Switch the *storage* unit (the currency that future TM bumps and session
  * snapshots are denominated in). For each lift whose current TM is NOT

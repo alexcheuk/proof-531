@@ -1,7 +1,7 @@
 import type { Lift, Unit } from '@/domain/types';
 /**
  * Onboarding wizard state machine. Ported from
- * `~/Development/531-pwa/src/features/onboarding/hooks/useOnboardingState.ts`.
+ * `the PWA reference`.
  *
  * State lives in-memory via `useReducer` so the route stays simple — a full
  * app refresh discards in-progress state, which is acceptable for v1 (the

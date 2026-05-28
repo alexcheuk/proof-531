@@ -15,13 +15,10 @@ import { round as snapWeight } from '@/domain/units';
 /**
  * Live screen state machine + rest-timer driver.
  *
- * Structural port of `~/Development/531-pwa/src/features/session/hooks/
- * useLiveScreenState.ts`. The PWA models the screen as `ready` vs `rest`
- * keyed on persisted SetLog rows. The mobile port simplifies to an explicit
- * phase tag so the screen can also model the AMRAP rep-entry sheet as a
- * first-class state, and so the rest timer can count DOWN (T-3s warning
- * haptic; T-0 has no audio cue under Expo Go since the SDK 55 split
- * removed expo-av's native module from Expo Go).
+ * The PWA modeled the screen as `ready` vs `rest` keyed on persisted SetLog
+ * rows. This port uses an explicit phase tag so the AMRAP rep-entry sheet is
+ * a first-class state, and the rest timer counts DOWN (T-3s warning haptic;
+ * T-0 has no audio cue — expo-av was removed in SDK 55).
  *
  * Phases:
  *   - `set`             — show the working set; CTA logs working (or opens AMRAP).

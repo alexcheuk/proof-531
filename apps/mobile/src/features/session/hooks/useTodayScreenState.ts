@@ -10,8 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 /**
  * Today screen state machine + Begin / Resume handler.
  *
- * Ported from `~/Development/531-pwa/src/features/session/hooks/
- * useTodayScreenState.ts`. The mobile Live screen owns the full set-by-set
+ * Ported from `the PWA reference`. The mobile Live screen owns the full set-by-set
  * state machine end to end, so the Today screen only needs to discriminate:
  *
  *   - `preview`               — no active session anywhere. CTA creates a

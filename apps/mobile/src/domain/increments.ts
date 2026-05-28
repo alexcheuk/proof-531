@@ -4,7 +4,7 @@
  * This module is part of `src/domain/` — a pure domain layer.
  * No framework imports, no asynchronous work, no database access.
  * Mirrors the PWA reference at
- * `~/Development/531-pwa/src/features/session/domain/increments.ts`.
+ * `the PWA reference`.
  */
 
 import type { Lift, Unit } from './types';

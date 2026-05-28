@@ -1,7 +1,7 @@
 /**
  * Confirm sheet for the destructive hard reset.
  *
- * Ported from `~/Development/531-pwa/src/features/settings/components/ResetConfirmSheet.tsx`.
+ * Ported from `the PWA reference`.
  * Mirrors the chrome of `UnitMigrationSheet` byte-for-byte — eyebrow + title +
  * body + filled primary + ghost secondary. No chromatic red: in the LEDGER
  * e-ink theme the red token aliases to ink-0, so destructive gravity is

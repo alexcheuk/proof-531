@@ -1,7 +1,7 @@
 /**
  * Session accessors.
  *
- * Mirrors the PWA accessors at `~/Development/531-pwa/src/db/accessors/session.ts`.
+ * Mirrors the PWA accessors at `the PWA reference`.
  *
  * Invariant (see docs/technical-design.md §4): `createSession` snapshots the
  * current TM value/unit AND the current display unit into the session row.
