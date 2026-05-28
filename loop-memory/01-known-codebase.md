@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-28, expedition 19)
+# Codebase facts (updated 2026-05-28, expedition 22)
 
 ## Architecture
 
@@ -11,7 +11,8 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `src/domain/` — pure 5/3/1 math, no React/async/Drizzle. Fully unit-tested.
 - `src/data/` — Drizzle + expo-sqlite. Accessors + TanStack Query hooks (`useSession`, `usePrs`, etc.).
 - `src/features/` — composition. Each feature has `components/`, `hooks/`, sometimes `sections/`. Tests colocated.
-- `src/app/` — expo-router routes, thin shells.
+- `src/app/` — expo-router routes, thin shells. Do NOT put non-route .ts files here — the router warns "missing default export" for anything without a default component export.
+- `src/lib/` — pure helpers: haptics, time, plate logic, and now `routes.ts` (navigation helpers). Relocated from `src/app/routes.ts` in expedition 22.
 
 ## Log sheet hooks (expedition 11)
 
@@ -195,6 +196,7 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 
 ## Back navigation contract
 
+- **`goTo` import: `@/lib/routes`** (moved from `@/app/routes` in expedition 22; `@/app/routes` is deleted).
 - **Live → Today, Today → Home.** Deterministic via `goTo.today` / `goTo.home`,
   not `router.back()`. Stack-default `back` lands on the originating tab
   (often History) which broke the user's mental model.
