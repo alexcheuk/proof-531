@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
@@ -12,6 +11,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { decompose, defaultPlateSet } from '@/domain/plates';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convertWeight, displayWeight } from '@/domain/units';
+import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';

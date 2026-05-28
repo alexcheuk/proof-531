@@ -1,3 +1,15 @@
+import { useActiveSession } from '@/data/queries/useActiveSession';
+import { useLatestTms } from '@/data/queries/useLatestTm';
+import { useAllLiftProgress } from '@/data/queries/useLiftProgress';
+import { usePrs } from '@/data/queries/usePrs';
+import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
+import { useSettings } from '@/data/queries/useSettings';
+import { Masthead } from '@/design/primitives/Masthead';
+import { dateLabel } from '@/domain/labels';
+import type { Lift } from '@/domain/types';
+import { LiftTabs } from '@/features/shared/LiftTabs';
+import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
+import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 /**
  * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
  * `LiftPage`s, one page per enabled lift.
@@ -12,19 +24,7 @@
  * Boundary: this file lives under `features/` and composes design
  * primitives + data queries — it never imports drizzle hex directly.
  */
-import { goTo } from '@/app/routes';
-import { useActiveSession } from '@/data/queries/useActiveSession';
-import { useLatestTms } from '@/data/queries/useLatestTm';
-import { useAllLiftProgress } from '@/data/queries/useLiftProgress';
-import { usePrs } from '@/data/queries/usePrs';
-import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
-import { useSettings } from '@/data/queries/useSettings';
-import { Masthead } from '@/design/primitives/Masthead';
-import { dateLabel } from '@/domain/labels';
-import type { Lift } from '@/domain/types';
-import { LiftTabs } from '@/features/shared/LiftTabs';
-import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
-import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
+import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import { FlatList, type ListRenderItem, View, useWindowDimensions } from 'react-native';

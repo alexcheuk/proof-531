@@ -10,12 +10,15 @@ import type { Href, Router } from 'expo-router';
  *
  * Use these helpers anywhere you'd otherwise write `router.push(... as never)`:
  *
- *   import { goTo } from '@/app/routes';
+ *   import { goTo } from '@/lib/routes';
  *   goTo.today(router, 'squat');
  *   goTo.live(router, sessionId);
  *
  * If a destination needs to change shape, change it here once instead of in
  * a dozen feature files.
+ *
+ * Lives in src/lib/ (not src/app/) so expo-router does not interpret it as a
+ * route and warn about a missing default export.
  */
 
 /**

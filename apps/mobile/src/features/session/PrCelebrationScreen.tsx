@@ -1,7 +1,7 @@
-import { goTo } from '@/app/routes';
 import { StatusBarShim } from '@/design/primitives/StatusBarShim';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
+import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';

@@ -1,9 +1,9 @@
-import { goTo } from '@/app/routes';
 import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
 import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
 import { SESSION_KEY } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
+import { goTo } from '@/lib/routes';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
 import { type Router, useIsFocused, useRouter } from 'expo-router';

@@ -1,11 +1,3 @@
-/**
- * One page of the Progress carousel — a single lift's title block, stats
- * triplet, goal panel, cycle×day matrix, and footnote. Composes the data
- * layer (`useLiftProgression`, `useLiftGoal`, `useSetLiftGoal`) and the
- * pure projection math from `domain/progression.ts`. Display-unit conversion
- * happens at the data hook; site code consumes numbers ready to render.
- */
-import { goTo } from '@/app/routes';
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
 import { useLiftGoal } from '@/data/queries/useLiftGoal';
 import { type LiftProgression, useLiftProgression } from '@/data/queries/useLiftProgression';
@@ -22,6 +14,14 @@ import { goalTargetTm } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
 import { displayUnit, displayWeight } from '@/domain/units';
 import { QueryShell } from '@/features/shared/QueryShell';
+/**
+ * One page of the Progress carousel — a single lift's title block, stats
+ * triplet, goal panel, cycle×day matrix, and footnote. Composes the data
+ * layer (`useLiftProgression`, `useLiftGoal`, `useSetLiftGoal`) and the
+ * pure projection math from `domain/progression.ts`. Display-unit conversion
+ * happens at the data hook; site code consumes numbers ready to render.
+ */
+import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

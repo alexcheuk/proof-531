@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { appendSetLog } from '@/data/accessors/setLog';
 import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
@@ -22,6 +21,7 @@ import { decompose, defaultPlateSet } from '@/domain/plates';
 import { formatMmSs } from '@/domain/time';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
 import { convertWeight, displayUnit as displayUnitGlyph } from '@/domain/units';
+import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

@@ -14,7 +14,7 @@ document picks up where that leaves off.
 | pnpm | 9.15+ | Workspace manager. Install via Corepack: `corepack enable && corepack prepare pnpm@latest --activate`. |
 | bash | 4+ | Orchestrator scripts use `mapfile` and `declare -A`. macOS ships 3.2 — `brew install bash`. |
 | yq (mikefarah) | v4 | Queue scripts. `brew install yq`, or download from https://github.com/mikefarah/yq/releases. |
-| Expo Go | latest from App Store / Play Store | Run the app on a physical device by scanning Metro's QR. |
+| Android SDK + JDK 17 | — | For local dev-client builds (`pnpm build:dev`). Alternatively use `eas build` (cloud, no local SDK needed). |
 
 ### Bootstrap
 
@@ -29,7 +29,8 @@ pnpm install
 ## Daily commands
 
 ```bash
-pnpm --filter @fivethreeone/mobile start    # boot Metro; scan QR with Expo Go
+pnpm build:dev                              # build the dev-client APK (needs Android SDK + JDK 17)
+pnpm --filter @fivethreeone/mobile start    # boot Metro; connect the dev-client APK on device/emulator
 pnpm typecheck                            # tsc --noEmit across workspace
 pnpm lint                                 # biome
 pnpm test                                 # jest

@@ -2,18 +2,18 @@
 
 A short tour of how `531` is laid out and why. For the full rationale — including rejected alternatives, harness layering, and the orchestrator design — see the engineering spec at [`docs/superpowers/specs/2026-05-19-expo-scaffold-design.md`](./superpowers/specs/2026-05-19-expo-scaffold-design.md). This document is a quick reference for working in the codebase; the spec is the source of truth for *intent*. `CLAUDE.md` at the repo root is the source of truth for *what's actually shipped today*.
 
-> **Status note (2026-05-26).** Phase A of the build pivoted from the original
-> spec's dev-client + Skia + Storybook + Maestro + Sentry + PostHog stack to
-> a leaner Expo Go workflow without those harnesses. The current stack reflects
-> that pivot; the original-spec set is deferred until a dev-client build is
-> needed. See `CLAUDE.md` for the canonical short list.
+> **Status note (2026-05-28).** Phase A of the build pivoted from the original
+> spec's full Skia + Storybook + Maestro + Sentry + PostHog stack to a leaner
+> dev-client workflow without those harnesses. A custom dev client is required
+> (Expo Go cannot run `expo-notifications` on Android). See `CLAUDE.md` for
+> the canonical short list.
 
 ## Stack
 
 | Layer | Choice |
 |---|---|
 | Runtime | Expo SDK 55, React Native 0.83+ (New Architecture on) |
-| Workflow | **Expo Go** (no custom dev client) |
+| Workflow | **Custom dev client** (`expo-dev-client`; Expo Go retired 2026-05-28) |
 | Language | TypeScript strict — `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Package manager | pnpm 9.15+ workspaces, Node 22 |
 | Navigation | expo-router (file-based) |
@@ -24,8 +24,8 @@ A short tour of how `531` is laid out and why. For the full rationale — includ
 | Haptics / fonts / notifications | `expo-haptics`, `expo-keep-awake`, `expo-font` (IBM Plex Sans / Mono / Sans-Condensed bundled), `expo-notifications` (rest-timer background alerts) |
 | Sheets | `@gorhom/bottom-sheet` v5 |
 | Lint + format | Biome (single tool) |
-| Tests | Jest + `@testing-library/react-native`, `fast-check` (domain property tests). No E2E / Storybook / Reassure on Expo Go. |
-| Observability | None shipped — Sentry + PostHog are deferred until a dev-client build is needed. |
+| Tests | Jest + `@testing-library/react-native`, `fast-check` (domain property tests). No E2E / Storybook / Reassure yet (deferred). |
+| Observability | None shipped — Sentry + PostHog are deferred. |
 | Build / deploy | EAS Update for OTA; EAS Build for store APKs/IPAs when needed |
 | CI | GitHub Actions |
 
@@ -105,11 +105,11 @@ Tests are TDD-discipline for `src/domain/` (red → green → commit). Skipped t
 
 OTA updates are the day-to-day delivery channel, shipped via EAS Update on every loop. The wrapper script is `pnpm release-ota` (run from the repo root); it calls `eas update --branch main --platform android --environment production --non-interactive` with the commit subject as the message. `runtimeVersion: { policy: "fingerprint" }` means changes to native deps (adding/removing a module with autolinked code) advance the runtime version — existing installs stay on the prior OTA until a fresh native build ships.
 
-EAS Build profiles in `eas.json` (preview / production) are reserved for store-track APKs/IPAs when needed. The original spec's three-profile flow (dev-client / preview / production) is deferred — there is no dev-client build today; local dev runs in Expo Go.
+EAS Build profiles in `eas.json` (development / preview / production) build APKs or IPAs for each track. The dev-client profile produces the `expo-dev-client` APK needed for local development. Preview and production are for store distribution.
 
 ## Observability
 
-None shipped. The original spec wired Sentry and an opt-in PostHog from day one; both are deferred until a dev-client build is needed (third-party SDKs with autolinked native code don't run in Expo Go). This is a free portfolio app — no auth, no IAP, no push, no cloud sync.
+None shipped. Sentry and PostHog are deferred. This is a free, local-first app — no auth, no IAP, no cloud sync.
 
 ## CI
 
@@ -123,7 +123,7 @@ GitHub Actions on every PR:
 6. `pnpm bundle-check` (Metro export, catches missing transitive deps that `jest` doesn't)
 7. `pnpm --filter @fivethreeone/web build` (Astro static-build smoke)
 
-Dev-client build + Maestro flows + Reassure regression checks are deferred along with the dev-client itself.
+Maestro flows + Reassure regression checks are deferred.
 
 Branch protection: no merge without green.
 

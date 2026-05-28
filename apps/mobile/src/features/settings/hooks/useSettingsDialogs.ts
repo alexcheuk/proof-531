@@ -1,10 +1,10 @@
-import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { migrateStorageUnit } from '@/data/accessors/migrateStorageUnit';
 import { resetEverything } from '@/data/accessors/reset';
 import { TM_KEY } from '@/data/queries/useLatestTm';
 import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import type { Lift, Unit } from '@/domain/types';
+import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';

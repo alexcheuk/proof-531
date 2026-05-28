@@ -1,9 +1,9 @@
-import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { completeOnboarding } from '@/data/accessors/onboarding';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
 import type { Lift } from '@/domain/types';
+import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { type Dispatch, useCallback, useMemo, useState } from 'react';

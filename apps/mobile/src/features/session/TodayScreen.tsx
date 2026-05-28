@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { useLatestTm } from '@/data/queries/useLatestTm';
 import { useLiftProgress } from '@/data/queries/useLiftProgress';
 import { useSettings } from '@/data/queries/useSettings';
@@ -6,6 +5,7 @@ import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
+import { goTo } from '@/lib/routes';
 /**
  * Today screen — preview of the upcoming session + Start CTA.
  *

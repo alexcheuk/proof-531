@@ -1,8 +1,8 @@
-import { goTo } from '@/app/routes';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Card } from '@/design/primitives/Card';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 

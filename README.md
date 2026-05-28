@@ -1,6 +1,6 @@
 # 531 Strength
 
-A 5/3/1 + Boring But Big training tracker for iOS and Android. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop. Free and open source.
+A 5/3/1 + Boring But Big training tracker for iOS and Android. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop. Source available.
 
 - **App**: [531.dev](https://531.dev)
 - **Dev blog**: [531.dev/blog](https://531.dev/blog)
@@ -19,11 +19,14 @@ The code is split into four clean layers: pure domain math (`src/domain/`), pers
 # Prerequisites: Node 22 (.nvmrc), pnpm 9.15+
 corepack enable && corepack prepare pnpm@latest --activate
 
-pnpm install                                # workspace install
-pnpm --filter @fivethreeone/mobile start    # boot Metro (scan QR with Expo Go)
+pnpm install                                    # workspace install
+pnpm build:dev                                  # build the dev client APK (needs Android SDK + JDK 17)
+# OR: eas build --profile development -p android  # build in the cloud (needs `eas login`)
+
+pnpm --filter @fivethreeone/mobile start        # boot Metro, connect the dev-client APK
 ```
 
-This project uses the **Expo Go workflow** — no custom dev client needed. Scan the QR code with the Expo Go app on a physical device, or press `i` / `a` for iOS Simulator / Android Emulator.
+This project uses a **custom dev client** (built with `expo-dev-client`). Expo Go cannot run it — native modules like `expo-notifications` are absent there. Install the dev client APK on a device or emulator, then connect via Metro. The dev client only needs to be rebuilt when native modules change; JS/TS edits hot-reload over the running client.
 
 ### Daily commands
 

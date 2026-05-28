@@ -1,3 +1,11 @@
+import type { Session } from '@/data/accessors/session';
+import { useDebouncedPress } from '@/design/hooks/useDebouncedPress';
+import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
+import { Row } from '@/design/primitives/Row';
+import { useTheme } from '@/design/theme';
+import { historyDateLabel, liftDisplayName } from '@/domain/labels';
+import { formatElapsedCompact } from '@/domain/summary';
+import type { Lift, Week } from '@/domain/types';
 /**
  * Single row in the History list — one completed/in-progress/cancelled
  * session. Tapping a row drills into the session's surface:
@@ -11,15 +19,7 @@
  * target so users can jump straight to a per-lift filter on tap; tapping
  * the rest of the row still navigates to the session surface.
  */
-import { goTo } from '@/app/routes';
-import type { Session } from '@/data/accessors/session';
-import { useDebouncedPress } from '@/design/hooks/useDebouncedPress';
-import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
-import { Row } from '@/design/primitives/Row';
-import { useTheme } from '@/design/theme';
-import { historyDateLabel, liftDisplayName } from '@/domain/labels';
-import { formatElapsedCompact } from '@/domain/summary';
-import type { Lift, Week } from '@/domain/types';
+import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';

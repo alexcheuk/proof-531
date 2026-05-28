@@ -1,3 +1,7 @@
+import { CtaBar } from '@/design/primitives/CtaBar';
+import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
+import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { useTheme } from '@/design/theme';
 /**
  * Session complete screen — the "stamped receipt" surface shown after the
  * Live screen completes (or the Today Complete pill is tapped).
@@ -7,11 +11,7 @@
  * receipt, cycle grid) live in their own files. The PR success haptic is
  * fired by `usePrSuccessHaptic`.
  */
-import { goTo } from '@/app/routes';
-import { CtaBar } from '@/design/primitives/CtaBar';
-import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
-import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { useTheme } from '@/design/theme';
+import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';

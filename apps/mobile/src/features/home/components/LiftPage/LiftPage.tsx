@@ -1,13 +1,3 @@
-/**
- * Per-lift content body on Home. Reanimated `LinearTransition` animates
- * layout when the selected lift changes (swap-out → swap-in feels like a
- * smooth strip, not a hard cut).
- *
- * Ported from `the PWA reference`.
- * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
- * with a "NO TRAINING MAX SET" strip pointing at onboarding.
- */
-import { goTo } from '@/app/routes';
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SecondaryLink } from '@/design/primitives/SecondaryLink';
@@ -17,6 +7,16 @@ import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+/**
+ * Per-lift content body on Home. Reanimated `LinearTransition` animates
+ * layout when the selected lift changes (swap-out → swap-in feels like a
+ * smooth strip, not a hard cut).
+ *
+ * Ported from `the PWA reference`.
+ * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
+ * with a "NO TRAINING MAX SET" strip pointing at onboarding.
+ */
+import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';

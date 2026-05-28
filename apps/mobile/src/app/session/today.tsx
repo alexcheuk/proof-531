@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
@@ -8,6 +7,7 @@ import { isLift } from '@/domain/labels';
 import { TodayScreen } from '@/features/session/TodayScreen';
 import { SessionLayout } from '@/features/session/components/SessionLayout';
 import { SessionTopBar } from '@/features/session/components/SessionTopBar';
+import { goTo } from '@/lib/routes';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, type ViewStyle } from 'react-native';

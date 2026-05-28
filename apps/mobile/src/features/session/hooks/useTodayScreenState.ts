@@ -1,4 +1,3 @@
-import { goTo } from '@/app/routes';
 import { useDb } from '@/data/DbProvider';
 import { createSession } from '@/data/accessors/session';
 import { ACTIVE_SESSION_KEY, useActiveSession } from '@/data/queries/useActiveSession';
@@ -6,6 +5,7 @@ import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { type WorkingSetIndex, nextWorkingSetIndex } from '@/domain/schemes';
 import type { Lift } from '@/domain/types';
+import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 /**
  * Today screen state machine + Begin / Resume handler.

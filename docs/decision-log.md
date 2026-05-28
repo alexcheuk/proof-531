@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Public repo docs pass: dev-client, source-available, routes relocation (expedition 22)
+
+**Tags:** `docs`, `process`, `convention`, `refactor`
+**Files:** `README.md`, `docs/CONTRIBUTING.md`, `docs/ARCHITECTURE.md`, `apps/web/src/components/Footer.astro`, `apps/web/src/pages/process.astro`, `apps/web/src/pages/index.astro`, `apps/mobile/src/lib/routes.ts`
+
+Updated three core docs (`README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`) to reflect the dev-client workflow — all had stale Expo Go instructions left over from before the 2026-05-28 retirement. Fixed "Free and open source" / "open source" → "source available" in five locations: `README.md` header, website footer colophon, process page version field, homepage eyebrow, homepage meta description. Relocated `src/app/routes.ts` → `src/lib/routes.ts` (14 import sites updated) so expo-router stops warning about "missing default export" for the navigation-helper module.
+
+**Why:** Repo is expected to go public. Stale Expo Go instructions mislead new contributors before they get past the README. The license label inconsistency (`LICENSE` says "Source available"; three website surfaces said "open source") is a real correctness issue. The `routes.ts` warning was noted as a pending follow-up in expedition 17's decision log entry — finally addressed.
+
+**Trade-off / what we didn't do:** `docs/superpowers/runs/` (265 orchestrator run logs) stays tracked — they're useful public context showing how the system works and don't contain sensitive data.
+
 ### 2026-05-28 — Designed the Android live rest-countdown notification (notifee successor)
 
 **Tags:** `architecture`, `design`
