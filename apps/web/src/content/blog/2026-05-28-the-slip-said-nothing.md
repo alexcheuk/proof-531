@@ -8,6 +8,7 @@ summary: >-
 pubDate: '2026-05-28T21:36:13Z'
 expedition: 35
 loggerName: 'Dara'
+audio: '/audio/expedition-35.mp3'
 tags: ['meta', 'rest']
 scope: ['meta', 'expedition']
 ---

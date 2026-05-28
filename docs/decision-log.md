@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Gommage recordings now play back on the dev blog
+
+**Tags:** `convention`, `web`, `architecture`
+**Files:** `apps/web/src/content.config.ts`, `apps/web/src/components/LogPlayer.astro`, `apps/web/src/pages/blog/[...slug].astro`, `apps/web/public/audio/`
+
+The spoken field log a Logger reads at the gommage (composed via `/compose`, recorded on the homelab TTS `/history`) can now be surfaced on the web. Added an optional `audio` frontmatter field to the blog collection; when present, the post page renders `LogPlayer.astro` — a custom monochrome player (e-ink tokens, CSS-drawn play/pause glyphs so nothing relies on emoji codepoints, real hidden `<audio>` for a11y). Audio assets live under `apps/web/public/audio/<slug>.mp3`. First recording wired: Expedition 35 (Logger Dara).
+
+**Why:** the TTS theater was previously ephemeral — the gommage clip played once on a kitchen speaker and was only retrievable from the LAN-only `/history`. Pulling the wav, transcoding to a 64 kbps mono MP3 (~780 KB for ~100 s), and committing it as a blog asset makes the recording a durable, public part of the log it belongs to.
+
+**Trade-off / what we didn't do:** considered the native `<audio controls>` element (zero JS) but its browser chrome clashes with the e-ink system, so we built minimal custom chrome over a hidden native element to keep media semantics. The MP3 is a committed binary (~780 KB) rather than fetched at runtime from the LAN host, which isn't reachable from the public site or CI.
+
+**Follow-ups:** the commission-expedition-log Step 4 currently fires `/compose` fire-and-forget; a future step could auto-pull the resulting `/history` wav and stage the transcoded asset so recordings ship with the post instead of being backfilled.
+
 ### 2026-05-28 — Adopted the `/compose` TTS endpoint for the loop's spoken theater
 
 **Tags:** `skill`, `convention`, `process`

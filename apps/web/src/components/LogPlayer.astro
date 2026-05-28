@@ -1,0 +1,239 @@
+---
+/*
+ * LogPlayer — playback for a Logger's spoken field log (the "gommage
+ * recording"). In the fiction the Logger reads their log aloud once,
+ * before the erasure; this surfaces that recording on the web.
+ *
+ * Schema-driven: renders only when a post carries an `audio` path
+ * (see content.config.ts). Styled to the e-ink system — monochrome,
+ * amber accent, IBM Plex Mono labels, sharp corners. The play/pause
+ * glyphs are CSS-drawn (not emoji codepoints) to stay strictly
+ * monochrome and render identically across platforms.
+ *
+ * The native <audio> element is the source of truth and stays in the
+ * DOM (visually hidden) so keyboard users and assistive tech get real
+ * media semantics; the custom chrome drives it via the media API.
+ */
+interface Props {
+  src: string;
+  loggerName?: string;
+  expedition?: number;
+}
+const { src, loggerName, expedition } = Astro.props;
+
+const caption =
+  loggerName && expedition !== undefined
+    ? `${loggerName} reads the log of Expedition ${expedition} aloud, once, before the gommage.`
+    : 'The Logger reads this log aloud, once, before the gommage.';
+---
+
+<figure class="player" data-log-player>
+  <figcaption class="player__eyebrow">The gommage recording</figcaption>
+
+  <div class="player__row">
+    <button type="button" class="player__toggle" data-play aria-label="Play recording">
+      <span class="player__icon player__icon--play" aria-hidden="true"></span>
+      <span class="player__icon player__icon--pause" aria-hidden="true"></span>
+    </button>
+
+    <div
+      class="player__track"
+      data-track
+      role="slider"
+      tabindex="0"
+      aria-label="Seek"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
+      <div class="player__fill" data-fill></div>
+    </div>
+
+    <span class="player__time" data-time>0:00&thinsp;/&thinsp;0:00</span>
+  </div>
+
+  <p class="player__caption">{caption}</p>
+
+  <audio data-audio preload="metadata" src={src}></audio>
+</figure>
+
+<style>
+  .player {
+    margin: var(--space-xl) 0 var(--space-2xl);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-1);
+    border: 1px solid var(--line-faint);
+    border-left: 4px solid var(--amber);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .player__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .player__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .player__toggle {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: var(--ink-0);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .player__toggle:hover {
+    background: var(--ink-1);
+  }
+  .player__toggle:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  /* CSS-drawn glyphs (no emoji codepoints) — both live in the button;
+     the `is-playing` class on the figure swaps which one shows. */
+  .player__icon--play {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 7px 0 7px 12px;
+    border-color: transparent transparent transparent var(--bg-0);
+    margin-left: 2px;
+  }
+  .player__icon--pause {
+    display: none;
+    width: 12px;
+    height: 14px;
+    border-left: 4px solid var(--bg-0);
+    border-right: 4px solid var(--bg-0);
+    box-sizing: border-box;
+  }
+  .player.is-playing .player__icon--play {
+    display: none;
+  }
+  .player.is-playing .player__icon--pause {
+    display: block;
+  }
+
+  .player__track {
+    flex: 1 1 auto;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    position: relative;
+  }
+  .player__track:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+  .player__fill {
+    width: 0%;
+    height: 100%;
+    background: var(--ink-1);
+    border-radius: var(--radius-pill);
+  }
+
+  .player__time {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .player__caption {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: var(--ink-3);
+  }
+
+  .player audio {
+    display: none;
+  }
+</style>
+
+<script>
+  function fmt(t: number): string {
+    if (!Number.isFinite(t)) return '0:00';
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function setup(root: HTMLElement) {
+    const audio = root.querySelector<HTMLAudioElement>('[data-audio]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-play]');
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    const fill = root.querySelector<HTMLElement>('[data-fill]');
+    const time = root.querySelector<HTMLElement>('[data-time]');
+    if (!audio || !toggle || !track || !fill || !time) return;
+
+    const render = () => {
+      const dur = audio.duration || 0;
+      const pct = dur ? (audio.currentTime / dur) * 100 : 0;
+      fill.style.width = `${pct}%`;
+      track.setAttribute('aria-valuenow', String(Math.round(pct)));
+      time.innerHTML = `${fmt(audio.currentTime)}&thinsp;/&thinsp;${fmt(dur)}`;
+    };
+
+    toggle.addEventListener('click', () => {
+      if (audio.paused) audio.play();
+      else audio.pause();
+    });
+    audio.addEventListener('play', () => {
+      root.classList.add('is-playing');
+      toggle.setAttribute('aria-label', 'Pause recording');
+    });
+    audio.addEventListener('pause', () => {
+      root.classList.remove('is-playing');
+      toggle.setAttribute('aria-label', 'Play recording');
+    });
+    audio.addEventListener('loadedmetadata', render);
+    audio.addEventListener('timeupdate', render);
+    audio.addEventListener('ended', render);
+
+    const seek = (clientX: number) => {
+      const rect = track.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      if (audio.duration) audio.currentTime = ratio * audio.duration;
+    };
+    track.addEventListener('click', (e) => seek(e.clientX));
+    track.addEventListener('keydown', (e) => {
+      if (!audio.duration) return;
+      if (e.key === 'ArrowRight') {
+        audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+        e.preventDefault();
+      } else if (e.key === 'ArrowLeft') {
+        audio.currentTime = Math.max(0, audio.currentTime - 5);
+        e.preventDefault();
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        if (audio.paused) audio.play();
+        else audio.pause();
+        e.preventDefault();
+      }
+    });
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-log-player]').forEach(setup);
+</script>

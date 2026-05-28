@@ -35,6 +35,11 @@ const blog = defineCollection({
     // Logger signed with — see loop-memory/04-dev-blog-persona.md.
     expedition: z.number().int().positive().optional(),
     loggerName: z.string().optional(),
+    // Optional path (under `public/`) to the Logger's spoken field log —
+    // the "gommage recording" produced when the post is commissioned (see
+    // loop-memory/15-tts.md). When present, the post page renders an inline
+    // audio player (LogPlayer.astro). Logger posts only; omit otherwise.
+    audio: z.string().optional(),
     tags: z.array(z.string()).default([]),
     // Scope is the structural dimension we filter `/blog` on: which surface(s)
     // the post is primarily about. `tags` stays for fine-grained content tags

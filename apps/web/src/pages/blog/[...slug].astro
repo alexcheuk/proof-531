@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Base from '~/layouts/Base.astro';
+import LogPlayer from '~/components/LogPlayer.astro';
 import { authorForPost, isLoggerPost } from '~/lib/posts';
 
 export async function getStaticPaths() {
@@ -89,6 +90,14 @@ const jsonLd = {
       <span class="entry__tldr-eyebrow">TL;DR</span>
       <p>{post.data.summary}</p>
     </aside>
+
+    {post.data.audio && (
+      <LogPlayer
+        src={post.data.audio}
+        loggerName={post.data.loggerName}
+        expedition={post.data.expedition}
+      />
+    )}
 
     {post.data.discordPrompts && post.data.discordPrompts.length > 0 && (
       <aside class="prompts">
