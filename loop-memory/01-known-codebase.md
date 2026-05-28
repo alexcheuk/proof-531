@@ -3,16 +3,16 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-28, expedition 29)
+# Codebase facts (updated 2026-05-28, expedition 31)
 
 ## Architecture
 
-- `src/design/` — only place hex/px literals live. Primitives in `primitives/`. Tokens in `tokens.ts`.
-- `src/domain/` — pure 5/3/1 math, no React/async/Drizzle. Fully unit-tested.
-- `src/data/` — Drizzle + expo-sqlite. Accessors + TanStack Query hooks (`useSession`, `usePrs`, etc.).
-- `src/features/` — composition. Each feature has `components/`, `hooks/`, sometimes `sections/`. Tests colocated.
+- `src/design/` — only place hex/px literals live. Primitives in `primitives/`. Tokens in `tokens.ts`. See `src/design/CLAUDE.md`.
+- `src/domain/` — pure 5/3/1 math, no React/async/Drizzle. Fully unit-tested. See `src/domain/CLAUDE.md`.
+- `src/data/` — Drizzle + expo-sqlite. Accessors + TanStack Query hooks (`useSession`, `usePrs`, etc.). See `src/data/CLAUDE.md` (added expedition 31).
+- `src/features/` — composition. Each feature has `components/`, `hooks/`, sometimes `sections/`. Tests colocated. See `src/features/CLAUDE.md` (added expedition 31).
 - `src/app/` — expo-router routes, thin shells. Do NOT put non-route .ts files here — the router warns "missing default export" for anything without a default component export.
-- `src/lib/` — pure helpers: haptics, time, plate logic, and now `routes.ts` (navigation helpers). Relocated from `src/app/routes.ts` in expedition 22.
+- `src/lib/` — pure helpers: haptics, time, plate logic, Android notification wrapper, and `routes.ts` (navigation helpers). Relocated from `src/app/routes.ts` in expedition 22.
 
 ## Log sheet hooks (expedition 11)
 
