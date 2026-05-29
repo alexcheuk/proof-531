@@ -4,6 +4,7 @@ import { useTheme } from '@/design/theme';
 import { cycleGoalEstimate } from '@/domain/progression';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { GoalPanelStepper } from './GoalPanelStepper';
 
 export type GoalPanelProps = {
   kind: LiftGoalKind;
@@ -129,7 +130,7 @@ export function GoalPanel({
           gap: 12,
         }}
       >
-        <StepperBtn
+        <GoalPanelStepper
           glyph="−"
           size="lg"
           onPress={dec}
@@ -170,7 +171,12 @@ export function GoalPanel({
             {unitGlyph}
           </RNText>
         </View>
-        <StepperBtn glyph="+" size="lg" onPress={inc} testID={`${testID ?? 'goal-panel'}-inc`} />
+        <GoalPanelStepper
+          glyph="+"
+          size="lg"
+          onPress={inc}
+          testID={`${testID ?? 'goal-panel'}-inc`}
+        />
       </View>
 
       <View
@@ -216,7 +222,7 @@ export function GoalPanel({
           <CapsLabel weight="bold" color="ink0" style={{ flex: 1 }}>
             Est. work days / week
           </CapsLabel>
-          <StepperBtn
+          <GoalPanelStepper
             glyph="−"
             size="sm"
             onPress={() => onDaysPerWeekStep(-1)}
@@ -236,7 +242,7 @@ export function GoalPanel({
           >
             {dpw !== null ? String(dpw) : '—'}
           </RNText>
-          <StepperBtn
+          <GoalPanelStepper
             glyph="+"
             size="sm"
             onPress={() => onDaysPerWeekStep(+1)}
@@ -246,62 +252,5 @@ export function GoalPanel({
         </View>
       ) : null}
     </View>
-  );
-}
-
-function StepperBtn({
-  glyph,
-  size,
-  onPress,
-  disabled,
-  testID,
-}: {
-  glyph: '−' | '+';
-  size: 'lg' | 'sm';
-  onPress: () => void;
-  disabled?: boolean;
-  testID?: string;
-}) {
-  const { colors, type } = useTheme();
-  const dim = size === 'lg' ? 44 : 28;
-  const fontSize = size === 'lg' ? 20 : 14;
-  const isDisabled = disabled ?? false;
-  const label =
-    glyph === '+'
-      ? size === 'lg'
-        ? 'Increase goal'
-        : 'Increase days per week'
-      : size === 'lg'
-        ? 'Decrease goal'
-        : 'Decrease days per week';
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={isDisabled}
-      testID={testID}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityState={isDisabled ? { disabled: true } : undefined}
-      style={{
-        width: dim,
-        height: dim,
-        borderWidth: 1,
-        borderColor: isDisabled ? colors.line : colors.ink0,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: colors.bg0,
-      }}
-    >
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize,
-          color: isDisabled ? colors.ink3 : colors.ink0,
-          lineHeight: fontSize,
-        }}
-      >
-        {glyph}
-      </RNText>
-    </Pressable>
   );
 }

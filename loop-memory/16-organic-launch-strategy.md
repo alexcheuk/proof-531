@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 65)
+**Last updated**: 2026-05-29 (Expedition 67)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,7 +122,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · expedition 59 · count updated expedition 65 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph reads "65+ iterations" (current). |
+| 1. GitHub README polish | done · expedition 59 · count updated expedition 67 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph reads "67+ iterations" (current). |
 | 1a. GitHub repo metadata | done · expedition 63 | Repo had NO description and NO topics — a blank profile. **Fixed this expedition via GitHub API.** Description now: "Free 5/3/1 Wendler + BBB strength training tracker for iOS and Android. Local-first, no account, no ads. Built by a Claude coding agent on a 30-minute cron loop." Homepage corrected from Vercel preview URL to https://531strength.com. Topics set: 531, 5-3-1, wendler, strength-training, powerlifting, workout-tracker, fitness-tracker, react-native, expo, local-first, offline-first, sqlite, typescript, fitness, gym, agentic-engineering (16 topics). Previously completely invisible to GitHub topic searches. |
 | 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · features updated expedition 56 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames. **Expedition 56:** Two new features added to Option A body: TM Test Week (7th Week Protocol) and lift rollback — both are practitioner-credibility signals that r/531Discussion values. Research note added explaining why each is relevant to the community. Personal details (how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary) remain the only human-only blocker. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
@@ -136,8 +136,51 @@ Use the right story for the right audience. Never mix them in a single post.
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | blocked · awaiting store listings | Expedition 60: Neither the Play Store nor the App Store listing is live yet (Android ships via GitHub Releases APK; iOS is in review). Implement when both stores have a live listing — use `expo-store-review` for the native in-app dialog, or `Linking.openURL` to the store page as a fallback. Show after session cycle >= 2, no modal, no repeated asks. |
 | 15. Hackernoon story — casual builder angle | pending · expedition 63 | Researched this expedition. Hackernoon publishes to 3.5M+ monthly tech readers, human editorial review, dofollow outbound links (SEO flows back to 531strength.com), audio + 12-language distribution. Ideal platform for the casual builder story at `docs/marketing/reddit-casual-builder-story-draft.md` — the "homelab, Google Home, expedition lore, absurdist delight" angle. Not a launch-day tactic. Sequence: Indie Hackers first (week 2-3 post-launch), then Hackernoon 1-2 weeks later with canonical URL pointing back to 531strength.com/blog. Draft already exists; Alex needs to fill in homelab/TTS/personal details (Q15 in questions-for-alex.md) before submitting. |
-| 13. YouTube Shorts series | brief improved · expedition 65 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added. **Expedition 62:** All references updated to "62+" throughout. **Expedition 64:** All references updated to "64+" throughout. **Expedition 65:** All references updated to "65+" throughout brief and shooting script. Version D hook now reads "65 times." "Note on the number" names Expedition 65 as current baseline. Film-now status unchanged: unblocked without iOS. |
+| 13. YouTube Shorts series | brief improved · expedition 67 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added. **Expedition 62:** All references updated to "62+" throughout. **Expedition 64:** All references updated to "64+" throughout. **Expedition 65:** All references updated to "65+" throughout. **Expedition 67:** All references updated to "67+" throughout brief and shooting script. Version D hook now reads "67 times." "Note on the number" names Expedition 67 as current baseline. Film-now status unchanged: unblocked without iOS. |
 | 14. Web tools as SEO entry point | in progress · expedition 62 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added — 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b — "How do I set my TM / is my TM too heavy?" — covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates — one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. **Expedition 62:** No new thread types added this loop. Playbook remains current. |
+
+## Expedition 67 — Research notes
+
+**Date:** 2026-05-29
+
+**Iteration count advancement — all marketing docs updated to 67+:**
+
+All "65+" count references across all marketing docs updated to "67+" (skipping 66 — no marketing-doc update ran that expedition). README was at "66+" from the expedition 66 commit; updated to "67+" this expedition. Files updated: `youtube-shorts-first-video-brief.md` (6 instances — platform context, Version C hook, Version D hook now reads "67 times", spoken line reference, "Note on the number" now names Expedition 67, minimum-viable-path step 1), `youtube-shorts-draft.md` (3 instances — spoken line, "Note" block now names Expedition 67, first comment/description), `reddit-vibecoding-draft.md` (5 instances — research context, Option A title, alternative title, body count, Option B body count), `reddit-reactnative-draft.md` (2 instances), `longform-how-i-built-this.md` (1 instance), `ai-experiment-story-outline.md` (2 instances — timing note now names Expedition 67, iteration reference), `producthunt-launch-guide.md` (2 instances), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (2 instances — now reads "67+ Logger posts exist as of Expedition 67"), `reddit-casual-builder-story-draft.md` (2 instances), `README.md` (1 instance — "How it's built" paragraph now reads "67+ iterations").
+
+**Anthropic's 2026 Agentic Coding Trends Report — new framing context:**
+
+Anthropic published a 2026 Agentic Coding Trends Report (available at resources.anthropic.com) that is directly relevant to the AI experiment story. Key findings and their relevance to the 531 Strength marketing angle:
+
+- **"The Delegation Gap":** Developers use AI in roughly 60% of their work but can only fully delegate 0-20% of tasks. The 531 Strength loop inverts this — the human role is 100% direction and context hygiene; the agent handles 100% of execution. That's not a gap to close, it's the architecture. The report names the problem that this project solved by design.
+- **Multi-agent teams as the 2026 trend:** The report identifies the shift from single-agent assistants to coordinated multi-agent teams (orchestrator → specialist subagents) as the defining 2026 change. The 531 Strength rn-designer → rn-frontend → rn-qa pipeline is this pattern, running since expedition 1 — before it was the "2026 trend."
+- **"~27% of AI-assisted work consists of tasks that wouldn't have been done otherwise."** The 531 Strength loop's backlog approach (always draining a task queue) is exactly this: the agent does work that wouldn't happen at human-only pacing. 67 expeditions of backlog drainage is a live example of this finding.
+- **Task horizons expanding from minutes to days.** The report cites a Rakuten case where an agent ran for 7 hours across a 12.5M-line codebase. The 531 Strength loop runs 48 times per day — continuous, not a single long run — but the cumulative effect is the same: sustained autonomous execution that compresses timelines.
+
+**Framing note for HN and r/vibecoding (comment prep, not post body):** If someone cites the Anthropic report in comments to suggest this project is "just following the trend," the honest counter is that the trend report describes what became mainstream in 2026 — this project was running these patterns since expedition 1 (early 2026 or late 2025). The report validates the architecture; it doesn't describe a path taken after reading it. Document this in `ai-experiment-story-outline.md` if a comment response is ever needed.
+
+**iOS App Store review times — no material change:**
+
+Runway live tracker (May 29, 2026): median "waiting for review" = 8h 38m; "in review" = 1h 52m. Identical to the Expedition 65 reading. No update needed to the operations guide. Tuesday/Wednesday remain the fastest submission days.
+
+**Competitive landscape — 5-3-1 Workout Logger still the dominant iOS app:**
+
+The top-ranked iOS result for "531" remains a separate "531 Strength" app (id1062989244, 4.9 stars, 11,000 ratings — the incumbent documented in Expedition 46). The "5/3/1 Workout Logger" (id1114435690) also surfaced with 4.8 stars and 5,000+ ratings — it has a plate calculator but no background rest timer, per its own feature list. The competitive gap documented in previous expeditions is unchanged: no free, BBB-complete, native-background-rest-timer app exists in the App Store. Five/Three/One (id1560266240), Zen Labs (id1361925217), and Wendler Log (Vandersoft) round out the field. None are free + BBB-complete + native rest timer.
+
+**Community search — no live threads found:**
+
+No indexed r/531Discussion or r/weightroom threads about app recommendations surfaced. Market gap remains uncontested. Strategy unchanged.
+
+**#needs-input — no new Alex replies:**
+
+No new replies as of Expedition 67. Remaining human-only blockers unchanged: App Store URL (post-iOS approval), Alex's personal 5/3/1 history for the r/531Discussion post.
+
+**Next actions:**
+1. iOS approval: run `docs/marketing/launch-day-operations-guide.md`.
+2. Alex: fill in personal 5/3/1 history in `docs/marketing/reddit-531discussion-draft.md` — the single human-only blocker for the most important launch-day post.
+3. Alex: film the YouTube Short. Unblocked without iOS. Version D hook now reads "67 times." See `docs/marketing/youtube-shorts-draft.md`.
+4. HN/r/vibecoding comment prep: Anthropic's 2026 Agentic Coding Trends Report (published 2026) validates the multi-agent harness and delegation-gap framing used in this project. If cited in comments, the response is: the report describes what became the 2026 trend; this project ran these patterns before the trend was named.
+
+---
 
 ## Expedition 65 — Research notes
 

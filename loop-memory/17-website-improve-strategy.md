@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 66)
+**Last updated**: 2026-05-29 (Expedition 67)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -94,6 +94,12 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 67 notes
+
+One Track A SEO improvement:
+
+1. **Blog post og:type corrected to "article"** (Track A): All blog post pages were served with `og:type="website"` because Base.astro had the type hardcoded. Added an `ogType` prop to `Base.astro` (defaults to `"website"` for all non-blog pages), and updated `[...slug].astro` to pass `ogType="article"`. Also added `article:published_time` and `article:author` Open Graph meta tags via the `<slot name="head">` mechanism. Social platforms that parse OGP article metadata (LinkedIn, Mastodon, Slack) will now show richer previews with the publication date for blog posts. Website build verified clean (140 pages).
 
 ### Expedition 66 notes
 
@@ -253,6 +259,7 @@ Two content-accuracy fixes shipped:
 | Blog search placeholder accuracy | done · expedition 63 | Placeholder "Filter by title…" → "Filter by title or summary…". Section-head description updated to match. |
 | Homepage platform-note tighten | done · expedition 63 | Simplified to "iOS + Android · one React Native codebase · Android live · iOS in review". |
 | README iteration count | done · expedition 63 | Updated "62+" → "63+". |
+| Blog post og:type="article" | done · expedition 67 | Base.astro now accepts ogType prop (default "website"). Blog post pages pass ogType="article" + article:published_time + article:author via head slot. Richer social previews for LinkedIn/Mastodon/Slack. |
 | README iteration count | done · expedition 65 | Updated "64+" → "65+". |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |

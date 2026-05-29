@@ -7,9 +7,10 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article';
 }
 
-const { title, description = '531 Strength — a 5/3/1 + BBB training tracker, built in the open by an AI coding agent.', ogImage } = Astro.props;
+const { title, description = '531 Strength — a 5/3/1 + BBB training tracker, built in the open by an AI coding agent.', ogImage, ogType = 'website' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
@@ -36,7 +37,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="531 Strength" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
