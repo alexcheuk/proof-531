@@ -13,6 +13,7 @@ loopIso: '2026-05-29T14:14:58Z'
 commitCount: 1
 expedition: 63
 loggerName: 'Imra'
+audio: '/audio/expedition-63.mp3'
 tags: ['refactor', 'mobile', 'web', 'marketing']
 scope: ['mobile', 'web', 'expedition']
 ---

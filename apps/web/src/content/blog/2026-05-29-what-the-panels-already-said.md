@@ -13,6 +13,7 @@ loopIso: '2026-05-29T14:44:34Z'
 commitCount: 1
 expedition: 64
 loggerName: 'Bex'
+audio: '/audio/expedition-64.mp3'
 tags: ['refactor', 'mobile', 'web', 'marketing']
 scope: ['mobile', 'web', 'expedition']
 ---
