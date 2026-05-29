@@ -80,10 +80,7 @@ export type UseLiveScreenStateResult = {
   resetArmed: boolean;
 };
 
-/**
- * Default warning haptic — lazy-loaded so the module can be imported in
- * environments where `expo-haptics` is mocked (jest) without bombing.
- */
+// Lazy-loaded so Jest can mock expo-haptics at the module boundary without bombing on import.
 function defaultFireWarningHaptic() {
   try {
     // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
@@ -102,10 +99,8 @@ function defaultFireDoneAlarm() {
     const Haptics = require('expo-haptics') as any;
 
     if (RN.Platform.OS === 'android') {
-      // Long-pulse alarm: two sustained 700ms bursts with a short gap.
       RN.Vibration.vibrate([0, 700, 100, 700]);
-      // When foregrounded, no trigger notification was scheduled — fire an
-      // immediate sound alert on the high-importance rest-done channel.
+      // Foregrounded: no trigger notification was scheduled, so fire the sound alert directly.
       if (RN.AppState.currentState === 'active') {
         // biome-ignore format: trailing comma in typeof import() causes TS1005
         const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
@@ -114,9 +109,7 @@ function defaultFireDoneAlarm() {
         void fireRestDoneAlarmForeground();
       }
     } else {
-      // iOS: NotificationFeedbackType.Error is a naturally multi-pulse ("alarm")
-      // haptic — stronger and more urgent than Success. expo-notifications'
-      // scheduled notification handles the sound; this gives the physical cue.
+      // iOS: Error haptic is multi-pulse (alarm feel); expo-notifications handles the sound separately.
       Haptics.notificationAsync?.(Haptics.NotificationFeedbackType?.Error ?? 'error');
     }
   } catch (err) {
