@@ -117,6 +117,10 @@ import Base from '~/layouts/Base.astro';
             <!-- filled by JS -->
           </div>
         </div>
+        <div class="share-row border-top">
+          <button class="copy-link-btn caps" id="copy-link-btn" type="button">Copy shareable link</button>
+          <span class="copy-confirm caps" id="copy-confirm" aria-live="polite"></span>
+        </div>
       </div>
 
       {/* CTA */}
@@ -314,6 +318,59 @@ import Base from '~/layouts/Base.astro';
     if (newV > 0) { state.goalTM = newV; render(); }
   });
 
+  // ── URL state ─────────────────────────────────────────────────────────
+  function pushUrl() {
+    var params = new URLSearchParams();
+    params.set('u', state.unit);
+    params.set('l', state.lift);
+    params.set('c', String(state.currentTM));
+    params.set('g', String(state.goalTM));
+    history.replaceState(null, '', '?' + params.toString());
+  }
+
+  var _render = render;
+  render = function () { _render(); pushUrl(); };
+
+  // ── copy link ─────────────────────────────────────────────────────────
+  var copyBtn = document.getElementById('copy-link-btn');
+  var copyConfirm = document.getElementById('copy-confirm');
+  var copyTimer = null;
+  copyBtn.addEventListener('click', function () {
+    navigator.clipboard.writeText(window.location.href).then(function () {
+      copyConfirm.textContent = 'Copied!';
+      if (copyTimer) clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () { copyConfirm.textContent = ''; }, 2000);
+    }).catch(function () { copyConfirm.textContent = 'Copy failed'; });
+  });
+
+  // ── init from URL ──────────────────────────────────────────────────────
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var u = params.get('u');
+    var l = params.get('l');
+    var c = params.get('c');
+    var g = params.get('g');
+    var validLifts = ['squat', 'deadlift', 'bench', 'press'];
+    if (u === 'lb' || u === 'kg') state.unit = u;
+    if (l && validLifts.indexOf(l) >= 0) state.lift = l;
+    var pc = parseFloat(c);
+    var pg = parseFloat(g);
+    if (!isNaN(pc) && pc > 0) state.currentTM = pc;
+    if (!isNaN(pg) && pg > 0) state.goalTM = pg;
+
+    // Sync toggle UI to loaded state
+    document.querySelectorAll('.seg-btn').forEach(function (btn) {
+      var active = btn.dataset.unit === state.unit;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+    document.querySelectorAll('.lift-btn').forEach(function (btn) {
+      var active = btn.dataset.lift === state.lift;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+  })();
+
   render();
 })();
 </script>
@@ -400,6 +457,38 @@ import Base from '~/layouts/Base.astro';
     margin-bottom: 48px;
   }
   .border-top { border-top: 1px solid var(--line); }
+
+  /* ── share row ── */
+  .share-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+  }
+  .copy-link-btn {
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-1);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .copy-link-btn:hover {
+    background: var(--bg-2);
+    color: var(--ink-0);
+  }
+  .copy-confirm {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
 
   /* ── segment row ── */
   .segment-row {

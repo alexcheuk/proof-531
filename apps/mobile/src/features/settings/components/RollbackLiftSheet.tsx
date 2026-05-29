@@ -3,12 +3,13 @@ import { countCompletedSessionsForLift } from '@/data/accessors/rollbackLift';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 
 export interface RollbackLiftSheetProps {
   open: boolean;
@@ -25,7 +26,7 @@ export function RollbackLiftSheet({
   onConfirm,
   pending = false,
 }: RollbackLiftSheetProps) {
-  const { colors, type, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const db = useDb();
   const [selectedLift, setSelectedLift] = useState<Lift | null>(enabledLifts[0] ?? null);
   const [sessionCount, setSessionCount] = useState(1);
@@ -57,22 +58,6 @@ export function RollbackLiftSheet({
 
   const isValid = selectedLift != null && maxSessions > 0;
 
-  const labelStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 11,
-    letterSpacing: 2.2,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-    marginBottom: spacing.xs,
-  };
-
-  const bodyTextStyle: TextStyle = {
-    fontFamily: type.sans,
-    fontSize: 13,
-    lineHeight: 19,
-    color: colors.ink2,
-  };
-
   const liftRowStyle: ViewStyle = {
     flexDirection: 'row',
     gap: spacing.xs,
@@ -85,12 +70,6 @@ export function RollbackLiftSheet({
     backgroundColor: active ? colors.ink0 : colors.bg0,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-  });
-
-  const makeLiftChipLabelStyle = (active: boolean): TextStyle => ({
-    fontFamily: `${type.sans}-Medium`,
-    fontSize: 13,
-    color: active ? colors.bg0 : colors.ink2,
   });
 
   return (
@@ -128,13 +107,21 @@ export function RollbackLiftSheet({
         testID: 'rollback-cancel',
       }}
     >
-      <RNText style={bodyTextStyle}>
+      <Text variant="sans" weight="regular" size={13} color="ink2" style={{ lineHeight: 19 }}>
         Deletes the last N sessions for a lift. Your cycle position and training max will revert to
         where they were before those sessions.
-      </RNText>
+      </Text>
 
       <View>
-        <RNText style={labelStyle}>Lift</RNText>
+        <Text
+          variant="mono"
+          weight="semibold"
+          size={11}
+          color="ink3"
+          style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: spacing.xs }}
+        >
+          Lift
+        </Text>
         <View style={liftRowStyle}>
           {enabledLifts.map((lift) => (
             <Pressable
@@ -145,9 +132,14 @@ export function RollbackLiftSheet({
               accessibilityState={{ checked: selectedLift === lift }}
               style={makeLiftChipStyle(selectedLift === lift)}
             >
-              <RNText style={makeLiftChipLabelStyle(selectedLift === lift)}>
+              <Text
+                variant="sans"
+                weight="medium"
+                size={13}
+                color={selectedLift === lift ? 'bg0' : 'ink2'}
+              >
                 {liftDisplayName(lift)}
-              </RNText>
+              </Text>
             </Pressable>
           ))}
         </View>
@@ -165,7 +157,9 @@ export function RollbackLiftSheet({
       />
 
       {selectedLift && maxSessions === 0 && (
-        <RNText style={bodyTextStyle}>No completed sessions for this lift.</RNText>
+        <Text variant="sans" weight="regular" size={13} color="ink2" style={{ lineHeight: 19 }}>
+          No completed sessions for this lift.
+        </Text>
       )}
     </SheetLayout>
   );

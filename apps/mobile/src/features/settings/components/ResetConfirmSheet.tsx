@@ -8,8 +8,7 @@
  */
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
-import { useTheme } from '@/design/theme';
-import { Text as RNText, type TextStyle } from 'react-native';
+import { Text } from '@/design/primitives/Text';
 
 export interface ResetConfirmSheetProps {
   open: boolean;
@@ -24,17 +23,6 @@ export function ResetConfirmSheet({
   onConfirm,
   pending = false,
 }: ResetConfirmSheetProps) {
-  const { colors, type } = useTheme();
-
-  const paragraphStyle: TextStyle = {
-    fontFamily: type.sans,
-    fontSize: 13,
-    lineHeight: 19,
-    color: colors.ink2,
-    marginTop: 10,
-    marginBottom: 10,
-  };
-
   return (
     <SheetLayout
       open={open}
@@ -63,10 +51,16 @@ export function ResetConfirmSheet({
         accessibilityLabel: 'Keep my data',
       }}
     >
-      <RNText style={paragraphStyle}>
+      <Text
+        variant="sans"
+        weight="regular"
+        size={13}
+        color="ink2"
+        style={{ lineHeight: 19, marginTop: 10, marginBottom: 10 }}
+      >
         This deletes all your training maxes, sessions, set logs, and PRs. You'll start over from
         Onboarding.
-      </RNText>
+      </Text>
     </SheetLayout>
   );
 }

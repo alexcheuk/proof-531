@@ -2,7 +2,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-const SITE = 'https://531.dev';
+const SITE = 'https://531strength.com';
 
 export default defineConfig({
   site: SITE,

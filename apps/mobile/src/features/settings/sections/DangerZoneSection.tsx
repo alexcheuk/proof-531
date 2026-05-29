@@ -1,7 +1,6 @@
 import { LedgerRow, LedgerRowLabel } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
-import { useTheme } from '@/design/theme';
-import { Text as RNText, type TextStyle } from 'react-native';
+import { Text } from '@/design/primitives/Text';
 
 export type DangerZoneSectionProps = {
   onReset: () => void;
@@ -9,12 +8,6 @@ export type DangerZoneSectionProps = {
 };
 
 export function DangerZoneSection({ onReset, onRollback }: DangerZoneSectionProps) {
-  const { colors, type } = useTheme();
-  const chevronStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 13,
-    color: colors.ink3,
-  };
   return (
     <LedgerSection title="Danger zone">
       <LedgerRow first onPress={onRollback} testID="rollback-lift-button">
@@ -22,14 +15,18 @@ export function DangerZoneSection({ onReset, onRollback }: DangerZoneSectionProp
           primary="Roll back a lift"
           secondary="delete last N sessions · revert cycle position"
         />
-        <RNText style={chevronStyle}>›</RNText>
+        <Text variant="mono" weight="semibold" size={13} color="ink3">
+          ›
+        </Text>
       </LedgerRow>
       <LedgerRow onPress={onReset} testID="reset-everything-button">
         <LedgerRowLabel
           primary="Reset everything"
           secondary="wipes all data · returns to onboarding"
         />
-        <RNText style={chevronStyle}>›</RNText>
+        <Text variant="mono" weight="semibold" size={13} color="ink3">
+          ›
+        </Text>
       </LedgerRow>
     </LedgerSection>
   );

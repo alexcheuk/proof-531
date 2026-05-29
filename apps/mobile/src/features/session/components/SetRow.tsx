@@ -17,7 +17,7 @@ import { displayUnit } from '@/domain/units';
  * into Live happens exclusively via the bottom `Start/Resume working set N`
  * CTA. The row visually marks state with `done` and `next` props.
  */
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 export type SetRowProps = {
   index: 1 | 2 | 3;
@@ -44,7 +44,7 @@ export function SetRow({
   next = false,
   testID,
 }: SetRowProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const containerStyle: ViewStyle = {
     paddingVertical: 14,
@@ -52,21 +52,6 @@ export function SetRow({
     borderTopColor: index === 1 ? colors.lineStrong : colors.line,
     ...(isLast ? { borderBottomWidth: 1, borderBottomColor: colors.lineStrong } : null),
     opacity: done ? 0.45 : 1,
-  };
-
-  const indexStyle: TextStyle = {
-    width: 20,
-    fontFamily: `${type.mono}-Bold`,
-    fontSize: 11,
-    letterSpacing: 0.44,
-    color: next ? colors.ink0 : colors.ink3,
-  };
-
-  const pctStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 11,
-    letterSpacing: 0.22,
-    color: colors.ink2,
   };
 
   // Compose an accessibility label so a screen reader announces the
@@ -91,7 +76,15 @@ export function SetRow({
   return (
     <View accessible accessibilityLabel={a11yLabel}>
       <Row {...(testID !== undefined ? { testID } : {})} style={containerStyle} gap="md">
-        <RNText style={indexStyle}>{done ? '✓' : String(index).padStart(2, '0')}</RNText>
+        <Text
+          variant="mono"
+          weight="bold"
+          size={11}
+          color={next ? 'ink0' : 'ink3'}
+          style={{ width: 20, letterSpacing: 0.44 }}
+        >
+          {done ? '✓' : String(index).padStart(2, '0')}
+        </Text>
         <Row style={{ flex: 1 }} gap="sm" wrap>
           <Row align="baseline" gap="xs">
             <Heading
@@ -121,7 +114,15 @@ export function SetRow({
 
         <Row gap="sm">
           {next ? <MonoBadge>UP NEXT</MonoBadge> : null}
-          <RNText style={pctStyle}>{Math.round(pct * 100)}%</RNText>
+          <Text
+            variant="mono"
+            weight="medium"
+            size={11}
+            color="ink2"
+            style={{ letterSpacing: 0.22 }}
+          >
+            {Math.round(pct * 100)}%
+          </Text>
         </Row>
       </Row>
     </View>

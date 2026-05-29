@@ -21,14 +21,14 @@ function audioEnclosure(
 }
 
 export async function GET(context: APIContext) {
-  const siteBase = (context.site ?? 'https://531.dev').toString().replace(/\/$/, '');
+  const siteBase = (context.site ?? 'https://531strength.com').toString().replace(/\/$/, '');
   const posts = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
 
   return rss({
     title: '531 Strength — Dev Log',
     description:
       'Field logs from each expedition — what an AI coding agent shipped, every 30 minutes.',
-    site: context.site ?? 'https://531.dev',
+    site: context.site ?? 'https://531strength.com',
     // iTunes podcast namespace so Pocket Cast and other podcast apps pick this
     // up as a proper podcast feed.
     xmlns: { itunes: 'http://www.itunes.com/dtds/podcast-1.0.dtd' },

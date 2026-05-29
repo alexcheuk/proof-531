@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Settings RNText consolidated to Text design primitive; site URL bug fixed; tools nav added
+
+**Tags:** `refactor`, `removal`, `bug`, `web`
+**Files:** `apps/mobile/src/features/settings/components/ResetConfirmSheet.tsx`, `apps/mobile/src/features/settings/components/RollbackLiftSheet.tsx`, `apps/mobile/src/features/settings/components/UnitMigrationSheet.tsx`, `apps/mobile/src/features/settings/sections/DangerZoneSection.tsx`, `apps/mobile/src/features/session/components/SetRow.tsx`, `apps/web/astro.config.mjs`, `apps/web/src/pages/rss.xml.ts`, `apps/web/src/components/TopBar.astro`
+
+Five settings-layer files that used raw `Text as RNText` from `react-native` with identical inline `TextStyle` const declarations were converted to the `Text` design primitive. This removed four repeated `paragraphStyle`/`bodyTextStyle` declarations, the `type` destructuring in two files, and eliminated `Text as RNText` and `type TextStyle` imports from four files. `DangerZoneSection` shed its entire `useTheme` dependency. `SetRow` eliminated its dual-import (both the design `Text` and raw `RNText`).
+
+**Why:** Three sheets (`ResetConfirmSheet`, `RollbackLiftSheet`, `UnitMigrationSheet`) all had the same `fontFamily: type.sans, fontSize: 13, lineHeight: 19, color: colors.ink2` pattern duplicated inline. The design system already had a `Text` primitive that expresses this consistently. Also fixed: `astro.config.mjs` had `https://531.dev` (placeholder domain) instead of `https://531strength.com`, silently poisoning every canonical URL, OG tag, and sitemap entry. Tools nav link was missing from the TopBar. Both tool pages gained shareable URL state + copy-link buttons.
+
+---
+
 ### 2026-05-29 — SeeFullRecordLink removed; replaced by SecondaryLink
 
 **Tags:** `removal`, `architecture`

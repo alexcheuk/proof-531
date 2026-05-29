@@ -7,10 +7,11 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import { TmPreviewRow } from './TmPreviewRow';
 
 export interface TmPreview {
@@ -39,19 +40,10 @@ export function UnitMigrationSheet({
   onConfirm,
   pending = false,
 }: UnitMigrationSheetProps) {
-  const { colors, type, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const targetGlyph = displayUnitGlyph(targetUnit);
   const currentGlyph = displayUnitGlyph(currentUnit);
   const step = targetUnit === 'lbs' ? '5 lb' : '2.5 kg';
-
-  const paragraphStyle: TextStyle = {
-    fontFamily: type.sans,
-    fontSize: 13,
-    lineHeight: 19,
-    color: colors.ink2,
-    marginTop: 10,
-    marginBottom: 4,
-  };
 
   const previewBox: ViewStyle = {
     borderTopWidth: 1,
@@ -90,10 +82,16 @@ export function UnitMigrationSheet({
         accessibilityLabel: 'Cancel storage unit migration',
       }}
     >
-      <RNText style={paragraphStyle}>
+      <Text
+        variant="sans"
+        weight="regular"
+        size={13}
+        color="ink2"
+        style={{ lineHeight: 19, marginTop: 10, marginBottom: 4 }}
+      >
         Your training maxes will be converted to {targetGlyph} and snapped to the nearest {step}.
         History rows keep their original unit.
-      </RNText>
+      </Text>
 
       {tmPreviews.length > 0 ? (
         <View style={previewBox}>
