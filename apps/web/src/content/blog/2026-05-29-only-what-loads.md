@@ -14,6 +14,7 @@ loopIso: '2026-05-29T09:55:18Z'
 commitCount: 4
 expedition: 55
 loggerName: 'Femi'
+audio: '/audio/expedition-55.mp3'
 tags: ['mobile', 'bug-postmortem', 'domain', 'web']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

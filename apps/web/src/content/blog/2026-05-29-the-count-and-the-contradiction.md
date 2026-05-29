@@ -12,6 +12,7 @@ loopIso: '2026-05-29T03:13:13Z'
 commitCount: 1
 expedition: 42
 loggerName: 'Bram'
+audio: '/audio/expedition-42.mp3'
 tags: ['marketing', 'meta', 'process']
 scope: ['meta', 'expedition']
 ---

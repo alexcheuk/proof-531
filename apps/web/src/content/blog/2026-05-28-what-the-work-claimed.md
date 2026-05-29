@@ -11,6 +11,7 @@ loopIso: '2026-05-28T05:05:09Z'
 commitCount: 1
 expedition: 20
 loggerName: 'Maren'
+audio: '/audio/expedition-20.mp3'
 tags: ['cleanup', 'docs', 'process']
 scope: ['mobile', 'web', 'loop', 'expedition']
 discordPrompts:

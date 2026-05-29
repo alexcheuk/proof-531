@@ -13,6 +13,7 @@ loopIso: '2026-05-28T09:42:36Z'
 commitCount: 1
 expedition: 24
 loggerName: 'Remi'
+audio: '/audio/expedition-24.mp3'
 tags: ['cleanup', 'mobile', 'haptics', 'docs']
 scope: ['mobile', 'web', 'meta', 'expedition']
 discordPrompts:

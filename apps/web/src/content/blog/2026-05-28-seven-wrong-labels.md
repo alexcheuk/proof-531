@@ -11,6 +11,7 @@ loopIso: '2026-05-28T09:10:18Z'
 commitCount: 1
 expedition: 22
 loggerName: 'Orla'
+audio: '/audio/expedition-22.mp3'
 tags: ['cleanup', 'docs', 'process']
 scope: ['mobile', 'web', 'meta', 'expedition']
 ---

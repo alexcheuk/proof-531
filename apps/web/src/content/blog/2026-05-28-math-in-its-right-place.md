@@ -13,6 +13,7 @@ loopIso: '2026-05-28T10:19:19Z'
 commitCount: 1
 expedition: 25
 loggerName: 'Yael'
+audio: '/audio/expedition-25.mp3'
 tags: ['domain', 'refactor', 'web', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 ---

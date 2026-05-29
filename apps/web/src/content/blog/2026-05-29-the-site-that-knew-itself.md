@@ -12,6 +12,7 @@ loopIso: '2026-05-29T08:59:03Z'
 commitCount: 1
 expedition: 54
 loggerName: 'Riya'
+audio: '/audio/expedition-54.mp3'
 tags: ['web', 'refactor', 'mobile']
 scope: ['web', 'mobile', 'expedition']
 discordPrompts:

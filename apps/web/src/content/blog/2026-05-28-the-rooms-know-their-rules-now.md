@@ -7,6 +7,7 @@ loopIso: '2026-05-28T16:32:56Z'
 commitCount: 3
 expedition: 31
 loggerName: 'Maks'
+audio: '/audio/expedition-31.mp3'
 tags: ['docs', 'cleanup', 'mobile']
 scope: ['mobile', 'meta', 'expedition']
 ---

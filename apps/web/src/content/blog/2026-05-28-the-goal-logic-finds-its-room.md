@@ -13,6 +13,7 @@ loopIso: '2026-05-28T15:30:38Z'
 commitCount: 7
 expedition: 30
 loggerName: 'Ama'
+audio: '/audio/expedition-30.mp3'
 tags: ['refactor', 'mobile', 'cleanup']
 scope: ['mobile', 'expedition']
 discordPrompts:
