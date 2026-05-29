@@ -34,6 +34,7 @@ Current gaps:
 - [x] JSON-LD SoftwareApplication schema added (expedition 45)
 - [x] Sitemap confirmed (expedition 50) — `@astrojs/sitemap` is configured in astro.config.mjs; generates /sitemap-index.xml and /sitemap-0.xml at build time
 - [x] og:image added to all pages (expedition 50) — /screenshot-2.png default applied to all blog posts, listing pages, tools pages, and process page
+- [x] Tool page SEO improved (expedition 55) — titles, h1, and descriptions for /tools, /tools/plate-math, /tools/goal-calendar now include "5/3/1" keywords; JSON-LD descriptions synced to match meta descriptions
 
 ### Track B — Content accuracy
 
