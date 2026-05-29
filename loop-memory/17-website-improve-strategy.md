@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 56)
+**Last updated**: 2026-05-29 (Expedition 60)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -51,6 +51,7 @@ Current gaps:
 - [x] The "How it works" section references Expo Go — confirmed NOT present (expedition 48 audit was correct; no Expo Go in any /pages file; item was stale)
 - [x] Process page step 03 diagram said `OTA` — corrected to `push` (expedition 53). OTA now triggers via CI on push, not by the loop agent directly.
 - [x] Workflow section "03 · Shipped" paragraph implied loop agent pushes OTA — corrected to describe CI triggering OTA on commit push (expedition 53)
+- [x] Process page Logger era dates corrected (expedition 60) — KPI note "Scribes" and expedition-note section both said "from 2026-05-27"; corrected to "2026-05-26" (matching the first expedition's pubDate). Expedition 54 claimed to fix these but did not — they persisted.
 
 ### Track C — UX / conversion
 
@@ -67,6 +68,7 @@ Current gaps:
 - [x] /dev-log route label corrected to /blog (expedition 56) — "how-built" card in index.astro showed `/dev-log` as the display route but linked to `/blog`; corrected to match the real URL
 - [x] Blog listing title and description improved (expedition 59) — title was "Dev log — 531"; now "Dev Log — 531 Strength" (includes app name for SEO); description now mentions 5/3/1 and specifies "one post per iteration"
 - [x] expedition-logs page path fixed (expedition 59) — eyebrow showed `/dev-log/expedition-logs` (wrong); corrected to `/blog/expedition-logs` (the real URL)
+- [x] Blog listing hero eyebrow `/dev-log` corrected to `/blog` (expedition 60) — the `<span class="seg">` eyebrow in `blog/index.astro` still showed `/dev-log`; the expedition 56 fix only corrected the homepage card, not the blog page's own eyebrow.
 - [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
 
 ### Track D — Technical health
@@ -86,6 +88,18 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 60 notes
+
+Three content-accuracy and UX fixes:
+
+1. **Blog listing eyebrow corrected from `/dev-log` to `/blog`** (Track C): The `<span class="seg">` eyebrow in `blog/index.astro` still displayed `/dev-log` — a path that doesn't exist. The expedition 56 fix only corrected the homepage "how-built" card; the blog page's own eyebrow was missed. Corrected to `/blog`.
+
+2. **Process page Logger era KPI date fixed** (Track B): The "Scribes" KPI note in `process.astro` said "from 2026-05-27"; corrected to "2026-05-26". Expedition 54 claimed to fix this but it persisted.
+
+3. **Process page expedition-note Logger era date fixed** (Track B): The `expedition-note` section heading also said "The Logger era · 2026-05-27 → ongoing"; corrected to "2026-05-26 → ongoing". Same root cause as item 2 — the expedition 54 fix was incomplete.
+
+Track E (colophon) verified: expedition-logs.astro colophon remains accurate to current lore — "They do not know about the blog" is correctly reflected as "The Loggers do not know about this page; they write for their successors." No changes needed.
 
 ### Expedition 59 notes
 
@@ -158,6 +172,9 @@ Two content-accuracy fixes shipped:
 | plate-math.astro global styles for injected plate list | done · expedition 56 | .pl-row and child classes were in scoped <style> but applied via innerHTML — Astro hash-scoping can't reach them. Moved to <style is:global>, removed duplicates from scoped block. Plate list breakdown now styled correctly. |
 | Homepage /blog route label fix | done · expedition 56 | "how-built" card showed `/dev-log` as route label but href was `/blog`. The path /dev-log doesn't exist. Label corrected to `/blog`. |
 | expedition-logs.astro colophon audit | done · expedition 56 | Verified against lore and persona docs — colophon is accurate to Logger era fiction. No changes needed. |
+| Blog listing eyebrow /dev-log → /blog | done · expedition 60 | blog/index.astro hero eyebrow <span class="seg"> still showed /dev-log; corrected to /blog. The expedition 56 fix only hit the homepage card. |
+| Process page Logger era dates (KPI + expedition-note) | done · expedition 60 | Two occurrences of "2026-05-27" in process.astro corrected to "2026-05-26". Expedition 54 claimed to fix but they persisted. |
+| expedition-logs.astro colophon re-verified | done · expedition 60 | Re-checked against 14-lore.md for Logger era accuracy. Text is correct — no changes needed. |
 
 ## Discord collaboration workflow
 

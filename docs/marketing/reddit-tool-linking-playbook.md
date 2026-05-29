@@ -63,6 +63,31 @@ This playbook gives Alex copy-paste responses for common thread types. Rule: ans
 
 ---
 
+## Thread type 2b: "How do I set my training max / is my TM too heavy?"
+
+**Trigger phrases** (search for these):
+- "training max too heavy"
+- "how do I set my TM"
+- "TM percentage"
+- "is my training max right"
+- "how do I know if my TM is too high"
+- "failed my AMRAP"
+- "should I reset my TM"
+
+**Response template:**
+
+> The standard starting point: set your TM at 85-90% of your actual 1RM, or use the "I can do 5 clean reps at this weight" test — if you can't comfortably hit 5 on your first working set, the TM is too high.
+>
+> For progression: if you're regularly failing your AMRAP sets or grinding on Week 3, you've probably jumped the TM too fast. Wendler's guidance is to drop it back to a weight you can AMRAP for 5+ on your working sets, and rebuild from there.
+>
+> If you want a calculator for this: 531strength.com/tools/goal-calendar lets you project forward from any starting TM — useful for seeing how many cycles it takes to reach a goal from a conservative starting point vs. an aggressive one.
+
+**Variants:**
+- If they mention the 7th Week Protocol specifically: "If you're doing TM Test Week, the calculator can also show you where you land after plugging in your tested max — just set your new TM to the result and project forward."
+- If they're asking about a rollback: "The 531 Strength app (free, Android now / iOS coming) has a one-tap TM rollback in settings if you want to track this automatically."
+
+---
+
 ## Thread type 3: "What app do you use to track 5/3/1?"
 
 **Trigger phrases** (search for these):
@@ -126,6 +151,14 @@ The full response templates above are for threads where you're the first or seco
 **For a thread where someone asks for a TM rollback or reset strategy:**
 
 > Side note: if you want to track rollbacks automatically, the 531 Strength app handles that in settings — Android is free now, iOS is coming. 531strength.com for info.
+
+**For a thread about goal weight / how long to reach a target lift:**
+
+> There's a free cycle-by-cycle projection for this: 531strength.com/tools/goal-calendar — enter current TM and goal, it shows exact weeks and cycle count.
+
+**For a thread where someone is debating which deload / 7th Week Protocol to run:**
+
+> If you go the TM Test Week route and want to project forward from your tested max: 531strength.com/tools/goal-calendar handles that — plug in your new TM after the test and it projects the next N cycles. The 531 Strength app (free, Android / iOS coming) also has 7th Week Protocol built in if you want the full session tracking.
 
 **Rule for short-form use:** Only use these when the thread question is already answered by others. Your comment is adding a resource, not answering the question. If you're the first to respond with useful information, use the full response templates above — they're more credible.
 

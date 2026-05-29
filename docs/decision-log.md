@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — AmrapLogSheet delta used Math.round instead of plate-snapped round
+
+**Tags:** `bug`, `domain`, `convention`
+**Files:** `apps/mobile/src/features/session/components/AmrapLogSheet/AmrapLogSheet.tsx`
+
+The `deltaFromBest` on the AMRAP projection chip was computed as `predictedE1RM - Math.round(existingBest)`. `predictedE1RM` was already plate-snapped via `round(predictedE1RMRaw, unit)`, but `existingBest` was only integer-rounded. This meant a delta of 3 lbs could show instead of 5 (nearest loadable increment). Changed to `round(existingBest, unit)` so both sides of the delta are on the same plate-increment grid.
+
+**Why:** Expedition 59 snapped all e1RM display values to plate increments. The session-complete screen already used `convert()` (snap mode) for `e1RMDelta`. The AMRAP sheet missed the memo — it predated the snapping convention and used `Math.round`.
+
 ### 2026-05-29 — Removed dead `target` prop chain from RestTimer
 
 **Tags:** `removal`, `convention`

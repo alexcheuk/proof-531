@@ -32,7 +32,7 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
   const cells: Array<{ label: string; value: string; suffix: string | null }> = [
     { label: 'Training max', value: String(tm), suffix: unitGlyph },
     {
-      label: 'Best e1rm',
+      label: 'Best e1RM',
       value: e1rmHas ? String(bestE1RM) : '—',
       suffix: e1rmHas ? unitGlyph : null,
     },

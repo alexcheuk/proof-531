@@ -70,7 +70,9 @@ export function AmrapLogSheet({
     !isPotentialPR && reps > 0 && existingBest > 0 && predictedE1RM === round(existingBest, unit);
   // Real-time delta against the user's current PR. Only surfaced when the
   // user has a prior PR (no baseline → no delta to brag about).
-  const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;
+  // Both sides are plate-snapped so the delta is always a loadable weight
+  // (matches how e1RMDelta is computed on the session-complete screen).
+  const deltaFromBest = existingBest > 0 ? predictedE1RM - round(existingBest, unit) : null;
   // Felt-quality affirmation as the user dials in reps well above the
   // prescribed minimum (the "+" of 5+/3+/1+). +3 over feels like a big set.
   const showBigSetCaption = reps >= prescribedReps + 3;

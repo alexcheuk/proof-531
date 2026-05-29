@@ -205,7 +205,7 @@ describe('ProgressScreen', () => {
     expect(screen.getByText('Progress.')).toBeTruthy();
     expect(screen.getByText('On the back squat')).toBeTruthy();
     expect(screen.getByText('Training max')).toBeTruthy();
-    expect(screen.getByText('Best e1rm')).toBeTruthy();
+    expect(screen.getByText('Best e1RM')).toBeTruthy();
     expect(screen.getByText('D1')).toBeTruthy();
     expect(screen.getByText('D2')).toBeTruthy();
     expect(screen.getByText('D3')).toBeTruthy();

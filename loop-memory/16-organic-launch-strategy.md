@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 59)
+**Last updated**: 2026-05-29 (Expedition 60)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -133,9 +133,55 @@ Use the right story for the right audience. Never mix them in a single post.
 | 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 · comment prep added expedition 43 · new signal expedition 44 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** Added specific data points for comment prep — 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. **Expedition 44 signal:** Added Apple App Store review-queue context — iOS submissions up 89% YoY due to AI app flood, Apple increasing scrutiny. This is a live, current framing hook: 531 Strength is the counterexample in the queue. If "Apple is blocking vibe-coded apps" comes up in comments, the answer is now ready and documented. Iteration counts updated to 44+ throughout draft. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
-| 12. In-app review prompt | pending · add to queue | |
-| 13. YouTube Shorts series | brief improved · expedition 56 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 54:** Iteration count updated to 54+. **Expedition 56:** First-video brief improved — hook alternatives added (3 versions with guidance on which to use), "Note on the number" added to the expedition-count line (check 531strength.com/blog for current count before filming), "What Alex needs to do" rewritten as a minimal-viable-path checklist with blocker status, pointer to shooting script added explicitly. Shooting script updated: spoken line "55 expeditions" → "56 expeditions" with same "check current count" note, first comment updated to "56+". Film-now status: face-cam + screen recording + Discord recording are all unblocked without iOS. CTA text overlay uses "Android available now — iOS coming soon" until App Store is live. |
-| 14. Web tools as SEO entry point | in progress · expedition 56 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created at `docs/marketing/reddit-tool-linking-playbook.md` with three full response templates. **Expedition 56:** Short-form comment templates added to playbook — 5 one-to-two sentence drop-ins for threads where the question is already answered (plate math, timeline projection, rollback). These are lower-friction than the full templates and better for high-volume threads. Playbook now has two tiers: full responses (first commenter in thread) and short-form (resource add when others have already answered). |
+| 12. In-app review prompt | blocked · awaiting store listings | Expedition 60: Neither the Play Store nor the App Store listing is live yet (Android ships via GitHub Releases APK; iOS is in review). Implement when both stores have a live listing — use `expo-store-review` for the native in-app dialog, or `Linking.openURL` to the store page as a fallback. Show after session cycle >= 2, no modal, no repeated asks. |
+| 13. YouTube Shorts series | brief improved · expedition 60 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 54:** Iteration count updated to 54+. **Expedition 56:** First-video brief improved — hook alternatives added (3 versions with guidance), "Note on the number" added, "What Alex needs to do" rewritten as minimal-viable-path checklist. Shooting script updated to "56 expeditions." **Expedition 60:** Brief and script updated to "60+ expeditions." Version D hook added to brief ("60 times. My AI agent has shipped code to my phone 60 times.") — now four hook options total. "Note on the number" in both brief and script now names Expedition 60 as the current baseline. First comment in shooting script updated to "60+ iterations." Film-now status unchanged: face-cam + screen recording + Discord recording are all unblocked without iOS. |
+| 14. Web tools as SEO entry point | in progress · expedition 60 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added — 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b — "How do I set my TM / is my TM too heavy?" — covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates — one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. |
+
+## Expedition 60 — Research notes
+
+**Date:** 2026-05-29
+
+**YouTube Shorts brief and shooting script — expedition count advanced to 60+:**
+
+Both `docs/marketing/youtube-shorts-first-video-brief.md` and `docs/marketing/youtube-shorts-draft.md` updated from "56 expeditions" to "60+ expeditions" throughout:
+
+- Brief: Platform context blurb updated ("60+ expeditions"), spoken line in 0:28–0:38 beat updated, Version C hook alternative updated, "Note on the number" updated to name Expedition 60 as the current floor.
+- Shooting script: Segment 4 spoken line updated, "Note" block updated to name Expedition 60, first pinned comment updated from "56+" to "60+".
+
+**YouTube Shorts brief — new Version D hook added:**
+
+The expedition count being 60+ is now a genuinely striking number. A fourth hook alternative was added to the brief:
+
+> Version D (number-first hook): "60 times. My AI agent has shipped code to my phone 60 times. Here's what it built."
+
+This hook leads with the scale rather than the backstory. It works for viewers who are already interested in "things that run autonomously" — which is a larger slice of 2026 YouTube than in 2024. Version A (the personal-problem hook) remains the primary recommendation for cold discovery audiences, but Version D is now a documented option if Alex finds the number-lead more natural on camera or wants a variant for a second Short.
+
+The brief now has four hook options with clear usage guidance: A for cold audiences (lead with the problem), D for audiences who respond to scale, B and C as fallbacks.
+
+**Reddit tool-linking playbook — two new additions:**
+
+1. **Thread type 2b added** — "How do I set my training max / is my TM too heavy?" This is a distinct thread category from timeline projection (type 2). TM reset / "my TM is too aggressive" threads are frequent in r/531Discussion and don't always overlap with goal-timeline questions. The new template: explains the 85-90% starting rule and the AMRAP test heuristic first, then offers the goal-calendar as a projection tool. Variants cover the 7th Week Protocol and app rollback.
+
+2. **Two new short-form templates added:**
+   - Goal weight / projection: one-sentence pointer to the goal-calendar for threads where someone wants the math but the question is already partially answered.
+   - 7th Week Protocol / TM Test Week: covers the specific case where someone is weighing deload options and mentions TM testing — the template bridges the web tool (project from your new tested TM) and the app (7th Week Protocol built in, tracks sessions automatically).
+
+The playbook now covers five full-template thread types and seven short-form drop-in templates.
+
+**r/531Discussion draft — confirmed current:**
+
+No expedition count references appear in the r/531Discussion draft body, which is correct — this is the lifting-audience post and the expedition/AI angle never appears there. `last_reviewed` metadata updated to Expedition 60. The draft remains post-ready pending: App Store URL, GitHub Releases URL, and Alex's personal 5/3/1 history (how long on program, whether he used Strong/Boostcamp, which lift is primary).
+
+**No new live community threads found:**
+
+No indexed r/531Discussion or r/weightroom threads for plate math, TM questions, or app recommendations. Strategy unchanged: use the playbook when live threads appear, hold the main launch post until iOS is live.
+
+**Next actions:**
+1. iOS approval: run `docs/marketing/launch-day-operations-guide.md`.
+2. Alex: film the YouTube Short — all segments unblocked without iOS. Four hook options now available in the brief; Version A or D both work. See `docs/marketing/youtube-shorts-draft.md`.
+3. Alex: monitor r/531Discussion weekly for TM reset threads, plate math threads, and timeline questions — the playbook now covers all three. See `docs/marketing/reddit-tool-linking-playbook.md`.
+
+---
 
 ## Expedition 59 — Research notes
 

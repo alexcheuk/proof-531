@@ -5,6 +5,7 @@ status: draft
 ready_to_post: false
 trigger: iOS live on App Store
 drafted: 2026-05-28
+last_reviewed: 2026-05-29 (Expedition 60)
 ---
 
 # r/531Discussion — Launch Post Draft
