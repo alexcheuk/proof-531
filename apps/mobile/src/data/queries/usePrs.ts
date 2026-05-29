@@ -1,8 +1,3 @@
-/**
- * `usePrs()` — TanStack Query hook returning all PR rows (one per lift, or none).
- *
- * Mirrors the PWA's `usePRs` Dexie hook.
- */
 import { useQuery } from '@tanstack/react-query';
 import { useDb } from '../DbProvider';
 import { getPRs } from '../accessors/prs';

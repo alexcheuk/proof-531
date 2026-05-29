@@ -2,15 +2,7 @@ import { useSessions } from '@/data/queries/useSessions';
 import type { Lift } from '@/domain/types';
 import { useMemo } from 'react';
 
-/**
- * Returns the timestamp of the most recent COMPLETED session for `lift`,
- * or `null` when the lift has never been finished. Reuses the existing
- * `useSessions` cache (no extra query).
- *
- * Surfaces the wall-clock `startedAt` (not `endedAt`) so the caller can
- * pass it to `formatRelativeTime` and the displayed cadence matches the
- * user's intuition about when the lift was "done".
- */
+// Returns startedAt (not endedAt) — user's intuition of "when I did this" is when they started, not when they finished.
 export function useLastCompletedSessionForLift(lift: Lift): {
   startedAt: number | null;
   isLoading: boolean;

@@ -1,16 +1,5 @@
-/**
- * Per-lift progress accessors.
- *
- * Each lift owns its own (cycle, week) — completing a bench session
- * advances bench's progress without moving squat. Backed by the
- * `lift_progress` table; one row per lift.
- *
- * Rows are seeded lazily: the first call to `getLiftProgress(lift)` (or
- * `getAllLiftProgress`) inserts a row with the legacy global
- * `settings.currentCycle`/`settings.week` as initial values, so users
- * upgrading from the pre-split build land on the same cycle/day they
- * left off. After that the row is the source of truth.
- */
+// Rows are seeded lazily from legacy settings.currentCycle/week so users upgrading from the pre-split build
+// land on the same cycle/day they left off. After the first call the row is the source of truth.
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { tmIncrement } from '../../domain/increments';
@@ -54,10 +43,6 @@ async function selectRow(db: AnyDb, lift: Lift): Promise<LiftProgressRow | null>
   return rows[0] ?? null;
 }
 
-/**
- * Get a lift's progress, seeding from the legacy global `settings` if no
- * row exists yet. Always returns a row.
- */
 export async function getLiftProgress(db: AnyDb, lift: Lift): Promise<LiftProgress> {
   const existing = await selectRow(db, lift);
   if (existing) return fromRow(existing);
@@ -72,11 +57,6 @@ export async function getLiftProgress(db: AnyDb, lift: Lift): Promise<LiftProgre
   return fromRow(row);
 }
 
-/**
- * Return progress for every lift, seeding any missing rows from the legacy
- * global `settings`. Order matches the input `lifts` array; pass
- * `settings.enabledLifts` to mirror the user's training split.
- */
 export async function getAllLiftProgress(
   db: AnyDb,
   lifts: readonly Lift[],
@@ -88,16 +68,6 @@ export async function getAllLiftProgress(
   return out;
 }
 
-/**
- * Advance a single lift's progress by one session.
- *
- *   - `week < 4` → bump week.
- *   - `week === 4` (deload just finished) → wrap to next cycle, week 1,
- *     and bump THIS lift's TM (only) per 5/3/1 progression rules.
- *
- * Bumps to other lifts' TMs never happen — that's the whole point of the
- * per-lift split.
- */
 export async function advanceLift(db: AnyDb, lift: Lift): Promise<LiftProgress> {
   const current = await getLiftProgress(db, lift);
   const nextWeekRaw = current.week + 1;

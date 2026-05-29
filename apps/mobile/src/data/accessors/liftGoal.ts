@@ -1,18 +1,4 @@
-/**
- * Per-lift goal accessors.
- *
- * The `lift_goals` table holds at most one row per lift (lift is PK). Zero
- * rows = "no goal set" — the Progress screen's empty/unset state. Stored
- * in storage units to match `trainingMaxes`; the render boundary converts
- * to the user's display unit at read time.
- *
- * A goal carries a `kind`:
- *   - `'tm'`  — target training max
- *   - `'1rm'` — target estimated one-rep max (TM ≈ 0.9 × 1RM)
- *
- * `setLiftGoal` is an upsert (ON CONFLICT lift). `clearLiftGoal` deletes
- * the row entirely so the next read returns `null`.
- */
+// Zero rows per lift = no goal set. Stored in storage units; render boundary converts to display units.
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift, Unit } from '../../domain/types';
@@ -24,7 +10,6 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
 export type LiftGoalKind = 'tm' | '1rm';
 export type LiftGoal = typeof liftGoals.$inferSelect;
 
-/** Read a single lift's goal, or `null` if none has been set. */
 export async function getLiftGoal(db: AnyDb, lift: Lift): Promise<LiftGoal | null> {
   const rows = (await Promise.resolve(
     db.select().from(liftGoals).where(eq(liftGoals.lift, lift)),
@@ -32,16 +17,10 @@ export async function getLiftGoal(db: AnyDb, lift: Lift): Promise<LiftGoal | nul
   return rows[0] ?? null;
 }
 
-/** Read every persisted lift goal (one row per lift, or none). */
 export async function getLiftGoals(db: AnyDb): Promise<LiftGoal[]> {
   return (await Promise.resolve(db.select().from(liftGoals))) as LiftGoal[];
 }
 
-/**
- * Upsert a goal for the given lift. The PK is `lift`, so this either
- * inserts a fresh row or updates the existing target via
- * `ON CONFLICT(lift) DO UPDATE`. Returns the persisted row.
- */
 export async function setLiftGoal(
   db: AnyDb,
   lift: Lift,
@@ -66,19 +45,10 @@ export async function setLiftGoal(
   return result;
 }
 
-/** Remove the goal for a lift (idempotent — no-op if no row exists). */
 export async function clearLiftGoal(db: AnyDb, lift: Lift): Promise<void> {
   await Promise.resolve(db.delete(liftGoals).where(eq(liftGoals.lift, lift)));
 }
 
-/**
- * Update the `days_per_week` field on an existing lift_goals row. No-op
- * when no goal row exists for the lift — the Goal Panel only surfaces the
- * days/week control once a goal is set, so this shouldn't happen in practice,
- * but the UPDATE-WHERE shape keeps it safe either way.
- *
- * Pass `null` to clear the value (return the estimate to a days-only view).
- */
 export async function setLiftGoalDaysPerWeek(
   db: AnyDb,
   lift: Lift,
