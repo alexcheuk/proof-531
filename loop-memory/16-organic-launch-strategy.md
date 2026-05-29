@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 49)
+**Last updated**: 2026-05-29 (Expedition 50)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -135,7 +135,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
 | 13. YouTube Shorts series | first-video brief drafted · expedition 49 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed — that detail is usable in video copy. First-video brief written: face-cam hook + screen demo middle + face-cam close, 43 seconds, origin story angle. See `docs/marketing/youtube-shorts-first-video-brief.md`. Five-video content plan (Expedition 47) revised for personal-channel context. Still needs: screen recording of live session (Q14), App Store URL for CTA. |
-| 14. Web tools as SEO entry point | confirmed · expedition 49 | Alex confirmed tools at /tools/ are the asset, same visual style as home page. No new product work needed — tools are already live. Tactic: link in Reddit/forum discussions when plate math questions come up. SEO angle: /tools/plate-math and /tools/goal-calendar as standalone entry points for search traffic. |
+| 14. Web tools as SEO entry point | in progress · expedition 50 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added to both tool pages with keyword-rich text targeting "531 plate math calculator", "5/3/1 training max calculator", "how long to reach 5/3/1 goal" and similar search queries. FAQ matches the site's visual language. Structured data (WebApplication schema) already present. Next step: link in Reddit/forum discussions when relevant questions appear — the pages can now rank on their own content merit. |
 
 ## Launch-day operations guide
 
@@ -197,6 +197,35 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
 
+## Expedition 50 — Research notes (milestone)
+
+**Date:** 2026-05-29
+
+**Expedition 50 is a milestone.** The strategy is now in a holding pattern waiting on iOS App Store approval. All 9 launch-day tactics have polished drafts. The main work this expedition is keeping the assets current and advancing tactic 14 (web tools SEO).
+
+**Iteration count update:** All "47+" references across marketing drafts updated to "50+". Files updated: `reddit-vibecoding-draft.md` (5 instances), `reddit-casual-builder-story-draft.md` (3 instances), `reddit-reactnative-draft.md` (2 instances), `producthunt-launch-guide.md` (2 instances), `ai-experiment-story-outline.md` (1 instance), `longform-how-i-built-this.md` (1 instance), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (1 instance). Also fixed the stale "46 iterations" in the vibecoding Option B title.
+
+**Tactic 14 advanced — FAQ sections added to both tool pages:**
+
+The plate-math and goal-calendar pages at 531strength.com/tools/ already had:
+- Strong functional calculators
+- Structured data (WebApplication JSON-LD schema with feature lists)
+- Shareable URL state
+
+What they were missing: text content that signals to search engines what queries these pages answer. A thin page with no explanatory prose doesn't rank for long-tail queries no matter how good the schema is.
+
+Added to both pages: a 4-item FAQ grid ("How to use this calculator" / "About this calculator") with prose that naturally contains the target terms:
+- `plate-math.astro`: "What is plate math?", "How does 5/3/1 plate math work?", "Standard vs. Women's bar", "Shareable links"
+- `goal-calendar.astro`: "What is a training max?", "How long does it take to reach a goal on 5/3/1?", "Squat and deadlift vs. bench and press", "Shareable links"
+
+Target search queries now covered in on-page text: "531 plate math calculator", "5/3/1 plate math", "5/3/1 training max calculator", "how long to reach goal 5/3/1", "5/3/1 progression calculator". These are low-competition long-tail queries that fit exactly what these tools do. The FAQ sections match the site's visual language (mono caps headings, same grid structure) and don't require any new npm packages.
+
+**Linking strategy unchanged:** The next step for tactic 14 is organic — drop these URLs in Reddit/forum discussions when plate math or progression timeline questions come up. The pages can now also rank on their own merit without a link. No additional product work needed.
+
+**Status check:** iOS is still pending. All launch-day drafts are polished. The loop is in maintain-and-advance mode until iOS approval arrives.
+
+---
+
 ## Expedition 49 — Research notes
 
 **Date:** 2026-05-28
@@ -242,7 +271,7 @@ No edits needed to the /process page. The copy was written before Alex confirmed
 **Tactic 14 — web tools organic play:**
 The /tools/ pages are already live: /tools/plate-math and /tools/goal-calendar. These are not just utilities — they're a separate organic entry point for people who don't know the app exists. A person searching "531 plate math calculator" lands on the tool, uses it, and then optionally discovers the app. This compounds over time without ongoing effort (once it ranks). The linking strategy is: drop these URLs in Reddit/forum discussions whenever the question is about 5/3/1 math, not about app recommendations. Different thread, different audience segment, different conversion path.
 
-**Iteration counts:** All "47+" references in marketing drafts should be updated to "49+" in the next iteration that touches those files. Not done this loop to avoid unnecessary churn — done when the files are next edited for other reasons.
+**Iteration counts:** All "47+" and "49+" references in marketing drafts updated to "50+" in Expedition 50 across all 7 affected files.
 
 ## Expedition 47 — Research notes
 
@@ -269,7 +298,7 @@ Target: lifters who search YouTube for 5/3/1 content. Zero developer angle.
 **Video 2: "My AI agent texts me when it ships code" (builder story track)**
 Hook (0-3s): "My homelab just told me my gym app fixed a bug." — screen shows a Google Home or phone notification.
 Middle (3-35s): Explain the loop in 25 seconds: cron fires, agent works, Discord summary → TTS to Google Home. Show the Discord message. Show the app change.
-Reveal (35-47s): "I haven't written a line of this code. 47+ iterations. The app is free." Link to /process page.
+Reveal (35-47s): "I haven't written a line of this code. 50+ iterations. The app is free." Link to /process page.
 Target: developers who would find this delightful. High shareability in developer communities.
 
 **Video 3: "The expedition field log" (builder story track)**

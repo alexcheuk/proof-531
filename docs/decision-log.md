@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — og:image defaulted to /screenshot-2.png across all website pages
+
+**Tags:** `web`, `seo`
+**Files:** `apps/web/src/pages/blog/[...slug].astro`, `apps/web/src/pages/blog/index.astro`, `apps/web/src/pages/blog/expedition-logs.astro`, `apps/web/src/pages/blog/tag/[scope].astro`, `apps/web/src/pages/process.astro`, `apps/web/src/pages/tools/*.astro`
+
+Every page that uses `Base.astro` now passes `ogImage="/screenshot-2.png"` as the default social preview. Previously only the homepage had an og:image; sharing any blog post, tool page, or the process page produced a blank preview card on Discord, Reddit, and Twitter/X.
+
+**Why:** social shares from any page now display the home-screen screenshot, giving the site a consistent identity on every platform where someone might drop a link.
+
+**Trade-off / what we didn't do:** per-page images (e.g. a blog post image matching the post's content) would be stronger, but requires generating or curating per-post assets. The site-wide default is a pragmatic baseline that ships today.
+
+### 2026-05-29 — Free tools section added to homepage
+
+**Tags:** `web`, `seo`, `conversion`
+**Files:** `apps/web/src/pages/index.astro`, `apps/web/src/styles/home.css`
+
+A new "05 · Free tools" section on the homepage links directly to `/tools/plate-math` and `/tools/goal-calendar`. The tools existed but were only reachable from the top nav. FAQ content added to both tool pages for long-tail keyword coverage.
+
+**Why:** the tools are the site's best hook for organic search — a calculator that ranks for "531 plate math calculator" drives traffic from people who will never hear about the app on Reddit. Burying them behind a nav click undersold them.
+
 ### 2026-05-28 — useHistoryBackHandler removed; merged into useHardwareBack
 
 **Tags:** `removal`, `refactor`

@@ -5,6 +5,7 @@ import Base from '~/layouts/Base.astro';
 <Base
   title="Plate Calculator — 531 Strength"
   description="Enter any weight and see exactly which plates to load on the barbell. Free plate math calculator for 5/3/1 and any strength program."
+  ogImage="/screenshot-2.png"
 >
   <script slot="head" is:inline type="application/ld+json">
   {
@@ -128,6 +129,29 @@ import Base from '~/layouts/Base.astro';
         <div class="cta-right">
           <a href="https://github.com/alexcheuk/proof-531/releases" rel="noopener" class="pill ghost">Download for Android →</a>
           <span class="pill ghost disabled" aria-label="iOS App Store coming soon">iOS · Soon</span>
+        </div>
+      </div>
+
+      {/* FAQ / context section */}
+      <div class="faq-section">
+        <h2 class="faq-heading">How to use this calculator</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>What is plate math?</h3>
+            <p>Plate math is the process of figuring out which weight plates to load on a barbell to hit a target weight. You subtract the bar weight (usually 45 lb / 20 kg), divide the remainder in half to get the per-side load, then match that against your available plates — starting with the heaviest and working down. This calculator does it automatically.</p>
+          </div>
+          <div class="faq-item">
+            <h3>How does 5/3/1 plate math work?</h3>
+            <p>In Jim Wendler's 5/3/1 program, your working weights are percentages of your training max. If your squat training max is 300 lb, your Week 1 working set at 65% is 195 lb. Enter 195 in this calculator: subtract the 45 lb bar, split 150 lb across two sides — 75 lb per side, loaded as 45+25+5. The calculator handles this for every set instantly.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Standard vs. Women's bar</h3>
+            <p>A standard Olympic barbell weighs 45 lb (20 kg). A women's Olympic bar weighs 35 lb (15 kg). Select the correct bar type before calculating — the starting weight changes the plate breakdown. Most commercial squat racks and bench stations use the standard 45 lb bar.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Shareable links</h3>
+            <p>Every calculator state has a unique URL — weight, unit, and bar type are encoded in the query string. Use "Copy shareable link" to grab the current configuration and send it to a training partner or save it for a specific working weight you check often.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -940,5 +964,45 @@ import Base from '~/layouts/Base.astro';
     .direct-row { padding: 14px 16px; }
     .input-row { padding: 16px; }
     .result-section { padding: 16px; }
+  }
+
+  /* ── FAQ section ── */
+  .faq-section {
+    margin-top: 64px;
+    border-top: 1px solid var(--line);
+    padding-top: 48px;
+  }
+  .faq-heading {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+    margin: 0 0 32px;
+  }
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 48px;
+  }
+  .faq-item h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    margin: 0 0 10px;
+  }
+  .faq-item p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-1);
+    margin: 0;
+  }
+  @media (max-width: 640px) {
+    .faq-grid { grid-template-columns: 1fr; gap: 24px; }
+    .faq-section { margin-top: 48px; padding-top: 36px; }
   }
 </style>

@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-28 (Expedition 48)
+**Last updated**: 2026-05-29 (Expedition 50)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -32,8 +32,8 @@ internal linking, sitemap accuracy, og:image for social sharing.
 Current gaps:
 - [x] og:image added to homepage (expedition 48) — uses /screenshot-2.png (real device screenshot)
 - [x] JSON-LD SoftwareApplication schema added (expedition 45)
-- [ ] No sitemap.xml verified (check if Astro generates one)
-- [ ] Blog posts lack og:image (every share looks like a blank card)
+- [x] Sitemap confirmed (expedition 50) — `@astrojs/sitemap` is configured in astro.config.mjs; generates /sitemap-index.xml and /sitemap-0.xml at build time
+- [x] og:image added to all pages (expedition 50) — /screenshot-2.png default applied to all blog posts, listing pages, tools pages, and process page
 
 ### Track B — Content accuracy
 
@@ -58,7 +58,8 @@ Make visitors understand what this is and want to download it:
 
 Current gaps:
 - [x] Real device screenshots added to homepage (expedition 48) — new "Real device" section with 2 screenshots
-- [ ] Process page "44+" reference — now auto-derived from blog count
+- [x] Process page counts are auto-derived (confirmed expedition 50) — uses getCollection dynamically
+- [x] Tools linked from homepage body (expedition 50) — new "05 · Free tools" section with plate-math and goal-calendar cards
 - [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
 
 ### Track D — Technical health
@@ -67,8 +68,7 @@ Keep the codebase clean and fast:
 - [x] index.astro CSS extracted to `src/styles/home.css` (expedition 46)
 - [x] process.astro CSS extracted to `src/styles/process.css` (expedition 46)
 - [x] robots.txt is correct — `Allow: /`, sitemap URL updated to `531.dev` (robots.txt was correct; astro.config.mjs domain was the bug, fixed expedition 46)
-- [ ] Audit for any broken internal links
-- [ ] Audit for any broken internal links
+- [x] Internal links audited (expedition 50) — all footer/nav anchor hrefs (/#program, /#plate, /#screens, /#get) match live IDs in index.astro; /tools, /blog, /process, /privacy, /support, /rss.xml all resolve; no broken links found
 
 ### Track E — Blog framework
 
@@ -90,7 +90,10 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | /tools/plate-math page | done · 2026-05-28 | Interactive plate calculator. Unit toggle (lbs/kg), bar selector, stepper + direct input, text-art barbell diagram, SEO JSON-LD WebApplication. |
 | /tools/goal-calendar page | done · 2026-05-28 | 5/3/1 goal projector. Per-lift TM progression, cycle table, summary stats. SEO JSON-LD WebApplication. |
 | Footer /tools link | done · 2026-05-28 | Added "Tools" to Product column in Footer.astro. |
-| og:image default | done · expedition 48 | /screenshot-2.png (real device, home screen) used as og:image on homepage. |
+| og:image default | done · expedition 48/50 | /screenshot-2.png used as homepage og:image (exp 48). Extended to all pages — blog posts, listing, tools, process — in expedition 50. |
+| Sitemap verification | done · expedition 50 | @astrojs/sitemap configured; generates /sitemap-index.xml + /sitemap-0.xml at build. |
+| Internal links audit | done · expedition 50 | All footer/nav hrefs checked — no broken links. Duplicate tracker entry removed. |
+| Tools section on homepage | done · expedition 50 | "05 · Free tools" section added to index.astro with plate-math and goal-calendar cards. Body now links into /tools. |
 | App Store URL update | blocked · waiting on Apple | Alex to update homepage CTA when iOS is live. |
 | Screenshots on homepage | done · expedition 48 | New "Real device" section with screenshot-1.png (PR Certificate, dark) and screenshot-2.png (Home, light). Copied to apps/web/public/. |
 | Pocket Cast confident copy | done · expedition 48 | process.astro now says "I subscribe in Pocket Cast" (not hedged). |

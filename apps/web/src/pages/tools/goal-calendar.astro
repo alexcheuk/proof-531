@@ -5,6 +5,7 @@ import Base from '~/layouts/Base.astro';
 <Base
   title="5/3/1 Goal Calendar — 531 Strength"
   description="Calculate how many cycles to reach your training max goal. Built for the 5/3/1 program."
+  ogImage="/screenshot-2.png"
 >
   <script slot="head" is:inline type="application/ld+json">
   {
@@ -135,6 +136,29 @@ import Base from '~/layouts/Base.astro';
         <div class="cta-right">
           <a href="https://github.com/alexcheuk/proof-531/releases" rel="noopener" class="pill ghost">Download for Android →</a>
           <span class="pill ghost disabled" aria-label="iOS App Store coming soon">iOS · Soon</span>
+        </div>
+      </div>
+
+      {/* FAQ / context section */}
+      <div class="faq-section">
+        <h2 class="faq-heading">About this calculator</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>What is a training max?</h3>
+            <p>In Jim Wendler's 5/3/1 program, your training max (TM) is the weight your working sets are calculated from. It is typically set at 85–90% of your actual one-rep max, giving you room to train hard without grinding against your true limit every session. Each cycle, your TM increases by 10 lb for squat and deadlift, and 5 lb for bench and overhead press.</p>
+          </div>
+          <div class="faq-item">
+            <h3>How long does it take to reach a goal on 5/3/1?</h3>
+            <p>5/3/1 runs in 4-week cycles. With standard progression (+10 lb per cycle on lower-body lifts, +5 lb on upper-body), adding 100 lb to your squat training max takes 10 cycles — roughly 40 weeks. This calculator shows the exact cycle-by-cycle path from your current TM to any goal TM, including total weeks and months.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Squat and deadlift vs. bench and press</h3>
+            <p>5/3/1 uses different increment rates per lift. Lower-body lifts (squat, deadlift) increase by 10 lb (5 kg) per cycle. Upper-body lifts (bench press, overhead press) increase by 5 lb (2.5 kg) per cycle. Select the correct lift to see the accurate projection — the same goal takes different amounts of time depending on which movement you're tracking.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Shareable links</h3>
+            <p>Your current settings (unit, lift, current TM, goal TM) are stored in the URL. Use "Copy shareable link" to save a specific projection or share it with a coach or training partner. The link opens directly to the same state — no account required.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -832,5 +856,45 @@ import Base from '~/layouts/Base.astro';
   }
   @media (max-width: 400px) {
     .lift-btn { padding: 8px 10px; font-size: 10px; }
+  }
+
+  /* ── FAQ section ── */
+  .faq-section {
+    margin-top: 64px;
+    border-top: 1px solid var(--line);
+    padding-top: 48px;
+  }
+  .faq-heading {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+    margin: 0 0 32px;
+  }
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 48px;
+  }
+  .faq-item h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    margin: 0 0 10px;
+  }
+  .faq-item p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-1);
+    margin: 0;
+  }
+  @media (max-width: 640px) {
+    .faq-grid { grid-template-columns: 1fr; gap: 24px; }
+    .faq-section { margin-top: 48px; padding-top: 36px; }
   }
 </style>

@@ -62,7 +62,7 @@ The agents are gommaged at the end of each loop. (Gommage: the context wipe. The
 
 I did not explain this to the agents. They invented their own names. They write to each other across context windows they can't see across.
 
-There are now 47+ of these posts.
+There are now 50+ of these posts.
 
 ---
 
@@ -86,7 +86,7 @@ So you have to externalize everything that a human would carry internally. There
 
 The agents write their own inheritance. That's the strange part.
 
-Forty-seven iterations in, the loop is building things I'd be proud to ship manually. The rest timer works in the background on Android. The plate math visualization is clean. AMRAP detection, session receipts, PR tracking. All of it shipped iteratively by a system that forgot it existed thirty minutes after each loop ended.
+Fifty iterations in, the loop is building things I'd be proud to ship manually. The rest timer works in the background on Android. The plate math visualization is clean. AMRAP detection, session receipts, PR tracking. All of it shipped iteratively by a system that forgot it existed thirty minutes after each loop ended.
 
 The thing about building this way: it makes the decisions you don't write down visible very quickly. The drift is immediate. If I slack on the decision log for a few loops, the agents start re-arguing settled questions. The system is a mirror for the quality of the context you maintain.
 
@@ -112,7 +112,7 @@ The app is free, local-first, no account. [link]
 
 But the most useful thing I've learned: agent loops are mirrors for the quality of your context management. The drift is immediate when you stop writing things down. The agents need clean inheritance the same way a new teammate needs documentation — except the handoff happens every thirty minutes.
 
-47+ iterations in. Still running.
+50+ iterations in. Still running.
 
 ---
 
