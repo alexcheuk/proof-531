@@ -5,24 +5,34 @@ status: draft
 ready_to_post: false
 trigger: iOS live on App Store (can post same day as r/531Discussion or shortly after)
 drafted: 2026-05-29 (Expedition 41)
+updated: 2026-05-28 (Expedition 42)
 ---
 
 # r/vibecoding — Post Draft
 
 ## Research context
 
-r/vibecoding has shifted from weekend experiments to production-ready builds. The community respects specificity — multi-agent orchestration with explicit role boundaries is more interesting than "I used Cursor to build something." The winning frame here is: this is a production app, it ships, I use it, here's the architecture that made that possible. The /process page is already the link destination.
+**Updated Expedition 42:** The dominant r/vibecoding community view in 2026 is "vibe coding is a prototyping methodology, not a production methodology." Reddit threads consistently reflect this: vibe coding works for MVPs, internal tools, and landing pages, but production requires code review, testing, and architectural planning beyond AI capabilities. The community is skeptical of "vibe-coded production apps" as a category.
+
+531 Strength directly contradicts this narrative — it has CI-enforced boundaries, property-tested domain logic, 42+ real iterations, and a shipped App Store product. The original draft below already leads with the architecture, but the revised Option A title and opening now lead with the contrast explicitly. This is a stronger hook than describing the architecture alone.
+
+r/vibecoding respects specificity — multi-agent orchestration with explicit role boundaries is more interesting than "I used Cursor to build something." The winning frame here is: this is a production app, it ships, I use it, and the system that built it has the safeguards the community says are impossible at production quality.
 
 ---
 
-## Option A — Lead with the architecture (recommended)
+## Option A — Lead with the contrast (recommended, updated Expedition 42)
 
 **Post title:**
-> Built a production React Native app on a 30-min Claude agent cron — 40+ iterations in, still running
+> r/vibecoding says vibe coding is for prototypes. I shipped a production app this way — 42+ iterations, CI enforcement, App Store live.
+
+**Alternative title (less confrontational):**
+> Built a production React Native app on a 30-min Claude agent cron — 42+ iterations in, still running
 
 **Body:**
 
-A few months ago I set a rule for myself: I wouldn't write the code for my own gym app. A Claude Code agent harness would.
+The consensus here is that vibe coding is a prototyping methodology. Build fast, then have engineers clean it up before it touches real users. I wanted to test whether that was necessarily true.
+
+A few months ago I set a rule: I wouldn't write the code for my own gym app. A Claude Code agent harness would. The constraint held through the full build.
 
 Here's the architecture that made it production-ready rather than a toy:
 
@@ -32,7 +42,7 @@ Here's the architecture that made it production-ready rather than a toy:
 
 **A decision log the next agent reads.** Each agent starts fresh. The continuity mechanism is a file in the repo where notable decisions are appended before work ships. An agent in iteration 40 reads what iteration 12 decided and why — and doesn't re-argue it.
 
-**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 40+ entries, one per loop.
+**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 42+ entries, one per loop.
 
 The result: Android on the Play Store, iOS on the App Store, property-tested domain logic, real boundary enforcement, an app I actually use for 5/3/1 training.
 
@@ -51,7 +61,7 @@ Source: [GitHub link]
 
 Built a 5/3/1 strength tracker this way: Claude Code agent harness, 30-minute cron, multi-agent subteam (designer → implementer → QA), each with role skill files and boundary rules enforced by CI scripts.
 
-The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 40+ entries, none written by a human.
+The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 42+ entries, none written by a human.
 
 The app ships. Android on Play Store, iOS on the App Store. I use it.
 

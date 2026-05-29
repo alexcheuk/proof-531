@@ -52,7 +52,7 @@ drafted: 2026-05-29 (Expedition 41)
 - No ads, no subscription, no analytics
 - Data stays on your device (SQLite)
 
-**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 40+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531.dev/process.
+**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 42+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531.dev/process.
 
 Free. No account required. iOS and Android.
 
@@ -65,12 +65,23 @@ Free. No account required. iOS and Android.
 - GitHub: [link]
 
 **Gallery (in order):**
-1. Today screen — showing the day's workout (main + BBB sets)
-2. Live session — plate visualization with rest timer active
-3. Session receipt — post-workout summary with PR chip
-4. History view — cycle progression over time
+1. Demo video — 45-60 second screen recording (see below — this is now the #1 priority asset)
+2. Today screen — showing the day's workout (main + BBB sets)
+3. Live session — plate visualization with rest timer active
+4. Session receipt — post-workout summary with PR chip
+5. History view — cycle progression over time
 
-(If a demo video exists: 30-60 second screen recording of a live session is the first asset. Video dramatically outperforms static screenshots.)
+**Demo video guidance (Expedition 42 update — this is now the highest-priority asset):**
+
+Research on PH 2026 launches confirms: products with a gallery video get significantly more upvotes and engagement than those with only screenshots. The algorithm rewards engagement (comments, replies, saves) over raw upvote counts — and video is the primary driver of that engagement.
+
+Spec for the video:
+- 45-60 seconds (no longer)
+- Must work with no sound — PH auto-plays muted, so anything that relies on audio is wasted
+- First 5 seconds must show the most impressive thing: plate math decomposing a working weight, or the AMRAP logging flow
+- Suggested sequence: open app → Today screen shows the program loaded → tap into Live session → plate visualization appears → log a set → rest timer counts down with haptic (show the vibration UI) → AMRAP set logged with e1RM calculation → session receipt appears with PR chip
+
+If a screen recording isn't ready before launch, static screenshots are acceptable but will underperform. Flag this as a task for the loop: capture a 45-60 second screen recording on device before Product Hunt launch day.
 
 ---
 
@@ -84,7 +95,7 @@ Hey r/PH — I built 531 Strength because I run the 5/3/1 program and couldn't f
 
 The core: training maxes → working weights calculated → plate math shown per side → log your sets → AMRAP reps → rest timer → session receipt. That's the whole loop.
 
-The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 40+ iterations. The dev blog on 531.dev/blog is written by the same system, one post per loop. Full process at 531.dev/process.
+The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 42+ iterations. The dev blog on 531.dev/blog is written by the same system, one post per loop. Full process at 531.dev/process.
 
 It's free because I built it for myself and wanted other lifters to have it. SQLite on-device, no account, no data collection.
 

@@ -70,7 +70,7 @@ The app is free, no account, local SQLite. Source on GitHub.
 
 ---
 
-**Timing note:** Post after 20+ expedition logs exist (already true at expedition 40+). HN will ask "how many iterations?" — the answer at expedition 40+ is credible. Post on a weekday between 8am–10am US Eastern.
+**Timing note:** Post after 20+ expedition logs exist (already satisfied — 42+ iterations as of Expedition 42). HN will ask "how many iterations?" — the answer at 42+ is credible. Post on a weekday between 8am–10am US Eastern.
 
 **What HN will likely ask:**
 - "Did you actually write any code?" — Answer: minimal, some emergency fixes. The constraint was mostly held.
@@ -82,6 +82,8 @@ The app is free, no account, local SQLite. Source on GitHub.
 - Don't be defensive about the AI angle — HN is skeptical of AI posts. Let the specificity speak.
 - Don't claim the agent is autonomous in a way that's overstated — the human does the direction-setting, queue management, and context hygiene.
 - Don't pitch the app's features as primary — that's a Reddit angle. HN cares about the engineering story.
+
+**New signal (Expedition 42):** Workout.cool (an open-source fitness coaching platform) got 827 points and 233 comments on Show HN in May 2026 — one of the highest-performing fitness Show HN posts in recent history. The top criticism was programming quality: bad exercise order, no progression logic, too many exercises per session. This is directly relevant to how 531 Strength should pre-answer HN's skepticism. If HN asks "is the program any good?", the answer is: "I didn't design the program — Jim Wendler did, and it's one of the most respected strength training systems in the world. The app implements it faithfully." That deflects the programming criticism entirely and borrows credibility from a proven source. Add this framing to the submitter's first comment.
 
 ---
 

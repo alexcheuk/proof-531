@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 41)
+**Last updated**: 2026-05-28 (Expedition 42)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9)
 
 ## The competitive anchor
@@ -106,9 +106,9 @@ Use the right story for the right audience. Never mix them in a single post.
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
 | 5. HN Show HN | strategy revised · expedition 40 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md` |
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
-| 7. Product Hunt | draft ready · expedition 41 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. |
+| 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
-| 9. r/vibecoding | draft ready · expedition 41 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. |
+| 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 42 signal:** The dominant r/vibecoding community view in 2026 is "vibe coding is a prototyping methodology, not a production methodology." 531 Strength directly contradicts this — it has CI-enforced boundaries, property-tested domain logic, N+ real iterations, and a shipped App Store product. The draft should lead with this contrast explicitly: "Most vibe-coded apps are prototypes. This one is in production." That's a sharper hook than just describing the architecture. See `docs/marketing/reddit-vibecoding-draft.md` for the updated version. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
@@ -151,6 +151,22 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
 
+## Expedition 42 — Research notes
+
+**Date:** 2026-05-28
+
+**Community search verdict:** Reddit is not well-indexed externally. No specific r/531Discussion or r/weightroom threads surfaced where a user was actively asking for a 5/3/1 app recommendation — no live thread to respond to this loop. Check again next time iOS is live and use the App Store launch as the trigger to post.
+
+**Market gap confirmed:** The 2026 strength app roundups (FindYourEdge, Jefit, Setgraph, Vora, The Manual, Built) still show Strong, Hevy, Boostcamp, and FitNotes as the primary options. No dedicated 5/3/1 tracker appears in any list. The gap that drives the r/531Discussion pitch ("I couldn't find a clean tracker for this specific program") remains accurate and uncontested.
+
+**HN fitness app appetite is real:** Workout.cool (open-source fitness coaching PWA) got 827 points and 233 comments on Show HN May 2026. The primary criticism was programming quality — bad exercise order, no progression logic. 531 Strength is immune to that criticism because it implements an established, named program. This gives Alex a strong pre-answer: "The program is Jim Wendler's — I just implemented it faithfully." Add this framing to the HN first-comment prep. See updated `docs/marketing/ai-experiment-story-outline.md`.
+
+**r/vibecoding framing sharpened:** The dominant community view in 2026 is "vibe coding is a prototyping methodology, not production." 531 Strength contradicts this directly — CI enforcement, property-tested domain logic, App Store live. The r/vibecoding post draft has been updated to lead with this contrast rather than just describing the architecture. See updated `docs/marketing/reddit-vibecoding-draft.md`.
+
+**Product Hunt video is now highest-priority pre-launch asset:** Research confirms PH's 2026 algorithm weights engagement (comments, saves) over raw upvotes. Products with a 45-60 second muted demo video get significantly more engagement than screenshots-only. A screen recording of one live session (Today → Live → plate math → AMRAP → rest timer → session receipt) is now the #1 missing asset before PH launch. The guide has been updated with a spec. See `docs/marketing/producthunt-launch-guide.md`.
+
+**No new blockers identified.** The existing blockers (App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details) remain. Nothing unblocked this loop.
+
 ## Sources
 
 - [5/3/1 BBB Reviews — Boostcamp](https://www.boostcamp.app/coaches/jim-wendler/5-3-1-boring-but-big/reviews)
@@ -158,3 +174,9 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 - [Indie Maker Analytics 2024-2025 — IndieLaunches.com](https://indielaunches.com/indie-maker-analytics-2024-2025-projects/)
 - [Low-Cost App Marketing — Indie App Santa](https://indieappsanta.com/2025/11/21/10349/)
 - [Fitness App Privacy — TechRadar](https://www.techradar.com/computing/cyber-security/beware-80-percent-of-the-most-popular-fitness-apps-are-selling-out-your-privacy)
+- [Best Strength Training Apps 2026 — FindYourEdge](https://www.findyouredge.app/news/best-strength-training-apps-2026)
+- [Best Workout Tracker App Reddit 2026 — Cora Health](https://www.corahealth.app/blog/best-workout-tracker-reddit)
+- [Workout.cool Show HN (827 points, 233 comments)](https://news.ycombinator.com/item?id=44309320)
+- [Ask HN: How far has vibe coding come?](https://news.ycombinator.com/item?id=46807308)
+- [Vibe Coding on Reddit — MorphLLM analysis](https://www.morphllm.com/reddit-vibe-coding)
+- [Product Hunt Launch Guide — Tom Dekan](https://tomdekan.com/articles/product-hunt-launch-guide)
