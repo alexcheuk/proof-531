@@ -14,7 +14,7 @@ updated: 2026-05-28 (Expedition 42)
 
 **Updated Expedition 42:** The dominant r/vibecoding community view in 2026 is "vibe coding is a prototyping methodology, not a production methodology." Reddit threads consistently reflect this: vibe coding works for MVPs, internal tools, and landing pages, but production requires code review, testing, and architectural planning beyond AI capabilities. The community is skeptical of "vibe-coded production apps" as a category.
 
-531 Strength directly contradicts this narrative — it has CI-enforced boundaries, property-tested domain logic, 44+ real iterations, and a shipped App Store product. The original draft below already leads with the architecture, but the revised Option A title and opening now lead with the contrast explicitly. This is a stronger hook than describing the architecture alone.
+531 Strength directly contradicts this narrative — it has CI-enforced boundaries, property-tested domain logic, 46+ real iterations, and a shipped App Store product. The original draft below already leads with the architecture, but the revised Option A title and opening now lead with the contrast explicitly. This is a stronger hook than describing the architecture alone.
 
 r/vibecoding respects specificity — multi-agent orchestration with explicit role boundaries is more interesting than "I used Cursor to build something." The winning frame here is: this is a production app, it ships, I use it, and the system that built it has the safeguards the community says are impossible at production quality.
 
@@ -33,10 +33,10 @@ Apple's App Store review queue was explicitly delayed in Q1 2026 due to the AI-a
 ## Option A — Lead with the contrast (recommended, updated Expedition 42)
 
 **Post title:**
-> r/vibecoding says vibe coding is for prototypes. I shipped a production app this way — 44+ iterations, CI enforcement, App Store live.
+> r/vibecoding says vibe coding is for prototypes. I shipped a production app this way — 46+ iterations, CI enforcement, App Store live.
 
 **Alternative title (less confrontational):**
-> Built a production React Native app on a 30-min Claude agent cron — 44+ iterations in, still running
+> Built a production React Native app on a 30-min Claude agent cron — 46+ iterations in, still running
 
 **Body:**
 
@@ -52,7 +52,7 @@ Here's the architecture that made it production-ready rather than a toy:
 
 **A decision log the next agent reads.** Each agent starts fresh. The continuity mechanism is a file in the repo where notable decisions are appended before work ships. An agent in iteration 40 reads what iteration 12 decided and why — and doesn't re-argue it.
 
-**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 44+ entries, one per loop.
+**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 46+ entries, one per loop.
 
 The result: Android on the Play Store, iOS on the App Store, property-tested domain logic, real boundary enforcement, an app I actually use for 5/3/1 training.
 
@@ -65,13 +65,13 @@ Source: [GitHub link]
 ## Option B — Shorter version (for lower-friction posting)
 
 **Post title:**
-> 30-min Claude agent cron → production React Native app, 44 iterations, still running
+> 30-min Claude agent cron → production React Native app, 46 iterations, still running
 
 **Body:**
 
 Built a 5/3/1 strength tracker this way: Claude Code agent harness, 30-minute cron, multi-agent subteam (designer → implementer → QA), each with role skill files and boundary rules enforced by CI scripts.
 
-The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 44+ entries, none written by a human.
+The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 46+ entries, none written by a human.
 
 The app ships. Android on Play Store, iOS on the App Store. I use it.
 

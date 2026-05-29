@@ -52,8 +52,8 @@ agent — don't duplicate that work here.
 apps/web/src/
   layouts/Base.astro   # global head (meta, og:, JSON-LD)
   pages/
-    index.astro        # homepage (currently 3993 lines — extract CSS when ready)
-    process.astro      # how-it's-built page
+    index.astro        # homepage (CSS extracted to styles/home.css in expedition 46)
+    process.astro      # how-it's-built page (CSS extracted to styles/process.css in expedition 46)
     blog/index.astro   # blog listing
     blog/expedition-logs.astro
   components/

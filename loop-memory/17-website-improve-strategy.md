@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531.dev — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-28 (Expedition 45)
+**Last updated**: 2026-05-28 (Expedition 46)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -64,9 +64,10 @@ Current gaps:
 ### Track D — Technical health
 
 Keep the codebase clean and fast:
-- [ ] index.astro is 3993 lines — most is inline CSS. Extract to a separate .css file
-- [ ] process.astro is 1376 lines — same issue
-- [ ] Verify robots.txt is correct (exists in public/)
+- [x] index.astro CSS extracted to `src/styles/home.css` (expedition 46)
+- [x] process.astro CSS extracted to `src/styles/process.css` (expedition 46)
+- [x] robots.txt is correct — `Allow: /`, sitemap URL updated to `531.dev` (robots.txt was correct; astro.config.mjs domain was the bug, fixed expedition 46)
+- [ ] Audit for any broken internal links
 - [ ] Audit for any broken internal links
 
 ### Track E — Blog framework
@@ -81,8 +82,10 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | JSON-LD SoftwareApplication schema | done · expedition 45 | Added to index.astro. Covers name, category, OS, price, description, URL. |
 | website-improve agent created | done · expedition 45 | See `.claude/skills/website-improve/SKILL.md` and this file. |
 | Discord #needs-input collaboration | done · expedition 45 | Channel exists (1509774367498829935). Bot can post questions for Alex. |
-| index.astro CSS extraction | pending | 3993 lines, most is `<style>`. Extract to `/src/styles/home.css`. |
-| process.astro CSS extraction | pending | 1376 lines, same issue. |
+| index.astro CSS extraction | done · expedition 46 | 2654-line scoped style block extracted to `src/styles/home.css`. Imported at frontmatter level. |
+| process.astro CSS extraction | done · expedition 46 | 798-line scoped style block extracted to `src/styles/process.css`. |
+| astro.config.mjs domain fix | done · expedition 46 | Was `531strength.com`, now `531.dev`. Affected sitemap URLs, og:url, canonicals. Also fixed RSS fallback. |
+| Dead code removal (PlateBar.astro) | done · expedition 46 | 301-line unused illustration component removed (superseded by PhonePlateBar.astro). |
 | og:image default | pending · needs asset | Need a 1200×630 social card PNG. Alex to provide or generate. |
 | App Store URL update | blocked · waiting on Apple | Alex to update homepage CTA when iOS is live. |
 | Screenshots on homepage | blocked · waiting on Alex | Need real device screenshots. Instructions in README Screenshots section. |

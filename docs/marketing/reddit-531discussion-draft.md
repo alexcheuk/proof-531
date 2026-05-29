@@ -11,7 +11,9 @@ drafted: 2026-05-28
 
 ## Research notes
 
-Direct Reddit search through web indices returned no results for this subreddit — it is not well-indexed externally. The following is based on: (1) what the strategy doc already captured from competitive research, (2) general patterns for niche lifting subreddits, and (3) what questions for Alex are at the bottom of this file.
+Direct Reddit search through web indices returned no results for this subreddit — it is not well-indexed externally. The following is based on: (1) what the strategy doc already captured from competitive research, (2) general patterns for niche lifting subreddits, (3) what questions for Alex are at the bottom of this file, and (4) App Store review analysis of the top competitor.
+
+**Expedition 46 — Competitor review analysis (high value):** The existing "531 Strength" app (App Store id1062989244, 4.9 stars, 11,000 ratings — the top result when searching "531" on iOS) has three documented pain points in its own App Store reviews: (1) rest timer stops when you leave the app, (2) no plate calculator, (3) no BBB support. These are verbatim from user reviews, not inferred. This is strong evidence that the new app addresses real, documented demand rather than hypothetical gaps. For the r/531Discussion post body, the framing "I tried the existing apps — [specific pain point] — so I built this" is now supported by primary evidence from the competitor's own reviews.
 
 General pattern for r/531Discussion (inferred from comparable niche lifting communities):
 - The community is practitioners, not browsers. Posts that get traction are about the program itself: TM calculation questions, block reports, AMRAP set discussions, BBB variant questions.

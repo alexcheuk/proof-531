@@ -65,9 +65,9 @@ export function groupPlates(perSide: readonly number[]): PlateGroup[] {
   return grouped;
 }
 
-/** Pretty-print a number, dropping trailing .0 (so 2.5 stays, 45 stays). */
+/** Pretty-print a plate weight. JavaScript's String() already omits trailing .0. */
 export function plateLabel(n: number): string {
-  return Number.isInteger(n) ? String(n) : String(n);
+  return String(n);
 }
 
 /**

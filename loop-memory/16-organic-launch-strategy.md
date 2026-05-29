@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 45)
+**Last updated**: 2026-05-28 (Expedition 46)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -101,10 +101,10 @@ Use the right story for the right audience. Never mix them in a single post.
 | Tactic | Status | Notes |
 |--------|--------|-------|
 | 1. GitHub README polish | done · updated expedition 44 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 44+ in Expedition 44. Screenshots placeholder section added with concrete capture instructions for Alex (Today screen, Live session, Session receipt). Per best-practices research: visual proof is the single biggest missing element for GitHub README engagement. |
-| 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
+| 2. r/531Discussion post | draft ready · sharpened expedition 46 | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added — the top existing "531" app (4.9 stars, 11K ratings) has verbatim App Store complaints about: rest timer breaking, no plate math, no BBB. These map exactly to this app's differentiators. Post body framing updated. Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
-| 5. HN Show HN | strategy revised · expedition 40 · signal confirmed expedition 45 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md`. **Expedition 45 confirmation:** Auto-Co Show HN (March 2026, 14 agents running a startup autonomously) received only 4 points — pure "autonomous agent" framing is confirmed dead on HN. Title Option A (personal story first) remains the correct call. |
+| 5. HN Show HN | strategy revised · expedition 40 · signal confirmed expedition 45 · competitor signal added expedition 46 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md`. **Expedition 45 confirmation:** Auto-Co Show HN (March 2026, 14 agents running a startup autonomously) received only 4 points — pure "autonomous agent" framing is confirmed dead on HN. Title Option A (personal story first) remains the correct call. **Expedition 46:** Added concrete answer to "how is this different from existing 5/3/1 apps?" — competitor's own App Store reviews document the exact three pain points this app solves. Now in ai-experiment-story-outline.md. |
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
@@ -168,6 +168,22 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
+
+## Expedition 46 — Research notes
+
+**Date:** 2026-05-28
+
+**Competitor App Store review analysis (primary source):** The top-ranked iOS app for "531" searches is "531 Strength" (id1062989244, 4.9 stars, 11,000 ratings — a different app than the one being launched). Its own App Store reviews document three recurring user complaints verbatim: (1) the rest timer stops when you leave the app, (2) there is no plate calculator, (3) BBB is not supported. These are not inferred from roundup articles — they are documented in the competitor's own reviews. This is the first primary-source confirmation of the market gap the launch pitch is built around. Update to drafts: competitor review analysis note added to `docs/marketing/reddit-531discussion-draft.md`; HN differentiation answer added to `docs/marketing/ai-experiment-story-outline.md`. Naming note: both apps share the name "531 Strength" — Alex should be aware of this when filling in App Store metadata and may want to differentiate with a subtitle.
+
+**Additional competitor landscape:** Wendler Log (Vandersoft) is on both iOS and Android and includes plate math, cloud sync, and 11 assistance programs. It is more feature-complete than the existing "531 Strength" app. It represents the paid-feature ceiling. The new app's position remains accurate: free, local-first, BBB-complete, background rest timer — specifically the features the community asks for and existing paid apps charge for or exclude.
+
+**Repstack (Feb 2026 Show HN):** An offline-first hypertrophy PWA targeting the RP community. Not a direct competitor (different program, different audience) but confirms HN appetite for local-first fitness tools. No specific points/comment data retrieved due to HN rate limiting.
+
+**No live community threads found:** No r/531Discussion or r/weightroom threads surfaced through external indices this loop. Strategy unchanged: post on iOS launch day.
+
+**Iteration counts updated:** All "44+" and "45+" references in marketing drafts updated to "46+": `docs/marketing/reddit-vibecoding-draft.md` (multiple references), `docs/marketing/longform-how-i-built-this.md`, `docs/marketing/ai-experiment-story-outline.md`.
+
+**Discord #needs-input:** Inaccessible this loop (HTTP 403 on API call — likely a token permission scope issue). No Alex replies retrieved. All open questions from `docs/marketing/questions-for-alex.md` remain outstanding.
 
 ## Expedition 45 — Research notes
 

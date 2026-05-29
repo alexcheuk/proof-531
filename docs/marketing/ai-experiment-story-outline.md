@@ -70,7 +70,7 @@ The app is free, no account, local SQLite. Source on GitHub.
 
 ---
 
-**Timing note:** Post after 20+ expedition logs exist (already satisfied — 44+ iterations as of Expedition 44). HN will ask "how many iterations?" — the answer at 44+ is credible. Post on a weekday between 8am–10am US Eastern.
+**Timing note:** Post after 20+ expedition logs exist (already satisfied — 46+ iterations as of Expedition 46). HN will ask "how many iterations?" — the answer at 46+ is credible. Post on a weekday between 8am–10am US Eastern.
 
 **What HN will likely ask:**
 - "Did you actually write any code?" — Answer: minimal, some emergency fixes. The constraint was mostly held.
@@ -86,6 +86,8 @@ The app is free, no account, local SQLite. Source on GitHub.
 **New signal (Expedition 42):** Workout.cool (an open-source fitness coaching platform) got 827 points and 233 comments on Show HN in May 2026 — one of the highest-performing fitness Show HN posts in recent history. The top criticism was programming quality: bad exercise order, no progression logic, too many exercises per session. This is directly relevant to how 531 Strength should pre-answer HN's skepticism. If HN asks "is the program any good?", the answer is: "I didn't design the program — Jim Wendler did, and it's one of the most respected strength training systems in the world. The app implements it faithfully." That deflects the programming criticism entirely and borrows credibility from a proven source. Add this framing to the submitter's first comment.
 
 **New signal (Expedition 44):** The App Store review queue has been explicitly delayed in 2026 by AI-app floods — iOS submissions are up 89% year-over-year and Apple's human review team is under pressure (9to5Mac, March 2026; Apple confirmed processing 200,000+ submissions/week). HN is likely to have read this coverage. If anyone raises "Apple is killing vibe-coded apps", the factual answer: Apple's concern is apps where the developer cannot explain or defend their code — the kind of app where no engineering was involved at all. 531 Strength's architecture (CI-enforced boundaries, property-tested math, multi-agent QA) is the opposite of what Apple is flagging. The fact that the app is in the review queue at all is proof it cleared the submission bar. Use this to reframe the AI risk conversation.
+
+**New signal (Expedition 46):** Competitive research on the existing "531 Strength" app (App Store id1062989244, 4.9 stars, 11K ratings) confirmed three documented user pain points in App Store reviews: (1) the rest timer stops when leaving the app, (2) no plate math / plate calculator, (3) no BBB support. These are the exact three differentiators the new 531 Strength app ships with. This isn't a gap inferred from roundup articles — it's documented in the competitor's own reviews. If HN asks "how is this different from existing 5/3/1 apps?", the answer is: "The most-reviewed existing 531 tracker (4.9 stars, 11K ratings) has three documented complaints in its App Store reviews: rest timer breaks when you leave the app, no plate math, no BBB. This app was built to fix exactly those three things." This is a precise, evidence-backed differentiator that lands far better than a generic "it's cleaner" claim.
 
 ---
 
