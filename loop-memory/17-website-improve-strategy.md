@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 52)
+**Last updated**: 2026-05-29 (Expedition 53)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -47,6 +47,8 @@ Current gaps:
 - [ ] iOS App Store URL — waiting on Apple approval (Alex needs to update when live)
 - [ ] Screenshots section in README + homepage is a placeholder
 - [x] The "How it works" section references Expo Go — confirmed NOT present (expedition 48 audit was correct; no Expo Go in any /pages file; item was stale)
+- [x] Process page step 03 diagram said `OTA` — corrected to `push` (expedition 53). OTA now triggers via CI on push, not by the loop agent directly.
+- [x] Workflow section "03 · Shipped" paragraph implied loop agent pushes OTA — corrected to describe CI triggering OTA on commit push (expedition 53)
 
 ### Track C — UX / conversion
 
@@ -100,6 +102,10 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | Expo Go pages audit | done · expedition 48 | No Expo Go references found in /pages — only in historical blog posts (correct). |
 | Duplicate section marker fix | done · expedition 51 | Homepage had two sections marked "04" (Real device + The product/screens rail). "Real device" changed to unlabeled marker — screens rail keeps 04, free tools keeps 05. |
 | Strategy file audit (expedition 52) | done · expedition 52 | Fixed stale/wrong domain note in progress tracker and Track D (astro.config.mjs entry said "Was 531strength.com, now 531.dev" — backwards; corrected). Verified: no hardcoded iteration counts in index.astro or process.astro (both use dynamic getCollection counts). Blog listing has no issues. |
+| Process page OTA accuracy fix | done · expedition 53 | Step 03 diagram: changed `OTA` to `push` (OTA is now CI-triggered). "03 · Shipped" workflow paragraph: updated to credit GitHub Actions for triggering OTA, not the loop agent. |
+| Blog hero expedition count | done · expedition 53 | Added `{loggerCount} expedition logs` to the hero eyebrow alongside total post count — more prominent visibility of expedition log count. |
+| LogPlayer.astro audit | done · expedition 53 | Reviewed — component is solid. Accessible (keyboard seek, aria-label toggle), CSS-drawn play/pause glyphs (no emoji), drives native `<audio>` via media API. No improvements needed. |
+| RSS audio enclosure audit | done · expedition 53 | Reviewed rss.xml.ts — iTunes namespace included, enclosure uses statSync for accurate byte length, itunes:episode and itunes:author per item. Feed is podcast-app-ready. No improvements needed. |
 
 ## Discord collaboration workflow
 

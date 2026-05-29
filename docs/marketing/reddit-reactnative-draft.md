@@ -29,7 +29,7 @@ Interesting component: a plate visualization that decomposes any weight into you
 
 Architecture enforces layer boundaries — domain math is a pure layer (no React, no async, no DB calls) with property-based tests via fast-check. Biome for lint/format. Custom dev client (expo-dev-client) for native module support.
 
-The app is built by a Claude Code agent harness on a 30-minute cron — 52+ iterations. Mentioned because it's an interesting constraint, not as the main story.
+The app is built by a Claude Code agent harness on a 30-minute cron — 53+ iterations. Mentioned because it's an interesting constraint, not as the main story.
 
 Android: [Play Store link]
 iOS: [App Store link]
@@ -63,7 +63,7 @@ Built a focused strength training tracker for the 5/3/1 program. Features I'd ex
 
 **Architecture:** Four-layer boundary enforcement — design tokens, domain math, persistence, feature composition. Boundary violations fail CI via custom scripts. Domain layer has property-based tests (fast-check) for all training math.
 
-Built by a Claude Code agent harness on a 30-minute cron. 52+ iterations. I mention this not to make the agent story the point, but because the codebase structure reflects it — the boundary rules exist because early agents violated them and breaking tests were the fix.
+Built by a Claude Code agent harness on a 30-minute cron. 53+ iterations. I mention this not to make the agent story the point, but because the codebase structure reflects it — the boundary rules exist because early agents violated them and breaking tests were the fix.
 
 Free, no account required.
 

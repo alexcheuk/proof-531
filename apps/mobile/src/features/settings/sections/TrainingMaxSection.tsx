@@ -35,7 +35,7 @@ export function TrainingMaxSection({ settings, tmsByLift, onEdit }: TrainingMaxS
             testID={`settings-tm-row-${lift}`}
           >
             <LedgerRowLabel primary={LIFT_META[lift].label} secondary={updatedLabel} />
-            <LedgerRowValue value={`${value} ${displayUnitGlyph(tmUnit)}  ›`} numeric />
+            <LedgerRowValue value={`${value} ${displayUnitGlyph(tmUnit)} ›`} numeric />
           </LedgerRow>
         );
       })}

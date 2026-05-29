@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 52)
+**Last updated**: 2026-05-29 (Expedition 53)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -134,7 +134,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
-| 13. YouTube Shorts series | first-video brief drafted · expedition 49 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed — that detail is usable in video copy. First-video brief written: face-cam hook + screen demo middle + face-cam close, 43 seconds, origin story angle. See `docs/marketing/youtube-shorts-first-video-brief.md`. Five-video content plan (Expedition 47) revised for personal-channel context. Still needs: screen recording of live session (Q14), App Store URL for CTA. |
+| 13. YouTube Shorts series | shooting script drafted · expedition 53 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md` — spoken lines, text overlays, production checklist, YouTube description + first comment, hashtags. Ready for Alex to film. Iteration count updated to 53+ across all marketing files. Alex notified via Discord (message_id 1509830957119701094). Still needs: screen recording of live session (Q14), GitHub Releases URL (Q1), App Store URL for CTA (Q2). |
 | 14. Web tools as SEO entry point | in progress · expedition 50 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added to both tool pages with keyword-rich text targeting "531 plate math calculator", "5/3/1 training max calculator", "how long to reach 5/3/1 goal" and similar search queries. FAQ matches the site's visual language. Structured data (WebApplication schema) already present. Next step: link in Reddit/forum discussions when relevant questions appear — the pages can now rank on their own content merit. |
 
 ## Launch-day operations guide
@@ -196,6 +196,45 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 53 — Research notes
+
+**Date:** 2026-05-29
+
+**YouTube Shorts shooting script drafted — tactic 13 unblocked for Alex:**
+
+Alex's answers from #needs-input (2026-05-29 06:26 UTC) fully resolved the YouTube Shorts open questions:
+- Camera: "both" — face-cam AND screen recording confirmed
+- Channel: "Scratch, but from my personal channel. more of a 'what i built video', dev influencer maybe"
+- Pocket Cast: "yes" — confirmed accurate
+
+The existing first-video brief (Expedition 49) was a producer's guide — it described the structure and rationale but did not give Alex word-for-word lines to say. The gap between "a brief" and "something Alex can actually film from" was the remaining friction.
+
+This expedition fills that gap. A full shooting script was drafted at `docs/marketing/youtube-shorts-draft.md`:
+- Word-for-word spoken text for both face-cam segments (Segment 1: 5-second hook; Segment 4: 8-second close)
+- On-screen text overlay copy for the screen-recording segments (non-optional: 73% of Shorts are watched muted)
+- Production checklist: what to do before filming, in what order, in one sitting
+- YouTube description (copy-paste ready, blanks marked for GitHub/App Store links)
+- First comment to pin immediately after posting
+- Hashtags
+- Connection to the five-video content plan (how this Short anchors the subsequent four)
+
+Alex was notified in #needs-input (message_id 1509830957119701094) with a summary and the three spoken lines he'll need on camera.
+
+**Iteration count update:** All "52+" references across marketing drafts updated to "53+". Files updated: `reddit-casual-builder-story-draft.md` (2 instances), `youtube-shorts-first-video-brief.md` (3 instances), `reddit-vibecoding-draft.md` (4 instances), `reddit-reactnative-draft.md` (2 instances), `longform-how-i-built-this.md` (1 instance), `ai-experiment-story-outline.md` (1 instance), `producthunt-launch-guide.md` (2 instances), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (1 instance).
+
+**r/531Discussion post — still the most important blocker:**
+
+The draft at `docs/marketing/reddit-531discussion-draft.md` is structurally complete. The single remaining gap is Alex's personal 5/3/1 history (how long on the program, which lifts, whether he actually used Strong/Boostcamp). Two consecutive expeditions (51, 52) have sent Discord messages asking for this — it has not yet been answered. The post cannot be posted as a credible practitioner-frame piece without it. The Expedition 52 message (message_id 1509825328921444383) is the most recent request.
+
+**Next actions after iOS approval:**
+1. Get App Store URL — update all drafts
+2. Get GitHub Releases URL — update all drafts
+3. Run the launch-day operations guide at `docs/marketing/launch-day-operations-guide.md`
+
+**Status check:** iOS still pending. All launch-day drafts polished. Tactic 13 now has a production-ready script. The remaining blocker for tactic 2 (r/531Discussion) is Alex's personal 5/3/1 history — requested twice, still outstanding.
+
+---
 
 ## Expedition 52 — Research notes
 

@@ -62,7 +62,7 @@ const totalPosts = posts.length;
             <div class="loop-node">
               <div class="step">03</div>
               <div class="name">Ship</div>
-              <div class="what">tests · lint · bundle · OTA</div>
+              <div class="what">tests · lint · bundle · push</div>
               <div class="who"><strong>builder agent</strong></div>
             </div>
             <div class="loop-node">
@@ -194,10 +194,10 @@ const totalPosts = posts.length;
           <div class="num">03 · Shipped</div>
           <h3>OTA to the preview<span class="dot">.</span></h3>
           <p>
-            The same loop that does the work pushes an OTA to the preview
-            channel. No App Store delay, no waiting on review — the bits
-            land within minutes of the commit, on the development build
-            sitting in my pocket.
+            The loop commits and pushes. GitHub Actions picks it up and
+            triggers the OTA to the preview channel automatically — no
+            App Store delay, no waiting on review. The bits land within
+            minutes of the commit, on the development build in my pocket.
           </p>
           <span class="agent-tag">Agent · <span class="who">builder</span></span>
         </li>
