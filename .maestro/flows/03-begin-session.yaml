@@ -2,7 +2,7 @@
 # Smoke test: begin a session from the Today screen and verify the live screen loads.
 # Does NOT complete the session — just verifies navigation to live and back.
 
-appId: com.alexcheuk.fivethreeone
+appId: com.alexcheuk.fivethreeone.dev
 ---
 - launchApp
 

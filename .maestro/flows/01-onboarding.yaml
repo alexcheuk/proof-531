@@ -2,7 +2,7 @@
 # Smoke test: complete onboarding for a fresh install.
 # Selects lbs, skips to a reasonable 1RM (default), then confirms the home screen appears.
 
-appId: com.alexcheuk.fivethreeone
+appId: com.alexcheuk.fivethreeone.dev
 ---
 # Clear all app state so onboarding shows on every run.
 - clearState

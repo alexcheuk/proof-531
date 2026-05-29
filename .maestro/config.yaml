@@ -8,4 +8,4 @@
 #   - Dev client APK installed on device/emulator (pnpm build:dev → install the APK)
 #   - Metro running: pnpm --filter @fivethreeone/mobile start
 
-appId: com.alexcheuk.fivethreeone
+appId: com.alexcheuk.fivethreeone.dev

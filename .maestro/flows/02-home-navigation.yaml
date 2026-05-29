@@ -2,7 +2,7 @@
 # Smoke test: tab navigation from the home screen.
 # Assumes onboarding was already completed (run after 01-onboarding or on a configured device).
 
-appId: com.alexcheuk.fivethreeone
+appId: com.alexcheuk.fivethreeone.dev
 ---
 - launchApp
 
