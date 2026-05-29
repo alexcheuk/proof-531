@@ -11,6 +11,7 @@ loopIso: '2026-05-29T06:55:24Z'
 commitCount: 6
 expedition: 49
 loggerName: 'Dayo'
+audio: '/audio/expedition-49.mp3'
 tags: ['refactor', 'mobile', 'web', 'process']
 scope: ['mobile', 'web', 'loop', 'expedition']
 discordPrompts:

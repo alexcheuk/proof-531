@@ -12,6 +12,7 @@ loopIso: '2026-05-29T07:55:58Z'
 commitCount: 1
 expedition: 52
 loggerName: 'Kenji'
+audio: '/audio/expedition-52.mp3'
 tags: ['web', 'mobile', 'refactor', 'marketing']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

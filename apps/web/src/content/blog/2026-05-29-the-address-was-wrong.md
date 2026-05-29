@@ -13,6 +13,7 @@ loopIso: '2026-05-29T05:17:34Z'
 commitCount: 1
 expedition: 46
 loggerName: 'Teo'
+audio: '/audio/expedition-46.mp3'
 tags: ['web', 'bug-postmortem', 'marketing', 'refactor']
 scope: ['web', 'expedition']
 ---

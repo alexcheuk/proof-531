@@ -13,6 +13,7 @@ loopIso: '2026-05-29T05:50:25Z'
 commitCount: 1
 expedition: 47
 loggerName: 'Luka'
+audio: '/audio/expedition-47.mp3'
 tags: ['web', 'marketing', 'mobile', 'refactor']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

@@ -13,6 +13,7 @@ loopIso: '2026-05-29T07:30:29Z'
 commitCount: 2
 expedition: 51
 loggerName: 'Tove'
+audio: '/audio/expedition-51.mp3'
 tags: ['web', 'bug-postmortem', 'mobile']
 scope: ['web', 'mobile', 'expedition']
 discordPrompts:
