@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-28, expedition 31)
+# Codebase facts (updated 2026-05-29, expedition 41)
 
 ## Architecture
 
@@ -318,16 +318,38 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `SessionCompleteScreen` — holds `[tmApplyOpen, setTmApplyOpen]` state; passes
   `onPress={() => setTmApplyOpen(true)}` to `TmAdjustmentNote`.
 
-## TM test week (Week 4 / 7th Week Protocol) — expedition 13
+## TM test week (Week 4 / 7th Week Protocol) — expedition 13, updated expedition 41
 
 - Week 4 deload replaced with a single TM-verification top set at 100% TM,
   3–5 rep target. `kind: 'tm-test'` in the set-kind discriminated union.
-- Domain: `isTmTestSet(set)` guard in `schemes.ts`. `computeTmSuggestion(reps)` in
-  `progression.ts` returns `{ kind: 'increment' | 'hold' | 'reset', delta: number }`.
+- Domain: `tmAdjustmentSuggestion(reps, lift, unit)` in `progression.ts` returns
+  `{ kind: 'increment' | 'hold' | 'reset', delta?: number, resetPct?: number }`.
+- Live screen: `TmTestLogSheet` in `features/session/components/TmTestLogSheet/`.
+  - Sub-components: `TmTestBandChip` (PASS/HOLD/RESET badge), `TmTestCaption` (text caption).
+  - Stepper seeded at 0, max 10. Band chip updates live as reps change.
+  - `useTmTestLogState` wraps `useLogSheetState` with `initialReps: 0`.
 - After logging a TM test, `useLiveScreenState` transitions to `'awaiting-bbb'`
   (prompt screen with two CTAs) and eventually to `'complete'`.
-- Receipt shows `TmTestReceiptBand` and `TmAdjustmentNote` with the suggestion.
+- Receipt shows `TmTestReceiptBand` (`features/session/components/TmTestReceiptBand.tsx`)
+  and `TmAdjustmentNote` with the suggestion.
 - User applies TM change via `TmApplySheet` — never automatic.
+- Progress grid: Day 4 header shows "TM" scheme label. Past TM-test cells show
+  band glyph (↑/=/↓) derived from `tmAdjustmentSuggestion`.
+
+## Lift rollback (Danger Zone) — expedition 41
+
+- `rollbackLift(db, lift, n)` in `data/accessors/rollbackLift.ts` deletes the
+  last N completed sessions for a lift, reverts `liftProgress` to the oldest
+  deleted session's week/cycle, and restores the TM from the snapshot in that row.
+  PR row is rebuilt from surviving AMRAP logs.
+- `countCompletedSessionsForLift(db, lift)` — returns the count of completed
+  sessions; used by `RollbackLiftSheet` to bound the stepper max.
+- `RollbackLiftSheet` in `features/settings/components/RollbackLiftSheet.tsx` —
+  sheet with lift chip row + `NumberStepper`. Query key is `['rollback-count', lift]`.
+  After rollback, `useSettingsDialogs.confirmRollback` invalidates
+  `SESSIONS_KEY`, `PRS_KEY`, `TM_KEY`, `['liftProgress']`, AND `['rollback-count']`
+  (the last one added in expedition 41 — stale max without it).
+- State resets: `sessionCount` resets to 1 on both `open=true` AND `selectedLift` change.
 
 ## Background rest notifications (expedition 14)
 
@@ -375,3 +397,4 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `settings.ts` — settings row CRUD.
 - `tm.ts` — training-max history.
 - `liftGoal.ts` — `getLiftGoal`, `setLiftGoal`. Used by `useLiftGoal()` TanStack Query hook.
+- `rollbackLift.ts` — `rollbackLift(db, lift, n)` + `countCompletedSessionsForLift(db, lift)`. Added expedition 40.

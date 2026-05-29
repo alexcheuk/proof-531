@@ -37,6 +37,12 @@ export function RollbackLiftSheet({
     enabled: open && selectedLift != null,
   });
 
+  // Reset to 1 when the sheet opens, so a second open doesn't carry over the
+  // user's last stepper value from a session that may have been deleted.
+  useEffect(() => {
+    if (open) setSessionCount(1);
+  }, [open]);
+
   // Clamp when the max changes (switching lifts or on open)
   useEffect(() => {
     if (sessionCount > maxSessions && maxSessions > 0) {

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 const mockMigrate = jest.fn();
 const mockReset = jest.fn();
+const mockRollback = jest.fn();
 const mockReplace = jest.fn();
 
 jest.mock('@/data/DbProvider', () => ({
@@ -16,6 +17,10 @@ jest.mock('@/data/accessors/migrateStorageUnit', () => ({
 
 jest.mock('@/data/accessors/reset', () => ({
   resetEverything: (db: unknown) => mockReset(db),
+}));
+
+jest.mock('@/data/accessors/rollbackLift', () => ({
+  rollbackLift: (db: unknown, lift: unknown, n: unknown) => mockRollback(db, lift, n),
 }));
 
 jest.mock('expo-router', () => ({
@@ -89,6 +94,77 @@ describe('useSettingsDialogs — unit migration', () => {
       await result.current.confirmStorageMigration();
     });
     expect(result.current.migrating).toBe(false);
+    consoleError.mockRestore();
+  });
+});
+
+describe('useSettingsDialogs — lift rollback', () => {
+  beforeEach(() => {
+    mockRollback.mockReset();
+  });
+
+  it('opens and closes the rollback sheet', () => {
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    expect(result.current.rollbackOpen).toBe(false);
+
+    act(() => result.current.openRollback());
+    expect(result.current.rollbackOpen).toBe(true);
+
+    act(() => result.current.closeRollback());
+    expect(result.current.rollbackOpen).toBe(false);
+  });
+
+  it('confirmRollback calls the accessor with the correct args and closes', async () => {
+    mockRollback.mockResolvedValue(2);
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRollback());
+
+    await act(async () => {
+      await result.current.confirmRollback('bench', 2);
+    });
+
+    expect(mockRollback).toHaveBeenCalledWith(expect.anything(), 'bench', 2);
+    expect(result.current.rollbackOpen).toBe(false);
+    expect(result.current.rollingBack).toBe(false);
+  });
+
+  it('keeps rollingBack=true while the accessor is in flight', async () => {
+    let resolve: ((n: number) => void) | null = null;
+    mockRollback.mockImplementation(
+      () =>
+        new Promise<number>((r) => {
+          resolve = r;
+        }),
+    );
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRollback());
+
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.confirmRollback('squat', 1);
+    });
+
+    expect(result.current.rollingBack).toBe(true);
+
+    await act(async () => {
+      resolve?.(1);
+      await pending;
+    });
+
+    expect(result.current.rollingBack).toBe(false);
+  });
+
+  it('clears rollingBack flag when accessor throws', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockRollback.mockRejectedValue(new Error('db fail'));
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRollback());
+
+    await act(async () => {
+      await result.current.confirmRollback('deadlift', 1);
+    });
+
+    expect(result.current.rollingBack).toBe(false);
     consoleError.mockRestore();
   });
 });

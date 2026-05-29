@@ -123,6 +123,7 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
         await queryClient.invalidateQueries({ queryKey: PRS_KEY });
         await queryClient.invalidateQueries({ queryKey: TM_KEY });
         await queryClient.invalidateQueries({ queryKey: ['liftProgress'] });
+        await queryClient.invalidateQueries({ queryKey: ['rollback-count'] });
         setRollbackOpen(false);
       } catch (err) {
         console.error('rollbackLift failed', err);
