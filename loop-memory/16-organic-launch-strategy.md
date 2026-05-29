@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 51)
+**Last updated**: 2026-05-29 (Expedition 52)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,14 +122,14 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · screenshots now available (expedition 51) | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 44+ in Expedition 44. Screenshots placeholder section added with concrete capture instructions for Alex (Today screen, Live session, Session receipt). Per best-practices research: visual proof is the single biggest missing element for GitHub README engagement. **Expedition 51:** Alex posted 5 screenshots to #needs-input (Discord) in response to the Expedition 45 request. These need to be embedded in the README — the screenshot placeholder section is ready for them. See Expedition 51 notes below for the Discord CDN URLs. |
-| 2. r/531Discussion post | draft ready · sharpened expedition 46 | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added — the top existing "531" app (4.9 stars, 11K ratings) has verbatim App Store complaints about: rest timer breaking, no plate math, no BBB. These map exactly to this app's differentiators. Post body framing updated. Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
+| 1. GitHub README polish | done · screenshots identified expedition 52 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Screenshots placeholder section ready. **Expedition 52:** All 5 screenshots downloaded to `docs/marketing/screenshots/`. Identified: 001435=Today screen, 003320=Live session plate math, 003330=AMRAP LOG sheet, 003635=PR moment, 003642=Session receipt. README embeds still need Alex to place the image files (they're in the repo at docs/marketing/screenshots/). |
+| 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames and descriptions — the three recommended are 001435 (Today), 003320 (plate math), 003642 (session receipt). Specific personal details request sent to Alex via Discord #needs-input (message_id 1509825328921444383) — needs: how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary. This is the only remaining blocker for this post. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
 | 5. HN Show HN | strategy revised · expedition 40 · signal confirmed expedition 45 · competitor signal added expedition 46 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md`. **Expedition 45 confirmation:** Auto-Co Show HN (March 2026, 14 agents running a startup autonomously) received only 4 points — pure "autonomous agent" framing is confirmed dead on HN. Title Option A (personal story first) remains the correct call. **Expedition 46:** Added concrete answer to "how is this different from existing 5/3/1 apps?" — competitor's own App Store reviews document the exact three pain points this app solves. Now in ai-experiment-story-outline.md. |
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
-| 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
+| 8. r/reactnative | draft ready · screenshots embedded expedition 52 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). **Expedition 52:** Screenshots section updated with actual filenames — 003320 (plate viz, lead image), 003330 (AMRAP sheet, shows bottom-sheet interaction), 001435 (Today screen). Needs: Play Store link, App Store link, GitHub link. See `docs/marketing/reddit-reactnative-draft.md`. |
 | 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 · comment prep added expedition 43 · new signal expedition 44 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** Added specific data points for comment prep — 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. **Expedition 44 signal:** Added Apple App Store review-queue context — iOS submissions up 89% YoY due to AI app flood, Apple increasing scrutiny. This is a live, current framing hook: 531 Strength is the counterexample in the queue. If "Apple is blocking vibe-coded apps" comes up in comments, the answer is now ready and documented. Iteration counts updated to 44+ throughout draft. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
@@ -196,6 +196,46 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 52 — Research notes
+
+**Date:** 2026-05-29
+
+**Iteration count update:** All "51+" references across marketing drafts updated to "52+". Files updated: `reddit-vibecoding-draft.md` (4 instances), `reddit-reactnative-draft.md` (2 instances), `producthunt-launch-guide.md` (2 instances), `ai-experiment-story-outline.md` (1 instance), `longform-how-i-built-this.md` (1 instance), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (1 instance), `reddit-casual-builder-story-draft.md` (2 instances), `youtube-shorts-first-video-brief.md` (1 instance).
+
+**Screenshot identification — all five screenshots now identified:**
+
+The five screenshots Alex posted to #needs-input are downloaded and at `docs/marketing/screenshots/`. Visual inspection confirms:
+
+| Filename | Screen | What it shows |
+|---|---|---|
+| Screenshot_20260527-001435.png | Today tab | Bench, Cycle 2 Day 1, cycle progress grid (D1–D4), TM 235 LB, Best e1RM 260, "RESUME SESSION" button |
+| Screenshot_20260527-003320.png | Live session pre-set | Bench, NEXT SET 155 LB x5, plate visualization (45+10 per side = 55 lb), full working set list with AMRAP on set 03, "START SESSION" |
+| Screenshot_20260527-003330.png | Live AMRAP set | "Bench now." header (dark mode), 200 LB x5+, full plate visualization (45+25+5+2.5 per side), LOG AMRAP sheet open, e1RM showing 5 reps = 233 LB |
+| Screenshot_20260527-003635.png | PR screen | Dark screen, "YOU HIT A NEW BENCH PR", "Stronger.", 222 LB new est. 1RM, was 197 LB, "STRONGER BY +25 LB" |
+| Screenshot_20260527-003642.png | Session receipt | "In the book." heading, "Stronger." record card, 222 LB est. 1RM, new record stamp (MAY 27 2026), CLOSE THE DAY, SEE FULL RECORD |
+
+**Screenshot recommendations by platform:**
+
+For **r/531Discussion** (lifting audience — proof the app works, tell the story): Today screen (001435) + plate math (003320) + session receipt (003642). These three show before/during/after a session. The receipt with the PR is emotionally resonant for lifters.
+
+For **r/reactnative** (developer audience — the interesting component is the plate viz): plate math (003320, lead image) + AMRAP sheet (003330, shows bottom-sheet interaction pattern) + Today screen (001435). Lead with the plate visualization — that's the technically interesting component.
+
+For **README** (both audiences): 2-3 screenshots. Best set: 001435 (Today, explains what the app does) + 003320 (plate math, the distinctive visual) + 003642 (session receipt, the payoff). The PR screen (003635) is dramatic but not explanatory as a standalone.
+
+For **Product Hunt**: All five if slots allow. The PR screen (003635) is visually striking as the hero image or first screenshot. The dark/light contrast between the PR screen and the receipt shows off the design range.
+
+For **YouTube Shorts**: The plate visualization and the "Stronger." PR screen are the two visual hooks. The receipt's typography ("In the book.") is distinctive but needs motion to land.
+
+**Discord #needs-input — personal details request sent:**
+
+Alex responded to Expedition 51's prompt "What document do u want me to review?" — this loop sent a concrete response directing him to `docs/marketing/reddit-531discussion-draft.md`. Message sent to channel 1509774367498829935, message_id 1509825328921444383.
+
+The message asks for three specific things: (1) how long he's actually been on 5/3/1, (2) whether he actually used Strong/Boostcamp, (3) which lift is his primary. These three answers transform Option A from a credible-sounding template into an authentic practitioner post.
+
+**Status check:** iOS is still pending. Screenshots gap is now closed for all drafts. The single remaining text gap in the most important draft (r/531Discussion) is Alex's personal 5/3/1 history — requested this loop.
+
+---
 
 ## Expedition 51 — Research notes
 

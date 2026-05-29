@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 51)
+**Last updated**: 2026-05-29 (Expedition 52)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -67,7 +67,7 @@ Current gaps:
 Keep the codebase clean and fast:
 - [x] index.astro CSS extracted to `src/styles/home.css` (expedition 46)
 - [x] process.astro CSS extracted to `src/styles/process.css` (expedition 46)
-- [x] robots.txt is correct — `Allow: /`, sitemap URL updated to `531.dev` (robots.txt was correct; astro.config.mjs domain was the bug, fixed expedition 46)
+- [x] robots.txt is correct — `Allow: /`, sitemap URL points to `531strength.com` (robots.txt was correct; astro.config.mjs domain was the bug — was a `531.dev` placeholder, fixed to `531strength.com` in expedition 46)
 - [x] Internal links audited (expedition 50) — all footer/nav anchor hrefs (/#program, /#plate, /#screens, /#get) match live IDs in index.astro; /tools, /blog, /process, /privacy, /support, /rss.xml all resolve; no broken links found
 
 ### Track E — Blog framework
@@ -84,7 +84,7 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | Discord #needs-input collaboration | done · expedition 45 | Channel exists (1509774367498829935). Bot can post questions for Alex. |
 | index.astro CSS extraction | done · expedition 46 | 2654-line scoped style block extracted to `src/styles/home.css`. Imported at frontmatter level. |
 | process.astro CSS extraction | done · expedition 46 | 798-line scoped style block extracted to `src/styles/process.css`. |
-| astro.config.mjs domain fix | done · expedition 46 | Was `531strength.com`, now `531.dev`. Affected sitemap URLs, og:url, canonicals. Also fixed RSS fallback. |
+| astro.config.mjs domain fix | done · expedition 46 | Was `531.dev` placeholder, corrected to `531strength.com`. Affected sitemap URLs, og:url, canonicals. Also fixed RSS fallback. |
 | Dead code removal (PlateBar.astro) | done · expedition 46 | 301-line unused illustration component removed (superseded by PhonePlateBar.astro). |
 | /tools index page | done · 2026-05-28 | Lists both calculator tools. SEO: CollectionPage JSON-LD, descriptive meta. |
 | /tools/plate-math page | done · 2026-05-28 | Interactive plate calculator. Unit toggle (lbs/kg), bar selector, stepper + direct input, text-art barbell diagram, SEO JSON-LD WebApplication. |
@@ -95,10 +95,11 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | Internal links audit | done · expedition 50 | All footer/nav hrefs checked — no broken links. Duplicate tracker entry removed. |
 | Tools section on homepage | done · expedition 50 | "05 · Free tools" section added to index.astro with plate-math and goal-calendar cards. Body now links into /tools. |
 | App Store URL update | blocked · waiting on Apple | Alex to update homepage CTA when iOS is live. |
-| Screenshots on homepage | done · expedition 48 | New "Real device" section with screenshot-1.png (PR Certificate, dark) and screenshot-2.png (Home, light). Copied to apps/web/public/. |
+| Screenshots on homepage | expanded · expedition 52 | Expedition 48: Added 2-screenshot "Real device" section. Expedition 52: Expanded to 4 screenshots (Today, Live session, Session receipt, PR Certificate). Added screenshot-3.png and screenshot-5.png to apps/web/public/. Grid updated from 2-col to 4-col (responsive: 2-col at ≤860px, 1-col at ≤480px). Copy updated from "light/dark mode" to before/during/after session flow. |
 | Pocket Cast confident copy | done · expedition 48 | process.astro now says "I subscribe in Pocket Cast" (not hedged). |
 | Expo Go pages audit | done · expedition 48 | No Expo Go references found in /pages — only in historical blog posts (correct). |
 | Duplicate section marker fix | done · expedition 51 | Homepage had two sections marked "04" (Real device + The product/screens rail). "Real device" changed to unlabeled marker — screens rail keeps 04, free tools keeps 05. |
+| Strategy file audit (expedition 52) | done · expedition 52 | Fixed stale/wrong domain note in progress tracker and Track D (astro.config.mjs entry said "Was 531strength.com, now 531.dev" — backwards; corrected). Verified: no hardcoded iteration counts in index.astro or process.astro (both use dynamic getCollection counts). Blog listing has no issues. |
 
 ## Discord collaboration workflow
 

@@ -8,6 +8,7 @@
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { useTheme } from '@/design/theme';
 import { LIFTS } from '@/domain/labels';
@@ -17,13 +18,7 @@ import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  FlatList,
-  type ListRenderItem,
-  Text as RNText,
-  View,
-  useWindowDimensions,
-} from 'react-native';
+import { FlatList, type ListRenderItem, View, useWindowDimensions } from 'react-native';
 import { ProgressLiftPage } from './components/ProgressLiftPage';
 import { ProgressSkeleton } from './components/ProgressSkeleton';
 
@@ -112,7 +107,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   if (combined.isError) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg0 }}>
-        <Masthead rightSlot={<CapsRight>projection</CapsRight>} elevated={mastheadElevated} />
+        <Masthead rightSlot={<CapsLabel>projection</CapsLabel>} elevated={mastheadElevated} />
         <QueryShell query={combined}>{null}</QueryShell>
       </View>
     );
@@ -122,7 +117,7 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg0 }} testID="progress-screen">
-      <Masthead rightSlot={<CapsRight>projection</CapsRight>} elevated={mastheadElevated} />
+      <Masthead rightSlot={<CapsLabel>projection</CapsLabel>} elevated={mastheadElevated} />
       {combined.isLoading || !settings.data ? (
         <ProgressSkeleton />
       ) : (
@@ -158,22 +153,5 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
         </>
       )}
     </View>
-  );
-}
-
-function CapsRight({ children }: { children: string }) {
-  const { colors, type } = useTheme();
-  return (
-    <RNText
-      style={{
-        fontFamily: `${type.mono}-Medium`,
-        fontSize: 10,
-        letterSpacing: 2.2,
-        textTransform: 'uppercase',
-        color: colors.ink2,
-      }}
-    >
-      {children}
-    </RNText>
   );
 }

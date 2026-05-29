@@ -14,11 +14,15 @@ appId: com.alexcheuk.fivethreeone.dev
 - tapOn:
     id: "tab-progress"
 - waitForAnimationToEnd
+- assertVisible:
+    id: "progress-screen"
 
 # Navigate to History tab
 - tapOn:
     id: "tab-history"
 - waitForAnimationToEnd
+- assertVisible:
+    id: "history-screen"
 
 # Navigate to Settings tab
 - tapOn:

@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — ProgressScreen and Colophon migrated to CapsLabel primitive
+
+**Tags:** `architecture`, `removal`, `convention`
+**Files:** `apps/mobile/src/features/progress/ProgressScreen.tsx`, `apps/mobile/src/features/settings/sections/Colophon.tsx`
+
+Both files hand-rolled the same caps-mono-medium style that `CapsLabel` was introduced to own. `ProgressScreen` defined a local `CapsRight` component; `Colophon` used raw `RNText` with hardcoded `fontFamily`, `letterSpacing`, and `textTransform`. Both replaced with `CapsLabel` — 20 lines deleted.
+
+**Why:** The `CapsLabel` primitive was introduced specifically to end drift in this pattern; having two un-migrated call sites meant font-weight, size, and spacing changes would require manual hunting. The Colophon retains its wider `letterSpacing: 2.88` via the style escape hatch since that spacing is intentionally heavier than the default xs preset.
+
 ### 2026-05-29 — Astro scoped CSS does not apply to JS-injected innerHTML
 
 **Tags:** `web`, `bug`, `convention`

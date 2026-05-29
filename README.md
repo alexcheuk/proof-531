@@ -40,7 +40,18 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 ## Screenshots
 
-<img src="docs/screenshots/screenshot-2.png" width="300" alt="Today screen — Bench, cycle grid, plate visualization" /> &nbsp; <img src="docs/screenshots/screenshot-1.png" width="300" alt="PR Certificate — Stronger. +25 LB" />
+<p>
+<img src="docs/screenshots/screenshot-2.png" width="200" alt="Today screen — Bench, cycle grid" />
+&nbsp;
+<img src="docs/screenshots/screenshot-3.png" width="200" alt="Live session — plate visualization" />
+&nbsp;
+<img src="docs/screenshots/screenshot-4.png" width="200" alt="AMRAP set — log sheet" />
+</p>
+<p>
+<img src="docs/screenshots/screenshot-1.png" width="200" alt="PR Certificate — Stronger. +25 LB" />
+&nbsp;
+<img src="docs/screenshots/screenshot-5.png" width="200" alt="Session receipt — In the book." />
+</p>
 
 ## Install
 
@@ -84,7 +95,7 @@ maestro test .maestro/flows/01-onboarding.yaml  # individual flow
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 49+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 52+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

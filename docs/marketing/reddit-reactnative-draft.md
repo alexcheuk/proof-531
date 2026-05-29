@@ -29,13 +29,16 @@ Interesting component: a plate visualization that decomposes any weight into you
 
 Architecture enforces layer boundaries — domain math is a pure layer (no React, no async, no DB calls) with property-based tests via fast-check. Biome for lint/format. Custom dev client (expo-dev-client) for native module support.
 
-The app is built by a Claude Code agent harness on a 30-minute cron — 51+ iterations. Mentioned because it's an interesting constraint, not as the main story.
+The app is built by a Claude Code agent harness on a 30-minute cron — 52+ iterations. Mentioned because it's an interesting constraint, not as the main story.
 
 Android: [Play Store link]
 iOS: [App Store link]
 Source: [GitHub link]
 
-Screenshots: [Today screen, Live session with plate visualization, Session receipt]
+Screenshots from docs/marketing/screenshots/:
+1. Screenshot_20260527-003320.png — Live session with plate visualization (155 LB x5, 45+10 per side displayed, full working set list) — the interesting RN component to lead with
+2. Screenshot_20260527-003330.png — AMRAP set in progress (Bench now, 200 LB x5+, LOG AMRAP sheet open with e1RM calculation) — shows the bottom sheet interaction
+3. Screenshot_20260527-001435.png — Today screen (Cycle 2 Day 1, cycle progress grid, TM/e1RM stats)
 
 ---
 
@@ -60,7 +63,7 @@ Built a focused strength training tracker for the 5/3/1 program. Features I'd ex
 
 **Architecture:** Four-layer boundary enforcement — design tokens, domain math, persistence, feature composition. Boundary violations fail CI via custom scripts. Domain layer has property-based tests (fast-check) for all training math.
 
-Built by a Claude Code agent harness on a 30-minute cron. 51+ iterations. I mention this not to make the agent story the point, but because the codebase structure reflects it — the boundary rules exist because early agents violated them and breaking tests were the fix.
+Built by a Claude Code agent harness on a 30-minute cron. 52+ iterations. I mention this not to make the agent story the point, but because the codebase structure reflects it — the boundary rules exist because early agents violated them and breaking tests were the fix.
 
 Free, no account required.
 
