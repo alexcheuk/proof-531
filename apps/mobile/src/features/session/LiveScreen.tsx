@@ -149,7 +149,6 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
           <RestPhase
             loggedUnit={unit}
             remaining={live.restRemaining}
-            target={live.restTarget}
             onAddRest={live.onAddRest}
             onSubRest={live.onSubRest}
             onSkip={live.onAdvanceFromRest}

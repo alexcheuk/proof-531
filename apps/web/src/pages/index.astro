@@ -19,6 +19,23 @@ const postCount = posts.length;
   <script slot="head" is:inline type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "531 Strength",
+    "url": "https://531strength.com",
+    "description": "A free, local-first 5/3/1 + BBB strength training tracker for iOS and Android.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://531strength.com/blog?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script slot="head" is:inline type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "531 Strength",
     "applicationCategory": "SportsApplication",

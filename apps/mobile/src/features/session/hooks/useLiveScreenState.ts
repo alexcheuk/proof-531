@@ -98,8 +98,6 @@ export type UseLiveScreenStateResult = {
   setIndex: WorkingSetIndex;
   /** Seconds remaining in the rest timer; 0 when not resting. */
   restRemaining: number;
-  /** Configured rest target in seconds — exposed so RestPhase can render context (e.g. "of 1:30"). */
-  restTarget: number;
   /** Add 30s to the running countdown — no-op outside `rest`. */
   onAddRest: () => void;
   /** Subtract 30s from the running countdown (floored at -overtime allowed) — no-op outside `rest`. */
@@ -428,7 +426,6 @@ export function useLiveScreenState(
     phase,
     setIndex: safeSetIndex,
     restRemaining: restTimer.remaining,
-    restTarget: restSeconds,
     lastLogged,
     isAmrap,
     isTmTest,

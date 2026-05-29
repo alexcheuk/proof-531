@@ -27,8 +27,6 @@ export type RestPhaseProps = {
   isPR?: boolean;
   /** Seconds remaining in the countdown (forwarded to RestTimer). */
   remaining: number;
-  /** Total configured rest target — forwarded to RestTimer for the count-up math. */
-  target: number;
   /** Optional ±30s / Skip controls — forwarded to RestTimer. */
   onAddRest?: () => void;
   onSubRest?: () => void;
@@ -57,7 +55,6 @@ export function RestPhase({
   loggedUnit,
   isPR = false,
   remaining,
-  target,
   onAddRest,
   onSubRest,
   onSkip,
@@ -101,7 +98,6 @@ export function RestPhase({
 
       <RestTimer
         remaining={remaining}
-        target={target}
         {...(onAddRest ? { onAddRest } : {})}
         {...(onSubRest ? { onSubRest } : {})}
         {...(onSkip ? { onSkip } : {})}

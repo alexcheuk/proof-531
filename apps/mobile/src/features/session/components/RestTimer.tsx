@@ -30,8 +30,6 @@ import { RestTimerControls } from './RestTimerControls';
 export type RestTimerProps = {
   /** Seconds remaining in the countdown driver. */
   remaining: number;
-  /** Total configured rest target — used to derive count-up elapsed. */
-  target: number;
   /** Adds 30s to the running countdown. Hides the button when absent. */
   onAddRest?: () => void;
   /** Subtracts 30s from the running countdown. Hides the button when absent. */

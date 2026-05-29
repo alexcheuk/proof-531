@@ -35,6 +35,7 @@ Current gaps:
 - [x] Sitemap confirmed (expedition 50) — `@astrojs/sitemap` is configured in astro.config.mjs; generates /sitemap-index.xml and /sitemap-0.xml at build time
 - [x] og:image added to all pages (expedition 50) — /screenshot-2.png default applied to all blog posts, listing pages, tools pages, and process page
 - [x] Tool page SEO improved (expedition 55) — titles, h1, and descriptions for /tools, /tools/plate-math, /tools/goal-calendar now include "5/3/1" keywords; JSON-LD descriptions synced to match meta descriptions
+- [x] WebSite JSON-LD schema added to homepage (expedition 59) — `@type: WebSite` with `potentialAction: SearchAction` for Google Sitelinks Searchbox; added as a second `<script type="application/ld+json">` block alongside the existing SoftwareApplication schema
 
 ### Track B — Content accuracy
 
@@ -64,6 +65,8 @@ Current gaps:
 - [x] Process page counts are auto-derived (confirmed expedition 50) — uses getCollection dynamically
 - [x] Tools linked from homepage body (expedition 50) — new "05 · Free tools" section with plate-math and goal-calendar cards
 - [x] /dev-log route label corrected to /blog (expedition 56) — "how-built" card in index.astro showed `/dev-log` as the display route but linked to `/blog`; corrected to match the real URL
+- [x] Blog listing title and description improved (expedition 59) — title was "Dev log — 531"; now "Dev Log — 531 Strength" (includes app name for SEO); description now mentions 5/3/1 and specifies "one post per iteration"
+- [x] expedition-logs page path fixed (expedition 59) — eyebrow showed `/dev-log/expedition-logs` (wrong); corrected to `/blog/expedition-logs` (the real URL)
 - [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
 
 ### Track D — Technical health
@@ -83,6 +86,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 59 notes
+
+Three website changes, all cosmetic/SEO (no visual changes to any page layout):
+
+1. **WebSite JSON-LD schema added** (Track A): Added `@type: WebSite` with `potentialAction: SearchAction` to homepage. This is what Google needs to show the Sitelinks Searchbox under the home result. Added as a second `<script type="application/ld+json">` block; the existing `SoftwareApplication` schema is unchanged.
+
+2. **Blog listing title and description improved** (Track A/C): Title changed from "Dev log — 531" to "Dev Log — 531 Strength". Description now says "...one post per iteration" instead of the generic text. Both changes improve SEO discoverability.
+
+3. **Expedition-logs page path corrected** (Track C): The eyebrow breadcrumb in `expedition-logs.astro` showed `/dev-log/expedition-logs` — a path that 404s. Corrected to `/blog/expedition-logs`, the actual URL.
 
 ### Expedition 56 notes
 

@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Removed dead `target` prop chain from RestTimer
+
+**Tags:** `removal`, `convention`
+**Files:** `apps/mobile/src/features/session/components/RestTimer.tsx`, `apps/mobile/src/features/session/components/RestPhase.tsx`, `apps/mobile/src/features/session/LiveScreen.tsx`, `apps/mobile/src/features/session/hooks/useLiveScreenState.ts`
+
+`RestTimerProps.target` was declared but never destructured in the component body. The prop was a relic of an earlier count-up design (the timer used to show "X of target elapsed"). When the direction flipped to count-down (expedition ~10), the `target` field was kept in the type for future "context" display ("of 1:30") but that display was never built. Removed the entire chain: `useLiveScreenState.restTarget` → `RestPhase.target` → `RestTimer.target`.
+
+**Why:** The `target` value flowed through three layers and touched four files while doing zero work. Removing it simplifies the public API of these components and removes a false expectation that a "of target" UI exists anywhere.
+
 ### 2026-05-29 — e1RM display values snapped to plate increments
 
 **Tags:** `bug`, `domain`, `convention`

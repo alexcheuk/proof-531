@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 56)
+**Last updated**: 2026-05-29 (Expedition 59)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,7 +122,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · screenshots identified expedition 52 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Screenshots placeholder section ready. **Expedition 52:** All 5 screenshots downloaded to `docs/marketing/screenshots/`. Identified: 001435=Today screen, 003320=Live session plate math, 003330=AMRAP LOG sheet, 003635=PR moment, 003642=Session receipt. README embeds still need Alex to place the image files (they're in the repo at docs/marketing/screenshots/). |
+| 1. GitHub README polish | done · expedition 59 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section now has a full stack table (framework, nav, DB, state, animation, notifications, testing, e2e) plus boundary rules explained in context of why they exist (agent-built, reviewer enforces). AI-loop paragraph updated to "59+ iterations". Expedition count references moved forward from 56 to 59 throughout. |
 | 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · features updated expedition 56 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames. **Expedition 56:** Two new features added to Option A body: TM Test Week (7th Week Protocol) and lift rollback — both are practitioner-credibility signals that r/531Discussion values. Research note added explaining why each is relevant to the community. Personal details (how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary) remain the only human-only blocker. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
@@ -136,6 +136,36 @@ Use the right story for the right audience. Never mix them in a single post.
 | 12. In-app review prompt | pending · add to queue | |
 | 13. YouTube Shorts series | brief improved · expedition 56 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 54:** Iteration count updated to 54+. **Expedition 56:** First-video brief improved — hook alternatives added (3 versions with guidance on which to use), "Note on the number" added to the expedition-count line (check 531strength.com/blog for current count before filming), "What Alex needs to do" rewritten as a minimal-viable-path checklist with blocker status, pointer to shooting script added explicitly. Shooting script updated: spoken line "55 expeditions" → "56 expeditions" with same "check current count" note, first comment updated to "56+". Film-now status: face-cam + screen recording + Discord recording are all unblocked without iOS. CTA text overlay uses "Android available now — iOS coming soon" until App Store is live. |
 | 14. Web tools as SEO entry point | in progress · expedition 56 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created at `docs/marketing/reddit-tool-linking-playbook.md` with three full response templates. **Expedition 56:** Short-form comment templates added to playbook — 5 one-to-two sentence drop-ins for threads where the question is already answered (plate math, timeline projection, rollback). These are lower-friction than the full templates and better for high-volume threads. Playbook now has two tiers: full responses (first commenter in thread) and short-form (resource add when others have already answered). |
+
+## Expedition 59 — Research notes
+
+**Date:** 2026-05-29
+
+**GitHub README — Tactic 1 completed:**
+
+The README has been fully rebuilt for Expedition 59. Specific changes:
+
+1. **Title and subtitle now carry SEO keywords.** "5/3/1 Wendler + BBB strength training tracker" and "React Native (Expo SDK 55)" appear in the first two lines — the terms a GitHub search or Google search would need to surface this repo.
+
+2. **Screenshots section moved up** (now before the feature list, not after it). GitHub renders the first screenful as the hook. Showing the app immediately answers "does this actually work?" before the reader has to parse text. Alt text updated to describe actual screen content (e.g., "Today screen — Bench, Cycle 2 Day 1, cycle progress grid, TM 235 LB") rather than generic labels.
+
+3. **Feature list reorganized into four groups:** Program, During a session, Tracking, Privacy. Previously it was a flat list of 10 items — scannability was low. The new grouping maps to the reader's mental model: "what program does it run, what happens while I lift, what does it remember, what does it know about me."
+
+4. **Architecture section expanded:** Added a full stack table (framework, navigation, database, state management, animation, notifications, haptics, linting, testing, e2e). This is the thing developer visitors care about — a scannable table beats prose for tech choices. The four boundary rules now include an explanation of *why* they exist: "because the app is built by an agent — the reviewer enforces them automatically, so the system cannot drift even across hundreds of iterations." This is a practitioner-credibility signal for the developer audience.
+
+5. **Iteration count updated to 59+** in the "How it's built" paragraph.
+
+6. **"Jim Wendler's 5/3/1 program"** — the phrase now appears explicitly in the What it does intro text. This is the search phrase, not just "5/3/1".
+
+**What Alex needs to do for Tactic 1:** Nothing. The README is complete. The screenshots are already committed at `docs/screenshots/`. The only future update needed is the iteration count (update "59+" each time the number rolls forward significantly) — which the loop handles automatically.
+
+**Next actions:**
+1. iOS approval: use `docs/marketing/launch-day-operations-guide.md`
+2. Alex: film the YouTube Short (all segments unblocked without iOS). See `docs/marketing/youtube-shorts-draft.md`.
+3. Alex: monitor r/531Discussion and r/weightroom for plate math and timeline questions — drop tool URLs using `docs/marketing/reddit-tool-linking-playbook.md`.
+4. Alex: fill in personal 5/3/1 history details in `docs/marketing/reddit-531discussion-draft.md` (how long on the program, which lifts, whether you used Strong/Boostcamp).
+
+---
 
 ## Launch-day operations guide
 
