@@ -6,7 +6,8 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Status**: Pre-launch (iOS App Store submission in progress)
+**Last updated**: 2026-05-29 (Expedition 41)
+**Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9)
 
 ## The competitive anchor
 
@@ -99,15 +100,15 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · expedition 37 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph |
+| 1. GitHub README polish | done · updated expedition 41 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 40+ in Expedition 41. |
 | 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
 | 5. HN Show HN | strategy revised · expedition 40 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md` |
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
-| 7. Product Hunt | pending · wait 2-3wk post-iOS | |
-| 8. r/reactnative | outline ready · expedition 38 | Technical angle drafted (stack + plate visualization). In same AI story doc. |
-| 9. r/vibecoding | outline ready · expedition 38 | 1-paragraph version of the loop story drafted. In same AI story doc. |
+| 7. Product Hunt | draft ready · expedition 41 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. |
+| 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
+| 9. r/vibecoding | draft ready · expedition 41 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
@@ -118,7 +119,7 @@ Alex flagged wanting to "share to the world a fun story on how I built this whol
 
 **Status: drafted (Expedition 40).**
 
-The piece is at `docs/marketing/longform-how-i-built-this.md`. It's ~1,200 words and covers:
+The piece is at `docs/marketing/longform-how-i-built-this.md`. Updated in Expedition 41 to fix "39 entries" → "40+ entries". It's ~1,200 words and covers:
 - The personal itch (2-plates-to-3-plates goal, the problem with existing apps)
 - The unusual constraint (agent loop, not writing code)
 - How the loop actually works (cron, Discord, multi-agent team, Logger posts)
