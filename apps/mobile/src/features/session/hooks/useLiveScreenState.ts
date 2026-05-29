@@ -164,6 +164,8 @@ function defaultFireWarningHaptic() {
   }
 }
 
+type RestChronometerModule = typeof import('@/lib/restChronometer');
+
 function defaultFireDoneAlarm() {
   try {
     const RN = require('react-native') as typeof import('react-native');
@@ -176,10 +178,8 @@ function defaultFireDoneAlarm() {
       // When foregrounded, no trigger notification was scheduled — fire an
       // immediate sound alert on the high-importance rest-done channel.
       if (RN.AppState.currentState === 'active') {
-        const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
-          '@/lib/restChronometer',
-        );
-        void fireRestDoneAlarmForeground();
+        const restChronometer = require('@/lib/restChronometer') as RestChronometerModule;
+        void restChronometer.fireRestDoneAlarmForeground();
       }
     } else {
       // iOS: NotificationFeedbackType.Error is a naturally multi-pulse ("alarm")
