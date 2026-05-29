@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — SeeFullRecordLink removed; replaced by SecondaryLink
+
+**Tags:** `removal`, `architecture`
+**Files:** `apps/mobile/src/features/session/SessionCompleteScreen.tsx`, `apps/mobile/src/features/session/components/SeeFullRecordLink.tsx`
+
+Deleted `SeeFullRecordLink.tsx` (feature-local text-link button on the session complete screen) and replaced its single use-site with the `SecondaryLink` design primitive that already existed for the same pattern. The two were nearly identical in purpose but `SeeFullRecordLink` used raw `Text` with no press feedback and had slightly different sizing.
+
+**Why:** `SecondaryLink` was extracted specifically to eliminate one-off copies of this pattern. `SeeFullRecordLink` was an unmigrated survivor — it predated the primitive and wasn't cleaned up when the primitive shipped. Removing it shrinks the session feature surface and makes `SecondaryLink` the consistent path for all low-emphasis text-link actions.
+
+---
+
+### 2026-05-29 — Process page "What it's like" section added
+
+**Tags:** `web`, `convention`
+**Files:** `apps/web/src/pages/process.astro`, `apps/web/src/styles/process.css`
+
+Added a new section to the /process page describing the ambient experience of building with the loop: the kitchen TTS announcement, Discord as the only interface, and listening to expedition audio logs via Pocket Cast and the RSS podcast feed.
+
+**Why:** The /process page explained the mechanism but not the experience. Alex described wanting a "look what I built" angle covering the homelab TTS/Google Home integration, the Discord-only interface, and the Pocket Cast audio log subscription — content that makes the project feel lived-in rather than just described.
+
+---
+
 ### 2026-05-28 — astro.config.mjs domain fixed; website CSS extracted; dead component removed
 
 **Tags:** `bug`, `removal`, `web`

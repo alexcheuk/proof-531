@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 46)
+**Last updated**: 2026-05-28 (Expedition 47)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -80,6 +80,19 @@ Use the right story for the right audience. Never mix them in a single post.
 - Post the /process page directly. Describe multi-agent orchestration (designer/implementer/QA, Logger rotation)
 - This community shifted from experiments to production-ready products; this is a production-ready example
 
+### Secondary / emerging channels
+
+**13. YouTube Shorts series** (new — Expedition 47)
+- Two distinct angles, each as its own series or interleaved:
+  - **The app story**: Screen-capture Shorts showing the app in action. Plate math visualization, rest timer in the background, session receipt. Target: lifters on YouTube who search for 5/3/1 content. These are short (38-47 seconds), screen-capture + text overlays, no face required.
+  - **The builder story**: The homelab + expedition lore angle. Each Short = one absurd detail from the system. The Google Home speaker reading Discord updates. Listening to expedition logs on Pocket Cast. The Logger rotation. The gommage. Target: developers who find delight in the unhinged-but-functional.
+- Key platform fact: 74% of Shorts views come from non-subscribers — discovery channel, not subscriber-building channel. Channel size irrelevant early on.
+- Optimal duration: 38-47 seconds for completion rate and algorithm favor.
+- Consistency matters more than virality: 4-7 per week gets 3.2x subscriber growth vs. irregular posting.
+- Best format hook: "Result → Reversal → Reveal" — show the outcome (a plate math calculation), challenge the assumption about how it was built, then reveal the agent loop.
+- See full 5-video content strategy in the Expedition 47 research notes below.
+- **Requires from Alex**: camera preference (Q12), YouTube channel status (Q13), screen recording of a live session (Q14). See `docs/marketing/questions-for-alex.md`.
+
 ### Secondary channels (opportunistic, not forced)
 
 **10. r/privacy / r/degoogle** — respond when the topic comes up naturally
@@ -112,6 +125,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
+| 13. YouTube Shorts series | strategy drafted · expedition 47 | Two-track strategy: app demo Shorts (screen-capture, lifter audience) + builder story Shorts (homelab/lore/expedition angle, developer audience). Five specific video ideas drafted in Expedition 47 research notes. Requires: camera preference (Q12), YouTube channel status (Q13), screen recording of one live session (Q14). See questions-for-alex.md. |
 
 ## Launch-day operations guide
 
@@ -168,6 +182,71 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531strength.com/process is complete and ready to link.
+
+## Expedition 47 — Research notes
+
+**Date:** 2026-05-28
+
+**YouTube Shorts as a marketing channel — research summary:**
+
+Platform scale is real: 2B monthly users, 200B daily views, 5.91% engagement rate (highest of all short-form platforms). 74% of Shorts views come from non-subscribers — this is a discovery channel first, subscriber channel second. Channel size is largely irrelevant in the early stages.
+
+The algorithm prioritizes four signals: swipe-away rate (did the first 3 seconds hold them?), watch-through rate, engagement rate (likes/comments/shares per view), and replay rate. Practical implication: the hook is the entire game. A Short that doesn't land in the first 3 seconds gets buried.
+
+Optimal duration for this type of content: 38-47 seconds. 40-second Shorts achieve 33% higher engagement than shorter ones. Muted auto-play is common — text overlays are not optional, they're part of the communication layer (73% of Shorts are watched without sound).
+
+Consistency signal: channels posting 4-7 Shorts weekly see 3.2x higher subscriber growth. This matters for a sustained campaign but is not the opening constraint — the first few videos need to exist before any growth strategy applies.
+
+**Five specific video ideas for 531 Strength YouTube Shorts:**
+
+**Video 1: "The plate math reveal" (app demo track)**
+Hook (0-3s): "What weight goes on the bar for 78% of 245?" — text on screen, no answer yet.
+Middle (3-35s): Open the app. Watch it calculate automatically. Show the plate visualization per side. Pan to a real barbell setup that matches.
+Reveal/CTA (35-47s): "531 Strength does this automatically for every set. Free, no account." App Store + Play Store links in description.
+Target: lifters who search YouTube for 5/3/1 content. Zero developer angle.
+
+**Video 2: "My AI agent texts me when it ships code" (builder story track)**
+Hook (0-3s): "My homelab just told me my gym app fixed a bug." — screen shows a Google Home or phone notification.
+Middle (3-35s): Explain the loop in 25 seconds: cron fires, agent works, Discord summary → TTS to Google Home. Show the Discord message. Show the app change.
+Reveal (35-47s): "I haven't written a line of this code. 47+ iterations. The app is free." Link to /process page.
+Target: developers who would find this delightful. High shareability in developer communities.
+
+**Video 3: "The expedition field log" (builder story track)**
+Hook (0-3s): "My app writes its own dev blog. The author ends every post with 'For those who come after.'" — show the blog excerpt.
+Middle (3-35s): Explain the Logger rotation: different persona each loop, doomed, anonymous, writing to the next expedition. Show two or three different sign-offs.
+Reveal (35-47s): "There are 47 of these. I listen to them on Pocket Cast." Link to 531strength.com/blog.
+Target: developers who follow build-in-public content. This is distinctive — no one else has expedition lore.
+
+**Video 4: "The app that builds itself" (developer/lifter crossover)**
+Hook (0-3s): "I built a gym app without writing any code. Here's what actually happened." — face to camera or text overlay.
+Middle (3-35s): Quick cuts between: (1) the app in use during a real session, (2) the Discord channel showing task queue items, (3) a commit rolling in. No deep explanation — just the contrast of "this looks like a real app" and "here's the machine that made it."
+Reveal (35-47s): "531 Strength. Free. No account. Built by Claude Code." Dual links.
+Target: both audiences — lifters see a real app, developers see the engineering story.
+
+**Video 5: "Why I stopped using Strong" (app demo track, competitive angle)**
+Hook (0-3s): "Strong costs $120. This is free and does the same thing." — text overlay, no brand disparagement needed.
+Middle (3-35s): Side-by-side or sequential: "Strong: subscription screen. This: open the app, start tracking." Show plate math, rest timer, BBB support.
+Reveal (35-47s): "531 Strength. Free, local-only, no account." Links.
+Target: lifters actively looking for alternatives. High search intent.
+
+**Format guidance across all five:**
+- Text overlays on every cut (73% watch without sound)
+- First 3 seconds must work as a complete thought — viewer should understand the hook without watching the rest
+- 38-47 seconds total; don't pad
+- Screen recordings can be done directly from the device — no special equipment required
+- Builder story track (Videos 2, 3, 4) pairs well with r/homelab, r/selfhosted, r/vibecoding post cross-linking
+
+**Casual "look what I built" post — drafted:**
+Full draft at `docs/marketing/reddit-casual-builder-story-draft.md`. Includes long-form version (suitable for Reddit post body, Indie Hackers, personal blog) and short version (for r/vibecoding comment or quick post). This is a distinct tone from the technical longform piece — it leads with the experience and the expedition lore rather than the architecture. Requires Alex to confirm homelab/TTS/Pocket Cast details before posting (see Q15-Q16 in questions-for-alex.md).
+
+**Permalinkable tools (web calculator angle):**
+The Discord task queue raised making the plate math calculator and goal calendar available as web tools at 531strength.com with permanent URLs. This is worth investigating as a separate tactic: a plate math calculator that ranks for "531 plate math calculator" or "5/3/1 BBB calculator" in search could drive steady traffic from people who never hear about the app through social channels. Not added to the 12-tactic list yet — it's a product roadmap call (requires web dev work) that Alex needs to weigh in on (Q17 in questions-for-alex.md).
+
+**Iteration counts updated:** All "46+" references in marketing drafts updated to "47+": `docs/marketing/reddit-vibecoding-draft.md`, `docs/marketing/longform-how-i-built-this.md`, `docs/marketing/ai-experiment-story-outline.md`, `docs/marketing/reddit-reactnative-draft.md`, `docs/marketing/producthunt-launch-guide.md`, `docs/marketing/launch-day-operations-guide.md`, `docs/marketing/questions-for-alex.md`.
+
+**New files created this expedition:**
+- `docs/marketing/reddit-casual-builder-story-draft.md` — casual builder story draft (homelab/lore/expedition angle)
+- Tactic 13 (YouTube Shorts) added to strategy and progress tracker
 
 ## Expedition 46 — Research notes
 

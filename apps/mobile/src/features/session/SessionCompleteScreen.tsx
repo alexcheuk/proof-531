@@ -1,6 +1,7 @@
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
+import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { useTheme } from '@/design/theme';
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
@@ -13,7 +14,6 @@ import { CycleCompleteBand } from './components/CycleCompleteBand';
 import { CycleGrid } from './components/CycleGrid';
 import { PRCertificate } from './components/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
-import { SeeFullRecordLink } from './components/SeeFullRecordLink';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';
 import { SessionLayout } from './components/SessionLayout';
@@ -236,7 +236,12 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
             <PrimaryPillButton testID="session-complete-close" onPress={handleClose}>
               Close the day
             </PrimaryPillButton>
-            <SeeFullRecordLink onPress={() => goTo.history(router)} />
+            <SecondaryLink
+              testID="session-complete-history-link"
+              onPress={() => goTo.history(router)}
+            >
+              See full record →
+            </SecondaryLink>
           </>
         )}
       </CtaBar>

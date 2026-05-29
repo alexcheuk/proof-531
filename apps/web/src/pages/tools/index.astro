@@ -1,0 +1,274 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+
+<Base
+  title="Free Training Tools — 531 Strength"
+  description="Free calculators for 5/3/1 and any strength program. Plate math calculator and goal calendar — shareable links for fitness communities."
+>
+  <script slot="head" is:inline type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "531 Strength — Free Training Tools",
+    "description": "Free calculators for 5/3/1 and any strength program.",
+    "url": "https://531strength.com/tools",
+    "hasPart": [
+      {
+        "@type": "WebApplication",
+        "name": "Plate Calculator",
+        "url": "https://531strength.com/tools/plate-math",
+        "applicationCategory": "SportsApplication"
+      },
+      {
+        "@type": "WebApplication",
+        "name": "5/3/1 Goal Calendar",
+        "url": "https://531strength.com/tools/goal-calendar",
+        "applicationCategory": "SportsApplication"
+      }
+    ]
+  }
+  </script>
+
+  <section class="tools-hero">
+    <div class="wrap">
+      <div class="eyebrow">FREE TOOLS</div>
+      <h1>Training calculators<span class="dot">.</span></h1>
+      <p class="lede">
+        Web-based versions of the calculators built into the app.
+        Shareable permanent links for fitness communities.
+      </p>
+    </div>
+  </section>
+
+  <section class="tools-grid-section">
+    <div class="wrap">
+      <div class="tools-grid">
+        <a href="/tools/plate-math" class="tool-card">
+          <div class="tool-marker">01</div>
+          <h2>Plate calculator<span class="dot">.</span></h2>
+          <p class="tool-desc">
+            Enter any target weight, select bar type, and see exactly which plates to load per side.
+            Works in lbs and kg.
+          </p>
+          <div class="tool-meta">
+            <span class="tag">PLATE MATH</span>
+            <span class="tag">LBS · KG</span>
+          </div>
+          <div class="tool-arrow">OPEN →</div>
+        </a>
+
+        <a href="/tools/goal-calendar" class="tool-card">
+          <div class="tool-marker">02</div>
+          <h2>Goal calendar<span class="dot">.</span></h2>
+          <p class="tool-desc">
+            Enter your current training max and a goal. See a cycle-by-cycle projection showing
+            how long it takes to get there.
+          </p>
+          <div class="tool-meta">
+            <span class="tag">5/3/1</span>
+            <span class="tag">CYCLE PROJECTION</span>
+          </div>
+          <div class="tool-arrow">OPEN →</div>
+        </a>
+      </div>
+
+      <div class="tools-cta">
+        <p class="cta-text">
+          These tools are built into the 531 Strength app — log sessions, track PRs,
+          and run the full 5/3/1 program on iOS and Android.
+        </p>
+        <a href="https://github.com/alexcheuk/proof-531/releases" rel="noopener" class="pill ghost">Android APK →</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .dot { color: var(--amber); }
+
+  /* ── hero ── */
+  .tools-hero {
+    padding: 64px 0 56px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .tools-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, var(--line-faint) 1px, transparent 1px);
+    background-size: 96px 100%;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 20px;
+    position: relative;
+  }
+  h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(40px, 5.5vw, 72px);
+    line-height: 0.97;
+    letter-spacing: -0.03em;
+    margin: 0 0 20px;
+    color: var(--ink-0);
+    position: relative;
+  }
+  .lede {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    max-width: 44ch;
+    margin: 0;
+    position: relative;
+  }
+
+  /* ── grid ── */
+  .tools-grid-section {
+    padding: 56px 0 80px;
+  }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    border: 1px solid var(--line-strong);
+    background: var(--line-strong);
+    margin-bottom: 48px;
+  }
+  .tool-card {
+    background: var(--bg-0);
+    padding: 40px 36px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .tool-card:hover {
+    background: var(--bg-1);
+  }
+  .tool-marker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+  .tool-card h2 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 0.97;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+    margin: 0;
+  }
+  .tool-desc {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    max-width: 36ch;
+    margin: 0;
+    flex: 1;
+  }
+  .tool-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--line-strong);
+    padding: 3px 8px;
+  }
+  .tool-arrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-0);
+    margin-top: 8px;
+  }
+
+  /* ── bottom CTA ── */
+  .tools-cta {
+    border-top: 1px solid var(--line);
+    padding-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .cta-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    max-width: 52ch;
+    margin: 0;
+    flex: 1 1 280px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: var(--ink-0);
+    color: var(--bg-0);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink-0);
+    text-decoration: none;
+    transition: transform var(--duration-base) var(--ease-standard), background var(--duration-base) var(--ease-standard);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pill.ghost {
+    background: transparent;
+    color: var(--ink-0);
+    border-color: var(--line-strong);
+  }
+  .pill.ghost:hover {
+    background: var(--bg-2);
+  }
+
+  @media (max-width: 640px) {
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+    .tool-card {
+      padding: 28px 20px;
+    }
+    .tools-hero {
+      padding: 40px 0 40px;
+    }
+    .tools-cta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+  }
+</style>

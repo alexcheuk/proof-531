@@ -1,0 +1,747 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+
+<Base
+  title="5/3/1 Goal Calendar — 531 Strength"
+  description="Calculate how many cycles to reach your training max goal. Built for the 5/3/1 program."
+>
+  <script slot="head" is:inline type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "5/3/1 Goal Calendar — 531 Strength",
+    "applicationCategory": "SportsApplication",
+    "description": "Calculate how many cycles to reach your training max goal. Built for the 5/3/1 program.",
+    "url": "https://531strength.com/tools/goal-calendar",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "Cycle-by-cycle TM projection",
+      "Per-lift progression rates (squat/deadlift +10lb, bench/press +5lb)",
+      "lbs and kg support",
+      "No account required"
+    ]
+  }
+  </script>
+
+  <section class="tool-hero">
+    <div class="wrap">
+      <div class="breadcrumb">
+        <a href="/tools">TOOLS</a>
+        <span class="sep">›</span>
+        <span>GOAL CALENDAR</span>
+      </div>
+      <h1>Goal calendar<span class="dot">.</span></h1>
+      <p class="lede">
+        Enter your current training max, set a goal, and see a cycle-by-cycle projection
+        of how long it takes to get there.
+      </p>
+    </div>
+  </section>
+
+  <section class="tool-section">
+    <div class="wrap">
+      <div class="tool-card" id="goal-calc">
+
+        {/* Unit toggle */}
+        <div class="segment-row">
+          <div class="caps segment-label">UNIT</div>
+          <div class="segment-group" role="group" aria-label="Select unit">
+            <button class="seg-btn active" data-unit="lb" aria-pressed="true">LBS</button>
+            <button class="seg-btn" data-unit="kg" aria-pressed="false">KG</button>
+          </div>
+        </div>
+
+        {/* Lift selector */}
+        <div class="segment-row border-top">
+          <div class="caps segment-label">LIFT</div>
+          <div class="lift-options" role="group" aria-label="Select lift" id="lift-options">
+            <button class="lift-btn active" data-lift="squat" data-inc-lb="10" data-inc-kg="5" aria-pressed="true">SQUAT</button>
+            <button class="lift-btn" data-lift="deadlift" data-inc-lb="10" data-inc-kg="5" aria-pressed="false">DEAD</button>
+            <button class="lift-btn" data-lift="bench" data-inc-lb="5" data-inc-kg="2.5" aria-pressed="false">BENCH</button>
+            <button class="lift-btn" data-lift="press" data-inc-lb="5" data-inc-kg="2.5" aria-pressed="false">PRESS</button>
+          </div>
+        </div>
+
+        {/* Progression note */}
+        <div class="prog-note-row border-top">
+          <span class="caps">PROGRESSION</span>
+          <span class="prog-note-val caps" id="prog-note-val">+10 LB / CYCLE (SQUAT · DEADLIFT)</span>
+        </div>
+
+        {/* Current TM */}
+        <div class="tm-row border-top">
+          <div class="tm-row-l">
+            <div class="caps">CURRENT TM</div>
+            <div class="tm-sub caps" id="current-tm-sub">TRAINING MAX</div>
+          </div>
+          <div class="stepper-group">
+            <button class="step-btn" id="btn-current-dec" aria-label="Decrease current TM">−</button>
+            <div class="tm-display">
+              <span class="tm-num" id="current-tm-display">275</span>
+              <span class="tm-unit caps" id="current-unit-label">LB</span>
+            </div>
+            <button class="step-btn" id="btn-current-inc" aria-label="Increase current TM">+</button>
+          </div>
+        </div>
+
+        {/* Goal TM */}
+        <div class="tm-row border-top">
+          <div class="tm-row-l">
+            <div class="caps">GOAL TM</div>
+            <div class="tm-sub caps" id="goal-tm-sub">TARGET TRAINING MAX</div>
+          </div>
+          <div class="stepper-group">
+            <button class="step-btn" id="btn-goal-dec" aria-label="Decrease goal TM">−</button>
+            <div class="tm-display">
+              <span class="tm-num" id="goal-tm-display">315</span>
+              <span class="tm-unit caps" id="goal-unit-label">LB</span>
+            </div>
+            <button class="step-btn" id="btn-goal-inc" aria-label="Increase goal TM">+</button>
+          </div>
+        </div>
+
+        {/* Result summary */}
+        <div class="result-summary border-top" id="result-summary">
+          <!-- filled by JS -->
+        </div>
+
+        {/* Cycle table */}
+        <div class="cycle-table-wrap border-top" id="cycle-table-wrap">
+          <div class="cycle-table-head">
+            <span class="caps">CYCLE</span>
+            <span class="caps">TRAINING MAX</span>
+            <span class="caps">TOTAL WEEKS</span>
+          </div>
+          <div class="cycle-table-body" id="cycle-table-body" aria-live="polite">
+            <!-- filled by JS -->
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div class="page-cta">
+        <div class="cta-left">
+          <div class="caps cta-label">USE IN THE APP</div>
+          <p>
+            The 531 Strength app tracks your TM automatically each cycle and shows your projected
+            progression over time.
+          </p>
+        </div>
+        <div class="cta-right">
+          <a href="https://github.com/alexcheuk/proof-531/releases" rel="noopener" class="pill ghost">Download for Android →</a>
+          <span class="pill ghost disabled" aria-label="iOS App Store coming soon">iOS · Soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+(function () {
+  var state = {
+    unit: 'lb',
+    lift: 'squat',
+    currentTM: 275,
+    goalTM: 315,
+  };
+
+  var LIFT_CONFIG = {
+    squat:     { incLb: 10, incKg: 5,   label: 'SQUAT · DEADLIFT' },
+    deadlift:  { incLb: 10, incKg: 5,   label: 'SQUAT · DEADLIFT' },
+    bench:     { incLb: 5,  incKg: 2.5, label: 'BENCH · PRESS' },
+    press:     { incLb: 5,  incKg: 2.5, label: 'BENCH · PRESS' },
+  };
+
+  var MAX_CYCLES = 52;
+
+  // ── DOM refs ──────────────────────────────────────────────────────────
+  var progNoteVal     = document.getElementById('prog-note-val');
+  var currentTMDisplay = document.getElementById('current-tm-display');
+  var goalTMDisplay   = document.getElementById('goal-tm-display');
+  var currentUnitLabel = document.getElementById('current-unit-label');
+  var goalUnitLabel   = document.getElementById('goal-unit-label');
+  var resultSummary   = document.getElementById('result-summary');
+  var cycleTableBody  = document.getElementById('cycle-table-body');
+
+  // ── helpers ───────────────────────────────────────────────────────────
+  function getIncrement() {
+    var cfg = LIFT_CONFIG[state.lift];
+    return state.unit === 'lb' ? cfg.incLb : cfg.incKg;
+  }
+
+  function getStep() {
+    return state.unit === 'lb' ? 5 : 2.5;
+  }
+
+  function fmtW(w) {
+    if (w % 1 === 0) return String(w);
+    if ((w * 10) % 1 === 0) return w.toFixed(1);
+    return w.toFixed(2);
+  }
+
+  function unitLabel() {
+    return state.unit === 'lb' ? 'LB' : 'KG';
+  }
+
+  // ── render ────────────────────────────────────────────────────────────
+  function render() {
+    var ul = unitLabel();
+    var inc = getIncrement();
+    var cfg = LIFT_CONFIG[state.lift];
+    var incLabel = state.unit === 'lb'
+      ? '+' + cfg.incLb + ' LB / CYCLE (' + cfg.label + ')'
+      : '+' + cfg.incKg + ' KG / CYCLE (' + cfg.label + ')';
+
+    progNoteVal.textContent = incLabel;
+    currentTMDisplay.textContent = fmtW(state.currentTM);
+    goalTMDisplay.textContent = fmtW(state.goalTM);
+    currentUnitLabel.textContent = ul;
+    goalUnitLabel.textContent = ul;
+
+    // calc cycles
+    if (state.goalTM <= state.currentTM) {
+      resultSummary.innerHTML = '<div class="already-there caps">YOU\'RE ALREADY THERE · GOAL REACHED</div>';
+      cycleTableBody.innerHTML = '';
+      return;
+    }
+
+    var cycles = [];
+    var tm = state.currentTM;
+    var cycleNum = 0;
+    while (tm < state.goalTM && cycleNum < MAX_CYCLES) {
+      cycleNum++;
+      tm = Math.round((tm + inc) * 1000) / 1000;
+      cycles.push({ cycle: cycleNum, tm: tm, weeks: cycleNum * 4 });
+    }
+
+    var totalCycles = cycles.length;
+    var totalWeeks = totalCycles * 4;
+    var totalMonths = (totalWeeks / 4.33).toFixed(1);
+
+    resultSummary.innerHTML =
+      '<div class="summary-grid">' +
+        '<div class="sum-cell">' +
+          '<div class="caps sum-label">CYCLES NEEDED</div>' +
+          '<div class="sum-val">' + totalCycles + '<span class="sum-unit caps">CYC</span></div>' +
+        '</div>' +
+        '<div class="sum-cell">' +
+          '<div class="caps sum-label">TOTAL WEEKS</div>' +
+          '<div class="sum-val">' + totalWeeks + '<span class="sum-unit caps">WK</span></div>' +
+        '</div>' +
+        '<div class="sum-cell">' +
+          '<div class="caps sum-label">~MONTHS</div>' +
+          '<div class="sum-val">' + totalMonths + '<span class="sum-unit caps">MO</span></div>' +
+        '</div>' +
+        '<div class="sum-cell">' +
+          '<div class="caps sum-label">TM GAIN</div>' +
+          '<div class="sum-val">' + fmtW(state.goalTM - state.currentTM) + '<span class="sum-unit caps">' + ul + '</span></div>' +
+        '</div>' +
+      '</div>';
+
+    // table rows — show all but mark goal row
+    var html = '';
+    cycles.forEach(function (row) {
+      var isGoal = row.tm >= state.goalTM;
+      html += '<div class="cycle-row' + (isGoal ? ' cycle-row--goal' : '') + '">' +
+        '<span class="cycle-num">' + row.cycle + '</span>' +
+        '<span class="cycle-tm">' + fmtW(row.tm) + ' <span class="cycle-unit caps">' + ul + '</span>' +
+          (isGoal ? ' <span class="goal-tag caps">GOAL</span>' : '') +
+        '</span>' +
+        '<span class="cycle-weeks caps">' + row.weeks + ' WK</span>' +
+        '</div>';
+    });
+
+    if (totalCycles >= MAX_CYCLES) {
+      html += '<div class="cycle-row cycle-row--more">' +
+        '<span class="caps" style="grid-column:1/-1">SHOWING ' + MAX_CYCLES + ' CYCLES MAX</span>' +
+        '</div>';
+    }
+
+    cycleTableBody.innerHTML = html;
+  }
+
+  // ── event handlers ────────────────────────────────────────────────────
+  document.querySelectorAll('.seg-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var newUnit = this.dataset.unit;
+      if (newUnit === state.unit) return;
+      if (newUnit === 'kg') {
+        state.currentTM = Math.round((state.currentTM / 2.20462) / 2.5) * 2.5;
+        state.goalTM    = Math.round((state.goalTM    / 2.20462) / 2.5) * 2.5;
+      } else {
+        state.currentTM = Math.round((state.currentTM * 2.20462) / 5) * 5;
+        state.goalTM    = Math.round((state.goalTM    * 2.20462) / 5) * 5;
+      }
+      state.unit = newUnit;
+      document.querySelectorAll('.seg-btn').forEach(function (b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      this.classList.add('active');
+      this.setAttribute('aria-pressed', 'true');
+      render();
+    });
+  });
+
+  document.querySelectorAll('.lift-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.lift-btn').forEach(function (b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      this.classList.add('active');
+      this.setAttribute('aria-pressed', 'true');
+      state.lift = this.dataset.lift;
+      render();
+    });
+  });
+
+  document.getElementById('btn-current-inc').addEventListener('click', function () {
+    state.currentTM = Math.round((state.currentTM + getStep()) * 1000) / 1000;
+    render();
+  });
+  document.getElementById('btn-current-dec').addEventListener('click', function () {
+    var newV = Math.round((state.currentTM - getStep()) * 1000) / 1000;
+    if (newV > 0) { state.currentTM = newV; render(); }
+  });
+  document.getElementById('btn-goal-inc').addEventListener('click', function () {
+    state.goalTM = Math.round((state.goalTM + getStep()) * 1000) / 1000;
+    render();
+  });
+  document.getElementById('btn-goal-dec').addEventListener('click', function () {
+    var newV = Math.round((state.goalTM - getStep()) * 1000) / 1000;
+    if (newV > 0) { state.goalTM = newV; render(); }
+  });
+
+  render();
+})();
+</script>
+
+<style>
+  .wrap {
+    max-width: var(--content-wide);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .dot { color: var(--amber); }
+  .caps {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* ── hero ── */
+  .tool-hero {
+    padding: 56px 0 48px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, var(--line-faint) 1px, transparent 1px);
+    background-size: 96px 100%;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .breadcrumb {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .breadcrumb a {
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+  .breadcrumb a:hover { color: var(--ink-0); }
+  .breadcrumb .sep { color: var(--line-strong); }
+
+  h1 {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: clamp(40px, 5.5vw, 72px);
+    line-height: 0.97;
+    letter-spacing: -0.03em;
+    margin: 0 0 20px;
+    color: var(--ink-0);
+    position: relative;
+  }
+  .lede {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    max-width: 48ch;
+    margin: 0;
+    position: relative;
+  }
+
+  /* ── tool section ── */
+  .tool-section {
+    padding: 56px 0 80px;
+  }
+  .tool-card {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    margin-bottom: 48px;
+  }
+  .border-top { border-top: 1px solid var(--line); }
+
+  /* ── segment row ── */
+  .segment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    gap: 16px;
+  }
+  .segment-label { flex-shrink: 0; }
+  .segment-group {
+    display: flex;
+    border: 1px solid var(--line-strong);
+  }
+  .seg-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 8px 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+  }
+  .seg-btn + .seg-btn { border-left: 1px solid var(--line-strong); }
+  .seg-btn:hover { color: var(--ink-0); }
+  .seg-btn.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+
+  /* ── lift selector ── */
+  .lift-options {
+    display: flex;
+    border: 1px solid var(--line-strong);
+  }
+  .lift-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+  }
+  .lift-btn + .lift-btn { border-left: 1px solid var(--line-strong); }
+  .lift-btn:hover { color: var(--ink-0); background: var(--bg-1); }
+  .lift-btn.active {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+
+  /* ── progression note ── */
+  .prog-note-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: var(--bg-1);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .prog-note-val {
+    color: var(--ink-0);
+    font-weight: 600;
+  }
+
+  /* ── TM rows ── */
+  .tm-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 24px;
+  }
+  .tm-sub {
+    font-size: 9px;
+    color: var(--ink-3);
+    margin-top: 3px;
+  }
+  .stepper-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tm-display {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 110px;
+    justify-content: center;
+  }
+  .tm-num {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+  }
+  .tm-unit {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+  }
+  .step-btn {
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--ink-0);
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+    flex-shrink: 0;
+  }
+  .step-btn:hover {
+    background: var(--ink-0);
+    color: var(--bg-0);
+  }
+
+  /* ── result summary ── */
+  .result-summary {
+    padding: 24px;
+    background: var(--bg-1);
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .sum-cell {
+    padding: 20px 16px;
+    border-right: 1px solid var(--line);
+  }
+  .sum-cell:last-child { border-right: none; }
+  .sum-label { margin-bottom: 8px; }
+  .sum-val {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+  .sum-unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+  }
+  .already-there {
+    padding: 20px;
+    color: var(--amber);
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  /* ── cycle table ── */
+  .cycle-table-wrap {
+    /* scrollable on mobile */
+  }
+  .cycle-table-head {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px;
+    padding: 10px 24px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .cycle-table-head span {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .cycle-table-body {
+    max-height: 480px;
+    overflow-y: auto;
+  }
+  .cycle-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px;
+    align-items: baseline;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--line-faint);
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .cycle-row:last-child { border-bottom: none; }
+  .cycle-row:hover { background: var(--bg-1); }
+  .cycle-row--goal {
+    background: var(--bg-1);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .cycle-row--more {
+    padding: 12px 24px;
+    background: var(--bg-1);
+  }
+  .cycle-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .cycle-row--goal .cycle-num { color: var(--ink-0); }
+  .cycle-tm {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .cycle-unit {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+  }
+  .goal-tag {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    padding: 1px 6px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .cycle-weeks {
+    text-align: right;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+  }
+
+  /* ── page CTA ── */
+  .page-cta {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-1);
+    padding: 32px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .cta-label { margin-bottom: 8px; }
+  .cta-left p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-1);
+    max-width: 44ch;
+    margin: 0;
+  }
+  .cta-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-0);
+    background: transparent;
+    white-space: nowrap;
+    transition: background var(--duration-base) var(--ease-standard);
+  }
+  .pill.ghost:hover { background: var(--bg-2); }
+  .pill.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* ── responsive ── */
+  @media (max-width: 640px) {
+    .summary-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sum-cell:nth-child(2) { border-right: none; }
+    .sum-cell:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  }
+  @media (max-width: 580px) {
+    .tm-row {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .stepper-group { justify-content: center; }
+    .segment-row { flex-direction: column; align-items: flex-start; }
+    .lift-options { flex-wrap: wrap; }
+    .tool-hero { padding: 40px 0 36px; }
+    .page-cta { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
+    .cycle-table-head,
+    .cycle-row { padding: 10px 16px; }
+  }
+  @media (max-width: 400px) {
+    .lift-btn { padding: 8px 10px; font-size: 10px; }
+  }
+</style>

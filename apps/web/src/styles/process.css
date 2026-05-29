@@ -873,3 +873,48 @@ section {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── ambient experience ──────────────────────────── */
+.ambient-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--line-strong);
+}
+.ambient-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line-strong);
+  margin-top: 40px;
+}
+.ambient-item {
+  padding: 24px 24px 28px;
+  border-right: 1px solid var(--line);
+}
+.ambient-item:last-child {
+  border-right: none;
+}
+.ambient-item h3 {
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 10px 0 14px;
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.ambient-item p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-1);
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .ambient-grid {
+    grid-template-columns: 1fr;
+  }
+  .ambient-item {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .ambient-item:last-child {
+    border-bottom: none;
+  }
+}

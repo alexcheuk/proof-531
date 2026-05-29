@@ -86,6 +86,10 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | process.astro CSS extraction | done · expedition 46 | 798-line scoped style block extracted to `src/styles/process.css`. |
 | astro.config.mjs domain fix | done · expedition 46 | Was `531strength.com`, now `531.dev`. Affected sitemap URLs, og:url, canonicals. Also fixed RSS fallback. |
 | Dead code removal (PlateBar.astro) | done · expedition 46 | 301-line unused illustration component removed (superseded by PhonePlateBar.astro). |
+| /tools index page | done · 2026-05-28 | Lists both calculator tools. SEO: CollectionPage JSON-LD, descriptive meta. |
+| /tools/plate-math page | done · 2026-05-28 | Interactive plate calculator. Unit toggle (lbs/kg), bar selector, stepper + direct input, text-art barbell diagram, SEO JSON-LD WebApplication. |
+| /tools/goal-calendar page | done · 2026-05-28 | 5/3/1 goal projector. Per-lift TM progression, cycle table, summary stats. SEO JSON-LD WebApplication. |
+| Footer /tools link | done · 2026-05-28 | Added "Tools" to Product column in Footer.astro. |
 | og:image default | pending · needs asset | Need a 1200×630 social card PNG. Alex to provide or generate. |
 | App Store URL update | blocked · waiting on Apple | Alex to update homepage CTA when iOS is live. |
 | Screenshots on homepage | blocked · waiting on Alex | Need real device screenshots. Instructions in README Screenshots section. |

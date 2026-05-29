@@ -70,7 +70,7 @@ The app is free, no account, local SQLite. Source on GitHub.
 
 ---
 
-**Timing note:** Post after 20+ expedition logs exist (already satisfied — 46+ iterations as of Expedition 46). HN will ask "how many iterations?" — the answer at 46+ is credible. Post on a weekday between 8am–10am US Eastern.
+**Timing note:** Post after 20+ expedition logs exist (already satisfied — 47+ iterations as of Expedition 47). HN will ask "how many iterations?" — the answer at 47+ is credible. Post on a weekday between 8am–10am US Eastern.
 
 **What HN will likely ask:**
 - "Did you actually write any code?" — Answer: minimal, some emergency fixes. The constraint was mostly held.
