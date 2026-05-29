@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-28, expedition 43)
+# Codebase facts (updated 2026-05-29, expedition 56)
 
 ## Architecture
 
@@ -25,6 +25,23 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `LogSheetFooter` (`features/session/components/LogSheetFooter.tsx`) — shared
   Cancel + Save button pair. Takes `cancelTestID`, `saveTestID`, and a11y
   labels as props. Both AMRAP and TM Test sheets use this directly.
+
+## CapsLabel coverage (updated expedition 56)
+
+Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
+- `TabBarItem.tsx` — tab bar labels (was: raw RNText with inline fontFamily/letterSpacing/color)
+- `AdjustTmCta.tsx` — "Adjust training max" label + sub-caption
+- `CycleGrid.tsx` — "Cycle № NN" header + "N of M" hint
+- `SessionCompleteMasthead.tsx` — "531 . ledger" wordmark dot and "ledger" text
+- `SessionCompleteTitle.tsx` — session prose paragraph
+- `SessionTopBar.tsx` — back arrow glyph
+- `LiveScreen.tsx` — "LOADING SESSION…" state
+- `ProgressScreen.tsx` — CapsLabel for projection label (done earlier)
+- `Colophon.tsx` — "— end of register —" (done earlier)
+
+Remaining known intentional RNText uses (not candidates):
+- `PrCelebrationComparison.tsx` — uses custom paper tints (PAPER_28, PAPER_45, PAPER_55) not in ColorToken; inside Reanimated views
+- `TmPreviewRow.tsx` — inline glyph spans (nested text in a Text component; letterSpacing 1.26 is intentionally tighter than xs preset)
 
 ## Key primitives (don't re-invent these)
 
