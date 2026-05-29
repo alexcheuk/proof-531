@@ -120,9 +120,8 @@ describe('AmrapLogSheet', () => {
   });
 
   it('surfaces a TIE caption + badge when reps would match (not beat) the existing best', () => {
-    // Epley: 225 × (1 + 5/30) = 262.5 → rounds to 263.
-    // Set existingBestE1RM to 262.5 so the rounded projection equals the
-    // rounded best — should trigger isTiePR.
+    // Epley: 225 × (1 + 5/30) = 262.5 → plate-snaps to 265 (nearest 5lb step).
+    // Set existingBestE1RM to 262.5 so round(predictedE1RM) === round(existingBest) — triggers isTiePR.
     mockState.reps = 5;
     const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={262.5} />);
     expect(screen.getByTestId('amrap-tie-badge')).toBeTruthy();

@@ -4,6 +4,7 @@
 Built with React Native (Expo SDK 55) by a Claude coding agent on a 30-minute cron loop.
 
 [![CI](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml/badge.svg)](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/alexcheuk/proof-531?label=Android%20APK&color=000)](https://github.com/alexcheuk/proof-531/releases/latest)
 [![License: Source Available](https://img.shields.io/badge/license-source%20available-blue)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](https://531strength.com)
 [![Expo SDK](https://img.shields.io/badge/Expo%20SDK-55-000020?logo=expo)](https://docs.expo.dev/versions/v55.0.0/)
@@ -70,11 +71,11 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 | Platform | Link |
 |---|---|
 | Android APK | [GitHub Releases](https://github.com/alexcheuk/proof-531/releases) |
-| iOS App Store | Coming soon |
+| iOS App Store | In App Store review — coming soon |
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 64+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 65+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

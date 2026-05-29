@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 63)
+**Last updated**: 2026-05-29 (Expedition 65)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -94,6 +94,20 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 65 notes
+
+Four polish fixes, all Track B (content accuracy):
+
+1. **README iteration count updated** (Track B): Changed "64+" to "65+" — expedition 65 is now running; highest committed loop ID is `loop-064`.
+
+2. **Homepage hero lede "submission" → "approval"** (Track B): The hero lede said "iOS App Store submission is in progress" — the submission itself happened already; what's pending is Apple's *approval*. Corrected to "iOS App Store approval is in progress" for consistency with the signoff section (which already said "approval in progress" after the expedition 64 fix).
+
+3. **Process page "App Store and Play Store" → "App Store"** (Track B): The about-section paragraph on `process.astro` said "I figured I'd just put it on the App Store and Play Store" — same Play Store error as the signoff section fixed in expedition 64. The app has never been submitted to the Play Store, only the iOS App Store is pending. Corrected to "the App Store".
+
+4. **Session receipt alt text "est. 1RM" → "e1RM"** (Track B): Screenshot-5.png alt text said "222 LB est. 1RM" but the app uses "e1RM" consistently as the abbreviation for estimated one-rep max. Corrected to "e1RM" for accuracy.
+
+5. **Process page colophon RN version added** (polish): Added "0.83" to the Stack entry in the colophon sidebar (`Expo SDK 55 · RN` → `Expo SDK 55 · RN 0.83`). The RN version is referenced in CLAUDE.md (RN 0.83+) and the README; the colophon was the only place that truncated it.
 
 ### Expedition 64 notes
 
@@ -231,6 +245,11 @@ Two content-accuracy fixes shipped:
 | Blog search placeholder accuracy | done · expedition 63 | Placeholder "Filter by title…" → "Filter by title or summary…". Section-head description updated to match. |
 | Homepage platform-note tighten | done · expedition 63 | Simplified to "iOS + Android · one React Native codebase · Android live · iOS in review". |
 | README iteration count | done · expedition 63 | Updated "62+" → "63+". |
+| README iteration count | done · expedition 65 | Updated "64+" → "65+". |
+| Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
+| Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |
+| Session receipt alt text "est. 1RM" → "e1RM" | done · expedition 65 | screenshot-5.png alt text used "est. 1RM"; app uses "e1RM" throughout. Corrected. |
+| Process page colophon RN version | done · expedition 65 | Stack entry "Expo SDK 55 · RN" → "Expo SDK 55 · RN 0.83". |
 
 ## Discord collaboration workflow
 

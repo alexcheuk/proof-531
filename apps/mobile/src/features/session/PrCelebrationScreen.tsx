@@ -165,12 +165,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const numbersScaleStyle = useScaleStyle(numbersScaleTarget);
 
   // Eyebrow backspace-and-retypes in parallel with count-up; FINAL_EYEBROW is the permanent state so no reset needed.
-  const eyebrowTarget =
-    phase === 'tick-up'
-      ? PR_CELEBRATION_FINAL_EYEBROW
-      : phase === 'prev-type' || phase === 'prev-hold'
-        ? PREV_EYEBROW
-        : PREV_EYEBROW;
+  const eyebrowTarget = phase === 'tick-up' ? PR_CELEBRATION_FINAL_EYEBROW : PREV_EYEBROW;
   const eyebrowTransitionActive =
     phase === 'prev-type' || phase === 'prev-hold' || phase === 'tick-up';
   const animatedEyebrow = useTypewriterTransition({

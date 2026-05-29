@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 61)
+# Codebase facts (updated 2026-05-29, expedition 65)
 
 ## Architecture
 
@@ -449,3 +449,14 @@ Remaining known intentional RNText uses (not candidates):
 - `tm.ts` — training-max history.
 - `liftGoal.ts` — `getLiftGoal`, `setLiftGoal`. Used by `useLiftGoal()` TanStack Query hook.
 - `rollbackLift.ts` — `rollbackLift(db, lift, n)` + `countCompletedSessionsForLift(db, lift)`. Added expedition 40.
+
+## Maestro e2e flows (added expedition 65)
+
+`.maestro/flows/` contains five smoke-test flows:
+- `01-onboarding.yaml` — full onboarding sequence
+- `02-home-navigation.yaml` — tab navigation (Home, Progress, History, Settings, and back)
+- `03-begin-session.yaml` — begin a session and verify live screen
+- `04-settings-navigation.yaml` — settings scroll + Danger Zone visibility
+- `05-progress-screen.yaml` — Progress tab, carousel, stats triplet, goal panel
+
+Flows use `appId: com.alexcheuk.fivethreeone.dev` (the development variant). Requires Maestro installed + dev-client APK on device. Run all: `maestro test .maestro/flows/`.

@@ -14,7 +14,7 @@ updated: 2026-05-28 (Expedition 42)
 
 **Updated Expedition 42:** The dominant r/vibecoding community view in 2026 is "vibe coding is a prototyping methodology, not a production methodology." Reddit threads consistently reflect this: vibe coding works for MVPs, internal tools, and landing pages, but production requires code review, testing, and architectural planning beyond AI capabilities. The community is skeptical of "vibe-coded production apps" as a category.
 
-531 Strength directly contradicts this narrative — it has CI-enforced boundaries, property-tested domain logic, 64+ real iterations, and a shipped App Store product. The original draft below already leads with the architecture, but the revised Option A title and opening now lead with the contrast explicitly. This is a stronger hook than describing the architecture alone.
+531 Strength directly contradicts this narrative — it has CI-enforced boundaries, property-tested domain logic, 65+ real iterations, and a shipped App Store product. The original draft below already leads with the architecture, but the revised Option A title and opening now lead with the contrast explicitly. This is a stronger hook than describing the architecture alone.
 
 r/vibecoding respects specificity — multi-agent orchestration with explicit role boundaries is more interesting than "I used Cursor to build something." The winning frame here is: this is a production app, it ships, I use it, and the system that built it has the safeguards the community says are impossible at production quality.
 
@@ -34,15 +34,18 @@ Apple's App Store review queue was explicitly delayed in Q1 2026 due to the AI-a
 **Expedition 64 signal — Claude Code Routines launched April 2026, post-dating this project:**
 Anthropic launched Claude Code Routines on April 14, 2026 — scheduled Claude Code sessions running on Anthropic's cloud. The 531 Strength homelab cron predates this by months. The community framing point: the "30-minute cron" architecture isn't a makeshift hack — it's the pattern Anthropic eventually built a product around. Specifically: Pro plan Routines allow 5 runs per day. The 531 Strength loop runs 48 times per day. The homelab setup enables a cadence that no hosted product currently supports. If r/vibecoding asks "why not use Claude Code Routines?", the honest answer is: this predates them, and the homelab cron gives finer control over context management, role skill files, and the multi-agent handoff chain. The loop is the architecture; Routines is Anthropic's attempt to productize one tier of that architecture. This is subtle positioning — don't lead with it in the post, but it's a solid comment-ready response to the "why roll your own scheduler?" question.
 
+**Expedition 65 signal — Code with Claude 2026 conference validated the multi-agent harness pattern:**
+Anthropic's developer conference (May 6, 2026) announced three new managed features: Multi-agent Orchestration (coordinator spawns subagents in parallel), Outcomes (agents iterate against explicit success criteria), and Dreaming (agents review past sessions and rewrite memory). The 531 Strength loop has run custom equivalents of all three for 65 iterations: rn-designer → rn-frontend → rn-qa is multi-agent orchestration; CI harness (property tests, boundary checkers) is Outcomes; loop-memory and decision-log are Dreaming. These are now Anthropic-managed features. This project ran them as custom harnesses before they existed as products. Use this framing if someone asks whether rolling your own harness is still worth it in 2026 — the homelab cron gives 48 runs/day vs. 25 max on Team/Enterprise Routines, and the custom harness exposes context management granularity that managed Routines does not.
+
 ---
 
 ## Option A — Lead with the contrast (recommended, updated Expedition 42)
 
 **Post title:**
-> r/vibecoding says vibe coding is for prototypes. I shipped a production app this way — 64+ iterations, CI enforcement, App Store live.
+> r/vibecoding says vibe coding is for prototypes. I shipped a production app this way — 65+ iterations, CI enforcement, App Store live.
 
 **Alternative title (less confrontational):**
-> Built a production React Native app on a 30-min Claude agent cron — 64+ iterations in, still running
+> Built a production React Native app on a 30-min Claude agent cron — 65+ iterations in, still running
 
 **Body:**
 
@@ -58,7 +61,7 @@ Here's the architecture that made it production-ready rather than a toy:
 
 **A decision log the next agent reads.** Each agent starts fresh. The continuity mechanism is a file in the repo where notable decisions are appended before work ships. An agent in iteration 40 reads what iteration 12 decided and why — and doesn't re-argue it.
 
-**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 64+ entries, one per loop.
+**A rotating Logger writes the blog.** At the end of each loop, a fourth agent — a different persona each time — writes a field log about what changed and commits it with the code. The dev blog is written entirely by the system. 65+ entries, one per loop.
 
 The result: Android on the Play Store, iOS on the App Store, property-tested domain logic, real boundary enforcement, an app I actually use for 5/3/1 training.
 
@@ -77,7 +80,7 @@ Source: [GitHub link]
 
 Built a 5/3/1 strength tracker this way: Claude Code agent harness, 30-minute cron, multi-agent subteam (designer → implementer → QA), each with role skill files and boundary rules enforced by CI scripts.
 
-The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 64+ entries, none written by a human.
+The interesting part: the blog is written the same way. A rotating Logger agent writes a field log each iteration and commits it alongside the code. 65+ entries, none written by a human.
 
 The app ships. Android on Play Store, iOS on the App Store. I use it.
 

@@ -1,0 +1,33 @@
+---
+# Smoke test: Progress screen content and lift carousel navigation.
+# Assumes onboarding was already completed with at least one lift enabled.
+
+appId: com.alexcheuk.fivethreeone.dev
+---
+- launchApp
+
+# Navigate to Progress tab
+- tapOn:
+    id: "tab-progress"
+- waitForAnimationToEnd
+
+# Progress screen and lift carousel should be present
+- assertVisible:
+    id: "progress-screen"
+- assertVisible:
+    id: "progress-lift-carousel"
+
+# Stats triplet for the first lift (squat default) should be visible
+- assertVisible:
+    id: "stats-triplet-squat"
+
+# Goal panel should be present
+- assertVisible:
+    id: "goal-panel-squat"
+
+# Return to Home tab
+- tapOn:
+    id: "tab-index"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "home-lift-carousel"

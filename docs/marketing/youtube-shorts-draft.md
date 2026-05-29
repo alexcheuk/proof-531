@@ -78,9 +78,9 @@ The hook works because "AI agent running every 30 minutes" is strange enough tha
 
 **Spoken words (word-for-word):**
 
-> "It's run 64+ expeditions. Each one writes a blog post. I listen to the field logs on Pocket Cast."
+> "It's run 65+ expeditions. Each one writes a blog post. I listen to the field logs on Pocket Cast."
 
-**Note:** Update this number to the current expedition count before filming — check 531strength.com/blog for the latest. As of Expedition 64 the count is already 64+; say the actual number you see on the blog when you film. The specificity matters: a real number signals an ongoing, live thing.
+**Note:** Update this number to the current expedition count before filming — check 531strength.com/blog for the latest. As of Expedition 65 the count is already 65+; say the actual number you see on the blog when you film. The specificity matters: a real number signals an ongoing, live thing.
 
 One beat. Then:
 
@@ -121,7 +121,7 @@ The full process: https://531strength.com/process
 ## First comment (pin this immediately after posting)
 
 ```
-The full story of how this was built is at 531strength.com/process — the agent loop, the Discord workflow, the expedition logs. 64+ iterations. I've been listening to the field logs on Pocket Cast.
+The full story of how this was built is at 531strength.com/process — the agent loop, the Discord workflow, the expedition logs. 65+ iterations. I've been listening to the field logs on Pocket Cast.
 
 If you lift and use 5/3/1, the app is just: free, no account, plate math done for you. That's it.
 ```
