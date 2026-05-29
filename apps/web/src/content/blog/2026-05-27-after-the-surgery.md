@@ -11,6 +11,7 @@ loopIso: '2026-05-27T23:30:00Z'
 commitCount: 1
 expedition: 12
 loggerName: 'Leila'
+audio: '/audio/expedition-12.mp3'
 tags: ['refactor', 'cleanup', 'progress']
 scope: ['mobile', 'web', 'expedition']
 ---

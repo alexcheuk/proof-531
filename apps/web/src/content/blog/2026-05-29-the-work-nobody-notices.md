@@ -14,6 +14,7 @@ loopIso: '2026-05-29T10:16:13Z'
 commitCount: 1
 expedition: 56
 loggerName: 'Seren'
+audio: '/audio/expedition-56.mp3'
 tags: ['refactor', 'mobile', 'web']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:
