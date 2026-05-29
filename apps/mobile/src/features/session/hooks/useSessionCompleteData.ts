@@ -10,31 +10,11 @@ import type { Lift, SetLog, Unit } from '@/domain/types';
 import { convert, convertWeight, displayUnit, displayWeight } from '@/domain/units';
 import { useMemo } from 'react';
 
-/**
- * Derives every view value SessionCompleteScreen needs from its three
- * queries (session row, set-logs, settings, prs).
- *
- * Pulling this out of the screen body keeps the rendering layer focused
- * on composition. Returns `null` for the data fields while still loading
- * so the screen can render its loading chrome without branching on every
- * individual query.
- */
 export type SessionCompleteData = {
   ready: boolean;
-  /** True while the underlying session row has not arrived. */
   loading: boolean;
-  /**
-   * True if the session exists but its status is something we cannot
-   * render a receipt for (`'cancelled'`). A stale `'in_progress'` read
-   * is NOT included here — it is treated as a transient cache fluke that
-   * the next refetch resolves. Bouncing on `'in_progress'` was the root
-   * of Discord 1508935260, where the AMRAP→BBB→Close flow occasionally
-   * landed the user on Home because the per-session cache had not yet
-   * been re-read between screens (BBB's `Mark complete` invalidates the
-   * set-logs/sessions list but not `SESSION_KEY`).
-   */
+  // 'in_progress' is not bounced — it's a transient cache fluke the next refetch resolves (see Discord 1508935260).
   cancelled: boolean;
-  /** True if the session lookup returned null (caller should bounce home). */
   missing: boolean;
   view: SessionCompleteView | null;
 };
@@ -51,7 +31,6 @@ export type SessionCompleteView = {
   sessionsInCycle: number;
   eyebrowDate: string;
   stampParts: ReturnType<typeof formatDateLabel>;
-  /** True when this session is the terminal session of its cycle (completedThisCycle === sessionsInCycle). */
   isCycleComplete: boolean;
   // PR / certificate
   hasPR: boolean;
@@ -66,29 +45,12 @@ export type SessionCompleteView = {
   workingVolume: number;
   elapsedReady: boolean;
   elapsedValue: string;
-  // BBB summary — present (number > 0 + display weight > 0) when the
-  // user marked BBB complete via the prompt screen, absent otherwise.
-  // The skip path on BbbPromptScreen writes no rows, so an empty BBB
-  // remains a real distinction on the receipt.
   bbbSetsCompleted: number;
   bbbWeightDisplay: number;
-  /**
-   * True when this Session Complete is a Week-4 TM Test session (a logged
-   * `'tm-test'` row exists). Drives the variant pivot: no PRCertificate,
-   * no AdjustTmCta, no standard ReceiptCard — instead, the TmTestReceiptBand
-   * + TmAdjustmentNote render. Legacy `'working'` week-4 deload sessions
-   * (pre-migration) resolve to `false` here and render under the legacy
-   * receipt — the forward-only contract.
-   */
+  // Legacy 'working' week-4 deload sessions (pre-migration) resolve to false and render under the old receipt.
   isTmTestSession: boolean;
-  /** Reps logged on the TM test set; only meaningful when `isTmTestSession`. */
   tmTestReps: number;
-  /** TM at test time in display units; only meaningful when `isTmTestSession`. */
   tmTestWeight: number;
-  /**
-   * TM adjustment suggestion derived from `tmAdjustmentSuggestion(reps, lift,
-   * unit)`. Null outside TM-test sessions.
-   */
   tmAdjustment: TmAdjustmentSuggestion | null;
 };
 

@@ -1,13 +1,3 @@
-/**
- * Pure helper: compute the next `enabledLifts` array after toggling one lift.
- *
- * Rules:
- * - Toggling an off lift adds it; the result preserves canonical LIFT_ORDER
- *   ordering (NOT insertion order).
- * - Toggling an on lift removes it.
- * - Toggling the only enabled lift is a no-op: returns the same array
- *   reference so callers can early-out cheaply.
- */
 import type { Lift } from '@/domain/types';
 import { LIFT_ORDER } from './lifts';
 

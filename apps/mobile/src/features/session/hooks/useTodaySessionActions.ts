@@ -6,18 +6,6 @@ import { useCallback, useState } from 'react';
 import { clearRestSnapshot } from '../sessionRuntime';
 import { useCancelConfirm } from './useCancelConfirm';
 
-/**
- * Today-screen restart action for an in-progress session.
- *
- * Surface contract — three modeless interactions:
- *   - `onRequestReset()` → opens the reset-confirm sheet.
- *   - `onConfirmResetFirstTap()` / `onConfirmResetSecondTap()` — two-tap arm.
- *   - `onDismissResetSheet()` — close + disarm.
- *
- * On success, invalidates the session-shaped query keys so the Today
- * screen rerenders with a fresh start. The caller stays on Today —
- * no navigation here.
- */
 export type UseTodaySessionActionsResult = {
   resetOpen: boolean;
   resetArmed: boolean;
