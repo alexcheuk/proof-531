@@ -1,6 +1,9 @@
 name: Preview APK
 
 on:
+  # Manual trigger so the on-runner build can be exercised on demand,
+  # independent of the path filter below.
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
