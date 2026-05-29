@@ -1,11 +1,9 @@
 /**
  * Behavioral test for RestPhase + RestTimer.
  *
- * Asserts the current layout: caps eyebrow ("SET COMPLETED" /
- * "SET COMPLETED · NEW PERSONAL RECORD"), display headline
- * ("Rest" / "Stronger" with a separate amber period), optional NEXT SET
- * TopSetBlock the parent passes via `nextSet`, and the count-up
- * RestTimer.
+ * Asserts the current layout: "SET COMPLETED" caps eyebrow, "Rest" display
+ * headline with a separate amber period, optional NEXT SET TopSetBlock the
+ * parent passes via `nextSet`, and the count-down RestTimer.
  */
 // RestTimer uses Reanimated to pulse the count-up clock when in overtime;
 // stub the native bridge so jest doesn't crash on import.
@@ -37,20 +35,13 @@ describe('RestPhase', () => {
     expect(screen.getByTestId('rest-timer')).toBeTruthy();
   });
 
-  it('renders the "Rest" headline word on a non-PR set', () => {
+  it('renders the "Rest" headline word', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} />);
     // The headline RNText holds a string child plus a sibling amber-period
     // Text — getByText can't match the bare word, so assert on the
     // children array of the testID'd node.
     const headline = screen.getByTestId('rest-phase-headline');
     expect(headline.props.children).toEqual(expect.arrayContaining(['Rest']));
-  });
-
-  it('renders the "Stronger" headline and PR eyebrow on a PR set', () => {
-    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} isPR />);
-    const headline = screen.getByTestId('rest-phase-headline');
-    expect(headline.props.children).toEqual(expect.arrayContaining(['Stronger']));
-    expect(screen.getByText('SET COMPLETED · NEW PERSONAL RECORD')).toBeTruthy();
   });
 
   it('renders the optional NEXT SET TopSetBlock when nextSet is provided', () => {

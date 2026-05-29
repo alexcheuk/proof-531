@@ -8,14 +8,17 @@ import { displayUnit } from '@/domain/units';
 /**
  * Full-body rendering of the Live screen's `rest` phase.
  *
- * Layout: caps eyebrow ("SET COMPLETED · NEW PERSONAL
- * RECORD"), display headline ("Rest." or "Stronger." on a PR), hairline
- * divider, the count-up RestTimer, and an optional NEXT SET preview block
+ * Layout: "SET COMPLETED" caps eyebrow, "Rest." display headline, hairline
+ * divider, the count-down RestTimer, and an optional NEXT SET preview block
  * so the user can prep plates while the timer ticks.
  *
  * Undo lives on the top bar during rest — RestPhase no longer renders an
  * inline undo button (removed 2026-05-24 per user feedback that the
  * duplicate was visual noise).
+ *
+ * Note: working sets (non-AMRAP) never produce e1RM PRs. After an AMRAP set
+ * the live screen goes directly to `pr-celebration` rather than entering
+ * rest, so there is no "PR during rest" case to render here.
  */
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
@@ -23,8 +26,6 @@ import { RestTimer } from './RestTimer';
 export type RestPhaseProps = {
   /** Display unit (`'lbs' | 'kg'` — rendered via `displayUnit()` as `lb | kg`). */
   loggedUnit: Unit;
-  /** True if the just-logged set is a PR (drives celebratory copy). */
-  isPR?: boolean;
   /** Seconds remaining in the countdown (forwarded to RestTimer). */
   remaining: number;
   /** Optional ±30s / Skip controls — forwarded to RestTimer. */
@@ -53,7 +54,6 @@ export type RestPhaseProps = {
 
 export function RestPhase({
   loggedUnit,
-  isPR = false,
   remaining,
   onAddRest,
   onSubRest,
@@ -72,8 +72,8 @@ export function RestPhase({
   const headlineStyle: TextStyle = {
     fontFamily: `${type.sans}-Bold`,
     fontSize: 64,
-    // 'Stronger' has a 'g' descender; 64/64 clips it on Android.
-    // See loop-memory/09-rn-text-clipping.md.
+    // 'Rest' has no descenders, but keep lineHeight: 74 to match the Set-phase
+    // headlines (same font, same baseline grid). See loop-memory/09-rn-text-clipping.md.
     lineHeight: 74,
     letterSpacing: -1.92,
     color: colors.ink0,
@@ -83,11 +83,11 @@ export function RestPhase({
     <View testID={testID ?? 'rest-phase'}>
       <View style={headerWrap}>
         <CapsLabel weight="semibold" style={{ marginBottom: 8 }} testID="rest-phase-eyebrow">
-          {isPR ? 'SET COMPLETED · NEW PERSONAL RECORD' : 'SET COMPLETED'}
+          SET COMPLETED
         </CapsLabel>
 
         <RNText style={headlineStyle} testID="rest-phase-headline">
-          {isPR ? 'Stronger' : 'Rest'}
+          Rest
           <Text variant="sans" weight="bold" size={64} color="amber" style={{ lineHeight: 74 }}>
             .
           </Text>

@@ -141,12 +141,26 @@ const latest = posts.slice(0, 2);
         <div class="right">
           Every entry is written immediately after a loop finishes — what
           changed, what was tried, what broke, and which queued asks shaped
-          the work. Scope chips filter the list; the most recent posts are
-          at the top.
+          the work. Scope chips filter by category; the search box filters
+          by title. Most recent posts are at the top.
         </div>
       </div>
 
       <ScopeFilter active="all" counts={counts} total={total} />
+
+      <div class="search-wrap" id="search-wrap">
+        <label class="search-label" for="log-search">Search</label>
+        <input
+          id="log-search"
+          class="search-input"
+          type="search"
+          name="q"
+          placeholder="Filter by title…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <span class="search-count" id="search-count" aria-live="polite"></span>
+      </div>
 
       {posts.length === 0 ? (
         <p class="empty">No entries yet. The first loop is on its way.</p>
@@ -160,7 +174,7 @@ const latest = posts.slice(0, 2);
             const featuredRow = idx === 0;
             const hasAudio = Boolean(post.data.audio);
             return (
-              <li class:list={['log-row', { featured: featuredRow, 'log-row--fold': idx >= 20 }]}>
+              <li class:list={['log-row', { featured: featuredRow, 'log-row--fold': idx >= 20 }]} data-search-text={`${post.data.title} ${post.data.summary ?? ''}`.toLowerCase()}>
                 <a href={`/blog/${post.id}`} class="log-row__link">
                   <div class="date">
                     {dateLabel}
@@ -295,6 +309,10 @@ const latest = posts.slice(0, 2);
     const list = document.getElementById('log-list');
     const wrap = document.getElementById('show-more-wrap');
     const btn = document.getElementById('show-more-btn');
+    const searchInput = document.getElementById('log-search') as HTMLInputElement | null;
+    const searchCount = document.getElementById('search-count');
+
+    // ── show-more fold ──
     if (list && wrap && btn) {
       list.classList.add('log-list--js-ready');
       wrap.classList.add('visible');
@@ -302,6 +320,56 @@ const latest = posts.slice(0, 2);
         list.classList.remove('log-list--js-ready');
         wrap.style.display = 'none';
       });
+    }
+
+    // ── search ──
+    if (list && searchInput) {
+      const rows = Array.from(list.querySelectorAll<HTMLLIElement>('.log-row'));
+
+      function applySearch(query: string): void {
+        const q = query.trim().toLowerCase();
+        if (!q) {
+          // No query — restore normal fold state.
+          for (const row of rows) row.removeAttribute('data-search-hidden');
+          if (searchCount) searchCount.textContent = '';
+          // Re-enable fold if it was previously active.
+          if (wrap && btn) {
+            if (!list!.classList.contains('log-list--js-ready')) {
+              list!.classList.add('log-list--js-ready');
+              (wrap as HTMLElement).style.display = '';
+              wrap.classList.add('visible');
+            }
+          }
+          return;
+        }
+        // Active query — unfold everything so all matches are visible.
+        list!.classList.remove('log-list--js-ready');
+        if (wrap) (wrap as HTMLElement).style.display = 'none';
+
+        let visible = 0;
+        for (const row of rows) {
+          const text = row.dataset.searchText ?? '';
+          const match = text.includes(q);
+          row.toggleAttribute('data-search-hidden', !match);
+          if (match) visible++;
+        }
+        if (searchCount) {
+          searchCount.textContent = visible === rows.length
+            ? ''
+            : `${visible} match${visible === 1 ? '' : 'es'}`;
+        }
+      }
+
+      searchInput.addEventListener('input', () => applySearch(searchInput.value));
+
+      // Read ?q= from URL on page load (honours the SearchAction JSON-LD target).
+      const urlQ = new URLSearchParams(window.location.search).get('q') ?? '';
+      if (urlQ) {
+        searchInput.value = urlQ;
+        applySearch(urlQ);
+        // Scroll the search input into view so the user sees the results.
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   </script>
 </Base>
@@ -590,6 +658,8 @@ const latest = posts.slice(0, 2);
   /* JS-only fold — hidden by default; JS removes .log-row--fold when "show all" is clicked.
      Without JS, all rows are visible (progressive enhancement). */
   .log-list--js-ready .log-row--fold { display: none; }
+  /* Search-hidden rows are hidden regardless of fold state. */
+  .log-row[data-search-hidden] { display: none; }
   .show-more-wrap {
     margin-top: 16px;
     text-align: center;
@@ -612,6 +682,50 @@ const latest = posts.slice(0, 2);
                 border-color var(--duration-base) var(--ease-standard);
   }
   .show-more-btn:hover { color: var(--ink-0); border-color: var(--ink-0); }
+
+  /* ── search ───────────────────────────────────── */
+  .search-wrap {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .search-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .search-input {
+    flex: 1;
+    max-width: 360px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--bg-0);
+    border: 1px solid var(--line-strong);
+    padding: 9px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-0);
+    border-radius: 0;
+    outline: none;
+    transition: border-color var(--duration-base) var(--ease-standard);
+  }
+  .search-input::placeholder { color: var(--ink-3); }
+  .search-input:focus { border-color: var(--ink-0); }
+  .search-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    white-space: nowrap;
+    min-width: 0;
+  }
   .log-list {
     list-style: none;
     padding: 0;

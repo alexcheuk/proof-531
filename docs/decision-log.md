@@ -42,6 +42,24 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Removed dead `isPR` prop from RestPhase
+
+**Tags:** `removal`, `convention`
+**Files:** `apps/mobile/src/features/session/components/RestPhase.tsx`
+
+`RestPhaseProps.isPR` was declared and defaulted to `false`, but was never passed as `true` in any caller. Working sets (the only sets that enter the rest phase) do not produce e1RM PRs — the app only tracks PRs from AMRAP sets. After an AMRAP set, the live screen transitions directly to `pr-celebration` or `awaiting-bbb`, skipping rest entirely. The prop was vestigial from an early design where AMRAP sets were followed by rest before the PR celebration flow was introduced. Removed `isPR` from the component, simplified the eyebrow and headline to always render `SET COMPLETED` / `Rest.`, and removed the corresponding test case.
+
+**Why:** Dead code in a high-traffic component (renders on every working-set rest in a session). Removing it eliminates a false expectation that a "Stronger." rest phase is possible, and narrows the type surface.
+
+### 2026-05-29 — Liftosaur now has built-in 5/3/1 BBB support
+
+**Tags:** `marketing`, `research`
+**Files:** `docs/marketing/reddit-531discussion-draft.md`, `docs/marketing/ai-experiment-story-outline.md`
+
+Liftosaur (free, iOS/Android/web) added a pre-built 5/3/1 BBB program. This narrows the "no free tracker with proper BBB" competitive gap. The decisive difference: Liftosaur is a PWA — its rest timer breaks when the screen turns off or the app backgrounds (confirmed in GitHub issue #66). The native app distinction (expo-notifications, react-native-notify-kit live chronometer) remains the technical moat. Marketing drafts updated with a ready answer for "what about Liftosaur?" comments.
+
+**Why:** Accurate competitive context in launch posts avoids getting blindsided in comments. The background-timer failure is architectural and can't be fixed by a PWA without a full native rewrite.
+
 ### 2026-05-29 — Onboarding 1RM display now plate-snapped to nearest loadable increment
 
 **Tags:** `bug`, `convention`

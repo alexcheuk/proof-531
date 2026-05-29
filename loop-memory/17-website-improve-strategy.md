@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 61)
+**Last updated**: 2026-05-29 (Expedition 62)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -36,6 +36,7 @@ Current gaps:
 - [x] og:image added to all pages (expedition 50) — /screenshot-2.png default applied to all blog posts, listing pages, tools pages, and process page
 - [x] Tool page SEO improved (expedition 55) — titles, h1, and descriptions for /tools, /tools/plate-math, /tools/goal-calendar now include "5/3/1" keywords; JSON-LD descriptions synced to match meta descriptions
 - [x] WebSite JSON-LD schema added to homepage (expedition 59) — `@type: WebSite` with `potentialAction: SearchAction` for Google Sitelinks Searchbox; added as a second `<script type="application/ld+json">` block alongside the existing SoftwareApplication schema
+- [x] SearchAction `?q=` target honoured by real search (expedition 62) — `/blog` now has a client-side title+summary search input that reads `?q=` on load, so the JSON-LD SearchAction target is functional rather than a dead link
 
 ### Track B — Content accuracy
 
@@ -70,6 +71,8 @@ Current gaps:
 - [x] expedition-logs page path fixed (expedition 59) — eyebrow showed `/dev-log/expedition-logs` (wrong); corrected to `/blog/expedition-logs` (the real URL)
 - [x] Blog listing hero eyebrow `/dev-log` corrected to `/blog` (expedition 60) — the `<span class="seg">` eyebrow in `blog/index.astro` still showed `/dev-log`; the expedition 56 fix only corrected the homepage card, not the blog page's own eyebrow.
 - [x] Blog listing show-more added (expedition 61) — 120 posts now; first 20 visible by default, "Show all N more posts" button reveals the rest via progressive-enhancement JS. Without JS, all posts visible.
+- [x] Homepage hero platform-note updated with React Native trust signal (expedition 62) — the small note below CTAs now includes "iOS + Android · one React Native codebase" to set expectations and reinforce the single-codebase story alongside the existing KPI strip entry.
+- [x] Blog listing search implemented (expedition 62) — search input added above the post list; filters by title+summary client-side, reads `?q=` from URL on load (fulfilling the SearchAction JSON-LD target from expedition 59). Active query unfolds all posts; clearing restores the fold. Match count shown in amber when filtering.
 
 ### Track D — Technical health
 
@@ -88,6 +91,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 62 notes
+
+Three improvements across Track A (SEO), Track C (UX/conversion), and a verification pass:
+
+1. **Blog listing search implemented** (Track A + Track C): The WebSite JSON-LD `SearchAction` added in expedition 59 targeted `https://531strength.com/blog?q={search_term_string}` but `/blog` had no search implementation — a visitor sent there by Google's Sitelinks Searchbox would see an unfiltered list. Added a client-side search input above the post list that filters by title + summary on keystroke. On page load, `?q=` is read from the URL and applied automatically, so the SearchAction target is now functional. Active query unfolds all folded posts. Match count shown in amber. Without JS, the search box is a plain non-functional input (not harmful — same progressive-enhancement pattern as the show-more fold).
+
+2. **Homepage hero platform-note updated** (Track C): The `platform-note` div below the CTAs said "Android APK · direct download · Play Store and App Store submissions in progress". Updated to include "iOS + Android · one React Native codebase" — reinforces that both platforms are served from a single codebase, setting expectations for the iOS-soon state and adding a trust signal. (The KPI strip already has this, but visitors who leave before scrolling won't see the strip.)
+
+3. **Screenshot paths verified** (Track B): All four screenshots referenced in the homepage screens rail (`/screenshot-1.png`, `/screenshot-2.png`, `/screenshot-3.png`, `/screenshot-5.png`) exist in `apps/web/public/`. A fifth file (`/screenshot-4.png`) also exists but is not currently referenced — not a gap, just unused. No broken image paths.
 
 ### Expedition 61 notes
 
@@ -191,6 +204,9 @@ Two content-accuracy fixes shipped:
 | Blog listing show-more | done · expedition 61 | 120 posts; first 20 visible, "Show all N more posts" button via progressive-enhancement JS. |
 | Blog tag page eyebrow fix (/dev-log/{scope} → /blog/tag/{scope}) | done · expedition 61 | Same bug pattern as blog/index.astro (exp 56-60). Eyebrow corrected on /blog/tag/[scope].astro. |
 | Blog tag page title/description SEO | done · expedition 61 | Title: `Dev log — {label} — 531` → `{label} — Dev Log — 531 Strength`. Description now leads with "531 Strength dev log". |
+| Blog listing search (?q= support) | done · expedition 62 | Client-side title+summary filter; reads ?q= on load to fulfil SearchAction JSON-LD target. Integrates with existing show-more fold. |
+| Homepage platform-note React Native signal | done · expedition 62 | Note below CTAs now includes "iOS + Android · one React Native codebase". |
+| Screenshot paths audit | done · expedition 62 | All 4 referenced screenshots exist. screenshot-4.png exists but unused — not a gap. |
 
 ## Discord collaboration workflow
 

@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 61)
+**Last updated**: 2026-05-29 (Expedition 62)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,7 +122,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · expedition 59 · count updated expedition 61 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph now reads "61+ iterations" (updated expedition 61). |
+| 1. GitHub README polish | done · expedition 59 · count updated expedition 62 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph now reads "62+ iterations" (updated expedition 62). |
 | 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · features updated expedition 56 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames. **Expedition 56:** Two new features added to Option A body: TM Test Week (7th Week Protocol) and lift rollback — both are practitioner-credibility signals that r/531Discussion values. Research note added explaining why each is relevant to the community. Personal details (how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary) remain the only human-only blocker. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
@@ -130,12 +130,56 @@ Use the right story for the right audience. Never mix them in a single post.
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · screenshots embedded expedition 52 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). **Expedition 52:** Screenshots section updated with actual filenames — 003320 (plate viz, lead image), 003330 (AMRAP sheet, shows bottom-sheet interaction), 001435 (Today screen). Needs: Play Store link, App Store link, GitHub link. See `docs/marketing/reddit-reactnative-draft.md`. |
-| 9. r/vibecoding | draft ready · signal updated expedition 61 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. **Expedition 44 signal:** iOS submissions up 89% YoY, Apple increasing scrutiny — 531 Strength is the counterexample in the queue. **Expedition 61 signal:** "Agentic engineering" is now the preferred term in the discourse (Claude Code's creator called for retiring "vibe coding" May 2026). The line between vibe coding and agentic engineering is now explicitly named in the community. 531 Strength sits on the correct side by architecture. "Agentic, not just vibe-coded" added as comment talking point in draft. Iteration counts updated to 61+ throughout draft. |
+| 9. r/vibecoding | draft ready · signal updated expedition 62 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. **Expedition 44 signal:** iOS submissions up 89% YoY, Apple increasing scrutiny — 531 Strength is the counterexample in the queue. **Expedition 61 signal:** "Agentic engineering" is now the preferred term in the discourse (Claude Code's creator called for retiring "vibe coding" May 2026). The line between vibe coding and agentic engineering is now explicitly named in the community. 531 Strength sits on the correct side by architecture. "Agentic, not just vibe-coded" added as comment talking point in draft. Iteration counts updated to 62+ throughout draft. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | blocked · awaiting store listings | Expedition 60: Neither the Play Store nor the App Store listing is live yet (Android ships via GitHub Releases APK; iOS is in review). Implement when both stores have a live listing — use `expo-store-review` for the native in-app dialog, or `Linking.openURL` to the store page as a fallback. Show after session cycle >= 2, no modal, no repeated asks. |
-| 13. YouTube Shorts series | brief improved · expedition 61 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added ("60 times..."). **Expedition 61:** Brief and script updated to "61+ expeditions" throughout. Version D hook now reads "61 times." "Note on the number" names Expedition 61 as current baseline. First comment in shooting script updated to "61+ iterations." Minimum-viable-path step 1 updated to reference the "61 expeditions" line. Film-now status unchanged: unblocked without iOS. |
-| 14. Web tools as SEO entry point | in progress · expedition 60 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added — 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b — "How do I set my TM / is my TM too heavy?" — covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates — one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. |
+| 13. YouTube Shorts series | brief improved · expedition 62 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added ("60 times..."). **Expedition 61:** Brief and script updated to "61+ expeditions" throughout. **Expedition 62:** All "61+" references updated to "62+" throughout brief and shooting script. Version D hook now reads "62 times." "Note on the number" names Expedition 62 as current baseline. Film-now status unchanged: unblocked without iOS. |
+| 14. Web tools as SEO entry point | in progress · expedition 62 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added — 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b — "How do I set my TM / is my TM too heavy?" — covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates — one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. **Expedition 62:** No new thread types added this loop. Playbook remains current. |
+
+## Expedition 62 — Research notes
+
+**Date:** 2026-05-29
+
+**Iteration count advancement — all marketing docs updated to 62+:**
+
+Every "61+" reference across all ten marketing docs and the GitHub README updated to "62+". Files updated: `youtube-shorts-first-video-brief.md` (5 instances — platform context blurb, Version C hook, Version D hook, spoken "62+ expeditions" line, "Note on the number"), `youtube-shorts-draft.md` (3 instances — spoken line, "Note" block, first comment), `reddit-vibecoding-draft.md` (5 instances — research context, Option A title, alternative title, body iteration count, Option B body count), `reddit-reactnative-draft.md` (2 instances), `longform-how-i-built-this.md` (1 instance), `ai-experiment-story-outline.md` (1 instance — timing note), `producthunt-launch-guide.md` (2 instances), `launch-day-operations-guide.md` (1 instance — vibecoding fill-in note), `questions-for-alex.md` (1 instance — resolved item note), `reddit-casual-builder-story-draft.md` (2 instances), `README.md` (1 instance — "How it's built" paragraph).
+
+**Liftosaur competitive intelligence — new (most significant finding this expedition):**
+
+Liftosaur (free, iOS/Android/web) now includes 5/3/1 Boring But Big as a built-in program. This is a material change to the competitive landscape: "free with BBB support" was previously only Boostcamp (with a truncated block), and now Liftosaur covers it. However, the architectural difference remains decisive for the launch pitch:
+
+Liftosaur is a Progressive Web App (PWA) packaged as a native installer, not a native React Native app. Its own GitHub issue tracker (issue #66, opened November 2023) documents that the Android rest timer does not notify when the screen is off or when the user switches apps — the exact failure mode the 531 Strength pitch is built around. The developer confirmed this is a PWA architectural limitation. iOS has the same ceiling: PWAs on iOS cannot deliver background audio or push notifications when a scheduled timer fires. As of May 2026 research, this limitation remains in place and no fix has been documented.
+
+The native app distinction therefore holds: `expo-notifications` on iOS delivers scheduled background notifications; `react-native-notify-kit` on Android delivers a live chronometer notification that persists when the screen is off. Neither is achievable in a PWA context. Liftosaur cannot close this gap without rewriting its architecture.
+
+**Implications for the drafts:**
+
+1. The r/531Discussion post body does not need to name Liftosaur — the post's frame is "I tried the apps that existed, they were wrong in these specific ways." If a commenter asks "what about Liftosaur?", the comment prep answer is now documented in `docs/marketing/reddit-531discussion-draft.md`: BBB is there, but the rest timer breaks when you leave the app, same limitation as the existing "531 Strength" app's most-reviewed complaint.
+
+2. The HN post now has a sharper answer to "why not just use Liftosaur?": documented in `docs/marketing/ai-experiment-story-outline.md`. The PWA rest-timer limitation is sourced (GitHub issue #66), which is the HN-grade answer.
+
+3. The "Strong costs $120 / Boostcamp BBB cuts off" framing in `docs/marketing/longform-how-i-built-this.md` was written before Liftosaur's BBB support was confirmed. Alex may want to revise the competitive landscape paragraph — Liftosaur is free and has BBB, but the rest timer problem is the same. The longform piece is in Alex's personal voice; this is flagged for him to decide rather than rewritten.
+
+**iOS App Store review timing — still current:**
+
+Runway live tracker data: median review time remains approximately 12–24 hours for new submissions in May 2026. Tuesday/Wednesday are still the fastest submission days. The operations guide remains accurate.
+
+**Community search — no live threads found:**
+
+No indexed r/531Discussion, r/weightroom, or r/531 threads about app recommendations surfaced. Reddit continues to be poorly indexed externally. Strategy unchanged: hold the main launch post for iOS, use the playbook when threads appear.
+
+**#needs-input — no new replies since Expedition 53:**
+
+The channel shows no new Alex replies beyond the Expedition 53 responses (YouTube Shorts camera/channel confirmation). Still waiting on: personal 5/3/1 history for r/531Discussion post (Q4), GitHub Releases URL (Q1), X/Twitter handle (Q7).
+
+**Next actions:**
+1. iOS approval: run `docs/marketing/launch-day-operations-guide.md`.
+2. Alex: fill in personal 5/3/1 history in `docs/marketing/reddit-531discussion-draft.md` — the single most important blocker for the most impactful launch-day post.
+3. Alex: be aware that Liftosaur now has free BBB support — if asked in r/531Discussion comments, the answer is its rest timer breaks when you leave the app (same documented complaint as the incumbent app). The post body doesn't need to change.
+4. Alex: film the YouTube Short. Unblocked without iOS. Four hook options in brief; "62 times" is now the Version D hook. See `docs/marketing/youtube-shorts-draft.md`.
+
+---
 
 ## Expedition 61 — Research notes
 
