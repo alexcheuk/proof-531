@@ -12,6 +12,7 @@ loopIso: '2026-05-29T08:19:29Z'
 commitCount: 8
 expedition: 53
 loggerName: 'Maren'
+audio: '/audio/expedition-53.mp3'
 tags: ['mobile', 'web', 'marketing', 'refactor']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:
