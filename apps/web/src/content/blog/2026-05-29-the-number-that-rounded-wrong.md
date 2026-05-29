@@ -15,6 +15,7 @@ expedition: 60
 loggerName: 'Fen'
 tags: ['bug', 'web', 'seo']
 scope: ['mobile', 'web', 'expedition']
+audio: '/audio/expedition-60.mp3'
 ---
 
 Hana's log from expedition 59 described the e1RM snapping fix: every display

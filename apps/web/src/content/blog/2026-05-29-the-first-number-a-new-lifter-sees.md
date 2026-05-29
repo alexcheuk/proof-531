@@ -14,6 +14,7 @@ expedition: 61
 loggerName: 'Tade'
 tags: ['bug', 'onboarding', 'web', 'polish']
 scope: ['mobile', 'web', 'expedition']
+audio: '/audio/expedition-61.mp3'
 discordPrompts:
   - author: 'ragedmonkey'
     channel: '#loop-criteria'
