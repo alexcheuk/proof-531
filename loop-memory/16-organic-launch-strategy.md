@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 53)
+**Last updated**: 2026-05-29 (Expedition 54)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -134,7 +134,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
-| 13. YouTube Shorts series | shooting script drafted · expedition 53 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md` — spoken lines, text overlays, production checklist, YouTube description + first comment, hashtags. Ready for Alex to film. Iteration count updated to 53+ across all marketing files. Alex notified via Discord (message_id 1509830957119701094). Still needs: screen recording of live session (Q14), GitHub Releases URL (Q1), App Store URL for CTA (Q2). |
+| 13. YouTube Shorts series | shooting script ready · expedition 54 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md` — spoken lines, text overlays, production checklist, YouTube description + first comment, hashtags. Ready for Alex to film. **Expedition 54:** Iteration count updated to 54+ across all marketing files. Spoken "53 expeditions" line in both shooting script and first-video brief updated to "54 expeditions." No new Discord replies received re: personal 5/3/1 history. Still needs: screen recording of live session (Q14), GitHub Releases URL (Q1), App Store URL for CTA (Q2). |
 | 14. Web tools as SEO entry point | in progress · expedition 50 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added to both tool pages with keyword-rich text targeting "531 plate math calculator", "5/3/1 training max calculator", "how long to reach 5/3/1 goal" and similar search queries. FAQ matches the site's visual language. Structured data (WebApplication schema) already present. Next step: link in Reddit/forum discussions when relevant questions appear — the pages can now rank on their own content merit. |
 
 ## Launch-day operations guide
@@ -196,6 +196,31 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 54 — Research notes
+
+**Date:** 2026-05-29
+
+**Iteration count update:** All "53+" references across marketing drafts updated to "54+". Files updated: `reddit-casual-builder-story-draft.md` (2 instances), `youtube-shorts-first-video-brief.md` (2 instances — including spoken "53 expeditions" line updated to "54 expeditions"), `youtube-shorts-draft.md` (2 instances — including spoken "53 expeditions" line updated to "54 expeditions"), `reddit-vibecoding-draft.md` (4 instances), `reddit-reactnative-draft.md` (2 instances), `longform-how-i-built-this.md` (1 instance), `ai-experiment-story-outline.md` (1 instance), `producthunt-launch-guide.md` (2 instances), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (1 instance).
+
+**#needs-input check — no new replies from Alex:**
+
+Message 1509825328921444383 (Expedition 52) asked Alex for three specific personal details to complete the r/531Discussion draft: how long he's been on 5/3/1, whether he actually used Strong/Boostcamp, which lift is his primary. No reply has been received across expeditions 52, 53, and 54. This is the most important outstanding blocker for the most important launch-day post.
+
+The shooting script at `docs/marketing/youtube-shorts-draft.md` was also flagged for Alex in Expedition 53. No reply received on that front either.
+
+**Community search — no live threads found:**
+
+Reddit remains poorly indexed externally. No r/531Discussion or r/weightroom threads about app recommendations surfaced in searches. Competitive landscape check confirms the market gap is unchanged: Boostcamp (free but BBB incomplete), paid apps (Strong, 5/3/1 Workout Logger at $120 lifetime), no free fully-featured dedicated 5/3/1+BBB tracker in any search result. The launch premise remains accurate.
+
+**Status check:** iOS still pending. All launch-day drafts are at "54+" and current. No new assets unblocked this loop. The two outstanding human-only blockers remain: (1) Alex's personal 5/3/1 history for the r/531Discussion post, and (2) the App Store URL once iOS is approved.
+
+**Next actions after iOS approval:**
+1. Get App Store URL — update all drafts
+2. Get GitHub Releases URL — update all drafts
+3. Run the launch-day operations guide at `docs/marketing/launch-day-operations-guide.md`
+
+---
 
 ## Expedition 53 — Research notes
 

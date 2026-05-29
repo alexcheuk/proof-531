@@ -42,83 +42,82 @@ import Base from '~/layouts/Base.astro';
 
   <section class="tool-section">
     <div class="wrap">
-      <div class="tool-card" id="goal-calc">
-
-        {/* Unit toggle */}
-        <div class="segment-row">
-          <div class="caps segment-label">UNIT</div>
-          <div class="segment-group" role="group" aria-label="Select unit">
-            <button class="seg-btn active" data-unit="lb" aria-pressed="true">LBS</button>
-            <button class="seg-btn" data-unit="kg" aria-pressed="false">KG</button>
+      <div class="progression goal-calc" data-goal-calc>
+        <div class="prog-left">
+          <div class="caps">For this lift</div>
+          <div class="calc-lifts" role="tablist" aria-label="Lift">
+            <button class="calc-lift active" data-lift="squat" role="tab" aria-selected="true">Squat</button>
+            <button class="calc-lift" data-lift="bench" role="tab" aria-selected="false">Bench</button>
+            <button class="calc-lift" data-lift="deadlift" role="tab" aria-selected="false">Dead</button>
+            <button class="calc-lift" data-lift="press" role="tab" aria-selected="false">Press</button>
           </div>
-        </div>
-
-        {/* Lift selector */}
-        <div class="segment-row border-top">
-          <div class="caps segment-label">LIFT</div>
-          <div class="lift-options" role="group" aria-label="Select lift" id="lift-options">
-            <button class="lift-btn active" data-lift="squat" data-inc-lb="10" data-inc-kg="5" aria-pressed="true">SQUAT</button>
-            <button class="lift-btn" data-lift="deadlift" data-inc-lb="10" data-inc-kg="5" aria-pressed="false">DEAD</button>
-            <button class="lift-btn" data-lift="bench" data-inc-lb="5" data-inc-kg="2.5" aria-pressed="false">BENCH</button>
-            <button class="lift-btn" data-lift="press" data-inc-lb="5" data-inc-kg="2.5" aria-pressed="false">PRESS</button>
-          </div>
-        </div>
-
-        {/* Progression note */}
-        <div class="prog-note-row border-top">
-          <span class="caps">PROGRESSION</span>
-          <span class="prog-note-val caps" id="prog-note-val">+10 LB / CYCLE (SQUAT · DEADLIFT)</span>
-        </div>
-
-        {/* Current TM */}
-        <div class="tm-row border-top">
-          <div class="tm-row-l">
-            <div class="caps">CURRENT TM</div>
-            <div class="tm-sub caps" id="current-tm-sub">TRAINING MAX</div>
-          </div>
-          <div class="stepper-group">
-            <button class="step-btn" id="btn-current-dec" aria-label="Decrease current TM">−</button>
-            <div class="tm-display">
-              <span class="tm-num" id="current-tm-display">275</span>
-              <span class="tm-unit caps" id="current-unit-label">LB</span>
+          <div class="prog-unit-row">
+            <div class="caps">Units</div>
+            <div class="pc-unit-toggle" role="group" aria-label="Units">
+              <button class="pc-unit-opt active" data-unit="lb" aria-pressed="true">LB</button>
+              <button class="pc-unit-opt" data-unit="kg" aria-pressed="false">KG</button>
             </div>
-            <button class="step-btn" id="btn-current-inc" aria-label="Increase current TM">+</button>
           </div>
-        </div>
-
-        {/* Goal TM */}
-        <div class="tm-row border-top">
-          <div class="tm-row-l">
-            <div class="caps">GOAL TM</div>
-            <div class="tm-sub caps" id="goal-tm-sub">TARGET TRAINING MAX</div>
-          </div>
-          <div class="stepper-group">
-            <button class="step-btn" id="btn-goal-dec" aria-label="Decrease goal TM">−</button>
-            <div class="tm-display">
-              <span class="tm-num" id="goal-tm-display">315</span>
-              <span class="tm-unit caps" id="goal-unit-label">LB</span>
+          <div class="prog-numbers single">
+            <div class="prog-num">
+              <div class="amount">+<span id="bump-lb">10</span><span class="unit">lb</span></div>
+              <div class="label" id="bump-label">Squat · per cycle</div>
+              <div class="kg">or +<span id="bump-kg">5</span> kg</div>
             </div>
-            <button class="step-btn" id="btn-goal-inc" aria-label="Increase goal TM">+</button>
           </div>
+          <p class="prog-note">
+            A cycle is 4 sessions of this lift — not 4 calendar weeks. Each lift runs its own cycle, so you set your own pace.
+          </p>
         </div>
 
-        {/* Result summary */}
-        <div class="result-summary border-top" id="result-summary">
-          <!-- filled by JS -->
-        </div>
+        <div class="prog-right calc-card">
+          <div class="caps">Run your numbers</div>
 
-        {/* Cycle table */}
-        <div class="cycle-table-wrap border-top" id="cycle-table-wrap">
+          <div class="calc-row">
+            <div class="calc-row-l">
+              <div class="caps">Current</div>
+              <div class="calc-sub">training max</div>
+            </div>
+            <div class="calc-stepper">
+              <button type="button" class="step-btn" id="btn-current-dec" aria-label="Decrease current TM">−</button>
+              <div class="calc-val">
+                <span id="current-tm-display">275</span>
+                <span class="vu" id="current-unit-label">lb</span>
+              </div>
+              <button type="button" class="step-btn" id="btn-current-inc" aria-label="Increase current TM">+</button>
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div class="calc-row-l">
+              <div class="caps">Goal</div>
+              <div class="calc-sub">training max</div>
+            </div>
+            <div class="calc-stepper">
+              <button type="button" class="step-btn" id="btn-goal-dec" aria-label="Decrease goal TM">−</button>
+              <div class="calc-val big">
+                <span id="goal-tm-display">315</span>
+                <span class="vu" id="goal-unit-label">lb</span>
+              </div>
+              <button type="button" class="step-btn" id="btn-goal-inc" aria-label="Increase goal TM">+</button>
+            </div>
+          </div>
+
+          <div class="calc-outcome" id="result-summary" aria-live="polite"></div>
+        </div>
+      </div>
+
+      {/* Cycle table + share below the main card */}
+      <div class="cycle-outer">
+        <div class="cycle-table-wrap" id="cycle-table-wrap">
           <div class="cycle-table-head">
             <span class="caps">CYCLE</span>
             <span class="caps">TRAINING MAX</span>
             <span class="caps">TOTAL WEEKS</span>
           </div>
-          <div class="cycle-table-body" id="cycle-table-body" aria-live="polite">
-            <!-- filled by JS -->
-          </div>
+          <div class="cycle-table-body" id="cycle-table-body" aria-live="polite"></div>
         </div>
-        <div class="share-row border-top">
+        <div class="share-row">
           <button class="copy-link-btn caps" id="copy-link-btn" type="button">Copy shareable link</button>
           <span class="copy-confirm caps" id="copy-confirm" aria-live="polite"></span>
         </div>
@@ -184,7 +183,9 @@ import Base from '~/layouts/Base.astro';
   var MAX_CYCLES = 52;
 
   // ── DOM refs ──────────────────────────────────────────────────────────
-  var progNoteVal     = document.getElementById('prog-note-val');
+  var bumpLb          = document.getElementById('bump-lb');
+  var bumpKg          = document.getElementById('bump-kg');
+  var bumpLabel       = document.getElementById('bump-label');
   var currentTMDisplay = document.getElementById('current-tm-display');
   var goalTMDisplay   = document.getElementById('goal-tm-display');
   var currentUnitLabel = document.getElementById('current-unit-label');
@@ -217,11 +218,9 @@ import Base from '~/layouts/Base.astro';
     var ul = unitLabel();
     var inc = getIncrement();
     var cfg = LIFT_CONFIG[state.lift];
-    var incLabel = state.unit === 'lb'
-      ? '+' + cfg.incLb + ' LB / CYCLE (' + cfg.label + ')'
-      : '+' + cfg.incKg + ' KG / CYCLE (' + cfg.label + ')';
-
-    progNoteVal.textContent = incLabel;
+    if (bumpLb) bumpLb.textContent = String(cfg.incLb);
+    if (bumpKg) bumpKg.textContent = String(cfg.incKg);
+    if (bumpLabel) bumpLabel.textContent = (state.lift.charAt(0).toUpperCase() + state.lift.slice(1)) + ' · per cycle';
     currentTMDisplay.textContent = fmtW(state.currentTM);
     goalTMDisplay.textContent = fmtW(state.goalTM);
     currentUnitLabel.textContent = ul;
@@ -229,7 +228,7 @@ import Base from '~/layouts/Base.astro';
 
     // calc cycles
     if (state.goalTM <= state.currentTM) {
-      resultSummary.innerHTML = '<div class="already-there caps">YOU\'RE ALREADY THERE · GOAL REACHED</div>';
+      resultSummary.innerHTML = '<div class="already-there">ALREADY AT GOAL</div>';
       cycleTableBody.innerHTML = '';
       return;
     }
@@ -248,24 +247,8 @@ import Base from '~/layouts/Base.astro';
     var totalMonths = (totalWeeks / 4.33).toFixed(1);
 
     resultSummary.innerHTML =
-      '<div class="summary-grid">' +
-        '<div class="sum-cell">' +
-          '<div class="caps sum-label">CYCLES NEEDED</div>' +
-          '<div class="sum-val">' + totalCycles + '<span class="sum-unit caps">CYC</span></div>' +
-        '</div>' +
-        '<div class="sum-cell">' +
-          '<div class="caps sum-label">TOTAL WEEKS</div>' +
-          '<div class="sum-val">' + totalWeeks + '<span class="sum-unit caps">WK</span></div>' +
-        '</div>' +
-        '<div class="sum-cell">' +
-          '<div class="caps sum-label">~MONTHS</div>' +
-          '<div class="sum-val">' + totalMonths + '<span class="sum-unit caps">MO</span></div>' +
-        '</div>' +
-        '<div class="sum-cell">' +
-          '<div class="caps sum-label">TM GAIN</div>' +
-          '<div class="sum-val">' + fmtW(state.goalTM - state.currentTM) + '<span class="sum-unit caps">' + ul + '</span></div>' +
-        '</div>' +
-      '</div>';
+      '<div class="o-l">~' + totalWeeks + ' work days away</div>' +
+      '<div class="o-r">≈ ' + totalMonths + ' mo · ' + totalCycles + ' cycle' + (totalCycles !== 1 ? 's' : '') + ' · +' + fmtW(state.goalTM - state.currentTM) + ' ' + ul + '</div>';
 
     // table rows — show all but mark goal row
     var html = '';
@@ -290,7 +273,7 @@ import Base from '~/layouts/Base.astro';
   }
 
   // ── event handlers ────────────────────────────────────────────────────
-  document.querySelectorAll('.seg-btn').forEach(function (btn) {
+  document.querySelectorAll('.pc-unit-opt[data-unit]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var newUnit = this.dataset.unit;
       if (newUnit === state.unit) return;
@@ -302,25 +285,23 @@ import Base from '~/layouts/Base.astro';
         state.goalTM    = Math.round((state.goalTM    * 2.20462) / 5) * 5;
       }
       state.unit = newUnit;
-      document.querySelectorAll('.seg-btn').forEach(function (b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
+      document.querySelectorAll('.pc-unit-opt[data-unit]').forEach(function (b) {
+        var on = b.dataset.unit === state.unit;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
       });
-      this.classList.add('active');
-      this.setAttribute('aria-pressed', 'true');
       render();
     });
   });
 
-  document.querySelectorAll('.lift-btn').forEach(function (btn) {
+  document.querySelectorAll('.calc-lift').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      document.querySelectorAll('.lift-btn').forEach(function (b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      this.classList.add('active');
-      this.setAttribute('aria-pressed', 'true');
       state.lift = this.dataset.lift;
+      document.querySelectorAll('.calc-lift').forEach(function (b) {
+        var on = b.dataset.lift === state.lift;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', String(on));
+      });
       render();
     });
   });
@@ -383,15 +364,15 @@ import Base from '~/layouts/Base.astro';
     if (!isNaN(pg) && pg > 0) state.goalTM = pg;
 
     // Sync toggle UI to loaded state
-    document.querySelectorAll('.seg-btn').forEach(function (btn) {
+    document.querySelectorAll('.pc-unit-opt[data-unit]').forEach(function (btn) {
       var active = btn.dataset.unit === state.unit;
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-pressed', String(active));
     });
-    document.querySelectorAll('.lift-btn').forEach(function (btn) {
+    document.querySelectorAll('.calc-lift').forEach(function (btn) {
       var active = btn.dataset.lift === state.lift;
       btn.classList.toggle('active', active);
-      btn.setAttribute('aria-pressed', String(active));
+      btn.setAttribute('aria-selected', String(active));
     });
   })();
 
@@ -475,12 +456,228 @@ import Base from '~/layouts/Base.astro';
   .tool-section {
     padding: 56px 0 80px;
   }
-  .tool-card {
+
+  /* ── progression goal calc (matches home page) ── */
+  .progression {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+  }
+  .prog-left {
+    padding: 36px 40px;
+    border-right: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--bg-1);
+  }
+  .prog-left .caps { color: var(--ink-2); }
+  .prog-numbers.single { margin: 0; }
+  .prog-num .amount {
+    font-family: var(--font-cond);
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink-0);
+  }
+  .prog-num .amount .unit {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink-2);
+    margin-left: 6px;
+  }
+  .prog-num .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 8px;
+  }
+  .prog-num .kg {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .prog-note {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .prog-unit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .pc-unit-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .pc-unit-opt {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+  }
+  .pc-unit-opt:hover { color: var(--ink-0); }
+  .pc-unit-opt.active { background: var(--ink-0); color: var(--bg-0); }
+  .prog-right {
+    padding: 36px 40px;
+  }
+  .calc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .calc-card > .caps {
+    margin-bottom: 20px;
+  }
+  .calc-lifts {
+    display: flex;
+    border-bottom: 1px solid var(--line-strong);
+    margin-bottom: 0;
+  }
+  .calc-lift {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 8px 14px;
+    font-family: var(--font-cond);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+  }
+  .calc-lift:last-child { border-right: none; }
+  .calc-lift:hover { color: var(--ink-0); background: var(--bg-1); }
+  .calc-lift.active { color: var(--ink-0); background: var(--bg-1); border-bottom: 2px solid var(--ink-0); }
+  .calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .calc-row:last-of-type { border-bottom: none; }
+  .calc-row-l .caps { color: var(--ink-1); }
+  .calc-sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 3px;
+  }
+  .calc-stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .step-btn {
+    appearance: none;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .step-btn:hover { background: var(--ink-0); color: var(--bg-0); }
+  .calc-val {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink-0);
+    min-width: 80px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .calc-val.big { font-size: 36px; }
+  .vu {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+  .calc-outcome {
+    margin-top: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .calc-outcome .o-l {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+  }
+  .calc-outcome .o-r {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink-2);
+  }
+  .already-there {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    padding: 16px 0;
+  }
+
+  /* ── cycle table outer ── */
+  .cycle-outer {
     border: 1px solid var(--line-strong);
     background: var(--bg-0);
     margin-bottom: 48px;
   }
-  .border-top { border-top: 1px solid var(--line); }
 
   /* ── share row ── */
   .share-row {
@@ -488,6 +685,7 @@ import Base from '~/layouts/Base.astro';
     align-items: center;
     gap: 12px;
     padding: 16px 24px;
+    border-top: 1px solid var(--line-faint);
   }
   .copy-link-btn {
     background: transparent;
@@ -512,187 +710,6 @@ import Base from '~/layouts/Base.astro';
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--amber);
-  }
-
-  /* ── segment row ── */
-  .segment-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    gap: 16px;
-  }
-  .segment-label { flex-shrink: 0; }
-  .segment-group {
-    display: flex;
-    border: 1px solid var(--line-strong);
-  }
-  .seg-btn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 8px 20px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    cursor: pointer;
-    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
-  }
-  .seg-btn + .seg-btn { border-left: 1px solid var(--line-strong); }
-  .seg-btn:hover { color: var(--ink-0); }
-  .seg-btn.active {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-
-  /* ── lift selector ── */
-  .lift-options {
-    display: flex;
-    border: 1px solid var(--line-strong);
-  }
-  .lift-btn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 10px 16px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    cursor: pointer;
-    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
-  }
-  .lift-btn + .lift-btn { border-left: 1px solid var(--line-strong); }
-  .lift-btn:hover { color: var(--ink-0); background: var(--bg-1); }
-  .lift-btn.active {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-
-  /* ── progression note ── */
-  .prog-note-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    background: var(--bg-1);
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .prog-note-val {
-    color: var(--ink-0);
-    font-weight: 600;
-  }
-
-  /* ── TM rows ── */
-  .tm-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 24px;
-    padding: 20px 24px;
-  }
-  .tm-sub {
-    font-size: 9px;
-    color: var(--ink-3);
-    margin-top: 3px;
-  }
-  .stepper-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .tm-display {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    min-width: 110px;
-    justify-content: center;
-  }
-  .tm-num {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: 44px;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--ink-0);
-    font-variant-numeric: tabular-nums;
-  }
-  .tm-unit {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    color: var(--ink-2);
-  }
-  .step-btn {
-    appearance: none;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--ink-0);
-    background: var(--bg-0);
-    color: var(--ink-0);
-    font-family: var(--font-mono);
-    font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
-    flex-shrink: 0;
-  }
-  .step-btn:hover {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-
-  /* ── result summary ── */
-  .result-summary {
-    padding: 24px;
-    background: var(--bg-1);
-  }
-  .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border: 1px solid var(--line-strong);
-    background: var(--bg-0);
-  }
-  .sum-cell {
-    padding: 20px 16px;
-    border-right: 1px solid var(--line);
-  }
-  .sum-cell:last-child { border-right: none; }
-  .sum-label { margin-bottom: 8px; }
-  .sum-val {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: 36px;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--ink-0);
-    font-variant-numeric: tabular-nums;
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-  }
-  .sum-unit {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    color: var(--ink-2);
-  }
-  .already-there {
-    padding: 20px;
-    color: var(--amber);
-    font-weight: 600;
-    font-size: 11px;
   }
 
   /* ── cycle table ── */
@@ -834,28 +851,13 @@ import Base from '~/layouts/Base.astro';
   }
 
   /* ── responsive ── */
-  @media (max-width: 640px) {
-    .summary-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .sum-cell:nth-child(2) { border-right: none; }
-    .sum-cell:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-  }
-  @media (max-width: 580px) {
-    .tm-row {
-      grid-template-columns: 1fr;
-      text-align: center;
-    }
-    .stepper-group { justify-content: center; }
-    .segment-row { flex-direction: column; align-items: flex-start; }
-    .lift-options { flex-wrap: wrap; }
+  @media (max-width: 720px) {
+    .progression { grid-template-columns: 1fr; }
+    .prog-left { border-right: none; border-bottom: 1px solid var(--line-strong); }
     .tool-hero { padding: 40px 0 36px; }
     .page-cta { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
     .cycle-table-head,
     .cycle-row { padding: 10px 16px; }
-  }
-  @media (max-width: 400px) {
-    .lift-btn { padding: 8px 10px; font-size: 10px; }
   }
 
   /* ── FAQ section ── */

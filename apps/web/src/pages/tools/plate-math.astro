@@ -1,5 +1,6 @@
 ---
 import Base from '~/layouts/Base.astro';
+import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
 ---
 
 <Base
@@ -41,80 +42,69 @@ import Base from '~/layouts/Base.astro';
 
   <section class="tool-section">
     <div class="wrap">
-      <div class="tool-card" id="plate-calc">
-
-        {/* Unit toggle */}
-        <div class="segment-row">
-          <div class="segment-label caps">UNIT</div>
-          <div class="segment-group" role="group" aria-label="Select unit">
-            <button class="seg-btn active" data-unit="lb" id="btn-lb" aria-pressed="true">LBS</button>
-            <button class="seg-btn" data-unit="kg" id="btn-kg" aria-pressed="false">KG</button>
-          </div>
-        </div>
-
-        {/* Bar selector */}
-        <div class="segment-row border-top">
-          <div class="segment-label caps">BAR WEIGHT</div>
-          <div class="bar-options" role="group" aria-label="Select bar weight" id="bar-options">
-            <button class="bar-btn active" data-bar-lb="45" data-bar-kg="20" data-bar-id="standard" aria-pressed="true">
-              <span class="bar-name">STANDARD</span>
-              <span class="bar-val" id="barlabel-standard">45 LB</span>
-            </button>
-            <button class="bar-btn" data-bar-lb="35" data-bar-kg="15" data-bar-id="womens" aria-pressed="false">
-              <span class="bar-name">WOMEN'S</span>
-              <span class="bar-val" id="barlabel-womens">35 LB</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Weight input */}
-        <div class="input-row border-top">
-          <label class="input-label caps" for="target-weight">TARGET WEIGHT</label>
-          <div class="input-group">
-            <button class="step-btn" id="btn-dec" aria-label="Decrease weight">−</button>
-            <div class="weight-display">
-              <span class="weight-num" id="weight-display">135</span>
-              <span class="weight-unit caps" id="weight-unit-label">LB</span>
+      <div class="plate-card" data-plate-calc>
+        <div class="pc-left">
+          <div>
+            <div class="pc-head">
+              <div class="caps">Target weight</div>
+              <div class="pc-unit-toggle" role="tablist" aria-label="Unit">
+                <button class="pc-unit-opt active" data-plate-unit="lb" role="tab" aria-selected="true">LB</button>
+                <button class="pc-unit-opt" data-plate-unit="kg" role="tab" aria-selected="false">KG</button>
+              </div>
             </div>
-            <button class="step-btn" id="btn-inc" aria-label="Increase weight">+</button>
+            <div class="pc-bar-row">
+              <div class="caps">Bar</div>
+              <div class="pc-unit-toggle" role="group" aria-label="Bar weight">
+                <button class="pc-unit-opt active" data-bar-lb="45" data-bar-kg="20" aria-pressed="true">STANDARD</button>
+                <button class="pc-unit-opt" data-bar-lb="35" data-bar-kg="15" aria-pressed="false">WOMEN'S</button>
+              </div>
+            </div>
+            <div class="pc-target">
+              <button class="pc-step" data-plate-step="dec" aria-label="Decrease weight">−</button>
+              <h3>
+                <span data-plate-weight>135</span>
+                <span class="pc-unit"> <span data-plate-unit-label>lb</span></span>
+              </h3>
+              <button class="pc-step" data-plate-step="inc" aria-label="Increase weight">+</button>
+            </div>
           </div>
-          <div class="input-hint caps" id="step-hint">STEP: 5 LB</div>
+          <div class="pc-readout">
+            <div class="item">
+              <div class="l">Per side</div>
+              <div class="v"><span data-plate-perside>45</span><span class="unit"> <span data-plate-unit-label>lb</span></span></div>
+            </div>
+            <div class="item">
+              <div class="l">Bar</div>
+              <div class="v"><span data-plate-bar>45</span><span class="unit"> <span data-plate-unit-label>lb</span></span></div>
+            </div>
+            <div class="item">
+              <div class="l">Plates</div>
+              <div class="v"><span data-plate-count>1</span><span class="unit"> ea</span></div>
+            </div>
+          </div>
+          <div id="plate-list" class="pc-plate-list" aria-live="polite" aria-label="Plate breakdown"></div>
+          <div id="result-note" class="pc-result-note" aria-live="polite"></div>
+          <div class="pc-extras">
+            <div class="pc-input-row">
+              <label class="caps" for="weight-input-field">Enter directly</label>
+              <input
+                type="number"
+                id="weight-input-field"
+                value="135"
+                min="0"
+                step="5"
+                class="pc-direct-input"
+                aria-label="Target weight"
+              />
+            </div>
+            <div class="share-row">
+              <button class="copy-link-btn caps" id="copy-link-btn" type="button">Copy shareable link</button>
+              <span class="copy-confirm caps" id="copy-confirm" aria-live="polite"></span>
+            </div>
+          </div>
         </div>
-
-        {/* Direct input */}
-        <div class="direct-row border-top">
-          <label class="caps" for="weight-input-field">OR ENTER DIRECTLY</label>
-          <input
-            type="number"
-            id="weight-input-field"
-            class="weight-input"
-            value="135"
-            min="0"
-            step="5"
-            aria-label="Enter target weight"
-          />
-        </div>
-
-        {/* Result */}
-        <div class="result-section border-top" id="result-section">
-          <div class="result-header">
-            <span class="caps">PLATES PER SIDE</span>
-            <span class="result-total caps" id="result-total">135 LB · 45 BAR</span>
-          </div>
-
-          <div class="plate-visual" id="plate-visual" aria-live="polite" aria-label="Plate layout">
-            <!-- filled by JS -->
-          </div>
-
-          <div class="plate-list" id="plate-list" aria-label="Plate list">
-            <!-- filled by JS -->
-          </div>
-
-          <div class="result-note" id="result-note"></div>
-          <div class="share-row">
-            <button class="copy-link-btn caps" id="copy-link-btn" type="button">Copy shareable link</button>
-            <span class="copy-confirm caps" id="copy-confirm" aria-live="polite"></span>
-          </div>
+        <div class="pc-right">
+          <PhonePlateBar weight={135} unit="lb" size="hero" withCaption />
         </div>
       </div>
 
@@ -158,306 +148,209 @@ import Base from '~/layouts/Base.astro';
   </section>
 </Base>
 
-<script is:inline>
-(function () {
-  // ── state ──────────────────────────────────────────────────────────────
-  var state = {
-    unit: 'lb',
-    barLb: 45,
-    weight: 135,
-  };
+<script>
+  import {
+    barWeight,
+    convertWeight,
+    decompose,
+    groupPlates,
+    plateLabel,
+    sizeFor,
+    stepFor,
+    type Unit,
+  } from '~/lib/plates';
 
-  // ── plate sets (lbs / kg) ──────────────────────────────────────────────
-  var PLATES_LB = [100, 55, 45, 35, 25, 10, 5, 2.5, 1.25];
-  var PLATES_KG = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 0.5];
+  const MAX_BY_UNIT: Record<Unit, number> = { lb: 600, kg: 275 };
 
-  // visual widths (relative) for each plate size
-  var PLATE_WIDTH_LB = { 100: 56, 55: 48, 45: 44, 35: 38, 25: 34, 10: 28, 5: 22, 2.5: 16, 1.25: 12 };
-  var PLATE_WIDTH_KG = { 50: 56, 25: 44, 20: 40, 15: 36, 10: 30, 5: 24, 2.5: 18, 1.25: 14, 0.5: 10 };
+  const root = document.querySelector<HTMLElement>('[data-plate-calc]');
+  if (!root) throw new Error('no plate-calc root');
 
-  // ── DOM refs ───────────────────────────────────────────────────────────
-  var weightDisplay = document.getElementById('weight-display');
-  var weightUnitLabel = document.getElementById('weight-unit-label');
-  var stepHint = document.getElementById('step-hint');
-  var resultTotal = document.getElementById('result-total');
-  var plateVisual = document.getElementById('plate-visual');
-  var plateList = document.getElementById('plate-list');
-  var resultNote = document.getElementById('result-note');
-  var weightInputField = document.getElementById('weight-input-field');
+  const weightEl = root.querySelector<HTMLElement>('[data-plate-weight]')!;
+  const perSideEl = root.querySelector<HTMLElement>('[data-plate-perside]')!;
+  const barEl = root.querySelector<HTMLElement>('[data-plate-bar]')!;
+  const countEl = root.querySelector<HTMLElement>('[data-plate-count]')!;
+  const decBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="dec"]')!;
+  const incBtn = root.querySelector<HTMLButtonElement>('[data-plate-step="inc"]')!;
+  const pBar = root.querySelector<HTMLElement>('.plate-bar')!;
+  const leftStack = pBar.querySelector<HTMLElement>('.stack-left')!;
+  const rightStack = pBar.querySelector<HTMLElement>('.stack:not(.stack-left)')!;
+  const collar = pBar.querySelector<HTMLElement>('.collar');
+  const captionR = pBar.querySelector<HTMLElement>('.caption-r');
+  const unitLabels = root.querySelectorAll<HTMLElement>('[data-plate-unit-label]');
+  const unitOpts = root.querySelectorAll<HTMLButtonElement>('[data-plate-unit]');
+  const barOpts = root.querySelectorAll<HTMLButtonElement>('[data-bar-lb]');
+  const plateListEl = document.getElementById('plate-list');
+  const resultNoteEl = document.getElementById('result-note');
+  const weightInputField = document.getElementById('weight-input-field') as HTMLInputElement | null;
+  const copyBtn = document.getElementById('copy-link-btn') as HTMLButtonElement | null;
+  const copyConfirm = document.getElementById('copy-confirm') as HTMLElement | null;
 
-  // ── helpers ───────────────────────────────────────────────────────────
-  function getBarKg() {
-    return state.barLb === 45 ? 20 : 15;
+  const H = 140;
+  const plateW = 22;
+
+  // Init from URL params
+  const params = new URLSearchParams(window.location.search);
+  let unit: Unit = (['lb', 'kg'].includes(params.get('unit') ?? '') ? params.get('unit') as Unit : 'lb');
+  let barLb = parseInt(params.get('bar') ?? '45', 10) === 35 ? 35 : 45;
+  let weight = Math.max(45, parseInt(params.get('w') ?? '135', 10) || 135);
+
+  function getCustomBar(): number {
+    return unit === 'lb' ? barLb : (barLb === 45 ? 20 : 15);
   }
 
-  function getCurrentBarWeight() {
-    return state.unit === 'lb' ? state.barLb : getBarKg();
-  }
-
-  function getPlates() {
-    return state.unit === 'lb' ? PLATES_LB : PLATES_KG;
-  }
-
-  function getStep() {
-    return state.unit === 'lb' ? 5 : 2.5;
-  }
-
-  function fmtWeight(w) {
-    // Show as integer if whole, one decimal if .5 or .25
-    if (w % 1 === 0) return String(w);
-    if ((w * 10) % 1 === 0) return w.toFixed(1);
-    return w.toFixed(2);
-  }
-
-  function calcPlates(targetWeight) {
-    var bar = getCurrentBarWeight();
-    var plates = getPlates();
-    var widths = state.unit === 'lb' ? PLATE_WIDTH_LB : PLATE_WIDTH_KG;
-    var remaining = (targetWeight - bar) / 2;
-    var result = [];
-
-    if (remaining < 0) return { plates: [], remaining: remaining };
-
-    for (var i = 0; i < plates.length; i++) {
-      var p = plates[i];
-      if (remaining >= p) {
-        var count = Math.floor(remaining / p);
-        result.push({ weight: p, count: count, width: widths[p] || 20 });
-        remaining = Math.round((remaining - count * p) * 1000) / 1000;
-      }
+  function renderPlate(p: number): HTMLDivElement {
+    const el = document.createElement('div');
+    el.className = 'plate';
+    const h = H * sizeFor(p, unit);
+    el.setAttribute('style', [
+      `width: ${plateW}px`, `height: ${h}px`,
+      'background: var(--ink-0)', 'border-radius: 1px',
+      'display: flex', 'align-items: center', 'justify-content: center', 'position: relative',
+    ].join('; '));
+    if (h >= 30) {
+      const lbl = document.createElement('span');
+      lbl.className = 'plate-label';
+      lbl.style.cssText = [
+        'font-family: var(--font-mono)', 'font-size: 14px', 'line-height: 12px',
+        'letter-spacing: 1.4px', 'font-weight: 700',
+        'transform: rotate(-90deg)', 'transform-origin: center',
+        'white-space: nowrap', 'pointer-events: none', 'color: var(--bg-0)',
+      ].join('; ');
+      lbl.textContent = plateLabel(p);
+      el.appendChild(lbl);
     }
-    return { plates: result, remaining: remaining };
+    return el;
   }
 
-  // ── render ─────────────────────────────────────────────────────────────
-  function render() {
-    var w = state.weight;
-    var unitLabel = state.unit === 'lb' ? 'LB' : 'KG';
-    var barW = getCurrentBarWeight();
-    var step = getStep();
-
-    weightDisplay.textContent = fmtWeight(w);
-    weightUnitLabel.textContent = unitLabel;
-    stepHint.textContent = 'STEP: ' + fmtWeight(step) + ' ' + unitLabel;
-    resultTotal.textContent = fmtWeight(w) + ' ' + unitLabel + ' · ' + fmtWeight(barW) + ' ' + unitLabel + ' BAR';
-
-    var calc = calcPlates(w);
-
-    // bar-label buttons
-    var barBtns = document.querySelectorAll('.bar-btn');
-    barBtns.forEach(function (btn) {
-      var lb = parseFloat(btn.dataset.barLb);
-      var kg = parseFloat(btn.dataset.barKg);
-      var val = state.unit === 'lb' ? fmtWeight(lb) + ' LB' : fmtWeight(kg) + ' KG';
-      btn.querySelector('.bar-val').textContent = val;
-    });
-
-    // update input field
-    weightInputField.value = fmtWeight(w);
-    weightInputField.step = fmtWeight(step);
-
-    // error state
-    if (w < barW) {
-      plateVisual.innerHTML = '';
-      plateList.innerHTML = '';
-      resultNote.textContent = 'Target weight is less than bar weight (' + fmtWeight(barW) + ' ' + unitLabel + ').';
-      resultNote.className = 'result-note result-note--warn';
+  function renderCaption(perSide: readonly number[]): void {
+    if (!captionR) return;
+    captionR.innerHTML = '';
+    const grouped = groupPlates(perSide);
+    const u = unit;
+    if (!grouped.length) {
+      const dash = document.createElement('span');
+      dash.style.color = 'var(--ink-2)';
+      dash.textContent = '—';
+      captionR.appendChild(dash);
       return;
     }
-    resultNote.textContent = '';
-    resultNote.className = 'result-note';
-
-    if (calc.remaining > 0.01) {
-      resultNote.textContent = 'Note: ' + fmtWeight(calc.remaining) + ' ' + unitLabel + ' per side cannot be made with standard plates.';
-      resultNote.className = 'result-note result-note--warn';
-    }
-
-    // plate visual (text-based barbell diagram)
-    renderVisual(calc.plates, barW);
-
-    // plate list
-    renderList(calc.plates);
-  }
-
-  function renderVisual(plates, barW) {
-    // Build a text-art barbell:
-    //   [45][35][25] | BAR | [25][35][45]
-    // We represent this with a flex row of plate divs + bar in center.
-    var html = '<div class="barbell-diagram" role="img" aria-label="Barbell plate diagram">';
-
-    // left side (plates in loading order: heaviest first from outside in)
-    html += '<div class="bb-side bb-side--left">';
-    for (var i = 0; i < plates.length; i++) {
-      var p = plates[i];
-      for (var j = 0; j < p.count; j++) {
-        html += '<div class="bb-plate" style="--pw:' + p.width + 'px" aria-hidden="true">' +
-          '<span class="bb-plate-label">' + fmtWeight(p.weight) + '</span>' +
-          '</div>';
-      }
-    }
-    html += '</div>';
-
-    // bar collar + sleeve
-    html += '<div class="bb-bar" aria-hidden="true"><div class="bb-collar"></div><div class="bb-sleeve"></div><div class="bb-center"><span>' + fmtWeight(barW) + '</span></div><div class="bb-sleeve"></div><div class="bb-collar"></div></div>';
-
-    // right side (mirror)
-    html += '<div class="bb-side bb-side--right">';
-    for (var i2 = plates.length - 1; i2 >= 0; i2--) {
-      var p2 = plates[i2];
-      for (var j2 = 0; j2 < p2.count; j2++) {
-        html += '<div class="bb-plate" style="--pw:' + p2.width + 'px" aria-hidden="true">' +
-          '<span class="bb-plate-label">' + fmtWeight(p2.weight) + '</span>' +
-          '</div>';
-      }
-    }
-    html += '</div>';
-
-    html += '</div>';
-    plateVisual.innerHTML = html;
-  }
-
-  function renderList(plates) {
-    if (plates.length === 0) {
-      plateList.innerHTML = '<div class="empty-list caps">JUST THE BAR</div>';
-      return;
-    }
-    var html = '';
-    plates.forEach(function (p) {
-      html += '<div class="plate-row">' +
-        '<span class="plate-row-weight">' + fmtWeight(p.weight) + ' <span class="plate-row-unit">' + (state.unit === 'lb' ? 'LB' : 'KG') + '</span></span>' +
-        '<span class="plate-row-count">× ' + p.count + ' per side</span>' +
-        '</div>';
+    grouped.forEach((g, i) => {
+      const grp = document.createElement('span');
+      grp.className = 'group';
+      if (i > 0) { const plus = document.createElement('span'); plus.className = 'plus'; plus.style.color = 'var(--ink-3)'; plus.textContent = '+'; grp.appendChild(plus); }
+      if (g.count > 1) { const ct = document.createElement('span'); ct.className = 'count'; ct.style.color = 'var(--ink-2)'; ct.textContent = `${g.count}×`; grp.appendChild(ct); }
+      const num = document.createElement('span'); num.className = 'num'; num.style.color = 'var(--ink-0)'; num.textContent = plateLabel(g.weight); grp.appendChild(num);
+      captionR.appendChild(grp);
     });
-    plateList.innerHTML = html;
+    const tot = document.createElement('span');
+    tot.className = 'total'; tot.style.color = 'var(--ink-0)';
+    tot.textContent = `= ${perSide.reduce((s, p) => s + p, 0)} ${u}`;
+    captionR.appendChild(tot);
   }
 
-  // ── event handlers ─────────────────────────────────────────────────────
-  // unit toggle
-  document.querySelectorAll('.seg-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var newUnit = this.dataset.unit;
-      if (newUnit === state.unit) return;
+  function render(): void {
+    const step = stepFor(unit);
+    const stdBar = barWeight(unit);
+    const customBar = getCustomBar();
+    // Adjust weight for custom bar: shift target so decompose gives correct per-side for the chosen bar
+    const adjusted = weight + (stdBar - customBar);
+    const { perSide } = decompose(adjusted, unit);
+    const perSideTotal = perSide.reduce((s, p) => s + p, 0);
 
-      // convert weight
-      if (newUnit === 'kg') {
-        state.weight = Math.round((state.weight / 2.20462) * 2) / 2; // round to 0.5
-        state.barLb = state.barLb; // keep lb ref, use kg bar equivalent
+    weightEl.textContent = String(weight);
+    for (const lbl of unitLabels) lbl.textContent = unit;
+    barEl.textContent = String(customBar);
+    perSideEl.textContent = String(perSideTotal);
+    countEl.textContent = String(perSide.length);
+
+    leftStack.innerHTML = '';
+    rightStack.innerHTML = '';
+    for (const p of perSide) { leftStack.appendChild(renderPlate(p)); rightStack.appendChild(renderPlate(p)); }
+    if (collar) collar.style.display = perSide.length > 0 ? '' : 'none';
+    renderCaption(perSide);
+
+    if (plateListEl) {
+      if (!perSide.length) {
+        plateListEl.innerHTML = '<div class="pl-row pl-just-bar">Just the bar</div>';
       } else {
-        state.weight = Math.round((state.weight * 2.20462) / 5) * 5;
+        plateListEl.innerHTML = groupPlates(perSide).map(g =>
+          `<div class="pl-row"><span class="pl-weight">${plateLabel(g.weight)} <span class="pl-unit">${unit.toUpperCase()}</span></span><span class="pl-count">× ${g.count} per side</span></div>`
+        ).join('');
       }
-      state.unit = newUnit;
-
-      document.querySelectorAll('.seg-btn').forEach(function (b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      this.classList.add('active');
-      this.setAttribute('aria-pressed', 'true');
-
-      // ensure weight is not below bar
-      var minW = getCurrentBarWeight();
-      if (state.weight < minW) state.weight = minW;
-
-      render();
-    });
-  });
-
-  // bar selector
-  document.querySelectorAll('.bar-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.querySelectorAll('.bar-btn').forEach(function (b) {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      this.classList.add('active');
-      this.setAttribute('aria-pressed', 'true');
-      state.barLb = parseFloat(this.dataset.barLb);
-      render();
-    });
-  });
-
-  // stepper buttons
-  document.getElementById('btn-inc').addEventListener('click', function () {
-    state.weight = Math.round((state.weight + getStep()) * 1000) / 1000;
-    render();
-  });
-  document.getElementById('btn-dec').addEventListener('click', function () {
-    var newW = Math.round((state.weight - getStep()) * 1000) / 1000;
-    var minW = getCurrentBarWeight();
-    if (newW >= minW) state.weight = newW;
-    render();
-  });
-
-  // direct input
-  weightInputField.addEventListener('change', function () {
-    var v = parseFloat(this.value);
-    if (!isNaN(v) && v >= 0) {
-      state.weight = v;
-      render();
     }
-  });
-  weightInputField.addEventListener('input', function () {
-    var v = parseFloat(this.value);
-    if (!isNaN(v) && v >= 0) {
-      state.weight = v;
-      render();
-    }
-  });
 
-  // ── URL state ─────────────────────────────────────────────────────────
-  function pushUrl() {
-    var params = new URLSearchParams();
-    params.set('w', String(state.weight));
-    params.set('u', state.unit);
-    if (state.barLb !== 45) params.set('b', String(state.barLb));
-    history.replaceState(null, '', '?' + params.toString());
+    if (resultNoteEl) {
+      if (weight < customBar) {
+        resultNoteEl.textContent = `Weight is below bar weight (${customBar} ${unit}).`;
+        resultNoteEl.className = 'pc-result-note warn';
+      } else {
+        resultNoteEl.textContent = '';
+        resultNoteEl.className = 'pc-result-note';
+      }
+    }
+
+    pBar.setAttribute('aria-label', perSide.length
+      ? `${weight} ${unit} — bar plus ${perSideTotal} ${unit} per side`
+      : `${weight} ${unit} — bar only`);
+
+    decBtn.disabled = weight - step < customBar;
+    incBtn.disabled = weight + step > MAX_BY_UNIT[unit];
+
+    if (weightInputField) { weightInputField.value = String(weight); weightInputField.step = String(step); }
+
+    for (const opt of unitOpts) {
+      const on = opt.dataset.plateUnit === unit;
+      opt.classList.toggle('active', on);
+      opt.setAttribute('aria-selected', String(on));
+    }
+    for (const opt of barOpts) {
+      const on = parseInt(opt.dataset.barLb ?? '45', 10) === barLb;
+      opt.classList.toggle('active', on);
+      opt.setAttribute('aria-pressed', String(on));
+    }
   }
 
-  // Wrap render to also sync URL after every state mutation.
-  var _render = render;
-  render = function () { _render(); pushUrl(); };
-
-  // ── copy link ─────────────────────────────────────────────────────────
-  var copyBtn = document.getElementById('copy-link-btn');
-  var copyConfirm = document.getElementById('copy-confirm');
-  var copyTimer = null;
-  copyBtn.addEventListener('click', function () {
-    var url = window.location.href;
-    navigator.clipboard.writeText(url).then(function () {
-      copyConfirm.textContent = 'Copied!';
-      if (copyTimer) clearTimeout(copyTimer);
-      copyTimer = setTimeout(function () { copyConfirm.textContent = ''; }, 2000);
-    }).catch(function () {
-      copyConfirm.textContent = 'Copy failed';
-    });
+  root.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const unitBtn = t.closest<HTMLButtonElement>('[data-plate-unit]');
+    if (unitBtn && unitBtn.dataset.plateUnit !== unit) {
+      const newUnit = unitBtn.dataset.plateUnit as Unit;
+      weight = convertWeight(weight, unit, newUnit);
+      unit = newUnit;
+      render(); return;
+    }
+    const barBtn = t.closest<HTMLButtonElement>('[data-bar-lb]');
+    if (barBtn) {
+      const nb = parseInt(barBtn.dataset.barLb ?? '45', 10);
+      if (nb !== barLb) { barLb = nb; render(); } return;
+    }
+    const stepBtn = t.closest<HTMLButtonElement>('[data-plate-step]');
+    if (stepBtn) {
+      const step = stepFor(unit);
+      const dir = stepBtn.dataset.plateStep === 'inc' ? 1 : -1;
+      weight = Math.max(getCustomBar(), Math.min(MAX_BY_UNIT[unit], weight + dir * step));
+      render(); return;
+    }
   });
 
-  // ── init ───────────────────────────────────────────────────────────────
-  (function initFromUrl() {
-    var params = new URLSearchParams(window.location.search);
-    var u = params.get('u');
-    var w = params.get('w');
-    var b = params.get('b');
-    if (u === 'kg' || u === 'lb') state.unit = u;
-    if (b === '35') state.barLb = 35;
-    var parsed = w ? parseFloat(w) : NaN;
-    if (!isNaN(parsed) && parsed > 0) state.weight = parsed;
+  weightInputField?.addEventListener('change', () => {
+    const v = parseFloat(weightInputField!.value);
+    if (!isNaN(v) && v > 0) { weight = Math.max(getCustomBar(), v); render(); }
+  });
 
-    // Sync UI toggles to URL-loaded state
-    document.querySelectorAll('.seg-btn').forEach(function (btn) {
-      var active = btn.dataset.unit === state.unit;
-      btn.classList.toggle('active', active);
-      btn.setAttribute('aria-pressed', String(active));
+  copyBtn?.addEventListener('click', () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('unit', unit);
+    url.searchParams.set('bar', String(barLb));
+    url.searchParams.set('w', String(weight));
+    navigator.clipboard.writeText(url.toString()).then(() => {
+      if (copyConfirm) { copyConfirm.textContent = 'Copied!'; setTimeout(() => { copyConfirm!.textContent = ''; }, 2000); }
     });
-    document.querySelectorAll('.bar-btn').forEach(function (btn) {
-      var active = parseFloat(btn.dataset.barLb) === state.barLb;
-      btn.classList.toggle('active', active);
-      btn.setAttribute('aria-pressed', String(active));
-    });
-  })();
+  });
 
   render();
-})();
+
+
 </script>
 
 <style>
@@ -539,335 +432,211 @@ import Base from '~/layouts/Base.astro';
     padding: 56px 0 80px;
   }
 
-  /* ── card ── */
-  .tool-card {
+  /* ── plate card (matches home page #plate section) ── */
+  .plate-card {
     border: 1px solid var(--line-strong);
-    background: var(--bg-0);
+    background: var(--bg-1);
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
     margin-bottom: 48px;
   }
-
-  .border-top { border-top: 1px solid var(--line); }
-
-  /* ── unit / segment row ── */
-  .segment-row {
+  .pc-left {
+    padding: 44px;
+    border-right: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 420px;
+  }
+  .pc-right {
+    padding: 44px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-0);
+    min-width: 0;
+  }
+  .pc-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
   }
-  .segment-label { flex-shrink: 0; }
-  .segment-group {
+  .pc-bar-row {
     display: flex;
-    border: 1px solid var(--line-strong);
-  }
-  .seg-btn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 8px 20px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    cursor: pointer;
-    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
-  }
-  .seg-btn + .seg-btn { border-left: 1px solid var(--line-strong); }
-  .seg-btn:hover { color: var(--ink-0); }
-  .seg-btn.active {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-
-  /* ── bar selector ── */
-  .bar-options {
-    display: flex;
-    border: 1px solid var(--line-strong);
-  }
-  .bar-btn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 10px 20px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 3px;
-    transition: background var(--duration-base) var(--ease-standard);
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
   }
-  .bar-btn + .bar-btn { border-left: 1px solid var(--line-strong); }
-  .bar-btn:hover { background: var(--bg-1); }
-  .bar-btn.active { background: var(--ink-0); }
-  .bar-btn.active .bar-name,
-  .bar-btn.active .bar-val { color: var(--bg-0) !important; }
-  .bar-name {
+  .pc-unit-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-0);
+  }
+  .pc-unit-opt {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    transition: color var(--duration-base) var(--ease-standard);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
   }
-  .bar-val {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--ink-1);
-    transition: color var(--duration-base) var(--ease-standard);
-  }
-
-  /* ── weight input row ── */
-  .input-row {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 24px;
-  }
-  .input-label { white-space: nowrap; }
-  .input-group {
+  .pc-unit-opt:hover { color: var(--ink-0); }
+  .pc-unit-opt.active { background: var(--ink-0); color: var(--bg-0); }
+  .pc-unit-opt:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .pc-target {
     display: flex;
     align-items: center;
-    gap: 12px;
-    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
   }
-  .weight-display {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    min-width: 120px;
-    justify-content: center;
-  }
-  .weight-num {
+  .pc-target h3 {
     font-family: var(--font-cond);
     font-weight: 600;
-    font-size: 48px;
+    font-size: 36px;
     line-height: 1;
     letter-spacing: -0.03em;
+    margin: 0;
     color: var(--ink-0);
-    font-variant-numeric: tabular-nums;
+    min-width: 8ch;
   }
-  .weight-unit {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    color: var(--ink-2);
-  }
-  .step-btn {
-    appearance: none;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--ink-0);
+  .pc-unit { color: var(--ink-2); font-weight: 500; }
+  .pc-step {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line-strong);
     background: var(--bg-0);
     color: var(--ink-0);
     font-family: var(--font-mono);
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
     cursor: pointer;
+    border-radius: 0;
+    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+    padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
-    flex-shrink: 0;
   }
-  .step-btn:hover {
-    background: var(--ink-0);
-    color: var(--bg-0);
-  }
-  .input-hint {
-    text-align: right;
-    white-space: nowrap;
-    font-size: 9px;
-  }
-
-  /* ── direct input row ── */
-  .direct-row {
-    display: flex;
-    align-items: center;
+  .pc-step:hover { background: var(--ink-0); color: var(--bg-0); }
+  .pc-step:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .pc-step:disabled { opacity: 0.35; cursor: not-allowed; }
+  .pc-step:disabled:hover { background: var(--bg-0); color: var(--ink-0); }
+  .pc-readout {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
-    padding: 14px 24px;
-    background: var(--bg-1);
   }
-  .weight-input {
-    appearance: none;
-    background: var(--bg-0);
-    border: 1px solid var(--line-strong);
-    color: var(--ink-0);
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    padding: 8px 12px;
-    width: 120px;
-    outline: none;
-    transition: border-color var(--duration-base) var(--ease-standard);
-  }
-  .weight-input:focus {
-    border-color: var(--ink-0);
-  }
-
-  /* ── result section ── */
-  .result-section {
-    padding: 24px;
-  }
-  .result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .result-total {
+  .pc-readout .item .l {
     font-family: var(--font-mono);
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .pc-readout .item .v {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.025em;
+    margin-top: 4px;
     color: var(--ink-0);
   }
-
-  /* barbell diagram */
-  .plate-visual {
-    margin-bottom: 24px;
-    overflow-x: auto;
-    padding: 8px 0;
-  }
-  .barbell-diagram {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    min-height: 90px;
-  }
-  .bb-side {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-  .bb-side--left { flex-direction: row-reverse; }
-  .bb-side--right { flex-direction: row; }
-
-  .bb-plate {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--pw, 24px);
-    height: 72px;
-    background: var(--ink-0);
-    position: relative;
-    flex-shrink: 0;
-    border: 1px solid var(--line-strong);
-  }
-  .bb-plate-label {
+  .pc-readout .item .v .unit {
     font-family: var(--font-mono);
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--bg-0);
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    line-height: 1;
-    white-space: nowrap;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    text-transform: uppercase;
   }
-
-  .bb-bar {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    gap: 0;
+  .pc-plate-list {
+    border-top: 1px solid var(--line-faint);
+    padding-top: 12px;
   }
-  .bb-collar {
-    width: 10px;
-    height: 20px;
-    background: var(--ink-2);
-    border: 1px solid var(--line-strong);
-    flex-shrink: 0;
-  }
-  .bb-sleeve {
-    width: 32px;
-    height: 12px;
-    background: var(--ink-3);
-    border-top: 1px solid var(--line-strong);
-    border-bottom: 1px solid var(--line-strong);
-    flex-shrink: 0;
-  }
-  .bb-center {
-    width: 72px;
-    height: 16px;
-    background: var(--ink-2);
-    border: 1px solid var(--line-strong);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .bb-center span {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--bg-0);
-  }
-
-  /* plate list */
-  .plate-list {
-    border-top: 1px solid var(--line);
-    padding-top: 16px;
-  }
-  .plate-row {
+  .pl-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 8px 0;
+    padding: 5px 0;
     border-bottom: 1px solid var(--line-faint);
   }
-  .plate-row:last-child { border-bottom: none; }
-  .plate-row-weight {
+  .pl-row:last-child { border-bottom: none; }
+  .pl-just-bar {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .pl-weight {
     font-family: var(--font-cond);
     font-weight: 600;
-    font-size: 22px;
+    font-size: 18px;
     letter-spacing: -0.02em;
     color: var(--ink-0);
-    font-variant-numeric: tabular-nums;
   }
-  .plate-row-unit {
+  .pl-unit {
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.18em;
     color: var(--ink-2);
   }
-  .plate-row-count {
+  .pl-count {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.14em;
     color: var(--ink-2);
   }
-  .empty-list {
-    padding: 16px 0;
-    font-size: 11px;
-    color: var(--ink-2);
-  }
-
-  /* result note */
-  .result-note {
-    margin-top: 12px;
+  .pc-result-note {
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.12em;
     color: var(--ink-3);
   }
-  .result-note--warn { color: var(--amber); }
+  .pc-result-note.warn { color: var(--amber); }
+  .pc-extras {
+    border-top: 1px solid var(--line-faint);
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pc-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pc-direct-input {
+    appearance: none;
+    background: var(--bg-0);
+    border: 1px solid var(--line-strong);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 6px 10px;
+    width: 100px;
+    outline: none;
+    transition: border-color var(--duration-base) var(--ease-standard);
+  }
+  .pc-direct-input:focus { border-color: var(--ink-0); }
 
   .share-row {
     margin-top: 16px;
@@ -949,21 +718,12 @@ import Base from '~/layouts/Base.astro';
   }
 
   /* ── responsive ── */
-  @media (max-width: 680px) {
-    .input-row {
-      grid-template-columns: 1fr;
-      text-align: center;
-    }
-    .input-hint { text-align: center; }
-    .segment-row { flex-direction: column; align-items: flex-start; }
+  @media (max-width: 720px) {
+    .plate-card { grid-template-columns: 1fr; }
+    .pc-left { border-right: none; border-bottom: 1px solid var(--line-strong); padding: 32px; min-height: auto; }
+    .pc-right { padding: 32px; }
     .tool-hero { padding: 40px 0 36px; }
     .page-cta { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
-  }
-  @media (max-width: 480px) {
-    .segment-row,
-    .direct-row { padding: 14px 16px; }
-    .input-row { padding: 16px; }
-    .result-section { padding: 16px; }
   }
 
   /* ── FAQ section ── */
@@ -1007,22 +767,3 @@ import Base from '~/layouts/Base.astro';
   }
 </style>
 
-<style is:global>
-  .barbell-diagram { display: flex; align-items: center; justify-content: center; gap: 0; min-height: 90px; }
-  .bb-side { display: flex; align-items: center; gap: 2px; }
-  .bb-side--left { flex-direction: row-reverse; }
-  .bb-side--right { flex-direction: row; }
-  .bb-plate { display: flex; align-items: center; justify-content: center; width: var(--pw, 24px); height: 72px; background: var(--ink-0); position: relative; flex-shrink: 0; border: 1px solid var(--line-strong); }
-  .bb-plate-label { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; color: var(--bg-0); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); line-height: 1; white-space: nowrap; }
-  .bb-bar { display: flex; align-items: center; flex-shrink: 0; gap: 0; }
-  .bb-collar { width: 10px; height: 20px; background: var(--ink-2); border: 1px solid var(--line-strong); flex-shrink: 0; }
-  .bb-sleeve { width: 32px; height: 12px; background: var(--ink-3); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); flex-shrink: 0; }
-  .bb-center { width: 72px; height: 16px; background: var(--ink-2); border: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .bb-center span { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.12em; color: var(--bg-0); }
-  .plate-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line-faint); }
-  .plate-row:last-child { border-bottom: none; }
-  .plate-row-weight { font-family: var(--font-cond); font-weight: 600; font-size: 22px; letter-spacing: -0.02em; color: var(--ink-0); font-variant-numeric: tabular-nums; }
-  .plate-row-unit { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; color: var(--ink-2); }
-  .plate-row-count { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--ink-2); }
-  .empty-list { padding: 16px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-2); }
-</style>

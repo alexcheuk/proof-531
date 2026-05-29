@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 53)
+**Last updated**: 2026-05-29 (Expedition 54)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -79,6 +79,22 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 
 ## Progress tracker
 
+### Expedition 54 notes
+
+Two content-accuracy fixes shipped:
+
+1. **Logger era start date corrected** (Track E): Both `blog/index.astro` and `process.astro` said
+   the Logger rotation started on "2026-05-27" — but expedition 1 is dated 2026-05-26 and the
+   persona-change entry in `04-dev-blog-persona.md` is also dated 2026-05-26. Corrected both
+   occurrences to "2026-05-26".
+
+2. **Duplicate summary removed from featured card body** (Track C UX): The featured-post section
+   in `blog/index.astro` was rendering `featured.data.summary` twice — once in the meta sidebar
+   and again as a plain `<p>` in the body. The duplicate paragraph was replaced with a
+   context-sensitive note: Logger posts get a sentence explaining the field-log / gommage framing
+   with a link to `/blog/expedition-logs`; non-Logger posts get a brief description of what a
+   loop post is. Both paths avoid re-showing the summary that's already in the sidebar.
+
 | Item | Status | Notes |
 |------|--------|-------|
 | JSON-LD SoftwareApplication schema | done · expedition 45 | Added to index.astro. Covers name, category, OS, price, description, URL. |
@@ -106,6 +122,8 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | Blog hero expedition count | done · expedition 53 | Added `{loggerCount} expedition logs` to the hero eyebrow alongside total post count — more prominent visibility of expedition log count. |
 | LogPlayer.astro audit | done · expedition 53 | Reviewed — component is solid. Accessible (keyboard seek, aria-label toggle), CSS-drawn play/pause glyphs (no emoji), drives native `<audio>` via media API. No improvements needed. |
 | RSS audio enclosure audit | done · expedition 53 | Reviewed rss.xml.ts — iTunes namespace included, enclosure uses statSync for accurate byte length, itunes:episode and itunes:author per item. Feed is podcast-app-ready. No improvements needed. |
+| Logger era start date fix | done · expedition 54 | blog/index.astro and process.astro both said "2026-05-27" for the Logger rotation start; corrected to "2026-05-26" (matching expedition 1's pubDate and the persona-change entry in 04-dev-blog-persona.md). |
+| Featured card body duplicate summary removed | done · expedition 54 | blog/index.astro featured section rendered summary twice (meta sidebar + body paragraph). Replaced body paragraph with context-aware note: Logger posts link to /blog/expedition-logs; non-Logger posts describe what a loop post is. |
 
 ## Discord collaboration workflow
 

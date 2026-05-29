@@ -1,12 +1,8 @@
-/**
- * Paper-RGB translucent tints used on the inverted-ink PRCertificate.
- *
- * The base RGB is `bg0` (231, 227, 214). The PWA layers `bg0` over the
- * ink-0 surface at varying alpha to shade subdivisions without introducing
- * new color tokens. Centralised here so the four constants don't multiply
- * across sibling components.
- */
-export const PAPER_28 = 'rgba(231,227,214,0.28)';
-export const PAPER_45 = 'rgba(231,227,214,0.45)';
-export const PAPER_55 = 'rgba(231,227,214,0.55)';
-export const PAPER_65 = 'rgba(231,227,214,0.65)';
+import { colors } from '@/design/tokens';
+
+// Re-export the paper-over-ink tints used across PRCertificate sub-components.
+// Raw rgba values live in design/tokens.ts (the only file allowed hex/px literals).
+export const PAPER_28 = colors.paperTint28;
+export const PAPER_45 = colors.paperTint45;
+export const PAPER_55 = colors.paperTint55;
+export const PAPER_65 = colors.paperTint65;

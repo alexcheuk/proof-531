@@ -542,81 +542,16 @@ const postCount = posts.length;
     </div>
   </section>
 
-  {/* ─── real device screenshots ─── */}
-  <section class="real-screenshots-section">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="marker">Real device</div>
-          <h2>What it actually<br />looks like<span class="dot">.</span></h2>
-        </div>
-        <div class="right">
-          Real screenshots from the app — no mockup polish. From picking your
-          lift to logging the top set to the session receipt. This is exactly
-          what loads when you tap the icon.
-        </div>
-      </div>
-
-      <div class="real-screenshots-grid">
-        <div class="real-screenshot-card">
-          <div class="rsc-label">Today · Home screen</div>
-          <img
-            src="/screenshot-2.png"
-            alt="531 Strength home screen showing Bench lift with plate visualization, cycle grid, TM 235 lb"
-            width="390"
-            height="844"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="real-screenshot-card">
-          <div class="rsc-label">Live session · plate math</div>
-          <img
-            src="/screenshot-3.png"
-            alt="531 Strength live session screen showing NEXT SET 155 LB with plate diagram (45+10 per side) and START SESSION button"
-            width="390"
-            height="844"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="real-screenshot-card">
-          <div class="rsc-label">Session receipt · In the book.</div>
-          <img
-            src="/screenshot-5.png"
-            alt="531 Strength session complete screen showing In the book., session record card, and CLOSE THE DAY button"
-            width="390"
-            height="844"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="real-screenshot-card">
-          <div class="rsc-label">PR Certificate · dark mode</div>
-          <img
-            src="/screenshot-1.png"
-            alt="531 Strength PR Certificate screen in dark mode: Stronger. — 222 LB — +25 LB vs 197 LB previous"
-            width="390"
-            height="844"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ─── screens rail ─── */}
+  {/* ─── screens rail — real device screenshots ─── */}
   <section id="screens" class="screens-section">
     <div class="wrap">
       <div class="section-head">
         <div>
           <div class="marker">04 · The product</div>
-          <h2>The screens<br />themselves<span class="dot">.</span></h2>
+          <h2>Real screenshots<span class="dot">,</span><br />every screen<span class="dot">.</span></h2>
         </div>
         <div class="right">
-          Three core screens per workout. Pick a lift, lift, log. The rail is
-          scrollable — drag to see iOS and Android side by side.
+          Actual device captures from the app. Today, the live session, the receipt, and the PR moment. No mockup polish — this is exactly what you see.
         </div>
       </div>
     </div>
@@ -624,294 +559,70 @@ const postCount = posts.length;
     <div class="screens-rail-wrap">
       <div class="screens-rail">
 
-        {/* 01 — Home (Bench page) */}
+        {/* 01 — Today / Home screen */}
         <div class="screen-card">
-          <div class="lab"><span>01 · Home</span><span class="idx">iOS</span></div>
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="phone-notch"></div>
-              <div class="phone-status">
-                <span class="mono">9:41</span>
-                <span class="icons">
-                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" /><rect x="4" y="4" width="2" height="6" /><rect x="8" y="2" width="2" height="8" /><rect x="12" y="0" width="2" height="10" /></svg>
-                  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0.5" y="0.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" /><rect x="2" y="2" width="15" height="6" rx="1" /></svg>
-                </span>
-              </div>
-              <div class="scr scr-home">
-                <div class="scr-masthead">
-                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
-                  <div class="date">WED · MAY 28</div>
-                </div>
-                <div class="scr-lift-tabs">
-                  <div class="lift-tab">SQUAT</div>
-                  <div class="lift-tab active">BENCH</div>
-                  <div class="lift-tab">DEAD</div>
-                </div>
-                <div class="scr-body">
-                  <div class="lift-eyebrow">CYCLE 03 · DAY 2</div>
-                  <div class="lift-title">Bench<span class="dot">.</span></div>
-                  <div class="topset-block">
-                    <div class="topset-head">
-                      <span class="caps">TOP SET</span>
-                      <span class="caps" style="color: var(--ink-3); letter-spacing: 0.18em;">90% TM · TM 185 LB</span>
-                    </div>
-                    <div class="topset-row">
-                      <span class="topset-weight">170</span>
-                      <span class="topset-unit">LB</span>
-                      <span class="topset-reps">× 3+</span>
-                    </div>
-                    <div class="topset-plate"><PhonePlateBar weight={170} unit="lb" size="mini" /></div>
-                  </div>
-                  <div class="cycle-strip-label">THIS CYCLE</div>
-                  <div class="cycle-strip">
-                    <div class="cyc-cell done"><div class="w">D1</div><div class="scheme">5·5·5+</div><span class="check">✓</span></div>
-                    <div class="cyc-cell active"><div class="w">D2</div><div class="scheme">3·3·3+</div></div>
-                    <div class="cyc-cell"><div class="w">D3</div><div class="scheme">5·3·1+</div></div>
-                    <div class="cyc-cell"><div class="w">D4</div><div class="scheme">TM TEST</div></div>
-                  </div>
-                  <div class="stat-grid">
-                    <div class="stat-cell"><div class="l">TM</div><div class="v">185 <span class="vu">LB</span></div></div>
-                    <div class="stat-cell"><div class="l">BEST e1RM</div><div class="v">215</div></div>
-                    <div class="stat-cell"><div class="l">CYCLE</div><div class="v">3</div><div class="vsub">ROLLING</div></div>
-                  </div>
-                  <div class="see-progress">SEE PROGRESS →</div>
-                </div>
-                <div class="cta-pill"><span>BEGIN SESSION</span><span>→</span></div>
-                <div class="phone-tabs">
-                  <div class="phone-tab active">TODAY</div>
-                  <div class="phone-tab">PROGRESS</div>
-                  <div class="phone-tab">HISTORY</div>
-                  <div class="phone-tab">YOU</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 02 — Live (paper bg, "Squat now.") */}
-        <div class="screen-card">
-          <div class="lab"><span>02 · Live</span><span class="idx">iOS</span></div>
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="phone-notch"></div>
-              <div class="phone-status">
-                <span class="mono">9:41</span>
-                <span class="icons">
-                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" /><rect x="4" y="4" width="2" height="6" /><rect x="8" y="2" width="2" height="8" /><rect x="12" y="0" width="2" height="10" /></svg>
-                  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0.5" y="0.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" /><rect x="2" y="2" width="15" height="6" rx="1" /></svg>
-                </span>
-              </div>
-              <div class="scr scr-live-v2">
-                {/* SessionTopBar — back chip left */}
-                <div class="session-topbar">
-                  <div class="back-chip">←</div>
-                  <span class="topbar-elapsed">12:34</span>
-                </div>
-                {/* LiveHeader — trimmed: eyebrow + Squat now. + AMRAP chip.
-                    Coaching line dropped for fit; chip alone carries the
-                    "this is the AMRAP set" signal. */}
-                <div class="live-header compact">
-                  <span class="lh-eyebrow lh-eyebrow--final">FINAL SET · 66% DONE</span>
-                  <div class="lh-title">Squat now<span class="dot">.</span></div>
-                  <span class="lh-amrap">AMRAP</span>
-                </div>
-                {/* Divider */}
-                <div class="live-divider"></div>
-                {/* TopSetBlock full — the marketing point of this card.
-                    Plate viz + giant weight + PER SIDE caption all visible. */}
-                <div class="live-topset">
-                  <div class="topset-head">
-                    <span class="caps" style="color: var(--ink-0); letter-spacing: 0.18em;">ON THE BAR · 90% TM</span>
-                  </div>
-                  <div class="topset-row live">
-                    <span class="topset-weight big">250</span>
-                    <span class="topset-unit">LB</span>
-                    <span class="topset-reps big">× 3+</span>
-                  </div>
-                  <div class="topset-plate">
-                    <PhonePlateBar weight={250} unit="lb" size="full" withCaption />
-                  </div>
-                </div>
-                <div style="flex: 1;"></div>
-                {/* Bottom CTA — Log AMRAP */}
-                <div class="cta-pill"><span>LOG AMRAP</span><span>→</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 03 — History */}
-        <div class="screen-card">
-          <div class="lab"><span>03 · History</span><span class="idx">Android</span></div>
+          <div class="lab"><span>01 · Today</span><span class="idx">Android</span></div>
           <div class="phone android">
-            <div class="phone-screen">
-              <div class="phone-notch"></div>
-              <div class="phone-status">
-                <span class="mono" style="font-size: 11px;">9:41</span>
-                <span class="icons">
-                  <svg width="14" height="9" viewBox="0 0 14 9" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5l2 2 4-4M8 4.5h5M8 7h5M8 2h5" /></svg>
-                  <svg width="14" height="9" viewBox="0 0 14 9" fill="currentColor"><path d="M2 8L8 2 14 8" /></svg>
-                  <svg width="20" height="9" viewBox="0 0 20 9" fill="currentColor"><rect x="0.5" y="0.5" width="16" height="8" rx="1.5" fill="none" stroke="currentColor" /><rect x="2" y="2" width="13" height="5" /></svg>
-                </span>
-              </div>
-              <div class="scr scr-history-v2">
-                <div class="scr-masthead">
-                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
-                  <div class="date">HISTORY</div>
-                </div>
-                {/* TitleBlock */}
-                <div class="title-block">
-                  <div class="tb-eyebrow">THE RECORD</div>
-                  <div class="tb-title">History<span class="dot">.</span></div>
-                </div>
-                {/* AchievementStrip — 3-cell hero + sparkline */}
-                <div class="ach-strip">
-                  <div class="ach-hero">
-                    <div class="ach-cell"><div class="l">SESSIONS FILED</div><div class="v">32</div></div>
-                    <div class="ach-cell"><div class="l">PERSONAL RECORDS</div><div class="v">5</div></div>
-                    <div class="ach-cell"><div class="l">TOTAL VOLUME</div><div class="v">128<span class="vu">K LB</span></div></div>
-                  </div>
-                  <div class="ach-caption">★ BEST · BENCH 215 LB · 12-DAY STREAK</div>
-                  <div class="ach-spark">
-                    {[0,1,0,1,1,0,1,1,0,1,1,1,0,1].map((v) => (
-                      <div class={`spark-bar ${v ? 'on' : ''}`}></div>
-                    ))}
-                  </div>
-                </div>
-                {/* FilterChips */}
-                <div class="filter-chips">
-                  <div class="fc-chip active">ALL <span class="ct">32</span></div>
-                  <div class="fc-chip">★ PRS <span class="ct">5</span></div>
-                  <div class="fc-chip">SQUAT</div>
-                  <div class="fc-chip">BENCH</div>
-                </div>
-                {/* CycleSection */}
-                <div class="cycle-section">
-                  <div class="cs-head">
-                    <span class="cs-label">CYCLE 03</span>
-                    <span class="cs-hint">3 of 4 done · 1 PR</span>
-                  </div>
-                  <div class="sess-row first">
-                    <div class="sr-l">
-                      <div class="sr-primary">Squat</div>
-                      <div class="sr-sec">TODAY</div>
-                    </div>
-                    <div class="sr-r">
-                      <span class="pr-star">★ PR</span>
-                      <div class="sr-val">
-                        <div class="v">C3 · D2</div>
-                        <div class="sub">47m</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="sess-row">
-                    <div class="sr-l">
-                      <div class="sr-primary">Bench</div>
-                      <div class="sr-sec">YESTERDAY</div>
-                    </div>
-                    <div class="sr-r">
-                      <div class="sr-val">
-                        <div class="v">C3 · D2</div>
-                        <div class="sub">38m</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="sess-row">
-                    <div class="sr-l">
-                      <div class="sr-primary">Dead</div>
-                      <div class="sr-sec">SAT · MAY 17</div>
-                    </div>
-                    <div class="sr-r">
-                      <div class="sr-val">
-                        <div class="v">C3 · D2</div>
-                        <div class="sub">52m</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="phone-tabs">
-                  <div class="phone-tab">TODAY</div>
-                  <div class="phone-tab">PROGRESS</div>
-                  <div class="phone-tab active">HISTORY</div>
-                  <div class="phone-tab">YOU</div>
-                </div>
-              </div>
+            <div class="phone-screen phone-screen--photo">
+              <img
+                src="/screenshot-2.png"
+                alt="531 Strength today screen: Bench, Cycle 2 Day 1, TM 235 lb, cycle progress grid, BEGIN SESSION"
+                width="390"
+                height="844"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
         </div>
 
-        {/* 04 — Plan (Today) */}
+        {/* 02 — Live session, plate math */}
         <div class="screen-card">
-          <div class="lab"><span>04 · Plan</span><span class="idx">Android</span></div>
+          <div class="lab"><span>02 · Live</span><span class="idx">Android</span></div>
           <div class="phone android">
-            <div class="phone-screen">
-              <div class="phone-notch"></div>
-              <div class="phone-status">
-                <span class="mono" style="font-size: 11px;">9:41</span>
-                <span class="icons">
-                  <svg width="14" height="9" viewBox="0 0 14 9" fill="currentColor"><path d="M2 8L8 2 14 8" /></svg>
-                  <svg width="20" height="9" viewBox="0 0 20 9" fill="currentColor"><rect x="0.5" y="0.5" width="16" height="8" rx="1.5" fill="none" stroke="currentColor" /><rect x="2" y="2" width="13" height="5" /></svg>
-                </span>
-              </div>
-              <div class="scr scr-plan-v2">
-                {/* SessionTopBar */}
-                <div class="session-topbar">
-                  <div class="back-chip">←</div>
-                </div>
-                {/* Masthead — `531.` LEDGER + C3·D2 right */}
-                <div class="scr-masthead" style="padding-top: 10px;">
-                  <div class="phone-wordmark"><span class="num">531</span><span class="mid">.</span><span class="sub">LEDGER</span></div>
-                  <div class="date">C3 · D2</div>
-                </div>
-                {/* TitleBlock — compact: eyebrow + Squat. */}
-                <div class="title-block compact">
-                  <div class="tb-eyebrow">WED · MAY 28 · 3·3·3+</div>
-                  <div class="tb-title">Squat<span class="dot">.</span></div>
-                </div>
-                {/* WorkingSetsBand — the marketing point of the Plan card.
-                    Plate viz lives on the Live card; we focus this card
-                    on the prescription ladder so the AMRAP row + CTA fit. */}
-                <div class="ws-band">
-                  <div class="ws-head">
-                    <span class="caps">WORKING SETS</span>
-                    <span class="caps" style="color: var(--ink-3);">TM 275 LB</span>
-                  </div>
-                  <div class="ws-row">
-                    <span class="ws-ix">01</span>
-                    <span class="ws-wt"><span class="num">195</span><span class="u">LB</span></span>
-                    <span class="ws-reps">× 3</span>
-                    <span class="ws-pct">70%</span>
-                  </div>
-                  <div class="ws-row">
-                    <span class="ws-ix">02</span>
-                    <span class="ws-wt"><span class="num">220</span><span class="u">LB</span></span>
-                    <span class="ws-reps">× 3</span>
-                    <span class="ws-pct">80%</span>
-                  </div>
-                  <div class="ws-row next">
-                    <span class="ws-ix">03</span>
-                    <span class="ws-wt"><span class="num">250</span><span class="u">LB</span></span>
-                    <span class="ws-reps">× 3+</span>
-                    <span class="ws-amrap">AMRAP</span>
-                    <span class="ws-pct">90%</span>
-                  </div>
-                </div>
-                {/* BBB band — single-line summary, same shape as the real app */}
-                <div class="ws-band" style="margin-top: 4px;">
-                  <div class="ws-head">
-                    <span class="caps">BBB · OPTIONAL</span>
-                    <span class="caps" style="color: var(--ink-3);">5 × 10 @ 50%</span>
-                  </div>
-                  <div class="ws-row">
-                    <span class="ws-ix">BBB</span>
-                    <span class="ws-wt"><span class="num">140</span><span class="u">LB</span></span>
-                    <span class="ws-reps">× 10</span>
-                    <span class="ws-pct">50%</span>
-                  </div>
-                </div>
-                <div style="flex: 1;"></div>
-                <div class="cta-pill"><span>START SESSION</span><span>→</span></div>
-              </div>
+            <div class="phone-screen phone-screen--photo">
+              <img
+                src="/screenshot-3.png"
+                alt="531 Strength live session: NEXT SET 155 LB, plate diagram 45+10 per side, START SESSION"
+                width="390"
+                height="844"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 03 — Session receipt */}
+        <div class="screen-card">
+          <div class="lab"><span>03 · Receipt</span><span class="idx">Android</span></div>
+          <div class="phone android">
+            <div class="phone-screen phone-screen--photo">
+              <img
+                src="/screenshot-5.png"
+                alt="531 Strength session receipt: In the book., 222 LB est. 1RM, new PR record, CLOSE THE DAY"
+                width="390"
+                height="844"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 04 — PR Certificate (dark mode) */}
+        <div class="screen-card">
+          <div class="lab"><span>04 · PR</span><span class="idx">Android</span></div>
+          <div class="phone android">
+            <div class="phone-screen phone-screen--photo">
+              <img
+                src="/screenshot-1.png"
+                alt="531 Strength PR Certificate: YOU HIT A NEW BENCH PR, Stronger., 222 LB, +25 LB vs 197 LB"
+                width="390"
+                height="844"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
         </div>

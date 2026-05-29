@@ -45,6 +45,7 @@ jest.mock('@/data/queries/useSessions', () => ({
   SESSIONS_KEY: ['sessions'],
 }));
 
+import { _resetSessionRuntimeForTests } from '../../sessionRuntime';
 import { useLiveScreenState } from '../useLiveScreenState';
 
 function wrapper({ children }: { children: ReactNode }) {
@@ -54,6 +55,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 describe('useLiveScreenState — bootstrap', () => {
   beforeEach(() => {
+    _resetSessionRuntimeForTests();
     mockCompleteSession.mockReset();
     mockSession.data = { id: 42, week: 1, trainingMaxSnapshot: 250, storageUnitSnapshot: 'lbs' };
     mockSetLogs.data = [];
@@ -96,6 +98,7 @@ describe('useLiveScreenState — bootstrap', () => {
 
 describe('useLiveScreenState — phase transitions', () => {
   beforeEach(() => {
+    _resetSessionRuntimeForTests();
     mockCompleteSession.mockReset();
     mockSession.data = { id: 42, week: 1, trainingMaxSnapshot: 250, storageUnitSnapshot: 'lbs' };
     mockSetLogs.data = [];

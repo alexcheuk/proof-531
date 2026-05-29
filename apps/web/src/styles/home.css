@@ -2694,6 +2694,18 @@ section.compact {
   background: var(--bg-0);
   overflow: hidden;
 }
+/* Phone screen filled with a real device screenshot */
+.phone-screen--photo {
+  padding: 0;
+}
+.phone-screen--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  border-radius: inherit;
+}
 .screens-rail-wrap {
   margin-top: 16px;
   overflow-x: auto;

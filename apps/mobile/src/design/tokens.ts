@@ -52,6 +52,13 @@ export const colors = {
   paperDim: '#D2CEC0', // = bg2
   paperMuted: 'rgba(231, 227, 214, 0.6)', // bg0 @ 60% — for ink-on-paper-inverted eyebrows
 
+  // Paper-over-ink tints — bg0 layered at alpha over ink-0 surface.
+  // Used by PRCertificate to shade subdivisions on the inverted (dark bg) certificate.
+  paperTint28: 'rgba(231,227,214,0.28)',
+  paperTint45: 'rgba(231,227,214,0.45)',
+  paperTint55: 'rgba(231,227,214,0.55)',
+  paperTint65: 'rgba(231,227,214,0.65)',
+
   // shadcn aliases — kept verbatim so primitives ported from the PWA
   // map 1:1. All resolved to underlying hex/rgba.
   background: '#E7E3D6', // = bg0

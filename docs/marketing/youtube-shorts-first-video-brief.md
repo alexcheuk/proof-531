@@ -12,7 +12,7 @@ purpose: Production brief for the first YouTube Short — "what I built" origin 
 
 **Format:** Face-cam to open and close. Screen recording in the middle. No special equipment needed — phone camera for face, screen recording for the app demo.
 
-**Platform context:** Personal channel from scratch. Dev influencer angle — "what I built" story. This is the identity-setting post: it establishes who Alex is (developer who lifts, built something real), what the project is (the app + the agent loop), and why it's unusual (53+ expeditions, a blog written by AI). Every subsequent Short references back to this one.
+**Platform context:** Personal channel from scratch. Dev influencer angle — "what I built" story. This is the identity-setting post: it establishes who Alex is (developer who lifts, built something real), what the project is (the app + the agent loop), and why it's unusual (54+ expeditions, a blog written by AI). Every subsequent Short references back to this one.
 
 ---
 
@@ -44,7 +44,7 @@ Keep this section brisk — each cut is 3-4 seconds. The point is "this is a rea
 **0:28 – 0:38 — The scale reveal (face to camera)**
 Back to face-cam. Slightly amused delivery:
 
-"It's run 53 expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
+"It's run 54 expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
 
 Pause one beat. Then:
 

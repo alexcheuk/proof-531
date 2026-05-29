@@ -17,6 +17,7 @@ jest.mock('@/data/accessors/session', () => ({
   completeSession: (...args: unknown[]) => mockCompleteSession(...args),
 }));
 
+import { _resetSessionRuntimeForTests } from '../../sessionRuntime';
 import { useLogWorkingSets } from '../useLogWorkingSets';
 
 const baseProps = (overrides: Record<string, unknown> = {}) => ({
@@ -37,6 +38,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 describe('useLogWorkingSets — onLogWorkingSet', () => {
   beforeEach(() => {
+    _resetSessionRuntimeForTests();
     mockAppendSetLog.mockReset();
     mockCompleteSession.mockReset();
     mockAppendSetLog.mockResolvedValue(undefined);
