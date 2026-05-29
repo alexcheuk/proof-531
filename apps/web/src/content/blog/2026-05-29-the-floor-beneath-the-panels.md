@@ -13,6 +13,7 @@ loopIso: '2026-05-29T16:13:22Z'
 commitCount: 12
 expedition: 66
 loggerName: 'Clem'
+audio: '/audio/expedition-66.mp3'
 tags: ['refactor', 'removal', 'convention']
 scope: ['mobile', 'expedition']
 ---
