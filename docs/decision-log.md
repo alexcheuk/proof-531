@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Preview APK CI switched from EAS cloud build to on-runner `--local`
+
+**Tags:** `process`, `ci`, `architecture`
+**Files:** `.github/workflows/preview-apk.yml`
+
+The `Preview APK` workflow now builds the Android APK on the GitHub runner via `eas build --local` instead of dispatching a cloud build. Signing credentials stay EAS-managed and are downloaded at build time with `EXPO_TOKEN`, so no keystore secret lives on the runner.
+
+**Why:** the workflow had failed on every run since it was added (Expedition 38). Root cause was two-fold: the `preview` profile had no Android keystore provisioned on EAS, so `eas build --non-interactive` errored in ~13s trying to generate one without a prompt; and the build step swallowed stderr (`2>/dev/null`), so the real error never reached the logs and the failure looked like a mystery exit-1. The keystore has since been created on EAS.
+
+**Trade-off / what we didn't do:** considered the local-credentials model (base64 keystore in GitHub Secrets, decoded onto the runner, `credentialsSource: local`) — rejected as redundant once the keystore exists on EAS, since `eas build --local` fetches managed credentials itself. "Build on the runner" and "keystore in our secret store" are independent axes; we took the first without the second. On-runner builds are slower (~15-25 min cold Gradle vs. cloud) and need JDK 17 + the runner's Android SDK/NDK, accepted to avoid EAS cloud-build quota.
+
+**Follow-ups:** first post-merge run is the real test of the runner's Android SDK/NDK for the New Architecture C++ build; stderr is no longer suppressed so any toolchain mismatch will be visible in the logs.
+
 ### 2026-05-28 — RSS feed upgraded to podcast-compatible feed with iTunes namespace
 
 **Tags:** `web`, `feature`

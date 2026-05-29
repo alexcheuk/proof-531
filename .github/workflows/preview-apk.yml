@@ -15,6 +15,9 @@ jobs:
   build:
     name: Build & release preview APK
     runs-on: ubuntu-latest
+    # A cold Gradle release build on the runner takes ~15-25 min; give it room
+    # but don't let a hung build burn the default 6h.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -26,6 +29,15 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      # `eas build --local` runs a real Android release build here on the
+      # runner (expo prebuild + Gradle), so the JDK must match what Expo SDK
+      # 55 / RN 0.83 expects. ubuntu-latest ships the Android SDK + NDK with
+      # $ANDROID_HOME already set; Gradle picks those up.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - run: pnpm install --frozen-lockfile
 
@@ -62,26 +74,30 @@ jobs:
             echo "Fingerprint changed — building new APK"
           fi
 
-      - name: Build preview APK via EAS
+      - name: Toolchain versions
+        if: steps.gate.outputs.skip != 'true'
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"; java -version
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+      - name: Build preview APK on runner (eas build --local)
         id: build
         if: steps.gate.outputs.skip != 'true'
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          cd apps/mobile
-          # --wait blocks until the cloud build finishes; --json writes the
-          # final build record to stdout. Redirect stderr so progress output
-          # doesn't corrupt the JSON parse.
-          BUILD_JSON=$(eas build \
+          # --local runs the Android release build on this runner instead of
+          # EAS cloud. Signing credentials (the keystore) stay managed by EAS
+          # and are downloaded at build time via EXPO_TOKEN — no keystore
+          # secret lives on the runner. stderr is intentionally NOT suppressed
+          # so a failure is diagnosable straight from the run logs.
+          pnpm --filter @fivethreeone/mobile exec eas build \
             --profile preview \
             --platform android \
+            --local \
             --non-interactive \
-            --wait \
-            --json 2>/dev/null)
-          APK_URL=$(echo "$BUILD_JSON" | python3 -c \
-            "import json,sys; data=json.load(sys.stdin); print(data[0]['artifacts']['buildUrl'])")
-          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
-          curl -sL -o /tmp/531-preview.apk "$APK_URL"
+            --output "$RUNNER_TEMP/531-preview.apk"
 
       - name: Publish GitHub Release
         if: steps.gate.outputs.skip != 'true'
@@ -93,7 +109,7 @@ jobs:
           TAG="preview-$(date -u +%Y%m%d-%H%M)-${SHORT_SHA}"
           NOTES=$(printf "fingerprint: ${{ steps.fp.outputs.hash }}\n\nBuilt from commit: ${{ github.sha }}")
           gh release create "$TAG" \
-            /tmp/531-preview.apk#531-preview.apk \
+            "$RUNNER_TEMP/531-preview.apk#531-preview.apk" \
             --title "Preview ${SHORT_SHA}" \
             --notes "$NOTES" \
             --prerelease
