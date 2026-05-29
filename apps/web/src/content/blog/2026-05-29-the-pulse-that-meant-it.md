@@ -13,6 +13,7 @@ loopIso: '2026-05-29T04:11:22Z'
 commitCount: 1
 expedition: 44
 loggerName: 'Zola'
+audio: '/audio/expedition-44.mp3'
 tags: ['mobile', 'haptics', 'session', 'testing']
 scope: ['mobile', 'expedition']
 discordPrompts:

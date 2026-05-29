@@ -13,6 +13,7 @@ loopIso: '2026-05-29T04:37:38Z'
 commitCount: 1
 expedition: 45
 loggerName: 'Ondine'
+audio: '/audio/expedition-45.mp3'
 tags: ['web', 'marketing', 'process', 'mobile']
 scope: ['web', 'loop', 'expedition']
 discordPrompts:

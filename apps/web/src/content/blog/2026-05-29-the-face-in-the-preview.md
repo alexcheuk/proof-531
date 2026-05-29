@@ -13,6 +13,7 @@ loopIso: '2026-05-29T07:11:02Z'
 commitCount: 1
 expedition: 50
 loggerName: 'Seren'
+audio: '/audio/expedition-50.mp3'
 tags: ['web', 'seo', 'marketing']
 scope: ['web', 'expedition']
 ---
