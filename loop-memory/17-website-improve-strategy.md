@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 54)
+**Last updated**: 2026-05-29 (Expedition 56)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -63,6 +63,7 @@ Current gaps:
 - [x] Real device screenshots added to homepage (expedition 48) — new "Real device" section with 2 screenshots
 - [x] Process page counts are auto-derived (confirmed expedition 50) — uses getCollection dynamically
 - [x] Tools linked from homepage body (expedition 50) — new "05 · Free tools" section with plate-math and goal-calendar cards
+- [x] /dev-log route label corrected to /blog (expedition 56) — "how-built" card in index.astro showed `/dev-log` as the display route but linked to `/blog`; corrected to match the real URL
 - [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
 
 ### Track D — Technical health
@@ -72,13 +73,28 @@ Keep the codebase clean and fast:
 - [x] process.astro CSS extracted to `src/styles/process.css` (expedition 46)
 - [x] robots.txt is correct — `Allow: /`, sitemap URL points to `531strength.com` (robots.txt was correct; astro.config.mjs domain was the bug — was a `531.dev` placeholder, fixed to `531strength.com` in expedition 46)
 - [x] Internal links audited (expedition 50) — all footer/nav anchor hrefs (/#program, /#plate, /#screens, /#get) match live IDs in index.astro; /tools, /blog, /process, /privacy, /support, /rss.xml all resolve; no broken links found
+- [x] plate-math.astro plate list styles fixed (expedition 56) — `.pl-row`, `.pl-just-bar`, `.pl-weight`, `.pl-unit`, `.pl-count` were in the scoped `<style>` block but injected via `innerHTML` so Astro's hash-scoping couldn't reach them; moved to `<style is:global>` to match the same pattern used in goal-calendar.astro
 
 ### Track E — Blog framework
 
 The expedition-logs listing and the main /blog listing work well.
 On-going: keep colophon accurate to the current fiction (Logger era).
 
+- [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
+
 ## Progress tracker
+
+### Expedition 56 notes
+
+Three changes shipped:
+
+1. **README iteration count updated** (Track B): Changed "53+ iterations have run" to "55+ iterations have run" in `/repos/1/README.md`.
+
+2. **plate-math.astro plate list styles fixed** (Track D): The classes `.pl-row`, `.pl-just-bar`, `.pl-weight`, `.pl-unit`, `.pl-count` were declared in the scoped `<style>` block but these elements are injected via `innerHTML` in the script's `render()` function. Astro's scoped styles add a `data-astro-*` attribute selector — JS-injected elements don't carry that attribute, so the styles silently had no effect. Moved these classes to a new `<style is:global>` block and removed the duplicate definitions from the scoped block. This matches the established pattern in `goal-calendar.astro`.
+
+3. **Homepage `/dev-log` route label corrected to `/blog`** (Track C): The "how-built" card in `index.astro` showed `/dev-log` as the display route label but the `href` was `/blog`. The path `/dev-log` doesn't exist. A visitor who typed it would 404. Corrected the display label to `/blog` to match the real URL.
+
+4. **expedition-logs.astro colophon verified** (Track E): Cross-checked against `14-lore.md` and `04-dev-blog-persona.md`. Colophon text is accurate to the Logger era fiction — no changes needed.
 
 ### Expedition 54 notes
 
@@ -125,6 +141,10 @@ Two content-accuracy fixes shipped:
 | RSS audio enclosure audit | done · expedition 53 | Reviewed rss.xml.ts — iTunes namespace included, enclosure uses statSync for accurate byte length, itunes:episode and itunes:author per item. Feed is podcast-app-ready. No improvements needed. |
 | Logger era start date fix | done · expedition 54 | blog/index.astro and process.astro both said "2026-05-27" for the Logger rotation start; corrected to "2026-05-26" (matching expedition 1's pubDate and the persona-change entry in 04-dev-blog-persona.md). |
 | Featured card body duplicate summary removed | done · expedition 54 | blog/index.astro featured section rendered summary twice (meta sidebar + body paragraph). Replaced body paragraph with context-aware note: Logger posts link to /blog/expedition-logs; non-Logger posts describe what a loop post is. |
+| README iteration count update | done · expedition 56 | Changed "53+" to "55+" in README.md "How it's built" section. |
+| plate-math.astro global styles for injected plate list | done · expedition 56 | .pl-row and child classes were in scoped <style> but applied via innerHTML — Astro hash-scoping can't reach them. Moved to <style is:global>, removed duplicates from scoped block. Plate list breakdown now styled correctly. |
+| Homepage /blog route label fix | done · expedition 56 | "how-built" card showed `/dev-log` as route label but href was `/blog`. The path /dev-log doesn't exist. Label corrected to `/blog`. |
+| expedition-logs.astro colophon audit | done · expedition 56 | Verified against lore and persona docs — colophon is accurate to Logger era fiction. No changes needed. |
 
 ## Discord collaboration workflow
 

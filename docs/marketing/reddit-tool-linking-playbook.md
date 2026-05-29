@@ -107,6 +107,30 @@ Reddit's external indexing is poor. To actually find live threads:
 
 ---
 
+## Short-form comment templates (1-2 sentences)
+
+The full response templates above are for threads where you're the first or second commenter and there's room to actually answer the question. These short versions are for threads where the plate math or timeline question is already mostly answered — just add the link with context, don't re-explain what others have said.
+
+**For a plate math thread where the question is mostly answered:**
+
+> Quick shortcut if you want to stop doing this in your head: 531strength.com/tools/plate-math — shows the plate breakdown per side, shareable link if you want to save a specific weight.
+
+> Built this calculator for exactly this problem — 531strength.com/tools/plate-math, free, works in any browser.
+
+**For a timeline / progression question where the math is already in the thread:**
+
+> If you want a cycle-by-cycle table instead of doing the math, this projects it out to your goal weight: 531strength.com/tools/goal-calendar — enter your current TM, goal TM, and pick the lift.
+
+> This tool does that projection if you want the full table: 531strength.com/tools/goal-calendar — shows how many cycles and weeks to reach a goal.
+
+**For a thread where someone asks for a TM rollback or reset strategy:**
+
+> Side note: if you want to track rollbacks automatically, the 531 Strength app handles that in settings — Android is free now, iOS is coming. 531strength.com for info.
+
+**Rule for short-form use:** Only use these when the thread question is already answered by others. Your comment is adding a resource, not answering the question. If you're the first to respond with useful information, use the full response templates above — they're more credible.
+
+---
+
 ## What not to do
 
 - Do not open a new thread just to share the tool — that reads as spam

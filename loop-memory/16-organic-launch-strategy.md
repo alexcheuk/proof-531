@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 55)
+**Last updated**: 2026-05-29 (Expedition 56)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -123,7 +123,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | Tactic | Status | Notes |
 |--------|--------|-------|
 | 1. GitHub README polish | done · screenshots identified expedition 52 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Screenshots placeholder section ready. **Expedition 52:** All 5 screenshots downloaded to `docs/marketing/screenshots/`. Identified: 001435=Today screen, 003320=Live session plate math, 003330=AMRAP LOG sheet, 003635=PR moment, 003642=Session receipt. README embeds still need Alex to place the image files (they're in the repo at docs/marketing/screenshots/). |
-| 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames and descriptions — the three recommended are 001435 (Today), 003320 (plate math), 003642 (session receipt). Specific personal details request sent to Alex via Discord #needs-input (message_id 1509825328921444383) — needs: how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary. This is the only remaining blocker for this post. See `docs/marketing/reddit-531discussion-draft.md` |
+| 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · features updated expedition 56 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames. **Expedition 56:** Two new features added to Option A body: TM Test Week (7th Week Protocol) and lift rollback — both are practitioner-credibility signals that r/531Discussion values. Research note added explaining why each is relevant to the community. Personal details (how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary) remain the only human-only blocker. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
 | 5. HN Show HN | strategy revised · expedition 40 · signal confirmed expedition 45 · competitor signal added expedition 46 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md`. **Expedition 45 confirmation:** Auto-Co Show HN (March 2026, 14 agents running a startup autonomously) received only 4 points — pure "autonomous agent" framing is confirmed dead on HN. Title Option A (personal story first) remains the correct call. **Expedition 46:** Added concrete answer to "how is this different from existing 5/3/1 apps?" — competitor's own App Store reviews document the exact three pain points this app solves. Now in ai-experiment-story-outline.md. |
@@ -134,8 +134,8 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
-| 13. YouTube Shorts series | shooting script ready · expedition 54 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md` — spoken lines, text overlays, production checklist, YouTube description + first comment, hashtags. Ready for Alex to film. **Expedition 54:** Iteration count updated to 54+ across all marketing files. Spoken "53 expeditions" line in both shooting script and first-video brief updated to "54 expeditions." No new Discord replies received re: personal 5/3/1 history. Still needs: screen recording of live session (Q14), GitHub Releases URL (Q1), App Store URL for CTA (Q2). |
-| 14. Web tools as SEO entry point | in progress · expedition 55 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** (1) Title tags, meta descriptions, and h1 headings updated on all three tool pages to include "5/3/1" and match actual search queries — competitor analysis showed top-ranked pages use "5/3/1 plate math calculator" / "5/3/1 training max goal calculator" while our pages were missing that signal entirely. (2) Reddit tool-linking playbook created at `docs/marketing/reddit-tool-linking-playbook.md` — three thread-type response templates (plate math questions, progression timeline questions, app recommendation threads), which subreddits to monitor, how to search for live threads, what not to do. Plate math and goal calendar responses can be used now without iOS. App recommendation response requires iOS first. |
+| 13. YouTube Shorts series | brief improved · expedition 56 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 54:** Iteration count updated to 54+. **Expedition 56:** First-video brief improved — hook alternatives added (3 versions with guidance on which to use), "Note on the number" added to the expedition-count line (check 531strength.com/blog for current count before filming), "What Alex needs to do" rewritten as a minimal-viable-path checklist with blocker status, pointer to shooting script added explicitly. Shooting script updated: spoken line "55 expeditions" → "56 expeditions" with same "check current count" note, first comment updated to "56+". Film-now status: face-cam + screen recording + Discord recording are all unblocked without iOS. CTA text overlay uses "Android available now — iOS coming soon" until App Store is live. |
+| 14. Web tools as SEO entry point | in progress · expedition 56 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created at `docs/marketing/reddit-tool-linking-playbook.md` with three full response templates. **Expedition 56:** Short-form comment templates added to playbook — 5 one-to-two sentence drop-ins for threads where the question is already answered (plate math, timeline projection, rollback). These are lower-friction than the full templates and better for high-volume threads. Playbook now has two tiers: full responses (first commenter in thread) and short-form (resource add when others have already answered). |
 
 ## Launch-day operations guide
 
@@ -196,6 +196,49 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 56 — Research notes
+
+**Date:** 2026-05-29
+
+**YouTube Shorts first-video brief — made more actionable:**
+
+The existing brief (Expedition 49) and shooting script (Expedition 53) were structurally complete but had a few friction points that could cause Alex to stall. Changes made to `docs/marketing/youtube-shorts-first-video-brief.md`:
+
+1. **Hook alternatives added.** The primary hook line is strong, but if Alex finds it awkward on camera delivery, he needs options — not a blank page. Two backup versions added (question hook and outcome hook) with guidance to start with Version A. The brief now explicitly explains why the primary hook works (earns the weird claim by leading with a normal problem) so Alex understands the reasoning, not just the instruction.
+
+2. **"Note on the number" added to the expedition-count line.** The spoken line says "56 expeditions" — but by the time Alex films, it will be higher. The note instructs him to check 531strength.com/blog for the current count. The specificity of a real number is load-bearing; using a stale number weakens the credibility signal.
+
+3. **"What Alex needs to do" rewritten as a minimal-viable-path checklist.** The previous version listed 5 steps but was vague ("edit in CapCut or similar"). The new version: specific 45-minute total-time estimate, numbered steps in filming order, explicit blocker status (what can be filmed now without iOS), and a note on the CTA text overlay for pre-iOS posting ("Android available now — iOS coming soon").
+
+4. **Shooting script (`docs/marketing/youtube-shorts-draft.md`) updated:** Spoken "55 expeditions" line updated to "56 expeditions" with same "check current count" note. First comment updated from "55+" to "56+".
+
+**r/531Discussion draft — two new features added:**
+
+The draft at `docs/marketing/reddit-531discussion-draft.md` was missing two features that have shipped since it was written. Both matter to r/531Discussion specifically:
+
+- **TM Test Week (7th Week Protocol):** This is the Wendler-native way to handle the "deload" week — not just lighter working sets, but actual TM testing. The community knows the protocol. Mentioning it is a practitioner signal, not a feature-list item.
+
+- **Lift rollback:** r/531Discussion has recurring threads about "my TM is too heavy, should I reset?" — this feature is a direct answer to that question. The setting exists, one tap, no manual recalculation.
+
+Neither feature was user-visible in the draft before. Both belong in the "What it does" list. Added.
+
+**Short-form Reddit comment templates added to playbook:**
+
+The tool-linking playbook (`docs/marketing/reddit-tool-linking-playbook.md`) had three full response templates — useful when you're the first commenter and need to actually answer the question before linking. But in practice, many threads will already have the math explained by others. Dropping a full 4-sentence response after the question is answered reads as promotional.
+
+Added a new "Short-form comment templates" section: 5 one-to-two sentence drop-ins for threads where the question is already answered. Each is conversational enough to not feel like an ad. The section includes a rule distinguishing when to use short-form (resource add) vs. full templates (first useful response). The rollback-specific template is new — it's the one case where mentioning the app (not the web tool) makes sense pre-iOS in a r/531Discussion context.
+
+**Community search — no new live threads found:**
+
+No indexed r/531Discussion or r/weightroom threads surfaced for plate math or app recommendation queries. Strategy unchanged: drop URLs via the playbook when live threads appear; post the main launch post when iOS is live.
+
+**Next actions:**
+1. Alex: film the YouTube Short. All segments are unblocked. See `docs/marketing/youtube-shorts-draft.md` for the word-for-word script and production checklist.
+2. Alex: log into Reddit and monitor r/531Discussion and r/weightroom for plate math and timeline questions. Drop tool URLs using the playbook.
+3. iOS approval: use `docs/marketing/launch-day-operations-guide.md`.
+
+---
 
 ## Expedition 55 — Research notes
 

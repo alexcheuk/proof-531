@@ -1,10 +1,10 @@
 import { usePrs } from '@/data/queries/usePrs';
 import { useSession } from '@/data/queries/useSession';
 import { useSettings } from '@/data/queries/useSettings';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { StatusBarShim } from '@/design/primitives/StatusBarShim';
-import { Text } from '@/design/primitives/Text';
 import { ThemeProvider, useTheme } from '@/design/theme';
 import { colors as baseColors } from '@/design/tokens';
 import { liftDisplayName } from '@/domain/labels';
@@ -92,9 +92,9 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
         <LiveStatusBar inverted={inverted} />
         <SessionTopBar onBack={() => goTo.home(router)} backLabel="Back to plan" />
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text variant="mono" weight="medium" size={11} color="ink3" style={{ letterSpacing: 2 }}>
+          <CapsLabel size="md" color="ink3">
             LOADING SESSION…
-          </Text>
+          </CapsLabel>
         </View>
       </SessionLayout>
     );

@@ -1,6 +1,7 @@
 ---
 drafted: 2026-05-28
 expedition: 49
+last_updated: 2026-05-29 (Expedition 56)
 purpose: Production brief for the first YouTube Short — "what I built" origin story
 ---
 
@@ -18,12 +19,23 @@ purpose: Production brief for the first YouTube Short — "what I built" origin 
 
 ## Beat-by-beat script
 
-**0:00 – 0:04 — Hook (face to camera)**
-Alex, direct to camera, flat delivery:
+**0:00 – 0:05 — Hook (face to camera)**
+Alex, direct to camera, flat delivery. Use the shooting script version verbatim (see `docs/marketing/youtube-shorts-draft.md` for the word-for-word line):
 
-"I needed a gym app. Existing ones were either $120 or terrible. So I built one — with an AI agent running every 30 minutes."
+"I needed a gym app. The good ones cost $120. The free ones were a mess. So I built one — with an AI agent that runs every 30 minutes."
 
 Cut immediately. Do not pause. The hook's job is to make the viewer need to know what "AI agent running every 30 minutes" means.
+
+**Why this hook works:** It leads with a problem anyone can relate to ($120 is a real number — it's the actual Strong lifetime price), then lands the strange claim at the end. The strangeness ("AI agent every 30 minutes") is what makes viewers watch the next segment. Do not deliver this with excitement or irony — flat is better.
+
+**Hook alternatives if this delivery feels awkward on camera:**
+
+- Version B (question hook): "What if your gym app built itself? Mine does — every 30 minutes."
+- Version C (outcome hook): "This gym app has been improving itself for 56 expeditions. I haven't written a line of code."
+
+Version A (the primary above) is still the strongest because it earns the weird claim by first stating a normal problem. Start with Version A.
+
+Cut immediately. Do not pause.
 
 **0:04 – 0:12 — The loop reveal (screen: Discord or loop diagram)**
 Switch to screen. Show the Discord #auto-improvements channel or #task-queue channel. One message visible — an expedition acknowledgment, a completed task checkmark, or the loop summary.
@@ -44,11 +56,13 @@ Keep this section brisk — each cut is 3-4 seconds. The point is "this is a rea
 **0:28 – 0:38 — The scale reveal (face to camera)**
 Back to face-cam. Slightly amused delivery:
 
-"It's run 55 expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
+"It's run 56 expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
 
 Pause one beat. Then:
 
 "The app is free. No account. Just — here."
+
+**Note on the number:** Use the actual current expedition count when you film. It will be higher than 56 by the time you shoot. Check the blog at 531strength.com/blog for the latest expedition count and use that number. The specificity is load-bearing — it signals this is a real, ongoing thing, not a one-time build.
 
 **0:38 – 0:43 — CTA (text overlay, face in background)**
 Text on screen: "531 Strength — free on iOS and Android"
@@ -114,10 +128,22 @@ The personal channel + dev influencer angle means the channel identity is Alex's
 
 ## What Alex needs to do
 
-1. Record the face-cam segments first — they're 15 seconds total and only require a phone and decent light
-2. Do one screen recording of a real session — Today queue load, one set logged, plate visualization, rest timer (capture the whole thing even if you only use 15 seconds of it — this recording also serves the Product Hunt video and the r/531Discussion post)
-3. Edit in CapCut or similar — add text overlays on every claim
-4. Post to personal YouTube channel with description: "531 Strength — free on iOS and Android. The process: 531strength.com/process — Source: github.com/[your-repo]"
-5. Add link to 531strength.com in bio
+The full word-for-word shooting script is at `docs/marketing/youtube-shorts-draft.md` — that file has exact spoken lines, text overlay copy, a production checklist, and the YouTube description. This brief is the "why" behind each decision; the shooting script is what to actually film from.
+
+**Minimum viable path (one sitting, ~45 minutes total):**
+
+1. Check the current expedition count at 531strength.com/blog — use that number in the "56 expeditions" line
+2. Find a spot with a window in front of you. Record Segment 1 (the hook, 5 seconds) and Segment 4 (the close, 8 seconds) in one or two takes each
+3. Screen-record the Discord channel (any message showing the loop working) — 8 seconds of footage
+4. Screen-record a real app session: Today screen loading, plate visualization, AMRAP set view, session receipt — 18 seconds of footage
+5. Drop everything into CapCut in order. Add text overlays on every claim (non-optional — 73% of views are muted). Check total is 42-45 seconds.
+6. Export portrait (9:16), post to YouTube, pin the first comment (copy from the shooting script)
+7. Add link to 531strength.com in bio
+
+**Blocker status:**
+- Face-cam filming: ready now, no iOS needed
+- Screen recording of app: ready now (Android works)
+- Screen recording of Discord: ready now
+- CTA text overlay: use "Android available now — iOS coming soon" until App Store is live; update after
 
 No elaborate setup. The shorter the total production time, the more likely it actually ships.

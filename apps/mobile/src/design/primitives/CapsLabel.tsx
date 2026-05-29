@@ -9,11 +9,10 @@ import { Text } from './Text';
  * codebase (Masthead right-slot, section eyebrows, list captions, the
  * "— END OF REGISTER —" colophon).
  *
- * Before this primitive existed, Settings / History / Home / SessionComplete
- * / TodayBody all hand-rolled the same `fontFamily: 'IBMPlexMono-Medium'`,
- * `letterSpacing: 2.2`, `textTransform: 'uppercase'` style inline — that
- * meant every drift incident (color tweak, weight change) had to be fixed
- * in five places. Use this everywhere a caps label is needed.
+ * Before this primitive existed every feature hand-rolled the same
+ * `fontFamily: 'IBMPlexMono-Medium'`, `letterSpacing: 2.2`,
+ * `textTransform: 'uppercase'` style inline. Use this everywhere a caps
+ * label is needed — the tab bar, section eyebrows, masthead slots, colophons.
  *
  * Sizing presets:
  *   - `xs` (9px / 1.62 ls) — colophons, ultra-fine print

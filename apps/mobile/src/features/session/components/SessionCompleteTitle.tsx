@@ -2,7 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Heading } from '@/design/primitives/Heading';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import { DateStamp } from './DateStamp';
 
 export type SessionCompleteTitleProps = {
@@ -33,7 +33,7 @@ export function SessionCompleteTitle({
   liftLower,
   cycleDay,
 }: SessionCompleteTitleProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const titleSection: ViewStyle = {
     paddingTop: 18,
@@ -47,18 +47,6 @@ export function SessionCompleteTitle({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: 12,
-  };
-  const titleSubtext: TextStyle = {
-    fontFamily: `${type.sans}-Medium`,
-    fontSize: 14,
-    lineHeight: 21,
-    color: colors.ink2,
-    marginTop: 14,
-    maxWidth: 280,
-  };
-  const titleSubtextStrong: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    color: colors.ink0,
   };
 
   return (
@@ -81,17 +69,25 @@ export function SessionCompleteTitle({
           {...(showCertificate ? { topArcLabel: '★  NEW RECORD  ★' } : {})}
         />
       </View>
-      <RNText style={titleSubtext}>
+      <Text
+        variant="sans"
+        weight="medium"
+        size={14}
+        color="ink2"
+        style={{ lineHeight: 21, marginTop: 14, maxWidth: 280 }}
+      >
         {showCertificate ? (
           <>
             {`${liftLower} day, day ${cycleDay}. `}
-            <RNText style={titleSubtextStrong}>{`a new estimated 1RM on the ${liftLower}`}</RNText>
+            <Text variant="sans" weight="bold" size={14} color="ink0">
+              {`a new estimated 1RM on the ${liftLower}`}
+            </Text>
             {' — the bar moved further today than ever before.'}
           </>
         ) : (
           `${liftLower} day, day ${cycleDay}. work done, weight moved, page turned.`
         )}
-      </RNText>
+      </Text>
     </View>
   );
 }

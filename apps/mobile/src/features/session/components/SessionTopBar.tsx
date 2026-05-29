@@ -1,3 +1,4 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 /**
  * Sticky top action row for session screens (Today / Live).
@@ -10,7 +11,7 @@ import { useTheme } from '@/design/theme';
  *   - 24px horizontal padding, ~14px vertical padding to match the PWA mass.
  *   - Back chip: 32×32, ink-0 border, mono `←` glyph.
  */
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 import { CompletePill } from './CompletePill';
 import { ResetPill } from './ResetPill';
 import { UndoPill } from './UndoPill';
@@ -46,7 +47,7 @@ export function SessionTopBar({
   onReset,
   testID,
 }: SessionTopBarProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
@@ -69,13 +70,6 @@ export function SessionTopBar({
     justifyContent: 'center',
   };
 
-  const backGlyphStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 13,
-    color: colors.ink0,
-    lineHeight: 13,
-  };
-
   return (
     <View testID={testID} style={containerStyle}>
       <Pressable
@@ -88,7 +82,9 @@ export function SessionTopBar({
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         style={backStyle}
       >
-        <RNText style={backGlyphStyle}>{'←'}</RNText>
+        <Text variant="mono" weight="semibold" size={13} color="ink0" style={{ lineHeight: 13 }}>
+          {'←'}
+        </Text>
       </Pressable>
       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
         {onUndo ? <UndoPill onPress={onUndo} /> : null}

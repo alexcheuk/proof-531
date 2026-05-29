@@ -41,13 +41,8 @@ export function TmPreviewRow({
     borderTopWidth: index === 0 ? 0 : 1,
     borderTopColor: colors.line,
   };
-  const liftLabelStyle: TextStyle = {
-    flex: 1,
-    fontFamily: `${type.sans}-SemiBold`,
-    fontSize: 14,
-    letterSpacing: -0.21,
-    color: colors.ink0,
-  };
+  // Inline glyph spans nested inside Text — must be RNText for inline text flow.
+  // letterSpacing 1.26 is intentionally tighter than CapsLabel presets.
   const oldGlyphStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
     fontSize: 9,
@@ -55,12 +50,6 @@ export function TmPreviewRow({
     textTransform: 'uppercase',
     color: colors.ink3,
     marginLeft: 6,
-  };
-  const arrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 12,
-    color: colors.ink3,
-    marginHorizontal: spacing.sm,
   };
   const newGlyphStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
@@ -73,7 +62,15 @@ export function TmPreviewRow({
 
   return (
     <Row style={rowStyle} testID={`unit-migration-row-${lift}`}>
-      <RNText style={liftLabelStyle}>{LIFT_META[lift].label}</RNText>
+      <Text
+        variant="sans"
+        weight="semibold"
+        size={14}
+        color="ink0"
+        style={{ flex: 1, letterSpacing: -0.21 }}
+      >
+        {LIFT_META[lift].label}
+      </Text>
       <Text
         variant="sans"
         weight="semibold"
@@ -85,7 +82,15 @@ export function TmPreviewRow({
         {oldValue}
         <RNText style={oldGlyphStyle}> {oldGlyph}</RNText>
       </Text>
-      <RNText style={arrowStyle}>{'→'}</RNText>
+      <Text
+        variant="mono"
+        weight="semibold"
+        size={12}
+        color="ink3"
+        style={{ marginHorizontal: spacing.sm }}
+      >
+        {'→'}
+      </Text>
       <Text
         variant="sans"
         weight="bold"

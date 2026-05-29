@@ -13,6 +13,8 @@ drafted: 2026-05-28
 
 Direct Reddit search through web indices returned no results for this subreddit — it is not well-indexed externally. The following is based on: (1) what the strategy doc already captured from competitive research, (2) general patterns for niche lifting subreddits, (3) what questions for Alex are at the bottom of this file, and (4) App Store review analysis of the top competitor.
 
+**Expedition 56 — Feature additions:** Two features shipped since the original draft that belong in the post. (1) TM Test Week (7th Week Protocol): the standard deload is replaced by Wendler's actual testing protocol — test-day sets at 85%, 95%, and 100% of TM, log reps, and the next TM is set from there. This is the "real" implementation detail that separates the app from apps that just skip Week 4. (2) Lift rollback: if a training max is too aggressive, the settings screen has a one-tap rollback with cycle count selector. Community shorthand for this is "running a TM that's too heavy" — r/531Discussion has recurring threads on this. Both features added to Option A body above.
+
 **Expedition 46 — Competitor review analysis (high value):** The existing "531 Strength" app (App Store id1062989244, 4.9 stars, 11,000 ratings — the top result when searching "531" on iOS) has three documented pain points in its own App Store reviews: (1) rest timer stops when you leave the app, (2) no plate calculator, (3) no BBB support. These are verbatim from user reviews, not inferred. This is strong evidence that the new app addresses real, documented demand rather than hypothetical gaps. For the r/531Discussion post body, the framing "I tried the existing apps — [specific pain point] — so I built this" is now supported by primary evidence from the competitor's own reviews.
 
 General pattern for r/531Discussion (inferred from comparable niche lifting communities):
@@ -41,6 +43,8 @@ So I built my own.
 - AMRAP logging with e1RM and PR detection
 - Rest timer between sets, haptic at T-3s, screen stays awake
 - Session receipt at the end — sets, reps, PRs, next week queued
+- 7th Week Protocol (TM Test Week) built in — the deload week is replaced with the actual Wendler protocol, not just a lighter version of the main sets
+- Lift rollback in settings — if you've been grinding at a TM that's too high, one tap drops it back and recalculates from there
 
 **What it doesn't do:**
 - No account, no cloud sync, no social, no gamification

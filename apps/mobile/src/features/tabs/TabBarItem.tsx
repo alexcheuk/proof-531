@@ -1,7 +1,8 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
-import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 
 const LABELS: Record<string, string> = {
   index: 'TODAY',
@@ -29,7 +30,7 @@ export type TabBarItemProps = {
 };
 
 export function TabBarItem({ route, focused, showDot, navigation }: TabBarItemProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
   const label = LABELS[route.name] ?? route.name.toUpperCase();
 
   const onPress = () => {
@@ -76,16 +77,9 @@ export function TabBarItem({ route, focused, showDot, navigation }: TabBarItemPr
       style={pressableStyle}
     >
       <Row gap="xs">
-        <RNText
-          style={{
-            fontFamily: focused ? `${type.mono}-Bold` : `${type.mono}-Medium`,
-            fontSize: 10,
-            letterSpacing: 2.2,
-            color: focused ? colors.ink0 : colors.ink3,
-          }}
-        >
+        <CapsLabel weight={focused ? 'bold' : 'medium'} color={focused ? 'ink0' : 'ink3'}>
           {label}
-        </RNText>
+        </CapsLabel>
         {showDot ? <View style={dotStyle} testID="tab-index-progress-dot" /> : null}
       </Row>
       <View style={underlineStyle} />

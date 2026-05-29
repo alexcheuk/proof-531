@@ -567,42 +567,8 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
     border-top: 1px solid var(--line-faint);
     padding-top: 12px;
   }
-  .pl-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--line-faint);
-  }
-  .pl-row:last-child { border-bottom: none; }
-  .pl-just-bar {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-  }
-  .pl-weight {
-    font-family: var(--font-cond);
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: var(--ink-0);
-  }
-  .pl-unit {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    color: var(--ink-2);
-  }
-  .pl-count {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    color: var(--ink-2);
-  }
+  /* .pl-row and child classes are in <style is:global> below —
+     they are injected via innerHTML so the scoped hash won't reach them. */
   .pc-result-note {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -764,6 +730,47 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
   @media (max-width: 640px) {
     .faq-grid { grid-template-columns: 1fr; gap: 24px; }
     .faq-section { margin-top: 48px; padding-top: 36px; }
+  }
+</style>
+
+<style is:global>
+  /* Plate list rows are injected via innerHTML in the script block —
+     Astro's scoped style hash cannot reach them, so these must be global. */
+  .pl-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--line-faint);
+  }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-just-bar {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .pl-weight {
+    font-family: var(--font-cond);
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+  }
+  .pl-unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+  }
+  .pl-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--ink-2);
   }
 </style>
 
