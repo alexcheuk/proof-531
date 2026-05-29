@@ -41,7 +41,7 @@ The draft uses "running BBB for about a year" as a framing device. Is that accur
 ## Needed before the HN / Indie Hackers posts
 
 **~~5. How many expedition iterations will exist by HN launch day?~~** — RESOLVED (Expedition 42)
-The "20+ expedition logs" threshold is already satisfied — 50 Logger posts exist as of Expedition 50. The current count for copy purposes is **50+ iterations**. Fill in `[N]` with "50+" for now; it will increase with each loop before launch.
+The "20+ expedition logs" threshold is already satisfied — 51 Logger posts exist as of Expedition 51. The current count for copy purposes is **51+ iterations**. Fill in `[N]` with "51+" for now; it will increase with each loop before launch.
 
 **6. ~~Does the /process page exist yet?~~** — RESOLVED (Expedition 40)
 The /process page exists at `531strength.com/process` and is well-built. It covers: the loop architecture, the Discord workflow, the three-channel system, the four loop steps, the rules, the full stack, the scribe era history (Margin → Verso → Logger rotation), and an about section. It is ready to be the linked destination for both the HN and Indie Hackers posts. No further work needed on this item.
@@ -59,8 +59,10 @@ The drafts use "Strong costs $120, Boostcamp's BBB block cuts off" as the compet
 **9. Plate visualization — can you describe it in one sentence?**
 The r/reactnative post mentions the plate visualization as an interesting component. One concrete sentence about what it shows (e.g., "decomposes your working weight into actual plates — 2x45, 1x25, 1x10 — shown per side for your bar weight") would make that post hit harder. What would you say about it if you were explaining it to a lifter?
 
-**10. Is there a demo video or GIF?**
-A 30-second screen recording of a live session (warm-up → working set → AMRAP → rest timer → receipt) would dramatically improve the Reddit posts. Screenshots are good; a video is better for showing that the rest timer actually works. Does one exist? If not, should the loop build a task to capture one before launch?
+**10. Screenshots — PARTIALLY RESOLVED (Expedition 51)**
+Alex posted 5 screenshots to #needs-input on Discord (2026-05-29). These are real app screenshots from 2026-05-27. The URLs are documented in `loop-memory/16-organic-launch-strategy.md` Expedition 51 notes — but Discord CDN URLs have expiring signatures, so the screenshots need to be downloaded and committed to the repo promptly. Recommended: save them to `docs/marketing/screenshots/` and embed in the README per the Expedition 44 placeholder instructions. A short demo video (for Product Hunt) is still outstanding.
+
+**Demo video:** A 30-second screen recording of a live session (warm-up → working set → AMRAP → rest timer → receipt) would dramatically improve the Product Hunt listing specifically. Screenshots are now available; a video is the remaining asset for PH launch.
 
 **11. Review the longform narrative — `docs/marketing/longform-how-i-built-this.md`**
 A full-arc "how I built this" piece is drafted — ~1,200 words covering: the personal itch, the unusual constraint, how the loop works, what was hard, what surprised you, where it is now, and the open question. This is the source asset for:

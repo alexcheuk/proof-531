@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 50)
+**Last updated**: 2026-05-29 (Expedition 51)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,7 +122,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · updated expedition 44 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 44+ in Expedition 44. Screenshots placeholder section added with concrete capture instructions for Alex (Today screen, Live session, Session receipt). Per best-practices research: visual proof is the single biggest missing element for GitHub README engagement. |
+| 1. GitHub README polish | done · screenshots now available (expedition 51) | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 44+ in Expedition 44. Screenshots placeholder section added with concrete capture instructions for Alex (Today screen, Live session, Session receipt). Per best-practices research: visual proof is the single biggest missing element for GitHub README engagement. **Expedition 51:** Alex posted 5 screenshots to #needs-input (Discord) in response to the Expedition 45 request. These need to be embedded in the README — the screenshot placeholder section is ready for them. See Expedition 51 notes below for the Discord CDN URLs. |
 | 2. r/531Discussion post | draft ready · sharpened expedition 46 | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added — the top existing "531" app (4.9 stars, 11K ratings) has verbatim App Store complaints about: rest timer breaking, no plate math, no BBB. These map exactly to this app's differentiators. Post body framing updated. Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
@@ -196,6 +196,39 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 51 — Research notes
+
+**Date:** 2026-05-29
+
+**Iteration count update:** All "50+" references across marketing drafts updated to "51+". Files updated: `reddit-vibecoding-draft.md` (6 instances), `reddit-reactnative-draft.md` (2 instances), `producthunt-launch-guide.md` (2 instances), `ai-experiment-story-outline.md` (1 instance), `longform-how-i-built-this.md` (1 instance), `launch-day-operations-guide.md` (1 instance), `questions-for-alex.md` (1 instance), `reddit-casual-builder-story-draft.md` (2 instances), `youtube-shorts-first-video-brief.md` (2 instances, previously at "48+").
+
+**Discord #needs-input — screenshots received (major unlock):**
+
+Alex (Discord: ragedmonkey) responded to the Expedition 45 request for app screenshots. Five screenshots posted in two batches:
+
+Batch 1 (2026-05-29 05:07 UTC):
+- `Screenshot_20260527-003635.png` — https://cdn.discordapp.com/attachments/1509774367498829935/1509785215042584706/Screenshot_20260527-003635.png
+- `Screenshot_20260527-001435.png` — https://cdn.discordapp.com/attachments/1509774367498829935/1509785215487311922/Screenshot_20260527-001435.png
+
+Batch 2 (2026-05-29 07:07 UTC):
+- `Screenshot_20260527-003320.png` — https://cdn.discordapp.com/attachments/1509774367498829935/1509815499968741497/Screenshot_20260527-003320.png
+- `Screenshot_20260527-003330.png` — https://cdn.discordapp.com/attachments/1509774367498829935/1509815500220268665/Screenshot_20260527-003330.png
+- `Screenshot_20260527-003642.png` — https://cdn.discordapp.com/attachments/1509774367498829935/1509815500471795754/Screenshot_20260527-003642.png
+
+Note: Discord CDN URLs contain expiring signatures (the `ex=` parameter is a hex-encoded Unix timestamp). These links are valid for a limited window. The screenshots need to be downloaded and committed to the repo before the links expire — recommended location: `docs/marketing/screenshots/` or directly into the README per the placeholder instructions added in Expedition 44.
+
+**Discord #needs-input — Alex asked "What document do u want me to review?"**
+
+Alex posted this follow-up question, apparently willing to review a draft document. The highest-value document for Alex to review before launch is the r/531Discussion post draft — it requires his personal 5/3/1 history filled in (Q4) and personal competitive framing (Q8). This unblocks the most important launch-day action.
+
+**Action needed from Alex (screenshottable response drafted below in questions-for-alex update):** The loop should respond in #needs-input to Alex's question and direct him to review `docs/marketing/reddit-531discussion-draft.md` — specifically the personal details in Option A ("Running BBB for about a year", "Tried Strong, Boostcamp", the actual story). This is the document that most needs his personal details.
+
+**Screenshots are a real unlock:** The Reddit posts, Product Hunt listing, and YouTube Shorts all cite "screenshots needed" as a placeholder. Five real screenshots from the app are now available. Once downloaded and embedded, the r/531Discussion and r/reactnative drafts are substantially more ready to post.
+
+**Status check:** iOS is still pending. The screenshot gap (the single most-cited blocker in the README and draft posts) is now unblocked pending download. All launch-day drafts remain polished.
+
+---
 
 ## Expedition 50 — Research notes (milestone)
 
