@@ -1,0 +1,99 @@
+name: Preview APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & release preview APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # Hash the files that affect the native fingerprint: config, deps, and
+      # any native Android source. Pure JS/TS changes are handled by OTA
+      # (ota.yml) and don't need a new APK.
+      - name: Compute native fingerprint
+        id: fp
+        run: |
+          HASH=$(cat \
+            apps/mobile/app.json \
+            apps/mobile/app.config.ts 2>/dev/null \
+            pnpm-lock.yaml \
+            | sha256sum | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+          echo "Fingerprint: $HASH"
+
+      - name: Check last release fingerprint
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LAST_BODY=$(gh release list --limit 1 --json body --jq '.[0].body' 2>/dev/null || echo "")
+          if echo "$LAST_BODY" | grep -qF "fingerprint: ${{ steps.fp.outputs.hash }}"; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Fingerprint unchanged — native build not needed (OTA covers this push)"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Fingerprint changed — building new APK"
+          fi
+
+      - name: Build preview APK via EAS
+        id: build
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          cd apps/mobile
+          # --wait blocks until the cloud build finishes; --json writes the
+          # final build record to stdout. Redirect stderr so progress output
+          # doesn't corrupt the JSON parse.
+          BUILD_JSON=$(eas build \
+            --profile preview \
+            --platform android \
+            --non-interactive \
+            --wait \
+            --json 2>/dev/null)
+          APK_URL=$(echo "$BUILD_JSON" | python3 -c \
+            "import json,sys; data=json.load(sys.stdin); print(data[0]['artifacts']['buildUrl'])")
+          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+          curl -sL -o /tmp/531-preview.apk "$APK_URL"
+
+      - name: Publish GitHub Release
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHORT_SHA="${{ github.sha }}"
+          SHORT_SHA="${SHORT_SHA:0:8}"
+          TAG="preview-$(date -u +%Y%m%d-%H%M)-${SHORT_SHA}"
+          NOTES=$(printf "fingerprint: ${{ steps.fp.outputs.hash }}\n\nBuilt from commit: ${{ github.sha }}")
+          gh release create "$TAG" \
+            /tmp/531-preview.apk#531-preview.apk \
+            --title "Preview ${SHORT_SHA}" \
+            --notes "$NOTES" \
+            --prerelease

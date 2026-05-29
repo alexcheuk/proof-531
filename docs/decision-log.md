@@ -42,6 +42,39 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — GitHub Actions preview APK workflow: fingerprint-gated EAS cloud build
+
+**Tags:** `process`, `ci`
+**Files:** `.github/workflows/preview-apk.yml`
+
+Added a new workflow that builds an Android preview APK via EAS and publishes it to GitHub Releases on every push to main that touches mobile paths. A sha256 fingerprint of `app.json`, `app.config.ts`, and `pnpm-lock.yaml` is stored in each release's notes; the next build is skipped if the fingerprint is unchanged (OTA already covers JS-only changes, native build only needed when deps/config change).
+
+**Why:** user wanted a readily-downloadable APK on GitHub Releases, without rebuilding on every pure-JS commit since EAS cloud builds are slow and consume credits.
+
+**Trade-off / what we didn't do:** `@expo/fingerprint` generates a more precise native fingerprint but requires an extra dependency and complex CLI output parsing. The sha256 of native-affecting files is a safe over-approximation — occasional unnecessary builds are preferable to missing a necessary one.
+
+### 2026-05-28 — "Roll back a lift" danger zone setting
+
+**Tags:** `feature`, `mobile`, `architecture`
+**Files:** `apps/mobile/src/data/accessors/rollbackLift.ts`, `apps/mobile/src/features/settings/components/RollbackLiftSheet.tsx`, `apps/mobile/src/features/settings/hooks/useSettingsDialogs.ts`
+
+Added a new danger zone action that lets users delete the last N completed sessions for a specific lift and revert the lift's cycle position and training max to where they were before those sessions. Implemented as a new `rollbackLift` accessor using the oldest deleted session's `trainingMaxSnapshot` as the canonical TM restore point — no history traversal needed.
+
+**Why:** user wanted a targeted undo for accidental session logging (e.g., "delete the last 2 bench sessions"), without the nuclear "reset everything" option.
+
+**Trade-off / what we didn't do:** could have stored TM history as a separate rollback journal. Instead we use `trainingMaxSnapshot` already persisted in the session row — this is sufficient and requires no new schema.
+
+### 2026-05-28 — organic-marketing agent + launch drafts
+
+**Tags:** `agent`, `process`
+**Files:** `.claude/agents/organic-marketing.md`, `docs/marketing/`
+
+Created an `organic-marketing` agent that reads `loop-memory/16-organic-launch-strategy.md` and advances one marketing tactic per loop. On first run it drafted Reddit post copy for r/531Discussion and r/weightroom, an HN/Indie Hackers story outline, and a "questions for Alex" file covering the 5 blocking gaps before launch posts can go live.
+
+**Why:** the #loop-criteria pin asked for a marketing agent that runs every loop, strengthening the strategy and drafts each cycle until iOS launch.
+
+**Follow-ups:** Alex should answer questions in `docs/marketing/questions-for-alex.md` so the Reddit/HN posts can be finalized. The agent runs automatically each loop.
+
 ### 2026-05-28 — Splash screen dark bg changed to cream to match logo
 
 **Tags:** `convention`, `mobile`

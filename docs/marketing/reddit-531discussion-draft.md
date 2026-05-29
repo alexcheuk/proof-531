@@ -1,0 +1,86 @@
+---
+tactic: 2
+channel: r/531Discussion
+status: draft
+ready_to_post: false
+trigger: iOS live on App Store
+drafted: 2026-05-28
+---
+
+# r/531Discussion — Launch Post Draft
+
+## Research notes
+
+Direct Reddit search through web indices returned no results for this subreddit — it is not well-indexed externally. The following is based on: (1) what the strategy doc already captured from competitive research, (2) general patterns for niche lifting subreddits, and (3) what questions for Alex are at the bottom of this file.
+
+General pattern for r/531Discussion (inferred from comparable niche lifting communities):
+- The community is practitioners, not browsers. Posts that get traction are about the program itself: TM calculation questions, block reports, AMRAP set discussions, BBB variant questions.
+- App posts are rare and treated with suspicion unless the poster is clearly a practitioner, not a developer promoting.
+- The winning framing is "I had a problem, I solved it, here it is if you want it" — not "check out my app."
+- Disclaim non-affiliation with Wendler explicitly and early. The community is protective of the program's IP and reputation.
+- Keep the title honest. Don't oversell. Let the screenshots do the talking.
+
+---
+
+## Option A — Practitioner frame (recommended)
+
+**Post title:**
+> I couldn't find a clean 5/3/1+BBB tracker that did the math and left everything else out, so I built one. Free, no account, local-only.
+
+**Body:**
+
+Running BBB for about a year. Tried Strong, Boostcamp, a few others. Strong costs $120 and wants me to manage a program template instead of just logging sets. Boostcamp is close but the UI is busy and the BBB block cuts off. Ended up with a notebook, which worked until I got tired of doing plate math in my head at 6am.
+
+So I built my own.
+
+**What it does:**
+- 5/3/1 percentages + BBB volume auto-computed from your training maxes
+- Plate math shown per side (for your bar weight, your plates, lb or kg)
+- AMRAP logging with e1RM and PR detection
+- Rest timer between sets, haptic at T-3s, screen stays awake
+- Session receipt at the end — sets, reps, PRs, next week queued
+
+**What it doesn't do:**
+- No account, no cloud sync, no social, no gamification
+- No coaching nudges, no suggested programs beyond 5/3/1+BBB
+- No ads, no paywalls, no analytics
+- Data stays on your device in a local SQLite database
+
+Android: [GitHub Releases link — fill in]
+iOS: [App Store link — fill in on launch day]
+
+Not affiliated with Jim Wendler or Wendler LLC. Just a fan of the program.
+
+Screenshots: [attach Today screen, Live session screen, Session receipt / history]
+
+---
+
+## Option B — Shorter, more direct
+
+**Post title:**
+> Built a free 5/3/1+BBB tracker — no account, no paywall, local-only. Sharing it.
+
+**Body:**
+
+Ran out of patience with existing options — too expensive, too many features I didn't need, or the BBB block wasn't complete. Built my own. Sharing it here in case it's useful to anyone else.
+
+Android APK on GitHub Releases. iOS on the App Store.
+
+Not affiliated with Jim Wendler. Free, local SQLite, no sign-in.
+
+[screenshots]
+
+---
+
+## Posting guidance
+
+- Post on iOS launch day, not before. Android-only post gets half the audience.
+- Post between 7am–10am US Eastern on a Tuesday or Wednesday (best engagement window for lifting subreddits).
+- Do not cross-post to r/weightroom the same day — stagger by at least 24 hours, use different copy (see tactic 3 draft).
+- If the post gets traction, reply to every comment within the first 2 hours. Engagement velocity matters.
+- If asked about future features, be honest: "I'm focused on getting the 5/3/1+BBB core right. Feature requests noted." Don't promise a roadmap.
+- If asked about affiliation: "No affiliation with Jim Wendler or Wendler LLC. I just run the program."
+
+## Questions for Alex
+
+See `/repos/1/docs/marketing/questions-for-alex.md` for what's needed before this post goes live.

@@ -5,9 +5,10 @@ import { Text as RNText, type TextStyle } from 'react-native';
 
 export type DangerZoneSectionProps = {
   onReset: () => void;
+  onRollback: () => void;
 };
 
-export function DangerZoneSection({ onReset }: DangerZoneSectionProps) {
+export function DangerZoneSection({ onReset, onRollback }: DangerZoneSectionProps) {
   const { colors, type } = useTheme();
   const chevronStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,
@@ -16,7 +17,14 @@ export function DangerZoneSection({ onReset }: DangerZoneSectionProps) {
   };
   return (
     <LedgerSection title="Danger zone">
-      <LedgerRow first onPress={onReset} testID="reset-everything-button">
+      <LedgerRow first onPress={onRollback} testID="rollback-lift-button">
+        <LedgerRowLabel
+          primary="Roll back a lift"
+          secondary="delete last N sessions · revert cycle position"
+        />
+        <RNText style={chevronStyle}>›</RNText>
+      </LedgerRow>
+      <LedgerRow onPress={onReset} testID="reset-everything-button">
         <LedgerRowLabel
           primary="Reset everything"
           secondary="wipes all data · returns to onboarding"

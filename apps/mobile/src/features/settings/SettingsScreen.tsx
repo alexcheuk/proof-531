@@ -16,6 +16,7 @@ import { QueryShell } from '@/features/shared/QueryShell';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { ResetConfirmSheet } from './components/ResetConfirmSheet';
+import { RollbackLiftSheet } from './components/RollbackLiftSheet';
 import { TmEditSheet } from './components/TmEditSheet';
 import { type TmPreview, UnitMigrationSheet } from './components/UnitMigrationSheet';
 import { useSettingsDialogs } from './hooks/useSettingsDialogs';
@@ -111,7 +112,7 @@ export function SettingsScreen() {
 
         <ReleaseSection />
 
-        <DangerZoneSection onReset={dialogs.requestReset} />
+        <DangerZoneSection onReset={dialogs.requestReset} onRollback={dialogs.openRollback} />
 
         <Colophon />
       </ScrollView>
@@ -144,6 +145,16 @@ export function SettingsScreen() {
           pending={dialogs.resetting}
           onCancel={dialogs.cancelReset}
           onConfirm={() => void dialogs.confirmReset()}
+        />
+      ) : null}
+
+      {dialogs.rollbackOpen ? (
+        <RollbackLiftSheet
+          open
+          enabledLifts={settings.enabledLifts}
+          pending={dialogs.rollingBack}
+          onClose={dialogs.closeRollback}
+          onConfirm={(lift, n) => void dialogs.confirmRollback(lift, n)}
         />
       ) : null}
     </View>

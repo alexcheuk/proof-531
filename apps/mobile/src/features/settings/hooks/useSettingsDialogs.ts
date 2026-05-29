@@ -1,7 +1,10 @@
 import { useDb } from '@/data/DbProvider';
 import { migrateStorageUnit } from '@/data/accessors/migrateStorageUnit';
 import { resetEverything } from '@/data/accessors/reset';
+import { rollbackLift } from '@/data/accessors/rollbackLift';
 import { TM_KEY } from '@/data/queries/useLatestTm';
+import { PRS_KEY } from '@/data/queries/usePrs';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import type { Lift, Unit } from '@/domain/types';
 import { goTo } from '@/lib/routes';
@@ -33,6 +36,12 @@ export type UseSettingsDialogsResult = {
   cancelReset: () => void;
   confirmReset: () => Promise<void>;
   resetting: boolean;
+  // Lift rollback
+  rollbackOpen: boolean;
+  openRollback: () => void;
+  closeRollback: () => void;
+  confirmRollback: (lift: Lift, n: number) => Promise<void>;
+  rollingBack: boolean;
 };
 
 export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogsResult {
@@ -45,6 +54,8 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
   const [migrating, setMigrating] = useState(false);
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [rollbackOpen, setRollbackOpen] = useState(false);
+  const [rollingBack, setRollingBack] = useState(false);
 
   const openTmEditor = useCallback((lift: Lift) => setEditingLift(lift), []);
   const closeTmEditor = useCallback(() => setEditingLift(null), []);
@@ -96,6 +107,32 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
     }
   }, [db, queryClient, resetting, router]);
 
+  const openRollback = useCallback(() => setRollbackOpen(true), []);
+
+  const closeRollback = useCallback(() => {
+    if (!rollingBack) setRollbackOpen(false);
+  }, [rollingBack]);
+
+  const confirmRollback = useCallback(
+    async (lift: Lift, n: number) => {
+      if (rollingBack) return;
+      setRollingBack(true);
+      try {
+        await rollbackLift(db, lift, n);
+        await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+        await queryClient.invalidateQueries({ queryKey: PRS_KEY });
+        await queryClient.invalidateQueries({ queryKey: TM_KEY });
+        await queryClient.invalidateQueries({ queryKey: ['liftProgress'] });
+        setRollbackOpen(false);
+      } catch (err) {
+        console.error('rollbackLift failed', err);
+      } finally {
+        setRollingBack(false);
+      }
+    },
+    [db, queryClient, rollingBack],
+  );
+
   return {
     editingLift,
     openTmEditor,
@@ -110,5 +147,10 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
     cancelReset,
     confirmReset,
     resetting,
+    rollbackOpen,
+    openRollback,
+    closeRollback,
+    confirmRollback,
+    rollingBack,
   };
 }

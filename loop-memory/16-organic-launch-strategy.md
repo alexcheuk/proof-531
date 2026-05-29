@@ -100,17 +100,27 @@ Use the right story for the right audience. Never mix them in a single post.
 | Tactic | Status | Notes |
 |--------|--------|-------|
 | 1. GitHub README polish | done · expedition 37 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph |
-| 2. r/531Discussion post | pending · wait for iOS | |
-| 3. r/weightroom thread | pending · wait for iOS | |
-| 4. @jimwendler tweet | pending · wait for iOS | |
-| 5. HN Show HN | pending · wait 1wk post-iOS | |
-| 6. Indie Hackers | pending · wait 1wk post-iOS | |
+| 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
+| 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
+| 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
+| 5. HN Show HN | outline ready · expedition 38 | Title, lead paragraph, 5-bullet story structure drafted. Wait for 20+ expedition logs + /process page. See `docs/marketing/ai-experiment-story-outline.md` |
+| 6. Indie Hackers | outline ready · expedition 38 | 5-section milestone post structure drafted. Same source doc as HN. |
 | 7. Product Hunt | pending · wait 2-3wk post-iOS | |
-| 8. r/reactnative | pending | |
-| 9. r/vibecoding | pending | |
+| 8. r/reactnative | outline ready · expedition 38 | Technical angle drafted (stack + plate visualization). In same AI story doc. |
+| 9. r/vibecoding | outline ready · expedition 38 | 1-paragraph version of the loop story drafted. In same AI story doc. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
+
+## Open questions (blocking launch-day posts)
+
+See `docs/marketing/questions-for-alex.md` for the full list. Summary of blockers:
+
+1. GitHub Releases URL for Android APK
+2. App Store URL (available after iOS approval)
+3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
+4. Alex's personal 5/3/1 history (practitioner credibility framing)
+5. Whether /process page on the marketing site exists yet (needed for HN post)
 
 ## Sources
 
