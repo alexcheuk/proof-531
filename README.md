@@ -87,7 +87,8 @@ pnpm run ci             # full CI chain (typecheck + lint + test + boundary chec
 pnpm verify             # ci + Metro bundle check + web build
 
 # e2e (requires Maestro + dev client on device)
-maestro test .maestro/flows/
+maestro test .maestro/flows/                    # all flows
+maestro test .maestro/flows/01-onboarding.yaml  # individual flow
 ```
 
 ## How it's built

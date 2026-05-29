@@ -30,23 +30,6 @@ import { ScrollView, View, type ViewStyle } from 'react-native';
 import { SessionLayout } from './components/SessionLayout';
 import { useHardwareBack } from './hooks/useHardwareBack';
 
-/**
- * Shown automatically after AMRAP — between the live set and the
- * SessionComplete receipt — so the user sees their Boring But Big plan
- * (5×10 @ 50% TM) before closing the day. Two CTAs:
- *
- *   - Primary "Mark BBB complete →" — writes 5 set_logs with
- *     `kind: 'bbb'` (each 10 reps at 50% TM) and routes to the
- *     receipt. The session row is already `status = completed`
- *     by this point (`completeSession` ran inside
- *     `useLogWorkingSets.onSaveAmrap` after the AMRAP set), so this is
- *     purely additive — closing the day still works the same way.
- *   - Secondary "Skip · close the day" — routes to the receipt
- *     without writing the BBB rows. Captures "I did the AMRAP but
- *     skipped the back-off work today" honestly.
- *
- * Both paths land on `/session/complete?sessionId=…`.
- */
 export type BbbPromptScreenProps = {
   sessionId: number;
 };
@@ -61,10 +44,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
 
   const router = useRouter();
 
-  // Android hardware back from /session/bbb should land on the receipt
-  // (the user has already finished AMRAP; this is a post-completion
-  // surface). The expo-router stack default would re-enter /session/live,
-  // which would see status=completed and bounce home — a regression.
+  // Hardware back must go to the receipt; live re-entry on a completed session bounces home.
   useHardwareBack({
     enabled: true,
     onBack: () => goTo.complete(router, sessionId, { replace: true }),
@@ -96,13 +76,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
     if (logging) return;
     setLogging(true);
     try {
-      // Write the 5 BBB rows at the BBB weight + reps. Use the session's
-      // STORAGE-unit weight so the receipt + history-volume math is
-      // consistent with the working-set rows (which also persist in
-      // storage units). `actualReps === prescribedReps` — we don't ask
-      // the user how many they hit on each BBB set (yet); this captures
-      // the "I did all 5 sets of 10" intent as the receipt's source of
-      // truth.
+      // Storage-unit weight keeps receipt volume math consistent with working-set rows.
       for (let i = 0; i < BBB_SETS; i += 1) {
         await appendSetLog(db, {
           sessionId,
@@ -113,12 +87,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
           actualReps: BBB_REPS,
         });
       }
-      // Refresh the session-shaped surface so the receipt's volume +
-      // History tab's lifetime-volume stat pick up the new rows on
-      // arrival. `SESSION_KEY` is also re-invalidated so the per-session
-      // cache cannot land at /session/complete with a stale
-      // `'in_progress'` status (Discord 1508935260 root cause —
-      // `SessionCompleteScreen` used to bounce home on a stale read).
+      // Invalidate all session/volume keys; SESSION_KEY prevents stale-in-progress bounce (Discord 1508935260).
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
         queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
@@ -126,8 +95,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
         queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
       ]);
     } catch (err) {
-      // Don't block close on failure — the user already did the work.
-      // Log the error and route on so they aren't stuck mid-flow.
+      // Don't block navigation on failure — user already did the work.
       console.error('BbbPromptScreen.onMarkComplete failed', err);
     } finally {
       setLogging(false);

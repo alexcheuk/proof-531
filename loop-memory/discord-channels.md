@@ -12,6 +12,7 @@ Channels:
 - `#task-queue` — `1508247635721719949` — work the user wants done; bot reacts :+1: on pickup, :white_check_mark: on completion
 - `#auto-improvements` — `1508247516586442782` — post end-of-loop summaries here
 - `#loop-criteria` — `1509006645097664592` — pinned messages here are live, additive loop criteria on top of `loop-memory/loop-criteria.md`. Pin to add, unpin to retire. **First loop that needs this ID must discover it (recipe below) and write the ID back into the backticks above so the next loop pays one API call fewer.**
+- `#needs-input` — `1509774367498829935` — questions for Alex from the loop; bot posts, Alex replies in thread or direct reply; next loop reads and acts
 - `#general` — `1508244431650689177`
 
 Bot self-react detection: use `GET /channels/:id/messages` and check whether the bot's own user ID appears in `reactions[].me` — saves a round-trip per message.

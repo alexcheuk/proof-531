@@ -50,6 +50,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
     {image && <meta name="twitter:image" content={image} />}
 
     <link rel="alternate" type="application/rss+xml" title="531 Strength dev blog" href="/rss.xml" />
+    <slot name="head" />
   </head>
   <body>
     {/* Skip-to-content link — first focusable element, visually hidden

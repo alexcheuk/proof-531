@@ -10,11 +10,13 @@ These are the gaps between what can be drafted from repo context and what needs 
 
 ---
 
-## App Store approval timing context (Expedition 43)
+## App Store approval timing context (Expedition 43, updated Expedition 45)
 
-iOS App Store review times have increased significantly in 2026. New app submissions are taking 2–5 days typically, with spikes to 7+ days during peak periods. The cause: app releases on iOS are up 89% year-over-year in April 2026, driven largely by AI coding tools lowering the barrier to submission. Apple's review team is processing a dramatically higher volume while increasing scrutiny.
+iOS App Store review times were elevated in early 2026 due to AI app flood (89% YoY increase in submissions). That context is still relevant for the r/vibecoding framing, but the actual queue times have improved: Runway's live tracker (updated May 27, 2026) shows median "waiting for review" is now 8h 27m and "in review" is 1h 53m. Most new app approvals complete within 12–24 hours.
 
-Practical implication: if 531 Strength is in review now, expect 3–7 days before a decision. An expedited review request is possible through App Store Connect but Apple accepts these sparingly — reserve it for genuine emergencies, not launch timing. The better move is to treat approval as happening on day 3–7 and have all posts pre-written and ready to go. The launch-day guide at `docs/marketing/launch-day-operations-guide.md` is set up for exactly that: fill in two blanks and post in sequence.
+The earlier "2-7 day" estimate was from the peak surge period. The current baseline is much faster — treat approval as potentially arriving the same business day as submission. Submissions on Tuesday perform best (fastest review start); Friday and Saturday submissions wait longest (~17h before review begins).
+
+Practical implication: have all posts pre-written and ready to go before you submit. The launch-day guide at `docs/marketing/launch-day-operations-guide.md` is set up for exactly that: fill in two blanks and post in sequence. Don't assume a multi-day buffer — you may need to act within hours of receiving the approval email.
 
 If the submission gets rejected: the most common rejection reasons for new apps in 2026 are incomplete metadata, edge cases that break during review (offline mode, empty data states, invalid inputs), and unclear data handling explanations. The privacy angle (zero analytics, local SQLite, no account) should be explicitly stated in the App Store description — that's both a marketing message and a pre-answer to reviewer scrutiny.
 

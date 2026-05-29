@@ -4,13 +4,6 @@ import { cycleGoalEstimate } from '@/domain/progression';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 
-/**
- * Bordered card with a TM/1RM toggle, value stepper, and outcome strip.
- * Matches the canonical `GoalPanelV3`.
- *
- * No internal state — fully controlled. The parent owns `kind` + `value`
- * + their setters, threads the mutation, and computes `cyclesUntilGoal`.
- */
 export type GoalPanelProps = {
   kind: LiftGoalKind;
   /** Current goal value (display units). */

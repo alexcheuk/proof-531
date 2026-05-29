@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 44)
+**Last updated**: 2026-05-28 (Expedition 45)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -104,7 +104,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
-| 5. HN Show HN | strategy revised · expedition 40 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md` |
+| 5. HN Show HN | strategy revised · expedition 40 · signal confirmed expedition 45 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md`. **Expedition 45 confirmation:** Auto-Co Show HN (March 2026, 14 agents running a startup autonomously) received only 4 points — pure "autonomous agent" framing is confirmed dead on HN. Title Option A (personal story first) remains the correct call. |
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
@@ -168,6 +168,18 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
+
+## Expedition 45 — Research notes
+
+**Date:** 2026-05-28
+
+**iOS review times corrected:** Runway's live tracker (updated May 27, 2026) shows the actual current iOS App Store review speed is far faster than the "2-7 day" estimate documented in Expedition 43. Median "waiting for review" is now 8h 27m; "in review" is 1h 53m. Most approvals complete within 12–24 hours. Tuesday submissions are fastest (10h 22m to start); Friday/Saturday are slowest (~17h). The launch-day operations guide and questions-for-alex.md have been updated to reflect this. Practical impact: Alex should have all posts ready to go before submission, not after a multi-day buffer. The clock starts fast.
+
+**HN "autonomous agent" framing confirmed dead:** Auto-Co (Show HN, March 2026) — "14 AI agents that run a startup autonomously" — received 4 points and 2 comments. The one visible comment was skeptical: "there are so many of these...what's the difference." This is direct 2026 evidence for what the Expedition 40 strategy revision already concluded from 2025 data: leading with autonomous agent framing on HN is a losing move. Title Option A ("I let a Claude agent build my gym app, start to finish") remains correct — personal story first, agent loop is the interesting secondary fact, not the headline claim. Updated the HN tactic notes in the progress tracker.
+
+**Market gap confirmed again by 2026 source:** Setgraph's roundup of 15 workout apps tested by lifters (2026) explicitly notes that "strong lifters need apps supporting percentage-based programs like 5/3/1 or conjugate training" but lists this as a desired feature rather than one any app delivers. No dedicated 5/3/1 tracker appears. This is now a third independent 2026 source confirming the gap (previously: Cora Health synthesis, FindYourEdge roundup). The r/531Discussion premise remains accurate and uncontested.
+
+**No live community threads found:** Reddit continues to be poorly indexed externally. No r/531Discussion, r/weightroom, or r/531 threads about app recommendations surfaced this loop. Strategy unchanged: post on iOS launch day, not in response to existing threads.
 
 ## Expedition 44 — Research notes
 

@@ -1,0 +1,25 @@
+---
+# Smoke test: settings screen and basic settings navigation.
+# Verifies the Settings tab loads, the scroll view is present,
+# and the Danger Zone section is visible (not tapped).
+
+appId: com.alexcheuk.fivethreeone
+---
+- launchApp
+
+# Tap the Settings tab
+- tapOn:
+    id: "tab-settings"
+- waitForAnimationToEnd
+
+# Settings scroll view should be visible
+- assertVisible:
+    id: "settings-scroll"
+
+# The Lift settings section should be present
+- assertVisible: "LIFTS"
+
+# The Danger Zone section heading should be visible when scrolled
+- scrollDown
+- waitForAnimationToEnd
+- assertVisible: "DANGER ZONE"

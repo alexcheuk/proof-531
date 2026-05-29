@@ -42,6 +42,21 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — website-improve skill created; JSON-LD structured data added; comment discipline enforced
+
+**Tags:** `skill`, `convention`, `process`
+**Files:** `.claude/skills/website-improve/SKILL.md`, `loop-memory/17-website-improve-strategy.md`, `apps/web/src/pages/index.astro`, `apps/web/src/layouts/Base.astro`
+
+Created `website-improve` as a dedicated skill for iterating on 531.dev (separate from `organic-marketing` which handles external launch strategy). Added JSON-LD `SoftwareApplication` schema to the homepage via a `head` slot in `Base.astro`. Removed multi-paragraph JSDoc comment blocks from `BbbPromptScreen`, `GoalPanel`, and `LiveScreen` — trimmed to one-liners where the WHY is non-obvious and deleted where the name is self-explanatory. Added `#needs-input` channel ID to Discord memory.
+
+**Why:** The `#loop-criteria` pin asked for a self-improving website strategy and agent. JSON-LD makes the app eligible for Google rich results. Comment blocks violated the "one short line max" rule in CLAUDE.md consistently across several session-flow files.
+
+**Trade-off / what we didn't do:** JSON-LD uses static content (not dynamic from blog posts) — a tradeoff for build-time simplicity. The `og:image` (social preview card) is still absent; it needs a design asset that doesn't exist yet.
+
+**Follow-ups:** Screenshots from Alex needed to unblock og:image card and homepage hero section.
+
+---
+
 ### 2026-05-29 — Maestro e2e test skeleton added; haptics upgraded to long-pulse
 
 **Tags:** `process`, `feature`, `architecture`

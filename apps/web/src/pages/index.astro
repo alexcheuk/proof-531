@@ -14,6 +14,29 @@ const postCount = posts.length;
   title="531 Strength — a 5/3/1 + BBB tracker I built for myself"
   description="A clean, local-first 5/3/1 + Boring But Big training journal for iOS and Android. Free. Source available. Made because I wanted something nice to log my own lifts."
 >
+  <script slot="head" is:inline type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "531 Strength",
+    "applicationCategory": "SportsApplication",
+    "operatingSystem": ["iOS", "Android"],
+    "description": "A free, local-first 5/3/1 + Boring But Big strength training tracker for iOS and Android. No account, no ads, no subscription. Data stays on your phone.",
+    "url": "https://531.dev",
+    "downloadUrl": "https://github.com/alexcheuk/proof-531/releases",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "softwareVersion": "1.0",
+    "featureList": [
+      "5/3/1 program with BBB accessory work",
+      "Visual plate calculator for every working set",
+      "Background-safe rest timer with alarm",
+      "PR tracking and cycle progress grid",
+      "lbs and kg support",
+      "Local-only — no account, no telemetry"
+    ]
+  }
+  </script>
+
   {/* ─── hero ─── */}
   <section class="hero">
     <div class="wrap">

@@ -2,12 +2,15 @@
 status: draft
 purpose: Consolidated execution guide for iOS launch day — what to do, in what order, at what time
 drafted: 2026-05-28 (Expedition 43)
+updated: 2026-05-28 (Expedition 45)
 trigger: iOS App Store approval notification received
 ---
 
 # Launch-Day Operations Guide
 
 When the iOS approval email arrives, this is the playbook. Every tactic has a draft ready — this doc tells you which one to run, when, and what to fill in.
+
+**iOS review speed note (updated Expedition 45):** Current Runway data (updated May 27, 2026) shows median "waiting for review" is 8h 27m and "in review" is 1h 53m. Most approvals complete within 12-24 hours now, not the 2-7 day window that was common in early 2026. This means the clock starts fast — be ready to act the day you submit, not a week later. The exception: if submission arrives on a Friday, expect the weekend delay (Friday and Saturday submissions take up to 17h to start review). Ideal submission day: Tuesday or Wednesday, morning US Eastern.
 
 **Before you do anything else:** Fill in the two blanks that appear in every post:
 - `[App Store link]` — available in App Store Connect immediately after approval (format: `https://apps.apple.com/app/id[number]`)

@@ -103,20 +103,11 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   const session = sessionQuery.data;
   const lift = session.lift as Lift;
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
-  // Display unit isn't tracked on the live screen here — settings may flip
-  // mid-session per the PWA spec, but the snapshot taken at createSession
-  // is the contract for this session's render unit. Falls back to the
-  // storage unit when the snapshot column is null.
+  // Display unit uses the session snapshot so mid-session settings changes don't affect this render.
   const unit: Unit = session.displayUnitSnapshot ?? storageUnit;
-  // Convert the storage-snapped prescribed weight into the session's
-  // display currency. When storage === display this is identity; when
-  // they diverge (post-migration on an in-flight session) the user sees
-  // the snapped destination-unit weight.
+  // Convert from storage unit; identity when they match, corrects post-migration in-flight sessions.
   const prescribedDisplay = displayWeight(live.prescribedWeight, storageUnit, unit);
-  // Per-side plate decomposition. Decompose against the *storage* weight
-  // and a plate-set matched to the storage unit so the breakdown is
-  // physically correct (lb plates on a lb-storage TM produce a 45-lb bar +
-  // lb plates regardless of which currency the user is viewing in).
+  // Decompose against storage unit so plate selection is physically correct (lb plates on lb TM).
   const plateSet: PlateSet = settingsQuery.data?.plateSet ?? defaultPlateSet(storageUnit);
   const perSide = decompose(live.prescribedWeight, plateSet).perSide;
   const existingPR = prsQuery.data?.find((p) => p.lift === lift);
@@ -162,13 +153,7 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
             onAddRest={live.onAddRest}
             onSubRest={live.onSubRest}
             onSkip={live.onAdvanceFromRest}
-            // Undo lives on the top bar during rest (no duplicate inline
-            // button); RestPhase no longer renders an onUndoLastSet
-            // affordance even when the prop is wired.
-            // During rest, useLiveScreenState has already advanced setIndex
-            // to the next set, so live.prescribedWeight / .pct / .isAmrap /
-            // .prescribedReps describe that set. The PlateBar perSide is
-            // already computed off the same prescribed weight above.
+            // setIndex advanced past rest — prescribedWeight already describes the NEXT set.
             nextSet={{
               weight: prescribedDisplay,
               reps: live.prescribedReps,
@@ -234,17 +219,8 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   );
 }
 
-/**
- * Status-bar treatment for Live. Defaults to dark glyphs on the paper
- * canvas; when the user has opted into the inverted Live screen
- * (Discord 1508984314) we paint the safe-area strip ink-0 and ask the
- * OS for light glyphs so the notch area stays continuous with the
- * surface.
- */
 function LiveStatusBar({ inverted }: { inverted: boolean }) {
-  // Read from the base palette so the strip color is the literal ink-0
-  // (the inverted theme would itself swap bg0 ↔ ink0, but the strip
-  // lives outside the themed subtree via the global tint store).
+  // Use base palette directly — the inverted ThemeProvider would swap ink0↔bg0 before this reaches the tint store.
   if (inverted) return <StatusBarShim color={baseColors.ink0} style="light" />;
   return <StatusBar style="dark" />;
 }
