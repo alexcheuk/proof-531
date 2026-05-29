@@ -73,7 +73,22 @@ An unknown voice name is rejected by Gemini and surfaces as a `502` (synthesis e
 ## Casting canon
 
 - **`Algenib` is reserved for Verso the Paintress** — the departure announcement and any off-cycle
-  Paintress handoff. Its gravelly register is her register. Do not give it to a Logger.
+  Paintress handoff. Its gravelly register is Verso's register; do not give it to a Logger.
+
+  **Verso's voice style** — pass this verbatim as the `style` field for every departure (it is the
+  single source of truth; the `auto-improve` Step 3 curl reproduces it):
+
+  > Speak as Verso: a battle-hardened, elegant nomad with more than a century behind him. A velvety,
+  > low masculine voice, worn at the edges with quiet fatigue. Composed, articulate, unhurried; never
+  > cheerful, never performative. Hold a steady pace with long, contemplative pauses. Somber and a
+  > little mysterious, carrying an understated, world-weary gravity that hints at a grief he never
+  > names.
+
+  The departure is the **somber, mysterious** register. The warm, brotherly register the character
+  uses in friendly dialogue never airs here: Verso does not speak in dialogue (see
+  `loop-memory/14-lore.md`), so the only Paintress audio is this announcement. Shape the contemplative
+  pauses with inline `[slowly]` plus a beat of silence (`...`); keep `[serious]` on the goals. Let the
+  rich `style` carry the texture (velvet, fatigue, gravity) and the tags carry the pacing.
 - **The Logger picks any *other* voice** that fits their character on the page (warm Loggers →
   `Sulafat`/`Achird`; clear/firm → `Iapetus`/`Orus`; soft/tired → `Achernar`/`Enceladus`; etc.).
   Vary it across expeditions so the ambient track doesn't become a drone — if two consecutive

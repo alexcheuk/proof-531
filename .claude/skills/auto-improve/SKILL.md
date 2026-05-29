@@ -104,14 +104,31 @@ print(max_exp + 1)
 
 # Fired through /compose (full reference: loop-memory/15-tts.md). HOME_TTS_URL is the
 # BASE url (set in .env.claude.local); we append /compose. Not required — curl || true if absent.
+# Build the JSON with Python so the long `style` note and any punctuation in the goals survive intact.
+TTS_PAYLOAD=$(NEXT_EXPEDITION="$NEXT_EXPEDITION" GOALS_SUMMARY="$GOALS_SUMMARY" python3 -c "
+import json, os
+n     = os.environ['NEXT_EXPEDITION']
+goals = os.environ['GOALS_SUMMARY']
+print(json.dumps({
+  'text':   f'[slowly] Expedition {n}... departs. [serious] The goals: {goals}',
+  'device': 'kitchen',
+  'voice':  'Algenib',
+  # Verso's voice style — kept in sync with the casting canon in loop-memory/15-tts.md.
+  'style':  ('Speak as Verso: a battle-hardened, elegant nomad with more than a century behind him. '
+             'A velvety, low masculine voice, worn at the edges with quiet fatigue. Composed, '
+             'articulate, unhurried; never cheerful, never performative. Hold a steady pace with '
+             'long, contemplative pauses. Somber and a little mysterious, carrying an understated, '
+             'world-weary gravity that hints at a grief he never names.'),
+}))
+")
 [ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL/compose" \
   -H "Content-Type: application/json" \
   --max-time 5 \
-  -d "{\"text\":\"[slowly] Expedition $NEXT_EXPEDITION departs. [serious] Goals: $GOALS_SUMMARY\",\"device\":\"kitchen\",\"voice\":\"Algenib\",\"style\":\"Say solemnly\"}" \
+  -d "$TTS_PAYLOAD" \
   >/dev/null 2>&1 || true
 ```
 
-The Paintress voice (Algenib, solemn) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice — the Logger's own. The inline `[slowly]` / `[serious]` audio tags shape the delivery directly; see `loop-memory/15-tts.md` for the full tag and voice catalog.
+The Paintress voice (Algenib) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The rich `style` note casts the character — a velvety, world-weary nomad with a century behind him — while the inline `[slowly]` (with a `...` beat) and `[serious]` tags carry the contemplative pacing; style and tags combine, per `loop-memory/15-tts.md`. The departure stays in Verso's somber/mysterious register, not the warm brotherly one (which never airs — Verso doesn't speak in dialogue). The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice: the Logger's own.
 
 `HOME_TTS_URL` is a personal homelab endpoint (see `.env.claude.example`). If unset, this block is a no-op. The iteration must not depend on the speaker being reachable.
 

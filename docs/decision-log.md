@@ -57,6 +57,17 @@ Created `website-improve` as a dedicated skill for iterating on 531.dev (separat
 
 ---
 
+### 2026-05-28 — Gave Verso a canonical voice profile for departure announcements
+
+**Tags:** `convention`, `tts`
+**Files:** `loop-memory/15-tts.md`, `.claude/skills/auto-improve/SKILL.md`
+
+The expedition-departure TTS (`auto-improve` Step 3, Algenib) now ships a full character `style` note instead of `"Say solemnly"`: a battle-hardened, elegant nomad with a century behind him; a velvety, low masculine voice worn with quiet fatigue; composed, unhurried, somber, world-weary gravity hinting at a grief he never names. Recorded as the single source of truth in the casting canon and reproduced verbatim in the caller, which was also switched from an inline `-d "{...}"` to a Python `json.dumps` builder so the long style and any goal punctuation survive.
+
+**Why:** `"Say solemnly"` threw away almost all of the character; a rich `style` field is the reliable lever for the texture (velvet, fatigue, gravity) while inline `[slowly]`/`...`/`[serious]` tags carry the pacing.
+
+**Trade-off / what we didn't do:** kept the departure in the somber/mysterious register only. The character's warm, brotherly dialogue register is deliberately omitted because Verso does not speak in dialogue (lore), so the announcement is the only Paintress audio that airs.
+
 ### 2026-05-29 — Maestro e2e test skeleton added; haptics upgraded to long-pulse
 
 **Tags:** `process`, `feature`, `architecture`
