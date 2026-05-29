@@ -29,6 +29,7 @@ export enum AndroidColor {
 
 const notifee = {
   createChannel: jest.fn(async () => 'channel-id'),
+  deleteChannel: jest.fn(async () => undefined),
   requestPermission: jest.fn(async () => ({ authorizationStatus: 1 })),
   displayNotification: jest.fn(async () => 'notif-id'),
   createTriggerNotification: jest.fn(async () => 'trigger-id'),

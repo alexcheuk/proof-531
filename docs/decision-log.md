@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Rest countdown moved out of Android's "Silent" group; FGS rejected
+
+**Tags:** `architecture`, `android`, `notifications`
+**Files:** `apps/mobile/src/lib/restChronometer.ts`, `apps/mobile/__mocks__/react-native-notify-kit.ts`
+
+The ongoing rest-countdown notification was filed under the shade's "Silent" group because its channel was created at `AndroidImportance.LOW`. Bumped the timer channel to `DEFAULT` (and versioned the channel id `rest-timer` → `rest-timer-v2`, deleting the legacy channel) so it leaves "Silent". `onlyAlertOnce` keeps the per-rest sound to a single ding rather than one per OS tick.
+
+**Why:** the countdown looked buried/second-class in the shade next to the native timer. The channel-id bump is mandatory because Android freezes a channel's importance at creation time — editing importance in code is a no-op on any install that already created the old channel.
+
+**Trade-off / what we didn't do:** rejected the "match the native timer exactly" path (foreground service, pinned at top, silent). An FGS can only be stopped from JS, which collides head-on with our zero-JS design where the OS timestamp trigger swaps "Resting" → "Rest complete" at T-0 with no process running; a backgrounded completion would leave the service stuck. The full FGS-owned-timer rewrite (service owns the countdown, stops itself at T-0) was the only correct way to adopt FGS, and wasn't worth it for a cosmetic placement win. Also rejected leaving it LOW. Net cost of the chosen path: one ding when each rest starts.
+
+---
+
 ### 2026-05-28 — PR certificate sharing upgraded to image capture (react-native-view-shot + expo-sharing)
 
 **Tags:** `feature`, `architecture`

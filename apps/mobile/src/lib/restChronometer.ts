@@ -14,7 +14,12 @@ import { Platform } from 'react-native';
  */
 
 const REST_NOTIFICATION_ID = 'rest';
-const CHANNEL_TIMER = 'rest-timer';
+// Versioned id: Android freezes a channel's importance at creation time, so an
+// existing install would keep the old LOW channel forever. Bumping the id forces
+// a fresh channel at the new DEFAULT importance. The previous 'rest-timer'
+// channel is deleted in ensureRestChannels so settings don't show a stale dupe.
+const CHANNEL_TIMER_LEGACY = 'rest-timer';
+const CHANNEL_TIMER = 'rest-timer-v2';
 const CHANNEL_DONE = 'rest-done';
 /** Action id for the notification "+30s" button. */
 export const REST_ADD_ACTION_ID = 'rest-add-30';
@@ -36,10 +41,21 @@ export async function ensureRestChannels(): Promise<void> {
   const m = load();
   if (!m) return;
   const { AndroidImportance } = m;
+  // Best-effort cleanup of the pre-v2 LOW channel so Android settings don't list
+  // an orphaned "Rest timer" entry alongside the new one.
+  try {
+    await m.default.deleteChannel(CHANNEL_TIMER_LEGACY);
+  } catch {
+    // never created on this install, or already gone
+  }
   await m.default.createChannel({
     id: CHANNEL_TIMER,
     name: 'Rest timer',
-    importance: AndroidImportance.LOW,
+    // DEFAULT (not LOW) keeps the ongoing countdown out of the shade's "Silent"
+    // group. DEFAULT plays a sound on first post; the chronometer sets
+    // onlyAlertOnce so it dings once when a rest starts, not on every OS tick.
+    // vibration stays off to match the app's quiet gym-timer feel.
+    importance: AndroidImportance.DEFAULT,
     vibration: false,
   });
   await m.default.createChannel({
