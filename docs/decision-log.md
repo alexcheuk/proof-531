@@ -42,6 +42,30 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — PR certificate sharing upgraded to image capture (react-native-view-shot + expo-sharing)
+
+**Tags:** `feature`, `architecture`
+**Files:** `apps/mobile/src/features/session/components/SharePrPill.tsx`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+`SharePrPill` now captures the PR certificate view as a PNG and shares it via the native share sheet (expo-sharing), falling back to text-only if capture fails or sharing is unavailable. The capture ref lives in `SessionCompleteScreen`; the pill receives it as an `onCaptureCertificate` callback.
+
+**Why:** the previous share path was text-only (`Share.share({ message })`) because `react-native-view-shot` was absent in Expo Go. With the migration to expo-dev-client (Expedition 28), native modules are fully supported. User requested actual image sharing so the certificate can be sent directly to WhatsApp, iMessage, etc.
+
+**Trade-off / what we didn't do:** considered SVG/HTML-to-base64 data URI (pure JS, no native rebuild) — rejected because it requires replicating the certificate visual logic and the result is harder to debug. Added `react-native-view-shot@4.0.3` and `expo-sharing@~55.0.20` as explicit deps. This changes the OTA fingerprint — existing native builds need a rebuild to receive the OTA.
+
+---
+
+### 2026-05-28 — `parseRouteId` extracted from four identical route shells
+
+**Tags:** `refactor`, `architecture`
+**Files:** `apps/mobile/src/lib/parseRouteId.ts`, `apps/mobile/src/app/session/live.tsx`, `complete.tsx`, `bbb.tsx`, `pr-celebration.tsx`
+
+Added `parseRouteId(raw)` to `src/lib/` as the single place that turns an expo-router string param into a nullable integer. Four route files had verbatim copies of `Number.parseInt(id, 10)` + `Number.isNaN` guard; all now call `parseRouteId`.
+
+**Why:** three-or-more identical fragments is the extraction threshold. All four files had the exact same two-liner; extracting removes the risk of subtle divergence if the guard logic ever needs to change.
+
+---
+
 ### 2026-05-28 — Preview APK CI switched from EAS cloud build to on-runner `--local`
 
 **Tags:** `process`, `ci`, `architecture`

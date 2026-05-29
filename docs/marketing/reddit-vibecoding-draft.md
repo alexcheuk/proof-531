@@ -18,6 +18,13 @@ updated: 2026-05-28 (Expedition 42)
 
 r/vibecoding respects specificity — multi-agent orchestration with explicit role boundaries is more interesting than "I used Cursor to build something." The winning frame here is: this is a production app, it ships, I use it, and the system that built it has the safeguards the community says are impossible at production quality.
 
+**Expedition 43 signal — specific data points to weave into comments:**
+The community skepticism has concrete evidence behind it: a security analysis of 1,645 Lovable-built apps found 170 contained exploitable vulnerabilities allowing personal data access by anyone. A survey of 18 CTOs found 16 reported production disasters from AI-generated code. These aren't hypothetical concerns — they're real outcomes the community has documented.
+
+531 Strength's answer is in the architecture, not the claims. Boundary enforcement scripts fail CI if hex values appear outside the token file. The domain math layer has zero React imports — enforced by an import-checker script, not instructions. Property-based tests (fast-check) verify the training percentages. The QA agent audits against a fixed checklist before any change ships.
+
+This isn't "trust me, I checked it." It's mechanically enforced. If you get asked in comments why the vibe-coded version is different here, the answer is: the constraints are in CI, not in prompts. An agent can ignore an instruction; it can't ignore a failing commit hook.
+
 ---
 
 ## Option A — Lead with the contrast (recommended, updated Expedition 42)

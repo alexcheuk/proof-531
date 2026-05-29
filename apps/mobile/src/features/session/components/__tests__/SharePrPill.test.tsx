@@ -2,17 +2,23 @@
  * Unit tests for SharePrPill + buildPrShareMessage.
  *
  * The visual pill itself is dumb — we mostly assert the message builder
- * (pure function) and that pressing the pill calls React Native's Share
- * API with the message we passed in.
+ * (pure function) and that pressing the pill calls the right share path.
  */
 import { ThemeProvider } from '@/design/theme';
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
 import { SharePrPill, buildPrShareMessage } from '../SharePrPill';
 
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(),
 }));
+
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn().mockResolvedValue(true),
+  shareAsync: jest.fn().mockResolvedValue(undefined),
+}));
+
+import * as Sharing from 'expo-sharing';
 
 describe('buildPrShareMessage', () => {
   it('formats lift / e1RM / delta into a single multi-line string', () => {
@@ -49,13 +55,64 @@ describe('SharePrPill', () => {
     jest.restoreAllMocks();
   });
 
-  it('calls Share.share with the supplied message on press', () => {
+  it('falls back to Share.share (text) when no capture callback is provided', async () => {
     const screen = render(
       <ThemeProvider>
         <SharePrPill message="hello" />
       </ThemeProvider>,
     );
     fireEvent.press(screen.getByTestId('session-complete-share-pr'));
-    expect(Share.share).toHaveBeenCalledWith({ message: 'hello' });
+    await waitFor(() => {
+      expect(Share.share).toHaveBeenCalledWith({ message: 'hello' });
+    });
+  });
+
+  it('calls expo-sharing with the captured URI when capture succeeds', async () => {
+    const captureUri = 'file:///tmp/cert.png';
+    const onCaptureCertificate = jest.fn().mockResolvedValue(captureUri);
+
+    const screen = render(
+      <ThemeProvider>
+        <SharePrPill message="hello" onCaptureCertificate={onCaptureCertificate} />
+      </ThemeProvider>,
+    );
+    fireEvent.press(screen.getByTestId('session-complete-share-pr'));
+    await waitFor(() => {
+      expect(onCaptureCertificate).toHaveBeenCalled();
+      expect(Sharing.shareAsync).toHaveBeenCalledWith(
+        captureUri,
+        expect.objectContaining({ dialogTitle: expect.any(String) }),
+      );
+      expect(Share.share).not.toHaveBeenCalled();
+    });
+  });
+
+  it('falls back to Share.share when capture returns null', async () => {
+    const onCaptureCertificate = jest.fn().mockResolvedValue(null);
+
+    const screen = render(
+      <ThemeProvider>
+        <SharePrPill message="fallback text" onCaptureCertificate={onCaptureCertificate} />
+      </ThemeProvider>,
+    );
+    fireEvent.press(screen.getByTestId('session-complete-share-pr'));
+    await waitFor(() => {
+      expect(Share.share).toHaveBeenCalledWith({ message: 'fallback text' });
+    });
+  });
+
+  it('falls back to Share.share when expo-sharing is unavailable', async () => {
+    (Sharing.isAvailableAsync as jest.Mock).mockResolvedValueOnce(false);
+    const onCaptureCertificate = jest.fn().mockResolvedValue('file:///tmp/cert.png');
+
+    const screen = render(
+      <ThemeProvider>
+        <SharePrPill message="fallback" onCaptureCertificate={onCaptureCertificate} />
+      </ThemeProvider>,
+    );
+    fireEvent.press(screen.getByTestId('session-complete-share-pr'));
+    await waitFor(() => {
+      expect(Share.share).toHaveBeenCalledWith({ message: 'fallback' });
+    });
   });
 });

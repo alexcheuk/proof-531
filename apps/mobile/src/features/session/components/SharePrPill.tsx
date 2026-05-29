@@ -1,36 +1,52 @@
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
+import * as Sharing from 'expo-sharing';
 import { useCallback } from 'react';
 import { Pressable, Share, View, type ViewStyle } from 'react-native';
 
-/**
- * Tiny "Share record" pill rendered under the PR certificate on the
- * receipt. Opens the native iOS / Android share sheet with a text
- * summary of the lift, the new estimated 1RM, and the delta — so the
- * user can drop it into WhatsApp / iMessage / wherever without leaving
- * Expo Go (the share-image path needs `react-native-view-shot` which
- * isn't bundled in the Expo Go runtime).
- *
- * Pure presentational — the parent passes the formatted text.
- */
 export type SharePrPillProps = {
-  /** The pre-formatted share text. Built by `buildPrShareMessage`. */
+  /** The pre-formatted share text. Used as fallback if image capture unavailable. */
   message: string;
+  /**
+   * Optional async function to capture the certificate as an image URI.
+   * Provided by the parent (SessionCompleteScreen) via a ViewShot ref.
+   * When present, the pill captures the certificate visual and shares that;
+   * falls back to text-only if capture fails or returns null.
+   */
+  onCaptureCertificate?: () => Promise<string | null>;
   testID?: string;
 };
 
-export function SharePrPill({ message, testID = 'session-complete-share-pr' }: SharePrPillProps) {
+export function SharePrPill({
+  message,
+  onCaptureCertificate,
+  testID = 'session-complete-share-pr',
+}: SharePrPillProps) {
   const { colors, layout, spacing } = useTheme();
 
   const onPress = useCallback(async () => {
     void Haptics.selectionAsync();
     try {
+      if (onCaptureCertificate) {
+        const uri = await onCaptureCertificate();
+        if (uri) {
+          const isAvailable = await Sharing.isAvailableAsync();
+          if (isAvailable) {
+            await Sharing.shareAsync(uri, { dialogTitle: '531 Strength · New Record' });
+            return;
+          }
+        }
+      }
       await Share.share({ message });
-    } catch (err) {
-      console.error('SharePrPill.onPress Share.share failed', err);
+    } catch {
+      try {
+        await Share.share({ message });
+      } catch (err) {
+        console.error('SharePrPill: share failed', err);
+      }
     }
-  }, [message]);
+  }, [message, onCaptureCertificate]);
 
   const containerStyle: ViewStyle = {
     paddingHorizontal: layout.gutter,
@@ -75,8 +91,8 @@ export function SharePrPill({ message, testID = 'session-complete-share-pr' }: S
 }
 
 /**
- * Build the text snippet shared from the receipt. Kept pure for unit
- * testing — the visual pill component is dumb.
+ * Build the text snippet shared from the receipt when image capture is unavailable.
+ * Kept pure for unit testing — the visual pill component is dumb.
  */
 export type BuildPrShareMessageInput = {
   liftLabel: string;

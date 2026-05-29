@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 41)
+# Codebase facts (updated 2026-05-28, expedition 43)
 
 ## Architecture
 
@@ -69,6 +69,25 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 
 - `/privacy` — simple privacy policy (no data collection, local SQLite only). Required for store listings.
 - `/support` — support page with GitHub Issues link + email. Required for App Store listings.
+
+## Route utilities (lib/)
+
+- `parseRouteId(raw)` (added expedition 43) — `src/lib/parseRouteId.ts`. Parses an expo-router
+  search-param string (or `string[] | undefined`) to a nullable integer. Use in every route
+  shell that receives a numeric ID from the URL. Previously each route had the same two-line
+  `parseInt + isNaN` guard inline; this centralises it.
+
+## Image sharing (native modules added expedition 43)
+
+- `react-native-view-shot@4.0.3` — capture any React Native view as a PNG/JPG file URI.
+  Import `captureRef` from `react-native-view-shot`.
+- `expo-sharing@~55.0.20` — open the native share sheet with a file URI. Wrap with
+  `await Sharing.isAvailableAsync()` check before calling `Sharing.shareAsync(uri, options)`.
+- These are native modules — adding them changed the OTA fingerprint. Existing native builds
+  need a rebuild to receive OTAs that include these modules.
+- Usage pattern in `SessionCompleteScreen`: `const certContainerRef = useRef<View>(null)` →
+  wrap `<PRCertificate>` in `<View ref={certContainerRef} collapsable={false}>` →
+  pass `handleCaptureCert` as `onCaptureCertificate` to `<SharePrPill>`.
 
 ## Pure helpers (domain/)
 

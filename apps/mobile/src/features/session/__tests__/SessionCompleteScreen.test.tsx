@@ -79,6 +79,15 @@ jest.mock('@/data/DbProvider', () => ({
 // @gorhom/bottom-sheet stub — requires Reanimated worklets bridge which
 // is not available in Jest. Render children passthrough is enough for
 // behavioral tests on the screen that hosts TmApplySheet.
+jest.mock('react-native-view-shot', () => ({
+  captureRef: jest.fn().mockResolvedValue('file:///tmp/cert.png'),
+}));
+
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn().mockResolvedValue(true),
+  shareAsync: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.mock('@gorhom/bottom-sheet', () => {
   const React = jest.requireActual('react');
   return {

@@ -5,8 +5,9 @@ import { useTheme } from '@/design/theme';
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, type ViewStyle } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollView, View, type ViewStyle } from 'react-native';
+import { captureRef } from 'react-native-view-shot';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleCompleteBand } from './components/CycleCompleteBand';
 import { CycleGrid } from './components/CycleGrid';
@@ -45,6 +46,16 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   useSessionCompleteHaptic(data.view !== null && data.view !== undefined);
   usePrSuccessHaptic(data.view?.hasPR ?? false);
+
+  const certContainerRef = useRef<View>(null);
+  const handleCaptureCert = useCallback(async (): Promise<string | null> => {
+    if (!certContainerRef.current) return null;
+    try {
+      return await captureRef(certContainerRef.current, { format: 'png', quality: 1 });
+    } catch {
+      return null;
+    }
+  }, []);
 
   // Defense in depth: a missing or explicitly cancelled session can't
   // render a receipt, so bounce home. A stale `'in_progress'` read from
@@ -161,14 +172,16 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
           <>
             {v.showCertificate ? (
               <>
-                <PRCertificate
-                  testID="session-complete-cert"
-                  e1RM={v.e1RMDisplay}
-                  prevE1RM={v.prevE1RMDisplay}
-                  delta={v.e1RMDelta}
-                  unit={v.unitGlyph}
-                  liftLabel={v.liftLower}
-                />
+                <View ref={certContainerRef} collapsable={false}>
+                  <PRCertificate
+                    testID="session-complete-cert"
+                    e1RM={v.e1RMDisplay}
+                    prevE1RM={v.prevE1RMDisplay}
+                    delta={v.e1RMDelta}
+                    unit={v.unitGlyph}
+                    liftLabel={v.liftLower}
+                  />
+                </View>
                 <SharePrPill
                   message={buildPrShareMessage({
                     liftLabel: v.liftLower,
@@ -176,6 +189,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
                     delta: v.e1RMDelta,
                     unit: v.unitGlyph,
                   })}
+                  onCaptureCertificate={handleCaptureCert}
                 />
                 <AdjustTmCta
                   delta={v.e1RMDelta}

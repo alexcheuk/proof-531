@@ -6,8 +6,8 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 42)
-**Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9)
+**Last updated**: 2026-05-28 (Expedition 43)
+**Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
 
@@ -108,10 +108,28 @@ Use the right story for the right audience. Never mix them in a single post.
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
-| 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 42 signal:** The dominant r/vibecoding community view in 2026 is "vibe coding is a prototyping methodology, not a production methodology." 531 Strength directly contradicts this — it has CI-enforced boundaries, property-tested domain logic, N+ real iterations, and a shipped App Store product. The draft should lead with this contrast explicitly: "Most vibe-coded apps are prototypes. This one is in production." That's a sharper hook than just describing the architecture. See `docs/marketing/reddit-vibecoding-draft.md` for the updated version. |
+| 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 · comment prep added expedition 43 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** Added specific data points for comment prep — 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. These are the exact concerns 531 Strength's CI enforcement answers. The draft now includes "Expedition 43 signal" section with these specifics and explains how to use them in comments without sounding defensive. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
+
+## Launch-day operations guide
+
+**Status: created (Expedition 43).**
+
+The guide is at `docs/marketing/launch-day-operations-guide.md`. It is the consolidated execution playbook for when iOS approval arrives — every tactic sequenced, timed, and linked to the appropriate draft. Previously the execution sequence was spread across five separate files.
+
+**What it covers:**
+- Hour 0: get the App Store URL, confirm GitHub Releases URL, update longform narrative
+- Day 1: r/531Discussion (timing window, which draft, what to fill in, how to handle comments)
+- Day 2: r/weightroom (24h stagger, thread reply vs. standalone decision)
+- Days 3-4: X/Twitter @jimwendler tweet
+- Week 1: r/reactnative showcase thread, r/vibecoding contrast post, HN Show HN
+- Weeks 2-3: Indie Hackers milestone post, Product Hunt launch
+- Ongoing: r/privacy, T-Nation
+- What's ready vs. what still needs Alex input
+
+**No input from Alex needed to use this guide** — the blanks are clearly marked and the rest is ready.
 
 ## The long-form narrative asset
 
@@ -150,6 +168,22 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
+
+## Expedition 43 — Research notes
+
+**Date:** 2026-05-28
+
+**App Store timing context confirmed:** iOS review times are now 2–7 days for new submissions (up from historical 24–48h). App releases on iOS are up 89% year-over-year as of April 2026, driven by AI coding tools. Apple's review team is processing dramatically more submissions with higher scrutiny. This affects launch planning: assume 3–7 day wait, have all posts pre-written, don't time the launch campaign around a specific day of submission.
+
+**r/vibecoding comment prep sharpened:** New concrete data for the "CI enforcement" counter-argument. A security analysis of 1,645 Lovable-built apps found 170 with exploitable vulnerabilities. A survey of 18 CTOs found 16 reported production disasters from AI code. These are the specific outcomes the community is reacting to. 531 Strength's answer (CI-enforced boundaries, property tests, QA agent) is architectural, not aspirational — that distinction lands in a community that's seen the failures. Updated `docs/marketing/reddit-vibecoding-draft.md` with a "Expedition 43 signal" section including comment prep language.
+
+**Launch-day operations guide created:** A consolidated hour-by-hour playbook for when iOS approval arrives. Previously the execution sequence was spread across five separate draft files; this guide pulls it together into one doc Alex can run against. Covers: what to do at hour 0, Day 1 (r/531Discussion), Day 2 (r/weightroom), Days 3–4 (X tweet), Week 1 (r/reactnative, r/vibecoding, HN), Weeks 2–3 (IH, Product Hunt), and ongoing channels. See `docs/marketing/launch-day-operations-guide.md`.
+
+**App Store timing note added to questions-for-alex.md:** Context added so Alex knows the current review environment — what to expect, what rejection patterns look like, and why the privacy angle should be explicit in App Store metadata.
+
+**No new community threads found:** Reddit search through web indices still returns no indexed r/531Discussion or r/weightroom threads. No live thread to respond to this loop. Strategy remains: post on iOS launch day, not in response to an existing thread.
+
+**HN and IH traction signals remain positive:** Workout.cool (827 points, 233 comments, May 2026) confirmed the fitness Show HN appetite is real. The top criticism there (bad programming quality, no progression logic) is the exact criticism 531 Strength is immune to — pre-answering it in the HN first comment remains the right call. AI fitness coach Show HN also live in April 2026 — demonstrates the category is active and HN is engaging with it.
 
 ## Expedition 42 — Research notes
 

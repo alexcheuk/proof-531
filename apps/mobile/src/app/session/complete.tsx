@@ -1,4 +1,5 @@
 import { SessionCompleteScreen } from '@/features/session/SessionCompleteScreen';
+import { parseRouteId } from '@/lib/parseRouteId';
 import { useLocalSearchParams } from 'expo-router';
 
 /**
@@ -9,8 +10,8 @@ import { useLocalSearchParams } from 'expo-router';
  */
 export default function CompleteRoute() {
   const { sessionId, from } = useLocalSearchParams<{ sessionId?: string; from?: string }>();
-  const parsed = sessionId ? Number.parseInt(sessionId, 10) : Number.NaN;
-  if (Number.isNaN(parsed)) return null;
+  const parsed = parseRouteId(sessionId);
+  if (parsed === null) return null;
   const origin: 'live' | 'history' = from === 'history' ? 'history' : 'live';
   return <SessionCompleteScreen sessionId={parsed} origin={origin} />;
 }

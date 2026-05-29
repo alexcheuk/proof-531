@@ -10,6 +10,16 @@ These are the gaps between what can be drafted from repo context and what needs 
 
 ---
 
+## App Store approval timing context (Expedition 43)
+
+iOS App Store review times have increased significantly in 2026. New app submissions are taking 2–5 days typically, with spikes to 7+ days during peak periods. The cause: app releases on iOS are up 89% year-over-year in April 2026, driven largely by AI coding tools lowering the barrier to submission. Apple's review team is processing a dramatically higher volume while increasing scrutiny.
+
+Practical implication: if 531 Strength is in review now, expect 3–7 days before a decision. An expedited review request is possible through App Store Connect but Apple accepts these sparingly — reserve it for genuine emergencies, not launch timing. The better move is to treat approval as happening on day 3–7 and have all posts pre-written and ready to go. The launch-day guide at `docs/marketing/launch-day-operations-guide.md` is set up for exactly that: fill in two blanks and post in sequence.
+
+If the submission gets rejected: the most common rejection reasons for new apps in 2026 are incomplete metadata, edge cases that break during review (offline mode, empty data states, invalid inputs), and unclear data handling explanations. The privacy angle (zero analytics, local SQLite, no account) should be explicitly stated in the App Store description — that's both a marketing message and a pre-answer to reviewer scrutiny.
+
+---
+
 ## Blocking — needed before iOS launch day posts
 
 **1. The GitHub Releases URL**

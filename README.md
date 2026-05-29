@@ -1,46 +1,101 @@
 # 531 Strength
 
-A free, local-first 5/3/1 + BBB strength training tracker for iOS and Android. No account. No ads. No data leaves your phone. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop.
+**A free, local-first 5/3/1 + BBB strength training tracker for iOS and Android.**
 
-- **App**: [531.dev](https://531.dev)
-- **Dev blog**: [531.dev/blog](https://531.dev/blog)
-- **How it's built**: [531.dev/process](https://531.dev/process)
-- **Changelog**: [`CHANGELOG.md`](./CHANGELOG.md)
-- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — SQLite on-device, zero telemetry.
+No account. No ads. No subscription. No data leaves your phone.
 
-## What it is
+[![CI](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml/badge.svg)](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml)
+[![License: Source Available](https://img.shields.io/badge/license-source%20available-blue)](./LICENSE)
+[![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](https://531.dev)
+[![Expo SDK](https://img.shields.io/badge/Expo%20SDK-55-000020?logo=expo)](https://docs.expo.dev/versions/v55.0.0/)
 
-A focused 5/3/1 training log for Jim Wendler's 5/3/1 program. Enter your training maxes, follow the program, log your AMRAP sets, run the Boring But Big (BBB) accessory work. The math handles the rest — percentages, plate calculator, cycle progression, PR tracking, lbs/kg support.
+---
 
-Everything stays on your device. No account required. No subscription. No data collection.
+**App** · [531.dev](https://531.dev) &nbsp;|&nbsp;
+**Dev blog** · [531.dev/blog](https://531.dev/blog) &nbsp;|&nbsp;
+**How it's built** · [531.dev/process](https://531.dev/process)
 
-The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a 30-minute cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice. The agent loop has run 42+ iterations; everything you see is the product of 30-minute autonomous sessions committing real code.
+---
 
-## Quick start
+## What it does
+
+Enter your training maxes once. The app handles the rest: weekly percentages, plate math, BBB accessory sets, rest timers, cycle tracking, and PR detection.
+
+**Features**
+
+- **5/3/1 program** — weeks 1/2/3/4 (deload) plus the 7th Week Protocol TM test
+- **BBB accessory work** — Boring But Big sets calculated automatically at 50% TM
+- **Plate calculator** — visual bar + plate layout for every working set
+- **PR tracking** — estimated 1RM logged after every AMRAP set; certificate on PRs
+- **Rest timer** — background-safe countdown with alarm on completion; Android live notification
+- **Cycle progress** — grid view of every session in the current cycle
+- **lbs + kg** — full unit support with correct increment rules per lift
+- **TM adjustment suggestions** — after TM test week, calm data-driven suggestions
+- **Lift rollback** — undo the last N sessions for any lift (settings Danger Zone)
+- **Local-only** — SQLite on-device, zero telemetry, no account
+
+## Install
+
+| Platform | Link |
+|---|---|
+| Android APK | [GitHub Releases](https://github.com/alexcheuk/proof-531/releases) |
+| iOS App Store | Coming soon |
+
+## Quick start (development)
 
 ```bash
-# Prerequisites: Node 22 (.nvmrc), pnpm 9.15+
+# Prerequisites: Node 22, pnpm 9.15+
 corepack enable && corepack prepare pnpm@latest --activate
 
-pnpm install                                    # workspace install
-pnpm build:dev                                  # build the dev client APK (needs Android SDK + JDK 17)
-# OR: eas build --profile development -p android  # build in the cloud (needs `eas login`)
+pnpm install
 
-pnpm --filter @fivethreeone/mobile start        # boot Metro, connect the dev-client APK
+# Build the dev-client APK (needs Android SDK + JDK 17)
+pnpm build:dev
+# OR build in the cloud (needs `eas login`)
+eas build --profile development -p android
+
+# Boot Metro — connect the dev-client APK
+pnpm --filter @fivethreeone/mobile start
 ```
 
-This project uses a **custom dev client** (built with `expo-dev-client`). Expo Go cannot run it — native modules like `expo-notifications` are absent there. Install the dev client APK on a device or emulator, then connect via Metro. The dev client only needs to be rebuilt when native modules change; JS/TS edits hot-reload over the running client.
+This project uses a **custom dev client** (not Expo Go). Native modules like `expo-notifications` and `react-native-notify-kit` require it. Install the dev-client APK on a device or emulator and connect via Metro. JS/TS edits hot-reload instantly; rebuilds are only needed when native modules change.
 
 ### Daily commands
 
 ```bash
-pnpm typecheck                              # tsc --noEmit across workspace
-pnpm lint                                   # biome
-pnpm test                                   # jest
-pnpm expo-doctor                            # expo doctor (renamed to dodge pnpm's `doctor` builtin)
-pnpm run ci                                 # full chain (use `run` — `ci` is also a pnpm builtin)
-pnpm verify                                 # ci + Metro bundle check + web build
+pnpm typecheck          # tsc --noEmit across workspace
+pnpm lint               # biome
+pnpm test               # jest
+pnpm run ci             # full CI chain (typecheck + lint + test + boundary checks)
+pnpm verify             # ci + Metro bundle check + web build
 ```
+
+## How it's built
+
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 43+ iterations have run; every line of code is the product of 30-minute agent sessions.
+
+The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
+
+See [531.dev/process](https://531.dev/process) and the [dev blog](https://531.dev/blog) for the full story.
+
+## Architecture
+
+```
+apps/mobile/src/
+  app/          # expo-router routes (thin shells only)
+  design/       # tokens, theme, primitives — only place hex/px live
+  domain/       # pure 5/3/1 math — no React, no async, no DB
+  data/         # Drizzle ORM + expo-sqlite, TanStack Query hooks
+  features/     # screen composition
+  lib/          # pure helpers: haptics, time, plate logic, routes
+```
+
+Four hard boundary rules, enforced by the reviewer agent on every commit:
+
+1. Hex/px literals only in `design/`
+2. `domain/` is pure — no React, no async, no Drizzle
+3. Components consume data via hooks — never import Drizzle directly
+4. `app/` routes are thin shells — no logic, just param extraction
 
 ## Documentation
 
@@ -48,22 +103,10 @@ pnpm verify                                 # ci + Metro bundle check + web buil
 |---|---|
 | [`docs/DESIGN.md`](docs/DESIGN.md) | Product + visual design spec |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Stack, layout, boundary rules |
-| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to add a task, run the orchestrator, conventional commits |
-| [`docs/decision-log.md`](docs/decision-log.md) | Notable decisions and why they were made |
+| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to add a task, run the orchestrator |
+| [`docs/decision-log.md`](docs/decision-log.md) | Notable decisions and their reasoning |
 | [`CLAUDE.md`](CLAUDE.md) | Agent orientation — start here if you're a Claude agent |
-
-## How work happens
-
-The primary day-to-day driver is the `/auto-improve` loop — a Claude agent running on a 30-minute cron that reads the task queue, picks 12–15 items to improve, ships them, and writes a dev-blog post about what changed. The loop is fully automated; the agent does the design, implementation, QA, and publishing in one go.
-
-For new features, the `rn-expo-pipeline` skill runs a coordinated `rn-designer` → `rn-frontend` → `rn-qa` agent team and produces a PR-ready commit.
-
-See [`.claude/skills/`](.claude/skills/) for the orchestrator source and [`loop-memory/`](loop-memory/) for the loop's cross-iteration memory.
-
-## Note on the PWA reference
-
-Some internal docs (particularly in `docs/superpowers/`) reference `~/Development/531-pwa` — a separate web app that served as the behavioral reference during the initial port. That directory is not part of this repository. For current design work, the running mobile app itself is the reference.
 
 ## License
 
-Source available — free to run for personal use; redistribution and commercial use require explicit permission. See [`LICENSE`](./LICENSE) for the full terms and [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling.
+Source available — free to run for personal use; redistribution and commercial use require explicit permission. See [`LICENSE`](./LICENSE) for full terms and [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling (short version: SQLite on-device, zero telemetry, nothing ever leaves your phone).
