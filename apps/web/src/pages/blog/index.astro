@@ -151,7 +151,7 @@ const latest = posts.slice(0, 2);
       {posts.length === 0 ? (
         <p class="empty">No entries yet. The first loop is on its way.</p>
       ) : (
-        <ol class="log-list">
+        <ol class="log-list" id="log-list" data-total={posts.length}>
           {posts.map((post, idx) => {
             const scopes: Scope[] = post.data.scope as Scope[];
             const dateLabel = fmtDate(post.data.pubDate);
@@ -160,7 +160,7 @@ const latest = posts.slice(0, 2);
             const featuredRow = idx === 0;
             const hasAudio = Boolean(post.data.audio);
             return (
-              <li class:list={['log-row', { featured: featuredRow }]}>
+              <li class:list={['log-row', { featured: featuredRow, 'log-row--fold': idx >= 20 }]}>
                 <a href={`/blog/${post.id}`} class="log-row__link">
                   <div class="date">
                     {dateLabel}
@@ -181,6 +181,13 @@ const latest = posts.slice(0, 2);
             );
           })}
         </ol>
+      )}
+      {posts.length > 20 && (
+        <div class="show-more-wrap" id="show-more-wrap">
+          <button class="show-more-btn" id="show-more-btn" type="button">
+            Show all {posts.length - 20} more posts
+          </button>
+        </div>
       )}
     </div>
   </section>
@@ -283,6 +290,20 @@ const latest = posts.slice(0, 2);
       </div>
     </div>
   </section>
+
+  <script>
+    const list = document.getElementById('log-list');
+    const wrap = document.getElementById('show-more-wrap');
+    const btn = document.getElementById('show-more-btn');
+    if (list && wrap && btn) {
+      list.classList.add('log-list--js-ready');
+      wrap.classList.add('visible');
+      btn.addEventListener('click', () => {
+        list.classList.remove('log-list--js-ready');
+        wrap.style.display = 'none';
+      });
+    }
+  </script>
 </Base>
 
 <style is:global>
@@ -566,6 +587,31 @@ const latest = posts.slice(0, 2);
     border-top: 1px solid var(--line-strong);
     border-bottom: 1px solid var(--line-strong);
   }
+  /* JS-only fold — hidden by default; JS removes .log-row--fold when "show all" is clicked.
+     Without JS, all rows are visible (progressive enhancement). */
+  .log-list--js-ready .log-row--fold { display: none; }
+  .show-more-wrap {
+    margin-top: 16px;
+    text-align: center;
+    display: none; /* hidden until JS activates */
+  }
+  .show-more-wrap.visible { display: block; }
+  .show-more-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    padding: 10px 22px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color var(--duration-base) var(--ease-standard),
+                border-color var(--duration-base) var(--ease-standard);
+  }
+  .show-more-btn:hover { color: var(--ink-0); border-color: var(--ink-0); }
   .log-list {
     list-style: none;
     padding: 0;

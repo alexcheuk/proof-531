@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 60)
+**Last updated**: 2026-05-29 (Expedition 61)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -69,7 +69,7 @@ Current gaps:
 - [x] Blog listing title and description improved (expedition 59) — title was "Dev log — 531"; now "Dev Log — 531 Strength" (includes app name for SEO); description now mentions 5/3/1 and specifies "one post per iteration"
 - [x] expedition-logs page path fixed (expedition 59) — eyebrow showed `/dev-log/expedition-logs` (wrong); corrected to `/blog/expedition-logs` (the real URL)
 - [x] Blog listing hero eyebrow `/dev-log` corrected to `/blog` (expedition 60) — the `<span class="seg">` eyebrow in `blog/index.astro` still showed `/dev-log`; the expedition 56 fix only corrected the homepage card, not the blog page's own eyebrow.
-- [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
+- [x] Blog listing show-more added (expedition 61) — 120 posts now; first 20 visible by default, "Show all N more posts" button reveals the rest via progressive-enhancement JS. Without JS, all posts visible.
 
 ### Track D — Technical health
 
@@ -88,6 +88,19 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 61 notes
+
+Three improvements across Track C (UX), Track A (SEO), and Track D (technical health):
+
+1. **Blog listing show-more button added** (Track C): With 120 posts, the `/blog` listing was a very long single page. Added progressive-enhancement JS: first 20 posts visible by default; a "Show all N more posts" button reveals the rest. Without JS, all posts remain visible. The `ScopeFilter` navigation already handles scope-based filtering; this addresses the raw count. CSS class `log-row--fold` marks folded rows; `log-list--js-ready` class is added by the script, so the fold only activates with JS.
+
+2. **Blog tag page (`/blog/tag/[scope]`) fixes** (Track A + Track C):
+   - Eyebrow breadcrumb corrected from `/dev-log/{scope}` to `/blog/tag/{scope}` — the old path 404s and was the same bug pattern fixed on the main listing (exp 56) and blog listing (exp 60).
+   - Page title updated from `Dev log — ${label} — 531` to `${label} — Dev Log — 531 Strength` — consistent with the main blog listing title format, and includes the full app name for SEO.
+   - Meta description improved to lead with `531 Strength dev log — ${label} posts` — previous description had no mention of the app name.
+
+3. **`#needs-input` checked** — no new replies from Alex. iOS still pending. Outstanding blockers unchanged (App Store URL, Alex's personal 5/3/1 history for r/531Discussion post).
 
 ### Expedition 60 notes
 
@@ -175,6 +188,9 @@ Two content-accuracy fixes shipped:
 | Blog listing eyebrow /dev-log → /blog | done · expedition 60 | blog/index.astro hero eyebrow <span class="seg"> still showed /dev-log; corrected to /blog. The expedition 56 fix only hit the homepage card. |
 | Process page Logger era dates (KPI + expedition-note) | done · expedition 60 | Two occurrences of "2026-05-27" in process.astro corrected to "2026-05-26". Expedition 54 claimed to fix but they persisted. |
 | expedition-logs.astro colophon re-verified | done · expedition 60 | Re-checked against 14-lore.md for Logger era accuracy. Text is correct — no changes needed. |
+| Blog listing show-more | done · expedition 61 | 120 posts; first 20 visible, "Show all N more posts" button via progressive-enhancement JS. |
+| Blog tag page eyebrow fix (/dev-log/{scope} → /blog/tag/{scope}) | done · expedition 61 | Same bug pattern as blog/index.astro (exp 56-60). Eyebrow corrected on /blog/tag/[scope].astro. |
+| Blog tag page title/description SEO | done · expedition 61 | Title: `Dev log — {label} — 531` → `{label} — Dev Log — 531 Strength`. Description now leads with "531 Strength dev log". |
 
 ## Discord collaboration workflow
 

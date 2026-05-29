@@ -103,12 +103,13 @@ describe('OnboardingScreen', () => {
 
     expect(input.unit).toBe('lbs');
     expect(input.enabledLifts).toEqual(['squat', 'bench', 'deadlift', 'press']);
-    // Epley(weight, reps): w * (1 + r/30) → integer-rounded for persistence.
+    // Epley(weight, reps): w * (1 + r/30) → plate-snapped to nearest 5 lb
+    // (same rounding as all other e1RM display sites — expedition 61 fix).
     // Defaults: squat 225×5, bench 185×5, deadlift 275×5, press 115×5.
-    expect(input.oneRMs.squat).toBe(Math.round(225 * (1 + 5 / 30)));
-    expect(input.oneRMs.bench).toBe(Math.round(185 * (1 + 5 / 30)));
-    expect(input.oneRMs.deadlift).toBe(Math.round(275 * (1 + 5 / 30)));
-    expect(input.oneRMs.press).toBe(Math.round(115 * (1 + 5 / 30)));
+    expect(input.oneRMs.squat).toBe(265); // 262.5 → 265
+    expect(input.oneRMs.bench).toBe(215); // 215.83 → 215
+    expect(input.oneRMs.deadlift).toBe(320); // 320.83 → 320
+    expect(input.oneRMs.press).toBe(135); // 134.17 → 135
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith('/');

@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Onboarding 1RM display now plate-snapped to nearest loadable increment
+
+**Tags:** `bug`, `convention`
+**Files:** `apps/mobile/src/features/onboarding/hooks/useOnboardingFlow.ts`
+
+The `computed` 1RM in the onboarding Review step used `Math.round(raw)` (integer rounding) while all other e1RM display sites in the app use `round(value, unit)` (plate-step snapping). The Review table now shows plate-snapped 1RM values so the "TM column = 90% of 1RM column" relationship is traceable to a loadable weight.
+
+**Why:** The expedition 59 e1RM snapping fix covered the session and history screens but missed the onboarding Review screen. Onboarding is the first place a new user sees their 1RM estimate — it should match the app's standard.
+
 ### 2026-05-29 — AmrapLogSheet delta used Math.round instead of plate-snapped round
 
 **Tags:** `bug`, `domain`, `convention`

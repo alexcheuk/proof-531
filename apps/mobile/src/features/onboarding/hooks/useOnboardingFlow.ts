@@ -3,6 +3,7 @@ import { completeOnboarding } from '@/data/accessors/onboarding';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
 import type { Lift } from '@/domain/types';
+import { round } from '@/domain/units';
 import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -49,10 +50,10 @@ export function useOnboardingFlow(): UseOnboardingFlowResult {
         input.mode === 'direct'
           ? Number(input.weight) || 0
           : estimateOneRm(Number(input.weight), Number(input.reps));
-      out[lift] = Math.round(raw);
+      out[lift] = round(raw, state.unit);
     }
     return out;
-  }, [state.enabledLifts, state.perLift]);
+  }, [state.enabledLifts, state.perLift, state.unit]);
 
   const handleFinish = useCallback(async () => {
     if (finishing) return;

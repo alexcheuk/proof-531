@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 57)
+# Codebase facts (updated 2026-05-29, expedition 61)
 
 ## Architecture
 
@@ -25,6 +25,15 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `LogSheetFooter` (`features/session/components/LogSheetFooter.tsx`) — shared
   Cancel + Save button pair. Takes `cancelTestID`, `saveTestID`, and a11y
   labels as props. Both AMRAP and TM Test sheets use this directly.
+
+## e1RM plate-snapping convention (updated expedition 61)
+
+All e1RM display sites use `round(value, unit)` from `domain/units`, NOT `Math.round()`. This includes:
+- AMRAP projection chip delta (expedition 60)
+- Session complete / history / progress screens (expedition 59)
+- Onboarding Review TM table (expedition 61)
+
+The `round()` function snaps to nearest 5 lb (lbs) or 2.5 kg (kg). Working volume totals and raw DB-stored values remain as floats (snap only at display time).
 
 ## CapsLabel coverage (updated expedition 57)
 
