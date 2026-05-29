@@ -105,16 +105,6 @@ export async function getLifetimeVolume(db: AnyDb): Promise<number> {
   return total === null || total === undefined ? 0 : total;
 }
 
-/**
- * Return the max `estimated1RM` across all set_logs for a given lift,
- * excluding rows from `excludingSessionId`. Used by the SessionComplete
- * PR certificate to render the prior best — the `prs` row alone is
- * insufficient because `appendSetLog` has already overwritten it with
- * THIS session's new best by the time the screen mounts.
- *
- * Returns `0` when no other completed-session AMRAP rows exist for the
- * lift (i.e. this is the first PR ever for that lift).
- */
 export async function getPreviousBestE1RM(
   db: AnyDb,
   lift: Lift,

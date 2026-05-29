@@ -9,17 +9,6 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
 type Session = typeof sessions.$inferSelect;
 
-/**
- * Roll back the last N completed sessions for a given lift.
- *
- * Deletes those sessions and their set_logs, resets lift_progress to
- * what it was before those sessions began, and restores the training
- * max from the oldest deleted session's snapshot. Rebuilds the PR row
- * from the surviving AMRAP logs (same contract as resetSession).
- *
- * Returns the number of sessions actually deleted (may be < n if fewer
- * completed sessions exist).
- */
 export async function rollbackLift(db: AnyDb, lift: Lift, n: number): Promise<number> {
   if (n < 1) return 0;
 
@@ -90,10 +79,6 @@ export async function rollbackLift(db: AnyDb, lift: Lift, n: number): Promise<nu
   return completed.length;
 }
 
-/**
- * Count the number of completed sessions for a lift. Used to set the
- * upper bound on the rollback stepper.
- */
 export async function countCompletedSessionsForLift(db: AnyDb, lift: Lift): Promise<number> {
   const rows = (await Promise.resolve(
     db
