@@ -28,7 +28,7 @@ The r/531Discussion and r/weightroom drafts both have `[GitHub Releases link —
 **2. The App Store URL**
 Will be needed the moment iOS goes live. Apple usually gives a short link like `https://apps.apple.com/app/id[number]`. Do you have the app ID yet from the submission? If not, it'll be available once the app is approved.
 
-**3. Have you ever posted in r/531Discussion or r/weightroom before?**
+**3. Have you ever posted in r/531Discussion or r/weightroom before?**: No
 Reddit is much more receptive to posts from accounts with community history. If you have an existing Reddit account with some history in these communities, post from that account. If not, the post needs to be even more practitioner-framed and may need to live in a thread rather than as a standalone post. This changes the copy slightly.
 
 **4. Do you want to include your personal story in the r/531Discussion post?**
@@ -51,7 +51,7 @@ Tactic 4 involves posting to X and tagging @jimwendler. What account will the tw
 
 ## Nice to have — improves copy quality
 
-**8. What's the exact complaint you had with existing apps?**
+**8. What's the exact complaint you had with existing apps?**: It looked boring, not easy to use. Wanted a plate visualizer/calculator. Not free.
 The drafts use "Strong costs $120, Boostcamp's BBB block cuts off" as the competitive framing. Are these accurate from your experience? Did you actually try those specific apps? If the framing is wrong, the post sounds dishonest to people who also use those apps. Fill in what's real.
 
 **9. Plate visualization — can you describe it in one sentence?**
