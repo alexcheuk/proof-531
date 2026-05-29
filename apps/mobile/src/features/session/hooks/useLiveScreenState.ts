@@ -73,9 +73,10 @@ export type UseLiveScreenStateOptions = {
    */
   fireWarningHaptic?: () => void;
   /**
-   * Fires a "rest done" haptic the moment the timer crosses 0 — gives the
-   * user a stronger "time to lift" cue without needing to watch the screen.
-   * Defaults to expo-haptics' `notificationAsync(Success)`; injectable.
+   * Fires the "rest done" alarm the moment the timer crosses 0 — alarm
+   * vibration pattern + foreground sound notification so the user doesn't
+   * need to watch the screen.
+   * Defaults to `defaultFireDoneAlarm`; injectable for tests.
    */
   fireDoneHaptic?: () => void;
 };
@@ -163,13 +164,31 @@ function defaultFireWarningHaptic() {
   }
 }
 
-function defaultFireDoneHaptic() {
+function defaultFireDoneAlarm() {
   try {
+    const RN = require('react-native') as typeof import('react-native');
     // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
     const Haptics = require('expo-haptics') as any;
-    Haptics.notificationAsync?.(Haptics.NotificationFeedbackType?.Success ?? 'success');
+
+    if (RN.Platform.OS === 'android') {
+      // Triple-pulse alarm vibration: [delay, on, pause, on, pause, on] in ms.
+      RN.Vibration.vibrate([0, 400, 150, 400, 150, 400]);
+      // When foregrounded, no trigger notification was scheduled — fire an
+      // immediate sound alert on the high-importance rest-done channel.
+      if (RN.AppState.currentState === 'active') {
+        const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
+          '@/lib/restChronometer',
+        );
+        void fireRestDoneAlarmForeground();
+      }
+    } else {
+      // iOS: NotificationFeedbackType.Error is a naturally multi-pulse ("alarm")
+      // haptic — stronger and more urgent than Success. expo-notifications'
+      // scheduled notification handles the sound; this gives the physical cue.
+      Haptics.notificationAsync?.(Haptics.NotificationFeedbackType?.Error ?? 'error');
+    }
   } catch (err) {
-    console.warn('useLiveScreenState: done haptic unavailable', err);
+    console.warn('useLiveScreenState: done alarm unavailable', err);
   }
 }
 
@@ -193,7 +212,7 @@ export function useLiveScreenState(
   const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
-  const fireDoneHaptic = options.fireDoneHaptic ?? defaultFireDoneHaptic;
+  const fireDoneHaptic = options.fireDoneHaptic ?? defaultFireDoneAlarm;
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;

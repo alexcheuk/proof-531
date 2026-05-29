@@ -14,7 +14,7 @@ A focused 5/3/1 training log for Jim Wendler's 5/3/1 program. Enter your trainin
 
 Everything stays on your device. No account required. No subscription. No data collection.
 
-The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a 30-minute cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice. The agent loop has run 36+ iterations; everything you see is the product of 30-minute autonomous sessions committing real code.
+The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a 30-minute cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice. The agent loop has run 39+ iterations; everything you see is the product of 30-minute autonomous sessions committing real code.
 
 ## Quick start
 

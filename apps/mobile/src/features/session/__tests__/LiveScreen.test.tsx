@@ -3,9 +3,8 @@
  *
  * Asserts:
  *   - expo-keep-awake is activated on mount and deactivated on unmount.
- *   - Rest timer fires the warning haptic at T-3s. (T-0 audio cue was removed
- *     when expo-av was dropped — Expo Go on SDK 55 no longer ships its
- *     native module.)
+ *   - Rest timer fires the warning haptic at T-3s and an alarm haptic (Error
+ *     type) at T-0.
  *   - The AMRAP bottom sheet is visible while in the `amrap-log` phase.
  *   - On phase==='complete', session-shaped queries are invalidated and the
  *     router replaces to `/session/complete?sessionId=…`.
@@ -321,12 +320,12 @@ describe('LiveScreen', () => {
     expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
     expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
 
-    // Advance to T-0 (90s elapsed) — "done" success haptic fires so the
-    // user gets a stronger "time to lift" cue without watching the screen.
+    // Advance to T-0 (90s elapsed) — "done" alarm haptic fires (Error type
+    // is a naturally multi-pulse alarm feel, stronger than Success).
     act(() => {
       jest.advanceTimersByTime(3_000);
     });
-    expect(mockNotificationAsync).toHaveBeenCalledWith('success');
+    expect(mockNotificationAsync).toHaveBeenCalledWith('error');
     expect(mockNotificationAsync).toHaveBeenCalledTimes(2);
   });
 

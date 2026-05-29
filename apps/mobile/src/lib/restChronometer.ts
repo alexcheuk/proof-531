@@ -167,6 +167,32 @@ export async function readDisplayedDeadline(): Promise<number | null> {
 }
 
 /**
+ * Fire the "Rest complete" notification immediately — used when the rest timer
+ * expires while the app is in the foreground (no trigger was scheduled in that
+ * case, so the chronometer-→-done swap never happens at the OS level).
+ * No-op on non-Android or when the module is unavailable.
+ */
+export async function fireRestDoneAlarmForeground(): Promise<void> {
+  const m = load();
+  if (!m) return;
+  try {
+    await ensureRestChannels();
+    await m.default.displayNotification({
+      id: `${REST_NOTIFICATION_ID}-done`,
+      title: 'Rest complete',
+      body: "Time to lift. You've got this.",
+      android: {
+        channelId: CHANNEL_DONE,
+        smallIcon: SMALL_ICON,
+        pressAction: { id: 'default', launchActivity: 'default' },
+      },
+    });
+  } catch {
+    // Non-fatal — foreground alarm degrades to haptics-only.
+  }
+}
+
+/**
  * Handle a "+30s" action press (foreground or background, even after process
  * death): extend the deadline carried in the notification data and re-post the
  * chronometer + reschedule the trigger. Returns the new deadline, or null.

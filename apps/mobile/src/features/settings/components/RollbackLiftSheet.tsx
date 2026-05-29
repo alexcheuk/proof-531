@@ -50,9 +50,9 @@ export function RollbackLiftSheet({
     }
   }, [maxSessions, sessionCount]);
 
-  // Reset to 1 when the selected lift changes
+  // Reset to 1 when the selected lift changes.
   useEffect(() => {
-    setSessionCount(1);
+    if (selectedLift != null) setSessionCount(1);
   }, [selectedLift]);
 
   const isValid = selectedLift != null && maxSessions > 0;

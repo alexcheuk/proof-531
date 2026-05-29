@@ -10,6 +10,8 @@ build N" section covers what landed on `main` between two preview builds.
 ## [Unreleased]
 
 ### Added
+- **Rest timer · alarm on completion** — when the rest countdown hits zero, the app fires an alarm-style haptic (iOS: Error notification type — a multi-pulse buzz; Android: triple-pulse `Vibration` pattern) plus, on Android in the foreground, an immediate "Rest complete" sound notification on the high-importance rest-done channel. The timer previously played a single soft haptic; it now acts more like an alarm so the user doesn't need to watch the screen.
+- **Danger zone · roll back a lift** — new Settings sheet that deletes the last N completed sessions for a chosen lift and reverts cycle position + training max to where they were before those sessions. Useful when a session was logged by mistake. Uses the oldest deleted session's training-max snapshot as the restore point (no history traversal needed).
 - **Android · live rest-countdown notification** — on Android, backgrounding the
   app mid-rest now posts an OS-ticked chronometer notification that counts down
   in the system tray. At T-0 it swaps to a "Rest complete" heads-up with
