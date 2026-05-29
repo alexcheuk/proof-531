@@ -10,7 +10,7 @@ function audioEnclosure(
   site: string,
 ): { url: string; length: number; type: 'audio/mpeg' } | undefined {
   try {
-    // audioPath is like "/audio/expedition-33.mp3" — resolve under public/
+    // audioPath is like "/audio/expedition-33.mp3", resolved under public/
     const localPath = join(process.cwd(), 'public', audioPath);
     const { size } = statSync(localPath);
     const siteBase = site.replace(/\/$/, '');
@@ -20,17 +20,35 @@ function audioEnclosure(
   }
 }
 
+/**
+ * Audio-only sibling of `/rss.xml`, served at `/rss-audio.xml`. Same
+ * iTunes podcast shape, but the item list is filtered to posts that
+ * actually have a spoken field log (`data.audio` set) AND whose audio
+ * file resolves on disk. This is the feed `/feeds.opml` points at, so an
+ * OPML import subscribes a podcast app to just the episodes that have
+ * audio: no text-only items that a strict podcast client would skip.
+ */
 export async function GET(context: APIContext) {
   const siteBase = (context.site ?? 'https://531strength.com').toString().replace(/\/$/, '');
-  const posts = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
+  const all = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
+
+  // Resolve enclosures up front so we can drop posts whose audio is
+  // declared in frontmatter but missing on disk; those would otherwise
+  // appear as playable episodes with a dead media link.
+  type Enclosure = NonNullable<ReturnType<typeof audioEnclosure>>;
+  const episodes: Array<{ post: (typeof all)[number]; enclosure: Enclosure }> = [];
+  for (const post of all) {
+    const enclosure = post.data.audio ? audioEnclosure(post.data.audio, siteBase) : undefined;
+    if (enclosure) episodes.push({ post, enclosure });
+  }
 
   return rss({
-    title: '531 Strength — Dev Log',
+    title: '531 Strength — Dev Log (Audio)',
     description:
-      'Field logs from each expedition — what an AI coding agent shipped, every 30 minutes.',
+      'The audio field logs from each expedition: every spoken recording, one episode per post.',
     site: context.site ?? 'https://531strength.com',
-    // iTunes podcast namespace so Pocket Cast and other podcast apps pick this
-    // up as a proper podcast feed.
+    // iTunes podcast namespace so Pocket Casts and other podcast apps pick
+    // this up as a proper podcast feed.
     xmlns: { itunes: 'http://www.itunes.com/dtds/podcast-1.0.dtd' },
     customData: [
       '<itunes:type>episodic</itunes:type>',
@@ -40,18 +58,14 @@ export async function GET(context: APIContext) {
       '<itunes:category text="Technology"/>',
       '<language>en</language>',
     ].join('\n'),
-    items: posts.map((post) => {
-      const enclosure = post.data.audio ? audioEnclosure(post.data.audio, siteBase) : undefined;
-
+    items: episodes.map(({ post, enclosure }) => {
       const itunesData: string[] = [];
       if (post.data.expedition != null) {
         itunesData.push(`<itunes:episode>${post.data.expedition}</itunes:episode>`);
       }
       itunesData.push(`<itunes:author>${authorForPost(post)}</itunes:author>`);
       itunesData.push('<itunes:explicit>false</itunes:explicit>');
-      if (enclosure) {
-        itunesData.push(`<itunes:image href="${siteBase}/favicon.svg"/>`);
-      }
+      itunesData.push(`<itunes:image href="${siteBase}/favicon.svg"/>`);
 
       return {
         title: post.data.title,
@@ -60,7 +74,7 @@ export async function GET(context: APIContext) {
         link: `/blog/${post.id}/`,
         author: authorForPost(post),
         categories: [...post.data.tags],
-        ...(enclosure ? { enclosure } : {}),
+        enclosure,
         customData: itunesData.join('\n'),
       };
     }),
