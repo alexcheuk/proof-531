@@ -241,9 +241,7 @@ export function deriveView({
   // new best by the time we mount, so we can't read it from there).
   // Convert with same precision policy as the new e1RM so the cert's delta
   // arithmetic stays internally consistent.
-  const prevE1RMDisplay = prevBestStorage
-    ? convert(prevBestStorage, storageUnit, renderUnit)
-    : 0;
+  const prevE1RMDisplay = prevBestStorage ? convert(prevBestStorage, storageUnit, renderUnit) : 0;
   const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
 
   return {

@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — e1RM display values snapped to plate increments
+
+**Tags:** `bug`, `domain`, `convention`
+**Files:** `apps/mobile/src/features/session/components/AmrapLogSheet/AmrapLogSheet.tsx`, `apps/mobile/src/features/session/hooks/useSessionCompleteData.ts`, `apps/mobile/src/features/history/bestLift.ts`, `apps/mobile/src/features/progress/components/ProgressLiftPage.tsx`, `apps/mobile/src/features/home/components/LiftPage/LiftPage.tsx`
+
+All e1RM display sites were using `Math.round()` — rounding to the nearest integer. A lifter's estimated 1RM should be expressed in weights that can actually be loaded on a bar: nearest 5 lb for lbs, nearest 2.5 kg for kg. Changed to `round()` / `convert()` (snap mode) from `domain/units`. Same fix applied to BBB display weight and TM display across live, today, and session-complete screens for consistency with cross-unit users.
+
+**Why:** User feedback: "We should be saying someone's e1RM is 222 lb, rounded to the lowest increment." An e1RM of 221.67 rounds to 222 with `Math.round` but 220 with plate-snapping. The bar-loadable weight is the honest representation. The delta values on the PR certificate and AMRAP sheet now also reflect plate-snapped arithmetic.
+
+**Trade-off / what we didn't do:** Working volume (weight × reps total) was left on `Math.round` — it's a total, not a loadable weight. Raw e1RM values stored in the DB remain unsnapped floats (snap only at display time) so PR comparison logic uses full precision.
+
 ### 2026-05-29 — ProgressScreen and Colophon migrated to CapsLabel primitive
 
 **Tags:** `architecture`, `removal`, `convention`
