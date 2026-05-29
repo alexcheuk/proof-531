@@ -1,12 +1,14 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 /**
  * Column header for the Progress cycle×day matrix. Mirrors `ProgressGridRow`'s
  * column structure: 34 px label spacer + 4 × flex 1 day cells + 54 px TM cell.
  */
 export function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
   const dayLabels: Array<{ label: string; scheme: string }> = [
     { label: 'D1', scheme: '5+' },
     { label: 'D2', scheme: '3+' },
@@ -39,29 +41,19 @@ export function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
         borderLeftColor: withLeftStrongRule ? colors.ink0 : colors.line,
       }}
     >
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize: 10,
-          letterSpacing: 1.8,
-          textTransform: 'uppercase',
-          color: colors.ink0,
-        }}
-      >
+      <CapsLabel weight="bold" color="ink0" style={{ letterSpacing: 1.8 }}>
         {label}
-      </RNText>
+      </CapsLabel>
       {sub ? (
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Medium`,
-            fontSize: 8,
-            letterSpacing: 1.44,
-            textTransform: 'uppercase',
-            color: colors.ink3,
-          }}
+        <Text
+          variant="mono"
+          weight="medium"
+          size={8}
+          color="ink3"
+          style={{ textTransform: 'uppercase', letterSpacing: 1.44 }}
         >
           {sub}
-        </RNText>
+        </Text>
       ) : null}
     </View>
   );

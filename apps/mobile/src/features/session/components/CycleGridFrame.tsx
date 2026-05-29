@@ -1,6 +1,7 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import { CycleGridCell } from './CycleGridCell';
 
 const DAY_LABELS = ['D1', 'D2', 'D3', 'D4'] as const;
@@ -22,7 +23,7 @@ export function CycleGridFrame({
   sessionsInCycle,
   testID,
 }: CycleGridFrameProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const frame: ViewStyle = {
     marginHorizontal: layout.gutter,
@@ -30,14 +31,6 @@ export function CycleGridFrame({
     borderWidth: 1,
     borderColor: colors.lineStrong,
   };
-  const weekLabel: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.62,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-  };
-
   return (
     <View style={frame}>
       <Row gap="xs" {...(testID !== undefined ? { testID } : { testID: 'cycle-grid' })}>
@@ -56,9 +49,9 @@ export function CycleGridFrame({
        * label centers drift by `3 * xs / 8` from the cell-group centers. */}
       <Row gap="xs" style={{ marginTop: 10 }}>
         {DAY_LABELS.map((d) => (
-          <RNText key={d} style={[weekLabel, { flex: 1, textAlign: 'center' }]}>
+          <CapsLabel key={d} size="xs" color="ink3" style={{ flex: 1, textAlign: 'center' }}>
             {d}
-          </RNText>
+          </CapsLabel>
         ))}
       </Row>
     </View>

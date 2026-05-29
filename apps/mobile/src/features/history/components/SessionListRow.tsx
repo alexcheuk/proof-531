@@ -1,8 +1,8 @@
 import type { Session } from '@/data/accessors/session';
 import { useDebouncedPress } from '@/design/hooks/useDebouncedPress';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { Row } from '@/design/primitives/Row';
-import { useTheme } from '@/design/theme';
 import { historyDateLabel, liftDisplayName } from '@/domain/labels';
 import { formatElapsedCompact } from '@/domain/summary';
 import type { Lift, Week } from '@/domain/types';
@@ -23,7 +23,7 @@ import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { Pressable, Text as RNText, type TextStyle } from 'react-native';
+import { Pressable } from 'react-native';
 
 function statusCaps(status: Session['status']): string {
   switch (status) {
@@ -70,7 +70,6 @@ export function SessionListRow({
   onPressPr,
 }: SessionListRowProps) {
   const router = useRouter();
-  const { colors, type } = useTheme();
   const date = new Date(session.startedAt);
   const dateText = historyDateLabel(date);
   const week = session.week as Week;
@@ -104,13 +103,6 @@ export function SessionListRow({
     .filter(Boolean)
     .join(', ');
 
-  const starStyle: TextStyle = {
-    fontFamily: `${type.mono}-Bold`,
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: colors.ink0,
-  };
-
   const prChip = hasPr ? (
     onPressPr ? (
       <Pressable
@@ -124,12 +116,20 @@ export function SessionListRow({
           pressed ? { opacity: 0.5 } : null,
         ]}
       >
-        <RNText style={starStyle}>★ PR</RNText>
+        <CapsLabel weight="bold" size="md" color="ink0" style={{ letterSpacing: 1.2 }}>
+          ★ PR
+        </CapsLabel>
       </Pressable>
     ) : (
-      <RNText style={starStyle} testID={`history-row-${session.id}-pr`}>
+      <CapsLabel
+        weight="bold"
+        size="md"
+        color="ink0"
+        style={{ letterSpacing: 1.2 }}
+        testID={`history-row-${session.id}-pr`}
+      >
         ★ PR
-      </RNText>
+      </CapsLabel>
     )
   ) : null;
 

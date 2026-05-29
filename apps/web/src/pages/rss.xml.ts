@@ -51,6 +51,9 @@ export async function GET(context: APIContext) {
       itunesData.push('<itunes:explicit>false</itunes:explicit>');
       if (enclosure) {
         itunesData.push(`<itunes:image href="${siteBase}/favicon.svg"/>`);
+        const words = post.data.summary?.split(/\s+/).length ?? 100;
+        const durationSecs = Math.max(120, Math.ceil((words * 3.5) / 175) * 60);
+        itunesData.push(`<itunes:duration>${durationSecs}</itunes:duration>`);
       }
 
       return {

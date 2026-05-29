@@ -1,13 +1,9 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
+import type { ColorToken } from '@/design/tokens';
 import * as Haptics from 'expo-haptics';
-import {
-  Pressable,
-  Text as RNText,
-  type StyleProp,
-  type TextStyle,
-  type ViewStyle,
-} from 'react-native';
+import { Pressable, type StyleProp, type ViewStyle } from 'react-native';
 
 export type RestTimerControlsProps = {
   onAddRest?: (() => void) | undefined;
@@ -21,7 +17,7 @@ export type RestTimerControlsProps = {
  * when its handler is undefined.
  */
 export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerControlsProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
   const showAny = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;
   if (!showAny) return null;
 
@@ -35,15 +31,6 @@ export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerCon
     backgroundColor: colors.bg0,
   };
   const chipPrimary: ViewStyle = { ...chipBase, backgroundColor: colors.ink0 };
-  const chipLabel: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 11,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: colors.ink0,
-  };
-  const chipLabelInverted: TextStyle = { ...chipLabel, color: colors.bg0 };
-
   return (
     <Row gap="sm" style={{ marginTop: spacing.lg }} testID="rest-timer-controls">
       {onSubRest ? (
@@ -52,7 +39,7 @@ export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerCon
           a11y="Subtract 30 seconds"
           onPress={onSubRest}
           style={chipBase}
-          textStyle={chipLabel}
+          color="ink0"
         >
           −30s
         </Chip>
@@ -63,7 +50,7 @@ export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerCon
           a11y="Add 30 seconds"
           onPress={onAddRest}
           style={chipBase}
-          textStyle={chipLabel}
+          color="ink0"
         >
           +30s
         </Chip>
@@ -74,7 +61,7 @@ export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerCon
           a11y="Skip rest and start the next set"
           onPress={onSkip}
           style={chipPrimary}
-          textStyle={chipLabelInverted}
+          color="bg0"
         >
           Skip ›
         </Chip>
@@ -88,11 +75,11 @@ type ChipProps = {
   a11y: string;
   onPress: () => void;
   style: StyleProp<ViewStyle>;
-  textStyle: StyleProp<TextStyle>;
+  color: ColorToken;
   children: string;
 };
 
-function Chip({ testID, a11y, onPress, style, textStyle, children }: ChipProps) {
+function Chip({ testID, a11y, onPress, style, color, children }: ChipProps) {
   const handle = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress();
@@ -105,7 +92,9 @@ function Chip({ testID, a11y, onPress, style, textStyle, children }: ChipProps) 
       onPress={handle}
       style={style}
     >
-      <RNText style={textStyle}>{children}</RNText>
+      <CapsLabel weight="semibold" size="md" color={color} style={{ letterSpacing: 1.8 }}>
+        {children}
+      </CapsLabel>
     </Pressable>
   );
 }

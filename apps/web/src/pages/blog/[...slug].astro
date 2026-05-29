@@ -6,17 +6,34 @@ import { authorForPost, isLoggerPost } from '~/lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  // Build a lookup of expedition number → post for expedition nav links.
+  const expeditionMap = new Map<number, CollectionEntry<'blog'>>();
+  for (const p of posts) {
+    if (typeof p.data.expedition === 'number' && p.data.scope.includes('expedition')) {
+      expeditionMap.set(p.data.expedition, p);
+    }
+  }
+
+  return posts.map((post) => {
+    const expNum = post.data.expedition;
+    const prevExpedition =
+      typeof expNum === 'number' ? (expeditionMap.get(expNum - 1) ?? null) : null;
+    const nextExpedition =
+      typeof expNum === 'number' ? (expeditionMap.get(expNum + 1) ?? null) : null;
+    return {
+      params: { slug: post.id },
+      props: { post, prevExpedition, nextExpedition },
+    };
+  });
 }
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  prevExpedition: CollectionEntry<'blog'> | null;
+  nextExpedition: CollectionEntry<'blog'> | null;
 }
 
-const { post } = Astro.props;
+const { post, prevExpedition, nextExpedition } = Astro.props;
 const { Content } = await render(post);
 
 const formatted = post.data.pubDate.toLocaleDateString('en-US', {
@@ -124,6 +141,24 @@ const jsonLd = {
           <span class="tag">{t}</span>
         ))}
       </footer>
+    )}
+
+    {isLogger && (prevExpedition || nextExpedition) && (
+      <nav class="expedition-nav" aria-label="Expedition navigation">
+        <div class="expedition-nav__inner">
+          {prevExpedition
+            ? <a class="expedition-nav__link expedition-nav__link--prev" href={`/blog/${prevExpedition.id}`}>
+                ← Expedition {prevExpedition.data.expedition}
+              </a>
+            : <span />
+          }
+          {nextExpedition && (
+            <a class="expedition-nav__link expedition-nav__link--next" href={`/blog/${nextExpedition.id}`}>
+              Expedition {nextExpedition.data.expedition} →
+            </a>
+          )}
+        </div>
+      </nav>
     )}
   </article>
 </Base>
@@ -324,5 +359,35 @@ const jsonLd = {
     border: 1px solid var(--line);
     border-radius: var(--radius-pill);
     padding: 2px 10px;
+  }
+
+  .expedition-nav {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--line-faint);
+  }
+
+  .expedition-nav__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .expedition-nav__link {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+
+  .expedition-nav__link:hover {
+    color: var(--ink-0);
+  }
+
+  .expedition-nav__link--next {
+    margin-left: auto;
   }
 </style>

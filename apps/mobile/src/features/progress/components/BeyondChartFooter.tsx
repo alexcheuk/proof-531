@@ -1,5 +1,6 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 /**
  * Dashed footer rendered below the grid when the goal lies past the last
@@ -19,7 +20,7 @@ export function BeyondChartFooter({
   unitGlyph,
   testID,
 }: BeyondChartFooterProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const wrap: ViewStyle = {
     flexDirection: 'row',
@@ -34,28 +35,12 @@ export function BeyondChartFooter({
 
   return (
     <View testID={testID} style={wrap}>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize: 10,
-          letterSpacing: 2.2,
-          textTransform: 'uppercase',
-          color: colors.ink2,
-        }}
-      >
+      <CapsLabel weight="bold">
         {`↓ Goal · ${cyclesBeyond} cycle${cyclesBeyond === 1 ? '' : 's'} beyond chart`}
-      </RNText>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 10,
-          letterSpacing: 1.8,
-          textTransform: 'uppercase',
-          color: colors.ink3,
-        }}
-      >
+      </CapsLabel>
+      <CapsLabel weight="semibold" color="ink3" style={{ letterSpacing: 1.8 }}>
         {`${goalValue}${unitGlyph}`}
-      </RNText>
+      </CapsLabel>
     </View>
   );
 }
