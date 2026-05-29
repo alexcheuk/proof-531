@@ -12,18 +12,7 @@ import {
   nextWorkingSetIndex,
 } from '@/domain/schemes';
 import { round as snapWeight } from '@/domain/units';
-/**
- * Live screen state machine + rest-timer driver.
- *
- * `setIndex` is bootstrapped from persisted `set_logs` rows so back-nav + resume
- * picks up where the user left off. The index then advances via local state for
- * phase transitions (set → rest → set); queries are invalidated so the receipt
- * and Today's "resume" CTA stay in sync.
- *
- * Rest duration defaults to `REST_SECONDS` (180 s, configurable in Settings).
- * The T-3s warning haptic fires deterministically off the countdown and is
- * assert-able by advancing fake timers in tests.
- */
+// setIndex bootstrapped from persisted set_logs rows so back-nav + resume picks up where the user left off.
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { clearRestSnapshot, readRestSnapshot } from '../sessionRuntime';
@@ -41,51 +30,18 @@ export type LivePhase =
   | 'complete'
   | 'reset-confirm';
 
-/**
- * Default rest duration in seconds.
- *
- * Set at **180s (3 minutes)** as a middle ground for 5/3/1 working sets.
- * Wendler's "Beyond 5/3/1" recommends 2-3 minutes between the 5s / 3s sets
- * and 4-5 minutes before the heavy top set; the BBB 5×10 supplementary work
- * typically uses 60-90 seconds. Users who run the program with shorter rest
- * can adjust in Settings.
- *
- * History: previously 90s (PWA carry-over) — too short for the heavy top
- * set per user feedback 2026-05-24.
- */
+// 180s (3 min) — previously 90s (PWA carry-over), raised after user feedback that it was too short for the top set.
 const REST_SECONDS = 180;
-/** Seconds-remaining at which the warning haptic fires. */
 const WARNING_THRESHOLD = 3;
-/**
- * How long a destructive confirm button stays armed before silently
- * disarming itself. Prevents the footgun where a user taps once
- * accidentally, looks away, and the second tap an hour later destroys
- * the session. Used by the Restart confirm flow.
- */
+// Disarms the Restart confirm button after 8s — prevents an accidental first tap from arming a later destructive tap.
 const CANCEL_ARM_TIMEOUT_MS = 8000;
 
 export type UseLiveScreenStateOptions = {
-  /** Defaults to REST_SECONDS — overridable so tests can assert on a shorter timeline. */
   restSeconds?: number;
-  /**
-   * Fires the warning haptic when the rest timer reaches T-3s.
-   * Defaults to expo-haptics' `notificationAsync(Warning)` — injectable for tests.
-   */
   fireWarningHaptic?: () => void;
-  /**
-   * Fires the "rest done" alarm the moment the timer crosses 0 — alarm
-   * vibration pattern + foreground sound notification so the user doesn't
-   * need to watch the screen.
-   * Defaults to `defaultFireDoneAlarm`; injectable for tests.
-   */
   fireDoneHaptic?: () => void;
 };
 
-/**
- * Snapshot of the most recently logged working/AMRAP set. Captured at the
- * moment of write so RestPhase can render the just-logged headline without
- * re-deriving from query state (which would race the rest transition).
- */
 export type LastLoggedSet = {
   weight: number;
   reps: number;
@@ -96,54 +52,31 @@ export type LastLoggedSet = {
 export type UseLiveScreenStateResult = {
   phase: LivePhase;
   setIndex: WorkingSetIndex;
-  /** Seconds remaining in the rest timer; 0 when not resting. */
   restRemaining: number;
-  /** Add 30s to the running countdown — no-op outside `rest`. */
   onAddRest: () => void;
-  /** Subtract 30s from the running countdown (floored at -overtime allowed) — no-op outside `rest`. */
   onSubRest: () => void;
-  /** Read the live rest deadline (ms, or null) — consumed by the notification layer. */
   getRestDeadlineMs: () => number | null;
-  /** Re-anchor the rest countdown to a deadline copied back from the notification. */
   syncRestDeadline: (endsAtMs: number) => void;
-  /** Snapshot of the most recently logged set. Cleared between sessions; null until the first log of this session. */
   lastLogged: LastLoggedSet | null;
-  /** True if the current working set is the AMRAP top set. */
   isAmrap: boolean;
-  /** True if the current set is the Week-4 TM Test set. */
   isTmTest: boolean;
-  /** Prescribed weight for the current set, snapped to the session's storage unit. */
   prescribedWeight: number;
   prescribedReps: number;
-  /** Top-set % (0..1). */
   pct: number;
-  /** True if the session row is loaded. */
   loaded: boolean;
-  /** Press handlers. */
   onLogWorkingSet: () => Promise<void>;
   onOpenAmrapSheet: () => void;
   onSaveAmrap: (reps: number) => Promise<void>;
   onCancelAmrapSheet: () => void;
-  /** Open the TM Test rep-entry sheet (Week-4 sessions only). */
   onOpenTmTestSheet: () => void;
-  /** Persist the TM Test reps (Week-4 sessions only). */
   onSaveTmTest: (reps: number) => Promise<void>;
-  /** Dismiss the TM Test sheet without saving. */
   onCancelTmTestSheet: () => void;
   onAdvanceFromRest: () => void;
-  /**
-   * Roll back the most recent `working` set log for this session and return
-   * to the `'set'` surface. No-op outside `'rest'` or when the most recent
-   * row is not a `working` set (e.g. AMRAP). Best-effort: failures are
-   * swallowed so the UI never enters an undefined state.
-   */
   onUndoLastSet: () => Promise<void>;
-  /** Open the Restart-session confirm sheet. */
   onRequestReset: () => void;
   onConfirmResetFirstTap: () => void;
   onConfirmResetSecondTap: () => Promise<void>;
   onDismissResetSheet: () => void;
-  /** True once the user has tapped the destructive Restart button once. */
   resetArmed: boolean;
 };
 

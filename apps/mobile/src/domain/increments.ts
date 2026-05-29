@@ -1,10 +1,3 @@
-/**
- * Per-cycle Training Max (TM) increments for 5/3/1.
- *
- * This module is part of `src/domain/` — a pure domain layer.
- * No framework imports, no asynchronous work, no database access.
- */
-
 import type { Lift, Unit } from './types';
 
 /** Lifts that use lower-body TM increments (10 lb / 5 kg per cycle). */
@@ -17,7 +10,6 @@ export function tmIncrement(unit: Unit, lift: Lift): number {
   return isLower ? 5 : 2.5;
 }
 
-/** Returns the next TM = currentTm + tmIncrement(unit, lift). */
 export function nextTm(currentTm: number, lift: Lift, unit: Unit): number {
   return currentTm + tmIncrement(unit, lift);
 }

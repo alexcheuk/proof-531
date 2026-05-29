@@ -1,18 +1,3 @@
-/**
- * `useLiftProgression(lift)` — assembles the Progress screen view model:
- * one row per cycle from C1 through `currentCycle + 6`, each with 4 day
- * cells (past / last-done / now / future), the cycle's TM, and a
- * `crossesGoal` marker on the cycle whose projected TM first reaches the
- * goal.
- *
- * The hook orchestrates four upstream queries (settings, TMs, lift goal,
- * completed-sessions-with-AMRAP) and threads the pure projection math in
- * `domain/progression.ts`. Display-unit conversion happens here so the
- * render boundary just consumes numbers.
- *
- * Cache key prefix `'liftProgression'` is invalidated by the
- * session-complete chain and by the goal-set mutation.
- */
 import { useQuery } from '@tanstack/react-query';
 import {
   cyclesUntilTmGoal,
@@ -39,10 +24,8 @@ type ProgressionCellPast = {
   day: 1 | 2 | 3 | 4;
   kind: 'past' | 'last-done';
   sessionId: number;
-  /** Display-unit, plate-snapped. */
   topWeight: number;
   topReps: number;
-  /** True when the cell is the AMRAP top set. Deload sessions have no AMRAP. */
   amrap: boolean;
   /**
    * Set-kind of the top-set row this cell summarises, when one is present.
@@ -53,7 +36,6 @@ type ProgressionCellPast = {
    *                    deload `✓` glyph rather than a TM-test band marker.
    */
   topSetKind: 'amrap' | 'tm-test' | null;
-  /** True for the week-4 column (formerly the deload column). */
   deload: boolean;
 };
 
@@ -61,7 +43,6 @@ type ProgressionCellNow = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'now';
-  /** Display-unit, plate-snapped — what the user is about to lift today. */
   prescribedWeight: number;
   deload: boolean;
 };
@@ -70,7 +51,6 @@ type ProgressionCellFuture = {
   cycle: number;
   day: 1 | 2 | 3 | 4;
   kind: 'future';
-  /** Display-unit, plate-snapped. 0 = no data and not projected (rare). */
   projectedWeight: number;
   deload: boolean;
 };
@@ -83,34 +63,23 @@ type ProgressionRow = {
   isCurrent: boolean;
   isFuture: boolean;
   cells: ProgressionCell[];
-  /** Display-unit, plate-snapped. */
   tm: number;
-  /** True on the first row whose `tm >= targetTm` (drives the dashed goal-rule above this row). */
   crossesGoal?: true;
 };
 
 export type LiftProgression = {
   lift: Lift;
   unit: Unit;
-  /** Current TM in display units (plate-snapped). */
   tm: number;
   currentCycle: number;
   currentWeek: 1 | 2 | 3 | 4;
-  /**
-   * All rendered cycle rows in chronological order. Range is
-   * `C1 .. currentCycle + max(FUTURE_COUNT, cyclesUntilGoal)` so the chart
-   * always shows at least 6 cycles ahead, and extends further when the
-   * persisted goal lands past that horizon.
-   */
   rows: ProgressionRow[];
-  /** Goal — value/unit in DISPLAY units; targetTm in display units too. */
   goal: {
     kind: LiftGoalKind;
     value: number;
     unit: Unit;
     targetTm: number;
   } | null;
-  /** Cycles from currentCycle until projected TM crosses goal; 0 if already past; null if no goal or unreachable. */
   cyclesUntilGoal: number | null;
 };
 

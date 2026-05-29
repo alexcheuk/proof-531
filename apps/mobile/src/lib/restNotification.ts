@@ -21,10 +21,6 @@ getNotifications()?.setNotificationHandler({
   }),
 });
 
-/**
- * Ask for notification permissions on iOS and Android 13+.
- * Returns true if granted; false if denied or irrelevant.
- */
 export async function requestNotificationPermissions(): Promise<boolean> {
   const Notifications = getNotifications();
   if (!Notifications) return false;
@@ -38,14 +34,7 @@ export async function requestNotificationPermissions(): Promise<boolean> {
   return status === 'granted';
 }
 
-/**
- * Schedule a "rest complete" notification that fires `seconds` from now.
- * Returns the notification identifier (used to cancel later) or null if
- * permissions were not granted.
- *
- * The notification fires even when the app is backgrounded or the screen
- * is off, alerting the user that their rest period has ended.
- */
+// Fires even when backgrounded or screen-off — that's the point.
 export async function scheduleRestDoneNotification(seconds: number): Promise<string | null> {
   const Notifications = getNotifications();
   if (!Notifications) return null;
@@ -74,10 +63,6 @@ export async function scheduleRestDoneNotification(seconds: number): Promise<str
   }
 }
 
-/**
- * Cancel a previously scheduled rest notification by its identifier.
- * No-op if the identifier is null or the notification already fired.
- */
 export async function cancelRestDoneNotification(id: string | null): Promise<void> {
   if (!id) return;
   const Notifications = getNotifications();

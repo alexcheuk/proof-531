@@ -1,9 +1,3 @@
-/**
- * 5/3/1 working-set schemes.
- *
- * Pure domain — no React, no async, no DB.
- */
-
 import type { Week } from './types';
 
 export type SetKind = 'warmup' | 'working' | 'amrap' | 'bbb' | 'assistance' | 'tm-test';
@@ -25,9 +19,6 @@ export type PlanEntry = {
 /** Valid working-set indices on Today / Live: 0, 1, 2. */
 export type WorkingSetIndex = 0 | 1 | 2;
 
-/**
- * 5/3/1 warmups: 40/50/60% × 5/5/3. Applied to every session.
- */
 export const WARMUPS: readonly WorkingSet[] = [
   { pct: 0.4, reps: 5, kind: 'warmup' },
   { pct: 0.5, reps: 5, kind: 'warmup' },
@@ -56,25 +47,11 @@ const WEEK_SETS: Record<Week, readonly WorkingSet[]> = {
   4: [{ pct: 1.0, reps: 5, kind: 'tm-test' }],
 };
 
-/**
- * Returns the working-set scheme for a 5/3/1 week. Fresh array per call.
- *
- * Length contract:
- *   - Weeks 1–3 → 3 sets (two working + one AMRAP top set).
- *   - Week 4 → 1 set (the TM-test set; replaces the legacy deload triple).
- *
- * Code paths that destructure `prescription(week)[0..2]` MUST narrow on the
- * week first or route week-4 through {@link tmTestSet} instead.
- */
+// Week 4 returns a single set (the TM test); destructuring [0..2] on week 4 throws — use tmTestSet() instead.
 export function prescription(week: Week): WorkingSet[] {
   return WEEK_SETS[week].map((s) => ({ ...s }));
 }
 
-/**
- * The Week-4 TM test set spec. Single set at 100% TM, prescribed reps = 5
- * (top of the 3–5 band). Use this in week-4 code paths instead of
- * `prescription(4)[0]` so the intent is explicit at the call site.
- */
 export function tmTestSet(): WorkingSet {
   // WEEK_SETS[4] is length 1 by construction; spread defensively.
   const s = WEEK_SETS[4][0];
@@ -82,12 +59,6 @@ export function tmTestSet(): WorkingSet {
   return { ...s };
 }
 
-/**
- * Thin lookup for a single working set by (week, index). Throws on out-of-range.
- *
- * Week 4 has a single set (the TM test); calling with index 1 or 2 on week 4
- * throws. Callers in week-4 code paths should prefer {@link tmTestSet}.
- */
 export function getWorkingSetByIndex(week: Week, setIndex: WorkingSetIndex): WorkingSet {
   if (setIndex !== 0 && setIndex !== 1 && setIndex !== 2) {
     throw new RangeError(`getWorkingSetByIndex: setIndex must be 0|1|2, got ${setIndex}`);
@@ -99,18 +70,6 @@ export function getWorkingSetByIndex(week: Week, setIndex: WorkingSetIndex): Wor
   return set;
 }
 
-/**
- * Lowest non-completed working-set index for the given week, or null if all
- * required sets are done. Defensive against duplicates and indices outside
- * the working-set range.
- *
- * Week 4 has a single set (index 0); supplying any week-1–3 list is identical
- * to the previous 3-set contract.
- *
- * If `week` is omitted, falls back to the legacy 3-set behavior — call sites
- * that already pass week-aware data should pass `week` so the function knows
- * how many slots to expect.
- */
 export function nextWorkingSetIndex(
   completedIndices: number[],
   week?: Week,

@@ -9,7 +9,6 @@ import {
   projectCycleRows,
   projectTmForCycle,
   projectTopSetWeight,
-  rollingAmrapMargin,
   tmAdjustmentSuggestion,
   tmFromOneRm,
 } from '../progression';
@@ -54,23 +53,6 @@ describe('bestE1RMForCycle', () => {
         },
       ),
     );
-  });
-});
-
-describe('rollingAmrapMargin', () => {
-  it('returns 0 on empty input', () => {
-    expect(rollingAmrapMargin([])).toBe(0);
-  });
-
-  it('averages (actual - prescribed) over the last N cycles', () => {
-    const cycles = [
-      { amrapPrescribedReps: 5, amrapActualReps: 9 },
-      { amrapPrescribedReps: 5, amrapActualReps: 8 },
-      { amrapPrescribedReps: 1, amrapActualReps: 5 },
-      { amrapPrescribedReps: 1, amrapActualReps: 3 },
-      { amrapPrescribedReps: 1, amrapActualReps: 4 },
-    ];
-    expect(rollingAmrapMargin(cycles, 3)).toBeCloseTo(3, 5);
   });
 });
 

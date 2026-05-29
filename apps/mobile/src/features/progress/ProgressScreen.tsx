@@ -24,11 +24,6 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
   const { colors } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
 
-  // The just-closed session id arrives as a URL param from
-  // `SessionCompleteScreen.handleClose` → `goTo.progress(..., { justCompleted })`.
-  // It's scoped to the lift in the same URL: only the matching lift's page
-  // receives it (so swiping to a different lift doesn't paint the
-  // animation on the wrong page).
   const { justCompleted: justCompletedParam, lift: urlLift } = useLocalSearchParams<{
     justCompleted?: string;
     lift?: string;
@@ -53,11 +48,6 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
     setSelectedLift(lift);
   }, [lift]);
 
-  // Per-lift scrolled flag. Each ProgressLiftPage's ScrollView is its own
-  // beast; the Masthead lives above the carousel and needs to know whether
-  // the *currently visible* page has scrolled. The page reports its
-  // boolean back via `reportScrolled`; the screen reads off the selected
-  // lift's value to drive `Masthead elevated`.
   const [scrolledByLift, setScrolledByLift] = useState<Partial<Record<Lift, boolean>>>({});
   const reportScrolled = useCallback((reporting: Lift, scrolled: boolean) => {
     setScrolledByLift((prev) =>
@@ -87,8 +77,6 @@ export function ProgressScreen({ lift }: ProgressScreenProps) {
         <ProgressLiftPage
           lift={item}
           onScrolledChange={(scrolled) => reportScrolled(item, scrolled)}
-          // Only forward the just-completed id to the lift it belongs to
-          // (the URL's `lift` param). Other pages render statically.
           justCompletedSessionId={item === urlLift ? justCompletedSessionId : undefined}
         />
       </View>

@@ -758,11 +758,6 @@ const postCount = posts.length;
 </Base>
 
 <script>
-  // Goal calculator — vanilla, no dependencies. Mirrors the mobile
-  // GoalPanel (TM/1RM toggle, ± stepper, days/week stepper, outcome strip)
-  // plus a lift picker. Math is the same `cyclesUntilTmGoal` shape: integer
-  // cycles of `tmIncrement(lift)` bumps; days = cycles × 4; months use
-  // ~4.345 weeks/month.
   type Lift = "squat" | "bench" | "deadlift" | "press";
   type Kind = "tm" | "1rm";
 
@@ -772,15 +767,6 @@ const postCount = posts.length;
     bench: 5,
     press: 5,
   };
-  const LIFT_LABEL: Record<Lift, string> = {
-    squat: "per cycle",
-    deadlift: "per cycle",
-    bench: "per cycle",
-    press: "per cycle",
-  };
-
-  // Sensible defaults per lift so the page lands on numbers a lifter
-  // recognises (225 squat → 315 etc.) before they touch anything.
   const DEFAULTS: Record<Lift, { current: number; goal: number }> = {
     squat: { current: 225, goal: 315 },
     bench: { current: 155, goal: 225 },
@@ -834,7 +820,7 @@ const postCount = posts.length;
       if (bumpKg) bumpKg.textContent = String(LIFT_INCREMENT_LB[lift] / 2);
       if (bumpLabel) {
         const liftCap = lift.charAt(0).toUpperCase() + lift.slice(1);
-        bumpLabel.textContent = `${liftCap} · ${LIFT_LABEL[lift]}`;
+        bumpLabel.textContent = `${liftCap} · per cycle`;
       }
 
       // Tabs

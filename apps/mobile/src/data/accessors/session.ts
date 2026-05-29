@@ -1,26 +1,6 @@
-/**
- * Session accessors.
- *
- * Mirrors the PWA accessors.
- *
- * Invariant (see docs/technical-design.md §4): `createSession` snapshots the
- * current TM value/unit AND the current display unit into the session row.
- * The snapshot is the source of truth for prescribed weights of this session.
- * Subsequent TM edits — including via `advanceCycle()` — do NOT mutate this
- * session's snapshot. A mid-session display-unit flip in Settings must NOT
- * change which currency this session renders in.
- *
- * Accessors take a Drizzle db handle as the first argument so tests can inject
- * a better-sqlite3-backed db while production callers pass the expo-sqlite-backed
- * `db` from `../drizzle/client`. The Drizzle query API is identical across drivers.
- *
- * Transactional trade-off: the PWA wraps these in Dexie transactions. drizzle-orm's
- * `db.transaction((tx) => ...)` exists but its typing varies across drivers and
- * we'd need to thread the tx through `getSettings` / `getCurrentTrainingMaxes` /
- * `advanceDay` (which take `AnyDb`, not the more specific tx type). Since the
- * mobile DB is single-writer (JS event loop, no concurrent expo-sqlite writers
- * in practice) we skip the wrapper. Each call's reads/writes are still sequential.
- */
+// Invariant: createSession snapshots the TM value/unit AND displayUnit into the row.
+// That snapshot is the source of truth for prescribed weights — TM edits and unit flips must NOT mutate it.
+// No transactions: the mobile DB is single-writer (JS event loop), so sequential reads/writes are safe.
 import { and, desc, eq, isNotNull, ne } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
@@ -34,17 +14,6 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
 export type Session = typeof sessions.$inferSelect;
 
-/**
- * Create a new in-progress Session for the given lift, snapshotting the
- * current TrainingMax (value + unit) and current displayUnit into the row.
- *
- * Idempotent on the single-session invariant (§4): if an in_progress row
- * already exists for this lift, returns it instead of inserting a duplicate.
- * If an in_progress row exists for a DIFFERENT lift, throws — callers
- * should check `getActiveSession` first and route to that lift's surface.
- *
- * Throws if no TM exists for the lift — callers should gate on onboarding.
- */
 export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
   // Single-session invariant: reuse any existing in_progress row for this
   // lift; refuse to create a parallel session while another lift's session

@@ -25,17 +25,6 @@ export function scopeCounts(posts: BlogEntry[]): Record<Scope, number> {
   return counts;
 }
 
-/**
- * Sort posts newest first.
- *
- * `pubDate` is a full ISO 8601 datetime (not just a calendar date) — see
- * `apps/web/src/content.config.ts` and the dev-blog template in
- * `loop-memory/03-dev-blog.md`. That gives us a real ordering even when
- * two posts share a calendar date (multiple loops in one day, an
- * off-cycle post landing the same day as a loop). `id` tiebreak is kept
- * as a last-resort safety net for the case where two posts somehow
- * publish at the exact same millisecond.
- */
 export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
   return [...posts].sort((a, b) => {
     const diff = b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
@@ -44,16 +33,7 @@ export function sortPostsNewestFirst(posts: BlogEntry[]): BlogEntry[] {
   });
 }
 
-/**
- * Sort expedition Logger posts by expedition number descending (highest
- * expedition number first). This is the canonical sort for the
- * /blog/expedition-logs listing — expedition number is authoritative for
- * ordering there; pubDate can drift due to timezone offsets in
- * agent-generated timestamps.
- *
- * Non-expedition posts (no `expedition` field) sort to the end, ordered
- * by pubDate descending as a fallback.
- */
+// Expedition number is authoritative for ordering — pubDate can drift due to timezone offsets in agent-generated timestamps.
 export function sortExpeditionsByNumber(posts: BlogEntry[]): BlogEntry[] {
   return [...posts].sort((a, b) => {
     const expA = a.data.expedition ?? -1;
@@ -63,11 +43,6 @@ export function sortExpeditionsByNumber(posts: BlogEntry[]): BlogEntry[] {
   });
 }
 
-/**
- * True if the post is a Logger field log (has both `expedition` and `loggerName`
- * in frontmatter and includes `'expedition'` in scope). Used to drive the
- * author/sign-off rendering on listing pages.
- */
 export function isLoggerPost(entry: BlogEntry): boolean {
   return (
     typeof entry.data.expedition === 'number' &&
@@ -76,20 +51,8 @@ export function isLoggerPost(entry: BlogEntry): boolean {
   );
 }
 
-/**
- * Posts written under the Margin persona (2026-05-19 → 2026-05-26 morning).
- * Margin was let go on 2026-05-26 and Verso took over the same day; the
- * handoff landed mid-date, so a string comparison on `post.id` fails for
- * Verso posts whose slug sorts alphabetically before "verso-day-one"
- * (loop-041 post-mortem). An explicit set is uglier but bulletproof —
- * a future scribe handoff just freezes the previous scribe's set the
- * same way.
- *
- * Two sources of truth contributed to this list: 17 pre-naming posts
- * (2026-05-19 / -24 / -25) that have no sign-off line but were written
- * under Margin's tenure per the persona doc, plus 11 posts from
- * 2026-05-26 that end with `— Margin`.
- */
+// String comparison on post.id fails for the mid-date 2026-05-26 handoff (Verso posts sort before "verso-day-one").
+// Explicit set is bulletproof; freeze the set on any future scribe handoff the same way.
 const MARGIN_POSTS: ReadonlySet<string> = new Set([
   '2026-05-19-day-zero-the-rubric',
   '2026-05-24-from-queue-to-loop',
@@ -121,17 +84,6 @@ const MARGIN_POSTS: ReadonlySet<string> = new Set([
   '2026-05-26-two-hooks-one-shape',
 ]);
 
-/**
- * Persona attribution for a blog post. Used by both the post page's
- * JSON-LD structured-data block and the RSS feed's `<author>` field, so
- * the byline a search engine or feed reader sees matches the visible
- * sign-off on the page.
- *
- * Order of precedence:
- *   1. Logger post (post-2026-05-27): `<loggerName>, Logger of Expedition N`
- *   2. Margin post (pre-2026-05-26 morning): see MARGIN_POSTS
- *   3. Verso (default for everything in between — and Verso-mode handoff posts)
- */
 export function authorForPost(entry: BlogEntry): string {
   if (isLoggerPost(entry)) {
     return `${entry.data.loggerName}, Logger of Expedition ${entry.data.expedition} (Claude agent)`;

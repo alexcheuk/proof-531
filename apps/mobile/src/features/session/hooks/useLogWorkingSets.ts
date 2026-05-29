@@ -12,31 +12,11 @@ import { useCallback } from 'react';
 import { clearRestSnapshot, setRestSnapshot } from '../sessionRuntime';
 import type { LastLoggedSet, LivePhase } from './useLiveScreenState';
 
-/**
- * Owns the two persistence callbacks fired by the Live screen's CTA:
- *
- *   - `onLogWorkingSet()` — append a `working` set log, advance the local
- *     setIndex, transition to `'rest'` (or `'complete'` on the last set
- *     of a deload week).
- *   - `onSaveAmrap(reps)` — append an `amrap` set log, snapshot the
- *     estimated 1RM for RestPhase, invalidate the PR-bearing query
- *     surface, and transition to `'complete'`.
- *
- * Side effects are bundled here so the screen-state hook stays focused
- * on phase + index machinery and so the persistence contract can be
- * tested in isolation.
- */
 export type UseLogWorkingSetsOptions = {
   sessionId: number | null;
   setIndex: WorkingSetIndex;
   prescribedWeight: number;
   prescribedReps: number;
-  /**
-   * Configured rest target in seconds — stamped into the runtime snapshot
-   * so a remount during rest can restore the running countdown. Defaults
-   * to the production constant when omitted (tests don't care about the
-   * absolute value, only that the snapshot exists).
-   */
   restSeconds?: number;
   setLastLogged: (snapshot: LastLoggedSet) => void;
   setSetIndex: (next: WorkingSetIndex) => void;
@@ -46,14 +26,6 @@ export type UseLogWorkingSetsOptions = {
 export type UseLogWorkingSetsResult = {
   onLogWorkingSet: () => Promise<void>;
   onSaveAmrap: (reps: number) => Promise<void>;
-  /**
-   * Persist a Week-4 TM Test set log. Terminal: writes one `'tm-test'` row,
-   * marks the session complete, and transitions the live screen to
-   * `'complete'`. No PR check (TM tests are bounded by definition and never
-   * produce e1RM PRs — the existing AMRAP-only filter in `appendSetLog`
-   * does the right thing implicitly, but TM-test rows are written directly
-   * without re-entering the AMRAP branch).
-   */
   onSaveTmTest: (reps: number) => Promise<void>;
 };
 

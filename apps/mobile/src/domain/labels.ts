@@ -1,28 +1,11 @@
-/**
- * String labels for 5/3/1 sessions — lift names, week scheme glyphs, and
- * locale-stable date headers.
- *
- * Pure: no React, no async, no DB. Safe to call from any layer.
- */
-
 import type { Lift, Week } from './types';
 
-/**
- * Canonical lift ordering — used by route param parsing, settings UI, and any
- * place that needs to iterate lifts in a stable order.
- */
 export const LIFTS: readonly Lift[] = ['squat', 'bench', 'deadlift', 'press'];
 
-/** Type guard for a string param being a valid Lift. */
 export function isLift(v: string | undefined): v is Lift {
   return typeof v === 'string' && (LIFTS as readonly string[]).includes(v);
 }
 
-/**
- * Human-readable lift label. Used in headlines (`Squat day.`) and ARIA
- * descriptions. Title-case — `.caps` / `text-transform: uppercase` is applied
- * at render time, not in the source string.
- */
 export function liftDisplayName(lift: Lift): string {
   switch (lift) {
     case 'squat':
@@ -36,13 +19,7 @@ export function liftDisplayName(lift: Lift): string {
   }
 }
 
-/**
- * Week scheme glyph for the title eyebrow.
- *   1 → 5/5/5+   2 → 3/3/3+   3 → 5/3/1+   4 → TM TEST
- *
- * Week 4 was the classic Wendler deload; replaced (forever-forward) with
- * the 7th Week Protocol TM test.
- */
+// Week 4 was the classic Wendler deload; replaced by the 7th Week Protocol TM test.
 export function weekLabel(week: Week): string {
   switch (week) {
     case 1:
@@ -56,11 +33,6 @@ export function weekLabel(week: Week): string {
   }
 }
 
-/**
- * Short caps-mono intent line for Today/Live — one phrase per 5/3/1 week.
- * Surfaces the *why* of the week's rep scheme so the user understands the
- * arc of the cycle without reading a programming primer.
- */
 export function weekIntent(week: Week): string {
   switch (week) {
     case 1:
@@ -90,12 +62,7 @@ const MONTH_ABBR = [
   'DEC',
 ] as const;
 
-/**
- * `MON · JAN 6` style date label (uppercase weekday + uppercase month + day).
- *
- * Pure: takes a Date, returns a string. Avoids `Intl.DateTimeFormat` so the
- * output is locale-stable across environments.
- */
+// Avoids Intl.DateTimeFormat — output must be locale-stable across environments.
 export function dateLabel(date: Date): string {
   const weekday = WEEKDAY_ABBR[date.getDay()];
   const month = MONTH_ABBR[date.getMonth()];
@@ -103,10 +70,7 @@ export function dateLabel(date: Date): string {
   return `${weekday} · ${month} ${day}`;
 }
 
-/**
- * Full proper-noun name used in settings rows and table headers.
- * Title-case — unlike `liftLongName` which is lower-case for use in prose.
- */
+/** Title-case proper noun ("Back squat") for settings rows and table headers. Lower-case variant: liftLongName. */
 export function liftProperName(lift: Lift): string {
   switch (lift) {
     case 'squat':
@@ -120,10 +84,7 @@ export function liftProperName(lift: Lift): string {
   }
 }
 
-/**
- * Colloquial lift name used in the Progress screen hero ("on the back squat").
- * Lower-case — caps/text-transform is applied at render time.
- */
+/** Lower-case colloquial name ("back squat") for prose. Title-case variant: liftProperName. */
 export function liftLongName(lift: Lift): string {
   switch (lift) {
     case 'squat':
@@ -137,17 +98,6 @@ export function liftLongName(lift: Lift): string {
   }
 }
 
-/**
- * Smart date label for History rows. Returns:
- *   `TODAY`               — same local day as `now`
- *   `YESTERDAY`           — previous local day
- *   `MON · JAN 6` style   — older sessions (`dateLabel` format)
- *
- * Surfacing TODAY/YESTERDAY makes recent sessions instantly readable
- * without forcing the user to do the date math themselves.
- *
- * Pure: pass `now` for testability.
- */
 export function historyDateLabel(date: Date, now: number = Date.now()): string {
   const startOfDay = (ms: number): number => {
     const d = new Date(ms);
