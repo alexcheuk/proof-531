@@ -30,7 +30,7 @@ export function LiftStats({ tmValue, tmUnit, bestE1RM, cycle }: LiftStatsProps) 
         },
         {
           label: 'BEST e1RM',
-          value: bestE1RM != null ? String(Math.round(bestE1RM)) : '—',
+          value: bestE1RM != null ? String(bestE1RM) : '—',
         },
         {
           label: 'CYCLE',

@@ -7,7 +7,7 @@ import { useTheme } from '@/design/theme';
 import { estimateOneRm } from '@/domain/epley';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift, Unit } from '@/domain/types';
-import { displayUnit } from '@/domain/units';
+import { displayUnit, round } from '@/domain/units';
 /**
  * Bottom-sheet AMRAP rep logger.
  *
@@ -59,7 +59,7 @@ export function AmrapLogSheet({
   });
 
   const predictedE1RMRaw = estimateOneRm(prescribedWeight, reps);
-  const predictedE1RM = Math.round(predictedE1RMRaw);
+  const predictedE1RM = round(predictedE1RMRaw, unit);
   const existingBest = existingBestE1RM ?? 0;
   const isPotentialPR = reps > 0 && predictedE1RMRaw > existingBest;
   useAmrapPrEdgeHaptic(open, isPotentialPR);
@@ -67,7 +67,7 @@ export function AmrapLogSheet({
   // Rounded comparison so floating-point drift on the Epley calc doesn't
   // mark an obvious tie as a near-miss. Requires an existing baseline.
   const isTiePR =
-    !isPotentialPR && reps > 0 && existingBest > 0 && predictedE1RM === Math.round(existingBest);
+    !isPotentialPR && reps > 0 && existingBest > 0 && predictedE1RM === round(existingBest, unit);
   // Real-time delta against the user's current PR. Only surfaced when the
   // user has a prior PR (no baseline → no delta to brag about).
   const deltaFromBest = existingBest > 0 ? predictedE1RM - Math.round(existingBest) : null;

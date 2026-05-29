@@ -6,7 +6,7 @@ import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
-import { displayUnit } from '@/domain/units';
+import { convert, displayUnit } from '@/domain/units';
 /**
  * Per-lift content body on Home. Reanimated `LinearTransition` animates
  * layout when the selected lift changes (swap-out → swap-in feels like a
@@ -65,6 +65,7 @@ export function LiftPage({
   const router = useRouter();
   const { spacing } = useTheme();
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
+  const bestE1RMDisplay = bestE1RM != null ? convert(bestE1RM, storageUnit, displayUnitProp) : null;
   const openProgress = () => goTo.progress(router, lift);
   const lastTrained = useLastCompletedSessionForLift(lift);
   const lastTrainedHint =
@@ -135,7 +136,7 @@ export function LiftPage({
         <LiftStats
           tmValue={state.tmDisplay}
           tmUnit={displayUnitProp}
-          bestE1RM={bestE1RM}
+          bestE1RM={bestE1RMDisplay}
           cycle={cycle}
         />
       </View>

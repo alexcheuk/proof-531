@@ -52,7 +52,7 @@ describe('deriveView (useSessionCompleteData)', () => {
     });
     expect(v.hasPR).toBe(true);
     expect(v.showCertificate).toBe(true);
-    expect(v.e1RMDisplay).toBe(269);
+    expect(v.e1RMDisplay).toBe(270);
   });
 
   it('does NOT show the certificate when no PR was set', () => {
@@ -99,8 +99,8 @@ describe('deriveView (useSessionCompleteData)', () => {
       settingsData: undefined,
       prevBestStorage: 0,
     });
-    // 200 × (1 + 5/30) = 233.33 → rounds to 233.
-    expect(v.e1RMDisplay).toBe(233);
+    // 200 × (1 + 5/30) = 233.33 → snaps to nearest 5lb → 235.
+    expect(v.e1RMDisplay).toBe(235);
   });
 
   it('clamps cycle position to sessionsInCycle even for very high weeks', () => {
@@ -220,7 +220,7 @@ describe('deriveView (useSessionCompleteData)', () => {
       settingsData: undefined,
       prevBestStorage: 250,
     });
-    // New = 267 (rounded), prev = 250 → delta = 17.
-    expect(v.e1RMDelta).toBe(17);
+    // New = 265 (266.667 snapped to nearest 5lb), prev = 250 → delta = 15.
+    expect(v.e1RMDelta).toBe(15);
   });
 });

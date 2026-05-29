@@ -9,7 +9,7 @@ import { LOWER_BODY, tmIncrement } from '@/domain/increments';
 import { liftLongName } from '@/domain/labels';
 import { cyclesUntilTmGoal } from '@/domain/progression';
 import type { Lift } from '@/domain/types';
-import { displayUnit, displayWeight } from '@/domain/units';
+import { convert, displayUnit } from '@/domain/units';
 import { QueryShell } from '@/features/shared/QueryShell';
 import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
@@ -60,7 +60,7 @@ export function ProgressLiftPage({
   const liftPr = (() => {
     const row = prs.data?.find((p) => p.lift === lift) ?? null;
     if (!row) return null;
-    return Math.round(displayWeight(row.bestE1RM, storageUnit, displayU));
+    return convert(row.bestE1RM, storageUnit, displayU);
   })();
 
   const {

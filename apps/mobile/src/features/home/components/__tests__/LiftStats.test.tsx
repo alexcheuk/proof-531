@@ -24,8 +24,8 @@ describe('LiftStats', () => {
     expect(screen.getByText('140 kg')).toBeTruthy();
   });
 
-  it('rounds the best e1RM display to a whole number', () => {
-    const screen = renderStats(<LiftStats tmValue={225} tmUnit="lbs" bestE1RM={297.4} cycle={3} />);
-    expect(screen.getByText('297')).toBeTruthy();
+  it('renders the pre-converted bestE1RM value as-is (caller is responsible for plate-snapping)', () => {
+    const screen = renderStats(<LiftStats tmValue={225} tmUnit="lbs" bestE1RM={295} cycle={3} />);
+    expect(screen.getByText('295')).toBeTruthy();
   });
 });

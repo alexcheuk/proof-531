@@ -7,7 +7,7 @@
  * PRs arrive at the same magnitude.
  */
 import type { Lift, Unit } from '@/domain/types';
-import { convertWeight, displayUnit } from '@/domain/units';
+import { convert, displayUnit } from '@/domain/units';
 
 export type PrRow = {
   lift: string;
@@ -45,7 +45,7 @@ export function pickBestLift(
   if (!best) return null;
   return {
     lift: best.lift as Lift,
-    e1RMDisplay: Math.round(convertWeight(best.bestE1RM, storageUnit, displayUnitParam)),
+    e1RMDisplay: convert(best.bestE1RM, storageUnit, displayUnitParam),
     unitGlyph: displayUnit(displayUnitParam),
   };
 }

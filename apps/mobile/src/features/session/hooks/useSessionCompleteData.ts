@@ -7,7 +7,7 @@ import { LIFTS } from '@/domain/labels';
 import { type TmAdjustmentSuggestion, tmAdjustmentSuggestion } from '@/domain/progression';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
 import type { Lift, SetLog, Unit } from '@/domain/types';
-import { convertWeight, displayUnit, displayWeight } from '@/domain/units';
+import { convert, convertWeight, displayUnit, displayWeight } from '@/domain/units';
 import { useMemo } from 'react';
 
 /**
@@ -181,7 +181,7 @@ export function deriveView({
           const v = estimateOneRm(l.prescribedWeight, l.actualReps);
           return v > max ? v : max;
         }, 0);
-  const e1RMDisplay = Math.round(convertWeight(newE1RMStorage, storageUnit, renderUnit));
+  const e1RMDisplay = convert(newE1RMStorage, storageUnit, renderUnit);
   const showCertificate = hasPR && e1RMDisplay > 0;
 
   // Elapsed time.
@@ -242,7 +242,7 @@ export function deriveView({
   // Convert with same precision policy as the new e1RM so the cert's delta
   // arithmetic stays internally consistent.
   const prevE1RMDisplay = prevBestStorage
-    ? Math.round(convertWeight(prevBestStorage, storageUnit, renderUnit))
+    ? convert(prevBestStorage, storageUnit, renderUnit)
     : 0;
   const e1RMDelta = Math.max(0, e1RMDisplay - prevE1RMDisplay);
 
