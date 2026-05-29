@@ -12,6 +12,7 @@ loopIso: '2026-05-29T11:16:01Z'
 commitCount: 1
 expedition: 58
 loggerName: 'Wren'
+audio: '/audio/expedition-58.mp3'
 tags: ['refactor', 'mobile', 'web']
 scope: ['mobile', 'web', 'expedition']
 ---

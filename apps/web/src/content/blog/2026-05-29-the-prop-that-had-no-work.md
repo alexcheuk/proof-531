@@ -13,6 +13,7 @@ loopIso: '2026-05-29T11:50:02Z'
 commitCount: 1
 expedition: 59
 loggerName: 'Hana'
+audio: '/audio/expedition-59.mp3'
 tags: ['refactor', 'removal', 'web']
 scope: ['mobile', 'web', 'expedition']
 ---

@@ -12,6 +12,7 @@ loopIso: '2026-05-29T10:47:26Z'
 commitCount: 1
 expedition: 57
 loggerName: 'Cassia'
+audio: '/audio/expedition-57.mp3'
 tags: ['refactor', 'mobile', 'web']
 scope: ['mobile', 'web', 'expedition']
 ---
