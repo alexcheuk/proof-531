@@ -1,15 +1,8 @@
-/**
- * Pure filter helpers for the History tab chip row.
- */
 import type { Session } from '@/data/accessors/session';
 import type { Lift } from '@/domain/types';
 
 export type HistoryFilter = { kind: 'all' } | { kind: 'prs' } | { kind: 'lift'; lift: Lift };
 
-/**
- * Apply a HistoryFilter to a session list. Pass `prSessionIds` so the
- * `prs` filter can keep only sessions whose set logs include a PR.
- */
 export function applyHistoryFilter(
   sessions: ReadonlyArray<Session>,
   filter: HistoryFilter,
@@ -25,7 +18,6 @@ export function applyHistoryFilter(
   }
 }
 
-/** Stable filter key for React `key=`. */
 export function historyFilterKey(filter: HistoryFilter): string {
   if (filter.kind === 'lift') return `lift:${filter.lift}`;
   return filter.kind;

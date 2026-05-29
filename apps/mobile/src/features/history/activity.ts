@@ -1,19 +1,8 @@
-/**
- * Pure helpers for the History activity sparkline.
- *
- * No React, no DB — domain-free math so the rhythm is property-testable.
- */
 import type { Session } from '@/data/accessors/session';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Local-midnight timestamp for the day `daysAgo` calendar days before the
- * one containing `ms`. Uses `Date.setDate` (not `ms - n*DAY_MS`) so the
- * arithmetic survives DST transitions — on a spring-forward day a calendar
- * day is 23 hours wide, on fall-back 25 hours, and naive ms-subtraction
- * lands the cursor in the wrong bucket and breaks the streak walk.
- */
+// Uses Date.setDate (not ms - n*DAY_MS) — DST days are 23 or 25 hours wide; naive ms-subtraction breaks streak math.
 function previousLocalMidnight(ms: number, daysAgo = 1): number {
   const d = new Date(ms);
   d.setHours(0, 0, 0, 0);
@@ -21,14 +10,6 @@ function previousLocalMidnight(ms: number, daysAgo = 1): number {
   return d.getTime();
 }
 
-/**
- * Count completed sessions falling within the current ISO week (Monday →
- * Sunday) up to and including `now`. The History strip uses this to surface
- * a "★ THIS WEEK · N sessions" caption — a tighter feedback loop than the
- * lifetime totals, so users see the needle move even before a cycle wraps.
- *
- * Returns `0` when no completed sessions exist in the window.
- */
 export function sessionsThisWeek(
   sessions: ReadonlyArray<Session>,
   now: number = Date.now(),
@@ -49,17 +30,6 @@ export function sessionsThisWeek(
   return count;
 }
 
-/**
- * Compute a recent-activity bitmap from session timestamps.
- *
- * Returns one boolean per day in the lookback window (length `days`),
- * **oldest first** so the array can be rendered left-to-right with `today`
- * on the right. A day is `true` when at least one session in `sessions`
- * was started during that 24-hour wall-clock window.
- *
- * Uses local-midnight bucketing so a session at 23:55 lands on the same
- * day as one at 06:00.
- */
 export function recentActivity(
   sessions: ReadonlyArray<Session>,
   days = 14,
@@ -90,15 +60,7 @@ export function recentActivity(
   return out;
 }
 
-/**
- * Count consecutive trailing `true` days from the end of an activity bitmap.
- *
- * Honors the same one-day grace rule as `currentStreakDays`: if today (the
- * last index) is empty but yesterday is filled, start the walk from
- * yesterday. The streak only resets after two consecutive empty days.
- * Without this the History sparkline's "★ N-day streak" badge would
- * vanish every morning at midnight before the user had a chance to train.
- */
+// Grace: if today is empty but yesterday is filled, start from yesterday — streak doesn't reset until two empty days.
 export function currentStreak(activity: ReadonlyArray<boolean>): number {
   if (activity.length === 0) return 0;
   const lastIdx = activity.length - 1;
@@ -111,24 +73,7 @@ export function currentStreak(activity: ReadonlyArray<boolean>): number {
   return streak;
 }
 
-/**
- * Real-world consecutive-day streak ending at `now`. Walks back through
- * every prior day that contains at least one completed session and returns
- * the run length.
- *
- * "Alive" rule: the streak survives one day of grace — if the user trained
- * yesterday but hasn't trained today yet, the streak is still
- * `yesterday-and-back`, not 0. The streak only resets once two full days
- * have passed without a session. This is the standard "don't break the
- * chain" pattern; the prior behavior (return 0 the moment today's bucket
- * was empty) made the "matching best streak" caption disappear every
- * morning even when the user was literally on their longest-ever run.
- *
- * Distinct from `currentStreak(activity)` which only sees the trailing
- * 14-day window — that helper saturates at 14 even when the actual streak
- * is longer. This one consults the full session list so it can be
- * meaningfully compared with `longestStreakDays(sessions)`.
- */
+// Full-history streak (not capped at 14 like currentStreak) for comparison with longestStreakDays.
 export function currentStreakDays(
   sessions: ReadonlyArray<Session>,
   now: number = Date.now(),
@@ -156,13 +101,6 @@ export function currentStreakDays(
   return streak;
 }
 
-/**
- * Total elapsed days from the user's first completed session through `now`.
- *
- * Inclusive of the first-session day (a session today reads as "Day 1").
- * Returns `0` when the user has no completed sessions yet, so callers can
- * gate rendering on a minimum count.
- */
 export function daysSinceFirstSession(
   sessions: ReadonlyArray<Session>,
   now: number = Date.now(),
@@ -181,11 +119,6 @@ export function daysSinceFirstSession(
   return Math.max(1, diff + 1);
 }
 
-/**
- * Local-date of the user's first completed session, or `null` when none.
- * Used to render the "Training since <month> <year>" caption in the
- * achievement strip.
- */
 export function firstSessionDate(sessions: ReadonlyArray<Session>): Date | null {
   let earliest: number | null = null;
   for (const s of sessions) {
@@ -196,17 +129,6 @@ export function firstSessionDate(sessions: ReadonlyArray<Session>): Date | null 
   return new Date(earliest);
 }
 
-/**
- * Longest run of consecutive training days across the user's full history.
- *
- * Scans every `completed` session's local-day bucket and walks the sorted
- * day list, counting the longest contiguous run. Returns `0` when the user
- * has no completed sessions yet.
- *
- * Distinct from `currentStreak`, which only inspects a trailing window.
- * This is the all-time personal best — surfaced in the achievement strip
- * so the user has a number to chase.
- */
 export function longestStreakDays(sessions: ReadonlyArray<Session>): number {
   const dayBuckets = new Set<number>();
   for (const s of sessions) {
