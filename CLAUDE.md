@@ -7,6 +7,8 @@
 A production scaffold for **531 Strength** — a 5/3/1 + BBB training tracker for iOS and Android.
 The product spec is in `docs/DESIGN.md`. The engineering spec is in `docs/superpowers/specs/2026-05-22-rn-port-from-pwa-design.md`.
 
+The companion marketing site + dev blog (`apps/web/`) is deployed at **https://531strength.com**. That is the canonical production domain — set as `const SITE` in `apps/web/astro.config.mjs`, which drives `context.site` for canonical URLs, the sitemap, and the RSS/OPML feeds. Anything that emits an absolute URL should read `context.site` rather than hardcode, and default fallbacks to `https://531strength.com` (older config used a `531.dev` placeholder — not the live domain).
+
 **The product vision lives in `docs/INTENT.md`.** It is a **drift check** — re-read it when a proposed change feels like it might be pulling the app sideways from what the user wants it to be (audience, aesthetic, scope, or the integrity of the vibe-coded experiment). It is *not* a brief for the blog or marketing site; those are downstream artifacts. Most decisions don't need this file. The ones that do, need it badly.
 
 ## Stack
