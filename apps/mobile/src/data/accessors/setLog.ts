@@ -1,25 +1,5 @@
-/**
- * SetLog accessors.
- *
- * Mirrors the PWA accessors.
- *
- * `appendSetLog` is the single write path for the `set_logs` table. For AMRAP
- * sets it additionally:
- *   1. Looks up the parent session's lift.
- *   2. Computes the Epley estimated 1RM from `prescribedWeight` × `actualReps`.
- *   3. Compares against the existing `prs` row (if any) for that lift and
- *      stamps `isPR` + `estimated1RM` onto the new row.
- *   4. Upserts the `prs` row pointing back at the new set log id when it is a
- *      new PR.
- *
- * Transactional trade-off: the PWA wraps the AMRAP path in a Dexie transaction
- * so a crash can't produce a SetLog with isPR=true and no PR row, or vice
- * versa. drizzle-orm's `db.transaction((tx) => ...)` exists but its typing
- * varies across drivers and we'd need to thread the tx through the `prs`
- * accessors (which take `AnyDb`). Since the mobile DB is single-writer (JS
- * event loop, no concurrent expo-sqlite writers in practice) we skip the
- * wrapper. Each call's reads/writes are still sequential.
- */
+// No transaction wrapper: mobile DB is single-writer (JS event loop), so sequential reads/writes are safe.
+// A crash between isPR=true and the prs upsert would leave a stale state — accepted trade-off vs. drizzle tx typing.
 import { desc, eq, sql } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { estimateOneRm } from '../../domain/epley';
@@ -33,14 +13,6 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
 export type SetLog = typeof setLogs.$inferSelect;
 type AppendSetLogInput = Omit<SetLog, 'id' | 'completedAt' | 'isPR' | 'estimated1RM'>;
 
-/**
- * Append a row to `set_logs`. For AMRAP sets, computes estimated 1RM,
- * compares to the existing PR for the parent session's lift, and upserts the
- * `prs` row when a new PR is set.
- *
- * Throws if `kind === 'amrap'` and the referenced session does not exist —
- * callers should always create the session first.
- */
 export async function appendSetLog(db: AnyDb, input: AppendSetLogInput): Promise<SetLog> {
   const baseRow = { ...input, completedAt: Date.now() };
 
@@ -80,19 +52,7 @@ export async function appendSetLog(db: AnyDb, input: AppendSetLogInput): Promise
   return row;
 }
 
-/**
- * Undo the most recent `working` set log for a session.
- *
- * Defensive contract:
- *   - If the most recent row (by `id` desc — `set_logs.id` is autoincrement and
- *     therefore strictly increasing in insertion order) is NOT `working`,
- *     returns `null` and leaves the table untouched. In particular we refuse
- *     to undo `amrap` rows in this iteration because doing so would have to
- *     cascade back into the `prs` table — out of scope.
- *   - If the session has no set log rows, returns `null`.
- *   - Otherwise deletes the row and returns the deleted row so callers can
- *     roll back local UI state (setIndex, phase, lastLogged).
- */
+// Only undoes 'working' rows — undoing 'amrap' would cascade into prs, which is out of scope.
 export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<SetLog | null> {
   const rows = (await Promise.resolve(
     db
@@ -109,27 +69,13 @@ export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<
   return last;
 }
 
-/**
- * Return every set log row for a given session in insertion order
- * (ascending `id`). The autoIncrement primary key is the source of
- * truth for "what happened first" — `completedAt` is a wall-clock
- * write that can collide on rapid back-to-back appends. Explicit
- * `ORDER BY id` so the docstring's contract is enforced by SQL, not
- * by happenstance ordering of an unordered SELECT.
- */
+// Orders by id (not completedAt) — completedAt can collide on rapid back-to-back writes; autoincrement id is safe.
 export async function getSetLogsForSession(db: AnyDb, sessionId: number): Promise<SetLog[]> {
   return (await Promise.resolve(
     db.select().from(setLogs).where(eq(setLogs.sessionId, sessionId)).orderBy(setLogs.id),
   )) as SetLog[];
 }
 
-/**
- * Return the distinct session ids that have at least one `isPR = true` row.
- *
- * Used by the History tab to render a PR marker on rows that produced a
- * personal record. Returning ids (not full rows) keeps the wire small and
- * matches the consumer's `Set<number>.has(id)` access pattern.
- */
 export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
   const rows = (await Promise.resolve(
     db
@@ -140,25 +86,7 @@ export async function getSessionIdsWithPrs(db: AnyDb): Promise<number[]> {
   return rows.map((r) => r.sessionId);
 }
 
-/**
- * Sum of `prescribedWeight × actualReps` across every working / amrap /
- * BBB set log row whose parent session has `status = 'completed'`. The
- * History tab's achievement strip uses this to render a "total volume"
- * stat alongside sessions filed + personal records.
- *
- * Aggregated in SQL so we don't have to pull N-sessions × M-rows into JS
- * just to sum them. Returns `0` when there are no qualifying rows (e.g. a
- * fresh install with no completed sessions).
- *
- * BBB sets WERE excluded historically because they weren't being logged
- * — the receipt's `volumeOfWorkingSets` (domain/summary.ts) still only
- * counts 5/3/1 working sets (that's the receipt's contract). But
- * loop-008 wired BBB logging end-to-end via `BbbPromptScreen`'s "Mark
- * complete" CTA, so the lifetime tally should reflect every plate the
- * user actually moved. Warmups + generic assistance are still excluded
- * — warmups don't accrue meaningful volume; assistance isn't part of
- * the program yet.
- */
+// BBB included (wired in loop-008): lifetime tally reflects every plate moved. Warmups and assistance excluded.
 export async function getLifetimeVolume(db: AnyDb): Promise<number> {
   const rows = (await Promise.resolve(
     db
