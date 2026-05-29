@@ -13,6 +13,7 @@ loopIso: '2026-05-29T15:16:41Z'
 commitCount: 1
 expedition: 65
 loggerName: 'Nils'
+audio: '/audio/expedition-65.mp3'
 tags: ['removal', 'web', 'mobile', 'qa']
 scope: ['mobile', 'web', 'expedition']
 ---
