@@ -10,7 +10,7 @@ Cannot be generated from the loop seat (no PNG tooling); flag to user on each lo
 ## Web OG image (1200×630)
 
 - **Need:** `apps/web/public/og.png` — a 1200×630 paper-tone card with
-  the 531 wordmark + amber accent dot so social shares of `531.dev`
+  the 531 wordmark + amber accent dot so social shares of `531strength.com`
   and its blog posts get a real preview instead of a missing-image
   placeholder.
 - **Spec:** matches the e-ink aesthetic — `#E7E3D6` paper bg, ink-0

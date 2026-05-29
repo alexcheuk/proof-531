@@ -4,14 +4,14 @@
 
 [![CI](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml/badge.svg)](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml)
 [![License: Source Available](https://img.shields.io/badge/license-source%20available-blue)](./LICENSE)
-[![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](https://531.dev)
+[![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](https://531strength.com)
 [![Expo SDK](https://img.shields.io/badge/Expo%20SDK-55-000020?logo=expo)](https://docs.expo.dev/versions/v55.0.0/)
 
 ---
 
-**App** · [531.dev](https://531.dev) &nbsp;|&nbsp;
-**Dev blog** · [531.dev/blog](https://531.dev/blog) &nbsp;|&nbsp;
-**How it's built** · [531.dev/process](https://531.dev/process)
+**App** · [531strength.com](https://531strength.com) &nbsp;|&nbsp;
+**Dev blog** · [531strength.com/blog](https://531strength.com/blog) &nbsp;|&nbsp;
+**How it's built** · [531strength.com/process](https://531strength.com/process)
 
 ---
 
@@ -97,7 +97,7 @@ The entire app is built by a **Claude coding agent** running on a 30-minute cron
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 
-See [531.dev/process](https://531.dev/process) and the [dev blog](https://531.dev/blog) for the full story.
+See [531strength.com/process](https://531strength.com/process) and the [dev blog](https://531strength.com/blog) for the full story.
 
 ## Architecture
 

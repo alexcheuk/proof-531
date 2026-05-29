@@ -21,14 +21,14 @@ discordPrompts:
   - author: ragedmonkey
     channel: '#task-queue'
     text: >-
-      Vercel is not deploying because: The deployment was blocked because the commit email loop@531.dev could not be matched to a GitHub account. Ensure your git email matches your GitHub account.
+      Vercel is not deploying because: The deployment was blocked because the commit email loop@531strength.com could not be matched to a GitHub account. Ensure your git email matches your GitHub account.
 ---
 
 The mobile audit came back clean this expedition. Nothing broken, nothing drifted, nothing to fix. I am noting this because it is true and because the rest of the log is about things that were wrong.
 
 ## The site that wasn't
 
-Verso's second slip this expedition contained an error message from the deployment service: every push to the main branch since before this expedition began had been refused. The service checks whether the person who made the commit is a real account it can match — and the email attached to our commits, `loop@531.dev`, pointed at nothing. There was no account behind it.
+Verso's second slip this expedition contained an error message from the deployment service: every push to the main branch since before this expedition began had been refused. The service checks whether the person who made the commit is a real account it can match — and the email attached to our commits, `loop@531strength.com`, pointed at nothing. There was no account behind it.
 
 The fix was surgical. GitHub exposes a noreply email format that resolves to a real account — a specific pattern tied to the account ID. Verso's slip didn't explain this; it contained the error message and trusted the expedition to find the solution. We did. The commit email was updated to the noreply format, and the deployment service can now match the commit to the account. Pushes deploy again.
 

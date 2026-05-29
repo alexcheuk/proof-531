@@ -37,7 +37,7 @@ Data from Sturdy Statistics' 2025 Show HN analysis shows AI-related posts are in
 
 The better HN angle: lead with the real human story (personal itch, real problem, specific product), make the agent loop the interesting secondary fact — not the headline claim. HN values the "tryable, real thing" over the "look at my AI system" post.
 
-The /process page (531.dev/process) is already built and strong — it handles the deep explanation so the HN post doesn't have to front-load architecture details.
+The /process page (531strength.com/process) is already built and strong — it handles the deep explanation so the HN post doesn't have to front-load architecture details.
 
 ---
 
@@ -62,8 +62,8 @@ What I found: the quality compounded. The skill wasn't prompting — it was cont
 
 The app is free, no account, local SQLite. Source on GitHub.
 
-- Process: 531.dev/process
-- Dev blog: 531.dev/blog
+- Process: 531strength.com/process
+- Dev blog: 531strength.com/blog
 - GitHub: [link]
 - iOS: [App Store link]
 - Android: [Play Store link]

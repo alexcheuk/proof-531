@@ -56,8 +56,8 @@ Here's the architecture that made it production-ready rather than a toy:
 
 The result: Android on the Play Store, iOS on the App Store, property-tested domain logic, real boundary enforcement, an app I actually use for 5/3/1 training.
 
-Process page (the real rubric + rules): 531.dev/process
-Dev blog (the receipts): 531.dev/blog
+Process page (the real rubric + rules): 531strength.com/process
+Dev blog (the receipts): 531strength.com/blog
 Source: [GitHub link]
 
 ---
@@ -75,7 +75,7 @@ The interesting part: the blog is written the same way. A rotating Logger agent 
 
 The app ships. Android on Play Store, iOS on the App Store. I use it.
 
-Full process if the architecture is interesting: 531.dev/process
+Full process if the architecture is interesting: 531strength.com/process
 
 ---
 

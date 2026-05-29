@@ -19,7 +19,7 @@ drafted: 2026-05-29 (Expedition 41)
 ## Account preparation (do before iOS launch)
 
 - Create a Product Hunt account if Alex doesn't have one
-- Complete the profile: bio, Twitter/X link, website (531.dev)
+- Complete the profile: bio, Twitter/X link, website (531strength.com)
 - Engage with 3-5 other products in the week before launch — upvote, leave thoughtful comments. A new account with zero activity launching a product is a yellow flag to voters.
 - If possible, have 3-4 people who have tried the app ready to upvote and leave a comment on launch morning. These should be genuine users, not coordinated shills. Real first-day comments beat empty upvotes.
 
@@ -52,7 +52,7 @@ drafted: 2026-05-29 (Expedition 41)
 - No ads, no subscription, no analytics
 - Data stays on your device (SQLite)
 
-**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 46+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531.dev/process.
+**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 46+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531strength.com/process.
 
 Free. No account required. iOS and Android.
 
@@ -61,7 +61,7 @@ Free. No account required. iOS and Android.
 **Links:**
 - iOS App Store: [link]
 - Android Play Store: [link]
-- Website: 531.dev
+- Website: 531strength.com
 - GitHub: [link]
 
 **Gallery (in order):**
@@ -95,7 +95,7 @@ Hey r/PH — I built 531 Strength because I run the 5/3/1 program and couldn't f
 
 The core: training maxes → working weights calculated → plate math shown per side → log your sets → AMRAP reps → rest timer → session receipt. That's the whole loop.
 
-The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 46+ iterations. The dev blog on 531.dev/blog is written by the same system, one post per loop. Full process at 531.dev/process.
+The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 46+ iterations. The dev blog on 531strength.com/blog is written by the same system, one post per loop. Full process at 531strength.com/process.
 
 It's free because I built it for myself and wanted other lifters to have it. SQLite on-device, no account, no data collection.
 

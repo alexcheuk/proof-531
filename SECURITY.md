@@ -9,7 +9,7 @@ Security vulnerabilities in the traditional sense (authentication bypass, data e
 In scope:
 
 - The mobile app (iOS + Android) — React Native / Expo
-- The marketing website (`531.dev`) — Astro static site
+- The marketing website (`531strength.com`) — Astro static site
 - The build toolchain and CI workflows in this repo
 
 Out of scope:
@@ -20,7 +20,7 @@ Out of scope:
 
 ## Reporting a vulnerability
 
-Open a [GitHub Issue](https://github.com/alexcheuk/proof-531/issues/new) and mark it with the label `security`. For anything that shouldn't be public immediately (e.g., a supply-chain issue affecting the release build), email the maintainer via the contact on the [support page](https://531.dev/support).
+Open a [GitHub Issue](https://github.com/alexcheuk/proof-531/issues/new) and mark it with the label `security`. For anything that shouldn't be public immediately (e.g., a supply-chain issue affecting the release build), email the maintainer via the contact on the [support page](https://531strength.com/support).
 
 Please include:
 

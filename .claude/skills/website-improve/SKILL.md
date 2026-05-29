@@ -7,8 +7,8 @@ and updates the progress tracker.
 
 ## What this skill covers
 
-The website lives in `apps/web/` — an Astro static site deployed to 531.dev. This skill
-handles anything that makes 531.dev better for visitors: SEO, copy accuracy, UX, technical
+The website lives in `apps/web/` — an Astro static site deployed to 531strength.com. This skill
+handles anything that makes 531strength.com better for visitors: SEO, copy accuracy, UX, technical
 health, and the blog framework. Marketing strategy and post drafts live in the `organic-marketing`
 agent — don't duplicate that work here.
 

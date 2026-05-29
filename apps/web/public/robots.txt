@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://531.dev/sitemap-index.xml
+Sitemap: https://531strength.com/sitemap-index.xml

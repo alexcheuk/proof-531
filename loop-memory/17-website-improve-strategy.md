@@ -1,9 +1,9 @@
 ---
 name: website-improve-strategy
-description: Strategy and progress tracker for the self-improving website loop. Covers SEO, content, UX, and technical improvements to 531.dev. Run each auto-improve iteration.
+description: Strategy and progress tracker for the self-improving website loop. Covers SEO, content, UX, and technical improvements to 531strength.com. Run each auto-improve iteration.
 ---
 
-# 531.dev — Website Self-Improvement Strategy
+# 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
 **Last updated**: 2026-05-28 (Expedition 46)
@@ -15,7 +15,7 @@ This strategy file drives the "Make the website better" category in `loop-criter
 The `website-improve` agent reads it each iteration, picks the next actionable step,
 executes it, and updates the tracker below.
 
-The website is at `apps/web/` — an Astro static site deployed to 531.dev.
+The website is at `apps/web/` — an Astro static site deployed to 531strength.com.
 
 ## Improvement tracks
 

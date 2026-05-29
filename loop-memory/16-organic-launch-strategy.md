@@ -157,7 +157,7 @@ The piece is at `docs/marketing/longform-how-i-built-this.md`. Updated in Expedi
 - HN — as the submitter comment (extract the most technical/surprising section)
 - r/vibecoding — as the primary link destination (the community moved to production builds, this is one)
 - Personal blog or dev.to if Alex has either
-- 531.dev blog — consider whether a special non-expedition post for the full human narrative is worth adding
+- 531strength.com blog — consider whether a special non-expedition post for the full human narrative is worth adding
 
 ## Open questions (blocking launch-day posts)
 
@@ -167,7 +167,7 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 2. App Store URL (available after iOS approval)
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
-5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
+5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531strength.com/process is complete and ready to link.
 
 ## Expedition 46 — Research notes
 

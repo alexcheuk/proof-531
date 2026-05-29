@@ -44,7 +44,7 @@ The draft uses "running BBB for about a year" as a framing device. Is that accur
 The "20+ expedition logs" threshold is already satisfied — 46 Logger posts exist as of Expedition 46. The current count for copy purposes is **46+ iterations**. Fill in `[N]` with "46+" for now; it will increase with each loop before launch.
 
 **6. ~~Does the /process page exist yet?~~** — RESOLVED (Expedition 40)
-The /process page exists at `531.dev/process` and is well-built. It covers: the loop architecture, the Discord workflow, the three-channel system, the four loop steps, the rules, the full stack, the scribe era history (Margin → Verso → Logger rotation), and an about section. It is ready to be the linked destination for both the HN and Indie Hackers posts. No further work needed on this item.
+The /process page exists at `531strength.com/process` and is well-built. It covers: the loop architecture, the Discord workflow, the three-channel system, the four loop steps, the rules, the full stack, the scribe era history (Margin → Verso → Logger rotation), and an about section. It is ready to be the linked destination for both the HN and Indie Hackers posts. No further work needed on this item.
 
 **7. What's your Twitter/X handle?**
 Tactic 4 involves posting to X and tagging @jimwendler. What account will the tweet come from? Is there a project account or will it come from your personal account?

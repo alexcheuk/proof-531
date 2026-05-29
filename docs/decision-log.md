@@ -60,7 +60,7 @@ Fixed `astro.config.mjs` site URL from `531strength.com` to `531.dev` — affect
 **Tags:** `skill`, `convention`, `process`
 **Files:** `.claude/skills/website-improve/SKILL.md`, `loop-memory/17-website-improve-strategy.md`, `apps/web/src/pages/index.astro`, `apps/web/src/layouts/Base.astro`
 
-Created `website-improve` as a dedicated skill for iterating on 531.dev (separate from `organic-marketing` which handles external launch strategy). Added JSON-LD `SoftwareApplication` schema to the homepage via a `head` slot in `Base.astro`. Removed multi-paragraph JSDoc comment blocks from `BbbPromptScreen`, `GoalPanel`, and `LiveScreen` — trimmed to one-liners where the WHY is non-obvious and deleted where the name is self-explanatory. Added `#needs-input` channel ID to Discord memory.
+Created `website-improve` as a dedicated skill for iterating on 531strength.com (separate from `organic-marketing` which handles external launch strategy). Added JSON-LD `SoftwareApplication` schema to the homepage via a `head` slot in `Base.astro`. Removed multi-paragraph JSDoc comment blocks from `BbbPromptScreen`, `GoalPanel`, and `LiveScreen` — trimmed to one-liners where the WHY is non-obvious and deleted where the name is self-explanatory. Added `#needs-input` channel ID to Discord memory.
 
 **Why:** The `#loop-criteria` pin asked for a self-improving website strategy and agent. JSON-LD makes the app eligible for Google rich results. Comment blocks violated the "one short line max" rule in CLAUDE.md consistently across several session-flow files.
 
@@ -705,11 +705,11 @@ Added a simple privacy policy page at `/privacy` describing the app's data postu
 **Tags:** `process`, `deployment`
 **Files:** `.git/config`
 
-Changed `git config user.email` from `loop@531.dev` to `1242663+alexcheuk@users.noreply.github.com`. Vercel's deployment protection matches commit authors against GitHub accounts; `loop@531.dev` has no GitHub account behind it and was blocking every push from deploying.
+Changed `git config user.email` from `loop@531strength.com` to `1242663+alexcheuk@users.noreply.github.com`. Vercel's deployment protection matches commit authors against GitHub accounts; `loop@531strength.com` has no GitHub account behind it and was blocking every push from deploying.
 
 **Why:** Alex reported in `#task-queue` that Vercel was refusing to deploy. The noreply email format (`{user_id}+{username}@users.noreply.github.com`) is how GitHub surfaces commits from the privacy-email-on setting — it resolves back to the `alexcheuk` account, which Vercel can match.
 
-**Trade-off / what we didn't do:** Could have added `loop@531.dev` as a secondary GitHub email or disabled Vercel's deployment protection check. Both require access to external settings the loop seat doesn't have. The git-config change is local and reversible.
+**Trade-off / what we didn't do:** Could have added `loop@531strength.com` as a secondary GitHub email or disabled Vercel's deployment protection check. Both require access to external settings the loop seat doesn't have. The git-config change is local and reversible.
 
 ### 2026-05-27 — process.astro updated to reflect expedition/Logger era
 
