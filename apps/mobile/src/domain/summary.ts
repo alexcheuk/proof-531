@@ -1,21 +1,8 @@
-/**
- * Pure helpers for the session-complete screen (Rev 4).
- *
- *   - `formatDateLabel`     — short weekday + month-day strings for the v3 stamp.
- *   - `formatElapsed`       — `mm:ss` (<60min) or `H:MM` (≥60min) elapsed time.
- *   - `volumeOfWorkingSets` — sum(weight × actualReps) across the working logs.
- *
- * No React, no Drizzle. Inputs are plain values; outputs are plain strings/numbers.
- */
-
 import type { SetLog } from './types';
 
 export type DateLabelParts = {
-  /** Uppercased short weekday — `WED`. */
   weekday: string;
-  /** Uppercased short month + day — `MAY 22`. */
   dateLine: string;
-  /** Four-digit year — `2026`. */
   year: string;
 };
 
@@ -35,14 +22,7 @@ const MONTH = [
   'DEC',
 ] as const;
 
-/**
- * Decompose a Date into the three text fragments the `DateStamp` SVG draws:
- * weekday (`WED`), month + day (`MAY 22`), and a 4-digit year string.
- *
- * Avoids `Intl.DateTimeFormat` so output is locale-stable across environments.
- * The `as` assertions are safe: getDay() returns 0..6 and getMonth() returns
- * 0..11 — both narrower than the array indices.
- */
+// Avoids Intl.DateTimeFormat — output must be locale-stable across environments.
 export function formatDateLabel(date: Date): DateLabelParts {
   return {
     weekday: WEEKDAY[date.getDay()] as (typeof WEEKDAY)[number],
@@ -51,13 +31,6 @@ export function formatDateLabel(date: Date): DateLabelParts {
   };
 }
 
-/**
- * `mm:ss` when the elapsed time is < 60 minutes; `H:MM` otherwise. Both
- * formats use a single colon; the trailing component is zero-padded to two
- * digits. The hours/minutes branch deliberately drops seconds.
- *
- * Negative or zero spans collapse to `0:00`. Sub-second slop is floored.
- */
 export function formatElapsed(startedAt: number, endedAt: number): string {
   const totalSec = Math.max(0, Math.floor((endedAt - startedAt) / 1000));
   const totalMin = Math.floor(totalSec / 60);
@@ -70,16 +43,6 @@ export function formatElapsed(startedAt: number, endedAt: number): string {
   return `${hr}:${String(min).padStart(2, '0')}`;
 }
 
-/**
- * Compact human-readable elapsed time for at-a-glance history rows. Returns:
- *   - `45m` when the span is < 60 minutes
- *   - `1h 5m` for ≥ 60 minutes
- *   - `1m` when the span is positive but rounds to 0 minutes — the row
- *     still ran and the user should see *something* rather than `0m`
- *
- * Designed for tight slots (e.g. LedgerRow sub captions). For the
- * receipt's `mm:ss` / `H:MM` display, use `formatElapsed`.
- */
 export function formatElapsedCompact(startedAt: number, endedAt: number): string {
   const totalSec = Math.max(0, Math.floor((endedAt - startedAt) / 1000));
   const totalMin = Math.floor(totalSec / 60);
@@ -90,14 +53,6 @@ export function formatElapsedCompact(startedAt: number, endedAt: number): string
   return min === 0 ? `${hr}h` : `${hr}h ${min}m`;
 }
 
-/**
- * Sum of `prescribedWeight × actualReps` across the three working SetLog rows.
- * Accepts a heterogeneous list (warmups, bbb, etc.) and filters down to
- * `kind === 'working' | 'amrap'` itself so the caller doesn't have to.
- *
- * Defensive: ignores indices outside {0,1,2} so a future schema relaxation
- * can't silently double-count. Returns 0 when no working sets exist.
- */
 export function volumeOfWorkingSets(logs: readonly SetLog[]): number {
   let total = 0;
   for (const log of logs) {

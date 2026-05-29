@@ -1,25 +1,10 @@
-/**
- * Pure aggregation helpers for the History tab achievement strip.
- *
- * Kept domain-free (no React, no DB) so the math is property-testable and
- * decoupled from the screen.
- */
 import type { Session } from '@/data/accessors/session';
 
 export type HistoryStats = {
-  /** Total sessions completed across all time. */
   filed: number;
-  /** Number of distinct sessions that produced at least one PR. */
   prs: number;
 };
 
-/**
- * Lifetime totals for the masthead strip.
- *
- * `filed` counts only `status === 'completed'` rows — in-progress and
- * cancelled sessions don't earn a stamp. `prs` is sized off the supplied
- * PR-id set (which comes from `useSessionPrIds`).
- */
 export function computeHistoryStats(
   sessions: ReadonlyArray<Session>,
   prSessionIds: ReadonlySet<number>,
@@ -34,20 +19,6 @@ export function computeHistoryStats(
   return { filed, prs };
 }
 
-/**
- * Per-cycle hint used above each cycle's session list.
- *
- * Returns a single dot-separated caption. Three clauses, in order:
- *   1. `3 of 4 done` (in-progress)  OR  `4 sessions` (finished)
- *   2. `· 1 PR` / `· 2 PRs`         (only when prCount > 0)
- *   3. `· 12 days`                  (only on a finished cycle with ≥2
- *      sessions — the span between first and last `startedAt`, rounded
- *      to whole days)
- *
- * The PR clause is omitted when there are none — no "0 PR" footgun.
- * The span clause is omitted on in-progress cycles (the user is still
- * in it, so the count is misleading) and on single-session cycles.
- */
 export function computeCycleHint(
   sessions: ReadonlyArray<Session>,
   prSessionIds: ReadonlySet<number>,
@@ -75,12 +46,6 @@ export function computeCycleHint(
   return parts.join(' · ');
 }
 
-/**
- * Inclusive day count between the earliest and latest `startedAt` in the
- * supplied session list. Returns `null` when the input has fewer than
- * two sessions. Uses local-midnight bucketing so "today and yesterday"
- * reads as `2 days`, not `1`.
- */
 function cycleSpanDays(sessions: ReadonlyArray<Session>): number | null {
   if (sessions.length < 2) return null;
   let earliest = sessions[0]?.startedAt ?? null;
