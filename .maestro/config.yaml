@@ -1,0 +1,11 @@
+---
+# Global Maestro config for 531 Strength e2e tests.
+# Run all flows: maestro test .maestro/flows/
+# Run one flow:  maestro test .maestro/flows/01-onboarding.yaml
+#
+# Prerequisites:
+#   - Maestro installed: curl -Ls "https://get.maestro.mobile.dev" | bash
+#   - Dev client APK installed on device/emulator (pnpm build:dev → install the APK)
+#   - Metro running: pnpm --filter @fivethreeone/mobile start
+
+appId: com.alexcheuk.fivethreeone

@@ -1,0 +1,35 @@
+---
+# Smoke test: tab navigation from the home screen.
+# Assumes onboarding was already completed (run after 01-onboarding or on a configured device).
+
+appId: com.alexcheuk.fivethreeone
+---
+- launchApp
+
+# Home tab is default
+- assertVisible:
+    id: "home-lift-carousel"
+
+# Navigate to Progress tab
+- tapOn:
+    id: "tab-progress"
+- waitForAnimationToEnd
+
+# Navigate to History tab
+- tapOn:
+    id: "tab-history"
+- waitForAnimationToEnd
+
+# Navigate to Settings tab
+- tapOn:
+    id: "tab-settings"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "settings-scroll"
+
+# Return to Home
+- tapOn:
+    id: "tab-index"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "home-lift-carousel"

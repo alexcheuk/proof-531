@@ -1,8 +1,8 @@
 import { StatusBarShim } from '@/design/primitives/StatusBarShim';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
+import { longPulseVibrate } from '@/lib/haptics';
 import { goTo } from '@/lib/routes';
-import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
@@ -101,7 +101,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const data = useSessionCompleteData(sessionId);
 
   useEffect(() => {
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    longPulseVibrate();
   }, []);
 
   const onContinue = () => goTo.bbb(router, sessionId, { replace: true });

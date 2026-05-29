@@ -222,8 +222,11 @@ the `done_when` checklist and a link to the run log in the body.
   [`fast-check`](https://github.com/dubzzz/fast-check) where applicable.
 - **Component tests assert behavior, not pixels.** Visual fidelity is checked
   manually against the running mobile app (the port from the PWA reference is
-  complete; the mobile app is now self-referential). Storybook + Maestro
-  screenshot harnesses are deferred until a dev-client build is needed.
+  complete; the mobile app is now self-referential). Storybook screenshot
+  harnesses are deferred.
+- **Maestro e2e flows live in `.maestro/flows/`.** Run them with `maestro test .maestro/flows/`
+  against a running dev client. Install Maestro: `curl -Ls "https://get.maestro.mobile.dev" | bash`.
+  Requires the dev-client APK installed on device/emulator and Metro running.
 - **No skipped tests** without a comment linking to a tracking issue.
 
 ## Pre-commit and PR review

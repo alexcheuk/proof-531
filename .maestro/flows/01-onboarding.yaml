@@ -1,0 +1,36 @@
+---
+# Smoke test: complete onboarding for a fresh install.
+# Selects lbs, skips to a reasonable 1RM (default), then confirms the home screen appears.
+
+appId: com.alexcheuk.fivethreeone
+---
+# Clear all app state so onboarding shows on every run.
+- clearState
+- launchApp
+
+# Step 1 — Intro: verify welcome copy and continue
+- assertVisible: "Get strong"
+- assertVisible: "Begin"
+- tapOn:
+    id: "onboarding-begin"
+
+# Step 2 — Pick lifts: all four are on by default, continue
+- assertVisible: "SQUAT"
+- tapOn: "Continue · 4 lifts"
+
+# Step 3 — 1RM entry: advance through all four lifts using "Next lift" / "Review"
+- tapOn: "Next lift"
+- tapOn: "Next lift"
+- tapOn: "Next lift"
+- tapOn: "Review"
+
+# Step 4 — Review: confirm and finish
+- assertVisible:
+    id: "onboarding-finish"
+- tapOn:
+    id: "onboarding-finish"
+
+# Should land on the Home (Today) tab
+- waitForAnimationToEnd
+- assertVisible:
+    id: "home-lift-carousel"

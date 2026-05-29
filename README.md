@@ -2,8 +2,6 @@
 
 **A free, local-first 5/3/1 + BBB strength training tracker for iOS and Android.**
 
-No account. No ads. No subscription. No data leaves your phone.
-
 [![CI](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml/badge.svg)](https://github.com/alexcheuk/proof-531/actions/workflows/ci.yml)
 [![License: Source Available](https://img.shields.io/badge/license-source%20available-blue)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey)](https://531.dev)
@@ -16,6 +14,12 @@ No account. No ads. No subscription. No data leaves your phone.
 **How it's built** · [531.dev/process](https://531.dev/process)
 
 ---
+
+## Why it exists
+
+Every 5/3/1 tracker I tried was either too general (treated it like any other program), too social (feeds, leaderboards, communities), or paywalled the features that mattered. I wanted something that did the BBB math correctly, showed me a plate diagram without asking me anything, and got out of the way. So I built it.
+
+No account required. No ads. No subscription. No data leaves your phone.
 
 ## What it does
 
@@ -33,6 +37,19 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 - **TM adjustment suggestions** — after TM test week, calm data-driven suggestions
 - **Lift rollback** — undo the last N sessions for any lift (settings Danger Zone)
 - **Local-only** — SQLite on-device, zero telemetry, no account
+
+## Screenshots
+
+<!-- Alex: add 3 screenshots here. Capture on a real device (portrait, clean state, no developer overlays).
+     Suggested shots:
+       1. Today screen — shows the lift queue for the day (which lift, which week, TM)
+       2. Live session screen — mid-set with plate visualization (the most visually distinctive screen)
+       3. Session receipt — the end-of-session summary with sets logged and next session queued
+     To embed: drag the images into this file in the GitHub UI, or use the syntax below.
+     Example: ![Today screen](docs/screenshots/today.png)
+     Aim for ~375px wide device screenshots; GitHub renders them inline. -->
+
+*Screenshots coming — app is in final iOS review.*
 
 ## Install
 
@@ -68,11 +85,14 @@ pnpm lint               # biome
 pnpm test               # jest
 pnpm run ci             # full CI chain (typecheck + lint + test + boundary checks)
 pnpm verify             # ci + Metro bundle check + web build
+
+# e2e (requires Maestro + dev client on device)
+maestro test .maestro/flows/
 ```
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 43+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 44+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

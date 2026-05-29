@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 43)
+**Last updated**: 2026-05-28 (Expedition 44)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -100,7 +100,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · updated expedition 41 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 40+ in Expedition 41. |
+| 1. GitHub README polish | done · updated expedition 44 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph. Iteration count updated to 44+ in Expedition 44. Screenshots placeholder section added with concrete capture instructions for Alex (Today screen, Live session, Session receipt). Per best-practices research: visual proof is the single biggest missing element for GitHub README engagement. |
 | 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
@@ -108,7 +108,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | draft ready · expedition 41 · signal update expedition 42 | Full hunter's guide drafted: listing copy, tagline options, first comment, day-of checklist, timing rules. See `docs/marketing/producthunt-launch-guide.md`. Needs: App Store URL, GitHub link, demo video if available. Post 2-3wk after iOS live. **Expedition 42 signal:** PH's 2026 algorithm weights engagement (comments, replies) over raw upvotes. A 45-60 second muted demo video is now the single biggest lever — products with video get significantly more engagement than screenshots only. Priority: get a screen recording of one live session (warmup → working set → AMRAP → rest timer countdown → session receipt) before PH launch. See updated note in producthunt-launch-guide.md. |
 | 8. r/reactnative | draft ready · expedition 41 | Full post-ready copy drafted for monthly showcase thread + standalone option. Stack, plate visualization component, agent-built mention (secondary). See `docs/marketing/reddit-reactnative-draft.md`. Needs: Play Store link, App Store link, GitHub link, screenshots. |
-| 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 · comment prep added expedition 43 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** Added specific data points for comment prep — 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. These are the exact concerns 531 Strength's CI enforcement answers. The draft now includes "Expedition 43 signal" section with these specifics and explains how to use them in comments without sounding defensive. |
+| 9. r/vibecoding | draft ready · expedition 41 · framing sharpened expedition 42 · comment prep added expedition 43 · new signal expedition 44 | Two options drafted: long (architecture-focused) and short (for lower-friction posting). Leads with CI-enforced boundaries, multi-agent handoffs, Logger rotation. See `docs/marketing/reddit-vibecoding-draft.md`. Needs: GitHub link, App Store link. **Expedition 43 signal:** Added specific data points for comment prep — 170/1,645 Lovable apps had exploitable vulnerabilities; 16/18 CTOs reported production disasters from AI code. **Expedition 44 signal:** Added Apple App Store review-queue context — iOS submissions up 89% YoY due to AI app flood, Apple increasing scrutiny. This is a live, current framing hook: 531 Strength is the counterexample in the queue. If "Apple is blocking vibe-coded apps" comes up in comments, the answer is now ready and documented. Iteration counts updated to 44+ throughout draft. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
@@ -168,6 +168,20 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
+
+## Expedition 44 — Research notes
+
+**Date:** 2026-05-28
+
+**GitHub README visual gap identified and addressed:** Per 2026 README best-practices research (DEV Community, multiple sources), the single biggest lever for GitHub README engagement is visual proof — screenshots or short GIFs that show the app in motion. The "What is this? Why should I care?" question must be answered in the first two lines, but the screenshot answers "Does this actually work?" which is what converts a visitor into someone who downloads or stars. A Screenshots placeholder section was added to the README with explicit instructions for Alex: which three screens to capture (Today queue, Live session with plate math, Session receipt), how to embed them, and why this matters. The iteration count was updated to 44+ throughout.
+
+**App Store vibe-coding-flood context documented:** A 9to5Mac article (March 2026) reports that Apple's review times extended significantly due to AI-generated app submissions. iOS submissions are up 89% YoY; Apple's human review team processes 200,000+ submissions/week. Apple's concern is specifically apps where the developer cannot explain or defend the code — the hallmark of low-oversight vibe coding, not multi-agent engineering with CI enforcement. This is now documented as a comment-prep framing hook in both `docs/marketing/reddit-vibecoding-draft.md` and `docs/marketing/ai-experiment-story-outline.md`. If the topic comes up in HN or r/vibecoding comments, the answer is ready.
+
+**Iteration counts updated throughout:** All "42+" references in marketing drafts updated to "44+": `docs/marketing/reddit-vibecoding-draft.md` (multiple references), `docs/marketing/longform-how-i-built-this.md`, `docs/marketing/ai-experiment-story-outline.md`.
+
+**Market gap remains uncontested:** Corahealth synthesis of 200+ Reddit threads (May 2026) confirms no dedicated 5/3/1 tracker appears in any recommendation roundup. Strong, Hevy, Boostcamp, and FitNotes remain the dominant names. The "I couldn't find a clean 5/3/1+BBB tracker" premise is still accurate, uncontested, and honest.
+
+**No live community threads found:** Reddit remains poorly indexed externally. No r/531Discussion or r/weightroom threads about app recommendations surfaced. Strategy unchanged: post on iOS launch day, not in response to existing threads.
 
 ## Expedition 43 — Research notes
 

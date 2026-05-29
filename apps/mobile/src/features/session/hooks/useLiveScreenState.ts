@@ -171,8 +171,8 @@ function defaultFireDoneAlarm() {
     const Haptics = require('expo-haptics') as any;
 
     if (RN.Platform.OS === 'android') {
-      // Triple-pulse alarm vibration: [delay, on, pause, on, pause, on] in ms.
-      RN.Vibration.vibrate([0, 400, 150, 400, 150, 400]);
+      // Long-pulse alarm: two sustained 700ms bursts with a short gap.
+      RN.Vibration.vibrate([0, 700, 100, 700]);
       // When foregrounded, no trigger notification was scheduled — fire an
       // immediate sound alert on the high-importance rest-done channel.
       if (RN.AppState.currentState === 'active') {

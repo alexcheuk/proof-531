@@ -1,0 +1,34 @@
+---
+# Smoke test: begin a session from the Today screen and verify the live screen loads.
+# Does NOT complete the session — just verifies navigation to live and back.
+
+appId: com.alexcheuk.fivethreeone
+---
+- launchApp
+
+# Tap the primary CTA on the Home/Today screen
+- waitForAnimationToEnd
+- tapOn:
+    id: "lift-page-squat-cta"
+
+# Should arrive at the Today (session preview) screen
+- waitForAnimationToEnd
+- assertVisible:
+    id: "start-session"
+
+# Start the session
+- tapOn:
+    id: "start-session"
+
+# Should arrive at the Live screen
+- waitForAnimationToEnd
+- assertVisible:
+    id: "live-scroll"
+
+# Navigate back (session-back is the TopBar back button in the live screen)
+- tapOn:
+    id: "session-back"
+- waitForAnimationToEnd
+# Should return to Today preview screen
+- assertVisible:
+    id: "start-session"

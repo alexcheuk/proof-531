@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Maestro e2e test skeleton added; haptics upgraded to long-pulse
+
+**Tags:** `process`, `feature`, `architecture`
+**Files:** `.maestro/config.yaml`, `.maestro/flows/`, `apps/mobile/src/lib/haptics.ts`
+
+Added three Maestro flow files (onboarding, tab navigation, begin-session smoke test) and a `longPulseVibrate()` helper in `src/lib/haptics.ts`. PR Celebration screen and rest-timer done alarm now both use a sustained 700ms vibration on Android (previously: short success buzz and triple 400ms pulses respectively). CONTRIBUTING.md updated to document Maestro setup.
+
+**Why:** Maestro was listed as "unblocked" since the dev-client migration but the test infrastructure was never created. The long-pulse vibration was a user request — a single sustained buzz is more noticeable at the two milestone moments (PR hit, rest done) than the existing short notification haptic.
+
+**Trade-off / what we didn't do:** iOS still gets `Haptics.impactAsync(Heavy)` for both moments — the CoreHaptics custom-pattern API isn't exposed by expo-haptics, so sustained vibration is Android-only. The Maestro flows are smoke tests, not golden-path tests — they verify navigation works, not that data is correct. Golden-path coverage (actual set logging, AMRAP result checking) is a follow-up.
+
+---
+
 ### 2026-05-28 — Rest countdown moved out of Android's "Silent" group; FGS rejected
 
 **Tags:** `architecture`, `android`, `notifications`
