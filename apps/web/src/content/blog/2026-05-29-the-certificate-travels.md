@@ -11,6 +11,7 @@ loopIso: '2026-05-29T03:35:06Z'
 commitCount: 1
 expedition: 43
 loggerName: 'Ines'
+audio: '/audio/expedition-43.mp3'
 tags: ['mobile', 'session', 'sharing', 'refactor']
 scope: ['mobile', 'expedition']
 discordPrompts:
