@@ -1,5 +1,6 @@
 import { useDb } from '@/data/DbProvider';
 import { countCompletedSessionsForLift } from '@/data/accessors/rollbackLift';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
@@ -113,15 +114,9 @@ export function RollbackLiftSheet({
       </Text>
 
       <View>
-        <Text
-          variant="mono"
-          weight="semibold"
-          size={11}
-          color="ink3"
-          style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: spacing.xs }}
-        >
+        <CapsLabel size="md" weight="semibold" color="ink3" style={{ marginBottom: spacing.xs }}>
           Lift
-        </Text>
+        </CapsLabel>
         <View style={liftRowStyle}>
           {enabledLifts.map((lift) => (
             <Pressable

@@ -79,6 +79,13 @@ After the post is staged but before (or alongside) the commit, send a read-aloud
 
 Strip code, file paths, and jargon — this is heard, not read.
 
+**Paragraph separators — use `;` or ` — ` instead of periods between sentences.** A period at a
+sentence boundary signals a tonal reset to the autoregressive TTS model; on a long clip this causes
+pitch drift — the voice gradually drops and sounds fatigued. To prevent it, join sentences within
+the body of the read-aloud with a semicolon (`;`) or an em-dash with spaces (` — `) rather than
+period-space-capital. Reserve periods for abbreviations and the final word of the clip. Inline audio
+tags (`[tired]`, `[slowly]`, etc.) can still appear after any separator.
+
 This goes out through the **`/compose`** endpoint. The full reference — voice catalog, audio tags, the casting canon, the payload recipe — lives in **`loop-memory/15-tts.md`**. Read it once; the essentials for this step are below.
 
 **Pick the voice and style for *this Logger*.** The agent returned `logger_name` and you can read the post itself for tone. Match them:
@@ -92,6 +99,11 @@ This goes out through the **`/compose`** endpoint. The full reference — voice 
   - *"Say with gallows humor, cracking wise on the way out"*
   - *"Say with quiet pride, measured and unhurried"* — the calm end of the range, used sparingly
   - *"Say flat and plain, steady, no drama"*
+
+  **Pitch-drift fix — required anchor sentence.** Always append this sentence to whatever register direction you write, so the model holds its energy across the full clip:
+  > Maintain a consistent, level pitch and crisp energy throughout the entire text. Do not let the voice drop or become fatigued.
+
+  Full example: *"Say with cocky swagger, fast and sure of yourself. Maintain a consistent, level pitch and crisp energy throughout the entire text. Do not let the voice drop or become fatigued."*
 - **Pace is normal by default.** Do **not** make the whole clip slow. Keep the body at a natural talking speed (the style direction sets it). Reserve any slowing for the very end — and even then, only the **motto**, not the entire sign-off.
 - **Delivery / the gommage fade** — let the Logger's persona decide the ending. A brisk Logger signs off clean. A somber one thins on the motto. A cocky one doesn't fade at all. Shape the sign-off with inline tags that match the register you've committed to for this clip — do **not** default to `[slowly] [whispers]` on every Logger regardless of character. That's one option, not the house style. Others: no tags at all (confident, clean exit); `[sighs]` before the motto (resigned); `[sarcastic]` on the motto (wry); a brief `[slowly]` on the last three words only (understated fade). Use a mid-transcript `[tired]` / `[sighs]` only if the full clip has been that character throughout. For a fully shaped delivery, drop a director's-notes block at the top of `text` and leave `style` empty — see `loop-memory/15-tts.md`. Examples across the range:
 

@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Astro scoped CSS does not apply to JS-injected innerHTML
+
+**Tags:** `web`, `bug`, `convention`
+**Files:** `apps/web/src/pages/tools/goal-calendar.astro`, `apps/web/src/pages/tools/plate-math.astro`, `loop-memory/18-astro-css-dynamic-injection.md`
+
+Tool pages used `element.innerHTML = html` to render dynamic content (cycle table rows, barbell diagram), but all CSS for those elements lived in Astro's default scoped `<style>` block. Scoped styles only match elements that have the `data-astro-cid-xxx` attribute Astro stamps onto static template elements — JS-injected elements never get that attribute, so the grid and flex layouts silently didn't apply. Fixed by adding `<style is:global>` blocks for dynamic-element rules in both tool pages.
+
+**Why:** The goal calendar showed cycle rows as concatenated inline spans ("1295 LB4 WK") and the plate-math barbell diagram collapsed. Reported by the user via screenshot.
+
+**Trade-off / what we didn't do:** Could also use `:global(.selector)` inline in the scoped block; chose a second `<style is:global>` block to keep the fix visually isolated and easy to audit. The original scoped block was left untouched.
+
+**Follow-ups:** CI has no browser test that would catch this. A Playwright smoke test that checks computed styles on tool pages would close the gap — flagged in `loop-memory/18-astro-css-dynamic-injection.md`.
+
+### 2026-05-29 — TTS pitch drift fix: pitch-anchor sentence required in Logger style field
+
+**Tags:** `tts`, `convention`
+**Files:** `loop-memory/15-tts.md`, `.claude/skills/commission-expedition-log/SKILL.md`
+
+Logger TTS clips were suffering autoregressive pitch drift — voice dropped and became fatigued toward the end of longer reads. Fixed by mandating that every Logger `style` field ends with a pitch-anchor sentence, and that paragraph separators in TTS text use `;` or ` — ` rather than periods (periods trigger tonal resets in the model).
+
+**Why:** Autoregressive TTS models accumulate spectral drift over long text; punctuation signals drive cadence resets. The fix anchors pitch explicitly in the style prompt and reduces period density in the text body.
+
 ### 2026-05-29 — og:image defaulted to /screenshot-2.png across all website pages
 
 **Tags:** `web`, `seo`

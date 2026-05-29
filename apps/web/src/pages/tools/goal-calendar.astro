@@ -898,3 +898,32 @@ import Base from '~/layouts/Base.astro';
     .faq-section { margin-top: 48px; padding-top: 36px; }
   }
 </style>
+
+<style is:global>
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line-strong); background: var(--bg-0); }
+  .sum-cell { padding: 20px 16px; border-right: 1px solid var(--line); }
+  .sum-cell:last-child { border-right: none; }
+  .sum-label { margin-bottom: 8px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-2); }
+  .sum-val { font-family: var(--font-cond); font-weight: 600; font-size: 36px; line-height: 1; letter-spacing: -0.03em; color: var(--ink-0); font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 5px; }
+  .sum-unit { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; color: var(--ink-2); }
+  .already-there { padding: 20px; color: var(--amber); font-weight: 600; font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+  .cycle-row { display: grid; grid-template-columns: 80px 1fr 120px; align-items: baseline; padding: 10px 24px; border-bottom: 1px solid var(--line-faint); transition: background var(--duration-base) var(--ease-standard); }
+  .cycle-row:last-child { border-bottom: none; }
+  .cycle-row:hover { background: var(--bg-1); }
+  .cycle-row--goal { background: var(--bg-1); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  .cycle-row--more { padding: 12px 24px; background: var(--bg-1); }
+  .cycle-num { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .cycle-row--goal .cycle-num { color: var(--ink-0); }
+  .cycle-tm { font-family: var(--font-cond); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; color: var(--ink-0); font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+  .cycle-unit { font-family: var(--font-mono); font-size: 9px; font-weight: 500; letter-spacing: 0.18em; color: var(--ink-2); }
+  .goal-tag { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); padding: 1px 6px; vertical-align: middle; margin-left: 4px; }
+  .cycle-weeks { text-align: right; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: var(--ink-3); text-transform: uppercase; }
+  @media (max-width: 640px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .sum-cell:nth-child(2) { border-right: none; }
+    .sum-cell:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  }
+  @media (max-width: 580px) {
+    .cycle-row { padding: 10px 16px; }
+  }
+</style>

@@ -1006,3 +1006,23 @@ import Base from '~/layouts/Base.astro';
     .faq-section { margin-top: 48px; padding-top: 36px; }
   }
 </style>
+
+<style is:global>
+  .barbell-diagram { display: flex; align-items: center; justify-content: center; gap: 0; min-height: 90px; }
+  .bb-side { display: flex; align-items: center; gap: 2px; }
+  .bb-side--left { flex-direction: row-reverse; }
+  .bb-side--right { flex-direction: row; }
+  .bb-plate { display: flex; align-items: center; justify-content: center; width: var(--pw, 24px); height: 72px; background: var(--ink-0); position: relative; flex-shrink: 0; border: 1px solid var(--line-strong); }
+  .bb-plate-label { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; color: var(--bg-0); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); line-height: 1; white-space: nowrap; }
+  .bb-bar { display: flex; align-items: center; flex-shrink: 0; gap: 0; }
+  .bb-collar { width: 10px; height: 20px; background: var(--ink-2); border: 1px solid var(--line-strong); flex-shrink: 0; }
+  .bb-sleeve { width: 32px; height: 12px; background: var(--ink-3); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); flex-shrink: 0; }
+  .bb-center { width: 72px; height: 16px; background: var(--ink-2); border: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .bb-center span { font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.12em; color: var(--bg-0); }
+  .plate-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line-faint); }
+  .plate-row:last-child { border-bottom: none; }
+  .plate-row-weight { font-family: var(--font-cond); font-weight: 600; font-size: 22px; letter-spacing: -0.02em; color: var(--ink-0); font-variant-numeric: tabular-nums; }
+  .plate-row-unit { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; color: var(--ink-2); }
+  .plate-row-count { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--ink-2); }
+  .empty-list { padding: 16px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-2); }
+</style>

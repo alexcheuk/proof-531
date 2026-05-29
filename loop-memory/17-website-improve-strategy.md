@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 50)
+**Last updated**: 2026-05-29 (Expedition 51)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -46,7 +46,7 @@ Keep the website copy accurate and honest:
 Current gaps:
 - [ ] iOS App Store URL — waiting on Apple approval (Alex needs to update when live)
 - [ ] Screenshots section in README + homepage is a placeholder
-- [ ] The "How it works" section references Expo Go (retired in expedition 28?)
+- [x] The "How it works" section references Expo Go — confirmed NOT present (expedition 48 audit was correct; no Expo Go in any /pages file; item was stale)
 
 ### Track C — UX / conversion
 
@@ -98,6 +98,7 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | Screenshots on homepage | done · expedition 48 | New "Real device" section with screenshot-1.png (PR Certificate, dark) and screenshot-2.png (Home, light). Copied to apps/web/public/. |
 | Pocket Cast confident copy | done · expedition 48 | process.astro now says "I subscribe in Pocket Cast" (not hedged). |
 | Expo Go pages audit | done · expedition 48 | No Expo Go references found in /pages — only in historical blog posts (correct). |
+| Duplicate section marker fix | done · expedition 51 | Homepage had two sections marked "04" (Real device + The product/screens rail). "Real device" changed to unlabeled marker — screens rail keeps 04, free tools keeps 05. |
 
 ## Discord collaboration workflow
 

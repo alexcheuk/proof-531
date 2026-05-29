@@ -102,6 +102,12 @@ An unknown voice name is rejected by Gemini and surfaces as a `502` (synthesis e
   Vary it across expeditions so the ambient track doesn't become a drone — if two consecutive
   Loggers feel similar, push the second to a different voice.
 
+  **Logger style field — required anchor sentence.** Every Logger `style` value must end with:
+  > Maintain a consistent, level pitch and crisp energy throughout the entire text. Do not let the voice drop or become fatigued.
+
+  Place it at the end of whatever register direction you've written, e.g.:
+  > "Say with cocky swagger, fast and sure of yourself. Maintain a consistent, level pitch and crisp energy throughout the entire text. Do not let the voice drop or become fatigued."
+
 ## Audio tags (delivery, inline)
 
 Bracketed cues placed **inline in `text`**; each modifies the delivery of the words *after* it.
@@ -131,6 +137,13 @@ gallows-humor, occasionally solemn) so the ambient track isn't one mournful dron
 
 Rule of thumb: **delivery (pacing, fade, emotion) → inline tags in `text`; overall register/mood →
 `style`.** They combine freely.
+
+**Paragraph separators in `text`.** Periods at sentence boundaries trigger a tonal reset in the
+autoregressive model — after a period the pitch tends to drop and the voice can sound fatigued by
+the end of a long clip. To prevent drift, join paragraphs with ` — ` (em-dash with spaces) or `;`
+(semicolon) rather than a period-space-capital pattern. Use periods only inside a single sentence
+where they carry genuine meaning (abbreviations, etc.) or at the very end of the clip. This applies
+to the full gommage read-aloud and to any Verso departure text.
 
 ## Director's-notes block (full control)
 
