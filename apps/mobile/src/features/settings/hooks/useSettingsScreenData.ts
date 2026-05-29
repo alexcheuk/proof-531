@@ -1,10 +1,4 @@
 import type { TrainingMax } from '@/data/accessors/trainingMax';
-/**
- * Combined Settings-screen read surface. Wraps `useSettings()` and
- * `useLatestTms()` so the screen has a single load/undefined check.
- *
- * Collapses the `tmsByLift` Map shape to TanStack Query data, indexed by Lift.
- */
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { useSettings } from '@/data/queries/useSettings';
 import type { Lift, Settings } from '@/domain/types';

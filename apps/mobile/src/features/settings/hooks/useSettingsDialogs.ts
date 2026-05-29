@@ -12,13 +12,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-/**
- * State + handlers for the three modal sheets attached to SettingsScreen:
- * TM editor, storage-unit migration, and the destructive reset.
- *
- * Pulled out of SettingsScreen so the screen body is pure composition. The
- * hook owns the pending/in-flight flags so the trigger sites can stay terse.
- */
 export type UseSettingsDialogsResult = {
   // TM editor
   editingLift: Lift | null;

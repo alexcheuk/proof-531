@@ -4,17 +4,6 @@ import type { PlateSet, Unit, Week } from '@/domain/types';
 import { convert, round } from '@/domain/units';
 import { useMemo } from 'react';
 
-/**
- * View model for `LiftPage`. Derives top-set weight / TM / plate
- * decomposition from raw TM + week + plate set, and exposes an `empty`
- * flag so the screen can short-circuit when no TM exists.
- *
- * Keeping this logic outside the component:
- *   - shrinks `LiftPage` to pure layout
- *   - makes the math independently unit-testable
- *   - documents the storage-vs-display unit invariant in one place
- *     (snap on storage, then convert for display)
- */
 export type UseLiftPageStateOptions = {
   week: Week;
   storageUnit: Unit;

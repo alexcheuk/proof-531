@@ -2,17 +2,7 @@ import type { Lift } from '@/domain/types';
 import { useCallback, useEffect, useRef } from 'react';
 import type { FlatList, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
-/**
- * Two-way binding between a horizontal lift carousel's scroll position and
- * the parent's `selectedLift` state. Shared between HomeScreen and
- * ProgressScreen — both render the same "one page per enabled lift"
- * shape and need identical sync behaviour (a momentum-end handler that
- * dispatches the new lift, plus an effect that `scrollToIndex`'s when the
- * selection changes externally via LiftTabs / deep-link / route params).
- *
- * `scrollToIndex` can throw before initial layout on Expo SDK 55; the
- * effect swallows that one-shot to keep first paint quiet.
- */
+// scrollToIndex throws before initial layout on Expo SDK 55; the effect swallows that one-shot.
 export type UseLiftCarouselSyncOptions = {
   selectedLift: Lift;
   enabledLifts: Lift[];

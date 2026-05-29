@@ -5,16 +5,6 @@ import type { Settings } from '@/domain/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-/**
- * Standard `update settings → invalidate the settings query` pair used by
- * every settings section that commits a single field. Replaces the
- * `useDb + useQueryClient + async commit` boilerplate that was
- * duplicated five times across `sections/`.
- *
- * Returns a single async function; callers await it (or `void` it) at
- * the site of the user gesture. Errors propagate — sections that need
- * to surface them can wrap in try/catch.
- */
 export function useUpdateSettings(): (patch: Partial<Omit<Settings, 'id'>>) => Promise<void> {
   const db = useDb();
   const queryClient = useQueryClient();

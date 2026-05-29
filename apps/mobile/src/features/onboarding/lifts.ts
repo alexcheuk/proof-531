@@ -1,18 +1,6 @@
-/**
- * Onboarding-local lift constants.
- *
- * Not imported across features — cross-feature imports violate the boundary
- * rules. Display labels delegate to `liftProperName` from domain/labels
- * rather than duplicating the strings; the `italic` subtitle is onboarding-
- * specific and stays local.
- */
 import { liftProperName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 
-/**
- * Canonical order of the four 5/3/1 lifts as shown in the onboarding
- * wizard. Onboarding-local — not imported across features.
- */
 export const LIFT_ORDER: readonly Lift[] = ['squat', 'bench', 'deadlift', 'press'];
 
 export interface LiftMeta {

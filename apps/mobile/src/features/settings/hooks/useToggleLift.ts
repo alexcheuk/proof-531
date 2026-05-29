@@ -1,16 +1,6 @@
 import { useDb } from '@/data/DbProvider';
-/**
- * Returns a stable `(lift) => Promise<void>` that toggles a lift in
- * `Settings.enabledLifts`, preserving LIFT_ORDER and no-opping if the toggle
- * would empty the set.
- *
- * Reads via a one-shot `getSettings()` await (not a closure over the query
- * cache) so the write uses the value at toggle-time.
- *
- * If the toggle disables a lift that still has an in-progress session, that
- * session is cancelled in the same call (Discord 1508768403) — otherwise it
- * keeps redirecting the Home Begin CTA to a now-disabled lift.
- */
+// Disabling a lift with an in-progress session cancels the session (Discord 1508768403) — otherwise
+// Home's Begin CTA keeps redirecting to the disabled lift.
 import { cancelSession, getActiveSession } from '@/data/accessors/session';
 import { getSettings, updateSettings } from '@/data/accessors/settings';
 import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';

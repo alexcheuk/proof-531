@@ -1,12 +1,4 @@
 import type { Lift, Unit } from '@/domain/types';
-/**
- * Onboarding wizard state machine. Ported from
-
- *
- * State lives in-memory via `useReducer` so the route stays simple — a full
- * app refresh discards in-progress state, which is acceptable for v1 (the
- * onboarding gate only flips on after `completeOnboarding` commits).
- */
 import { type Dispatch, useReducer } from 'react';
 import { LIFT_ORDER } from '../lifts';
 

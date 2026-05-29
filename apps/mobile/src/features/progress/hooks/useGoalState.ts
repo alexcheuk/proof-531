@@ -11,10 +11,8 @@ import { ceilToStep, defaultBumpStep } from '../goalDefaults';
 export type GoalState = {
   draftKind: LiftGoalKind;
   draftValue: number;
-  /** true while no goal has been persisted yet — value is a default placeholder */
   unset: boolean;
   persistedDaysPerWeek: number | null;
-  /** projected TM in storage units, used by the cycle grid to draw goal-rule rows */
   draftTargetTm: number;
   isError: boolean;
   onKindChange: (kind: LiftGoalKind) => void;

@@ -1,12 +1,3 @@
-/**
- * Thin wrapper around `Updates.useUpdates()` that flattens the expo-updates
- * runtime state into a stable shape for the OTA banner and the Settings
- * "Release" section.
- *
- * `useUpdates` works in production / preview APKs and returns inert defaults
- * inside Expo Go and `expo start` (where OTAs are disabled). Callers can
- * always read the returned fields without branching on environment.
- */
 import * as Updates from 'expo-updates';
 import { useCallback } from 'react';
 

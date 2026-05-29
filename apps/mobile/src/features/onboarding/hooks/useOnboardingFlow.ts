@@ -14,17 +14,6 @@ import {
   useOnboardingState,
 } from './useOnboardingState';
 
-/**
- * Driver for `OnboardingScreen`. Owns:
- *   - The reducer-backed `state` + `dispatch` (seeded from current settings).
- *   - The per-lift computed 1RM map (Epley for `calculate` mode, identity
- *     for `direct`).
- *   - The `finishing` flag + `handleFinish` which commits via
- *     `completeOnboarding`, awaits a TM/settings refetch, and routes home.
- *
- * Pulling all of this out of the screen body keeps the render tree focused
- * on the four-step switch.
- */
 export type UseOnboardingFlowResult = {
   state: OnboardingState;
   dispatch: Dispatch<OnboardingAction>;
