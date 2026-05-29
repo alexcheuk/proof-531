@@ -8,13 +8,6 @@ import { estimateOneRm } from '@/domain/epley';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit, round } from '@/domain/units';
-/**
- * Bottom-sheet AMRAP rep logger.
- *
- * Composition shell — rep/pending state lives in
- * `useAmrapLogState`, the e1RM caption is `ProjectionChip`, and the
- * Save/Cancel button pair is `LogSheetFooter`.
- */
 import { View, type ViewStyle } from 'react-native';
 import { useAmrapLogState } from '../../hooks/useAmrapLogState';
 import { useAmrapPrEdgeHaptic } from '../../hooks/useAmrapPrEdgeHaptic';

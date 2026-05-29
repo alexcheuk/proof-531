@@ -28,14 +28,7 @@ import { useSessionCompleteHaptic } from './hooks/useSessionCompleteHaptic';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
-  /**
-   * Where the user arrived from. Drives which CTAs render in the bottom
-   * bar:
-   *   - `live` (default) — just-finished flow → "Close the day" primary +
-   *     "See full record →" secondary link.
-   *   - `history` — reviewing a past session → single "Back to history"
-   *     primary, no secondary link.
-   */
+  /** 'live' = just-finished flow (Close the day + share); 'history' = reviewing past (Back to history). */
   origin?: 'live' | 'history';
 };
 
@@ -57,12 +50,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     }
   }, []);
 
-  // Defense in depth: a missing or explicitly cancelled session can't
-  // render a receipt, so bounce home. A stale `'in_progress'` read from
-  // the per-session cache is NOT a bounce trigger — see the
-  // `cancelled` field on `SessionCompleteData` for why. The view stays
-  // null until status flips to `'completed'`, so the screen renders its
-  // loading chrome while we wait.
+  // Stale 'in_progress' reads are NOT a bounce — the view waits for 'completed'.
+  // Missing/cancelled sessions have no receipt to show, so send the user home.
   useEffect(() => {
     if (data.loading) return;
     if (data.missing || data.cancelled) {
@@ -70,17 +59,10 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     }
   }, [data.loading, data.missing, data.cancelled, router]);
 
-  // CRITICAL: all hooks must run on every render — keep this above any
-  // early return so the React Hook rules hold. Previously `useCallback`
-  // and `useHardwareBack` were below an `if (!data.view) return`
-  // which crashed with "Rendered more hooks than during the previous
-  // render" the instant `data.view` resolved on a PR row.
+  // Keep all hooks above the early return — moving them below `if (!data.view)` crashes
+  // with "Rendered more hooks than during the previous render" when data.view resolves.
   const handleBackToHistory = useCallback(() => {
-    // Always navigate explicitly to /history rather than calling
-    // router.back(). The tabs → session group push doesn't reliably
-    // remember the originating tab — both Android hardware back and
-    // router.back() can land on the home tab (or Today). Pushing the
-    // tab route directly is the only stable path back to history.
+    // router.back() is unreliable from inside the session group — can land on Today.
     goTo.history(router);
   }, [router]);
 

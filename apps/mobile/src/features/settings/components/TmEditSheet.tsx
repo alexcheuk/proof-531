@@ -1,9 +1,4 @@
 import { useDb } from '@/data/DbProvider';
-/**
- * Bottom-sheet TM editor. Tapping a Training max row in SettingsScreen opens
- * this sheet; Save appends a new TrainingMax row via `setTrainingMax` (PD-04
- * append-only contract — never UPDATE).
- */
 import { setTrainingMax } from '@/data/accessors/trainingMax';
 import { TM_KEY } from '@/data/queries/useLatestTm';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
@@ -18,19 +13,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { LIFT_META } from '../lifts';
 
-/**
- * A delta is "big" when it exceeds 2× the per-cycle recommended bump.
- * Wendler's defaults are +5 lb upper / +10 lb lower (or +2.5 kg / +5 kg).
- * Beyond 2× the program prescription, the user is shooting for territory
- * the program no longer paces them safely toward.
- */
+// 2× per-cycle recommended bump (Wendler default: +10 lb lower / +5 lb upper).
 const BIG_JUMP_MULTIPLIER = 2;
 
-/**
- * Format a percentage delta for the TmEditSheet caption.
- * Single-decimal under 10% (so 2.5%, 4.3% are legible); whole-number
- * above (a 12.7% jump rounds to 13% — no spurious precision).
- */
+// Single-decimal below 10% (2.5%, 4.3%), whole-number at or above (avoids spurious precision).
 function formatDeltaPct(pct: number): string {
   const sign = pct > 0 ? '+' : '-';
   const abs = Math.abs(pct);
@@ -40,10 +26,7 @@ function formatDeltaPct(pct: number): string {
 export interface TmEditSheetProps {
   lift: Lift;
   currentValue: number;
-  /**
-   * Storage unit — the TM row's own unit. Edits commit in this unit so the
-   * NumberStepper step and unit glyph are storage-side.
-   */
+  /** The TM row's own unit — stepper step and commit use this, not displayUnit. */
   storageUnit: Unit;
   /** Settings.displayUnit — used only for the storage ≠ display caption. */
   displayUnit: Unit;

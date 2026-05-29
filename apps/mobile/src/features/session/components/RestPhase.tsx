@@ -5,48 +5,24 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
-/**
- * Full-body rendering of the Live screen's `rest` phase.
- *
- * Layout: "SET COMPLETED" caps eyebrow, "Rest." display headline, hairline
- * divider, the count-down RestTimer, and an optional NEXT SET preview block
- * so the user can prep plates while the timer ticks.
- *
- * Undo lives on the top bar during rest — RestPhase no longer renders an
- * inline undo button (removed 2026-05-24 per user feedback that the
- * duplicate was visual noise).
- *
- * Note: working sets (non-AMRAP) never produce e1RM PRs. After an AMRAP set
- * the live screen goes directly to `pr-celebration` rather than entering
- * rest, so there is no "PR during rest" case to render here.
- */
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
 
 export type RestPhaseProps = {
-  /** Display unit (`'lbs' | 'kg'` — rendered via `displayUnit()` as `lb | kg`). */
   loggedUnit: Unit;
-  /** Seconds remaining in the countdown (forwarded to RestTimer). */
   remaining: number;
-  /** Optional ±30s / Skip controls — forwarded to RestTimer. */
   onAddRest?: () => void;
   onSubRest?: () => void;
   onSkip?: () => void;
-  /**
-   * Optional preview of the upcoming set — rendered as a TopSetBlock so the
-   * user can prep plates while the timer counts down. Omit on the terminal
-   * rest (no next set), though the live state machine currently never
-   * enters rest after the last working/AMRAP set.
-   */
   nextSet?: {
     weight: number;
     reps: number;
     amrap: boolean;
     /** Top-set % of TM (0..1). */
     pct: number;
-    /** Pre-computed plate decomposition (heaviest first). */
+    /** Plate decomposition, heaviest first. */
     perSide: readonly number[];
-    /** TM in display unit, for the "TM 245 lb" caption. */
+    /** TM in display unit, for the caption. */
     tmDisplay: number;
   };
   testID?: string;

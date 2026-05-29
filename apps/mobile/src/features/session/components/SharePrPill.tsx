@@ -6,14 +6,9 @@ import { useCallback } from 'react';
 import { Pressable, Share, View, type ViewStyle } from 'react-native';
 
 export type SharePrPillProps = {
-  /** The pre-formatted share text. Used as fallback if image capture unavailable. */
+  /** Share text shown when image capture is unavailable (fallback). */
   message: string;
-  /**
-   * Optional async function to capture the certificate as an image URI.
-   * Provided by the parent (SessionCompleteScreen) via a ViewShot ref.
-   * When present, the pill captures the certificate visual and shares that;
-   * falls back to text-only if capture fails or returns null.
-   */
+  /** Capture the certificate view as a file URI; falls back to text share if absent or null. */
   onCaptureCertificate?: () => Promise<string | null>;
   testID?: string;
 };
@@ -79,10 +74,7 @@ export function SharePrPill({
   );
 }
 
-/**
- * Build the text snippet shared from the receipt when image capture is unavailable.
- * Kept pure for unit testing — the visual pill component is dumb.
- */
+// Kept pure (no React imports) so it can be unit-tested without a renderer.
 export type BuildPrShareMessageInput = {
   liftLabel: string;
   e1RM: number;

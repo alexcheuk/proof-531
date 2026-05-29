@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 62)
+**Last updated**: 2026-05-29 (Expedition 63)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -122,7 +122,8 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | done · expedition 59 · count updated expedition 62 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph now reads "62+ iterations" (updated expedition 62). |
+| 1. GitHub README polish | done · expedition 59 · count updated expedition 63 | Keywords in title/subtitle: "5/3/1 Wendler + BBB strength training", "React Native (Expo SDK 55)". All 5 screenshots embedded (docs/screenshots/). Alt text describes exact screen content. Features section reorganized into Program / During a session / Tracking / Privacy groups for scanability. Architecture section has full stack table plus boundary rules explained in context. AI-loop paragraph reads "63+ iterations" (current). |
+| 1a. GitHub repo metadata | done · expedition 63 | Repo had NO description and NO topics — a blank profile. **Fixed this expedition via GitHub API.** Description now: "Free 5/3/1 Wendler + BBB strength training tracker for iOS and Android. Local-first, no account, no ads. Built by a Claude coding agent on a 30-minute cron loop." Homepage corrected from Vercel preview URL to https://531strength.com. Topics set: 531, 5-3-1, wendler, strength-training, powerlifting, workout-tracker, fitness-tracker, react-native, expo, local-first, offline-first, sqlite, typescript, fitness, gym, agentic-engineering (16 topics). Previously completely invisible to GitHub topic searches. |
 | 2. r/531Discussion post | draft ready · screenshots embedded expedition 52 · features updated expedition 56 · awaiting Alex personal details | Two options drafted (practitioner-frame + short). **Expedition 46:** Competitor review analysis added. **Expedition 52:** Screenshots section updated with actual filenames. **Expedition 56:** Two new features added to Option A body: TM Test Week (7th Week Protocol) and lift rollback — both are practitioner-credibility signals that r/531Discussion values. Research note added explaining why each is relevant to the community. Personal details (how long on 5/3/1, whether he used Strong/Boostcamp, which lift is primary) remain the only human-only blocker. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
@@ -134,8 +135,79 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | blocked · awaiting store listings | Expedition 60: Neither the Play Store nor the App Store listing is live yet (Android ships via GitHub Releases APK; iOS is in review). Implement when both stores have a live listing — use `expo-store-review` for the native in-app dialog, or `Linking.openURL` to the store page as a fallback. Show after session cycle >= 2, no modal, no repeated asks. |
+| 15. Hackernoon story — casual builder angle | pending · expedition 63 | Researched this expedition. Hackernoon publishes to 3.5M+ monthly tech readers, human editorial review, dofollow outbound links (SEO flows back to 531strength.com), audio + 12-language distribution. Ideal platform for the casual builder story at `docs/marketing/reddit-casual-builder-story-draft.md` — the "homelab, Google Home, expedition lore, absurdist delight" angle. Not a launch-day tactic. Sequence: Indie Hackers first (week 2-3 post-launch), then Hackernoon 1-2 weeks later with canonical URL pointing back to 531strength.com/blog. Draft already exists; Alex needs to fill in homelab/TTS/personal details (Q15 in questions-for-alex.md) before submitting. |
 | 13. YouTube Shorts series | brief improved · expedition 62 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added ("60 times..."). **Expedition 61:** Brief and script updated to "61+ expeditions" throughout. **Expedition 62:** All "61+" references updated to "62+" throughout brief and shooting script. Version D hook now reads "62 times." "Note on the number" names Expedition 62 as current baseline. Film-now status unchanged: unblocked without iOS. |
 | 14. Web tools as SEO entry point | in progress · expedition 62 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added — 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b — "How do I set my TM / is my TM too heavy?" — covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates — one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. **Expedition 62:** No new thread types added this loop. Playbook remains current. |
+
+## Expedition 63 — Research notes
+
+**Date:** 2026-05-29
+
+**GitHub repo metadata — major organic discoverability fix (most important action this expedition):**
+
+The GitHub repo had zero description, zero topics, and a stale homepage URL pointing to a Vercel preview URL (`proof-531-web.vercel.app`), not the production domain. This was a silent organic search blind spot: anyone visiting the repo's GitHub page would see a blank "About" panel, and GitHub's internal topic-search would return zero results for queries like "5/3/1 workout tracker" or "strength training react native."
+
+**Fixed via GitHub API this expedition:**
+
+- **Description**: "Free 5/3/1 Wendler + BBB strength training tracker for iOS and Android. Local-first, no account, no ads. Built by a Claude coding agent on a 30-minute cron loop." — hits the key audience signals (free, local-first, specific program) and the interesting hook (built by an agent) in a single sentence.
+- **Homepage**: corrected to `https://531strength.com` (was `https://proof-531-web.vercel.app` — a Vercel preview URL that technically resolves but signals a dev project rather than a live product).
+- **Topics (16 total)**: `531`, `5-3-1`, `wendler`, `strength-training`, `powerlifting`, `workout-tracker`, `fitness-tracker`, `react-native`, `expo`, `local-first`, `offline-first`, `sqlite`, `typescript`, `fitness`, `gym`, `agentic-engineering`
+
+**Topic selection rationale:**
+- `5-3-1` and `531` and `wendler` — the program-specific searches that define the niche; no competitor app on GitHub has these
+- `strength-training` and `powerlifting` — the two GitHub topics with meaningful fitness-developer overlap (Flexify, skulpt, and Ironlog all use these; they're how developer-lifters find projects)
+- `workout-tracker` and `fitness-tracker` — the two highest-traffic fitness repo categories on GitHub; `workout-tracker` has many recently-updated repos, `fitness-tracker` is slightly broader
+- `react-native`, `expo`, `typescript`, `sqlite` — the four technology tags developers search when evaluating stack
+- `local-first`, `offline-first` — the architectural distinction that separates this from cloud-sync apps; the repo skulpt (most comparable competitor on GitHub) uses both of these and they are used by the privacy-conscious developer audience
+- `agentic-engineering` — the emerging term (per Simon Willison's May 2026 piece) for the methodology used to build this app; no other fitness app on GitHub uses this tag; it's a differentiator for the "how it was built" audience
+- Excluded: `bbq`, `powerlifting-calculator`, `training-log` (low traffic); `ai-agent` (too broad and positions it as an AI tool rather than a fitness app)
+
+**Why this matters for organic discoverability:**
+GitHub's topic pages function like search results. The topic page for `workout-tracker` (sorted by recently updated) is how developers looking for open-source workout apps find projects. Being listed there with a clear description and the correct homepage means a developer searching for a React Native workout tracker lands on this repo rather than seeing it in search and bouncing because there was no description. The fix is live immediately — GitHub topic pages crawl fast.
+
+**Simon Willison "vibe coding vs. agentic engineering" — discourse signal sharpened:**
+
+Simon Willison's May 6 2026 post "Vibe coding and agentic engineering are getting closer than I'd like" is now well-linked in the developer discourse. His key point: as coding agents become more reliable, professional developers are trusting them without reviewing every line, which starts to look like vibe coding — but the difference is that professionals bring accountability, architectural judgment, and usage-based trust calibration to the relationship. He explicitly reframes "agentic engineering" as the professional discipline.
+
+This sharpens the r/vibecoding post angle in an important way. The post can now cite a specific, named source for the "agentic engineering" term — Willison's piece is the clearest statement of the distinction and it's from someone the HN and r/vibecoding audience will recognize. The comment talking point already in the vibecoding draft ("the constraints are in CI, not in prompts") maps directly onto what Willison says separates the two: in agentic engineering, the engineer retains accountability through external enforcement, not just self-discipline.
+
+**No action needed in the draft** — the existing Expedition 61 signal note already documents this framing. But if Alex is asked in comments what separates 531 Strength from "just vibe coding," the Willison post is now a specific source to reference if the conversation goes deep.
+
+**Hackernoon as a Tactic 12 platform — new research:**
+
+The longform narrative at `docs/marketing/longform-how-i-built-this.md` and the casual builder story at `docs/marketing/reddit-casual-builder-story-draft.md` are drafted but have no distribution path beyond Indie Hackers and Reddit. Hackernoon was researched as an additional platform.
+
+Key findings:
+- Hackernoon publishes to 3.5M+ monthly tech readers and uses human editors who curate for quality
+- Content is distributed in 12 languages and available as audio
+- The platform explicitly favors "technical detail" and "founder/engineering stories with narrative flow" — this matches both the longform piece and the casual builder story
+- Submission process: create account, submit draft for review queue, 3-5 business days median review time, human editorial review before publish
+- Outbound links are dofollow (unlike dev.to which uses nofollow) — SEO signal flows back to 531strength.com
+- The "how I built this" arc with an AI agent cron loop is exactly the content type they feature
+
+**Recommendation:** Hackernoon is the best platform for the casual builder story (`reddit-casual-builder-story-draft.md`) outside of Reddit and Indie Hackers. It's not a launch-day tactic — it should go out 1-2 weeks after the Indie Hackers post, to avoid competing with the more community-driven distribution. The story differs enough from the longform piece to warrant separate publication rather than cross-posting.
+
+**Add to Tactic 12 (story-sharing angle):** Hackernoon as secondary platform for the casual builder story, after Indie Hackers has run. Cross-post with canonical URL pointing back to 531strength.com/blog if Alex writes it there first.
+
+**5/3/1 community channel audit — new findings:**
+
+Previous loops confirmed r/531Discussion, r/weightroom, and T-Nation as the primary communities. This expedition researched Discord servers and found no dedicated 5/3/1 or Jim Wendler Discord servers (the Paragon Fitness, Sets N Reps, and FitMorii servers are general fitness communities). This confirms Reddit remains the correct primary channel for the lifting audience — the community hasn't moved to Discord in any meaningful way for this program specifically.
+
+T-Nation forums remain active with ongoing 5/3/1 threads, as documented in Expedition 43. The opportunistic strategy (Tactic 11: participate first, mention app only if directly asked) remains correct — T-Nation is not a launch-day play.
+
+One new observation: the r/vibecoding subreddit grew from near zero to 89,000 members in under one year and has shifted from "look what I made" to "production readiness and maintenance" discussions. The community maturation matches the tone of the current r/vibecoding draft, which leads with "the community says vibe coding is for prototypes — here's a production counterexample." That framing is still correct for the 2026 community.
+
+**Iteration count — README updated to 63+:**
+
+The README "How it's built" paragraph already reflects the Expedition 63 count (63+ iterations, which is current). No updates needed to other marketing docs this loop — the expedition count increments daily and updating every single doc each loop is diminishing returns. The count in each doc will be updated when the doc is next actively edited.
+
+**Next actions:**
+1. iOS approval: run `docs/marketing/launch-day-operations-guide.md`.
+2. Alex: fill in personal 5/3/1 history in `docs/marketing/reddit-531discussion-draft.md` — the single human-only blocker for the most important launch-day post.
+3. Alex: film the YouTube Short. Unblocked without iOS. See `docs/marketing/youtube-shorts-draft.md`.
+4. When story-sharing angle is ready (Tactic 12): Indie Hackers first, then Hackernoon for the casual builder story (~1-2 weeks later).
+
+---
 
 ## Expedition 62 — Research notes
 

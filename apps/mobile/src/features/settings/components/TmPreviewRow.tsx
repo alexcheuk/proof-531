@@ -16,14 +16,6 @@ export type TmPreviewRowProps = {
   index: number;
 };
 
-/**
- * One row of the unit-migration preview table. Renders:
- *   <lift>   <oldValue><oldGlyph> → <newValue><newGlyph>
- *
- * The arrow and the new value carry visual weight (sans-bold ink-0); the
- * old value is the smaller, lighter peer so the user reads the
- * transformation L → R at a glance.
- */
 export function TmPreviewRow({
   lift,
   oldValue,

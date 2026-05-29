@@ -1,11 +1,4 @@
-/**
- * Confirm sheet for the destructive hard reset.
- *
- * Mirrors the chrome of `UnitMigrationSheet` byte-for-byte — eyebrow + title +
- * body + filled primary + ghost secondary. No chromatic red: in the LEDGER
- * e-ink theme the red token aliases to ink-0, so destructive gravity is
- * carried by the filled primary chrome + copy.
- */
+// No red on the destructive action — the e-ink theme aliases red → ink-0; copy and filled chrome carry the weight.
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { Text } from '@/design/primitives/Text';

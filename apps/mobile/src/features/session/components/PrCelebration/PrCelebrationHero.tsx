@@ -3,43 +3,17 @@ import { useTheme } from '@/design/theme';
 import { Text as RNText, View } from 'react-native';
 import { PAPER_55 } from '../PRCertificate/paperTints';
 
-/**
- * The "YOU HIT A NEW {LIFT} PR" eyebrow + "Stronger." hero pair at the
- * top of the PR celebration screen.
- *
- * The intro sequence is orchestrated by the screen — this component
- * exposes `typedChars` so the screen can drive a typewriter reveal in
- * place (rather than from a separate overlay). When `typedChars` is
- * undefined, both texts render fully.
- *
- * To keep the line heights stable during the typewriter (so layout
- * doesn't jump as each line gains characters), empty slices render a
- * single space — the line height stays at the final value regardless
- * of how much of the string has been revealed.
- */
+// Empty slices show a single space so line heights stay stable during the typewriter reveal.
 export const PR_CELEBRATION_HERO_TEXT = 'Stronger.';
 
-/**
- * Helper for the orchestrator — the typewriter walks across the
- * combined eyebrow + hero text, so it needs both lengths to know how
- * many ticks the full reveal takes.
- */
+// Combined eyebrow + hero length — the typewriter walks across both strings as one sequence.
 export function prCelebrationTypeLength(eyebrow: string): number {
   return eyebrow.length + PR_CELEBRATION_HERO_TEXT.length;
 }
 
 export type PrCelebrationHeroProps = {
-  /**
-   * Eyebrow caps line. Defaults to "YOU HIT A NEW PR" — the screen
-   * passes the lift-specific variant ("YOU HIT A NEW SQUAT PR" etc.)
-   * once it has resolved the session row.
-   */
   eyebrow?: string;
-  /**
-   * Number of characters revealed across the combined eyebrow + hero
-   * text (eyebrow consumes the first `eyebrow.length` characters, the
-   * hero takes the rest). Omit to render fully.
-   */
+  /** Characters revealed across combined eyebrow + hero (eyebrow first, then hero). Omit to render fully. */
   typedChars?: number;
 };
 

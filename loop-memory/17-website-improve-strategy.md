@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 62)
+**Last updated**: 2026-05-29 (Expedition 63)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -73,6 +73,8 @@ Current gaps:
 - [x] Blog listing show-more added (expedition 61) — 120 posts now; first 20 visible by default, "Show all N more posts" button reveals the rest via progressive-enhancement JS. Without JS, all posts visible.
 - [x] Homepage hero platform-note updated with React Native trust signal (expedition 62) — the small note below CTAs now includes "iOS + Android · one React Native codebase" to set expectations and reinforce the single-codebase story alongside the existing KPI strip entry.
 - [x] Blog listing search implemented (expedition 62) — search input added above the post list; filters by title+summary client-side, reads `?q=` from URL on load (fulfilling the SearchAction JSON-LD target from expedition 59). Active query unfolds all posts; clearing restores the fold. Match count shown in amber when filtering.
+- [x] Blog search placeholder + description corrected (expedition 63) — placeholder said "Filter by title…" but search includes summary; corrected to "Filter by title or summary…". Section-head description updated to "filters by title and summary".
+- [x] Homepage platform-note tightened (expedition 63) — simplified to "iOS + Android · one React Native codebase · Android live · iOS in review"; removes redundant "Android APK · direct download" (already in CTA) and verbose submissions phrasing.
 
 ### Track D — Technical health
 
@@ -91,6 +93,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 63 notes
+
+Two UX polish fixes:
+
+1. **Blog search placeholder and description corrected** (Track C): The search placeholder said "Filter by title…" but the `data-search-text` attribute includes both title and summary — making the placeholder a lie. Corrected to "Filter by title or summary…". Also updated the section-head description ("the search box filters by title" → "filters by title and summary"). No logic change — just copy accuracy.
+
+2. **Homepage platform-note tightened** (Track C): The note below the hero CTAs was "Android APK · direct download · iOS + Android · one React Native codebase · Play Store and App Store submissions in progress" — verbose and partly redundant with the CTA buttons. The "Android APK · direct download" phrase repeated the button label; "Play Store and App Store submissions in progress" repeated the iOS button state. Simplified to "iOS + Android · one React Native codebase · Android live · iOS in review" — the one piece of signal that wasn't in the buttons (single-codebase fact) now leads.
+
+Verification pass: process page KPIs are dynamic, expedition-logs colophon is still accurate, tools pages have no drift. README iteration count updated from "62+" to "63+".
 
 ### Expedition 62 notes
 
@@ -207,6 +219,9 @@ Two content-accuracy fixes shipped:
 | Blog listing search (?q= support) | done · expedition 62 | Client-side title+summary filter; reads ?q= on load to fulfil SearchAction JSON-LD target. Integrates with existing show-more fold. |
 | Homepage platform-note React Native signal | done · expedition 62 | Note below CTAs now includes "iOS + Android · one React Native codebase". |
 | Screenshot paths audit | done · expedition 62 | All 4 referenced screenshots exist. screenshot-4.png exists but unused — not a gap. |
+| Blog search placeholder accuracy | done · expedition 63 | Placeholder "Filter by title…" → "Filter by title or summary…". Section-head description updated to match. |
+| Homepage platform-note tighten | done · expedition 63 | Simplified to "iOS + Android · one React Native codebase · Android live · iOS in review". |
+| README iteration count | done · expedition 63 | Updated "62+" → "63+". |
 
 ## Discord collaboration workflow
 

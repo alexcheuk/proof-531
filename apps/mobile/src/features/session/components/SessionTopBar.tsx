@@ -1,16 +1,5 @@
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-/**
- * Sticky top action row for session screens (Today / Live).
- *
- * Back chip on the left, optional right-side action:
- * nothing or a Complete-session pill (see `CompletePill`).
- *
- * Visual contract:
- *   - bg-bg-0 surface, bottom hairline `colors.line`.
- *   - 24px horizontal padding, ~14px vertical padding to match the PWA mass.
- *   - Back chip: 32×32, ink-0 border, mono `←` glyph.
- */
 import { Pressable, View, type ViewStyle } from 'react-native';
 import { CompletePill } from './CompletePill';
 import { ResetPill } from './ResetPill';
@@ -25,16 +14,9 @@ export type SessionTopBarProps = {
   backLabel?: string;
   /** Right-side action — defaults to `{ kind: 'none' }`. */
   rightAction?: RightAction;
-  /**
-   * Optional "↶ Undo" pill rendered just left of the primary right action.
-   * Used on Live during rest so the user can roll back the most recent
-   * working set without leaving the top bar. Omit to hide entirely.
-   */
+  /** "↶ Undo" pill during rest — omit to hide. */
   onUndo?: () => void;
-  /**
-   * Optional "↺ Restart" pill rendered between Undo and the primary right
-   * action. Used on Live to surface the wipe-and-start-over flow.
-   */
+  /** "↺ Restart" pill for the wipe-and-restart flow — omit to hide. */
   onReset?: () => void;
   testID?: string;
 };

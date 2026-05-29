@@ -122,7 +122,6 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
 
   const scrollStyle: ViewStyle = { flex: 1, backgroundColor: colors.bg0 };
 
-  // Set surface is visible during 'set', 'amrap-log', and 'tm-test-log'.
   const showSetSurface =
     live.phase === 'set' || live.phase === 'amrap-log' || live.phase === 'tm-test-log';
   const showRestSurface = live.phase === 'rest';

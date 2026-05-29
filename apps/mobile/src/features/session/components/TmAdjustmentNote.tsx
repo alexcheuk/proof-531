@@ -13,15 +13,6 @@ export type TmAdjustmentNoteProps = {
   testID?: string;
 };
 
-/**
- * "Suggested TM · next cycle" pressable note on Week-4 Session Complete.
- * Tapping opens a sheet (TmApplySheet) where the user can apply or dismiss.
- *
- * Visual variants:
- *   increment → inverted (ink0 bg, paper text) — mirrors the PR Certificate
- *   reset     → amber bg, paper text — signals a downward correction
- *   hold      → default (paper bg, ink text) — no visual emphasis needed
- */
 export function TmAdjustmentNote({
   suggestion,
   tmDisplay,

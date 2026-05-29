@@ -3,35 +3,14 @@ import { formatWeight } from '@/domain/units';
 import { Text as RNText, View } from 'react-native';
 import { PAPER_28, PAPER_55 } from '../PRCertificate/paperTints';
 
-/**
- * The "eyebrow + e1RM number + unit" block on the PR celebration
- * screen.
- *
- * Composition slots so the screen orchestrator can drive the intro
- * sequence in place (rather than through a parallel overlay):
- *
- *   - `eyebrowOverride` — replaces the default "NEW ESTIMATED 1RM"
- *     caps line. Used to show "PREVIOUS BEST" during the intro
- *     typewriter and the in-flight backspace+retype to "NEW ESTIMATED
- *     1RM" during tick-up.
- *   - `valueOverride` — replaces the formatted e1RM number. Used to
- *     show the prior-best value and the in-flight count-up value.
- *   - `hideTopBorder` — skip rendering the hairline above the eyebrow.
- *     The screen renders a non-scaled border externally so the scale
- *     animation on this block doesn't push the border off the screen.
- *
- * The comparison row ("Previous best · Stronger by +X") moved to its
- * own component (`PrCelebrationComparison`) so it can live outside
- * the scaled wrapper.
- */
 export type PrCelebrationNumbersProps = {
   e1RMDisplay: number;
   unitGlyph: string;
-  /** Override the eyebrow caption. */
+  /** Overrides "NEW ESTIMATED 1RM" — used by the intro sequence for "PREVIOUS BEST" and the backspace→retype transition. */
   eyebrowOverride?: string;
-  /** Override the formatted display value. */
+  /** Overrides the formatted e1RM number — used for the prior-best and count-up values during intro. */
   valueOverride?: string;
-  /** Skip rendering the hairline above the eyebrow (caller renders it externally). */
+  /** The caller renders the border externally so scale animation on this block doesn't push it off-screen. */
   hideTopBorder?: boolean;
 };
 

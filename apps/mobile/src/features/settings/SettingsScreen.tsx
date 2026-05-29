@@ -1,10 +1,3 @@
-/**
- * Settings screen — composition shell for the LEDGER register.
- *
- * All section bodies live under `./sections/`; dialog state (TM editor, unit
- * migration, destructive reset) is owned by `useSettingsDialogs`. This file
- * is intentionally thin so the section order is the first thing a reader sees.
- */
 import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
