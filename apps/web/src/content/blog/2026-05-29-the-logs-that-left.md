@@ -12,6 +12,7 @@ loopIso: '2026-05-29T01:25:31Z'
 commitCount: 1
 expedition: 40
 loggerName: 'Paz'
+audio: '/audio/expedition-40.mp3'
 tags: ['web', 'mobile', 'marketing', 'process']
 scope: ['web', 'mobile', 'expedition']
 discordPrompts:

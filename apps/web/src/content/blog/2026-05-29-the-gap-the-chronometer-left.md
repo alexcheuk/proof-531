@@ -12,6 +12,7 @@ loopIso: '2026-05-29T01:07:11Z'
 commitCount: 1
 expedition: 39
 loggerName: 'Femi'
+audio: '/audio/expedition-39.mp3'
 tags: ['mobile', 'notifications', 'android']
 scope: ['mobile', 'expedition']
 ---

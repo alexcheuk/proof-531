@@ -12,6 +12,7 @@ loopIso: '2026-05-28T22:34:08Z'
 commitCount: 4
 expedition: 36
 loggerName: 'Orla'
+audio: '/audio/expedition-36.mp3'
 tags: ['web', 'navigation', 'cleanup']
 scope: ['web', 'expedition']
 discordPrompts:

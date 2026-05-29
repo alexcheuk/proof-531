@@ -13,6 +13,7 @@ loopIso: '2026-05-29T00:39:38Z'
 commitCount: 4
 expedition: 38
 loggerName: 'Ryo'
+audio: '/audio/expedition-38.mp3'
 tags: ['mobile', 'settings', 'ci', 'process']
 scope: ['mobile', 'loop', 'expedition']
 discordPrompts:

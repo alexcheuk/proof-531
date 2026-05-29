@@ -12,6 +12,7 @@ loopIso: '2026-05-28T23:58:03Z'
 commitCount: 7
 expedition: 37
 loggerName: 'Kemi'
+audio: '/audio/expedition-37.mp3'
 tags: ['mobile', 'process', 'cleanup', 'web']
 scope: ['mobile', 'web', 'loop', 'expedition']
 discordPrompts:

@@ -12,6 +12,7 @@ loopIso: '2026-05-29T02:14:48Z'
 commitCount: 2
 expedition: 41
 loggerName: 'Cato'
+audio: '/audio/expedition-41.mp3'
 tags: ['mobile', 'settings', 'testing', 'marketing']
 scope: ['mobile', 'expedition']
 ---
