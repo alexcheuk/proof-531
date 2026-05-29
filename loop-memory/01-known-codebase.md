@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 56)
+# Codebase facts (updated 2026-05-29, expedition 57)
 
 ## Architecture
 
@@ -26,7 +26,7 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
   Cancel + Save button pair. Takes `cancelTestID`, `saveTestID`, and a11y
   labels as props. Both AMRAP and TM Test sheets use this directly.
 
-## CapsLabel coverage (updated expedition 56)
+## CapsLabel coverage (updated expedition 57)
 
 Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
 - `TabBarItem.tsx` — tab bar labels (was: raw RNText with inline fontFamily/letterSpacing/color)
@@ -38,10 +38,16 @@ Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
 - `LiveScreen.tsx` — "LOADING SESSION…" state
 - `ProgressScreen.tsx` — CapsLabel for projection label (done earlier)
 - `Colophon.tsx` — "— end of register —" (done earlier)
+- `StatsTriplet.tsx` — column header labels (expedition 57)
+- `GoalRuleRow.tsx` — "Goal · X" and "tm ≈ N" labels (expedition 57)
+- `GoalPanel.tsx` — toggle labels, days-away caption, estimate, dpw label (expedition 57)
+- `SharePrPill.tsx` — "SHARE RECORD →" and "OPENS YOUR SHARE SHEET" (expedition 57)
 
 Remaining known intentional RNText uses (not candidates):
 - `PrCelebrationComparison.tsx` — uses custom paper tints (PAPER_28, PAPER_45, PAPER_55) not in ColorToken; inside Reanimated views
 - `TmPreviewRow.tsx` — inline glyph spans (nested text in a Text component; letterSpacing 1.26 is intentionally tighter than xs preset)
+- `GoalPanel.tsx` unit glyph "lb"/"kg" — 12px/ls2.64 display; intentionally larger than any CapsLabel preset for visual pairing with 56px numeric
+- `GoalPanel.tsx` 56px value display — not caps text at all; numeric display with tabular-nums
 
 ## Key primitives (don't re-invent these)
 

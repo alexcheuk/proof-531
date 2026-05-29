@@ -1,6 +1,7 @@
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 /**
  * Horizontal goal rule dropped INTO the grid between the two cycle rows
@@ -21,7 +22,7 @@ export type GoalRuleRowProps = {
 };
 
 export function GoalRuleRow({ kind, value, targetTm, unitGlyph, testID }: GoalRuleRowProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const wrap: ViewStyle = {
     borderTopWidth: 2,
@@ -50,30 +51,14 @@ export function GoalRuleRow({ kind, value, targetTm, unitGlyph, testID }: GoalRu
               backgroundColor: colors.ink0,
             }}
           />
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-Bold`,
-              fontSize: 10,
-              letterSpacing: 2.2,
-              textTransform: 'uppercase',
-              color: colors.ink0,
-            }}
-          >
+          <CapsLabel weight="bold" color="ink0">
             {`Goal · ${kind === 'tm' ? 'training max' : '1rm'} ${value}${unitGlyph}`}
-          </RNText>
+          </CapsLabel>
         </View>
         {kind === '1rm' ? (
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 9,
-              letterSpacing: 1.62,
-              textTransform: 'uppercase',
-              color: colors.ink2,
-            }}
-          >
+          <CapsLabel size="xs" weight="semibold">
             {`tm ≈ ${targetTm}${unitGlyph}`}
-          </RNText>
+          </CapsLabel>
         ) : null}
       </View>
     </View>

@@ -1,3 +1,4 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 
@@ -51,18 +52,9 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
             borderLeftColor: colors.line,
           }}
         >
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 9,
-              letterSpacing: 1.98,
-              textTransform: 'uppercase',
-              color: colors.ink2,
-              marginBottom: 4,
-            }}
-          >
+          <CapsLabel size="xs" weight="semibold" style={{ marginBottom: 4 }}>
             {c.label}
-          </RNText>
+          </CapsLabel>
           <RNText
             style={{
               fontFamily: `${type.sans}-Bold`,

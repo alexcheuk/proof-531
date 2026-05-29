@@ -1,4 +1,5 @@
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 import { cycleGoalEstimate } from '@/domain/progression';
 import * as Haptics from 'expo-haptics';
@@ -111,17 +112,9 @@ export function GoalPanel({
                 backgroundColor: on ? colors.ink0 : 'transparent',
               }}
             >
-              <RNText
-                style={{
-                  fontFamily: `${type.mono}-SemiBold`,
-                  fontSize: 10,
-                  letterSpacing: 1.8,
-                  textTransform: 'uppercase',
-                  color: on ? colors.bg0 : colors.ink2,
-                }}
-              >
-                Goal · {k === 'tm' ? 'training max' : 'one-rep max'}
-              </RNText>
+              <CapsLabel weight="semibold" color={on ? 'bg0' : 'ink2'}>
+                {`Goal · ${k === 'tm' ? 'training max' : 'one-rep max'}`}
+              </CapsLabel>
             </Pressable>
           );
         })}
@@ -191,15 +184,7 @@ export function GoalPanel({
           borderTopColor: colors.lineStrong,
         }}
       >
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 10,
-            letterSpacing: 2.2,
-            textTransform: 'uppercase',
-            color: colors.ink0,
-          }}
-        >
+        <CapsLabel weight="bold" color="ink0">
           {unset
             ? 'tap to set a goal'
             : cyclesUntilGoal === null
@@ -207,21 +192,12 @@ export function GoalPanel({
               : cyclesUntilGoal === 0
                 ? 'already past goal'
                 : `~${daysApprox} day${daysApprox === 1 ? '' : 's'} away`}
-        </RNText>
-        <RNText
-          testID={`${testID ?? 'goal-panel'}-estimate`}
-          style={{
-            fontFamily: `${type.mono}-Medium`,
-            fontSize: 10,
-            letterSpacing: 1.8,
-            textTransform: 'uppercase',
-            color: colors.ink3,
-          }}
-        >
+        </CapsLabel>
+        <CapsLabel testID={`${testID ?? 'goal-panel'}-estimate`} color="ink3">
           {!unset && monthsApprox !== null && dpw !== null
             ? `≈ ${monthsApprox} mo at ${dpw}/wk`
             : ''}
-        </RNText>
+        </CapsLabel>
       </View>
       {!unset ? (
         <View
@@ -237,18 +213,9 @@ export function GoalPanel({
           }}
           testID={`${testID ?? 'goal-panel'}-dpw-row`}
         >
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-Bold`,
-              fontSize: 10,
-              letterSpacing: 2.2,
-              textTransform: 'uppercase',
-              color: colors.ink0,
-              flex: 1,
-            }}
-          >
+          <CapsLabel weight="bold" color="ink0" style={{ flex: 1 }}>
             Est. work days / week
-          </RNText>
+          </CapsLabel>
           <StepperBtn
             glyph="−"
             size="sm"

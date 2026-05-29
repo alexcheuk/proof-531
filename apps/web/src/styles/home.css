@@ -773,14 +773,6 @@
   color: var(--ink-2);
   margin-left: 2px;
 }
-.stat-cell .vsub {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: var(--ink-3);
-  text-transform: uppercase;
-}
 
 /* SecondaryLink — "SEE PROGRESS →" */
 .see-progress {

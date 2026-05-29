@@ -1,4 +1,4 @@
-import { Text } from '@/design/primitives/Text';
+import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
 import * as Sharing from 'expo-sharing';
@@ -23,7 +23,7 @@ export function SharePrPill({
   onCaptureCertificate,
   testID = 'session-complete-share-pr',
 }: SharePrPillProps) {
-  const { colors, layout, spacing } = useTheme();
+  const { layout, spacing } = useTheme();
 
   const onPress = useCallback(async () => {
     void Haptics.selectionAsync();
@@ -68,24 +68,13 @@ export function SharePrPill({
           opacity: pressed ? 0.5 : 1,
         })}
       >
-        <Text
-          variant="mono"
-          weight="semibold"
-          size={11}
-          style={{ letterSpacing: 2, color: colors.ink1 }}
-        >
+        <CapsLabel size="md" weight="semibold" color="ink1">
           {'SHARE RECORD →'}
-        </Text>
+        </CapsLabel>
       </Pressable>
-      <Text
-        variant="mono"
-        weight="regular"
-        size={9}
-        color="ink3"
-        style={{ marginTop: 2, letterSpacing: 1.2 }}
-      >
+      <CapsLabel size="xs" color="ink3" style={{ marginTop: 2 }}>
         OPENS YOUR SHARE SHEET
-      </Text>
+      </CapsLabel>
     </View>
   );
 }
