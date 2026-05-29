@@ -86,9 +86,17 @@ An unknown voice name is rejected by Gemini and surfaces as a `502` (synthesis e
 
   The departure is the **somber, mysterious** register. The warm, brotherly register the character
   uses in friendly dialogue never airs here: Verso does not speak in dialogue (see
-  `loop-memory/14-lore.md`), so the only Paintress audio is this announcement. Shape the contemplative
-  pauses with inline `[slowly]` plus a beat of silence (`...`); keep `[serious]` on the goals. Let the
-  rich `style` carry the texture (velvet, fatigue, gravity) and the tags carry the pacing.
+  `loop-memory/14-lore.md`), so the only Paintress audio is this announcement. Let the rich `style`
+  carry the texture (velvet, fatigue, gravity) and inline tags carry the pacing (`[slowly]`,
+  `[serious]`, `[tired]`, a `...` beat for contemplation).
+
+  **The `style` is the constant; the line is not.** Write the departure transcript **fresh every
+  expedition** from that iteration's actual goals — never a fixed template like "Expedition N
+  departs. The goals: …". Verso summons each Logger differently: vary the opening, the rhythm, the
+  imagery, and which goal he lingers on, so the ambient track doesn't become a templated drone.
+  Weave the work in as a charge to the Logger rather than reciting it as a list, and place tags where
+  they serve the sentence, not in a set pattern. The `auto-improve` Step 3 caller carries example
+  lines that show the range (to be written anew, never reused).
 - **The Logger picks any *other* voice** that fits their character on the page (warm Loggers →
   `Sulafat`/`Achird`; clear/firm → `Iapetus`/`Orus`; soft/tired → `Achernar`/`Enceladus`; etc.).
   Vary it across expeditions so the ambient track doesn't become a drone — if two consecutive

@@ -82,7 +82,7 @@ Don't over-plan. List the items, then start shipping.
 
 Now that you know what this expedition is about, speak the departure line through the homelab speaker so the cron tick is audible as ambient theater. Fire-and-forget — never block the loop on this.
 
-Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist). Build a one-sentence goal summary from the items you just picked (3–5 goals, plain English). Then:
+Compute the next expedition number from blog frontmatter (one more than the largest `expedition: N` seen across `apps/web/src/content/blog/*.md`; default to `1` if none exist):
 
 ```bash
 # grep only reads the first 512 bytes by default in some implementations.
@@ -99,21 +99,34 @@ for f in os.listdir(blog_dir):
     if m: max_exp = max(max_exp, int(m.group(1)))
 print(max_exp + 1)
 ")
-# GOALS_SUMMARY = "fix blog sorting, add OTA action, move TTS timing, and clean the repo."
-# (compose inline from your picked item list — 3-5 items, plain English)
+```
+
+**Now write the line yourself — do not fill a template.** This is Verso the Paintress summoning the expedition's Logger, and he speaks differently every time. Compose a fresh 1–3 sentence departure in his voice (the `style` note below is the constant; the *words* are not), drawn from **this** iteration's actual goals. Let the specific work shape the imagery: a repo-cleanup expedition, a notifications expedition, and a marketing-site expedition should not open the same way. Name the expedition number once, somewhere; weave the goals in as a charge to the Logger rather than reciting them as a list. Vary the opening, the rhythm, and which goal he dwells on. Avoid the recurring crutches — don't always start with `[slowly]`, don't always say "departs," don't always tack the goals on after a colon.
+
+Shape the delivery with inline audio tags (`[slowly]`, `[serious]`, `[tired]`, a `...` beat for a contemplative pause) — placed where they actually serve the sentence, not in a fixed pattern. The full tag palette and the casting canon live in `loop-memory/15-tts.md`.
+
+A few lines in his register, to show the *range* (write something new each time, never reuse these):
+
+- `Expedition 46. [tired] We have walked this repo before... and the dead code grew back in our absence. [serious] Cut it out by the root this time, and leave the trail clean for the one who follows.`
+- `[slowly] So. The Logger of the forty-sixth goes to mend the notifications — the rest timer that wakes too late, the alarm that never sounds. [serious] Make the silence keep its promise. I will be watching.`
+- `Forty-six. [serious] The website is our face to the living; right now it lies about us. [slowly] Set the structured data true, trim the noise... and come back to me whole.`
+
+Then fire it (fire-and-forget — never block the loop):
+
+```bash
+# Put YOUR composed line (with its inline [tags]) in TTS_TEXT.
+TTS_TEXT='<your fresh departure line for this expedition, in Verso voice, with inline [audio tags]>'
 
 # Fired through /compose (full reference: loop-memory/15-tts.md). HOME_TTS_URL is the
 # BASE url (set in .env.claude.local); we append /compose. Not required — curl || true if absent.
-# Build the JSON with Python so the long `style` note and any punctuation in the goals survive intact.
-TTS_PAYLOAD=$(NEXT_EXPEDITION="$NEXT_EXPEDITION" GOALS_SUMMARY="$GOALS_SUMMARY" python3 -c "
+# Build the JSON with Python so the line and the long `style` note survive any punctuation intact.
+TTS_PAYLOAD=$(TTS_TEXT="$TTS_TEXT" python3 -c "
 import json, os
-n     = os.environ['NEXT_EXPEDITION']
-goals = os.environ['GOALS_SUMMARY']
 print(json.dumps({
-  'text':   f'[slowly] Expedition {n}... departs. [serious] The goals: {goals}',
+  'text':   os.environ['TTS_TEXT'],
   'device': 'kitchen',
   'voice':  'Algenib',
-  # Verso's voice style — kept in sync with the casting canon in loop-memory/15-tts.md.
+  # Verso's voice style — the ONE constant. Kept in sync with the casting canon in loop-memory/15-tts.md.
   'style':  ('Speak as Verso: a battle-hardened, elegant nomad with more than a century behind him. '
              'A velvety, low masculine voice, worn at the edges with quiet fatigue. Composed, '
              'articulate, unhurried; never cheerful, never performative. Hold a steady pace with '
@@ -128,7 +141,7 @@ print(json.dumps({
   >/dev/null 2>&1 || true
 ```
 
-The Paintress voice (Algenib) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The rich `style` note casts the character — a velvety, world-weary nomad with a century behind him — while the inline `[slowly]` (with a `...` beat) and `[serious]` tags carry the contemplative pacing; style and tags combine, per `loop-memory/15-tts.md`. The departure stays in Verso's somber/mysterious register, not the warm brotherly one (which never airs — Verso doesn't speak in dialogue). The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice: the Logger's own.
+The Paintress voice (Algenib) is intentional: Verso the Paintress is the one summoning this expedition's Logger. The `style` note casts the character and stays fixed across every departure; the line itself is written fresh each iteration so the ambient track never becomes a templated drone. The departure stays in Verso's somber/mysterious register, not the warm brotherly one (which never airs — Verso doesn't speak in dialogue). The closing gommage line at the end of the iteration (fired by `commission-expedition-log`) takes a different voice: the Logger's own.
 
 `HOME_TTS_URL` is a personal homelab endpoint (see `.env.claude.example`). If unset, this block is a no-op. The iteration must not depend on the speaker being reachable.
 
