@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Comment sweep completed across full codebase (expeditions 63–66)
+
+**Tags:** `convention`, `refactor`
+**Files:** `apps/mobile/src/domain/`, `apps/mobile/src/lib/`, `apps/mobile/src/data/`, `apps/mobile/src/features/`, `apps/web/src/lib/`
+
+Four consecutive expeditions eliminated multi-paragraph "what" docstrings across the entire codebase. The convention is now enforced: single-line comments only, and only when the WHY is non-obvious (hidden constraints, subtle invariants, historical bug context, workarounds for platform bugs). `rollingAmrapMargin` in `domain/progression.ts` was removed as dead production code (test-only, self-marked "informational only").
+
+**Why:** The convention "default to no comments" had been on the books since the beginning but was never enforced retroactively. The sweep covered ~900 lines removed. Comments that explained what the code did — paraphrasing the function name and signature — were the primary target.
+
+**Trade-off / what we didn't do:** Some genuinely useful WHY comments were kept as single lines (DST rationale in history/activity.ts, Expo SDK 55 scrollToIndex crash, the Discord 1508768403 session-cancel bug, etc.). The line between "why" and "what" was judged call-by-call.
+
 ### 2026-05-29 — Removed dead `isPR` prop from RestPhase
 
 **Tags:** `removal`, `convention`

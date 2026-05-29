@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 65)
+**Last updated**: 2026-05-29 (Expedition 66)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -94,6 +94,14 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 66 notes
+
+This expedition focused on the mobile codebase comment sweep rather than website-specific improvements. One Track B item handled:
+
+1. **README iteration count updated** (Track B): Changed "65+" to "66+" — expedition 66 is now running.
+
+No other Track A/C/D items this loop — the comment sweep across 30+ files was the primary deliverable.
 
 ### Expedition 65 notes
 

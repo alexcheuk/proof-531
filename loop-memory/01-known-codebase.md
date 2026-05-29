@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 65)
+# Codebase facts (updated 2026-05-29, expedition 66)
 
 ## Architecture
 
@@ -449,6 +449,14 @@ Remaining known intentional RNText uses (not candidates):
 - `tm.ts` — training-max history.
 - `liftGoal.ts` — `getLiftGoal`, `setLiftGoal`. Used by `useLiftGoal()` TanStack Query hook.
 - `rollbackLift.ts` — `rollbackLift(db, lift, n)` + `countCompletedSessionsForLift(db, lift)`. Added expedition 40.
+
+## Comment convention (updated expedition 66)
+
+The codebase underwent a comprehensive comment sweep in expeditions 63–66:
+- **Expeditions 63–64**: Removed multi-paragraph 'what' docstrings from all features/ files.
+- **Expedition 66**: Swept domain/, lib/, data/accessors/, data/queries/, design/primitives/, and remaining feature hooks.
+- **Kept**: Only single-line non-obvious notes — WHY comments (hidden constraints, subtle invariants, historical bug context). Function/file names carry the WHAT.
+- `rollingAmrapMargin` in domain/progression.ts was dead production code (tests only, self-marked "informational only") — removed along with its tests.
 
 ## Maestro e2e flows (added expedition 65)
 
