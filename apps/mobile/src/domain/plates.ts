@@ -1,20 +1,5 @@
-/**
- * Pure plate-decomposition math for 531 Strength.
- *
- * Mirrors the PWA's `src/features/session/domain/plates.ts` behavior verbatim:
- * greedy per-side descending decomposition, with epsilon-tolerant comparison
- * to avoid float drift on 2.5-step plates, and tiny leftover dust clamped to 0.
- *
- * This module is part of `src/domain/` — pure. No React, no async, no DB.
- */
-
 import type { PlateSet, Unit } from './types';
 
-/**
- * Default PlateSet for a given storage unit. Used at the render site when
- * settings.plateSet is null (a fresh install before the user explicitly
- * picked a plate flavor).
- */
 export function defaultPlateSet(unit: Unit): PlateSet {
   return unit === 'kg' ? 'kg-standard' : 'standard';
 }
@@ -24,34 +9,21 @@ export const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;
 export const BAR_LBS = 45;
 export const BAR_KG = 20;
 
-/**
- * Floor for any user-entered weight (training max, 1RM, lifted weight).
- * You can't lift below an empty bar — Discord 1508767813.
- */
 export function barWeight(unit: Unit): number {
   return unit === 'kg' ? BAR_KG : BAR_LBS;
 }
 
 export type PlateCalc = {
-  /** Plates on ONE side (the bar is symmetric), heaviest first. */
   readonly perSide: readonly number[];
-  /** Total weight (both sides) that couldn't be matched. 0 when exact. */
   readonly leftover: number;
 };
 
-/** Greedy per-side decomposition. Selects bar + plates by PlateSet. */
 export function decompose(target: number, plateSet: PlateSet): PlateCalc {
   const bar = plateSet === 'kg-standard' ? BAR_KG : BAR_LBS;
   const plates = plateSet === 'kg-standard' ? PLATES_KG : PLATES_LBS;
   return calcPlates(target, bar, plates);
 }
 
-/**
- * Lower-level greedy decomposition with explicit bar + plates.
- *
- * Greedy is correct for the standard plate sets above: each plate is at least
- * twice the next-smallest, so no smaller combination beats the greedy pick.
- */
 export function calcPlates(target: number, bar: number, plates: readonly number[]): PlateCalc {
   const remainingTotal = target - bar;
   if (remainingTotal <= 0) {
