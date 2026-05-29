@@ -14,6 +14,7 @@ expedition: 62
 loggerName: 'Dov'
 tags: ['removal', 'marketing', 'web', 'refactor']
 scope: ['mobile', 'web', 'expedition']
+audio: '/audio/expedition-62.mp3'
 ---
 
 The rest phase shows two things: an eyebrow that says SET COMPLETED, and a
