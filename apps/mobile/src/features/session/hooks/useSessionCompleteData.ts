@@ -209,13 +209,13 @@ export function deriveView({
   const bbbLogs = logs.filter((l) => l.kind === 'bbb');
   const bbbSetsCompleted = bbbLogs.length;
   const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
-  const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorageRow, storageUnit, renderUnit));
+  const bbbWeightDisplay = convert(bbbWeightStorageRow, storageUnit, renderUnit);
 
   // TM Test rollup — when present, drives the week-4 receipt + adjustment
   // surface in place of the standard PR / receipt / adjust-tm chrome.
   const tmTestReps = tmTestLog?.actualReps ?? 0;
   const tmTestWeightStorage = tmTestLog?.prescribedWeight ?? 0;
-  const tmTestWeight = Math.round(convertWeight(tmTestWeightStorage, storageUnit, renderUnit));
+  const tmTestWeight = convert(tmTestWeightStorage, storageUnit, renderUnit);
   const tmAdjustment: TmAdjustmentSuggestion | null = isTmTestSession
     ? tmAdjustmentSuggestion(tmTestReps, lift, renderUnit)
     : null;

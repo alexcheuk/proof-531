@@ -20,7 +20,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { decompose, defaultPlateSet } from '@/domain/plates';
 import { formatMmSs } from '@/domain/time';
 import type { Lift, PlateSet, Unit } from '@/domain/types';
-import { convertWeight, displayUnit as displayUnitGlyph } from '@/domain/units';
+import { convert, displayUnit as displayUnitGlyph } from '@/domain/units';
 import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -66,7 +66,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const plateSet: PlateSet = settings.plateSet ?? defaultPlateSet(storageUnit);
 
   const bbbWeightStorage = bbbWeightFromTm(session.trainingMaxSnapshot, storageUnit);
-  const bbbWeightDisplay = Math.round(convertWeight(bbbWeightStorage, storageUnit, renderUnit));
+  const bbbWeightDisplay = convert(bbbWeightStorage, storageUnit, renderUnit);
   const perSide = decompose(bbbWeightStorage, plateSet).perSide;
   const restHint = formatMmSs(settings.bbbRestTargetSeconds);
 

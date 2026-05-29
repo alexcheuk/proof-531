@@ -10,7 +10,7 @@ import { colors as baseColors } from '@/design/tokens';
 import { liftDisplayName } from '@/domain/labels';
 import { decompose, defaultPlateSet } from '@/domain/plates';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
-import { convertWeight, displayWeight } from '@/domain/units';
+import { convert, displayWeight } from '@/domain/units';
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -160,7 +160,7 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
               amrap: live.isAmrap,
               pct: live.pct,
               perSide,
-              tmDisplay: Math.round(convertWeight(session.trainingMaxSnapshot, storageUnit, unit)),
+              tmDisplay: convert(session.trainingMaxSnapshot, storageUnit, unit),
             }}
             testID="rest-phase"
           />

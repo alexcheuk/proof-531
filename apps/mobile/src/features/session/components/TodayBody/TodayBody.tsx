@@ -16,7 +16,7 @@ import { dateLabel, liftDisplayName, weekIntent, weekLabel } from '@/domain/labe
 import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
-import { convertWeight, displayUnit } from '@/domain/units';
+import { convert, displayUnit } from '@/domain/units';
 import { View } from 'react-native';
 import { BbbBand } from './BbbBand';
 import { TmTestNote } from './TmTestNote';
@@ -70,7 +70,7 @@ export function TodayBody({
   const { colors, layout, spacing } = useTheme();
   const renderUnit: Unit = displayUnitProp ?? storageUnit;
   const unitGlyph = displayUnit(renderUnit);
-  const tmInDisplay = Math.round(convertWeight(tm, storageUnit, renderUnit));
+  const tmInDisplay = convert(tm, storageUnit, renderUnit);
   const lastTrained = useLastCompletedSessionForLift(lift);
 
   const isTmTestWeek = week === 4;

@@ -20,7 +20,7 @@ The companion marketing site + dev blog (`apps/web/`) is deployed at **https://5
 - Notifications: `expo-notifications` (iOS scheduled "Rest complete"); `react-native-notify-kit` (notifee successor) for the Android live rest-countdown chronometer notification
 - `@gorhom/bottom-sheet` v5 for sheets; IBM Plex Sans/Mono/Sans-Condensed via expo-font
 - Jest + @testing-library/react-native + fast-check (domain property tests)
-- No Sentry, no PostHog, no Skia, no Storybook, no Reassure (deferred). Maestro / on-device e2e is now *unblocked* by the dev-client move but not yet adopted
+- No Sentry, no PostHog, no Skia, no Storybook, no Reassure (deferred). Maestro e2e is adopted — flows live in `.maestro/flows/` (onboarding, home navigation, begin-session, settings smoke tests). Reassure perf tests remain deferred.
 
 ## Layout
 

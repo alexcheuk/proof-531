@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 54)
+**Last updated**: 2026-05-29 (Expedition 55)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -135,7 +135,7 @@ Use the right story for the right audience. Never mix them in a single post.
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
 | 13. YouTube Shorts series | shooting script ready · expedition 54 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md` — spoken lines, text overlays, production checklist, YouTube description + first comment, hashtags. Ready for Alex to film. **Expedition 54:** Iteration count updated to 54+ across all marketing files. Spoken "53 expeditions" line in both shooting script and first-video brief updated to "54 expeditions." No new Discord replies received re: personal 5/3/1 history. Still needs: screen recording of live session (Q14), GitHub Releases URL (Q1), App Store URL for CTA (Q2). |
-| 14. Web tools as SEO entry point | in progress · expedition 50 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added to both tool pages with keyword-rich text targeting "531 plate math calculator", "5/3/1 training max calculator", "how long to reach 5/3/1 goal" and similar search queries. FAQ matches the site's visual language. Structured data (WebApplication schema) already present. Next step: link in Reddit/forum discussions when relevant questions appear — the pages can now rank on their own content merit. |
+| 14. Web tools as SEO entry point | in progress · expedition 55 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** (1) Title tags, meta descriptions, and h1 headings updated on all three tool pages to include "5/3/1" and match actual search queries — competitor analysis showed top-ranked pages use "5/3/1 plate math calculator" / "5/3/1 training max goal calculator" while our pages were missing that signal entirely. (2) Reddit tool-linking playbook created at `docs/marketing/reddit-tool-linking-playbook.md` — three thread-type response templates (plate math questions, progression timeline questions, app recommendation threads), which subreddits to monitor, how to search for live threads, what not to do. Plate math and goal calendar responses can be used now without iOS. App recommendation response requires iOS first. |
 
 ## Launch-day operations guide
 
@@ -196,6 +196,56 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
 8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
 9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 55 — Research notes
+
+**Date:** 2026-05-29
+
+**Tool page SEO — title, description, and h1 updated across all three tool pages:**
+
+Competitive analysis of what actually ranks for the key queries revealed a meaningful gap. The top-ranking results for "5/3/1 training max calculator" include ironcompare.com, calculator.academy, strength.tools, blackironbeast.com, ctrlcalculator.com — none of which do what the 531strength.com goal-calendar does (cycle-by-cycle projection to a goal weight). That tool is genuinely differentiated. But the page title was "5/3/1 Goal Calendar — 531 Strength" with an h1 of "Goal calendar." — neither of which signal the search query "5/3/1 training max goal calculator."
+
+Similarly, the plate-math page title was "Plate Calculator — 531 Strength" with an h1 of "Plate calculator." — missing "5/3/1" entirely in the heading. Top-ranking pages for plate math queries all lead with the program name.
+
+Changes made:
+- `apps/web/src/pages/tools/plate-math.astro`: title → "5/3/1 Plate Math Calculator — 531 Strength"; description rewritten to lead with "barbell plate calculator for 5/3/1"; h1 → "5/3/1 plate calculator"
+- `apps/web/src/pages/tools/goal-calendar.astro`: title → "5/3/1 Training Max Goal Calculator — 531 Strength"; description rewritten to mention "cycle-by-cycle projection" and all four lifts; h1 → "5/3/1 goal calculator"
+- `apps/web/src/pages/tools/index.astro`: title → "Free 5/3/1 Calculators — Plate Math & Goal Calendar"; description rewritten to mention "Jim Wendler's 5/3/1 program" explicitly
+
+**Reddit tool-linking playbook created:**
+
+`docs/marketing/reddit-tool-linking-playbook.md` is now ready. Covers:
+- Three thread-type templates: plate math questions, progression timeline questions, app recommendation threads
+- Trigger phrases to search for in each thread type (e.g., "how do I calculate plates", "how long to hit", "what app for 5/3/1")
+- Which subreddits to monitor in priority order: r/531Discussion, r/weightroom, r/powerlifting, r/fitness, r/overcominggravity
+- How to find live threads (Reddit is poorly indexed externally — must use native Reddit search sorted by New)
+- Frequency guidance: 2-4 organic drops per month, never forced
+- What not to do (avoid mentioning AI/Claude in lifting communities — wrong story for that audience)
+
+The plate math and goal calendar response templates can be used now without iOS being live. The app recommendation template requires iOS first.
+
+**"How I built this" story angle — research update:**
+
+The Medium article "Vibe Coding vs. Agentic Coding" (April 2026) provides useful framing: the article distinguishes "vibe coding" (you stay in the loop) from "agentic coding" (the AI plans and executes in structured loops). 531 Strength is the latter — the cron loop is not vibe coding by that definition. This is a sharper claim than "vibe-coded": the app uses an autonomous agentic loop with CI enforcement, multi-agent handoffs, and property-tested domain logic. The r/vibecoding and HN posts should use this distinction. The reddit-vibecoding-draft.md already leads with CI boundaries — the "agentic, not vibe-coded" framing is a stronger sharpening.
+
+Key research finding: Reddit communities respond most to "I shipped a specific problem I had" over "I built something with AI." The practitioner frame (r/531Discussion: "I needed a BBB tracker that did the math") and the agentic differentiation frame (r/vibecoding: "this is a production app with CI enforcement, not a prototype") are both correct and should not be mixed.
+
+**Competitor SEO landscape:**
+
+The goal-calendar's differentiation is real: no top-ranking 5/3/1 calculator shows a multi-cycle projection to a goal weight. Black Iron Beast, Omni Calculator, ctrlcalculator.com — all show one cycle only. 531strength.com/tools/goal-calendar is the only tool found in research that projects how many cycles and weeks to reach a specific goal TM. That's a real gap. The updated title and h1 now signal this to search engines.
+
+The plate-math calculator competes with more tools (barbellcalculator.com, the existing "531 Strength" iOS app's web presence, Black Iron Beast's plate section) but the visual plate-per-side rendering is distinctive. Search engines now see "5/3/1 plate math calculator" in all three heading tiers (title, h1, description) rather than just in the FAQ prose.
+
+**#needs-input — no new replies from Alex:**
+
+Still waiting on: personal 5/3/1 history (Q4), GitHub Releases URL (Q1). iOS still pending.
+
+**Next actions:**
+1. iOS approval: use launch-day operations guide at `docs/marketing/launch-day-operations-guide.md`
+2. Alex: log into Reddit and search r/531Discussion for "plates" and "how long" sorted by New — start dropping tool URLs in relevant threads using the playbook at `docs/marketing/reddit-tool-linking-playbook.md`
+3. Iteration count is now at "55+" across all marketing drafts (updated this expedition)
+
+---
 
 ## Expedition 54 — Research notes
 
