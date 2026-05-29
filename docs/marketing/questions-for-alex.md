@@ -31,8 +31,8 @@ The draft uses "running BBB for about a year" as a framing device. Is that accur
 **5. How many expedition iterations will exist by HN launch day?**
 The HN draft says "wait until 20+ expedition logs exist." How many are there now? The `/process` page and HN post both need a real number. If we're at [N], the post can say "N iterations in, still running."
 
-**6. Does the /process page exist yet?**
-The strategy doc references a `/process` page on the marketing site (`apps/web`). Is it live? What's the URL? Both HN and Indie Hackers posts link to it. If it doesn't exist, either: (a) the agent loop needs to build it before the HN post, or (b) the posts link to GitHub directly instead.
+**6. ~~Does the /process page exist yet?~~** — RESOLVED (Expedition 40)
+The /process page exists at `531.dev/process` and is well-built. It covers: the loop architecture, the Discord workflow, the three-channel system, the four loop steps, the rules, the full stack, the scribe era history (Margin → Verso → Logger rotation), and an about section. It is ready to be the linked destination for both the HN and Indie Hackers posts. No further work needed on this item.
 
 **7. What's your Twitter/X handle?**
 Tactic 4 involves posting to X and tagging @jimwendler. What account will the tweet come from? Is there a project account or will it come from your personal account?
@@ -56,8 +56,10 @@ A 30-second screen recording of a live session (warm-up → working set → AMRA
 
 **Can be finalized now (no Alex input needed):**
 - r/531Discussion and r/weightroom post structure and framing — done
-- AI experiment story outline — done
+- AI experiment story outline + revised HN strategy — done (Expedition 40)
 - HN and IH structure — done
+- /process page — exists, ready to link (resolved Expedition 40)
+- Long-form "how I built this" narrative — drafted (Expedition 40). See `docs/marketing/longform-how-i-built-this.md`
 
 **Cannot be finalized until iOS is live:**
 - Actual App Store URL in both Reddit posts
@@ -66,4 +68,19 @@ A 30-second screen recording of a live session (warm-up → working set → AMRA
 - GitHub Releases URL (Q1)
 - Reddit account history (Q3) — affects whether standalone post or thread reply is the right play
 - Personal 5/3/1 history (Q4) — affects practitioner credibility of r/531Discussion post
-- /process page existence (Q6) — affects HN post structure
+- Expedition count at HN launch day (Q5) — fill in [N] placeholders in HN lead paragraph
+- Twitter/X handle (Q7) — needed for @jimwendler tweet
+
+**New item (Expedition 40):**
+**11. Review the longform narrative — `docs/marketing/longform-how-i-built-this.md`**
+A full-arc "how I built this" piece is drafted — ~1,200 words covering: the personal itch, the unusual constraint, how the loop works, what was hard, what surprised you, where it is now, and the open question. This is the source asset for:
+- Indie Hackers milestone post (extract and expand section 3+4)
+- HN submitter comment (extract the "what surprised me" section)
+- Any platform where the full narrative fits
+
+**Before it can be published, Alex needs to:**
+- Fill in personal 5/3/1 details (how long running it, actual lifts — currently placeholder "about a year")
+- Confirm or correct the competitive framing (Strong, Boostcamp — is this accurate from your experience?)
+- Fill in [N] expedition count
+- Add GitHub link and App Store link
+- Decide: post under personal name or project name?

@@ -29,24 +29,59 @@ Each iteration the system gets slightly better — not because someone refactore
 
 ---
 
-## HN Show HN — Draft title and lead
+## HN Show HN — Revised title and lead (updated Expedition 40)
 
-**Title:**
-> Show HN: 531 Strength — a 5/3/1 tracker built by a Claude agent on a 30-minute cron
+### Strategy update based on HN research
 
-**Lead paragraph (first comment, by submitter):**
+Data from Sturdy Statistics' 2025 Show HN analysis shows AI-related posts are in a "quadrant of death": they attract early cluster votes from AI-interested readers but don't resonate with the broader HN audience. Posts that lead with "built by an AI / Claude agent" pattern underperform vs. their early vote signal. The current title leads too hard with the AI system angle.
 
-531 Strength is a free 5/3/1 + BBB strength training tracker for iOS and Android. It's a real app (in the App Store, on the Play Store) — but the interesting part is how it was built.
+The better HN angle: lead with the real human story (personal itch, real problem, specific product), make the agent loop the interesting secondary fact — not the headline claim. HN values the "tryable, real thing" over the "look at my AI system" post.
 
-A Claude Code agent runs on a 30-minute cron. Each iteration: pick a task from a queue, spawn designer / implementer / QA sub-agents, run the static-analysis harness, commit to main. The dev blog is written by the same system. The human role is direction and review — not writing code.
+The /process page (531.dev/process) is already built and strong — it handles the deep explanation so the HN post doesn't have to front-load architecture details.
 
-The app has shipped [N] iterations this way. Here's what that looks like and what we've learned:
+---
 
-[link to /process page]
-[link to GitHub]
-[link to App Store / Play Store]
+**Title option A (recommended — personal/real angle first):**
+> Show HN: 531 Strength — I let a Claude agent build my gym app, start to finish
 
-**Timing note:** Post this after 20+ expedition logs exist. The loop needs to look like a running, self-sustaining thing — not an experiment that ran for a week. HN will ask "how many iterations?" and the answer needs to be credible.
+**Title option B (app-first, agent secondary):**
+> Show HN: 531 Strength — free 5/3/1 tracker, built entirely by a Claude agent on a cron
+
+**Title option C (more technical, for technical audience):**
+> Show HN: A Claude agent on a 30-min cron built this 5/3/1 app — N iterations later
+
+---
+
+**Recommended lead paragraph (first comment, by submitter):**
+
+I lift, I wanted a 5/3/1 + BBB tracker that did the math and left everything else out, and everything I found was either too expensive or too generic. So I built one — but with a constraint: I wouldn't write the code. A Claude Code agent harness on a 30-minute cron would.
+
+[N] iterations later, the app is on the App Store and Play Store. The interesting part isn't the app — it's what running a real product on an agent loop for this long taught me about where the model works and where it fails.
+
+What I found: the quality compounded. The skill wasn't prompting — it was context hygiene. The agents drift when the human drifts. The dev blog (written by the same system, one post per loop) ended up being the most honest receipt of a vibe-coding experiment I've encountered.
+
+The app is free, no account, local SQLite. Source on GitHub.
+
+- Process: 531.dev/process
+- Dev blog: 531.dev/blog
+- GitHub: [link]
+- iOS: [App Store link]
+- Android: [Play Store link]
+
+---
+
+**Timing note:** Post after 20+ expedition logs exist (already true at expedition 40+). HN will ask "how many iterations?" — the answer at expedition 40+ is credible. Post on a weekday between 8am–10am US Eastern.
+
+**What HN will likely ask:**
+- "Did you actually write any code?" — Answer: minimal, some emergency fixes. The constraint was mostly held.
+- "Is the app actually good or just a demo?" — Answer: it's used for real workouts. The proof is the feature specificity: plate math, AMRAP detection, BBB percentages, rest timers. Toy demos don't have per-side plate visualization.
+- "Why 30 minutes?" — Answer: short enough to stay honest about what shipped, long enough to ship something real.
+- "What's the failure mode?" — Answer: context drift. When the decision log isn't maintained, agents re-argue settled questions. The system drifts when the human drifts.
+
+**What NOT to say in the HN comments:**
+- Don't be defensive about the AI angle — HN is skeptical of AI posts. Let the specificity speak.
+- Don't claim the agent is autonomous in a way that's overstated — the human does the direction-setting, queue management, and context hygiene.
+- Don't pitch the app's features as primary — that's a Reddit angle. HN cares about the engineering story.
 
 ---
 

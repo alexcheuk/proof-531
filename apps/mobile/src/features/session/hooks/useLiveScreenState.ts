@@ -176,8 +176,9 @@ function defaultFireDoneAlarm() {
       // When foregrounded, no trigger notification was scheduled — fire an
       // immediate sound alert on the high-importance rest-done channel.
       if (RN.AppState.currentState === 'active') {
+        // biome-ignore format: trailing comma in typeof import() causes TS1005
         const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
-          '@/lib/restChronometer',
+          '@/lib/restChronometer'
         );
         void fireRestDoneAlarmForeground();
       }

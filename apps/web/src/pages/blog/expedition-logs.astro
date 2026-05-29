@@ -49,6 +49,10 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
           this page; they write for their successors. We publish what
           they leave behind.
         </p>
+        <p class="subscribe-line">
+          Entries marked <span class="audio-ref">&#9654; AUDIO</span> include the Logger's spoken recording.
+          Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> — compatible with Pocket Cast and other podcast apps.
+        </p>
         {latestExpedition > 0 && (
           <p class="archive-line">— archived through expedition {latestExpedition}</p>
         )}
@@ -183,6 +187,9 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
   }
   .colophon p { margin: 0 0 12px; }
   .colophon p:last-child { margin-bottom: 0; }
+  .subscribe-line { color: var(--ink-2); font-size: 12px; }
+  .audio-ref { color: var(--amber); font-weight: 600; letter-spacing: 0.1em; }
+  .rss-link { color: var(--ink-0); text-decoration: underline; text-underline-offset: 3px; }
   .colophon .archive-line {
     margin-top: 14px;
     padding-top: 12px;

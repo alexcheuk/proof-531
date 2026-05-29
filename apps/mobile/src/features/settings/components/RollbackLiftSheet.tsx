@@ -4,6 +4,7 @@ import { NumberStepper } from '@/design/primitives/NumberStepper';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { useTheme } from '@/design/theme';
+import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -16,13 +17,6 @@ export interface RollbackLiftSheetProps {
   onConfirm: (lift: Lift, n: number) => void;
   pending?: boolean;
 }
-
-const LIFT_LABELS: Record<Lift, string> = {
-  squat: 'Squat',
-  bench: 'Bench',
-  deadlift: 'Deadlift',
-  press: 'Press',
-};
 
 export function RollbackLiftSheet({
   open,
@@ -112,7 +106,7 @@ export function RollbackLiftSheet({
           glyph="→"
           accessibilityLabel={
             selectedLift
-              ? `Roll back ${sessionCount} ${LIFT_LABELS[selectedLift]} session${sessionCount > 1 ? 's' : ''}`
+              ? `Roll back ${sessionCount} ${liftDisplayName(selectedLift)} session${sessionCount > 1 ? 's' : ''}`
               : 'Roll back sessions'
           }
         >
@@ -146,7 +140,7 @@ export function RollbackLiftSheet({
               style={makeLiftChipStyle(selectedLift === lift)}
             >
               <RNText style={makeLiftChipLabelStyle(selectedLift === lift)}>
-                {LIFT_LABELS[lift]}
+                {liftDisplayName(lift)}
               </RNText>
             </Pressable>
           ))}

@@ -103,14 +103,42 @@ Use the right story for the right audience. Never mix them in a single post.
 | 2. r/531Discussion post | draft ready · expedition 38 | Two options drafted (practitioner-frame + short). Needs: App Store URL, GitHub Releases URL, Alex's Reddit history, personal 5/3/1 details. See `docs/marketing/reddit-531discussion-draft.md` |
 | 3. r/weightroom thread | draft ready · expedition 38 | Thread-reply option (recommended) + standalone option. Post 24h after tactic 2. See `docs/marketing/reddit-weightroom-draft.md` |
 | 4. @jimwendler tweet | pending · wait for iOS | Needs Alex's X handle |
-| 5. HN Show HN | outline ready · expedition 38 | Title, lead paragraph, 5-bullet story structure drafted. Wait for 20+ expedition logs + /process page. See `docs/marketing/ai-experiment-story-outline.md` |
-| 6. Indie Hackers | outline ready · expedition 38 | 5-section milestone post structure drafted. Same source doc as HN. |
+| 5. HN Show HN | strategy revised · expedition 40 | HN title/lead updated based on 2025 Show HN data: AI-first framing underperforms; now leads with personal story + real app, agent loop is secondary. Three title options provided. Pre-answered likely HN questions. /process page confirmed ready. See `docs/marketing/ai-experiment-story-outline.md` |
+| 6. Indie Hackers | source draft ready · expedition 40 | Full longform narrative drafted as source asset. See `docs/marketing/longform-how-i-built-this.md` — extract sections 3+4 for IH post. |
 | 7. Product Hunt | pending · wait 2-3wk post-iOS | |
 | 8. r/reactnative | outline ready · expedition 38 | Technical angle drafted (stack + plate visualization). In same AI story doc. |
 | 9. r/vibecoding | outline ready · expedition 38 | 1-paragraph version of the loop story drafted. In same AI story doc. |
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
+
+## The long-form narrative asset
+
+Alex flagged wanting to "share to the world a fun story on how I built this whole thing — the technical aspect, the fun aspect, the whole vibe code journey."
+
+**Status: drafted (Expedition 40).**
+
+The piece is at `docs/marketing/longform-how-i-built-this.md`. It's ~1,200 words and covers:
+- The personal itch (2-plates-to-3-plates goal, the problem with existing apps)
+- The unusual constraint (agent loop, not writing code)
+- How the loop actually works (cron, Discord, multi-agent team, Logger posts)
+- What was hard (context drift, boundary enforcement, agent handoffs)
+- What surprised me (quality compounding, context hygiene as the real skill, the blog as receipt)
+- Where it is now + open question about compounding
+
+**Needs from Alex before publishing:**
+- Personal details filled in (how long on 5/3/1, actual lifts — currently generalized)
+- Confirmation that Strong/Boostcamp framing is accurate from personal experience
+- Expedition count [N] filled in
+- GitHub + App Store links added
+- Decision: personal name or project name as byline?
+
+**Where this publishes:**
+- Indie Hackers — as the milestone post (full article or excerpt)
+- HN — as the submitter comment (extract the most technical/surprising section)
+- r/vibecoding — as the primary link destination (the community moved to production builds, this is one)
+- Personal blog or dev.to if Alex has either
+- 531.dev blog — consider whether a special non-expedition post for the full human narrative is worth adding
 
 ## Open questions (blocking launch-day posts)
 
@@ -119,8 +147,8 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 1. GitHub Releases URL for Android APK
 2. App Store URL (available after iOS approval)
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
-4. Alex's personal 5/3/1 history (practitioner credibility framing)
-5. Whether /process page on the marketing site exists yet (needed for HN post)
+4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
+5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531.dev/process is complete and ready to link.
 
 ## Sources
 

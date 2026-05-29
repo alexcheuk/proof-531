@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — RSS feed upgraded to podcast-compatible feed with iTunes namespace
+
+**Tags:** `web`, `feature`
+**Files:** `apps/web/src/pages/rss.xml.ts`
+
+Upgraded `/rss.xml` from a plain blog RSS feed to a dual-purpose RSS + podcast feed. Added the iTunes podcast namespace (`xmlns:itunes`), channel-level `<itunes:type>`, `<itunes:author>`, `<itunes:category>`, and per-episode `<enclosure>` (with actual file-size bytes read at build time via `fs.statSync`) and `<itunes:episode>` tags. The single feed URL now works in both traditional RSS readers and podcast apps like Pocket Cast.
+
+**Why:** user asked for the expedition audio logs to be accessible from podcast apps. The audio files were already in `public/audio/` and referenced in post frontmatter; the feed just didn't expose them as enclosures.
+
+**Trade-off / what we didn't do:** could have created a separate `/podcast.xml` feed. Single feed is cleaner — no split audience, same URL everywhere.
+
 ### 2026-05-28 — GitHub Actions preview APK workflow: fingerprint-gated EAS cloud build
 
 **Tags:** `process`, `ci`
