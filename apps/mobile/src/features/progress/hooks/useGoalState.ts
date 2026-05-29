@@ -22,14 +22,7 @@ export type GoalState = {
   onDaysPerWeekChange: (daysPerWeek: number | null) => void;
 };
 
-/**
- * Manages the editable goal state for the GoalPanel. Owns the lift-goal
- * queries; the parent (ProgressLiftPage) passes in display/storage context
- * from its own settings + progression queries to avoid duplicate fetches.
- *
- * currentTm — current training max in display units, used to seed the
- * default goal value when the user has never set one.
- */
+// Parent (ProgressLiftPage) passes display/storage context to avoid duplicate fetches.
 export function useGoalState(
   lift: Lift,
   opts: {

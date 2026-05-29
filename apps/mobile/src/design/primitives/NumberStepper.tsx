@@ -11,20 +11,7 @@ import { useTheme } from '../theme';
 import { CapsLabel } from './CapsLabel';
 import { Row } from './Row';
 
-/**
- * Sharp-cornered ink-bordered stepper — two 56×56 paper squares flanking a
- * large weight-num center value. Ported from PWA
- * `src/components/ui/number-stepper.tsx`.
- *
- * Visual idiom matches the LEDGER paper-square form: each button is its own
- * outlined square (no shared rail). Silent-clamp at bounds — pressing a
- * boundary button still fires onChange (with the clamped value, equal to
- * the current value) and a light haptic.
- *
- * Unit display follows the PWA mapping: callers pass storage form
- * (`'lbs' | 'kg' | 'reps' | ...`) and the stepper maps `'lbs'` to the
- * LEDGER glyph `'lb'`. Other strings pass through unchanged.
- */
+// Silent-clamp at bounds: onChange fires even at min/max (with the clamped value) so callers don't need a special case.
 
 const STEP_BUTTON_SIZE = 56;
 const STEP_GLYPH_FONT_SIZE = 28;

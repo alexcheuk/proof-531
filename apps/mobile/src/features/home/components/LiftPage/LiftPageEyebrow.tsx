@@ -11,11 +11,6 @@ export type LiftPageEyebrowProps = {
   isInProgress: boolean;
 };
 
-/**
- * "Cycle N · Day W" eyebrow row on a LiftPage. When a session is actively
- * running for this lift, a 6×6 ink square + "In progress" caps chip
- * appears on the right.
- */
 export function LiftPageEyebrow({ lift, cycle, week, isInProgress }: LiftPageEyebrowProps) {
   const { colors } = useTheme();
   return (

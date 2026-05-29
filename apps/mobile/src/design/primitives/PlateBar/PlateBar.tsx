@@ -4,23 +4,7 @@ import { PerSideCaption } from './PerSideCaption';
 import { PlateRect } from './PlateRect';
 import { groupPlates, sizeFor } from './plateMath';
 
-/**
- * Monochrome side-view barbell visualization (LEDGER plate-v3).
- *
- * Pure-presentational. The caller passes a precomputed `perSide`
- * decomposition (heaviest plate first). Plates stamp their weight number
- * (rotated -90°) when they're tall enough to read.
- *
- * Two variants:
- *   - default (full): bar+collars+plates row + a hairline "PER SIDE" row
- *     showing grouped plates and their per-side total.
- *   - `mini`: same row at smaller dimensions, no PER SIDE row.
- *
- * Ported from PWA `src/components/plate-bar.tsx`. The plate-size ramp and
- * grouping rules live in `./plateMath.ts` so they can be unit-tested
- * independently; PlateRect and PerSideCaption are sibling files so the
- * composition shell stays small.
- */
+// Pure-presentational — plate-size ramp and grouping rules live in ./plateMath.ts for independent unit-testing.
 export type PlateBarProps = {
   /** Plates per side, heaviest first (greedy decomposition order). */
   perSide: readonly number[];

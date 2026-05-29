@@ -1,10 +1,3 @@
-/**
- * Progress tab — horizontal carousel where each page is one lift's
- * `ProgressLiftPage`. Layout mirrors HomeScreen: Masthead + LiftTabs are
- * fixed at the top; per-lift content scrolls inside its own FlatList page.
- *
- * Tokens / hex / px literals stay in `src/design/`.
- */
 import { useLatestTms } from '@/data/queries/useLatestTm';
 import { usePrs } from '@/data/queries/usePrs';
 import { useSettings } from '@/data/queries/useSettings';

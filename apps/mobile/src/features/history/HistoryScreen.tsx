@@ -1,16 +1,3 @@
-/**
- * History screen — composes Masthead + TitleBlock + an achievement strip +
- * a chip-row filter + a cycle-grouped list of past sessions, all inside a
- * pull-to-refresh ScrollView.
- *
- * The mobile port adds PR markers (`★ PR` chip on rows) + a lifetime stats
- * strip ("N sessions filed · M PRs") + a 14-day activity sparkline + an
- * "All / PRs / per-lift" filter so the page rewards consistency, not just
- * records completed work.
- *
- * Derived/memoized data + the four query reads live in `useHistoryScreenData`
- * — this file is composition + filter UI state only.
- */
 import { useScrolledPast } from '@/design/hooks/useScrolledPast';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';

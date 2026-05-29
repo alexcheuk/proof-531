@@ -48,7 +48,8 @@ Keep the website copy accurate and honest:
 
 Current gaps:
 - [ ] iOS App Store URL — waiting on Apple approval (Alex needs to update when live)
-- [ ] Screenshots section in README + homepage is a placeholder
+- [x] Screenshots section in README + homepage is a placeholder — verified done (expedition 64): README has 5 screenshots at docs/screenshots/ with proper alt text; homepage screens-rail has 4 real device captures. Item was stale.
+- [x] Signoff section "Play Store" copy corrected (expedition 64) — signoff-state paragraph said "Play Store and App Store submissions in progress" but the app was never submitted to the Play Store. Corrected to "iOS App Store approval in progress."
 - [x] The "How it works" section references Expo Go — confirmed NOT present (expedition 48 audit was correct; no Expo Go in any /pages file; item was stale)
 - [x] Process page step 03 diagram said `OTA` — corrected to `push` (expedition 53). OTA now triggers via CI on push, not by the loop agent directly.
 - [x] Workflow section "03 · Shipped" paragraph implied loop agent pushes OTA — corrected to describe CI triggering OTA on commit push (expedition 53)
@@ -93,6 +94,14 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 64 notes
+
+Two content-accuracy fixes:
+
+1. **Signoff "Play Store" copy corrected** (Track B): The signoff section footer paragraph said "Play Store and App Store submissions in progress" — inaccurate because the app has never been submitted to the Play Store; only the iOS App Store is pending. Corrected to "iOS App Store approval in progress — the dev log announces when it lands."
+
+2. **Screenshots Track B item marked done** (Track B): Verified that docs/screenshots/ contains 5 real device screenshots and the homepage screens-rail section has 4 of them with correct alt text. The placeholder item was stale.
 
 ### Expedition 63 notes
 

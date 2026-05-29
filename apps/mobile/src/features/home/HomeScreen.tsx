@@ -10,19 +10,6 @@ import type { Lift } from '@/domain/types';
 import { LiftTabs } from '@/features/shared/LiftTabs';
 import { QueryShell, combineQueries } from '@/features/shared/QueryShell';
 import { useLiftCarouselSync } from '@/features/shared/hooks/useLiftCarouselSync';
-/**
- * Home screen — composes Masthead + LiftTabs + a horizontal swipe carousel of
- * `LiftPage`s, one page per enabled lift.
- *
- * Uses a
- * `pagingEnabled` horizontal `FlatList` keyed on the lift, with
- * `onMomentumScrollEnd` driving `setSelectedLift` and a `scrollToIndex`
- * effect that re-syncs when the selected lift changes externally (e.g. via
- * a LiftTab tap).
- *
- * Boundary: this file lives under `features/` and composes design
- * primitives + data queries — it never imports drizzle hex directly.
- */
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';

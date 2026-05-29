@@ -1,15 +1,4 @@
-/**
- * Section frame for the LEDGER register layout. Behavioral port of the PWA
- * `LedgerSection` (src/components/ui/ledger-section.tsx).
- *
- * Caps title on the left, optional caps hint on the right, hairline-bordered
- * rows below. Surface is transparent (inherits the paper canvas). The section
- * provides its own `pt-6 px-6` so consecutive sections read as one continuous
- * register.
- *
- * Note: the PWA uses `items-baseline` for the header row. React Native does
- * not support `'baseline'` for `alignItems`; we use `'center'` instead.
- */
+// RN doesn't support alignItems:'baseline' — header row uses 'center' instead of the PWA's items-baseline.
 
 import type { ReactNode } from 'react';
 import { Text as RNText, type StyleProp, type TextStyle, View, type ViewStyle } from 'react-native';

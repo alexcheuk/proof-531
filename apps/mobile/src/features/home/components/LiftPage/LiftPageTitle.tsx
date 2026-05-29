@@ -7,13 +7,6 @@ import { Pressable, type ViewStyle } from 'react-native';
 
 export type LiftPageTitleProps = {
   lift: Lift;
-  /**
-   * Tap handler. When supplied, the headline becomes a Pressable that
-   * fires a selection haptic on press-in. Used by TODAY to route into
-   * the Progress screen for this lift. Omit to render the headline as
-   * non-interactive Text (preserves the original behavior for screens
-   * that don't yet integrate the Progress entry point).
-   */
   onPress?: () => void;
 };
 
@@ -26,15 +19,6 @@ const TITLE_LETTER_SPACING = -2.56;
 // line heights, so we bump to 74.
 const TITLE_LINE_HEIGHT = 74;
 
-/**
- * The giant lift-name headline (e.g. "Squat.") with the amber-accent
- * period. Sized to match the PWA's hero typography on a LiftPage.
- *
- * Wrapped in a Pressable when `onPress` is supplied so the lifter can
- * tap the headline to open the Progress screen for this lift (per spec
- * decision 6). Press-in fires `Haptics.selectionAsync()`. Hit-slop adds
- * vertical padding so the effective tap target clears 44 pt.
- */
 export function LiftPageTitle({ lift, onPress }: LiftPageTitleProps) {
   const { spacing } = useTheme();
 

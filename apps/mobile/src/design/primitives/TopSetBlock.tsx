@@ -5,20 +5,7 @@ import { PlateBar } from './PlateBar';
 import { Row } from './Row';
 import { SectionBand } from './SectionBand';
 
-/**
- * Caps label + meta + giant weight + `× reps` + `PlateBar`.
- *
- * Used on Home (mini plate variant) and Today (full plate, also serves as the
- * screen's hero strip). Pure — the caller computes the displayed weight via
- * `snapWeight(snapshotTM × pct, unit)` and the matching `perSide` plate
- * decomposition (heaviest first) and passes them in. Keeping plate math out
- * about the domain.
- *
- *   bordered=true   → renders own top/bottom hairlines + py (Home).
- *   bordered=false  → no chrome; parent provides section spacing (Today).
- *
- * Ported from PWA `src/components/top-set-block.tsx`.
- */
+// Pure — caller computes the displayed weight and perSide decomposition; plate math stays in the domain.
 
 export type TopSetBlockProps = {
   /** Total weight on the bar, in the display unit (already converted). */

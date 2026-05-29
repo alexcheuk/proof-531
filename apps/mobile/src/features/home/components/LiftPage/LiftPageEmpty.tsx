@@ -11,11 +11,6 @@ export type LiftPageEmptyProps = {
   testIDPrefix?: string;
 };
 
-/**
- * "NO TRAINING MAX SET" empty-state block rendered when LiftPage has no
- * TM for the active lift. CTA bounces back into onboarding so a TM can
- * be entered.
- */
 export function LiftPageEmpty({ testIDPrefix }: LiftPageEmptyProps) {
   const router = useRouter();
   const { colors, spacing } = useTheme();

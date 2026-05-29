@@ -1,12 +1,4 @@
-/**
- * One record line within a LedgerSection. Behavioral port of the PWA
- * `LedgerRow` (src/components/ui/ledger-row.tsx).
- *
- * - Hairline top border: strong on first row of a section, faint otherwise.
- * - Renders as a Pressable when `onPress` is provided AND not `disabled`,
- *   otherwise as a non-interactive View — so non-pressable rows don't
- *   advertise a tap target to a11y tooling.
- */
+// Renders as Pressable when onPress is provided — so non-pressable rows don't advertise a tap target to a11y tooling.
 import type { ReactNode } from 'react';
 import { Pressable, type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../../theme';

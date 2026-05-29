@@ -2,10 +2,6 @@ import { Skeleton } from '@/design/primitives/Skeleton';
 import { useTheme } from '@/design/theme';
 import { View, type ViewStyle } from 'react-native';
 
-/**
- * Loading skeleton for the Progress lift page — three blocks roughly the size
- * of the title, stats triplet, and goal panel.
- */
 export function ProgressSkeleton() {
   const { colors, spacing, layout } = useTheme();
   const containerStyle: ViewStyle = {

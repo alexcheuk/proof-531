@@ -7,14 +7,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
-/**
- * Per-lift content body on Home. Reanimated `LinearTransition` animates
- * layout when the selected lift changes (swap-out → swap-in feels like a
- * smooth strip, not a hard cut).
- *
- * Empty state (no TM for this lift): replaces TopSet / CycleStrip / LiftStats
- * with a "NO TRAINING MAX SET" strip pointing at onboarding.
- */
+// LinearTransition animates layout when the selected lift changes — swap feels like a smooth strip, not a hard cut.
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { View, type ViewStyle } from 'react-native';

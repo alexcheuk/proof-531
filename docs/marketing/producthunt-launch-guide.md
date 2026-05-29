@@ -52,7 +52,7 @@ drafted: 2026-05-29 (Expedition 41)
 - No ads, no subscription, no analytics
 - Data stays on your device (SQLite)
 
-**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 62+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531strength.com/process.
+**The unusual backstory:** This app was built by a Claude Code agent on a 30-minute cron — 64+ iterations of autonomous design, implementation, QA, and a dev blog post written by the same system per loop. The human role: specify direction, review, merge. Full process at 531strength.com/process.
 
 Free. No account required. iOS and Android.
 
@@ -95,7 +95,7 @@ Hey r/PH — I built 531 Strength because I run the 5/3/1 program and couldn't f
 
 The core: training maxes → working weights calculated → plate math shown per side → log your sets → AMRAP reps → rest timer → session receipt. That's the whole loop.
 
-The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 62+ iterations. The dev blog on 531strength.com/blog is written by the same system, one post per loop. Full process at 531strength.com/process.
+The unusual part: I didn't write the code. A Claude Code agent harness on a 30-minute cron built it — 64+ iterations. The dev blog on 531strength.com/blog is written by the same system, one post per loop. Full process at 531strength.com/process.
 
 It's free because I built it for myself and wanted other lifters to have it. SQLite on-device, no account, no data collection.
 

@@ -1,14 +1,4 @@
-/**
- * 22×22 square ledger checkbox primitive. Behavioral port of the PWA
- * `CheckboxLedger` (src/components/ui/checkbox-ledger.tsx).
- *
- * - unchecked: 1.5px ink-0 border, transparent fill.
- * - checked:   1.5px ink-0 border, ink-0 fill, paper-color ✓ glyph.
- * - disabled:  border softens to ink-3; fill becomes ink-3 when checked.
- *
- * Always renders a Pressable so a11y tooling sees a checkbox target even
- * when no `onChange` is provided (presentational use).
- */
+// Always renders a Pressable so a11y tooling sees a checkbox target even in presentational use.
 
 import {
   Pressable,

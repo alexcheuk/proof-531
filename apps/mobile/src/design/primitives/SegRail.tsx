@@ -1,12 +1,3 @@
-/**
- * N-option segmented control. Hairline ink border, sharp corners.
- * Active segment fills ink0 with paper text; idle stays transparent.
- *
- * Options may be marked `disabled` to render present-but-unselectable
- * segments (used by Settings' Plate set "Custom" stub).
- *
- * Ported from PWA `src/components/ui/seg-rail.tsx`.
- */
 import * as Haptics from 'expo-haptics';
 import { Pressable, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';

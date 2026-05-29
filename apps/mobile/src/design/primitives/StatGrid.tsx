@@ -6,17 +6,6 @@ import { Heading } from './Heading';
 import { Row } from './Row';
 import { SectionBand } from './SectionBand';
 
-/**
- * Three-column "caps label / display value / caps sub" stat readout. The
- * recurring 3-up cell grid used by Home (Last/Best/Cycle), Onboarding
- * (Estimated 1RM / Training max), and Settings (Cycle prescription rows).
- *
- * Wraps a `SectionBand` (default tone, padding 'none') so the band's
- * hairlines and the grid cells stay in lock-step. `divided` toggles vertical
- * hairlines between cells.
- *
- * Ported from PWA `src/components/stat-grid.tsx`.
- */
 export type StatCell = {
   label: string;
   /** ReactNode so sites can mix tabular numerics + unit subscripts inline. */

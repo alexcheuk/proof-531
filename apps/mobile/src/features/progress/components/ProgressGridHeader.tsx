@@ -3,10 +3,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { View, type ViewStyle } from 'react-native';
 
-/**
- * Column header for the Progress cycle×day matrix. Mirrors `ProgressGridRow`'s
- * column structure: 34 px label spacer + 4 × flex 1 day cells + 54 px TM cell.
- */
+// Column layout must mirror ProgressGridRow: 34 px label spacer + 4 × flex 1 day cells + 54 px TM cell.
 export function ProgressGridHeader({ unitGlyph }: { unitGlyph: 'lb' | 'kg' }) {
   const { colors } = useTheme();
   const dayLabels: Array<{ label: string; scheme: string }> = [

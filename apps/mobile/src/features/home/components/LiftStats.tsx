@@ -1,13 +1,3 @@
-/**
- * Three-cell stat readout shown below the TopSetBlock on Home.
- *
- *   TM       — current training max, in display unit
- *   BEST e1RM — best estimated 1RM from a logged AMRAP (em-dash when none)
- *   CYCLE     — rolling cycle number from settings
- *
- * Cell labels are documented in `docs/superpowers/plans/PE-03-home`:
- * shows "TM / BEST e1RM / CYCLE" until the Last-session-stats backing query lands.
- */
 import { StatGrid } from '@/design/primitives/StatGrid';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
@@ -20,17 +10,18 @@ type LiftStatsProps = {
 };
 
 export function LiftStats({ tmValue, tmUnit, bestE1RM, cycle }: LiftStatsProps) {
+  const unitLabel = displayUnit(tmUnit);
   return (
     <StatGrid
       testID="lift-stats"
       cells={[
         {
           label: 'TM',
-          value: `${tmValue} ${displayUnit(tmUnit)}`,
+          value: `${tmValue} ${unitLabel}`,
         },
         {
           label: 'BEST e1RM',
-          value: bestE1RM != null ? String(bestE1RM) : '—',
+          value: bestE1RM != null ? `${bestE1RM} ${unitLabel}` : '—',
         },
         {
           label: 'CYCLE',

@@ -2,12 +2,6 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 
-/**
- * 3-column stats strip — Training Max · Best e1RM · Cycle. Matches the
- * canonical `StatsTripletV3`. Hairline left border between columns, bottom
- * hairline rule under the whole strip. Lives in `features/progress/` since
- * it's progression-screen-specific.
- */
 export type StatsTripletProps = {
   tm: number;
   /** Best lifetime e1RM in display units. 0/null renders as `—` with no unit suffix. */

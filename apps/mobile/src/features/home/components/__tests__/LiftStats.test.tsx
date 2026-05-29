@@ -12,7 +12,7 @@ describe('LiftStats', () => {
     expect(screen.getByText('TM')).toBeTruthy();
     expect(screen.getByText('315 lb')).toBeTruthy();
     expect(screen.getByText('BEST e1RM')).toBeTruthy();
-    expect(screen.getByText('342')).toBeTruthy();
+    expect(screen.getByText('342 lb')).toBeTruthy();
     expect(screen.getByText('CYCLE')).toBeTruthy();
     expect(screen.getByText('2')).toBeTruthy();
     expect(screen.getByText('rolling')).toBeTruthy();
@@ -24,8 +24,8 @@ describe('LiftStats', () => {
     expect(screen.getByText('140 kg')).toBeTruthy();
   });
 
-  it('renders the pre-converted bestE1RM value as-is (caller is responsible for plate-snapping)', () => {
+  it('renders the pre-converted bestE1RM value with unit suffix', () => {
     const screen = renderStats(<LiftStats tmValue={225} tmUnit="lbs" bestE1RM={295} cycle={3} />);
-    expect(screen.getByText('295')).toBeTruthy();
+    expect(screen.getByText('295 lb')).toBeTruthy();
   });
 });

@@ -2,11 +2,6 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 import { View, type ViewStyle } from 'react-native';
 
-/**
- * Dashed footer rendered below the grid when the goal lies past the last
- * rendered cycle (currentCycle + 6). Matches the canonical's beyond-chart
- * marker.
- */
 export type BeyondChartFooterProps = {
   cyclesBeyond: number;
   goalValue: number;

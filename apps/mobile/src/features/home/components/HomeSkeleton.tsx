@@ -3,10 +3,6 @@ import { Skeleton } from '@/design/primitives/Skeleton';
 import { useTheme } from '@/design/theme';
 import { View } from 'react-native';
 
-/**
- * Paper-themed loading skeleton for the Home tab. Renders the same rough
- * rhythm as the populated screen so the first paint feels intentional.
- */
 export function HomeSkeleton() {
   const { layout } = useTheme();
   return (
