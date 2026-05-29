@@ -42,6 +42,26 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — Splash screen dark bg changed to cream to match logo
+
+**Tags:** `convention`, `mobile`
+**Files:** `apps/mobile/app.json`
+
+The dark-mode splash screen was showing `#1A1812` (near-black) behind the 531. logo image, which has the cream `#E7E3D6` background baked in as an RGB PNG (no alpha). On dark-mode devices — the majority — this produced a black screen with a small cream-colored square in the center. Changed `dark.backgroundColor` to `#E7E3D6` so both modes show a seamless cream splash.
+
+**Why:** user reported black splash screen; the logo image was designed with the cream background and requires the container to match it.
+
+**Trade-off / what we didn't do:** could have produced a transparent-background logo variant, but that requires a design asset we don't have. The cream bg on both modes is simpler and consistent with the brand identity.
+
+### 2026-05-28 — commission-expedition-log: gommage sign-off is now persona-driven, not hardcoded
+
+**Tags:** `convention`, `process`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md`
+
+Removed the hard requirement to put `[slowly] [whispers]` on the motto for every Logger. The sign-off delivery is now determined by the Logger's register: a somber Logger fades on the motto, a brisk one signs off clean, a wry one might use `[sarcastic]`. The fade is documented as one option among several, not the default house style.
+
+**Why:** Alex flagged that the hardcoded fade was overriding the Logger's persona and making every sign-off sound the same — the exact failure mode the varied-register guidance was trying to prevent.
+
 ### 2026-05-28 — Retuned the gommage read-aloud: longer, varied register, normal pace
 
 **Tags:** `convention`, `process`

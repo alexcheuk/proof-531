@@ -2,16 +2,6 @@ import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
-/**
- * Session complete screen — the "stamped receipt" surface shown after the
- * Live screen completes (or the Today Complete pill is tapped).
- *
- * Composition shell only — view derivation lives in
- * `useSessionCompleteData`, sub-blocks (masthead, title, PR certificate,
- * receipt, cycle grid) live in their own files. Two haptics fire on load:
- * a Heavy impact for all completions (`useSessionCompleteHaptic`) and a
- * Success notification for PR sessions (`usePrSuccessHaptic`).
- */
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

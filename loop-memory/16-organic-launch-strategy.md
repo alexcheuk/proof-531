@@ -99,7 +99,7 @@ Use the right story for the right audience. Never mix them in a single post.
 
 | Tactic | Status | Notes |
 |--------|--------|-------|
-| 1. GitHub README polish | pending | |
+| 1. GitHub README polish | done · expedition 37 | Keywords, local-first/free/no-account messaging, process page link, AI-loop paragraph |
 | 2. r/531Discussion post | pending · wait for iOS | |
 | 3. r/weightroom thread | pending · wait for iOS | |
 | 4. @jimwendler tweet | pending · wait for iOS | |

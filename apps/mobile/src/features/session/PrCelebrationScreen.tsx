@@ -38,27 +38,6 @@ import {
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 
-/**
- * Full-screen, inverted-color celebration shown right after an AMRAP
- * set that registers a new estimated 1RM PR.
- *
- * The intro plays *in place* on the existing layout:
- *   - The hero (eyebrow + "Stronger.") scales up to ~1.25, typewriter-
- *     reveals across both lines, then scales down to its final size.
- *   - The numbers block then scales up the same way, types "PREVIOUS
- *     BEST" + the prior value, flips the eyebrow to "NEW ESTIMATED
- *     1RM", counts the value up, then scales back to its final size.
- *   - The comparison row + CTA fade in once the numbers have settled.
- *
- * The layout never reflows — hidden blocks reserve their final-state
- * height via `opacity: 0`, so each scale-up animation reads as
- * emphasis on the same element, not a separate centered overlay.
- *
- * Status-bar safe area is painted ink-0 by `StatusBarShim` via the
- * global tint layer in `_layout.tsx`. Primary CTA "Continue →"
- * replace-routes to the BBB prompt; Android hardware back is wired
- * to the same destination.
- */
 export type PrCelebrationScreenProps = {
   sessionId: number;
 };
@@ -137,14 +116,9 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     ready: sequenceReady,
   });
 
-  // ── Hero eyebrow, lift-specific. Falls back to a sane default while
-  //    the session row is still loading.
   const heroEyebrow = v ? `YOU HIT A NEW ${v.lift.toUpperCase()} PR` : 'YOU HIT A NEW PR';
 
-  // ── Typewriter for the hero. Active during type/hold so the full
-  //    string stays rendered through the hold without re-blanking. The
-  //    sentinel string only carries the right LENGTH — we feed the
-  //    returned char count to the Hero, which slices the real text.
+  // Sentinel string carries only the LENGTH; Hero slices the real text by char count.
   const titleActive = phase === 'title-type' || phase === 'title-hold';
   const typedTitleChars = useTypewriter({
     text: 'X'.repeat(prCelebrationTypeLength(heroEyebrow)),
@@ -153,10 +127,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     onComplete: onTitleTyped,
   }).length;
 
-  // ── Typewriter for the prev-best value. We type *only the number* —
-  //    PrCelebrationNumbers renders the unit glyph as a sibling at its
-  //    own (smaller) font size, so typing the unit characters would
-  //    render them at the big number size on every intermediate tick.
+  // Type only the number — unit glyph renders as a smaller sibling, not part of the typed string.
   const prevValueText = v ? formatWeight(v.prevE1RMDisplay) : '';
   const prevActive = phase === 'prev-type' || phase === 'prev-hold';
   const prevValueTyped = useTypewriter({
@@ -166,7 +137,6 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     onComplete: onPrevTyped,
   });
 
-  // ── Count-up from prev → new during tick-up.
   const tickActive = phase === 'tick-up';
   const tickValue = useCountUp({
     from: v?.prevE1RMDisplay ?? 0,
@@ -176,15 +146,11 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     onComplete: onTickComplete,
   });
 
-  // ── Visibility windows. Each block is in the layout from the moment
-  //    its phases begin (so layout doesn't shift), gated by opacity.
+  // In layout before visible so the dimensions are reserved and the layout never reflows.
   const heroVisible = phaseAtLeast(phase, 'title-type');
   const numbersVisible = phaseAtLeast(phase, 'prev-type');
   const ctaVisible = phase === 'final';
 
-  // ── Scale targets. Each block scales up to emphasis while its
-  //    intro phases run, then back to normal once that block has
-  //    settled.
   const heroScaleTarget =
     phase === 'title-type' || phase === 'title-hold' ? SCALE_EMPHASIS : SCALE_NORMAL;
   const numbersScaleTarget =
@@ -198,13 +164,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   const heroScaleStyle = useScaleStyle(heroScaleTarget);
   const numbersScaleStyle = useScaleStyle(numbersScaleTarget);
 
-  // ── Eyebrow transition: backspace "PREVIOUS BEST" then retype
-  //    "NEW ESTIMATED 1RM" the moment the tick-up phase begins. The
-  //    transition runs in parallel with the count-up; at ~45ms/char and
-  //    30 characters of total work, the label settles ~1.35s into the
-  //    2.5s tick. "NEW ESTIMATED 1RM" is also the permanent final-state
-  //    eyebrow (rendered by PrCelebrationNumbers' default), so the
-  //    label never has to reset after tick-up.
+  // Eyebrow backspace-and-retypes in parallel with count-up; FINAL_EYEBROW is the permanent state so no reset needed.
   const eyebrowTarget =
     phase === 'tick-up'
       ? PR_CELEBRATION_FINAL_EYEBROW
@@ -219,8 +179,6 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     active: eyebrowTransitionActive,
   });
 
-  // ── Numbers content overrides per phase. Values are unit-stripped —
-  //    PrCelebrationNumbers renders the unit glyph as a sibling.
   let numbersEyebrow: string | undefined;
   let numbersValue: string | undefined;
   if (phase === 'prev-type' || phase === 'prev-hold') {

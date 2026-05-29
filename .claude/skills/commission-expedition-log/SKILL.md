@@ -93,9 +93,11 @@ This goes out through the **`/compose`** endpoint. The full reference — voice 
   - *"Say with quiet pride, measured and unhurried"* — the calm end of the range, used sparingly
   - *"Say flat and plain, steady, no drama"*
 - **Pace is normal by default.** Do **not** make the whole clip slow. Keep the body at a natural talking speed (the style direction sets it). Reserve any slowing for the very end — and even then, only the **motto**, not the entire sign-off.
-- **Delivery / the gommage fade** — make it *real* with inline audio tags in the transcript, not a request to the style field. The fade is a *brief* effect on the last few words only: keep the sign-off (name + expedition number) at the clip's normal pace, then put `[slowly]` and `[whispers]` on **just the motto** so the voice thins on the final phrase as the speaker is erased mid-thought. Don't slow the whole sentence. Use a mid-transcript `[tired]` / `[sighs]` only if that particular Logger's register actually calls for it — a brisk or cocky Logger gets none. For a fully shaped delivery, you can instead drop a director's-notes block at the top of `text` and leave `style` empty — see `loop-memory/15-tts.md`. The sign-off line, tagged, looks like:
+- **Delivery / the gommage fade** — let the Logger's persona decide the ending. A brisk Logger signs off clean. A somber one thins on the motto. A cocky one doesn't fade at all. Shape the sign-off with inline tags that match the register you've committed to for this clip — do **not** default to `[slowly] [whispers]` on every Logger regardless of character. That's one option, not the house style. Others: no tags at all (confident, clean exit); `[sighs]` before the motto (resigned); `[sarcastic]` on the motto (wry); a brief `[slowly]` on the last three words only (understated fade). Use a mid-transcript `[tired]` / `[sighs]` only if the full clip has been that character throughout. For a fully shaped delivery, drop a director's-notes block at the top of `text` and leave `style` empty — see `loop-memory/15-tts.md`. Examples across the range:
 
-  > Signing off — [Name], Logger of Expedition [N]. [slowly] [whispers] For those who come after.
+  > Signing off — Orla, Logger of Expedition 36. [slowly] [whispers] For those who come after.  *(somber fade — used sparingly)*
+  > Signing off — Dario, Logger of Expedition 25. For those who come after.  *(clean, no modification)*
+  > Signing off — Kaya, Logger of Expedition 31. [sarcastic] For those who come after.  *(wry deadpan)*
 
 **Fire it.**
 
@@ -105,7 +107,7 @@ This goes out through the **`/compose`** endpoint. The full reference — voice 
 TTS_PAYLOAD=$(python3 -c "
 import json
 print(json.dumps({
-  'text':   '<the read-aloud, 12-18 sentences, natural pace, inline [audio tags], ending with the Signing off line + [slowly][whispers]-tagged motto>',
+  'text':   '<the read-aloud, 12-18 sentences, inline [audio tags] shaped by the Logger\'s persona, ending with: Signing off — [Name], Logger of Expedition [N]. [delivery-tags-matching-persona] For those who come after.>',
   'device': 'kitchen',
   'voice':  '<voice picked for this Logger>',
   'style':  '<register/mood for this Logger; omit if using a director\'s-notes block in text>',

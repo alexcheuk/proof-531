@@ -1,17 +1,20 @@
 # 531 Strength
 
-A 5/3/1 + Boring But Big training tracker for iOS and Android. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop. Source available.
+A free, local-first 5/3/1 + BBB strength training tracker for iOS and Android. No account. No ads. No data leaves your phone. Built with Expo SDK 55, React Native New Architecture, and a 30-minute Claude agent loop.
 
 - **App**: [531.dev](https://531.dev)
 - **Dev blog**: [531.dev/blog](https://531.dev/blog)
+- **How it's built**: [531.dev/process](https://531.dev/process)
 - **Changelog**: [`CHANGELOG.md`](./CHANGELOG.md)
-- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — local-only, no tracking.
+- **Privacy policy**: [`docs/PRIVACY.md`](./docs/PRIVACY.md) — SQLite on-device, zero telemetry.
 
 ## What it is
 
-A focused 5/3/1 training log. Enter your training maxes, follow the program, log your AMRAP sets. The math handles the rest — percentages, plate calculator, cycle progression, PR tracking.
+A focused 5/3/1 training log for Jim Wendler's 5/3/1 program. Enter your training maxes, follow the program, log your AMRAP sets, run the Boring But Big (BBB) accessory work. The math handles the rest — percentages, plate calculator, cycle progression, PR tracking, lbs/kg support.
 
-The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice.
+Everything stays on your device. No account required. No subscription. No data collection.
+
+The code is split into four clean layers: pure domain math (`src/domain/`), persistence via Drizzle ORM + expo-sqlite (`src/data/`), a typed design system (`src/design/`), and feature composition (`src/features/`). Most of it is built by a Claude coding agent running on a 30-minute cron — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the [dev blog](https://531.dev/blog) for what that looks like in practice. The agent loop has run 36+ iterations; everything you see is the product of 30-minute autonomous sessions committing real code.
 
 ## Quick start
 
