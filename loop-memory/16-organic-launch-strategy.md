@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength — Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-28 (Expedition 47)
+**Last updated**: 2026-05-28 (Expedition 49)
 **Status**: Pre-launch (iOS App Store submission in progress — all drafts ready for tactics 1-9; launch-day operations guide now complete)
 
 ## The competitive anchor
@@ -82,16 +82,25 @@ Use the right story for the right audience. Never mix them in a single post.
 
 ### Secondary / emerging channels
 
-**13. YouTube Shorts series** (new — Expedition 47)
+**13. YouTube Shorts series** (new — Expedition 47, updated Expedition 49)
+- **Channel confirmed (Expedition 49):** Personal channel, from scratch. "What I built" / dev influencer angle. Alex appears on camera — both face-cam AND screen recording confirmed.
 - Two distinct angles, each as its own series or interleaved:
-  - **The app story**: Screen-capture Shorts showing the app in action. Plate math visualization, rest timer in the background, session receipt. Target: lifters on YouTube who search for 5/3/1 content. These are short (38-47 seconds), screen-capture + text overlays, no face required.
-  - **The builder story**: The homelab + expedition lore angle. Each Short = one absurd detail from the system. The Google Home speaker reading Discord updates. Listening to expedition logs on Pocket Cast. The Logger rotation. The gommage. Target: developers who find delight in the unhinged-but-functional.
+  - **The app story**: Screen-capture Shorts showing the app in action. Plate math visualization, rest timer in the background, session receipt. Target: lifters on YouTube who search for 5/3/1 content. 38-47 seconds, screen-capture + text overlays.
+  - **The builder story**: The homelab + expedition lore angle. Face-cam + screen. The Google Home speaker reading Discord updates. Listening to expedition logs on Pocket Cast (confirmed). The Logger rotation. The gommage. Target: developers who find delight in the unhinged-but-functional.
+- **Format now confirmed:** Face-cam for hook/close, screen recording for the app demo middle. Highest-completion format. No special equipment needed.
 - Key platform fact: 74% of Shorts views come from non-subscribers — discovery channel, not subscriber-building channel. Channel size irrelevant early on.
 - Optimal duration: 38-47 seconds for completion rate and algorithm favor.
-- Consistency matters more than virality: 4-7 per week gets 3.2x subscriber growth vs. irregular posting.
 - Best format hook: "Result → Reversal → Reveal" — show the outcome (a plate math calculation), challenge the assumption about how it was built, then reveal the agent loop.
-- See full 5-video content strategy in the Expedition 47 research notes below.
-- **Requires from Alex**: camera preference (Q12), YouTube channel status (Q13), screen recording of a live session (Q14). See `docs/marketing/questions-for-alex.md`.
+- **First video brief drafted (Expedition 49):** See `docs/marketing/youtube-shorts-first-video-brief.md` — the origin story / "what I built" video. This is the identity-setting Short that anchors everything else.
+- See full 5-video content strategy in the Expedition 47 research notes below; Expedition 49 notes update it for the personal-channel + both-camera context.
+- **Still needs from Alex**: screen recording of one live session (Q14), homelab specifics (Q15), App Store URL (for CTA once iOS is live).
+
+**14. Web tools as organic SEO entry point** (confirmed — Expedition 49)
+- The plate-math calculator and goal-calendar at 531strength.com/tools/ are confirmed live and use the same visual style as the home page. These are the asset.
+- Organic play: link these tools in Reddit and forum discussions whenever someone asks "how do I calculate plates for 5/3/1" or "how long will it take me to hit X weight." The URL is shareable, free, no download required. This is a different audience entry point than the app itself.
+- SEO angle: a plate math calculator that ranks for "531 plate math calculator" or "5/3/1 percentage calculator" could drive steady search traffic without ongoing effort. The tools pages are already built — they need links.
+- Where to drop them: r/531Discussion, r/weightroom, r/powerlifting, T-Nation when a relevant question appears. Do not force it — answer the question first, mention the tool as a resource.
+- No additional product work required. The tools already exist. This is purely a linking + SEO compounding play.
 
 ### Secondary channels (opportunistic, not forced)
 
@@ -125,7 +134,8 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | pending · add to queue | |
-| 13. YouTube Shorts series | strategy drafted · expedition 47 | Two-track strategy: app demo Shorts (screen-capture, lifter audience) + builder story Shorts (homelab/lore/expedition angle, developer audience). Five specific video ideas drafted in Expedition 47 research notes. Requires: camera preference (Q12), YouTube channel status (Q13), screen recording of one live session (Q14). See questions-for-alex.md. |
+| 13. YouTube Shorts series | first-video brief drafted · expedition 49 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed — that detail is usable in video copy. First-video brief written: face-cam hook + screen demo middle + face-cam close, 43 seconds, origin story angle. See `docs/marketing/youtube-shorts-first-video-brief.md`. Five-video content plan (Expedition 47) revised for personal-channel context. Still needs: screen recording of live session (Q14), App Store URL for CTA. |
+| 14. Web tools as SEO entry point | confirmed · expedition 49 | Alex confirmed tools at /tools/ are the asset, same visual style as home page. No new product work needed — tools are already live. Tactic: link in Reddit/forum discussions when plate math questions come up. SEO angle: /tools/plate-math and /tools/goal-calendar as standalone entry points for search traffic. |
 
 ## Launch-day operations guide
 
@@ -182,6 +192,57 @@ See `docs/marketing/questions-for-alex.md` for the full list. Summary of blocker
 3. Alex's Reddit account history in lifting communities (affects standalone vs. thread-reply strategy)
 4. Alex's personal 5/3/1 history (practitioner credibility framing — also needed for longform piece)
 5. ~~Whether /process page exists~~ — RESOLVED (Expedition 40). The /process page at 531strength.com/process is complete and ready to link.
+6. ~~Camera preference for YouTube Shorts~~ — RESOLVED (Expedition 49). Both face-cam and screen recording. Full format available.
+7. ~~YouTube channel status~~ — RESOLVED (Expedition 49). Personal channel from scratch, "what I built" / dev influencer angle.
+8. ~~Pocket Cast subscription~~ — RESOLVED (Expedition 49). Confirmed accurate. /process page language stands.
+9. ~~Permalinkable web tools~~ — RESOLVED (Expedition 49). Tools at /tools/ are live. Tactic 14 added.
+
+## Expedition 49 — Research notes
+
+**Date:** 2026-05-28
+
+**Alex's answers — resolved this expedition:**
+
+**Q12 (camera preference): Both** — Alex will use both screen recording AND face-cam. This unlocks the highest-completion format for YouTube Shorts: face-cam hook (0-4s), screen demo middle (4-38s), face-cam close (38-43s). No choice between formats needed — the full format is available. The five-video content plan from Expedition 47 is revised: all videos now assume face-cam availability.
+
+**Q13 (YouTube channel): From scratch, from personal channel, "what I built" video, dev influencer angle.** This is the identity-defining decision. The channel is not a brand channel for the app — it's a developer's personal channel where the app is the most interesting project. Implications:
+- Content should feel personal, not polished-product
+- The builder story (expedition lore, Google Home, Pocket Cast) is as central as the app itself
+- "Dev influencer" means future Shorts can range widely: other tools, other projects, build-in-public moments — but the origin story for the channel is this app
+- Starting from zero is fine for Shorts (74% of views come from non-subscribers), but the channel identity needs to be clear from video one
+- The first video sets the frame: "developer who lifts, built something weird, here's what it is"
+
+**Q3/Q5 combined (Pocket Cast + web tools):**
+- Pocket Cast subscription confirmed — the /process page language ("Subscribe in Pocket Cast and field logs come through like a podcast") is accurate and no changes are needed to that page
+- Web tools (plate math + goal calendar) confirmed as the asset — same visual style as home page, tools are already live at /tools/. No new product work needed. Tactic 14 added as organic SEO/link play.
+
+**YouTube Shorts content plan — revised for personal channel + both-camera format:**
+
+The Expedition 47 five-video plan was drafted for an unknown camera situation. Now that both face-cam and screen recording are confirmed, and the channel is personal/dev-influencer, each video gets face-cam availability and the sequencing changes slightly:
+
+**Video 1 (Origin story — first to post):** "What I built" — face-cam hook and close, screen demo middle. Establishes who Alex is, what the app is, and what the loop is. The identity video. See `docs/marketing/youtube-shorts-first-video-brief.md` for the full production brief.
+
+**Video 2 (Loop reveal):** "My AI agent texts me when it ships code" — updated for face-cam. Alex reacts to a Discord message in real time on camera, then cuts to showing what the code change produced in the app.
+
+**Video 3 (Expedition lore):** "My app writes its own dev blog. I listen to it on Pocket Cast." — face-cam intro, cuts to Pocket Cast showing the feed, then to the blog on 531strength.com. The Pocket Cast confirmation makes this directly usable.
+
+**Video 4 (Crossover — lifter + developer):** "The app that builds itself" — interleaved cuts between Alex using the app in a gym or home gym setting and the Discord task queue. The "real lifting, real agent" contrast.
+
+**Video 5 (Competitive):** "Why I stopped using Strong" — face-cam delivers the "$120 vs. free" line, screen demo shows the app. This one can be posted once the App Store is live (needs dual-store CTAs).
+
+**Sequencing guidance:** Post Video 1 first regardless of iOS status (the origin story doesn't need the App Store URL in the video itself — put it in the description as "coming to iOS, Android available now"). Videos 2, 3, 4 can follow in any order. Video 5 should wait for iOS (the competitive comparison lands better with both stores available).
+
+**Content plan for the /process page Pocket Cast line:**
+The existing language at 531strength.com/process is confirmed accurate:
+- "Subscribe in Pocket Cast and field logs come through like a podcast" — line 558-562 of process.astro
+- "The feed includes audio episodes for expedition logs with recordings and works in podcast apps like Pocket Cast" — sign-off section
+
+No edits needed to the /process page. The copy was written before Alex confirmed it — it happened to be correct.
+
+**Tactic 14 — web tools organic play:**
+The /tools/ pages are already live: /tools/plate-math and /tools/goal-calendar. These are not just utilities — they're a separate organic entry point for people who don't know the app exists. A person searching "531 plate math calculator" lands on the tool, uses it, and then optionally discovers the app. This compounds over time without ongoing effort (once it ranks). The linking strategy is: drop these URLs in Reddit/forum discussions whenever the question is about 5/3/1 math, not about app recommendations. Different thread, different audience segment, different conversion path.
+
+**Iteration counts:** All "47+" references in marketing drafts should be updated to "49+" in the next iteration that touches those files. Not done this loop to avoid unnecessary churn — done when the files are next edited for other reasons.
 
 ## Expedition 47 — Research notes
 

@@ -42,6 +42,20 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-28 — useHistoryBackHandler removed; merged into useHardwareBack
+
+**Tags:** `removal`, `refactor`
+**Files:** `apps/mobile/src/features/session/hooks/useHistoryBackHandler.ts`, `apps/mobile/src/features/session/SessionCompleteScreen.tsx`
+
+`useHistoryBackHandler` was an exact duplicate of `useHardwareBack` — same `BackHandler.addEventListener` + `enabled` gate, different name, different JSDoc. SessionCompleteScreen now uses `useHardwareBack`. File deleted.
+
+### 2026-05-28 — commission-expedition-log TTS shortened ~20%; README screenshots added
+
+**Tags:** `skill`, `process`
+**Files:** `.claude/skills/commission-expedition-log/SKILL.md`, `README.md`, `docs/screenshots/`
+
+Per Alex feedback: gommage read-aloud was running too long. Target reduced from 12–18 sentences/~220–340 words to 9–14 sentences/~175–270 words. Also: Alex provided two real device screenshots (Today screen, PR Certificate); added to README.md and docs/screenshots/.
+
 ### 2026-05-28 — Settings RNText consolidated to Text design primitive; site URL bug fixed; tools nav added
 
 **Tags:** `refactor`, `removal`, `bug`, `web`

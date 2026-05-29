@@ -2640,6 +2640,44 @@ section.compact {
   font-weight: 600;
 }
 
+/* ── real device screenshots ── */
+.real-screenshots-section {
+  background: var(--bg-0);
+  border-top: 1px solid var(--ink-4);
+}
+.real-screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.real-screenshot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rsc-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.real-screenshot-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--ink-4);
+  border-radius: 2px;
+}
+@media (max-width: 560px) {
+  .real-screenshots-grid {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+  }
+}
+
 /* screens rail — centered when the 4 phones fit the viewport, scrolls
      horizontally when they don't. The rail's own `padding-inline` does
      the centering math (not the wrap's), so scroll position stays usable

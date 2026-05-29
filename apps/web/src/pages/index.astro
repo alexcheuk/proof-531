@@ -14,6 +14,7 @@ const postCount = posts.length;
 <Base
   title="531 Strength — a 5/3/1 + BBB tracker I built for myself"
   description="A clean, local-first 5/3/1 + Boring But Big training journal for iOS and Android. Free. Source available. Made because I wanted something nice to log my own lifts."
+  ogImage="/screenshot-2.png"
 >
   <script slot="head" is:inline type="application/ld+json">
   {
@@ -536,6 +537,48 @@ const postCount = posts.length;
             I mostly look at <strong>e1RM</strong>, which the app estimates
             from your AMRAP using Epley. Your mileage may vary.
           </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ─── real device screenshots ─── */}
+  <section class="real-screenshots-section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="marker">04 · Real device</div>
+          <h2>What it actually<br />looks like<span class="dot">.</span></h2>
+        </div>
+        <div class="right">
+          Real screenshots from the app. Light/beige mode for the home screen,
+          dark mode for the PR certificate. No mockup polish — this is what loads
+          when you tap the icon.
+        </div>
+      </div>
+
+      <div class="real-screenshots-grid">
+        <div class="real-screenshot-card">
+          <div class="rsc-label">Today · Home screen · light mode</div>
+          <img
+            src="/screenshot-2.png"
+            alt="531 Strength home screen showing Bench lift with plate visualization, cycle grid (D1 5·5·5+, D2 3·3·3+, D3 5·3·1+, D4 TM TEST), TM 235 lb, and best e1RM 260"
+            width="390"
+            height="844"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="real-screenshot-card">
+          <div class="rsc-label">PR Certificate · dark mode</div>
+          <img
+            src="/screenshot-1.png"
+            alt="531 Strength PR Certificate screen in dark mode showing: YOU HIT A NEW BENCH PR — Stronger. — 222 LB — +25 LB"
+            width="390"
+            height="844"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </div>

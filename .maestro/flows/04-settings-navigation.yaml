@@ -2,8 +2,8 @@
 # Smoke test: settings screen and basic settings navigation.
 # Verifies the Settings tab loads, the scroll view is present,
 # and the Danger Zone section is visible (not tapped).
-
-appId: com.alexcheuk.fivethreeone
+#
+# appId is inherited from .maestro/config.yaml (com.alexcheuk.fivethreeone.dev).
 ---
 - launchApp
 

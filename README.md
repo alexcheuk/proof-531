@@ -40,16 +40,7 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 ## Screenshots
 
-<!-- Alex: add 3 screenshots here. Capture on a real device (portrait, clean state, no developer overlays).
-     Suggested shots:
-       1. Today screen — shows the lift queue for the day (which lift, which week, TM)
-       2. Live session screen — mid-set with plate visualization (the most visually distinctive screen)
-       3. Session receipt — the end-of-session summary with sets logged and next session queued
-     To embed: drag the images into this file in the GitHub UI, or use the syntax below.
-     Example: ![Today screen](docs/screenshots/today.png)
-     Aim for ~375px wide device screenshots; GitHub renders them inline. -->
-
-*Screenshots coming — app is in final iOS review.*
+<img src="docs/screenshots/screenshot-2.png" width="300" alt="Today screen — Bench, cycle grid, plate visualization" /> &nbsp; <img src="docs/screenshots/screenshot-1.png" width="300" alt="PR Certificate — Stronger. +25 LB" />
 
 ## Install
 
@@ -93,7 +84,7 @@ maestro test .maestro/flows/01-onboarding.yaml  # individual flow
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 47+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 48+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

@@ -21,7 +21,7 @@ import { SharePrPill, buildPrShareMessage } from './components/SharePrPill';
 import { TmAdjustmentNote } from './components/TmAdjustmentNote';
 import { TmApplySheet } from './components/TmApplySheet';
 import { TmTestReceiptBand } from './components/TmTestReceiptBand';
-import { useHistoryBackHandler } from './hooks/useHistoryBackHandler';
+import { useHardwareBack } from './hooks/useHardwareBack';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 import { useSessionCompleteHaptic } from './hooks/useSessionCompleteHaptic';
@@ -72,7 +72,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   // CRITICAL: all hooks must run on every render — keep this above any
   // early return so the React Hook rules hold. Previously `useCallback`
-  // and `useHistoryBackHandler` were below an `if (!data.view) return`
+  // and `useHardwareBack` were below an `if (!data.view) return`
   // which crashed with "Rendered more hooks than during the previous
   // render" the instant `data.view` resolved on a PR row.
   const handleBackToHistory = useCallback(() => {
@@ -84,7 +84,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     goTo.history(router);
   }, [router]);
 
-  useHistoryBackHandler({ enabled: origin === 'history', onBack: handleBackToHistory });
+  useHardwareBack({ enabled: origin === 'history', onBack: handleBackToHistory });
 
   const [tmApplyOpen, setTmApplyOpen] = useState(false);
 

@@ -77,7 +77,7 @@ Before it can be published, Alex needs to:
 
 ---
 
-## Blocking summary (updated Expedition 47)
+## Blocking summary (updated Expedition 49)
 
 **Cannot be finalized until iOS is live:**
 - Actual App Store URL in Reddit posts and all other drafts
@@ -87,10 +87,14 @@ Before it can be published, Alex needs to:
 - Reddit account history (Q3) — affects standalone vs. thread reply strategy
 - Personal 5/3/1 history (Q4) — affects practitioner credibility of r/531Discussion post
 - Twitter/X handle (Q7) — needed for @jimwendler tweet
-- Camera preference for YouTube Shorts (Q12) — determines whether face-cam or screen-only approach
-- YouTube channel status (Q13) — existing vs. new channel
-- Homelab/TTS/Pocket Cast details (Q15, Q16) — needed to finalize casual builder story
-- Permalinkable tools decision (Q17) — product roadmap call, not a copy call
+- Homelab/TTS details (Q15) — homelab setup specifics for casual builder story
+- Screen recording of a live session (Q14) — needed for Product Hunt video and several Shorts
+
+**Resolved this expedition (Expedition 49):**
+- Camera preference (Q12): both screen recording AND face-cam — unlocks full format
+- YouTube channel status (Q13): personal channel, from scratch, "what I built" / dev influencer angle
+- Pocket Cast subscription (Q16): confirmed accurate — /process page language stands
+- Web tools decision (Q17): confirmed — tools at /tools/ are the asset, same visual style as home page
 
 ---
 
@@ -100,11 +104,11 @@ Research confirmed YouTube Shorts is a viable discovery channel for indie develo
 
 Before committing to this channel, answers to the following will determine whether it's worth pursuing and how to shape the content:
 
-**12. Are you willing to appear on camera, or would this need to be screen-capture only?**
-The most effective Shorts for this type of project combine face-cam reaction with screen demo. Screen-only Shorts work but get lower completion rates. If you're camera-comfortable, "developer reacts to AI building their app" format is very strong. If not, screen-capture + text overlays is a fully viable alternative.
+**~~12. Are you willing to appear on camera, or would this need to be screen-capture only?~~** — RESOLVED (Expedition 49)
+Answer: **Both** — screen recording AND camera/face. This unlocks the full short-form format: face-cam hook + screen demo body, the highest-completion approach. See updated YouTube Shorts content plan in `loop-memory/16-organic-launch-strategy.md` (Expedition 49 section) and first-video brief at `docs/marketing/youtube-shorts-first-video-brief.md`.
 
-**13. Do you already have a YouTube channel, or would this be a new one?**
-Starting from zero is fine for discovery (74% of Shorts views are from non-subscribers, so channel size barely matters early on), but a new channel needs a clear identity from day one. If you have an existing channel with any subscribers, posting there first has a small advantage.
+**~~13. Do you already have a YouTube channel, or would this be a new one?~~** — RESOLVED (Expedition 49)
+Answer: **From scratch, from personal channel.** The content angle is "what I built" / dev influencer. This determines the channel identity from day one: personal developer building something interesting, not a brand channel. The content plan has been revised to lead with the personal builder story rather than the app-first framing. See Expedition 49 section in `loop-memory/16-organic-launch-strategy.md`.
 
 **14. Can you do a screen recording of one live session?**
 The single highest-value piece of content for both YouTube Shorts and Product Hunt is a 45-60 second screen recording of a real session: open the app, log a set, show the plate math, run the rest timer, close out with the receipt. This is the "does it actually work?" proof. It also anchors the YouTube Shorts content strategy — several of the five proposed video ideas use this recording as the foundation.
@@ -112,11 +116,11 @@ The single highest-value piece of content for both YouTube Shorts and Product Hu
 **15. Casual builder story — homelab + Google Home details**
 The draft at `docs/marketing/reddit-casual-builder-story-draft.md` describes the homelab TTS setup (Discord summary → Google Home speaker), the Pocket Cast expedition log audio, and the expedition lore. Are these details accurate as written? Any additional color on the homelab setup (server, OS, the exact Discord → TTS pathway) would strengthen the post for r/homelab or r/selfhosted audiences.
 
-**16. Pocket Cast detail — do you actually listen to expedition logs this way?**
-The casual builder draft uses this as a genuine humanizing detail. If it's accurate, it's one of the most distinctive elements of the whole story — "I listen to my AI's field logs on my morning walk" is exactly the kind of specific, weird, true detail that makes a post memorable. Confirm or correct.
+**~~16. Pocket Cast detail — do you actually listen to expedition logs this way?~~** — RESOLVED (Expedition 49)
+Answer: **Yes.** Alex confirmed he subscribes via Pocket Cast. The /process page language at 531strength.com/process ("Subscribe in Pocket Cast and field logs come through like a podcast") is accurate as written. The casual builder story draft can use this detail without qualification. It stays in the draft.
 
-**17. Permalinkable tools — web versions of Plate Math and Goal Calendar?**
-The Discord task queue raised the idea of making the plate math calculator and goal calendar available as web tools at 531strength.com with permanent URLs, so they can be linked in Reddit and forum discussions about calculator resources. This is a separate product decision (involves web development work) but has real organic potential — a plate math calculator that ranks for search terms like "531 plate math calculator" could drive steady traffic. Is this something worth adding to the roadmap? If yes, it goes in the task queue.
+**~~17. Permalinkable tools — web versions of Plate Math and Goal Calendar?~~** — RESOLVED (Expedition 49)
+Answer: **Yes — use the same tools that already exist.** The plate-math and goal-calendar calculators at 531strength.com/tools/ are confirmed. Alex wants the same visual style as the home page illustrations. The tools are already live; the tactic is to link to them in Reddit/forum discussions and treat them as a separate organic search entry point. No new product work needed. Tactic 14 (web tools as SEO entry point) added to `loop-memory/16-organic-launch-strategy.md`.
 
 ---
 
@@ -126,7 +130,9 @@ The Discord task queue raised the idea of making the plate math calculator and g
 - r/531Discussion and r/weightroom post structure and framing — done
 - AI experiment story outline + revised HN strategy — done (Expedition 40)
 - HN and IH structure — done
-- /process page — exists, ready to link (resolved Expedition 40)
+- /process page — exists, ready to link (resolved Expedition 40). Pocket Cast language confirmed accurate (Expedition 49).
 - Long-form "how I built this" narrative — drafted (Expedition 40). See `docs/marketing/longform-how-i-built-this.md`
-- Casual "look what I built" story draft — done (Expedition 47). See `docs/marketing/reddit-casual-builder-story-draft.md`
-- YouTube Shorts content strategy — drafted (Expedition 47). See Tactic 13 in `loop-memory/16-organic-launch-strategy.md`
+- Casual "look what I built" story draft — done (Expedition 47). See `docs/marketing/reddit-casual-builder-story-draft.md`. Pocket Cast detail confirmed usable (Expedition 49).
+- YouTube Shorts content strategy — drafted (Expedition 47), **fully revised for personal channel + both-camera format (Expedition 49)**. See Tactic 13 in `loop-memory/16-organic-launch-strategy.md`
+- YouTube Shorts first-video brief — drafted (Expedition 49). See `docs/marketing/youtube-shorts-first-video-brief.md`
+- Web tools (plate math + goal calendar) confirmed as organic SEO/link asset at 531strength.com/tools/ — Tactic 14 in `loop-memory/16-organic-launch-strategy.md`

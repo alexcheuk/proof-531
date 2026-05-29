@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-28 (Expedition 46)
+**Last updated**: 2026-05-28 (Expedition 48)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -30,7 +30,7 @@ Key levers: structured data (JSON-LD), meta descriptions, page titles,
 internal linking, sitemap accuracy, og:image for social sharing.
 
 Current gaps:
-- [ ] No og:image fallback (social shares show no preview image)
+- [x] og:image added to homepage (expedition 48) — uses /screenshot-2.png (real device screenshot)
 - [x] JSON-LD SoftwareApplication schema added (expedition 45)
 - [ ] No sitemap.xml verified (check if Astro generates one)
 - [ ] Blog posts lack og:image (every share looks like a blank card)
@@ -57,7 +57,7 @@ Make visitors understand what this is and want to download it:
 - Mobile navigation works (fixed in expedition 41 per task queue)
 
 Current gaps:
-- [ ] No app screenshots anywhere on the homepage (biggest conversion gap)
+- [x] Real device screenshots added to homepage (expedition 48) — new "Real device" section with 2 screenshots
 - [ ] Process page "44+" reference — now auto-derived from blog count
 - [ ] Blog listing is long with no pagination (ok for now, revisit at 60+ posts)
 
@@ -90,9 +90,11 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 | /tools/plate-math page | done · 2026-05-28 | Interactive plate calculator. Unit toggle (lbs/kg), bar selector, stepper + direct input, text-art barbell diagram, SEO JSON-LD WebApplication. |
 | /tools/goal-calendar page | done · 2026-05-28 | 5/3/1 goal projector. Per-lift TM progression, cycle table, summary stats. SEO JSON-LD WebApplication. |
 | Footer /tools link | done · 2026-05-28 | Added "Tools" to Product column in Footer.astro. |
-| og:image default | pending · needs asset | Need a 1200×630 social card PNG. Alex to provide or generate. |
+| og:image default | done · expedition 48 | /screenshot-2.png (real device, home screen) used as og:image on homepage. |
 | App Store URL update | blocked · waiting on Apple | Alex to update homepage CTA when iOS is live. |
-| Screenshots on homepage | blocked · waiting on Alex | Need real device screenshots. Instructions in README Screenshots section. |
+| Screenshots on homepage | done · expedition 48 | New "Real device" section with screenshot-1.png (PR Certificate, dark) and screenshot-2.png (Home, light). Copied to apps/web/public/. |
+| Pocket Cast confident copy | done · expedition 48 | process.astro now says "I subscribe in Pocket Cast" (not hedged). |
+| Expo Go pages audit | done · expedition 48 | No Expo Go references found in /pages — only in historical blog posts (correct). |
 
 ## Discord collaboration workflow
 
