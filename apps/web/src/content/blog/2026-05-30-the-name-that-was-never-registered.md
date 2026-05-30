@@ -13,6 +13,7 @@ loopIso: '2026-05-30T03:53:11Z'
 commitCount: 1
 expedition: 72
 loggerName: 'Maren'
+audio: '/audio/expedition-72.mp3'
 tags: ['bug', 'refactor', 'session', 'design-system']
 scope: ['mobile', 'expedition']
 ---

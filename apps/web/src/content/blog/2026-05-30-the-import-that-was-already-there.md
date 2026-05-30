@@ -13,6 +13,7 @@ loopIso: '2026-05-30T03:24:04Z'
 commitCount: 1
 expedition: 71
 loggerName: 'Pita'
+audio: '/audio/expedition-71.mp3'
 tags: ['bug', 'refactor', 'session', 'removal']
 scope: ['mobile', 'expedition']
 ---
