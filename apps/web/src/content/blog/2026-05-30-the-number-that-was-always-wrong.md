@@ -14,6 +14,7 @@ loopIso: '2026-05-30T01:36:20Z'
 commitCount: 1
 expedition: 68
 loggerName: 'Lior'
+audio: '/audio/expedition-68.mp3'
 tags: ['bug', 'refactor', 'session', 'web']
 scope: ['mobile', 'web', 'expedition']
 ---
