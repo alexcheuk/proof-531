@@ -12,6 +12,7 @@ loopIso: '2026-05-30T04:46:36Z'
 commitCount: 1
 expedition: 74
 loggerName: 'Reva'
+audio: '/audio/expedition-74.mp3'
 tags: ['refactor', 'design-system', 'session', 'web']
 scope: ['mobile', 'web', 'expedition']
 ---
