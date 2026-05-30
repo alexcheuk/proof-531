@@ -12,12 +12,6 @@ export type CycleGridFrameProps = {
   testID?: string;
 };
 
-/**
- * Standalone visual grid — frame + per-day cells + week-label row. Used
- * by SessionComplete (under the `CycleGrid` header) — the Settings
- * surface that used to host this no longer makes sense now that each
- * lift runs its own cycle.
- */
 export function CycleGridFrame({
   completedThisCycle,
   sessionsInCycle,
@@ -43,10 +37,7 @@ export function CycleGridFrame({
           />
         ))}
       </Row>
-      {/* Each label gets equal `flex: 1` width + the SAME `gap="xs"` as the
-       * cells row above. That makes each label's column align exactly with
-       * its group of `sessionsInCycle / 4` cells — without the gap match the
-       * label centers drift by `3 * xs / 8` from the cell-group centers. */}
+      {/* gap="xs" must match the cells row above — otherwise label columns drift from their cell groups */}
       <Row gap="xs" style={{ marginTop: 10 }}>
         {DAY_LABELS.map((d) => (
           <CapsLabel key={d} size="xs" color="ink3" style={{ flex: 1, textAlign: 'center' }}>

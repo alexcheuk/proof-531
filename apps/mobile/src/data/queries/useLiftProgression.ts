@@ -65,7 +65,6 @@ export type LiftProgression = {
   unit: Unit;
   tm: number;
   currentCycle: number;
-  currentWeek: 1 | 2 | 3 | 4;
   rows: ProgressionRow[];
   goal: {
     kind: LiftGoalKind;
@@ -254,7 +253,6 @@ export function useLiftProgression(lift: Lift) {
         unit: displayU,
         tm: tmDisplay,
         currentCycle,
-        currentWeek,
         rows,
         goal,
         cyclesUntilGoal,

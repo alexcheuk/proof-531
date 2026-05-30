@@ -87,7 +87,6 @@ jest.mock('@/data/queries/useLiftProgression', () => ({
       unit: 'lbs',
       tm: 275,
       currentCycle: 3,
-      currentWeek: 2,
       rows: [
         {
           cycle: 1,

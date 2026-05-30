@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — Remove currentWeek from LiftProgression return; fix cross-unit goal snap
+
+**Tags:** `bug`, `removal`, `refactor`
+**Files:** `apps/mobile/src/data/queries/useLiftProgression.ts`, `apps/mobile/src/features/progress/hooks/useGoalState.ts`
+
+`LiftProgression.currentWeek` was computed and included in the query return object but never accessed by any consumer (`ProgressLiftPage` destructures `tm`, `rows`, `goal`, `cyclesUntilGoal` — not `currentWeek`). Removed the field from the type and the return value. Also fixed a bug in `useGoalState`: `persistedValue` was computed with `Math.round(displayWeight(...))` rather than `round(value, displayU)`, so goals stored in kg and displayed in lbs would show as unsnapped integers (e.g. 309 lb instead of 310 lb). The stepper's ±5 increment would then produce values like 314/304 instead of 315/305. Fixed to use the plate-snapping `round` function. Regression test added.
+
+**Why:** The `currentWeek` dead output was the only field of `LiftProgression` that nothing outside the query consumed — a clean removal. The goal snap bug was the same class as the `onKindChange` bug fixed in expedition 71 (both used `Math.round` where the domain `round` was needed).
+
 ### 2026-05-29 — Rename weekLabel/weekIntent → daySchemeLabel/dayIntent; new screenshots
 
 **Tags:** `convention`, `refactor`

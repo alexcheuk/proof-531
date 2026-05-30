@@ -39,7 +39,7 @@ export function useGoalState(
   const goalRow = goalQuery.data ?? null;
   const persistedKind: LiftGoalKind = goalRow?.kind ?? 'tm';
   const persistedValue: number | null = goalRow
-    ? Math.round(displayWeight(goalRow.targetValue, goalRow.unit, displayU))
+    ? round(displayWeight(goalRow.targetValue, goalRow.unit, displayU), displayU)
     : null;
 
   const defaultValueFor = useCallback(

@@ -141,4 +141,18 @@ describe('useGoalState', () => {
     const { result } = renderHook(() => useGoalState('squat', OPTS), { wrapper });
     expect(result.current.persistedDaysPerWeek).toBe(4);
   });
+
+  it('plate-snaps persisted goal when converting across units (kg stored, lbs display)', () => {
+    // 140 kg stored → displayWeight(140, 'kg', 'lbs') ≈ 308.647
+    // Math.round → 309 (not plate-snapped), round('lbs') → 310 (correct)
+    const KG_OPTS = {
+      displayU: 'lbs' as const,
+      storageUnit: 'kg' as const,
+      tmStep: 5,
+      currentTm: 308,
+    };
+    mockGoalData.data = { kind: 'tm', targetValue: 140, unit: 'kg', daysPerWeek: null };
+    const { result } = renderHook(() => useGoalState('squat', KG_OPTS), { wrapper });
+    expect(result.current.draftValue % 5).toBe(0);
+  });
 });

@@ -30,10 +30,6 @@ export function useLiftPageState({
   tm,
 }: UseLiftPageStateOptions): UseLiftPageStateResult {
   return useMemo<UseLiftPageStateResult>(() => {
-    // Week 1–3 → top of the working triple (`sets[2]`, the AMRAP).
-    // Week 4 → the TM test set (100% × 5, kind 'tm-test'). Both shapes
-    // satisfy `WorkingSet`; the LiftPage mini-card renders whichever the
-    // current week prescribes.
     const topSet = week === 4 ? tmTestSet() : prescription(week)[2];
     if (tm == null || topSet == null) return { empty: true };
 

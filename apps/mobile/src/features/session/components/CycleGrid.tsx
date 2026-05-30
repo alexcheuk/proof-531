@@ -10,11 +10,6 @@ export type CycleGridProps = {
   sessionsInCycle: number;
 };
 
-/**
- * Cycle № NN header + visual 16-cell (or 4n-cell) grid showing position
- * within the current cycle. The visual grid is `CycleGridFrame`; this
- * shell adds the `Cycle № NN · N of M` header row above it.
- */
 export function CycleGrid({ cycle, completedThisCycle, sessionsInCycle }: CycleGridProps) {
   const { layout } = useTheme();
 

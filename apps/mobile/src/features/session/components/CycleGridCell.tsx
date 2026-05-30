@@ -8,11 +8,6 @@ export type CycleGridCellProps = {
   justNow: boolean;
 };
 
-/**
- * One cell in the cycle progress grid. Ink-0 fill when `done`, hairline
- * outline when not. The `justNow` cell wraps in a second ring 3px out so
- * the just-completed session pops without bigger geometry.
- */
 export function CycleGridCell({ done, justNow }: CycleGridCellProps) {
   const { colors } = useTheme();
   const base: ViewStyle = { flex: 1, height: 16 };

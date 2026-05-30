@@ -118,7 +118,7 @@ export function LiftPage({
         />
       </View>
 
-      <CycleStrip currentWeek={week} />
+      <CycleStrip currentDay={week} />
 
       <View style={{ marginTop: spacing.lg }}>
         <LiftStats

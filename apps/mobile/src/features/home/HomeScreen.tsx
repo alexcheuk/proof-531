@@ -82,9 +82,6 @@ export function HomeScreen() {
   const settingsData = settings.data;
   const tmsData = tms.data;
   const prsData = prs.data;
-  // Per-lift progress (cycle, week): each enabled lift owns its own row.
-  // Read all of them up front so each LiftPage in the carousel can paint
-  // its own (cycle, week) without re-firing per render.
   const progress = useAllLiftProgress(enabledLifts);
   const progressByLift = useMemo(() => {
     const map = new Map<Lift, { currentCycle: number; week: 1 | 2 | 3 | 4 }>();
@@ -139,8 +136,6 @@ export function HomeScreen() {
             tm={tmRow?.value ?? null}
             bestE1RM={pr?.bestE1RM ?? null}
             isInProgress={lift === inProgressLift}
-            // Surface partial progress on the in-progress lift's CTA so
-            // the user knows exactly which set they're resuming.
             completedCount={lift === inProgressLift ? inProgressCompletedCount : 0}
             onBegin={() => handleBegin(lift)}
             onResume={() => handleOpenToday(lift)}
@@ -180,8 +175,6 @@ export function HomeScreen() {
     );
   }
 
-  // If the selected lift is no longer enabled (e.g. settings edit), snap
-  // back to the first enabled lift.
   const selectedToRender = enabledLifts.includes(selectedLift) ? selectedLift : firstLift;
   const initialIdx = Math.max(0, enabledLifts.indexOf(selectedToRender));
 

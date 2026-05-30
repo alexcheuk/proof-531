@@ -16,10 +16,10 @@ const CELLS: readonly Cell[] = [
 ];
 
 type CycleStripProps = {
-  currentWeek: Week;
+  currentDay: Week;
 };
 
-export function CycleStrip({ currentWeek }: CycleStripProps) {
+export function CycleStrip({ currentDay }: CycleStripProps) {
   const { colors, spacing } = useTheme();
 
   return (
@@ -27,8 +27,8 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
       <CapsLabel style={{ marginBottom: spacing.sm }}>THIS CYCLE</CapsLabel>
       <Row style={{ borderWidth: 1, borderColor: colors.lineStrong }} align="stretch">
         {CELLS.map((c, i) => {
-          const isNext = c.w === currentWeek;
-          const isDone = c.w < currentWeek;
+          const isNext = c.w === currentDay;
+          const isDone = c.w < currentDay;
           const cellStyle: ViewStyle = {
             flex: 1,
             alignItems: 'center',

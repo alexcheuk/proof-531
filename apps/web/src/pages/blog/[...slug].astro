@@ -51,9 +51,9 @@ const isLogger = isLoggerPost(post);
 // JSON-LD BlogPosting structured data — lets Google / RSS readers
 // understand the post's metadata without scraping the body.
 // `image` is required by Google's Rich Results guidelines for BlogPosting
-// eligibility; we use the same og:image asset (screenshot-2.png) across
-// the site so it's always present and already sized for sharing.
-const ogImageAbsolute = new URL('/screenshot-2.png', Astro.site).toString();
+// eligibility; we use the same og:image asset across the site so it's always
+// present and already sized for sharing.
+const ogImageAbsolute = new URL('/screenshot-7.png', Astro.site).toString();
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -75,7 +75,7 @@ const jsonLd = {
 };
 ---
 
-<Base title={`${post.data.title} — 531 Strength dev log`} description={post.data.summary} ogImage="/screenshot-2.png" ogType="article">
+<Base title={`${post.data.title} — 531 Strength dev log`} description={post.data.summary} ogImage="/screenshot-7.png" ogType="article">
   <meta slot="head" name="author" content={authorName} />
   <meta slot="head" property="article:published_time" content={iso} />
   <meta slot="head" property="article:author" content={authorName} />

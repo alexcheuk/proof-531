@@ -21,28 +21,15 @@ export type TodayBodyProps = {
   cycle: number;
   /** Storage unit of the TM — drives the snap math. */
   storageUnit: Unit;
-  /** Display unit — drives the render conversion. */
   displayUnit?: Unit;
-  /** Training Max value (in storage unit). */
   tm: number;
   /** Configured plate set — drives plate decomposition (bar + plate inventory). */
   plateSet: PlateSet;
-  /**
-   * 1-based index of the next-pending working set (1, 2, or 3). Defaults
-   * to 1 — the first set is "next" when no progress is known.
-   */
+  // 1-based; defaults to 1 (first set is "next" when no progress is known)
   nextSetIndex?: 1 | 2 | 3;
-  /**
-   * 0-based indices of working/AMRAP sets that have already been logged.
-   * Defaults to an empty list (preview mode — nothing done yet).
-   */
+  // 0-based; defaults to [] (preview mode — nothing done yet)
   completedIndices?: ReadonlyArray<0 | 1 | 2>;
-  /**
-   * User's configured BBB rest target (seconds). When provided, shown as
-   * a hint chip next to the BBB band so the user can verify their pace
-   * before starting. Sourced from `settings.bbbRestTargetSeconds` — NOT
-   * the working-set rest target.
-   */
+  // BBB-specific rest target — NOT the working-set rest target
   bbbRestTargetSeconds?: number;
 };
 
@@ -64,11 +51,10 @@ export function TodayBody({
   const tmInDisplay = convert(tm, storageUnit, renderUnit);
   const lastTrained = useLastCompletedSessionForLift(lift);
 
-  const isTmTestWeek = week === 4;
-  // Week 4 prescription is a single tm-test set; weeks 1–3 are the classic
-  // 3-set scheme. Route via the dedicated helper on week 4 so the
-  // index-based API on weeks 1–3 stays unchanged.
-  const heroSet = isTmTestWeek
+  const isTmTestDay = week === 4;
+  // Day 4 is a single TM-test set; route via the dedicated helper so the
+  // index-based API on days 1–3 stays unchanged.
+  const heroSet = isTmTestDay
     ? tmTestSet()
     : (() => {
         const sets = prescription(week);
@@ -111,7 +97,7 @@ export function TodayBody({
         unitGlyph={unitGlyph}
         tmInDisplay={tmInDisplay}
         plateSet={plateSet}
-        {...(isTmTestWeek
+        {...(isTmTestDay
           ? { eyebrow: 'TM TEST', pctLabel: '100% TM', repsRange: [3, 5] as const }
           : {})}
       />
@@ -123,7 +109,7 @@ export function TodayBody({
         unitGlyph={unitGlyph}
       />
 
-      {isTmTestWeek ? (
+      {isTmTestDay ? (
         // Week 4: TM test set IS the work. No 3-set scheme, no BBB. The
         // guidance card replaces the BBB band's visual weight.
         <TmTestNote />
