@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — RNText sweep: ComparisonRow + PrCelebrationHero; new component tests
+
+**Tags:** `convention`, `refactor`, `test`
+**Files:** `apps/mobile/src/features/session/components/PRCertificate/ComparisonRow.tsx`, `apps/mobile/src/features/session/components/PrCelebration/PrCelebrationHero.tsx`
+
+Completed the PRCertificate/PrCelebration primitive sweep: `ComparisonRow` and `PrCelebrationHero` were the two remaining components with raw `RNText` + manual `fontFamily` string assembly. Both now use the `Text` primitive with `color="paperTint45"` / `color="bg0"` tokens. `ComparisonRow` dropped its `useTheme()` import entirely. `PrCelebrationHero` dropped `colors` and `type` from the destructure.
+
+Added 6 new behavioral tests for previously-untested session components: `RestTimer`, `CompletePill`, `UndoPill`, `CycleGrid`, `LogSheetFooter`, `ReceiptCard`. Session component test coverage is now substantially higher — these were the largest remaining untested components in the session feature.
+
+**Why:** The CapsLabel/Text sweep started in expedition 57 is now complete in the mobile app — no more manual font-family string assembly outside the design layer. Component tests were added as coverage gaps identified in routine audit.
+
 ### 2026-05-30 — RNText → Text/CapsLabel sweep into design primitives layer
 
 **Tags:** `convention`, `refactor`

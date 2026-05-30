@@ -1,6 +1,6 @@
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, View } from 'react-native';
+import { View } from 'react-native';
 
 // Empty slices show a single space so line heights stay stable during the typewriter reveal.
 export const PR_CELEBRATION_HERO_TEXT = 'Stronger.';
@@ -20,7 +20,7 @@ export function PrCelebrationHero({
   eyebrow = 'YOU HIT A NEW PR',
   typedChars,
 }: PrCelebrationHeroProps) {
-  const { colors, spacing, type } = useTheme();
+  const { spacing } = useTheme();
 
   const totalLen = prCelebrationTypeLength(eyebrow);
   const revealed = typedChars ?? totalLen;
@@ -44,16 +44,17 @@ export function PrCelebrationHero({
         {eyebrowShown.length > 0 ? eyebrowShown : ' '}
       </Text>
 
-      <RNText
+      <Text
+        variant="sans"
+        weight="bold"
+        size={76}
+        color="bg0"
         style={{
-          fontFamily: `${type.display}-Bold`,
-          fontSize: 76,
           // 92 (≈1.21× font size) clears the 'g' descender + amber
           // period without clipping. 82 was too tight on iOS — the
           // line box ended just below the baseline.
           lineHeight: 92,
           letterSpacing: -2.8,
-          color: colors.bg0,
         }}
       >
         {heroShown.length > 0 ? (
@@ -68,7 +69,7 @@ export function PrCelebrationHero({
         ) : (
           ' '
         )}
-      </RNText>
+      </Text>
     </View>
   );
 }

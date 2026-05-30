@@ -1,7 +1,7 @@
 import { Row } from '@/design/primitives/Row';
-import { useTheme } from '@/design/theme';
+import { Text } from '@/design/primitives/Text';
 import { formatWeight } from '@/domain/units';
-import { Text as RNText, View } from 'react-native';
+import { View } from 'react-native';
 import { PaperCapsText } from './PaperCapsText';
 import { PAPER_28, PAPER_45 } from './paperTints';
 
@@ -14,8 +14,6 @@ export type ComparisonRowProps = {
 
 /** "Previous best" struck-through + "Stronger by +N" delta column. */
 export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowProps) {
-  const { colors, type } = useTheme();
-
   return (
     <Row
       justify="space-between"
@@ -32,11 +30,12 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
         <PaperCapsText variant="label" style={{ marginBottom: 4 }}>
           Previous best
         </PaperCapsText>
-        <RNText
+        <Text
+          variant="sans"
+          weight="medium"
+          size={22}
+          color="paperTint45"
           style={{
-            fontFamily: `${type.display}-Medium`,
-            fontSize: 22,
-            color: PAPER_45,
             letterSpacing: -0.44,
             lineHeight: 22,
             textDecorationLine: 'line-through',
@@ -44,38 +43,41 @@ export function ComparisonRow({ prevE1RM, delta, unit, testID }: ComparisonRowPr
           }}
         >
           {`${formatWeight(prevE1RM)} `}
-          <RNText
+          <Text
+            variant="mono"
+            weight="medium"
+            size={10}
+            color="paperTint45"
             style={{
-              fontFamily: `${type.mono}-Medium`,
-              fontSize: 10,
               letterSpacing: 1.8,
               textTransform: 'uppercase',
-              color: PAPER_45,
               textDecorationLine: 'none',
             }}
           >
             {unit}
-          </RNText>
-        </RNText>
+          </Text>
+        </Text>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
         <PaperCapsText variant="label" style={{ marginBottom: 4 }}>
           Stronger by
         </PaperCapsText>
         <Row align="baseline" gap="xs">
-          <RNText
-            testID={testID}
+          <Text
+            variant="sans"
+            weight="bold"
+            size={32}
+            color="bg0"
+            numeric
             style={{
-              fontFamily: `${type.display}-Bold`,
-              fontSize: 32,
               // rn-line-height-ok: numeric delta value only
               lineHeight: 32,
               letterSpacing: -0.96,
-              color: colors.bg0,
             }}
+            {...(testID !== undefined ? { testID } : {})}
           >
             {`+${formatWeight(delta)}`}
-          </RNText>
+          </Text>
           <PaperCapsText variant="unit" tone="paper" style={{ fontSize: 11, letterSpacing: 2.2 }}>
             {unit}
           </PaperCapsText>

@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-30, expedition 74)
+# Codebase facts (updated 2026-05-30, expedition 75)
 
 ## Architecture
 
@@ -49,12 +49,14 @@ Fully migrated — no more hand-rolled inline mono-caps styles in features or pr
 - `ProgressGridCell.tsx` — all 5 RNText spans → Text with `ColorToken` values (no more hex lookups)
 
 Remaining known intentional RNText uses (not candidates):
-- `PrCelebrationHero.tsx` — outer RNText needed as container for inline `<Text>` amber dot child (mixed inline text at same size; 76px display font requires this pattern)
-- `PRCertificate.tsx` — outer RNText for "Stronger" + inline amber dot; same pattern
-- `ComparisonRow.tsx` (PRCertificate) — outer RNText with nested inline unit span that clears textDecorationLine
+- `PRCertificate.tsx` — outer RNText for "Stronger" + inline amber dot; same pattern as PrCelebrationHero
 - `PaperCapsText.tsx` (PRCertificate) — mini-primitive for inverted panel; appropriate direct RNText use
 - `TmPreviewRow.tsx` — inline glyph spans (nested text in a Text component; letterSpacing 1.26 is intentionally tighter than xs preset)
 - `_layout.tsx` — error boundary fallback (appropriate: minimal recovery UI outside the theme)
+
+Migrated in expedition 75 (no longer intentional RNText):
+- `PrCelebrationHero.tsx` — outer 76px RNText → `Text variant="sans" weight="bold" size={76} color="bg0"`. `colors` and `type` dropped from `useTheme()` destructure.
+- `ComparisonRow.tsx` (PRCertificate) — both numeric spans migrated to `Text`; `paperTint45` color token used directly (confirmed in tokens.ts). `useTheme()` import removed entirely.
 
 Note: `paperTint45/55/65` ARE in the `ColorToken` union — confirmed expedition 73. The Text primitive accepts all `ColorToken` values including paper tints.
 
@@ -155,6 +157,13 @@ Note: `paperTint45/55/65` ARE in the `ColorToken` union — confirmed expedition
 - Jest config in `apps/mobile/package.json`.
 - Hook tests live next to the hook (`hooks/__tests__/useFoo.test.tsx`).
   Mock queries at module-load — see `useHistoryScreenData.test.tsx`.
+
+Session component tests added through expedition 75 (all in `components/__tests__/`):
+- `RestTimer.test.tsx` — countdown display, overtime state, accessibility role. Requires Reanimated mock (see pattern below).
+- `CompletePill.test.tsx`, `UndoPill.test.tsx` — label, testID, onPress, a11y role. Note: `textTransform: 'uppercase'` is a style prop; the underlying text string is lowercase ("Complete session", not "COMPLETE SESSION"). Query with lowercase.
+- `CycleGrid.test.tsx` — cycle number, position counter, D1–D4 labels, cell count.
+- `LogSheetFooter.test.tsx` — Cancel/Save labels, onCancel/onSave callbacks, disabled-while-pending.
+- `ReceiptCard.test.tsx` — top set, AMRAP e1RM conditional, volume, BBB conditional, elapsed conditional.
 - **`@gorhom/bottom-sheet` mock is required** in any test file whose
   component tree reaches `Sheet.tsx` or `SheetLayout.tsx`. The real lib
   needs Reanimated worklets which don't run in Jest. Standard stub:
