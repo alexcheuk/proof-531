@@ -1,8 +1,10 @@
+import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { TmAdjustmentSuggestion } from '@/domain/progression';
 import type { Unit } from '@/domain/types';
 import { displayUnit, round } from '@/domain/units';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 
 export type TmAdjustmentNoteProps = {
   suggestion: TmAdjustmentSuggestion;
@@ -20,7 +22,7 @@ export function TmAdjustmentNote({
   onPress,
   testID = 'session-complete-tm-adjustment',
 }: TmAdjustmentNoteProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
 
   const isInverted = suggestion.kind === 'increment';
   const isAmber = suggestion.kind === 'reset';
@@ -28,10 +30,7 @@ export function TmAdjustmentNote({
 
   const bgColor = isInverted ? colors.ink0 : isAmber ? colors.amber : undefined;
   const borderColor = hasDarkBg ? 'transparent' : colors.lineStrong;
-  const eyebrowColor = hasDarkBg ? colors.paperMuted : colors.ink2;
-  const valueColor = hasDarkBg ? colors.paper : colors.ink0;
-  const captionColor = hasDarkBg ? colors.paperMuted : colors.ink3;
-  const chevronColor = hasDarkBg ? colors.paper : colors.ink0;
+  const contentColorToken = hasDarkBg ? ('paper' as const) : ('ink0' as const);
 
   const ctaStyle: ViewStyle = {
     marginHorizontal: spacing.lg,
@@ -44,33 +43,6 @@ export function TmAdjustmentNote({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  };
-  const eyebrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 10,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: eyebrowColor,
-    marginBottom: 4,
-  };
-  const valueStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 17,
-    letterSpacing: -0.34,
-    color: valueColor,
-  };
-  const captionStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 9,
-    letterSpacing: 1.62,
-    textTransform: 'uppercase',
-    color: captionColor,
-    marginTop: 4,
-  };
-  const chevronStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 16,
-    color: chevronColor,
   };
 
   const u = displayUnit(unit);
@@ -99,13 +71,31 @@ export function TmAdjustmentNote({
       style={({ pressed }) => [ctaStyle, pressed ? { opacity: 0.7 } : null]}
     >
       <View>
-        <RNText style={eyebrowStyle}>Suggested TM · next cycle</RNText>
-        <RNText style={valueStyle} testID="tm-adjustment-value">
+        <CapsLabel
+          size="sm"
+          weight="semibold"
+          color={hasDarkBg ? 'paperMuted' : 'ink2'}
+          style={{ marginBottom: 4 }}
+        >
+          Suggested TM · next cycle
+        </CapsLabel>
+        <Text
+          variant="sans"
+          weight="bold"
+          size={17}
+          color={contentColorToken}
+          style={{ letterSpacing: -0.34 }}
+          testID="tm-adjustment-value"
+        >
           {value}
-        </RNText>
-        <RNText style={captionStyle}>Tap to apply</RNText>
+        </Text>
+        <CapsLabel size="xs" color={hasDarkBg ? 'paperMuted' : 'ink3'} style={{ marginTop: 4 }}>
+          Tap to apply
+        </CapsLabel>
       </View>
-      <RNText style={chevronStyle}>›</RNText>
+      <Text variant="mono" weight="semibold" size={16} color={contentColorToken}>
+        ›
+      </Text>
     </Pressable>
   );
 }

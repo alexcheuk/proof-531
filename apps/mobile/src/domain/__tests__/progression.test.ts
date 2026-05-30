@@ -10,10 +10,9 @@ import {
   projectTmForCycle,
   projectTopSetWeight,
   tmAdjustmentSuggestion,
-  tmFromOneRm,
 } from '../progression';
 import type { Lift, Unit } from '../types';
-import { round } from '../units';
+import { round, trainingMaxFrom } from '../units';
 
 const LIFTS: Lift[] = ['squat', 'bench', 'deadlift', 'press'];
 const UNITS: Unit[] = ['lbs', 'kg'];
@@ -121,24 +120,20 @@ describe('projectTopSetWeight', () => {
   });
 });
 
-describe('tmFromOneRm + goalTargetTm', () => {
-  it('TM ≈ 0.9 × 1RM, snapped to unit step', () => {
-    expect(tmFromOneRm(350, 'lbs')).toBe(round(315, 'lbs'));
-    expect(tmFromOneRm(200, 'kg')).toBe(round(180, 'kg'));
-  });
-
-  it('goalTargetTm passes through for kind=tm', () => {
+describe('goalTargetTm', () => {
+  it('passes through for kind=tm', () => {
     expect(goalTargetTm('tm', 305, 'lbs')).toBe(305);
   });
 
-  it('goalTargetTm converts kind=1rm via 0.9 factor', () => {
-    expect(goalTargetTm('1rm', 350, 'lbs')).toBe(round(315, 'lbs'));
+  it('converts kind=1rm via 0.9 factor (delegates to trainingMaxFrom)', () => {
+    expect(goalTargetTm('1rm', 350, 'lbs')).toBe(trainingMaxFrom(350, 'lbs'));
+    expect(goalTargetTm('1rm', 200, 'kg')).toBe(trainingMaxFrom(200, 'kg'));
   });
 
-  it('property: TM derived from 1RM is always plate-snapped', () => {
+  it('property: 1RM target is always plate-snapped', () => {
     fc.assert(
       fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 50, max: 1000 }), (unit, oneRm) => {
-        const tm = tmFromOneRm(oneRm, unit);
+        const tm = goalTargetTm('1rm', oneRm, unit);
         return round(tm, unit) === tm;
       }),
     );

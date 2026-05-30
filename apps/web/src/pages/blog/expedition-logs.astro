@@ -20,6 +20,7 @@ const counts = scopeCounts(all);
 const latestExpedition = posts.length > 0
   ? Math.max(...posts.map(p => p.data.expedition ?? 0))
   : 0;
+const audioCount = posts.filter(p => Boolean(p.data.audio)).length;
 
 const dateFmt = new Intl.DateTimeFormat('en-US', {
   year: 'numeric', month: 'short', day: '2-digit',
@@ -51,8 +52,9 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
           they leave behind.
         </p>
         <p class="subscribe-line">
-          Entries marked <span class="audio-ref">&#9654; AUDIO</span> include the Logger's spoken recording.
-          Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> — compatible with Pocket Cast and other podcast apps.
+          {audioCount > 0 && <>{audioCount} of {posts.length} entries include the Logger's spoken recording — marked <span class="audio-ref">&#9654; AUDIO</span>.</>}
+          {audioCount === 0 && <>Entries marked <span class="audio-ref">&#9654; AUDIO</span> include the Logger's spoken recording.</>}
+          {' '}Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> — compatible with Pocket Cast and other podcast apps.
         </p>
         {latestExpedition > 0 && (
           <p class="archive-line">— archived through expedition {latestExpedition}</p>

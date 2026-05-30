@@ -71,29 +71,44 @@ describe('useGoalState', () => {
   it('converts draft value when switching from tm to 1rm kind', async () => {
     mockGoalData.data = { kind: 'tm', targetValue: 270, unit: 'lbs', daysPerWeek: null };
     const { result } = renderHook(() => useGoalState('squat', OPTS), { wrapper });
-    const tmValue = result.current.draftValue; // 270
 
     await act(async () => {
       result.current.onKindChange('1rm');
     });
 
-    // switching tm → 1rm divides by 0.9 and rounds
+    // switching tm → 1rm divides by 0.9 and plate-snaps to 5 lb
+    // 270 / 0.9 = 300 — already plate-snapped
     expect(result.current.draftKind).toBe('1rm');
-    expect(result.current.draftValue).toBe(Math.round(tmValue / 0.9));
+    expect(result.current.draftValue % 5).toBe(0);
+    expect(result.current.draftValue).toBe(300);
   });
 
   it('converts draft value when switching from 1rm back to tm kind', async () => {
     mockGoalData.data = { kind: '1rm', targetValue: 300, unit: 'lbs', daysPerWeek: null };
     const { result } = renderHook(() => useGoalState('squat', OPTS), { wrapper });
-    const rmValue = result.current.draftValue; // 300
 
     await act(async () => {
       result.current.onKindChange('tm');
     });
 
-    // switching 1rm → tm multiplies by 0.9 and rounds
+    // switching 1rm → tm multiplies by 0.9 and plate-snaps to 5 lb
+    // 300 * 0.9 = 270 — already plate-snapped
     expect(result.current.draftKind).toBe('tm');
-    expect(result.current.draftValue).toBe(Math.round(rmValue * 0.9));
+    expect(result.current.draftValue % 5).toBe(0);
+    expect(result.current.draftValue).toBe(270);
+  });
+
+  it('plate-snaps the converted value on kind switch', async () => {
+    // 1RM 315 lb → TM: Math.round(315 * 0.9) = 284, but round(283.5, 'lbs') = 285
+    mockGoalData.data = { kind: '1rm', targetValue: 315, unit: 'lbs', daysPerWeek: null };
+    const { result } = renderHook(() => useGoalState('squat', OPTS), { wrapper });
+
+    await act(async () => {
+      result.current.onKindChange('tm');
+    });
+
+    expect(result.current.draftValue).toBe(285);
+    expect(result.current.draftValue % 5).toBe(0);
   });
 
   it('calls setGoal mutation on value change', async () => {

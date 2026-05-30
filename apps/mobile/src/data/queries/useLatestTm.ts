@@ -1,9 +1,3 @@
-/**
- * `useLatestTms()` / `useLatestTm(lift)` — TanStack Query hooks reading the
- * append-only training-max history, collapsed to the most-recent row per lift.
- *
- * Mirrors the PWA's `useTrainingMaxes` Dexie hook.
- */
 import { useQuery } from '@tanstack/react-query';
 import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';

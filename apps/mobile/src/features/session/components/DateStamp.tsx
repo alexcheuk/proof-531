@@ -10,10 +10,7 @@ export type DateStampProps = {
   dateLine: string;
   /** Four-digit year string — `2026`. */
   year: string;
-  /**
-   * Top label. Defaults to `531 · ENTERED`. On PR sessions the parent passes
-   * `★  NEW RECORD  ★` (Rev 5 spec §B). U+00B7 middle-dot, not ASCII.
-   */
+  // defaults to "531 · ENTERED"; PR sessions pass "★ NEW RECORD ★" (U+00B7 middle-dot)
   topArcLabel?: string;
   testID?: string;
 };

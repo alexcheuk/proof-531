@@ -4,7 +4,7 @@ import { useSetLiftGoal } from '@/data/queries/useSetLiftGoal';
 import { useSetLiftGoalDaysPerWeek } from '@/data/queries/useSetLiftGoalDaysPerWeek';
 import { goalTargetTm } from '@/domain/progression';
 import type { Lift, Unit } from '@/domain/types';
-import { displayWeight } from '@/domain/units';
+import { displayWeight, round } from '@/domain/units';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ceilToStep, defaultBumpStep } from '../goalDefaults';
 
@@ -77,13 +77,13 @@ export function useGoalState(
         kind === draftKind
           ? draftValue
           : kind === 'tm'
-            ? Math.round(draftValue * 0.9)
-            : Math.round(draftValue / 0.9);
+            ? round(draftValue * 0.9, displayU)
+            : round(draftValue / 0.9, displayU);
       setDraftKind(kind);
       setDraftValue(nextValue);
       persist(kind, nextValue);
     },
-    [draftKind, draftValue, persist],
+    [draftKind, draftValue, displayU, persist],
   );
 
   const onValueChange = useCallback(

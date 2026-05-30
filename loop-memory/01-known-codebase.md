@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 70)
+# Codebase facts (updated 2026-05-30, expedition 71)
 
 ## Architecture
 
@@ -35,7 +35,7 @@ All e1RM display sites use `round(value, unit)` from `domain/units`, NOT `Math.r
 
 The `round()` function snaps to nearest 5 lb (lbs) or 2.5 kg (kg). Working volume totals and raw DB-stored values remain as floats (snap only at display time).
 
-## CapsLabel coverage (updated expedition 57)
+## CapsLabel coverage (updated expedition 71)
 
 Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
 - `TabBarItem.tsx` — tab bar labels (was: raw RNText with inline fontFamily/letterSpacing/color)
@@ -51,6 +51,8 @@ Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
 - `GoalRuleRow.tsx` — "Goal · X" and "tm ≈ N" labels (expedition 57)
 - `GoalPanel.tsx` — toggle labels, days-away caption, estimate, dpw label (expedition 57)
 - `SharePrPill.tsx` — "SHARE RECORD →" and "OPENS YOUR SHARE SHEET" (expedition 57)
+- `TmAdjustmentNote.tsx` — eyebrow "SUGGESTED TM · NEXT CYCLE" and caption "Tap to apply" (expedition 71)
+- `TmApplySheet.tsx` — "CURRENT TM" and "NEW TM" labels and value/arrow text (expedition 71)
 
 Remaining known intentional RNText uses (not candidates):
 - `PrCelebrationComparison.tsx` — uses custom paper tints (PAPER_28, PAPER_45, PAPER_55) not in ColorToken; inside Reanimated views
@@ -470,7 +472,11 @@ The codebase underwent a comprehensive comment sweep in expeditions 63–69:
 
 Flows use `appId: com.alexcheuk.fivethreeone.dev` (the development variant). Requires Maestro installed + dev-client APK on device. Run all: `maestro test .maestro/flows/`.
 
-## Domain deduplication (expedition 70)
+## Domain deduplication (expedition 70, updated expedition 71)
 
-- `tmFromOneRm` in `domain/progression.ts` now delegates to `trainingMaxFrom` in `domain/units.ts` — they were identical (`round(oneRm * 0.9, unit)`). Both exports remain but the logic lives in one place.
+- `tmFromOneRm` in `domain/progression.ts` was removed in expedition 71 — it was a pure wrapper for `trainingMaxFrom` from `domain/units`. `goalTargetTm` now calls `trainingMaxFrom` directly. External callers already used `trainingMaxFrom` directly.
 - `remainingMs` and `remainingSeconds` removed from `domain/restDeadline.ts` — no callers outside their own tests. Active callers: `isExpired` (useRestNotification.ts), `extendDeadline` (lib/restChronometer.ts).
+
+## Bug fix: useGoalState kind-switch conversion (expedition 71)
+
+- `useGoalState.onKindChange` was using `Math.round` when converting between TM and 1RM modes. `Math.round(315 * 0.9) = 284` — not plate-snapped. Fixed to use `round(value, displayU)` from `domain/units`. Regression test added to `useGoalState.test.tsx`.

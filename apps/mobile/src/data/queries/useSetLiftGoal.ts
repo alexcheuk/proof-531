@@ -1,14 +1,3 @@
-/**
- * `useSetLiftGoal()` — mutation that upserts (target ≠ null) or clears
- * (target === null) a per-lift goal. Goal carries a `kind` ('tm' | '1rm').
- *
- * Optimistic: writes `setQueryData(['liftGoal', lift], ...)` in `onMutate`
- * so the Progress goal panel updates the moment the user taps a stepper or
- * toggles a tab; on failure rolls back via the snapshot captured in
- * onMutate. Invalidates both `['liftGoal', lift]` and the
- * `['liftProgression']` prefix so the grid's "cycles to go" + goal-rule
- * placement recompute against the new target.
- */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Lift, Unit } from '../../domain/types';
 import { useDb } from '../DbProvider';

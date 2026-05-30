@@ -30,12 +30,7 @@ type LiftPageProps = {
   tm: number | null;
   bestE1RM: number | null;
   isInProgress: boolean;
-  /**
-   * Number of working/AMRAP sets logged for this lift's active session.
-   * Only consulted when `isInProgress` is true — drives the
-   * "Resume · set N of 3" CTA copy so users see exactly where they are
-   * before tapping in. Defaults to 0.
-   */
+  // sets completed so far in the active session; drives "Resume · set N of 3" copy
   completedCount?: number;
   onBegin: () => void;
   onResume: () => void;

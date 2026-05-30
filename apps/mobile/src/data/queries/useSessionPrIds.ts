@@ -1,11 +1,3 @@
-/**
- * `useSessionPrIds()` — distinct session ids that contain a PR set log.
- *
- * Returned as a `Set<number>` so consumers can call `prIds.has(session.id)`
- * inside a list render without an O(n²) `.includes` over the array.
- *
- * Backs the History tab's PR star marker and per-cycle PR count.
- */
 import { useQuery } from '@tanstack/react-query';
 import { useDb } from '../DbProvider';
 import { getSessionIdsWithPrs } from '../accessors/setLog';

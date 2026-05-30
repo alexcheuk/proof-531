@@ -20,23 +20,10 @@ type ProgressLiftRowProps = {
   draftKind: LiftGoalKind;
   draftValue: number;
   draftTargetTm: number;
-  /**
-   * Session id the user just closed. The cell whose `sessionId` matches
-   * gets wrapped in `JustCompletedAnimator` for a one-shot fill-in. The
-   * animator is keyed on the id so a new session remounts a fresh
-   * Animated.View; passing `undefined` (the normal case) wraps nothing.
-   */
+  // matched cell gets wrapped in JustCompletedAnimator; undefined wraps nothing
   justCompletedSessionId?: number | undefined;
 };
 
-/**
- * One row of the Progress cycle matrix — four day cells + the cycle's TM,
- * with a dashed `GoalRuleRow` above when this cycle is the one whose
- * projected TM first reaches the user's goal.
- *
- * Distinct name from the design-system `Row` primitive: this is a
- * *grid* row composed of grid cells, not a generic flex row.
- */
 export function ProgressLiftRow({
   lift,
   unit,

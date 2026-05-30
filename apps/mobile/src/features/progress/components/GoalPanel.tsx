@@ -15,13 +15,9 @@ export type GoalPanelProps = {
   step: number;
   /** Minimum the stepper allows (typically `currentTm + tmStep`). */
   minValue: number;
-  /** Cycles until projected TM reaches goal. `0` = already past. `null` = unreachable in lookahead. */
+  // 0 = already past goal; null = unreachable within the 120-cycle lookahead
   cyclesUntilGoal: number | null;
-  /**
-   * User's expected workout days per week for THIS lift. `null` = unset.
-   * Drives the secondary "≈ N mo at K/wk" estimate next to the days-left
-   * figure; without it we render days-only.
-   */
+  // null = unset; drives the "≈ N mo at K/wk" estimate — days-only without it
   daysPerWeek: number | null;
   onKindChange: (kind: LiftGoalKind) => void;
   onValueChange: (value: number) => void;

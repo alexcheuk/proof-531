@@ -27,14 +27,7 @@ type ProgressionCellPast = {
   topWeight: number;
   topReps: number;
   amrap: boolean;
-  /**
-   * Set-kind of the top-set row this cell summarises, when one is present.
-   *   - `'amrap'`   — weeks 1–3 AMRAP top set.
-   *   - `'tm-test'` — week-4 TM Test set (post-migration).
-   *   - `null`      — no top set logged. Legacy week-4 `'working'` deload
-   *                    sessions land here; the cell renders the existing
-   *                    deload `✓` glyph rather than a TM-test band marker.
-   */
+  // null = no top set; legacy week-4 'working' deload sessions land here, rendering a ✓ not a TM band
   topSetKind: 'amrap' | 'tm-test' | null;
   deload: boolean;
 };

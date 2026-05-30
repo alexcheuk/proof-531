@@ -5,13 +5,14 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Row } from '@/design/primitives/Row';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { TmAdjustmentSuggestion } from '@/domain/progression';
 import type { Lift, Unit } from '@/domain/types';
 import { convertWeight, displayUnit, round } from '@/domain/units';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 export type TmApplySheetProps = {
   open: boolean;
@@ -37,7 +38,7 @@ export function TmApplySheet({
 }: TmApplySheetProps) {
   const db = useDb();
   const queryClient = useQueryClient();
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,26 +88,6 @@ export function TmApplySheet({
     borderColor: colors.lineStrong,
     marginBottom: spacing.md,
   };
-  const labelStyle: TextStyle = {
-    fontFamily: `${type.mono}-Medium`,
-    fontSize: 10,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: colors.ink3,
-    marginBottom: 2,
-  };
-  const valueStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 22,
-    letterSpacing: -0.3,
-    color: colors.ink0,
-  };
-  const arrowStyle: TextStyle = {
-    fontFamily: `${type.mono}-SemiBold`,
-    fontSize: 18,
-    color: colors.ink2,
-    marginHorizontal: spacing.md,
-  };
 
   return (
     <SheetLayout
@@ -136,19 +117,45 @@ export function TmApplySheet({
       <View style={rowStyle}>
         <Row justify="space-between" align="center">
           <View>
-            <RNText style={labelStyle}>Current TM</RNText>
-            <RNText style={valueStyle} testID="tm-apply-current">
+            <CapsLabel size="sm" color="ink3" style={{ marginBottom: 2 }}>
+              Current TM
+            </CapsLabel>
+            <Text
+              variant="sans"
+              weight="bold"
+              size={22}
+              color="ink0"
+              style={{ letterSpacing: -0.3 }}
+              testID="tm-apply-current"
+            >
               {tmDisplay} {u}
-            </RNText>
+            </Text>
           </View>
           {suggestion.kind !== 'hold' ? (
             <>
-              <RNText style={arrowStyle}>→</RNText>
+              <Text
+                variant="mono"
+                weight="semibold"
+                size={18}
+                color="ink2"
+                style={{ marginHorizontal: spacing.md }}
+              >
+                →
+              </Text>
               <View style={{ alignItems: 'flex-end' }}>
-                <RNText style={labelStyle}>New TM</RNText>
-                <RNText style={[valueStyle, { color: colors.ink0 }]} testID="tm-apply-new">
+                <CapsLabel size="sm" color="ink3" style={{ marginBottom: 2 }}>
+                  New TM
+                </CapsLabel>
+                <Text
+                  variant="sans"
+                  weight="bold"
+                  size={22}
+                  color="ink0"
+                  style={{ letterSpacing: -0.3 }}
+                  testID="tm-apply-new"
+                >
                   {newTmDisplay} {u}
-                </RNText>
+                </Text>
               </View>
             </>
           ) : (

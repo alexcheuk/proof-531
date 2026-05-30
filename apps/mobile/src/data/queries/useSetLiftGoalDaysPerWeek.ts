@@ -1,12 +1,3 @@
-/**
- * `useSetLiftGoalDaysPerWeek()` — mutation that updates the per-lift
- * workout frequency on `lift_goals`. Used by the Goal Panel to enable
- * a weeks/months estimate derived from "days until goal" ÷ days/week.
- *
- * Optimistic: writes the updated `daysPerWeek` into the cached LiftGoal row
- * immediately so the Goal Panel's secondary estimate flips on the same frame
- * the user taps. Rolls back on error; invalidates the goal key on settle.
- */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';

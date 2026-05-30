@@ -10,25 +10,16 @@ import { LiveHeader } from './LiveHeader';
 export type SetPhaseProps = {
   setIndex: 0 | 1 | 2;
   isAmrap: boolean;
-  /**
-   * True when the current set is the Week-4 TM Test set. Drives the live
-   * eyebrow copy (`TM TEST · TARGET 3–5`) and the rep glyph (range
-   * "3–5" instead of a single number with a trailing "+").
-   */
+  // drives "TM TEST · TARGET 3–5" eyebrow and the "3–5" rep range glyph
   isTmTest?: boolean;
   liftLabel: string;
   elapsedSeconds: number;
-  /** Top-set weight already converted into the display unit. */
   weight: number;
   reps: number;
   pct: number;
   unit: Unit;
   perSide: ReadonlyArray<number>;
-  /**
-   * Optional caps caption — e.g. "+10 lb per side vs set 1". Shown below
-   * the PlateBar when the user is on set 2 or 3. Omit on set 1 (no prior
-   * set to compare).
-   */
+  // "+N lb per side vs set 1" caption below PlateBar; omit on set 1 (no prior set)
   plateChangeHint?: string;
 };
 

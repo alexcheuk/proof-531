@@ -47,13 +47,9 @@ export function projectTopSetWeight(
   return round(tm * set.pct, unit);
 }
 
-export function tmFromOneRm(oneRm: number, unit: Unit): number {
-  return trainingMaxFrom(oneRm, unit);
-}
-
 export function goalTargetTm(kind: GoalKind, value: number, unit: Unit): number {
   if (kind === 'tm') return value;
-  return tmFromOneRm(value, unit);
+  return trainingMaxFrom(value, unit);
 }
 
 // Returns null when targetTm is null (no goal) or exceeds the maxLookahead horizon (default 120 cycles ≈ 10 years).

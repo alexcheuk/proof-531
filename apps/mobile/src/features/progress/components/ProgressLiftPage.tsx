@@ -27,16 +27,9 @@ import { StatsTriplet } from './StatsTriplet';
 
 export type ProgressLiftPageProps = {
   lift: Lift;
-  /** Bubbles internal scroll-past-threshold state up so a shared masthead
-   * (in `ProgressScreen`) can elevate when *this* page — the currently
-   * visible one — has been scrolled. */
+  // tells ProgressScreen whether this page is scrolled so the shared masthead can elevate
   onScrolledChange?: (scrolled: boolean) => void;
-  /**
-   * Session id the user just closed for this lift. Travels as a route
-   * param from `SessionCompleteScreen.handleClose`. The matching cell in
-   * the grid mounts a one-shot `JustCompletedAnimator`. Undefined on
-   * every other entry (direct tab tap, cross-lift swipe).
-   */
+  // session just closed via "Close the day"; drives JustCompletedAnimator on the matching grid cell
   justCompletedSessionId?: number | undefined;
 };
 

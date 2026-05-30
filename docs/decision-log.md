@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — Removed tmFromOneRm; bug-fixed goal kind conversion; continued comment sweep
+
+**Tags:** `removal`, `bug`, `convention`
+**Files:** `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/features/progress/hooks/useGoalState.ts`, `apps/mobile/src/features/session/components/TmAdjustmentNote.tsx`, `apps/mobile/src/features/session/components/TmApplySheet.tsx`, `apps/mobile/src/data/queries/`
+
+Removed `tmFromOneRm` from `progression.ts` — it was a single-line wrapper for `trainingMaxFrom` from `domain/units` with no callers outside its own tests; `goalTargetTm` now calls `trainingMaxFrom` directly. Bug-fixed `useGoalState.onKindChange`: it used `Math.round` when converting between TM and 1RM display modes, producing non-plate-snapped values (e.g. 315 × 0.9 = 283.5 → `Math.round` = 284, not 285). Changed to `round(value, displayU)` and added a regression test. Also continued the comment sweep into `data/queries/` (file-level multi-paragraph docstrings removed from 7 hooks) and several feature components (prop-level multi-line JSDoc condensed to single-line comments in ProgressLiftPage, ProgressLiftRow, GoalPanel, SetPhase, DateStamp, LiftPage). Migrated `TmAdjustmentNote` and `TmApplySheet` from raw RNText + inline styles to `CapsLabel` + `Text` primitives.
+
+**Why:** The `tmFromOneRm` export was a documented duplicate since expedition 70. The goal kind bug was discovered while reading `useGoalState` — the `round` function from domain/units was already imported for `goalTargetTm` but not used for the interactive conversion. The comment sweep continuation caught ~12 multi-line prop JSDoc blocks in progress and session features that expedition 69 didn't reach.
+
 ### 2026-05-29 — Completed comment sweep; RSS podcast artwork fixed; bbb test comment corrected
 
 **Tags:** `convention`, `bug`, `web`
