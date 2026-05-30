@@ -2,7 +2,7 @@ import { estimateOneRm } from './epley';
 import { tmIncrement } from './increments';
 import { prescription } from './schemes';
 import type { Lift, SetLogKind, Unit } from './types';
-import { round } from './units';
+import { round, trainingMaxFrom } from './units';
 
 export type GoalKind = 'tm' | '1rm';
 
@@ -48,7 +48,7 @@ export function projectTopSetWeight(
 }
 
 export function tmFromOneRm(oneRm: number, unit: Unit): number {
-  return round(oneRm * 0.9, unit);
+  return trainingMaxFrom(oneRm, unit);
 }
 
 export function goalTargetTm(kind: GoalKind, value: number, unit: Unit): number {

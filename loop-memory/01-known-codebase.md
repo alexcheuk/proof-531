@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 69)
+# Codebase facts (updated 2026-05-29, expedition 70)
 
 ## Architecture
 
@@ -469,3 +469,8 @@ The codebase underwent a comprehensive comment sweep in expeditions 63–69:
 - `05-progress-screen.yaml` — Progress tab, carousel, stats triplet, goal panel
 
 Flows use `appId: com.alexcheuk.fivethreeone.dev` (the development variant). Requires Maestro installed + dev-client APK on device. Run all: `maestro test .maestro/flows/`.
+
+## Domain deduplication (expedition 70)
+
+- `tmFromOneRm` in `domain/progression.ts` now delegates to `trainingMaxFrom` in `domain/units.ts` — they were identical (`round(oneRm * 0.9, unit)`). Both exports remain but the logic lives in one place.
+- `remainingMs` and `remainingSeconds` removed from `domain/restDeadline.ts` — no callers outside their own tests. Active callers: `isExpired` (useRestNotification.ts), `extendDeadline` (lib/restChronometer.ts).

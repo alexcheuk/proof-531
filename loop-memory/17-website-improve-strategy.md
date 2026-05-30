@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 68)
+**Last updated**: 2026-05-29 (Expedition 70)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -94,6 +94,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 70 notes
+
+Three SEO and UX fixes across Track A and Track C:
+
+1. **BlogPosting JSON-LD `image` field added** (Track A): The `BlogPosting` structured data in `[...slug].astro` was missing the `image` property. Google's Rich Results guidelines require `image` for a `BlogPosting` to be eligible for article rich results in search. Added `image` pointing to `/screenshot-2.png` (the canonical og:image used across the site). Also added a `logo` sub-object to `publisher` — Google recommends this to anchor the organisation identity. No visual changes.
+
+2. **`<meta name="author">` added to blog post pages** (Track A): Blog posts already had `article:author` (OG) and `author` in JSON-LD, but were missing the plain HTML `<meta name="author">` tag. Some feed readers, search crawlers, and social scrapers read this tag directly rather than parsing OG or JSON-LD. Added as a head slot meta in `[...slug].astro` — value is the same `authorName` string used for `article:author`. Zero-cost SEO signal.
+
+3. **404 page title and links improved** (Track C): The 404 `<title>` was "Not found — 531" (inconsistent with every other page which says "531 Strength"). Corrected to "Not found — 531 Strength". Also added `/tools` to the 404 recovery links — it listed only 3 destinations (app overview, how it's built, dev log) but the free calculators are a real, useful page worth surfacing to lost visitors. Reordered links by descending audience breadth: overview → dev log → calculators → process.
 
 ### Expedition 69 notes
 
@@ -283,6 +293,9 @@ Two content-accuracy fixes shipped:
 | RSS itunes:image SVG → PNG | done · expedition 69 | Both channel-level and per-episode itunes:image used favicon.svg; podcast apps require JPEG/PNG. Swapped to /screenshot-2.png. |
 | README iteration count | done · expedition 69 | Updated "68+" → "69+". |
 | ScopeFilter count label | done · expedition 69 | "Showing X of X" → "X posts" for unfiltered view; tightened filtered label. |
+| BlogPosting JSON-LD image + publisher logo | done · expedition 70 | Added `image` (screenshot-2.png) and publisher `logo` to BlogPosting schema — required by Google Rich Results guidelines for article eligibility. |
+| meta name="author" on blog post pages | done · expedition 70 | Added HTML `<meta name="author">` tag to [..slug].astro head slot. Complements article:author OG tag and JSON-LD author already present. |
+| 404 page title and recovery links | done · expedition 70 | Title was "Not found — 531"; corrected to "Not found — 531 Strength". Added /tools to the 404 recovery links; reordered by audience breadth. |
 | README iteration count | done · expedition 65 | Updated "64+" → "65+". |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |

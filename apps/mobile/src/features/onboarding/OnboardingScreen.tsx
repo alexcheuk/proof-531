@@ -1,7 +1,3 @@
-/**
- * Four-step onboarding wizard orchestrator. Composition shell only — all
- * state + finish-flow plumbing lives in `useOnboardingFlow`.
- */
 import { StatusBar } from 'expo-status-bar';
 import { useOnboardingFlow } from './hooks/useOnboardingFlow';
 import { Intro } from './steps/Intro';
