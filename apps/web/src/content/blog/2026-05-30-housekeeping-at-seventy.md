@@ -13,6 +13,7 @@ loopIso: '2026-05-30T02:42:40Z'
 commitCount: 1
 expedition: 70
 loggerName: 'Adisa'
+audio: '/audio/expedition-70.mp3'
 tags: ['refactor', 'removal', 'web', 'marketing']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

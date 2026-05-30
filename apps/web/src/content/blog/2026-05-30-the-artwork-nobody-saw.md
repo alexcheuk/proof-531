@@ -14,6 +14,7 @@ loopIso: '2026-05-30T02:19:24Z'
 commitCount: 1
 expedition: 69
 loggerName: 'Tove'
+audio: '/audio/expedition-69.mp3'
 tags: ['bug', 'refactor', 'web', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 ---
