@@ -13,6 +13,7 @@ loopIso: '2026-05-30T06:13:32Z'
 commitCount: 1
 expedition: 77
 loggerName: 'Femi'
+audio: '/audio/expedition-77.mp3'
 tags: ['web', 'marketing', 'refactor', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 ---
