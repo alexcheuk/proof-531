@@ -1,13 +1,13 @@
 import {
   LIFTS,
   dateLabel,
+  dayIntent,
+  daySchemeLabel,
   historyDateLabel,
   isLift,
   liftDisplayName,
   liftLongName,
   liftProperName,
-  weekIntent,
-  weekLabel,
 } from '../labels';
 
 describe('LIFTS', () => {
@@ -54,21 +54,21 @@ describe('liftLongName', () => {
   });
 });
 
-describe('weekLabel', () => {
-  it('returns scheme glyphs for each week', () => {
-    expect(weekLabel(1)).toBe('5/5/5+');
-    expect(weekLabel(2)).toBe('3/3/3+');
-    expect(weekLabel(3)).toBe('5/3/1+');
-    expect(weekLabel(4)).toBe('TM TEST');
+describe('daySchemeLabel', () => {
+  it('returns scheme glyphs for each cycle day', () => {
+    expect(daySchemeLabel(1)).toBe('5/5/5+');
+    expect(daySchemeLabel(2)).toBe('3/3/3+');
+    expect(daySchemeLabel(3)).toBe('5/3/1+');
+    expect(daySchemeLabel(4)).toBe('TM TEST');
   });
 });
 
-describe('weekIntent', () => {
-  it('returns a per-week intent phrase', () => {
-    expect(weekIntent(1)).toBe('Easy 5s · build the groove');
-    expect(weekIntent(2)).toBe('Heavy 3s · trust the system');
-    expect(weekIntent(3)).toBe('Top single · grind the +');
-    expect(weekIntent(4)).toBe('Verify the TM · 3 to 5 clean reps');
+describe('dayIntent', () => {
+  it('returns a per-day intent phrase', () => {
+    expect(dayIntent(1)).toBe('Easy 5s · build the groove');
+    expect(dayIntent(2)).toBe('Heavy 3s · trust the system');
+    expect(dayIntent(3)).toBe('Top single · grind the +');
+    expect(dayIntent(4)).toBe('Verify the TM · 3 to 5 clean reps');
   });
 });
 

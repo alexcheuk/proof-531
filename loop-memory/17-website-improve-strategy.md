@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-30 (Expedition 76)
+**Last updated**: 2026-05-29 (Expedition 77)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -95,6 +95,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs ScopeFilter count label fixed (expedition 74) — was showing "73 of 133 · expedition" (filtered view wording on a dedicated listing page); corrected to show "73 posts" by passing `total={posts.length}` instead of `total={all.length}`.
 
 ## Progress tracker
+
+### Expedition 77 notes
+
+Three accuracy and SEO fixes following the new screenshot rail (screenshots 6/7/8 replacing 2/3/5):
+
+1. **Homepage og:image updated to screenshot-6.png** (Track A): The site-wide og:image was still `/screenshot-2.png` — an old screenshot no longer featured in the homepage rail. Updated the homepage `ogImage` prop to `/screenshot-6.png` (the new "Today" screen, slot 01 in the rail), so social shares of 531strength.com now show the current representative screenshot rather than one that's been superseded. All other pages continue to use screenshot-2.png (it still exists; no broken images).
+
+2. **Screens-rail section head copy updated** (Track B): The `<h2>` said "Real screenshots, every screen." — "every screen" could be read as claiming the rail shows every screen in the app (it shows 4). Changed to "Real screenshots. No mock-ups." — accurate, punchy, and matches what the new descriptive line says. The right-column copy updated from "Today, the live session, the receipt, and the PR moment" to "Before the session, during the AMRAP, the receipt after, and the PR certificate" — names the shots in sequence without relying on "Today" (the screen label) as the descriptor, and calls the AMRAP set what it is.
+
+3. **Stale "dark mode" JSX comment removed** (Track B): The PR Certificate card in the screens rail had a JSX comment `{/* 04 — PR Certificate (dark mode) */}`. The app has no user-facing dark mode toggle — the PR Certificate screen's dark appearance is just its fixed design, not a mode. The "(dark mode)" label was old copy left over from a prior framing. Removed the parenthetical; comment now reads `{/* 04 — PR Certificate */}`.
 
 ### Expedition 76 notes
 
@@ -331,6 +341,9 @@ Two content-accuracy fixes shipped:
 | Blog listing KPI "since May 19" removed | done · expedition 74 | "One per loop since May 19" → "One per loop" — May 19 was the day-zero manual post, not the start of the loop cadence. |
 | expedition-logs ScopeFilter count label | done · expedition 74 | Was "73 of 133 · expedition" (wrong framing for a dedicated listing page); now "73 posts" via `total={posts.length}`. |
 | global.css .container margin cleanup | done · expedition 74 | `margin: 0 inherit` + `margin-inline: auto` simplified to `margin: 0 auto`. Net visual effect: identical. |
+| Homepage og:image updated to screenshot-6.png | done · expedition 77 | Was screenshot-2.png (old shot no longer in rail); updated to screenshot-6.png (current "Today" screen, slot 01). |
+| Screens-rail h2 and description copy updated | done · expedition 77 | h2 "Real screenshots, every screen." → "Real screenshots. No mock-ups." Right-column updated to name each shot by session moment. |
+| Stale "dark mode" JSX comment removed | done · expedition 77 | PR Certificate card comment had "(dark mode)" parenthetical — app has no user-facing dark mode. Removed. |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |
 | Session receipt alt text "est. 1RM" → "e1RM" | done · expedition 65 | screenshot-5.png alt text used "est. 1RM"; app uses "e1RM" throughout. Corrected. |

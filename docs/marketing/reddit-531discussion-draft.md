@@ -60,12 +60,12 @@ iOS: [App Store link — fill in on launch day]
 
 Not affiliated with Jim Wendler or Wendler LLC. Just a fan of the program.
 
-Screenshots: attach these three from docs/marketing/screenshots/:
-1. Screenshot_20260527-001435.png — Today screen (Bench, Cycle 2 Day 1, cycle progress grid, TM and e1RM stats, RESUME SESSION button)
-2. Screenshot_20260527-003320.png — Live session pre-set (Bench, 155 LB x5, plate visualization showing 45+10 per side = 55 lb, full set list with AMRAP on set 03)
-3. Screenshot_20260527-003642.png — Session receipt (In the book. Stronger. 222 LB est. 1RM, new record stamp, +25 LB vs previous best, CLOSE THE DAY)
+Screenshots: use the three newer high-quality screenshots from docs/screenshots/ (added Expedition 77):
+1. screenshot-6.png — Today screen (Bench, C2D1, plate visualization, START SESSION button)
+2. screenshot-7.png — Live AMRAP (Bench now., AMRAP sheet open, e1RM calculation live)
+3. screenshot-8.png — Session receipt with embedded PR certificate (In the book., +25 LB)
 
-These three tell the complete story: what the program looks like before you start, what the bar looks like during a set, and what you get when you finish.
+These three tell the complete story: what the program looks like before you start, what the AMRAP sheet looks like mid-set, and what you get when you finish. Prefer these over the older Screenshot_20260527-*.png files — the new screenshots are higher quality and show the same flows.
 
 ---
 

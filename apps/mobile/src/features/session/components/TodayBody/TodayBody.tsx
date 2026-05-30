@@ -3,7 +3,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
 import { useTheme } from '@/design/theme';
-import { dateLabel, liftDisplayName, weekIntent, weekLabel } from '@/domain/labels';
+import { dateLabel, dayIntent, daySchemeLabel, liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
@@ -81,7 +81,7 @@ export function TodayBody({
     <View style={{ backgroundColor: colors.bg0 }}>
       <Masthead rightSlot={<CapsLabel>{`c${cycle}·d${week}`}</CapsLabel>} />
       <TitleBlock
-        eyebrow={`${dateLabel(new Date())} · ${weekLabel(week)}`}
+        eyebrow={`${dateLabel(new Date())} · ${daySchemeLabel(week)}`}
         title={`${liftDisplayName(lift)}.`}
         style={{ paddingTop: 20, paddingBottom: 20 }}
       />
@@ -93,8 +93,8 @@ export function TodayBody({
           gap: spacing.xs,
         }}
       >
-        <CapsLabel size="xs" color="ink2" testID="today-week-intent">
-          {weekIntent(week)}
+        <CapsLabel size="xs" color="ink2" testID="today-day-intent">
+          {dayIntent(week)}
         </CapsLabel>
         {lastTrained.startedAt ? (
           <CapsLabel size="xs" color="ink3" testID="today-last-trained">

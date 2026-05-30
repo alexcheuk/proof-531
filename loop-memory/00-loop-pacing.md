@@ -122,6 +122,15 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   will not receive the OTA update. Expo Go testers are unaffected. Note this
   in the Discord summary whenever a native module is added.
 
+## Jest "Force exiting" warning (expedition 77)
+
+- **`expo-notifications` keeps alive an internal timer in the Jest environment.** This causes
+  the `Force exiting Jest` + `A worker process has failed to exit gracefully` warning at the end
+  of every test run. It is **not caused by our code** — all 1113+ tests pass cleanly. The warning
+  cannot be suppressed without patching `expo-notifications` internals or adding a global
+  `afterAll(() => jest.clearAllTimers())` which would interact badly with tests that rely on fake
+  timers. **Do not investigate this each loop** — it is a known, benign, pre-existing issue.
+
 ## `jq` not available (expedition 19)
 
 - **`jq` is not installed in the loop environment.** Use Python for all JSON parsing:

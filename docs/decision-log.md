@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Rename weekLabel/weekIntent → daySchemeLabel/dayIntent; new screenshots
+
+**Tags:** `convention`, `refactor`
+**Files:** `apps/mobile/src/domain/labels.ts`, `apps/mobile/src/features/session/components/TodayBody/TodayBody.tsx`, `apps/web/public/screenshot-6.png`, `apps/web/src/pages/index.astro`
+
+`weekLabel` and `weekIntent` in `domain/labels.ts` were legacy names from when the program called the cycle positions "weeks" (Wendler's original framing). The app has used "Day" terminology everywhere since we adopted the 7th Week Protocol — the DB column `week` is kept for compatibility, but user-facing strings and code should say "day". Renamed to `daySchemeLabel` and `dayIntent`. The `Week` type alias (`1 | 2 | 3 | 4`) is kept; only the display-helper names changed.
+
+Three new real-device screenshots from Alex added (screenshot-6: Today plan, screenshot-7: Live AMRAP + LOG sheet, screenshot-8: Session receipt with embedded PR certificate). Homepage screenshot rail updated to use them as the primary 3 slots. Previous slots showed older UI; new screenshots show the current polished state.
+
 ### 2026-05-30 — RNText sweep: ComparisonRow + PrCelebrationHero; new component tests
 
 **Tags:** `convention`, `refactor`, `test`

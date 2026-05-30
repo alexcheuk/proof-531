@@ -27,16 +27,16 @@ No account required. No ads. No subscription. No data leaves your phone.
 ## Screenshots
 
 <p>
-<img src="docs/screenshots/screenshot-2.png" width="200" alt="Today screen — Bench, Cycle 2 Day 1, cycle progress grid, TM 235 LB" />
+<img src="docs/screenshots/screenshot-6.png" width="200" alt="Today screen — Bench, Cycle 2 Day 1, plate visualization, START SESSION" />
 &nbsp;
-<img src="docs/screenshots/screenshot-3.png" width="200" alt="Live session — plate visualization, NEXT SET 155 LB x5, full working set list" />
+<img src="docs/screenshots/screenshot-7.png" width="200" alt="Live AMRAP — Bench now., LOG AMRAP sheet, e1RM calculation" />
 &nbsp;
-<img src="docs/screenshots/screenshot-4.png" width="200" alt="AMRAP set — LOG AMRAP sheet, plate visualization, e1RM calculation" />
+<img src="docs/screenshots/screenshot-8.png" width="200" alt="Session receipt — In the book., new record stamp, PR certificate, CLOSE THE DAY" />
 </p>
 <p>
-<img src="docs/screenshots/screenshot-1.png" width="200" alt="PR screen — YOU HIT A NEW BENCH PR, Stronger., +25 LB" />
+<img src="docs/screenshots/screenshot-1.png" width="200" alt="PR celebration — YOU HIT A NEW BENCH PR, Stronger., +25 LB" />
 &nbsp;
-<img src="docs/screenshots/screenshot-5.png" width="200" alt="Session receipt — In the book., new record stamp, CLOSE THE DAY" />
+<img src="docs/screenshots/screenshot-5.png" width="200" alt="Session receipt — In the book., e1RM, SET LOGS, CLOSE THE DAY" />
 </p>
 
 ## What it does
@@ -76,7 +76,7 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 76+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 77+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

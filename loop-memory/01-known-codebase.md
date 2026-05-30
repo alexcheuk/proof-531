@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-30, expedition 75)
+# Codebase facts (updated 2026-05-29, expedition 77)
 
 ## Architecture
 
@@ -85,7 +85,7 @@ Note: `paperTint45/55/65` ARE in the `ColorToken` union — confirmed expedition
 - `Button` — generic shadcn-style variants. Removed 2026-05-24. Use `PrimaryPillButton`.
 - `SectionHeader` — Removed 2026-05-24. Use `TitleBlock` for hero/display titles.
 
-## Domain exports (updated 2026-05-28, expedition 28)
+## Domain exports (updated 2026-05-29, expedition 77)
 
 - `domain/increments.ts` exports `LOWER_BODY: ReadonlySet<Lift>` — the set of lifts
   that use larger cycle TM increments (10 lb / 5 kg). Import this; don't re-define locally.
@@ -97,6 +97,8 @@ Note: `paperTint45/55/65` ARE in the `ColorToken` union — confirmed expedition
   - `liftDisplayName(lift)` — title-case short name ("Squat", "Bench")
   - `liftLongName(lift)` — colloquial coach-voice name ("back squat", "bench press"); moved from `features/progress/labels.ts` in expedition 26
   - `liftProperName(lift)` — title-case proper noun ("Back squat", "Bench press"); added expedition 28. Use this for settings rows and table headers; use `liftLongName` for prose.
+  - `daySchemeLabel(day)` — scheme abbreviation for a cycle day ('5/5/5+', '3/3/3+', '5/3/1+', 'TM TEST'). Renamed from `weekLabel` in expedition 77; `Week` type kept for DB compatibility.
+  - `dayIntent(day)` — per-day intent phrase ("Easy 5s · build the groove", etc.). Renamed from `weekIntent` in expedition 77.
 - `features/progress/labels.ts` — DELETED in expedition 26. `liftLongName` now lives in `domain/labels`.
 
 ## Web pages

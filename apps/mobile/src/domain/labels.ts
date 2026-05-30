@@ -19,9 +19,8 @@ export function liftDisplayName(lift: Lift): string {
   }
 }
 
-// Week 4 was the classic Wendler deload; replaced by the 7th Week Protocol TM test.
-export function weekLabel(week: Week): string {
-  switch (week) {
+export function daySchemeLabel(day: Week): string {
+  switch (day) {
     case 1:
       return '5/5/5+';
     case 2:
@@ -33,8 +32,8 @@ export function weekLabel(week: Week): string {
   }
 }
 
-export function weekIntent(week: Week): string {
-  switch (week) {
+export function dayIntent(day: Week): string {
+  switch (day) {
     case 1:
       return 'Easy 5s · build the groove';
     case 2:
