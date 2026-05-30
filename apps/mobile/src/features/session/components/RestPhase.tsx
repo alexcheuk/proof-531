@@ -5,7 +5,7 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
 
 export type RestPhaseProps = {
@@ -37,22 +37,13 @@ export function RestPhase({
   nextSet,
   testID,
 }: RestPhaseProps) {
-  const { colors, type, spacing } = useTheme();
+  const { spacing } = useTheme();
   const unitLabel = displayUnit(loggedUnit);
 
   const headerWrap: ViewStyle = {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-  };
-  const headlineStyle: TextStyle = {
-    fontFamily: `${type.sans}-Bold`,
-    fontSize: 64,
-    // 'Rest' has no descenders, but keep lineHeight: 74 to match the Set-phase
-    // headlines (same font, same baseline grid). See loop-memory/09-rn-text-clipping.md.
-    lineHeight: 74,
-    letterSpacing: -1.92,
-    color: colors.ink0,
   };
 
   return (
@@ -62,12 +53,20 @@ export function RestPhase({
           SET COMPLETED
         </CapsLabel>
 
-        <RNText style={headlineStyle} testID="rest-phase-headline">
+        {/* rn-line-height-ok: single-word headline, no descenders */}
+        <Text
+          variant="sans"
+          weight="bold"
+          size={64}
+          color="ink0"
+          style={{ lineHeight: 74, letterSpacing: -1.92 }}
+          testID="rest-phase-headline"
+        >
           Rest
           <Text variant="sans" weight="bold" size={64} color="amber" style={{ lineHeight: 74 }}>
             .
           </Text>
-        </RNText>
+        </Text>
       </View>
 
       <Divider />

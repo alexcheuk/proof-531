@@ -2,12 +2,13 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Heading } from '@/design/primitives/Heading';
 import { Row } from '@/design/primitives/Row';
 import { SectionBand } from '@/design/primitives/SectionBand';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { BBB_REPS, BBB_SETS, bbbWeightFromTm } from '@/domain/bbb';
 import { formatMmSs } from '@/domain/time';
 import type { Unit } from '@/domain/types';
 import { displayWeight } from '@/domain/units';
-import { Text as RNText, type TextStyle, View } from 'react-native';
+import { View } from 'react-native';
 
 export type BbbBandProps = {
   tm: number;
@@ -25,16 +26,9 @@ export function BbbBand({
   unitGlyph,
   bbbRestTargetSeconds,
 }: BbbBandProps) {
-  const { colors, layout, spacing, type } = useTheme();
+  const { layout, spacing } = useTheme();
   const bbbWeightStorage = bbbWeightFromTm(tm, storageUnit);
   const bbbWeight = displayWeight(bbbWeightStorage, storageUnit, renderUnit);
-
-  const countStyle: TextStyle = {
-    fontFamily: `${type.sans}-Medium`,
-    fontSize: 16,
-    letterSpacing: -0.16,
-    color: colors.ink1,
-  };
 
   return (
     <View style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.xl }}>
@@ -48,7 +42,15 @@ export function BbbBand({
       </Row>
       <SectionBand padding="tight" testID="today-bbb-band">
         <Row justify="space-between">
-          <RNText style={countStyle}>{`${BBB_SETS} sets of ${BBB_REPS}`}</RNText>
+          <Text
+            variant="sans"
+            weight="medium"
+            size={16}
+            color="ink1"
+            style={{ letterSpacing: -0.16 }}
+          >
+            {`${BBB_SETS} sets of ${BBB_REPS}`}
+          </Text>
           <Row align="flex-end" gap="xs">
             <Heading size="m" lineHeight={26} numeric>
               {bbbWeight}

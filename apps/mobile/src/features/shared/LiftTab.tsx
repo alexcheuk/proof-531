@@ -1,10 +1,11 @@
 import { Row } from '@/design/primitives/Row';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift } from '@/domain/types';
 import * as Haptics from 'expo-haptics';
 import { useEffect } from 'react';
-import { Pressable, Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { Pressable, type TextStyle, View, type ViewStyle } from 'react-native';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -49,15 +50,6 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
     alignItems: 'center',
     gap: spacing.xs + 2,
     minHeight: 44,
-  };
-
-  const labelStyle: TextStyle = {
-    fontFamily: type.mono,
-    fontSize: TAB_FONT_SIZE,
-    fontWeight: '600',
-    letterSpacing: TAB_LETTER_SPACING,
-    textTransform: 'uppercase',
-    color: active ? colors.ink0 : colors.ink3,
   };
 
   const starStyle: TextStyle = {
@@ -115,7 +107,15 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
       style={buttonStyle}
     >
       <Row gap="xs" style={{ gap: spacing.xs + 2 }}>
-        <RNText style={labelStyle}>{shortName(lift)}</RNText>
+        <Text
+          variant="mono"
+          weight="semibold"
+          size={TAB_FONT_SIZE}
+          color={active ? 'ink0' : 'ink3'}
+          style={{ letterSpacing: TAB_LETTER_SPACING, textTransform: 'uppercase' }}
+        >
+          {shortName(lift)}
+        </Text>
         {inProgress ? (
           // In-progress is the more actionable signal — the user is mid-session
           // and the dot is asking them to come finish. The PR star is still

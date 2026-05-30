@@ -1,9 +1,10 @@
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { cycleGoalEstimate } from '@/domain/progression';
 import * as Haptics from 'expo-haptics';
-import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 import { GoalPanelStepper } from './GoalPanelStepper';
 
 export type GoalPanelProps = {
@@ -41,7 +42,7 @@ export function GoalPanel({
   unset,
   testID,
 }: GoalPanelProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const onStep = (delta: number) => {
     void Haptics.selectionAsync();
@@ -141,31 +142,26 @@ export function GoalPanel({
             justifyContent: 'center',
           }}
         >
-          <RNText
-            style={{
-              fontFamily: `${type.sans}-Bold`,
-              fontSize: 56,
-              color: unset ? colors.ink2 : colors.ink0,
-              letterSpacing: -2.52,
-              // rn-line-height-ok: digit-only display (tabular-nums); '—' fallback
-              lineHeight: 56,
-              fontVariant: ['tabular-nums', 'lining-nums'],
-            }}
+          {/* rn-line-height-ok: digit-only display (tabular-nums); '—' fallback */}
+          <Text
+            variant="sans"
+            weight="bold"
+            size={56}
+            color={unset ? 'ink2' : 'ink0'}
+            numeric
+            style={{ letterSpacing: -2.52, lineHeight: 56 }}
           >
             {value > 0 ? String(value) : '—'}
-          </RNText>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 12,
-              letterSpacing: 2.64,
-              textTransform: 'uppercase',
-              color: colors.ink2,
-              marginLeft: 10,
-            }}
+          </Text>
+          <Text
+            variant="mono"
+            weight="semibold"
+            size={12}
+            color="ink2"
+            style={{ letterSpacing: 2.64, textTransform: 'uppercase', marginLeft: 10 }}
           >
             {unitGlyph}
-          </RNText>
+          </Text>
         </View>
         <GoalPanelStepper
           glyph="+"
@@ -225,19 +221,17 @@ export function GoalPanel({
             disabled={dpw === null}
             testID={`${testID ?? 'goal-panel'}-dpw-dec`}
           />
-          <RNText
+          <Text
+            variant="mono"
+            weight="bold"
+            size={14}
+            color={dpw === null ? 'ink2' : 'ink0'}
+            numeric
+            style={{ minWidth: 22, textAlign: 'center' }}
             testID={`${testID ?? 'goal-panel'}-dpw-value`}
-            style={{
-              fontFamily: `${type.mono}-Bold`,
-              fontSize: 14,
-              color: dpw === null ? colors.ink2 : colors.ink0,
-              minWidth: 22,
-              textAlign: 'center',
-              fontVariant: ['tabular-nums', 'lining-nums'],
-            }}
           >
             {dpw !== null ? String(dpw) : '—'}
-          </RNText>
+          </Text>
           <GoalPanelStepper
             glyph="+"
             size="sm"

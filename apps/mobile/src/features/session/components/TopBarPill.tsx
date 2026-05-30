@@ -1,6 +1,7 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
-import { Pressable, Text as RNText, type TextStyle, type ViewStyle } from 'react-native';
+import { Pressable, type ViewStyle } from 'react-native';
 
 export type TopBarPillVariant = 'outlined' | 'filled';
 
@@ -23,7 +24,7 @@ export function TopBarPill({
   accessibilityLabel,
   accessibilityHint,
 }: TopBarPillProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
   const filled = variant === 'filled';
   const pillStyle: ViewStyle = {
     paddingHorizontal: filled ? 14 : 12,
@@ -34,13 +35,6 @@ export function TopBarPill({
     backgroundColor: filled ? colors.ink0 : colors.bg0,
     alignItems: 'center',
     justifyContent: 'center',
-  };
-  const textStyle: TextStyle = {
-    fontFamily: `${type.mono}-${filled ? 'Bold' : 'SemiBold'}`,
-    fontSize: 10,
-    letterSpacing: 2.2,
-    color: filled ? colors.bg0 : colors.ink0,
-    textTransform: 'uppercase',
   };
   const handlePress = () => {
     // expo-haptics throws on unsupported platforms (e.g. web preview).
@@ -61,7 +55,15 @@ export function TopBarPill({
       hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
       style={pillStyle}
     >
-      <RNText style={textStyle}>{glyph ? `${glyph} ${label}` : label}</RNText>
+      <Text
+        variant="mono"
+        weight={filled ? 'bold' : 'semibold'}
+        size={10}
+        color={filled ? 'bg0' : 'ink0'}
+        style={{ letterSpacing: 2.2, textTransform: 'uppercase' }}
+      >
+        {glyph ? `${glyph} ${label}` : label}
+      </Text>
     </Pressable>
   );
 }

@@ -1,7 +1,8 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 // SVG arc-text (textPath) would be ideal but react-native-svg is a native dep we're avoiding;
 // this approximates the wet-stamp with a bordered circle + stacked caps-mono labels.
-import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 export type DateStampProps = {
   /** Uppercased short weekday — `WED`, `TODAY` for the fallback. */
@@ -107,21 +108,21 @@ type StampLabelProps = {
 };
 
 function StampLabel({ text, style, position, spacingBelow, testID }: StampLabelProps) {
-  const { colors, type } = useTheme();
-  const family = style.family === 'bold' ? `${type.mono}-Bold` : `${type.mono}-SemiBold`;
-  const textStyle: TextStyle = {
-    fontFamily: family,
-    fontSize: style.fontSize,
-    letterSpacing: style.letterSpacing,
-    color: colors.ink0,
-    textTransform: 'uppercase',
-    ...(style.opacity !== undefined ? { opacity: style.opacity } : null),
-    ...(position ? { position: 'absolute', ...position } : null),
-    ...(spacingBelow !== undefined ? { marginBottom: spacingBelow } : null),
-  };
   return (
-    <RNText style={textStyle} {...(testID !== undefined ? { testID } : {})}>
+    <Text
+      variant="mono"
+      weight={style.family}
+      size={style.fontSize}
+      color="ink0"
+      {...(testID !== undefined ? { testID } : {})}
+      style={[
+        { letterSpacing: style.letterSpacing, textTransform: 'uppercase' },
+        style.opacity !== undefined ? { opacity: style.opacity } : null,
+        position ? { position: 'absolute', ...position } : null,
+        spacingBelow !== undefined ? { marginBottom: spacingBelow } : null,
+      ]}
+    >
       {text}
-    </RNText>
+    </Text>
   );
 }

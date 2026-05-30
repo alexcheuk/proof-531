@@ -10,7 +10,7 @@ export function round(weight: number, unit: Unit): number {
   return Math.round(weight / step) * step;
 }
 
-// snap=true (default) for loadable weights (plate math, ledger); snap=false for derived stats (e1RM, volume).
+// snap=true (default): rounds to nearest plate increment. Pass snap:false for raw derived values (volume, intermediate calculations).
 export function convert(
   value: number,
   fromUnit: Unit,

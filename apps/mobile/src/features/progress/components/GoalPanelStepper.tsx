@@ -1,5 +1,6 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Pressable, Text as RNText } from 'react-native';
+import { Pressable } from 'react-native';
 
 export function GoalPanelStepper({
   glyph,
@@ -14,7 +15,7 @@ export function GoalPanelStepper({
   disabled?: boolean;
   testID?: string;
 }) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
   const dim = size === 'lg' ? 44 : 28;
   const fontSize = size === 'lg' ? 20 : 14;
   const isDisabled = disabled ?? false;
@@ -44,16 +45,15 @@ export function GoalPanelStepper({
         backgroundColor: colors.bg0,
       }}
     >
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize,
-          color: isDisabled ? colors.ink3 : colors.ink0,
-          lineHeight: fontSize,
-        }}
+      <Text
+        variant="mono"
+        weight="bold"
+        size={fontSize}
+        color={isDisabled ? 'ink3' : 'ink0'}
+        style={{ lineHeight: fontSize }}
       >
         {glyph}
-      </RNText>
+      </Text>
     </Pressable>
   );
 }

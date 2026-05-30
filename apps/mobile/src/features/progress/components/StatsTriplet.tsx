@@ -1,6 +1,7 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 export type StatsTripletProps = {
   tm: number;
@@ -12,7 +13,7 @@ export type StatsTripletProps = {
 };
 
 export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTripletProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
@@ -49,32 +50,28 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
           <CapsLabel size="xs" weight="semibold" style={{ marginBottom: 4 }}>
             {c.label}
           </CapsLabel>
-          <RNText
-            style={{
-              fontFamily: `${type.sans}-Bold`,
-              fontSize: 26,
-              color: colors.ink0,
-              letterSpacing: -0.78,
-              // rn-line-height-ok: tabular numeric stats only
-              lineHeight: 26,
-              fontVariant: ['tabular-nums', 'lining-nums'],
-            }}
+          <Text
+            variant="sans"
+            weight="bold"
+            size={26}
+            color="ink0"
+            numeric
+            style={{ letterSpacing: -0.78, lineHeight: 26 }}
           >
             {c.value}
             {c.suffix ? (
-              <RNText
-                style={{
-                  fontFamily: `${type.mono}-SemiBold`,
-                  fontSize: 11,
-                  letterSpacing: 1.98,
-                  color: colors.ink3,
-                }}
+              <Text
+                variant="mono"
+                weight="semibold"
+                size={11}
+                color="ink3"
+                style={{ letterSpacing: 1.98 }}
               >
                 {' '}
                 {c.suffix}
-              </RNText>
+              </Text>
             ) : null}
-          </RNText>
+          </Text>
         </View>
       ))}
     </View>

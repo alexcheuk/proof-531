@@ -1,8 +1,10 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
+import type { ColorToken } from '@/design/tokens';
 import type { Week } from '@/domain/types';
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 type Cell = { w: Week; scheme: string; compact?: boolean };
 
@@ -18,7 +20,7 @@ type CycleStripProps = {
 };
 
 export function CycleStrip({ currentWeek }: CycleStripProps) {
-  const { colors, spacing, type } = useTheme();
+  const { colors, spacing } = useTheme();
 
   return (
     <View style={{ marginTop: spacing.lg }} testID="cycle-strip">
@@ -39,47 +41,44 @@ export function CycleStrip({ currentWeek }: CycleStripProps) {
             position: 'relative',
           };
 
-          const schemeColor = isDone ? colors.bg0 : isNext ? colors.ink0 : colors.ink3;
+          const schemeColorToken: ColorToken = isDone ? 'bg0' : isNext ? 'ink0' : 'ink3';
 
           return (
             <View key={c.w} style={cellStyle} testID={`cycle-strip-cell-${c.w}`}>
               <CapsLabel size="xs" weight="semibold" color={isDone ? 'paperMuted' : 'ink3'}>
                 {`D${c.w}`}
               </CapsLabel>
-              <RNText
-                style={
-                  c.compact
-                    ? {
-                        fontFamily: `${type.mono}-SemiBold`,
-                        fontSize: 10,
-                        letterSpacing: 1.8,
-                        textTransform: 'uppercase',
-                        color: schemeColor,
-                      }
-                    : {
-                        fontFamily: `${type.mono}-Bold`,
-                        fontSize: 12,
-                        letterSpacing: 0.24,
-                        color: schemeColor,
-                        opacity: isDone || isNext ? 1 : 0.7,
-                      }
-                }
-              >
-                {c.scheme}
-              </RNText>
+              {c.compact ? (
+                <Text
+                  variant="mono"
+                  weight="semibold"
+                  size={10}
+                  color={schemeColorToken}
+                  style={{ letterSpacing: 1.8, textTransform: 'uppercase' }}
+                >
+                  {c.scheme}
+                </Text>
+              ) : (
+                <Text
+                  variant="mono"
+                  weight="bold"
+                  size={12}
+                  color={schemeColorToken}
+                  style={{ letterSpacing: 0.24, opacity: isDone || isNext ? 1 : 0.7 }}
+                >
+                  {c.scheme}
+                </Text>
+              )}
               {isDone ? (
-                <RNText
-                  style={{
-                    position: 'absolute',
-                    top: 2,
-                    right: 4,
-                    fontFamily: `${type.mono}-Regular`,
-                    fontSize: 9,
-                    color: colors.bg0,
-                  }}
+                <Text
+                  variant="mono"
+                  weight="regular"
+                  size={9}
+                  color="bg0"
+                  style={{ position: 'absolute', top: 2, right: 4 }}
                 >
                   ✓
-                </RNText>
+                </Text>
               ) : null}
               {isNext ? (
                 <View

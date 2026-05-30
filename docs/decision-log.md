@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — RNText → Text primitive sweep across feature components
+
+**Tags:** `convention`, `bug`
+**Files:** `apps/mobile/src/features/home/components/CycleStrip.tsx`, `apps/mobile/src/features/session/components/DateStamp.tsx`, `apps/mobile/src/features/session/components/TopBarPill.tsx`, `apps/mobile/src/features/session/components/RestPhase.tsx`, `apps/mobile/src/features/session/components/TodayBody/BbbBand.tsx`, `apps/mobile/src/features/progress/components/StatsTriplet.tsx`, `apps/mobile/src/features/progress/components/GoalPanel.tsx`, `apps/mobile/src/features/progress/components/GoalPanelStepper.tsx`, `apps/mobile/src/features/shared/LiftTab.tsx`
+
+Nine feature components migrated from raw `RNText` + inline `fontFamily` string assembly to the `Text` design primitive. Fixed a real rendering bug in `LiftTab`: it used `fontFamily: type.mono` (base family name `'IBMPlexMono'`, which is not registered) with `fontWeight: '600'` — Android ignores `fontWeight` on custom fonts and would render the Regular weight. The remaining 7 `RNText` usages in features stay: PRCertificate/PrCelebration use paper-tint colors and `type.display` that the `Text` primitive doesn't support, and `TmPreviewRow` uses inline glyph spans in a text flow.
+
+**Why:** The feature layer should express text through design primitives rather than assembling font-family strings and inline `TextStyle` objects. Reduces future drift, catches weight bugs (the `LiftTab` case), and means all non-ceremony text in features goes through one codepath.
+
+**Trade-off / what we didn't do:** Did not extend `Text` to accept arbitrary hex colors — paper tints (PAPER_45/55/65) are ceremony-specific and don't belong in the token system.
+
 ### 2026-05-30 — Removed tmFromOneRm; bug-fixed goal kind conversion; continued comment sweep
 
 **Tags:** `removal`, `bug`, `convention`

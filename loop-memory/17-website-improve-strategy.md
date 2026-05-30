@@ -95,6 +95,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 
 ## Progress tracker
 
+### Expedition 72 notes
+
+One Track B item (content accuracy) and one Track B (README):
+
+1. **README OTA badge added** (Track B): Added `[![OTA](https://github.com/alexcheuk/proof-531/actions/workflows/ota.yml/badge.svg)](...)` badge alongside the CI badge — shows deployment health at a glance on the GitHub repo page.
+
+2. **README iteration count** already at 72+ (Track B): Updated by the organic-marketing agent as part of its iteration count sweep.
+
+No Track A/C/D items this loop — the primary deliverable was the mobile Text primitive refactor sweep (fixing a rendering bug in LiftTab and migrating 9 feature components from raw RNText to the design system).
+
 ### Expedition 70 notes
 
 Three SEO and UX fixes across Track A and Track C:
