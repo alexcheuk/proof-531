@@ -1,5 +1,7 @@
-import { Text as RNText, type StyleProp, View, type ViewStyle } from 'react-native';
+import { type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Text } from './Text';
 
 type TitleBlockProps = {
   eyebrow: string;
@@ -23,7 +25,7 @@ type TitleBlockProps = {
  * Titles without a trailing dot render as-is.
  */
 export function TitleBlock({ eyebrow, title, style, testID }: TitleBlockProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const containerStyle: ViewStyle = {
     paddingHorizontal: layout.gutter,
@@ -38,30 +40,23 @@ export function TitleBlock({ eyebrow, title, style, testID }: TitleBlockProps) {
 
   return (
     <View testID={testID} style={[containerStyle, style]}>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Medium`,
-          fontSize: 10,
-          letterSpacing: 2.2,
-          textTransform: 'uppercase',
-          color: colors.ink2,
-          marginBottom: 8,
-        }}
-      >
+      <CapsLabel color="ink2" style={{ marginBottom: 8 }}>
         {eyebrow}
-      </RNText>
-      <RNText
-        style={{
-          fontFamily: `${type.sans}-Bold`,
-          fontSize: 28,
-          lineHeight: 32,
-          letterSpacing: -0.84,
-          color: colors.ink0,
-        }}
+      </CapsLabel>
+      <Text
+        variant="sans"
+        weight="bold"
+        size={28}
+        color="ink0"
+        style={{ lineHeight: 32, letterSpacing: -0.84 }}
       >
         {titleBody}
-        {trailingDot ? <RNText style={{ color: colors.amber }}>{'.'}</RNText> : null}
-      </RNText>
+        {trailingDot ? (
+          <Text variant="sans" weight="bold" size={28} color="amber">
+            {'.'}
+          </Text>
+        ) : null}
+      </Text>
     </View>
   );
 }

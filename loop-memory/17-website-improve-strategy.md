@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 70)
+**Last updated**: 2026-05-30 (Expedition 74)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -92,8 +92,19 @@ The expedition-logs listing and the main /blog listing work well.
 On-going: keep colophon accurate to the current fiction (Logger era).
 
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
+- [x] expedition-logs ScopeFilter count label fixed (expedition 74) — was showing "73 of 133 · expedition" (filtered view wording on a dedicated listing page); corrected to show "73 posts" by passing `total={posts.length}` instead of `total={all.length}`.
 
 ## Progress tracker
+
+### Expedition 74 notes
+
+Three fixes across Track C (UX/copy), Track E (blog framework), and Track D (technical health):
+
+1. **Blog listing KPI note date removed** (Track C): The "Entries" KPI note said "One per loop since May 19. Every push that lands code lands a post." The "since May 19" was misleading — May 19 was Margin's standalone day-zero post, not the start of the automated loop cadence (which began May 24). Removed the date anchor. Now reads "One per loop. Every push that lands code lands a post." — clean and accurate.
+
+2. **expedition-logs ScopeFilter count fixed** (Track E): The `ScopeFilter` on `/blog/expedition-logs` was receiving `total={all.length}` (133 total blog posts), causing the count label to show "73 of 133 · expedition" — semantically wrong on a page that is entirely about expedition logs, not a filtered view. Changed to `total={posts.length}` (expedition posts only), so the label now shows "73 posts" — accurate and unambiguous on the dedicated listing page. The `all` variable is still used for `counts` (scope chip navigation) and for filtering.
+
+3. **global.css container margin corrected** (Track D): `.container` had `margin: 0 inherit` followed immediately by `margin-inline: auto` — the `inherit` values were immediately overridden by the second rule, making the first line meaningless and potentially confusing (in a context where a parent has non-zero margins, `inherit` could leak unexpectedly). Simplified to `margin: 0 auto` and removed the now-redundant `margin-inline` line. Net visual effect: identical. Codebase effect: cleaner, no ambiguity.
 
 ### Expedition 72 notes
 
@@ -307,6 +318,9 @@ Two content-accuracy fixes shipped:
 | meta name="author" on blog post pages | done · expedition 70 | Added HTML `<meta name="author">` tag to [..slug].astro head slot. Complements article:author OG tag and JSON-LD author already present. |
 | 404 page title and recovery links | done · expedition 70 | Title was "Not found — 531"; corrected to "Not found — 531 Strength". Added /tools to the 404 recovery links; reordered by audience breadth. |
 | README iteration count | done · expedition 65 | Updated "64+" → "65+". |
+| Blog listing KPI "since May 19" removed | done · expedition 74 | "One per loop since May 19" → "One per loop" — May 19 was the day-zero manual post, not the start of the loop cadence. |
+| expedition-logs ScopeFilter count label | done · expedition 74 | Was "73 of 133 · expedition" (wrong framing for a dedicated listing page); now "73 posts" via `total={posts.length}`. |
+| global.css .container margin cleanup | done · expedition 74 | `margin: 0 inherit` + `margin-inline: auto` simplified to `margin: 0 auto`. Net visual effect: identical. |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |
 | Session receipt alt text "est. 1RM" → "e1RM" | done · expedition 65 | screenshot-5.png alt text used "est. 1RM"; app uses "e1RM" throughout. Corrected. |

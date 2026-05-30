@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-30, expedition 71)
+# Codebase facts (updated 2026-05-30, expedition 74)
 
 ## Architecture
 
@@ -35,35 +35,28 @@ All e1RM display sites use `round(value, unit)` from `domain/units`, NOT `Math.r
 
 The `round()` function snaps to nearest 5 lb (lbs) or 2.5 kg (kg). Working volume totals and raw DB-stored values remain as floats (snap only at display time).
 
-## CapsLabel coverage (updated expedition 71)
+## CapsLabel + Text primitive coverage (updated expedition 74)
 
-Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
-- `TabBarItem.tsx` — tab bar labels (was: raw RNText with inline fontFamily/letterSpacing/color)
-- `AdjustTmCta.tsx` — "Adjust training max" label + sub-caption
-- `CycleGrid.tsx` — "Cycle № NN" header + "N of M" hint
-- `SessionCompleteMasthead.tsx` — "531 . ledger" wordmark dot and "ledger" text
-- `SessionCompleteTitle.tsx` — session prose paragraph
-- `SessionTopBar.tsx` — back arrow glyph
-- `LiveScreen.tsx` — "LOADING SESSION…" state
-- `ProgressScreen.tsx` — CapsLabel for projection label (done earlier)
-- `Colophon.tsx` — "— end of register —" (done earlier)
-- `StatsTriplet.tsx` — column header labels (expedition 57)
-- `GoalRuleRow.tsx` — "Goal · X" and "tm ≈ N" labels (expedition 57)
-- `GoalPanel.tsx` — toggle labels, days-away caption, estimate, dpw label (expedition 57)
-- `SharePrPill.tsx` — "SHARE RECORD →" and "OPENS YOUR SHARE SHEET" (expedition 57)
-- `TmAdjustmentNote.tsx` — eyebrow "SUGGESTED TM · NEXT CYCLE" and caption "Tap to apply" (expedition 71)
-- `TmApplySheet.tsx` — "CURRENT TM" and "NEW TM" labels and value/arrow text (expedition 71)
+Fully migrated — no more hand-rolled inline mono-caps styles in features or primitives:
+
+**Features layer (expeditions 57–73):**
+- `TabBarItem.tsx`, `AdjustTmCta.tsx`, `CycleGrid.tsx`, `SessionCompleteMasthead.tsx`, `SessionCompleteTitle.tsx`, `SessionTopBar.tsx`, `LiveScreen.tsx`, `ProgressScreen.tsx`, `Colophon.tsx`, `StatsTriplet.tsx`, `GoalRuleRow.tsx`, `GoalPanel.tsx`, `SharePrPill.tsx`, `TmAdjustmentNote.tsx`, `TmApplySheet.tsx` — all migrated.
+
+**Design primitives layer (expedition 74):**
+- `TitleBlock.tsx` — eyebrow → CapsLabel; title → Text with nested amber dot Text
+- `Masthead.tsx` — "531" and "." → Text; "ledger" → CapsLabel
+- `TmCell.tsx` — single value display → Text with `weight`/`color` tokens
+- `ProgressGridCell.tsx` — all 5 RNText spans → Text with `ColorToken` values (no more hex lookups)
 
 Remaining known intentional RNText uses (not candidates):
-- `PrCelebrationHero.tsx` — outer RNText needed as container for inline `<Text>` amber dot child (mixed inline text at same size)
+- `PrCelebrationHero.tsx` — outer RNText needed as container for inline `<Text>` amber dot child (mixed inline text at same size; 76px display font requires this pattern)
 - `PRCertificate.tsx` — outer RNText for "Stronger" + inline amber dot; same pattern
 - `ComparisonRow.tsx` (PRCertificate) — outer RNText with nested inline unit span that clears textDecorationLine
 - `PaperCapsText.tsx` (PRCertificate) — mini-primitive for inverted panel; appropriate direct RNText use
 - `TmPreviewRow.tsx` — inline glyph spans (nested text in a Text component; letterSpacing 1.26 is intentionally tighter than xs preset)
-- `GoalPanel.tsx` unit glyph "lb"/"kg" — 12px/ls2.64 display; intentionally larger than any CapsLabel preset for visual pairing with 56px numeric
-- `GoalPanel.tsx` 56px value display — not caps text at all; numeric display with tabular-nums
+- `_layout.tsx` — error boundary fallback (appropriate: minimal recovery UI outside the theme)
 
-Note (expedition 73): `PrCelebrationComparison.tsx`, `PrCelebrationNumbers.tsx`, and `PrCelebrationHero.tsx` eyebrow were migrated to the Text primitive. `paperTint45/55/65` ARE in the `ColorToken` union — the prior note saying they were not was wrong.
+Note: `paperTint45/55/65` ARE in the `ColorToken` union — confirmed expedition 73. The Text primitive accepts all `ColorToken` values including paper tints.
 
 ## Key primitives (don't re-invent these)
 

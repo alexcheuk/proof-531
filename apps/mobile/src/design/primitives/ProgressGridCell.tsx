@@ -1,5 +1,7 @@
-import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import type { ColorToken } from '../tokens';
+import { Text } from './Text';
 
 export type ProgressGridCellVariant = 'past' | 'outlined' | 'now' | 'future';
 
@@ -36,7 +38,7 @@ export function ProgressGridCell({
   accessibilityLabel,
   testID,
 }: ProgressGridCellProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const isPast = variant === 'past';
   const isOutlined = variant === 'outlined';
@@ -55,82 +57,75 @@ export function ProgressGridCell({
     backgroundColor: filled ? colors.ink0 : 'transparent',
   };
 
-  const weightColor = filled ? colors.bg0 : isFuture ? colors.ink3 : colors.ink0;
+  // Resolved ColorToken keys for weight and secondary text.
+  // Filled cells (past/outlined) use bg0 (paper white) against the ink-0 fill.
+  // Future cells use ink3 (muted). Now/present cells use ink0 (primary).
+  const weightColorToken: ColorToken = filled ? 'bg0' : isFuture ? 'ink3' : 'ink0';
   // Brighten the rep count on filled cells from paperMuted → bg0 (full
   // paper white) so the "× N" reads clearly against ink-0 — and bump to
   // fontSize 10 so it pulls its weight next to the bolded weight number.
-  const secondaryColor = filled ? colors.bg0 : isFuture ? colors.ink3 : colors.ink2;
+  const secondaryColorToken: ColorToken = filled ? 'bg0' : isFuture ? 'ink3' : 'ink2';
 
   const renderPastOrOutlined = () => (
     <>
-      <RNText
-        style={{
-          fontFamily: `${type.sans}-Bold`,
-          fontSize: 17,
-          color: weightColor,
-          letterSpacing: -0.51,
-          lineHeight: 17,
-          fontVariant: ['tabular-nums', 'lining-nums'],
-        }}
+      <Text
+        variant="sans"
+        weight="bold"
+        size={17}
+        color={weightColorToken}
+        numeric
+        style={{ letterSpacing: -0.51, lineHeight: 17 }}
       >
         {weight > 0 ? String(weight) : '·'}
-      </RNText>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-SemiBold`,
-          fontSize: 10,
-          color: secondaryColor,
-          letterSpacing: 0.36,
-          marginTop: 3,
-          fontVariant: ['tabular-nums', 'lining-nums'],
-        }}
+      </Text>
+      <Text
+        variant="mono"
+        weight="semibold"
+        size={10}
+        color={secondaryColorToken}
+        numeric
+        style={{ letterSpacing: 0.36, marginTop: 3 }}
       >
         {marker ? marker : typeof reps === 'number' && reps > 0 ? `× ${reps}` : ''}
-      </RNText>
+      </Text>
     </>
   );
 
   const renderNow = () => (
     <>
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Bold`,
-          fontSize: 8,
-          color: colors.ink2,
-          letterSpacing: 1.92,
-          textTransform: 'uppercase',
-        }}
+      <Text
+        variant="mono"
+        weight="bold"
+        size={8}
+        color="ink2"
+        style={{ letterSpacing: 1.92, textTransform: 'uppercase' }}
       >
         next
-      </RNText>
-      <RNText
-        style={{
-          fontFamily: `${type.sans}-SemiBold`,
-          fontSize: 15,
-          color: colors.ink0,
-          letterSpacing: -0.375,
-          lineHeight: 15,
-          marginTop: 3,
-          fontVariant: ['tabular-nums', 'lining-nums'],
-        }}
+      </Text>
+      <Text
+        variant="sans"
+        weight="semibold"
+        size={15}
+        color="ink0"
+        numeric
+        style={{ letterSpacing: -0.375, lineHeight: 15, marginTop: 3 }}
       >
         {weight > 0 ? String(weight) : '·'}
-      </RNText>
+      </Text>
     </>
   );
 
   const renderFuture = () => (
-    <RNText
-      style={{
-        fontFamily: `${type.mono}-Medium`,
-        fontSize: 13,
-        color: colors.ink3,
-        letterSpacing: 0.26,
-        fontVariant: ['tabular-nums', 'lining-nums'],
-      }}
+    <Text
+      variant="mono"
+      weight="medium"
+      size={13}
+      color="ink3"
+      numeric
+      style={{ letterSpacing: 0.26 }}
     >
       {weight > 0 ? String(weight) : '·'}
-    </RNText>
+    </Text>
   );
 
   const body = isFuture ? renderFuture() : isNow ? renderNow() : renderPastOrOutlined();

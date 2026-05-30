@@ -135,9 +135,8 @@ img {
 .container {
   width: 100%;
   max-width: var(--content-max);
-  margin: 0 inherit;
+  margin: 0 auto;
   padding-inline: var(--gutter);
-  margin-inline: auto;
 }
 
 .container--wide {

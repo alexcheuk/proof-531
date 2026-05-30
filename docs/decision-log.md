@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — RNText → Text/CapsLabel sweep into design primitives layer
+
+**Tags:** `convention`, `refactor`
+**Files:** `apps/mobile/src/design/primitives/TitleBlock.tsx`, `apps/mobile/src/design/primitives/Masthead.tsx`, `apps/mobile/src/design/primitives/TmCell.tsx`, `apps/mobile/src/design/primitives/ProgressGridCell.tsx`
+
+Extended the RNText → Text/CapsLabel migration from the features layer (expedition 71–72) into the design primitives themselves. `TitleBlock` eyebrow migrated to `CapsLabel`; title and amber dot to nested `Text` primitives. `Masthead` wordmark migrated: "531" and "." to `Text`, "ledger" to `CapsLabel`. `TmCell` single display value migrated from raw `fontFamily` assembly to `Text` with `weight` and `color` tokens. `ProgressGridCell` five `RNText` spans migrated to `Text` with `ColorToken` values replacing hex lookups.
+
+**Why:** The font-name correctness sweep started in expedition 72 (the `LiftTab` "name not registered" bug) naturally extends to the primitives themselves — they were still assembling font family strings manually. Using primitives inside primitives is the right layering, and eliminates the remaining manual `${type.xxx}-SufFix` patterns in the design layer.
+
+**Trade-off / what we didn't do:** Did not add a `letterSpacing` or `textTransform` prop to `Text` — both are passed cleanly via the `style` escape hatch, which the API already documents for spacing/margins.
+
 ### 2026-05-30 — PrCelebration RNText sweep: paperTint tokens enable migration
 
 **Tags:** `convention`, `refactor`

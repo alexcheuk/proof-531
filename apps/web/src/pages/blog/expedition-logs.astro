@@ -65,7 +65,7 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
 
   <section class="log-section">
     <div class="wrap">
-      <ScopeFilter active="expedition" counts={counts} total={all.length} shown={posts.length} />
+      <ScopeFilter active="expedition" counts={counts} total={posts.length} />
 
       {posts.length === 0 ? (
         <p class="empty">

@@ -1,5 +1,6 @@
-import { Text as RNText, View, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { Text } from './Text';
 
 /**
  * Right-column TM cell for the Progress grid. Three variants matching the
@@ -22,7 +23,7 @@ export type TmCellProps = {
 };
 
 export function TmCell({ tm, variant, accessibilityLabel, testID }: TmCellProps) {
-  const { colors, type } = useTheme();
+  const { colors } = useTheme();
 
   const isCurrent = variant === 'current';
 
@@ -36,10 +37,6 @@ export function TmCell({ tm, variant, accessibilityLabel, testID }: TmCellProps)
     backgroundColor: isCurrent ? colors.bg2 : 'transparent',
   };
 
-  const valueColor =
-    variant === 'current' ? colors.ink0 : variant === 'past' ? colors.ink1 : colors.ink3;
-  const valueWeight = isCurrent ? `${type.sans}-Bold` : `${type.sans}-SemiBold`;
-
   return (
     <View
       testID={testID}
@@ -47,18 +44,16 @@ export function TmCell({ tm, variant, accessibilityLabel, testID }: TmCellProps)
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="text"
     >
-      <RNText
-        style={{
-          fontFamily: valueWeight,
-          fontSize: 18,
-          color: valueColor,
-          letterSpacing: -0.54,
-          lineHeight: 18,
-          fontVariant: ['tabular-nums', 'lining-nums'],
-        }}
+      <Text
+        variant="sans"
+        weight={isCurrent ? 'bold' : 'semibold'}
+        size={18}
+        color={variant === 'current' ? 'ink0' : variant === 'past' ? 'ink1' : 'ink3'}
+        numeric
+        style={{ letterSpacing: -0.54, lineHeight: 18 }}
       >
         {tm > 0 ? String(tm) : '·'}
-      </RNText>
+      </Text>
     </View>
   );
 }

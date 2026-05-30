@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
-import { Text as RNText, type StyleProp, View, type ViewStyle } from 'react-native';
+import { type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { CapsLabel } from './CapsLabel';
+import { Text } from './Text';
 
 type MastheadProps = {
   rightSlot?: ReactNode;
@@ -38,7 +40,7 @@ export function Masthead({
   testID,
   style,
 }: MastheadProps) {
-  const { colors, layout, type } = useTheme();
+  const { colors, layout } = useTheme();
 
   const containerStyle: ViewStyle = {
     flexDirection: 'row',
@@ -74,40 +76,21 @@ export function Masthead({
   return (
     <View testID={testID} style={[containerStyle, style]}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 14,
-            lineHeight: 14,
-            letterSpacing: 1.96,
-            textTransform: 'uppercase',
-            color: colors.ink0,
-          }}
+        <Text
+          variant="mono"
+          weight="bold"
+          size={14}
+          color="ink0"
+          style={{ lineHeight: 14, letterSpacing: 1.96, textTransform: 'uppercase' }}
         >
           531
-        </RNText>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 14,
-            letterSpacing: 0,
-            color: colors.ink3,
-          }}
-        >
+        </Text>
+        <Text variant="mono" weight="bold" size={14} color="ink3" style={{ letterSpacing: 0 }}>
           .
-        </RNText>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Medium`,
-            fontSize: 10,
-            letterSpacing: 2.2,
-            textTransform: 'uppercase',
-            color: colors.ink3,
-            marginLeft: 10,
-          }}
-        >
+        </Text>
+        <CapsLabel color="ink3" style={{ marginLeft: 10 }}>
           ledger
-        </RNText>
+        </CapsLabel>
       </View>
       {rightSlot ? (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>{rightSlot}</View>
