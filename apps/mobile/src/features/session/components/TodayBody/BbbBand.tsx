@@ -14,22 +14,10 @@ export type BbbBandProps = {
   storageUnit: Unit;
   renderUnit: Unit;
   unitGlyph: 'lb' | 'kg';
-  /**
-   * BBB-specific rest hint shown next to the eyebrow ("REST 1:30 BETWEEN SETS").
-   * Sourced from `settings.bbbRestTargetSeconds`, NOT `restTargetSeconds` —
-   * BBB rest is shorter than the working-set rest by design (5×10 at 50% TM
-   * is light enough that 3 minutes between is wasted time).
-   */
+  // Uses settings.bbbRestTargetSeconds (not restTargetSeconds) — BBB rest is shorter by design.
   bbbRestTargetSeconds?: number;
 };
 
-/**
- * "BORING BUT BIG" 5×10 @ 50% TM summary band — read-only, numeric only.
- *
- * When `bbbRestTargetSeconds` is supplied, the eyebrow row also shows a
- * small `REST 1:30 BETWEEN SETS` chip on the right so the user sees their
- * configured pace before starting (and remembers what Settings is set to).
- */
 export function BbbBand({
   tm,
   storageUnit,

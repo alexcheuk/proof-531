@@ -1,17 +1,8 @@
 import { extendDeadline } from '@/domain/restDeadline';
 import { Platform } from 'react-native';
 
-/**
- * Android-only wrapper around react-native-notify-kit for the live rest
- * countdown. The notification is the OS-ticked chronometer (counts down with
- * zero JS running); a same-id timestamp trigger replaces it with a "Rest
- * complete" alert at the deadline. Every posted notification carries the
- * deadline in its `data` payload, which survives process death and is the
- * cross-process carrier for the +30s action and the foreground re-sync.
- *
- * notify-kit is lazy-required and Android-guarded so the iOS bundle never
- * loads the native module and every function is a safe no-op off Android.
- */
+// notify-kit lazy-required and Android-guarded so the iOS bundle never loads the native module.
+// Notification data payload carries the deadline so it survives process death (cross-process +30s sync).
 
 const REST_NOTIFICATION_ID = 'rest';
 // Versioned id: Android freezes a channel's importance at creation time, so an
@@ -78,7 +69,6 @@ export async function requestRestPermission(): Promise<void> {
   }
 }
 
-/** Post (or replace) the ongoing chronometer notification counting down to `endsAtMs`. */
 export async function postRestChronometer(opts: {
   endsAtMs: number;
   sessionId: number;
@@ -109,11 +99,7 @@ export async function postRestChronometer(opts: {
   }
 }
 
-/**
- * Schedule the "Rest complete" heads-up alert at `endsAtMs`. Posted with the
- * same id as the chronometer, so when the OS fires it the ticking notification
- * is replaced (the swap), with no JS needed at T-0. No-op if already past.
- */
+// Same id as the chronometer — the OS replaces the ticking notification at T-0 with no JS needed.
 export async function scheduleRestComplete(opts: {
   endsAtMs: number;
   sessionId: number;
@@ -162,11 +148,6 @@ export async function cancelRest(): Promise<void> {
   }
 }
 
-/**
- * Read the deadline back from the currently-displayed rest notification (the
- * authoritative cross-process value after a backgrounded +30s). Returns null
- * if there is no rest notification or its data is unreadable.
- */
 export async function readDisplayedDeadline(): Promise<number | null> {
   const m = load();
   if (!m) return null;
@@ -182,12 +163,7 @@ export async function readDisplayedDeadline(): Promise<number | null> {
   }
 }
 
-/**
- * Fire the "Rest complete" notification immediately — used when the rest timer
- * expires while the app is in the foreground (no trigger was scheduled in that
- * case, so the chronometer-→-done swap never happens at the OS level).
- * No-op on non-Android or when the module is unavailable.
- */
+// Used when rest expires in the foreground — no trigger was scheduled, so the OS swap never fires.
 export async function fireRestDoneAlarmForeground(): Promise<void> {
   const m = load();
   if (!m) return;
@@ -208,11 +184,6 @@ export async function fireRestDoneAlarmForeground(): Promise<void> {
   }
 }
 
-/**
- * Handle a "+30s" action press (foreground or background, even after process
- * death): extend the deadline carried in the notification data and re-post the
- * chronometer + reschedule the trigger. Returns the new deadline, or null.
- */
 export async function handleAddRestAction(
   data: Record<string, string | number | object> | undefined,
 ): Promise<number | null> {

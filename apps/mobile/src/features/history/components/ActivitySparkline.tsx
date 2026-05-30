@@ -5,7 +5,6 @@ import { View, type ViewStyle } from 'react-native';
 import { currentStreak } from '../activity';
 
 export type ActivitySparklineProps = {
-  /** Oldest-first window of training-day bits, length 14 (default). */
   activity: ReadonlyArray<boolean>;
 };
 

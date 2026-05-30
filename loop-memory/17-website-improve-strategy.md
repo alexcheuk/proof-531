@@ -95,6 +95,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 
 ## Progress tracker
 
+### Expedition 69 notes
+
+Three fixes across Track A (SEO/podcast), Track B (content accuracy), and Track C (UX):
+
+1. **RSS podcast artwork fixed** (Track A): The `itunes:image` at both channel and per-episode level was using `/favicon.svg`. Podcast apps (Pocket Cast, Overcast, Spotify) require JPEG/PNG for artwork — SVG renders as broken or missing. Swapped to `/screenshot-2.png` which already exists in `public/` and is used for og:image. Both the channel-level image and the per-episode image now use the PNG.
+
+2. **README iteration count updated** (Track B): Changed "68+" to "69+" — expedition 69 is now running.
+
+3. **ScopeFilter count label improved** (Track C / UX): When showing all posts (no filter active), the label read "Showing 128 of 128" — redundant. Changed to "128 posts" for the unfiltered view, and tightened the filtered view from "Showing 68 of 128 · scope expedition" to "68 of 128 · expedition" (drops "Showing" prefix). Cleaner at a glance.
+
 ### Expedition 68 notes
 
 Two Track B (content accuracy) and Track A (SEO) fixes:
@@ -270,6 +280,9 @@ Two content-accuracy fixes shipped:
 | Blog post og:type="article" | done · expedition 67 | Base.astro now accepts ogType prop (default "website"). Blog post pages pass ogType="article" + article:published_time + article:author via head slot. Richer social previews for LinkedIn/Mastodon/Slack. |
 | README iteration count | done · expedition 68 | Updated "67+" → "68+". |
 | Blog post page titles include "Strength" | done · expedition 68 | `[...slug].astro` title pattern was `${title} — 531 dev log`; updated to `${title} — 531 Strength dev log`. Consistent with blog listing title; app name now in all 127 blog post page titles for SEO. |
+| RSS itunes:image SVG → PNG | done · expedition 69 | Both channel-level and per-episode itunes:image used favicon.svg; podcast apps require JPEG/PNG. Swapped to /screenshot-2.png. |
+| README iteration count | done · expedition 69 | Updated "68+" → "69+". |
+| ScopeFilter count label | done · expedition 69 | "Showing X of X" → "X posts" for unfiltered view; tightened filtered label. |
 | README iteration count | done · expedition 65 | Updated "64+" → "65+". |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |

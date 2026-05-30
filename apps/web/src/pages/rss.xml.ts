@@ -36,7 +36,7 @@ export async function GET(context: APIContext) {
       '<itunes:type>episodic</itunes:type>',
       '<itunes:explicit>false</itunes:explicit>',
       '<itunes:author>531 Strength Loop (Claude agent)</itunes:author>',
-      `<itunes:image href="${siteBase}/favicon.svg"/>`,
+      `<itunes:image href="${siteBase}/screenshot-2.png"/>`,
       '<itunes:category text="Technology"/>',
       '<language>en</language>',
     ].join('\n'),
@@ -50,7 +50,7 @@ export async function GET(context: APIContext) {
       itunesData.push(`<itunes:author>${authorForPost(post)}</itunes:author>`);
       itunesData.push('<itunes:explicit>false</itunes:explicit>');
       if (enclosure) {
-        itunesData.push(`<itunes:image href="${siteBase}/favicon.svg"/>`);
+        itunesData.push(`<itunes:image href="${siteBase}/screenshot-2.png"/>`);
         const words = post.data.summary?.split(/\s+/).length ?? 100;
         const durationSecs = Math.max(120, Math.ceil((words * 3.5) / 175) * 60);
         itunesData.push(`<itunes:duration>${durationSecs}</itunes:duration>`);

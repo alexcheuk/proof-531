@@ -8,15 +8,10 @@ import { UndoPill } from './UndoPill';
 export type RightAction = { kind: 'none' } | { kind: 'complete'; onPress: () => void };
 
 export type SessionTopBarProps = {
-  /** Pressed when the user taps the back chip. */
   onBack: () => void;
-  /** ARIA label for the back chip — visible glyph is always `←`. */
   backLabel?: string;
-  /** Right-side action — defaults to `{ kind: 'none' }`. */
   rightAction?: RightAction;
-  /** "↶ Undo" pill during rest — omit to hide. */
   onUndo?: () => void;
-  /** "↺ Restart" pill for the wipe-and-restart flow — omit to hide. */
   onReset?: () => void;
   testID?: string;
 };

@@ -1,13 +1,4 @@
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
-/**
- * Today screen body — masthead + title block + top-set hero + working-sets band
- * + BBB band + colophon. Composition shell over four sub-components.
- *
- * Pure presentation; the parent owns the data fetch + Start handler.
- *
- * Plate visualization lives only in the top-set hero (matching the PWA).
- * Working sets and BBB show numerics only.
- */
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';

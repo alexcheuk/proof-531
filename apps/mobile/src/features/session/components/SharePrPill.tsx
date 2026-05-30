@@ -6,9 +6,7 @@ import { useCallback } from 'react';
 import { Pressable, Share, View, type ViewStyle } from 'react-native';
 
 export type SharePrPillProps = {
-  /** Share text shown when image capture is unavailable (fallback). */
   message: string;
-  /** Capture the certificate view as a file URI; falls back to text share if absent or null. */
   onCaptureCertificate?: () => Promise<string | null>;
   testID?: string;
 };

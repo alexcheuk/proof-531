@@ -5,24 +5,13 @@ import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
 
 export type ProjectionChipProps = {
-  /** Rounded predicted 1RM in the display unit. */
   predictedE1RM: number;
-  /** Display-unit token, used to render the `lb`/`kg` suffix. */
   unit: Unit;
-  /**
-   * Delta against the user's prior best (rounded ints). `null` when the
-   * user has no prior PR — the chip then shows just the predicted 1RM.
-   */
+  // null when user has no prior PR — chip shows just the predicted 1RM.
   deltaFromBest: number | null;
-  /** Current rep count — controls whether the delta is shown at all. */
   reps: number;
-  /** True when the predicted 1RM beats the existing PR — shows the PR badge. */
   isPotentialPR: boolean;
-  /**
-   * True when the predicted 1RM ties (but does not beat) the existing PR.
-   * Mutually exclusive with `isPotentialPR` — when both could in principle
-   * be true the strict-PR badge wins, so the chip never double-stamps.
-   */
+  // Mutually exclusive with isPotentialPR — strict-PR badge wins when both could apply.
   isTiePR?: boolean;
   testID?: string;
 };

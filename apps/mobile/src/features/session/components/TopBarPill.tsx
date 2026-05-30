@@ -6,13 +6,11 @@ export type TopBarPillVariant = 'outlined' | 'filled';
 
 export type TopBarPillProps = {
   label: string;
-  /** Optional leading glyph rendered tight against the label. */
   glyph?: string | undefined;
   variant?: TopBarPillVariant;
   onPress: () => void;
   testID: string;
   accessibilityLabel: string;
-  /** Optional screen-reader hint describing what tapping the pill does. */
   accessibilityHint?: string | undefined;
 };
 

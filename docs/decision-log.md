@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — Completed comment sweep; RSS podcast artwork fixed; bbb test comment corrected
+
+**Tags:** `convention`, `bug`, `web`
+**Files:** `apps/mobile/src/lib/`, `apps/mobile/src/features/session/`, `apps/web/src/pages/rss.xml.ts`, `apps/mobile/src/domain/__tests__/bbb.test.ts`
+
+Expedition 69 completed the final pass of the comment sweep started in expedition 63: multi-paragraph docstrings removed from lib/ (restChronometer, registerRestBackgroundHandler, parseRouteId, haptics), session hooks (usePrSuccessHaptic, useSessionCompleteHaptic, useCancelConfirm, useElapsedSeconds, sessionRuntime), and component prop-level JSDoc (ActivitySparkline, RestTimer, SessionTopBar, ProjectionChip, SharePrPill, TopBarPill, LiveCtaButton, BbbBand, TodayBody). Also fixed the RSS podcast artwork (both channel-level and per-episode `itunes:image` used favicon.svg — podcast apps require JPEG/PNG; swapped to /screenshot-2.png). Corrected a wrong comment in bbb.test.ts that said "snap to 67.5 kg" when the actual result of `round(68.75, 'kg')` is 70 kg (Math.round(27.5) = 28, × 2.5 = 70).
+
+**Why:** The comment sweep convention has been on the books since expedition 63 but a tail of files in lib/ and prop-level interfaces wasn't reached until now. The RSS artwork issue was discovered during the web audit — SVG podcast artwork silently fails or renders broken in Pocket Cast and Overcast. The bbb test comment was a documentation lie that could mislead future readers about rounding behavior.
+
 ### 2026-05-29 — PRCertificate: guard ComparisonRow on prevE1RM > 0 && delta > 0
 
 **Tags:** `bug`, `mobile`

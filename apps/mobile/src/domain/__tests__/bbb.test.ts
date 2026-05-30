@@ -15,7 +15,8 @@ describe('domain/bbb', () => {
   });
 
   it('snaps kg weights to the nearest 2.5 kg increment', () => {
-    // 137.5 * 0.5 = 68.75 → snap to 67.5 kg under nearest-2.5 rounding.
+    // 137.5 * 0.5 = 68.75 → round(68.75/2.5=27.5) = 28 → 28 × 2.5 = 70 kg.
+    expect(bbbWeightFromTm(137.5, 'kg')).toBe(70);
     expect(bbbWeightFromTm(137.5, 'kg') % 2.5).toBe(0);
   });
 });

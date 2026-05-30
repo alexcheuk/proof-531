@@ -11,8 +11,8 @@ interface Props {
 const { active, counts, total, shown = total } = Astro.props;
 const countLabel =
   shown === total
-    ? `Showing ${total} of ${total}`
-    : `Showing ${shown} of ${total} · scope ${active}`;
+    ? `${total} post${total === 1 ? '' : 's'}`
+    : `${shown} of ${total} · ${active}`;
 ---
 
 <div class="log-controls">

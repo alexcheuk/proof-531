@@ -1,20 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/**
- * Two-tap "armed" gate for destructive actions.
- *
- * Returns the `armed` flag plus three handlers:
- *   - `arm()`              — first tap; sets armed=true and fires the optional
- *                            warning haptic.
- *   - `disarm()`           — explicit clear (e.g. sheet dismissed).
- *   - `attemptDestroy(fn)` — call when the user taps confirm. Runs `fn` only
- *                            when armed; arms otherwise. Returns the result
- *                            of `fn` when it ran, undefined otherwise.
- *
- * Auto-disarms after `timeoutMs` so a stray arm tap doesn't leave the
- * destructive button hot for the rest of the session. Defaults to 8s,
- * matching the prior in-line live-screen behavior.
- */
 export type UseCancelConfirmOptions = {
   /** Milliseconds to keep `armed` true before silently reverting. */
   timeoutMs?: number;

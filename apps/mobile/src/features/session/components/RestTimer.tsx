@@ -18,13 +18,9 @@ import Animated, {
 import { RestTimerControls } from './RestTimerControls';
 
 export type RestTimerProps = {
-  /** Seconds remaining in the countdown driver. */
   remaining: number;
-  /** Adds 30s to the running countdown. Hides the button when absent. */
   onAddRest?: () => void;
-  /** Subtracts 30s from the running countdown. Hides the button when absent. */
   onSubRest?: () => void;
-  /** Skip remaining rest — advances to the next set. Hides the button when absent. */
   onSkip?: () => void;
   testID?: string;
 };

@@ -1,11 +1,4 @@
-/**
- * Short, human relative-time formatter: `today` / `yesterday` / `N days ago` /
- * `N weeks ago` / `N months ago` / `N years ago`. Future timestamps → `today`.
- * Pure — pass `now` for testability.
- *
- * date-fns was attempted in loop-003 but slowed SettingsScreen enough to break
- * 7 integration tests under jest-expo. Decision-log entry 2026-05-25 has details.
- */
+// date-fns was tried in loop-003 but caused SettingsScreen to fail 7 jest-expo tests (module load path issue).
 export function formatRelativeTime(ts: number, now: number = Date.now()): string {
   const diffMs = now - ts;
   if (diffMs < 0) return 'today';

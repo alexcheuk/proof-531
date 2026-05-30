@@ -1,19 +1,7 @@
 import type { LastLoggedSet } from './hooks/useLiveScreenState';
 
-/**
- * In-memory live-session runtime snapshot.
- *
- * Keeps the rest-timer end-time and most-recently-logged set alive across
- * remounts of LiveScreen — e.g. when the user tabs to History during rest
- * and returns. The screen's local state is reseeded from this snapshot on
- * the next mount; the snapshot is cleared when the rest phase ends or the
- * session completes/cancels.
- *
- * Module-level state (not React) so a screen unmount does not clear it.
- * Does not survive an app kill — for that we'd persist to AsyncStorage or
- * SQLite, deferred until we have evidence anyone backgrounds the app
- * during rest.
- */
+// Module-level (not React) so LiveScreen remounts during rest don't lose the countdown.
+// Does not survive an app kill — persisting to SQLite is deferred until there's evidence of demand.
 export type LiveRestSnapshot = {
   sessionId: number;
   /** Absolute wall-clock ms when the rest timer should reach 0. */

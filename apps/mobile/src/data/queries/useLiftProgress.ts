@@ -1,15 +1,5 @@
-/**
- * `useLiftProgress(lift)` — read a single lift's (cycle, week) state.
- * Seeds lazily from legacy global settings on first call, then becomes
- * the source of truth.
- *
- * Companion: `useAllLiftProgress(enabledLifts)` for surfaces that need
- * every enabled lift's row at once (e.g. cross-lift summaries).
- *
- * Cache invalidation: `completeSession` advances the lift's row; the
- * mutation that wraps it must invalidate `LIFT_PROGRESS_KEY(lift)` (and
- * the multi-lift list) so headers pick up the new cycle/week immediately.
- */
+// Cache invalidation: completeSession must invalidate LIFT_PROGRESS_KEY(lift) and ALL_LIFT_PROGRESS_KEY so
+// headers pick up the new cycle/week immediately.
 import { useQuery } from '@tanstack/react-query';
 import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';

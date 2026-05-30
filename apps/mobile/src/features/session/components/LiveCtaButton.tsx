@@ -5,11 +5,9 @@ export type LiveCtaButtonProps = {
   phase: UseLiveScreenStateResult['phase'];
   setIndex: UseLiveScreenStateResult['setIndex'];
   isAmrap: boolean;
-  /** Week-4 TM Test flag — CTA pivots to "Log TM test" instead of AMRAP. */
   isTmTest: boolean;
   onAdvanceFromRest: () => void;
   onOpenAmrapSheet: () => void;
-  /** Opens the TM Test rep-entry sheet. */
   onOpenTmTestSheet: () => void;
   onLogWorkingSet: () => void;
 };
