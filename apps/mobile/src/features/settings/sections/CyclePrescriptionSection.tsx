@@ -18,7 +18,7 @@ const CYCLE_ROWS: readonly CycleRow[] = [
 
 export function CyclePrescriptionSection() {
   return (
-    <LedgerSection title="Cycle prescription" hint="5/3/1 · week 4 verifies the TM · read only">
+    <LedgerSection title="Cycle prescription" hint="5/3/1 · day 4 verifies the TM · read only">
       {CYCLE_ROWS.map((w, i) => (
         <LedgerRow key={w.label} first={i === 0}>
           <LedgerRowLabel primary={w.label} secondary={w.reps} />

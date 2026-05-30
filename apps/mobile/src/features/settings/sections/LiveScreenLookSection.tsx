@@ -18,17 +18,13 @@ export function LiveScreenLookSection({ inverted }: LiveScreenLookSectionProps) 
   const updateSettings = useUpdateSettings();
   const value: LookValue = inverted ? 'inverted' : 'paper';
 
-  async function commit(next: LookValue) {
-    await updateSettings({ liveScreenInverted: next === 'inverted' });
-  }
-
   return (
     <LedgerSection title="Live screen look" hint="set + rest surface during the lift">
       <SegRail<LookValue>
         testID="settings-live-screen-look"
         value={value}
         options={LOOK_OPTIONS}
-        onChange={(next) => void commit(next)}
+        onChange={(next) => void updateSettings({ liveScreenInverted: next === 'inverted' })}
       />
     </LedgerSection>
   );

@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-30 (Expedition 74)
+**Last updated**: 2026-05-30 (Expedition 76)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -95,6 +95,16 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs ScopeFilter count label fixed (expedition 74) — was showing "73 of 133 · expedition" (filtered view wording on a dedicated listing page); corrected to show "73 posts" by passing `total={posts.length}` instead of `total={all.length}`.
 
 ## Progress tracker
+
+### Expedition 76 notes
+
+Three fixes across Track B (content accuracy), Track A (SEO), and Track D (technical health):
+
+1. **Hero ledger cycle entry corrected** (Track B): Was `4 weeks · 16 sessions` — inaccurate because a 5/3/1 cycle is not tied to 4 calendar weeks (each lift runs its own cycle at whatever pace you train). Changed to `4 sessions / lift · your schedule`. The goal calculator section already had the right copy ("A cycle is 4 sessions of this lift — not 4 calendar weeks") — the hero ledger now agrees.
+
+2. **SoftwareApplication featureList expanded** (Track A): Added "5/3/1 + BBB with 7th Week Protocol TM verification" (was plain "5/3/1 program with BBB accessory work"), "Goal projection — set a target TM or 1RM, see how many cycles away", and "PR tracking, cycle progress grid, and PR certificate sharing". The list was missing two key differentiators (goal projection and the TM test protocol). Total features: 7 (was 6).
+
+3. **README accuracy fix** (Track B): The What It Does section said "Week 1 (5/5/5+), Week 2 (3/3/3+), Week 3 (5/3/1+), Week 4 deload, 7th Week Protocol TM test" — this implies Week 4 is a deload AND a TM test, which is wrong. Week 4 replaced the deload with the TM test. Updated to "Day 1 (5/5/5+), Day 2 (3/3/3+), Day 3 (5/3/1+), Day 4 TM verification (7th Week Protocol — no deload week)" — accurate and consistent with the app's Day N terminology.
 
 ### Expedition 74 notes
 

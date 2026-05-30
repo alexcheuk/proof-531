@@ -27,14 +27,6 @@ export function RestTargetSection({
   const currentWorking = String(restTargetSeconds) as RestPreset;
   const currentBbb = String(bbbRestTargetSeconds) as RestPreset;
 
-  async function commitRestTarget(next: RestPreset) {
-    await updateSettings({ restTargetSeconds: Number(next) });
-  }
-
-  async function commitBbbRestTarget(next: RestPreset) {
-    await updateSettings({ bbbRestTargetSeconds: Number(next) });
-  }
-
   return (
     <LedgerSection title="Rest target" hint="countdown between sets">
       <LabeledSegRail
@@ -45,7 +37,7 @@ export function RestTargetSection({
           testID="settings-rest-target"
           value={currentWorking}
           options={REST_PRESETS}
-          onChange={(next) => void commitRestTarget(next)}
+          onChange={(next) => void updateSettings({ restTargetSeconds: Number(next) })}
         />
       </LabeledSegRail>
       <LabeledSegRail
@@ -56,7 +48,7 @@ export function RestTargetSection({
           testID="settings-bbb-rest-target"
           value={currentBbb}
           options={REST_PRESETS}
-          onChange={(next) => void commitBbbRestTarget(next)}
+          onChange={(next) => void updateSettings({ bbbRestTargetSeconds: Number(next) })}
         />
       </LabeledSegRail>
     </LedgerSection>

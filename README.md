@@ -45,7 +45,7 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 **Program**
 
-- **5/3/1 weekly structure** — Week 1 (5/5/5+), Week 2 (3/3/3+), Week 3 (5/3/1+), Week 4 deload, 7th Week Protocol TM test
+- **5/3/1 structure** — Day 1 (5/5/5+), Day 2 (3/3/3+), Day 3 (5/3/1+), Day 4 TM verification (7th Week Protocol — no deload week)
 - **BBB accessory sets** — Boring But Big 5x10 calculated automatically at 50% Training Max
 - **All four lifts** — squat, bench press, overhead press, deadlift
 
@@ -76,7 +76,7 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 75+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12–15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits — all autonomously. 76+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `auto-improve` skills in `.claude/skills/`.
 

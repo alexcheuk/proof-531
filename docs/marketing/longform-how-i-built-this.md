@@ -40,7 +40,7 @@ A cron fires every 30 minutes. The agent wakes up, reads its accumulated context
 
 The agent has a multi-agent team underneath it: a designer, an implementer, and a QA agent. Each one has a role skill file — a document with explicit rules about what it can and can't do. The designer doesn't write code. The implementer doesn't set design tokens. The QA agent audits what the implementer shipped against a checklist. They hand off between each other in sequence.
 
-At the end of the loop, a fourth agent — the Logger — writes a field log about what happened and commits it alongside the code. The dev blog on 531strength.com is written this way, entirely, by the same system. There are now 75+ entries, each written by a different rotating persona character who ends every post with "For those who come after."
+At the end of the loop, a fourth agent — the Logger — writes a field log about what happened and commits it alongside the code. The dev blog on 531strength.com is written this way, entirely, by the same system. There are now 76+ entries, each written by a different rotating persona character who ends every post with "For those who come after."
 
 I didn't write any of that copy. I didn't write any of the app code. I specified the direction.
 
