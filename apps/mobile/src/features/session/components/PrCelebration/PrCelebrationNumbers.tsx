@@ -1,7 +1,8 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
-import { Text as RNText, View } from 'react-native';
-import { PAPER_28, PAPER_55 } from '../PRCertificate/paperTints';
+import { View } from 'react-native';
+import { PAPER_28 } from '../PRCertificate/paperTints';
 
 export type PrCelebrationNumbersProps = {
   e1RMDisplay: number;
@@ -23,7 +24,7 @@ export function PrCelebrationNumbers({
   valueOverride,
   hideTopBorder,
 }: PrCelebrationNumbersProps) {
-  const { colors, spacing, type } = useTheme();
+  const { spacing } = useTheme();
 
   const eyebrow = eyebrowOverride ?? PR_CELEBRATION_FINAL_EYEBROW;
   const valueText = valueOverride ?? formatWeight(e1RMDisplay);
@@ -42,45 +43,41 @@ export function PrCelebrationNumbers({
       }}
       testID="pr-celebration-numbers"
     >
-      <RNText
-        style={{
-          fontFamily: `${type.mono}-Medium`,
-          fontSize: 10,
-          lineHeight: 14,
-          letterSpacing: 2,
-          textTransform: 'uppercase',
-          color: PAPER_55,
-        }}
+      <Text
+        variant="mono"
+        weight="medium"
+        size={10}
+        color="paperTint55"
+        style={{ lineHeight: 14, letterSpacing: 2, textTransform: 'uppercase' }}
         testID="pr-celebration-eyebrow"
       >
         {eyebrow.length > 0 ? eyebrow : ' '}
-      </RNText>
+      </Text>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8 }}>
-        <RNText
+        <Text
+          variant="sans"
+          weight="bold"
+          size={64}
+          color="bg0"
+          numeric
           style={{
-            fontFamily: `${type.display}-Bold`,
-            fontSize: 64,
             // rn-line-height-ok: numeric e1RM display only
             lineHeight: 70,
             letterSpacing: -2.2,
-            color: colors.bg0,
           }}
           testID="pr-celebration-e1rm"
         >
           {valueText}
-        </RNText>
-        <RNText
-          style={{
-            fontFamily: `${type.mono}-Bold`,
-            fontSize: 13,
-            letterSpacing: 2.6,
-            textTransform: 'uppercase',
-            color: colors.bg0,
-            marginLeft: spacing.sm,
-          }}
+        </Text>
+        <Text
+          variant="mono"
+          weight="bold"
+          size={13}
+          color="bg0"
+          style={{ letterSpacing: 2.6, textTransform: 'uppercase', marginLeft: spacing.sm }}
         >
           {unitGlyph}
-        </RNText>
+        </Text>
       </View>
     </View>
   );

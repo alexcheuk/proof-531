@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-30 — PrCelebration RNText sweep: paperTint tokens enable migration
+
+**Tags:** `convention`, `refactor`
+**Files:** `apps/mobile/src/features/session/components/PrCelebration/PrCelebrationNumbers.tsx`, `apps/mobile/src/features/session/components/PrCelebration/PrCelebrationComparison.tsx`, `apps/mobile/src/features/session/components/PrCelebration/PrCelebrationHero.tsx`
+
+Migrated 8 standalone `RNText` elements in the PR celebration components to the `Text` design primitive. The prior decision log entry said paper tints were incompatible, but `paperTint45/55/65` were already in the `ColorToken` union — `color="paperTint55"` works. Remaining 5 `RNText` usages in features are all legitimate outer containers for inline text children (mixed colors within a single text span).
+
+**Why:** Continuation of the font-family correctness sweep. Using `Text` guarantees the `IBMPlexSans-Medium` font family name is assembled correctly; raw `${type.display}-Medium` inline assembly is correct today but the primitive is the right abstraction.
+
 ### 2026-05-30 — RNText → Text primitive sweep across feature components
 
 **Tags:** `convention`, `bug`

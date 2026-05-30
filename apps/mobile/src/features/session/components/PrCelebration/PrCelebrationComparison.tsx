@@ -1,7 +1,8 @@
+import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { formatWeight } from '@/domain/units';
 import { useEffect } from 'react';
-import { Text as RNText, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, {
   Easing,
   cancelAnimation,
@@ -10,7 +11,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import { PAPER_28, PAPER_45, PAPER_55 } from '../PRCertificate/paperTints';
+import { PAPER_28, PAPER_45 } from '../PRCertificate/paperTints';
 
 // Always mounted (even when not visible) so its layout box is reserved from the first render —
 // prevents justifyContent:center from shifting the celebration upward when this row appears.
@@ -70,7 +71,7 @@ export function PrCelebrationComparison({
   unitGlyph,
   visible,
 }: PrCelebrationComparisonProps) {
-  const { colors, spacing, type } = useTheme();
+  const { spacing } = useTheme();
 
   const prevStyle = useLeftEntryStyle(visible, 0);
   const deltaStyle = useLeftEntryStyle(visible, STAGGER_MS);
@@ -101,23 +102,21 @@ export function PrCelebrationComparison({
         }}
       >
         <Animated.View style={prevStyle}>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 9,
-              letterSpacing: 1.98,
-              textTransform: 'uppercase',
-              color: PAPER_55,
-              marginBottom: 4,
-            }}
+          <Text
+            variant="mono"
+            weight="semibold"
+            size={9}
+            color="paperTint55"
+            style={{ letterSpacing: 1.98, textTransform: 'uppercase', marginBottom: 4 }}
           >
             Previous best
-          </RNText>
-          <RNText
+          </Text>
+          <Text
+            variant="sans"
+            weight="medium"
+            size={22}
+            color="paperTint45"
             style={{
-              fontFamily: `${type.display}-Medium`,
-              fontSize: 22,
-              color: PAPER_45,
               letterSpacing: -0.44,
               textDecorationLine: 'line-through',
               textDecorationColor: PAPER_45,
@@ -125,47 +124,43 @@ export function PrCelebrationComparison({
             testID="pr-celebration-prev"
           >
             {`${formatWeight(prevE1RMDisplay)} ${unitGlyph}`}
-          </RNText>
+          </Text>
         </Animated.View>
         <Animated.View style={[{ alignItems: 'flex-end' }, deltaStyle]}>
-          <RNText
-            style={{
-              fontFamily: `${type.mono}-SemiBold`,
-              fontSize: 9,
-              letterSpacing: 1.98,
-              textTransform: 'uppercase',
-              color: PAPER_55,
-              marginBottom: 4,
-            }}
+          <Text
+            variant="mono"
+            weight="semibold"
+            size={9}
+            color="paperTint55"
+            style={{ letterSpacing: 1.98, textTransform: 'uppercase', marginBottom: 4 }}
           >
             Stronger by
-          </RNText>
+          </Text>
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <RNText
+            <Text
+              variant="sans"
+              weight="bold"
+              size={32}
+              color="bg0"
+              numeric
               style={{
-                fontFamily: `${type.display}-Bold`,
-                fontSize: 32,
                 // rn-line-height-ok: numeric delta value (e.g. "+12") only
                 lineHeight: 32,
                 letterSpacing: -0.96,
-                color: colors.bg0,
               }}
               testID="pr-celebration-delta"
             >
               {`+${formatWeight(e1RMDelta)}`}
-            </RNText>
-            <RNText
-              style={{
-                fontFamily: `${type.mono}-Bold`,
-                fontSize: 11,
-                letterSpacing: 2.2,
-                textTransform: 'uppercase',
-                color: colors.bg0,
-                marginLeft: 4,
-              }}
+            </Text>
+            <Text
+              variant="mono"
+              weight="bold"
+              size={11}
+              color="bg0"
+              style={{ letterSpacing: 2.2, textTransform: 'uppercase', marginLeft: 4 }}
             >
               {unitGlyph}
-            </RNText>
+            </Text>
           </View>
         </Animated.View>
       </View>

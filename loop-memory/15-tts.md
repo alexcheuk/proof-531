@@ -82,7 +82,8 @@ An unknown voice name is rejected by Gemini and surfaces as a `502` (synthesis e
   > low masculine voice, worn at the edges with quiet fatigue. Composed, articulate, unhurried; never
   > cheerful, never performative. Hold a steady pace with long, contemplative pauses. Somber and a
   > little mysterious, carrying an understated, world-weary gravity that hints at a grief he never
-  > names.
+  > names. Maintain a consistent, level pitch and crisp energy throughout the entire text. Do not let
+  > the voice drop or become fatigued.
 
   The departure is the **somber, mysterious** register. The warm, brotherly register the character
   uses in friendly dialogue never airs here: Verso does not speak in dialogue (see

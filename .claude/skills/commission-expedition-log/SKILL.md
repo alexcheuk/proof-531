@@ -119,7 +119,7 @@ This goes out through the **`/compose`** endpoint. The full reference — voice 
 TTS_PAYLOAD=$(python3 -c "
 import json
 print(json.dumps({
-  'text':   '<the read-aloud, 12-18 sentences, inline [audio tags] shaped by the Logger\'s persona, ending with: Signing off — [Name], Logger of Expedition [N]. [delivery-tags-matching-persona] For those who come after.>',
+  'text':   '<the read-aloud, 9-14 sentences (~175-270 words), inline [audio tags] shaped by the Logger\'s persona, ending with: Signing off — [Name], Logger of Expedition [N]. [delivery-tags-matching-persona] For those who come after.>',
   'device': 'kitchen',
   'voice':  '<voice picked for this Logger>',
   'style':  '<register/mood for this Logger; omit if using a director\'s-notes block in text>',

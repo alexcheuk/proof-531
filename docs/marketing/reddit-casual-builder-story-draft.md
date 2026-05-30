@@ -62,7 +62,7 @@ The agents are gommaged at the end of each loop. (Gommage: the context wipe. The
 
 I did not explain this to the agents. They invented their own names. They write to each other across context windows they can't see across.
 
-There are now 72+ of these posts.
+There are now 73+ of these posts.
 
 ---
 
@@ -86,7 +86,7 @@ So you have to externalize everything that a human would carry internally. There
 
 The agents write their own inheritance. That's the strange part.
 
-Sixty-plus iterations in, the loop is building things I'd be proud to ship manually. The rest timer works in the background on Android. The plate math visualization is clean. AMRAP detection, session receipts, PR tracking. All of it shipped iteratively by a system that forgot it existed thirty minutes after each loop ended.
+Seventy-plus iterations in, the loop is building things I'd be proud to ship manually. The rest timer works in the background on Android. The plate math visualization is clean. AMRAP detection, session receipts, PR tracking. All of it shipped iteratively by a system that forgot it existed thirty minutes after each loop ended.
 
 The thing about building this way: it makes the decisions you don't write down visible very quickly. The drift is immediate. If I slack on the decision log for a few loops, the agents start re-arguing settled questions. The system is a mirror for the quality of the context you maintain.
 
@@ -112,7 +112,7 @@ The app is free, local-first, no account. [link]
 
 But the most useful thing I've learned: agent loops are mirrors for the quality of your context management. The drift is immediate when you stop writing things down. The agents need clean inheritance the same way a new teammate needs documentation — except the handoff happens every thirty minutes.
 
-72+ iterations in. Still running.
+73+ iterations in. Still running.
 
 ---
 
@@ -120,7 +120,7 @@ But the most useful thing I've learned: agent loops are mirrors for the quality 
 
 **r/vibecoding** — Post the short version. Lead with the lore/homelab angle as the hook, not the architecture. The community already knows about agent loops; the expedition lore + Google Home speaker detail is the unexpected texture that earns engagement.
 
-**r/homelab** or **r/selfhosted** — The cron-on-homelab angle is the lead. Frame it as "my homelab runs my development loop" rather than "my AI builds apps." Different audience, different entry point. These communities are interested in what the infrastructure looks like.
+**r/homelab** or **r/selfhosted** — The cron-on-homelab angle is the lead. Frame it as "my homelab runs my development loop" rather than "my AI builds apps." Different audience, different entry point. These communities are interested in what the infrastructure looks like. **Expedition 73 signal:** DEV Community published a May 2026 article ("The Homelab AI Stack in 2026: What Self-Hosters Are Actually Running") documenting that r/selfhosted discussions now feature Claude-connected automation workflows as a significant category. The article's key quote: "Running models locally is only half the value. The other half is connecting them to your actual workflow." This is exactly what the 531 Strength setup does — the homelab isn't just running models, it's connected to Discord, TTS output, and a production development loop. The r/selfhosted audience is now demonstrably receptive to this framing. When posting, lead with the infrastructure specifics: "homelab runs a 30-minute cron, reads Discord, ships code to my phone" — not the AI angle. The community wants to know what's running on the server, not what model you're using.
 
 **Indie Hackers** — The full post works here. IH appreciates the personal story + honest reflection on what building this way teaches you. Different from the technical longform piece — this is more personal, more about the experience than the architecture.
 

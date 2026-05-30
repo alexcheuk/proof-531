@@ -1,7 +1,6 @@
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { Text as RNText, View } from 'react-native';
-import { PAPER_55 } from '../PRCertificate/paperTints';
 
 // Empty slices show a single space so line heights stay stable during the typewriter reveal.
 export const PR_CELEBRATION_HERO_TEXT = 'Stronger.';
@@ -30,19 +29,20 @@ export function PrCelebrationHero({
 
   return (
     <View>
-      <RNText
+      <Text
+        variant="mono"
+        weight="medium"
+        size={15}
+        color="paperTint55"
         style={{
-          fontFamily: `${type.mono}-Medium`,
-          fontSize: 15,
           lineHeight: 19,
           letterSpacing: 1.4,
           textTransform: 'uppercase',
-          color: PAPER_55,
           marginBottom: spacing.md + 2,
         }}
       >
         {eyebrowShown.length > 0 ? eyebrowShown : ' '}
-      </RNText>
+      </Text>
 
       <RNText
         style={{

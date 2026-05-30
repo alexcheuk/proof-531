@@ -55,10 +55,15 @@ Fully migrated to CapsLabel (no more hand-rolled inline mono-caps styles):
 - `TmApplySheet.tsx` — "CURRENT TM" and "NEW TM" labels and value/arrow text (expedition 71)
 
 Remaining known intentional RNText uses (not candidates):
-- `PrCelebrationComparison.tsx` — uses custom paper tints (PAPER_28, PAPER_45, PAPER_55) not in ColorToken; inside Reanimated views
+- `PrCelebrationHero.tsx` — outer RNText needed as container for inline `<Text>` amber dot child (mixed inline text at same size)
+- `PRCertificate.tsx` — outer RNText for "Stronger" + inline amber dot; same pattern
+- `ComparisonRow.tsx` (PRCertificate) — outer RNText with nested inline unit span that clears textDecorationLine
+- `PaperCapsText.tsx` (PRCertificate) — mini-primitive for inverted panel; appropriate direct RNText use
 - `TmPreviewRow.tsx` — inline glyph spans (nested text in a Text component; letterSpacing 1.26 is intentionally tighter than xs preset)
 - `GoalPanel.tsx` unit glyph "lb"/"kg" — 12px/ls2.64 display; intentionally larger than any CapsLabel preset for visual pairing with 56px numeric
 - `GoalPanel.tsx` 56px value display — not caps text at all; numeric display with tabular-nums
+
+Note (expedition 73): `PrCelebrationComparison.tsx`, `PrCelebrationNumbers.tsx`, and `PrCelebrationHero.tsx` eyebrow were migrated to the Text primitive. `paperTint45/55/65` ARE in the `ColorToken` union — the prior note saying they were not was wrong.
 
 ## Key primitives (don't re-invent these)
 

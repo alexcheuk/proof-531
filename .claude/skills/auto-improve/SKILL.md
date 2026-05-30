@@ -131,7 +131,9 @@ print(json.dumps({
              'A velvety, low masculine voice, worn at the edges with quiet fatigue. Composed, '
              'articulate, unhurried; never cheerful, never performative. Hold a steady pace with '
              'long, contemplative pauses. Somber and a little mysterious, carrying an understated, '
-             'world-weary gravity that hints at a grief he never names.'),
+             'world-weary gravity that hints at a grief he never names. '
+             'Maintain a consistent, level pitch and crisp energy throughout the entire text. '
+             'Do not let the voice drop or become fatigued.'),
 }))
 ")
 [ -n "${HOME_TTS_URL:-}" ] && curl -sS -X POST "$HOME_TTS_URL/compose" \
