@@ -1,35 +1,7 @@
-/**
- * Storage-unit migration accessor.
- *
- * Mirrors the PWA accessor at
-
- *
- * Switch the *storage* unit (the currency that future TM bumps and session
- * snapshots are denominated in). For each lift whose current TM is NOT
- * already in the target unit, we APPEND a new TM row at
- * `value = convertAndSnap(old, oldUnit, newUnit)`, `unit = newUnit`,
- * `note = 'unit-migration'`. Existing rows are NOT mutated — TM history is
- * append-only per docs/technical-design.md §4 (the PD-04 invariant). We
- * then patch `Settings.storageUnit` to the new unit. If
- * `Settings.displayUnit` was tied to the old storage (i.e. user hadn't
- * picked a different display), we also flip `displayUnit` to the new unit
- * — KISS, the user sees migrated numbers immediately.
- *
- * In-flight sessions (status === 'in_progress') are NOT touched — their
- * `storageUnitSnapshot` was set at createSession and remains valid. Any
- * `advanceCycle()` after this migration bumps the *new* (latest) TM rows
- * in the new unit, since `tmIncrement` keys off the row's own `tm.unit`.
- *
- * No-op when the requested unit already equals the current storage.
- *
- * Atomicity: the inserts + settings patch run inside a SQLite transaction
- * (BEGIN/COMMIT) executed against the underlying driver, so a process kill
- * between the loop and the settings update cannot leave a hybrid state
- * where some TMs are in the new unit but settings.storageUnit still names
- * the old one. If the BEGIN/COMMIT helpers aren't available on the driver
- * (e.g. a mocked test handle), we fall back to sequential writes with the
- * same crash-recovery property as before.
- */
+// TM history is append-only (PD-04 invariant) — new rows are INSERTed, never mutated.
+// The whole operation runs inside a raw BEGIN/COMMIT so a mid-flight crash can't leave a
+// hybrid state (some TMs in the new unit, settings.storageUnit still naming the old one).
+// Falls back to sequential writes when the driver doesn't expose execSync/exec (test handles).
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Unit } from '../../domain/types';
@@ -41,14 +13,9 @@ import { getCurrentTrainingMaxes } from './trainingMax';
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
-/**
- * Best-effort raw-SQL exec against drizzle's underlying session. drizzle
- * surfaces a `.run` that takes a `sql` template; we don't want to depend
- * on that here, so we reach for the underlying driver via the same shape
- * runMigrations uses (`execSync` for expo-sqlite, `exec` for
- * better-sqlite3). Returns false if neither is available — caller falls
- * back to non-transactional writes.
- */
+// Reach the underlying driver via the same shape runMigrations uses (execSync for expo-sqlite,
+// exec for better-sqlite3). Returns false when neither is available — caller falls back to
+// sequential writes.
 function execRaw(db: AnyDb, sql: string): boolean {
   // biome-ignore lint/suspicious/noExplicitAny: structural reach across drivers
   const session = (db as any).session;
@@ -87,14 +54,9 @@ export async function migrateStorageUnit(db: AnyDb, newUnit: Unit): Promise<void
         }),
       );
     }
-    // PRs (`prs.bestE1RM`) are stored as bare numbers in whatever storage
-    // unit was in effect when the AMRAP set was logged — the table has no
-    // unit column. Before this migration, every existing PR was in the
-    // OLD storage unit (single-unit invariant pre-migration), so converting
-    // them all in one pass keeps `pickBestLift`'s numeric `>` comparison
-    // honest after future PRs land in the new unit. Without this, a 100 kg
-    // PR sits at `100` while a fresh 220 lb PR sits at `220` — the lb
-    // value falsely "wins" the heaviest-lift badge.
+    // prs.bestE1RM has no unit column — it's bare numbers in whatever storage unit was active
+    // when the AMRAP set was logged. Converting them all keeps pickBestLift's numeric > honest:
+    // without this, a 100 kg PR (stored as 100) would lose to a 220 lb PR (stored as 220).
     const existingPrs = (await Promise.resolve(db.select().from(prs))) as Array<{
       lift: 'squat' | 'bench' | 'deadlift' | 'press';
       bestE1RM: number;

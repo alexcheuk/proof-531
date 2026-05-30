@@ -1,28 +1,6 @@
 import { Pressable, Text as RNText, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
-/**
- * Single Progress-grid cell. Four visual variants:
- *
- *   - `past`  — completed day; ink-filled (bg `ink0`, fg `bg0`). Shows
- *               weight (display 17) on top + `× N` (mono 9, .78 alpha) below.
- *   - `outlined` — most-recent completed day; same fill as `past`, plus a
- *               2-px ink outline INSET (rendered with stacked borders so
- *               outer dimensions stay aligned with neighboring cells).
- *   - `now`   — current week's upcoming day; paper bg, caps "next" eyebrow
- *               on top + display 15 weight below + inset 4-px amber accent
- *               border (the only accent-colored thing on the grid, so it
- *               reads as "you are here" without needing a separate
- *               highlight color).
- *   - `future` — projected day; paper bg, mono 13 weight only, `ink3` color.
- *
- * Marker (`✓` / `─`) replaces the second-line content on deload cells.
- *
- * Renders as Pressable when `onPress` is supplied (past cells tap into
- * SessionComplete); otherwise as a plain View so VoiceOver does not
- * announce phantom buttons.
- */
-
 export type ProgressGridCellVariant = 'past' | 'outlined' | 'now' | 'future';
 
 export type ProgressGridCellProps = {

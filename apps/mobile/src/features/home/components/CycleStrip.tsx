@@ -2,16 +2,6 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import type { Week } from '@/domain/types';
-/**
- * 4-week ledger grid showing the current cycle's set schemes.
- *
- * Visual contract mirrors the Progress grid:
- *   - Completed weeks (< currentWeek): ink-filled black bg, paper text, ✓ glyph.
- *   - Current/next week (= currentWeek): paper bg + 3-px inset amber accent border.
- *   - Future weeks (> currentWeek): transparent bg, muted text.
- *
- * Matches the Progress grid visual contract.
- */
 import { Text as RNText, View, type ViewStyle } from 'react-native';
 
 type Cell = { w: Week; scheme: string; compact?: boolean };

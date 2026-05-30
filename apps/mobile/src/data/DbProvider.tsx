@@ -1,10 +1,4 @@
-/**
- * React context that supplies the Drizzle database handle to query hooks.
- *
- * Production: wrapped in `src/app/_layout.tsx` around the expo-sqlite-backed
- * `db` from `./drizzle/client`. Tests inject a better-sqlite3-backed db so
- * hooks can render headless without mocking the import graph.
- */
+// Tests inject a better-sqlite3-backed db so hooks can render headless without mocking the import graph.
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { type ReactNode, createContext, createElement, useContext } from 'react';
 

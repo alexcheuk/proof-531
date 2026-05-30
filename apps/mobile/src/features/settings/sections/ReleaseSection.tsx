@@ -1,12 +1,5 @@
-/**
- * Settings "Release" section — surfaces the currently-running JS bundle so a
- * tester on a preview APK can confirm at a glance whether they're on the
- * embedded build or a later OTA. Tapping "Check for update" runs the same
- * fetch the app does silently on launch.
- *
- * Hidden inside Expo Go / dev (`isEmbeddedLaunch` is always true and there
- * is no channel / updateId to show — the section would just print dashes).
- */
+// Hidden when running outside expo-updates (isEmbeddedLaunch + no channel/updateId) — the
+// section would just render dashes and confuse non-OTA testers.
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
 import { formatRelativeTime } from '@/domain/relativeTime';

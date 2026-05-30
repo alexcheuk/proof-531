@@ -9,11 +9,6 @@ export type ActivitySparklineProps = {
   activity: ReadonlyArray<boolean>;
 };
 
-/**
- * 14-day activity sparkline rendered as a row of hairline-tall ticks.
- * Filled ticks mark days with a completed session; muted ticks mark idle
- * days. A trailing streak count is shown next to the row when ≥ 2.
- */
 export function ActivitySparkline({ activity }: ActivitySparklineProps) {
   const { colors } = useTheme();
   const streak = currentStreak(activity);

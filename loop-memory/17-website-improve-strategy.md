@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com — Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 67)
+**Last updated**: 2026-05-29 (Expedition 68)
 **Status**: Active — iterating each loop
 
 ## Purpose
@@ -94,6 +94,14 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs.astro colophon verified (expedition 56) — reviewed against 14-lore.md and 04-dev-blog-persona.md; text is accurate: "The Loggers do not know about this page; they write for their successors" matches the lore rule ("They do not know about the blog"); no changes needed.
 
 ## Progress tracker
+
+### Expedition 68 notes
+
+Two Track B (content accuracy) and Track A (SEO) fixes:
+
+1. **README iteration count updated** (Track B): Changed "67+" to "68+" — expedition 68 is now running.
+
+2. **Blog post page titles include "Strength"** (Track A / SEO): Blog post pages used the title pattern `${title} — 531 dev log`. This was inconsistent with the blog listing title "Dev Log — 531 Strength" (fixed in expedition 59) and omitted the app name. Changed to `${title} — 531 Strength dev log` — now all 127 blog post pages include the full app name in their `<title>` tag. Social shares and search result snippets will show "531 Strength" rather than bare "531", which is more searchable and consistent with the rest of the site. Build verified clean (141 pages).
 
 ### Expedition 67 notes
 
@@ -260,6 +268,8 @@ Two content-accuracy fixes shipped:
 | Homepage platform-note tighten | done · expedition 63 | Simplified to "iOS + Android · one React Native codebase · Android live · iOS in review". |
 | README iteration count | done · expedition 63 | Updated "62+" → "63+". |
 | Blog post og:type="article" | done · expedition 67 | Base.astro now accepts ogType prop (default "website"). Blog post pages pass ogType="article" + article:published_time + article:author via head slot. Richer social previews for LinkedIn/Mastodon/Slack. |
+| README iteration count | done · expedition 68 | Updated "67+" → "68+". |
+| Blog post page titles include "Strength" | done · expedition 68 | `[...slug].astro` title pattern was `${title} — 531 dev log`; updated to `${title} — 531 Strength dev log`. Consistent with blog listing title; app name now in all 127 blog post page titles for SEO. |
 | README iteration count | done · expedition 65 | Updated "64+" → "65+". |
 | Homepage hero lede "submission" → "approval" | done · expedition 65 | Hero lede now says "iOS App Store approval is in progress" — matches signoff section. |
 | Process page "App Store and Play Store" fix | done · expedition 65 | About section said "App Store and Play Store" — same bug as exp 64 signoff fix. Corrected to "the App Store" only. |

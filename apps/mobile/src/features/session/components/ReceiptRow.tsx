@@ -4,20 +4,6 @@ import { MonoBadge } from '@/design/primitives/MonoBadge';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
 import { View } from 'react-native';
-/**
- * Single line item on the session-complete "receipt".
- *
- * Caps eyebrow on the left, numeric cluster on the right.
- *
- *   - `label`  — caps eyebrow on the left (e.g. `Top set`).
- *   - `value`  — the big display string (already formatted, e.g. `255 × 8+`).
- *   - `sub`    — caps mono suffix to the right of the value (e.g. `lb · 85% tm`).
- *   - `stamp`  — optional bordered chip (e.g. `★ PR`); rendered before the value.
- *   - `first`  — drops the row-internal top hairline (the parent rail already
- *                draws its own borderTop on the wrapping `SectionBand`).
- *
- * Pure presentational. Caller decides which rows to render and in what order.
- */
 import type { ViewStyle } from 'react-native';
 
 export type ReceiptRowProps = {

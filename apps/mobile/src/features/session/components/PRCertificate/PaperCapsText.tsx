@@ -3,19 +3,8 @@ import type { ReactNode } from 'react';
 import { Text as RNText, type TextStyle } from 'react-native';
 import { PAPER_45, PAPER_55, PAPER_65 } from './paperTints';
 
-/**
- * Mono uppercase caps label used throughout the PR certificate panel.
- *
- * Every certificate sub-component (`SignOffRow`, `ComparisonRow`,
- * `HeroNumberRow`, the panel eyebrow) was repeating the same handful of
- * `fontFamily` + `letterSpacing` + `textTransform: uppercase` lines with
- * one of four paper-tint colors. This primitive captures the contract
- * so a future copy edit touches one file.
- *
- * Lives next to the certificate (not in `src/design/primitives/`) because
- * the tints are intentionally specific to the inverted-ink panel — there's
- * no consumer outside this directory.
- */
+// Lives next to the certificate (not in src/design/primitives/) because the paper tints are
+// specific to the inverted-ink panel — no consumers outside this directory.
 export type PaperCapsTextProps = {
   children: ReactNode;
   /** Visual weight bucket. */

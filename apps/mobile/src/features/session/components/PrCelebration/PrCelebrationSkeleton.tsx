@@ -10,11 +10,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PAPER_28, PAPER_45 } from '../PRCertificate/paperTints';
 
-/**
- * Pre-data placeholder shown on the PR celebration while
- * `useSessionCompleteData` resolves. Mirrors the hero-number slot's
- * shape so the layout doesn't jump when real data arrives.
- */
 export function PrCelebrationSkeleton() {
   const { spacing } = useTheme();
   const opacity = useSharedValue(0);

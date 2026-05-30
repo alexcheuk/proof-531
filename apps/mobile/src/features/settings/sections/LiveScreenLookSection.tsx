@@ -14,11 +14,6 @@ export type LiveScreenLookSectionProps = {
   inverted: boolean;
 };
 
-/**
- * Toggles the visual treatment of the Live set + rest screens between
- * the default paper canvas and the inverted (ink-0 surface, paper text)
- * palette used by the PR celebration screen. Discord 1508984314.
- */
 export function LiveScreenLookSection({ inverted }: LiveScreenLookSectionProps) {
   const updateSettings = useUpdateSettings();
   const value: LookValue = inverted ? 'inverted' : 'paper';

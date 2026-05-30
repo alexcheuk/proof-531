@@ -6,17 +6,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
-/**
- * One working-set row on Today.
- *
- * Built on `LedgerRow`-shaped chrome: hairline top border (strong on the first
- * row of the section), label cluster on the left, weight × reps cluster on
- * the right.
- *
- * Today's working-set rows are NEVER interactive (Rev 3, 2026-05-22). Entry
- * into Live happens exclusively via the bottom `Start/Resume working set N`
- * CTA. The row visually marks state with `done` and `next` props.
- */
+// Never interactive — entry into Live happens only via the bottom "Start/Resume working set N" CTA.
 import { View, type ViewStyle } from 'react-native';
 
 export type SetRowProps = {

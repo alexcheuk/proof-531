@@ -1,16 +1,4 @@
-/**
- * Training-max accessors.
- *
- * Mirrors the PWA accessors.
- * TM history is **append-only** per locked planner decision — `setTrainingMax`
- * always INSERTs a new row, never overwrites an existing one. The "current" TM
- * for a lift is the most recently inserted row for that lift.
- *
- * Accessors take a Drizzle db handle as the first argument so tests can inject
- * a better-sqlite3-backed db (see `__tests__/trainingMax.test.ts`) while
- * production callers pass the expo-sqlite-backed `db` from `../drizzle/client`.
- * The Drizzle query API is identical across drivers.
- */
+// TM history is append-only — setTrainingMax always INSERTs, never overwrites.
 import { desc, eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift, Unit } from '../../domain/types';
@@ -24,7 +12,6 @@ type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
 export type TrainingMax = typeof trainingMaxes.$inferSelect;
 
-/** Append a new TrainingMax row. Never overwrites. Returns the persisted row with id populated. */
 export async function setTrainingMax(
   db: AnyDb,
   lift: Lift,
@@ -40,11 +27,6 @@ export async function setTrainingMax(
   return row;
 }
 
-/**
- * Return the latest TrainingMax row per lift (one row per lift, or zero rows
- * if a lift has never been set). Used by the onboarding gate, by createSession
- * to take a snapshot, and by Settings UIs.
- */
 export async function getCurrentTrainingMaxes(db: AnyDb): Promise<TrainingMax[]> {
   const allRows = (await Promise.resolve(
     db.select().from(trainingMaxes).orderBy(desc(trainingMaxes.updatedAt), desc(trainingMaxes.id)),
@@ -60,7 +42,6 @@ export async function getCurrentTrainingMaxes(db: AnyDb): Promise<TrainingMax[]>
   return out;
 }
 
-/** Full append-history for a single lift, newest first. */
 export async function getTrainingMaxHistory(db: AnyDb, lift: Lift): Promise<TrainingMax[]> {
   const rows = await Promise.resolve(
     db

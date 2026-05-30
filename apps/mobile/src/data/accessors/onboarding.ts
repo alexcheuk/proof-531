@@ -1,21 +1,5 @@
-/**
- * Onboarding accessor.
- *
- * Mirrors the PWA accessor.
- * (PWA name: `finishOnboarding`). Patches the singleton Settings row with the
- * user's chosen unit + enabled lifts, then appends one TrainingMax row per
- * enabled lift (TM = 90 % of the supplied 1RM, snapped to the unit step).
- *
- * Atomicity trade-off: the PWA wraps the whole operation in a Dexie `rw`
- * transaction so a mid-flight throw rolls back IndexedDB. drizzle-orm's
- * `db.transaction((tx) => ...)` exists but its typing varies across drivers
- * (better-sqlite3 vs expo-sqlite) and we'd need to thread `tx` through every
- * downstream call. Instead we validate every `oneRM` up-front before any
- * writes, so the only way to reach the write loop is with valid input — there
- * is no partial-write window in normal use. (Disk-full / SQLITE_FULL between
- * writes remains theoretically possible; we accept that risk on the mobile
- * single-writer DB.)
- */
+// No DB transaction: all oneRMs are validated up-front so the write loop can't be reached with
+// invalid input — no partial-write window in normal use. (Disk-full between writes is accepted.)
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { DEFAULT_SETTINGS, type Lift, type Settings, type Unit } from '../../domain/types';
@@ -39,8 +23,6 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     throw new Error('completeOnboarding: enabledLifts must not be empty');
   }
 
-  // Validate all oneRMs before any writes (so we don't partially commit on
-  // single-driver setups without true transaction support).
   for (const lift of input.enabledLifts) {
     const oneRM = input.oneRMs[lift];
     if (oneRM == null || oneRM <= 0) {
@@ -48,7 +30,6 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     }
   }
 
-  // Read existing settings (if any), patch storage/display unit + enabledLifts.
   const existingRows = (await Promise.resolve(
     db.select().from(settings).where(eq(settings.id, 1)),
   )) as Array<typeof settings.$inferSelect>;
@@ -94,7 +75,6 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     await Promise.resolve(db.insert(settings).values(row));
   }
 
-  // Single `now` so all TM rows share an `updatedAt` (this is logically one tick).
   const now = Date.now();
   for (const lift of input.enabledLifts) {
     const oneRM = input.oneRMs[lift];

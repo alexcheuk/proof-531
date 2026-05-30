@@ -1,34 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/**
- * Phase machine for the PR-celebration intro sequence.
- *
- *   idle          — pre-mount no-op state. Effect kicks in and advances to title-type.
- *   title-type    — typewriter writes "YOU HIT A NEW PR" + "STRONGER." centered, large.
- *   title-hold    — short pause after the title is fully typed.
- *   title-settle  — title crossfades from centered intro position to its final top-left
- *                   lockup (eyebrow + hero) so the numbers block has room below.
- *   prev-type     — typewriter writes "PREVIOUS BEST" + prior e1RM in the centered slot
- *                   the title just vacated.
- *   prev-hold     — short pause so the user can read the prior number.
- *   tick-up       — the label crossfades from "PREVIOUS BEST" to "NEW ESTIMATED 1RM"
- *                   and the number counts up from prev → new. Visually anchored in the
- *                   same centered slot.
- *   numbers-settle — the centered numbers block crossfades to its final
- *                    PrCelebrationNumbers position under the title.
- *   final         — comparison row + CTAs fade in. Sequence is done.
- *
- * Transitions that depend on substring length / value range (typewriter,
- * count-up) are driven externally — the consumer calls `advance()` from the
- * animation hook's onComplete. Time-based transitions (the two holds + the
- * two settles) are driven internally with timeouts so we don't have to
- * thread setTimeout through every render.
- *
- * `hasComparison === false` (this is the user's first PR for the lift —
- * there's no prior best to display) collapses the entire prev/tick/settle
- * chunk: after the title settles, the sequence jumps straight to `final`.
- */
-
 export type Phase =
   | 'idle'
   | 'title-type'

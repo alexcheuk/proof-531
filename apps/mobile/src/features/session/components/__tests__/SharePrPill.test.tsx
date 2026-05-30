@@ -1,9 +1,3 @@
-/**
- * Unit tests for SharePrPill + buildPrShareMessage.
- *
- * The visual pill itself is dumb — we mostly assert the message builder
- * (pure function) and that pressing the pill calls the right share path.
- */
 import { ThemeProvider } from '@/design/theme';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
@@ -43,6 +37,19 @@ describe('buildPrShareMessage', () => {
     });
     expect(msg).toContain('press · 100 kg estimated 1RM');
     expect(msg).toContain('+5 kg stronger');
+  });
+
+  it('omits the stronger line when delta is 0', () => {
+    const msg = buildPrShareMessage({
+      liftLabel: 'bench',
+      e1RM: 280,
+      delta: 0,
+      unit: 'lb',
+    });
+    expect(msg).toContain('★ NEW RECORD ★');
+    expect(msg).toContain('bench · 280 lb estimated 1RM');
+    expect(msg).not.toContain('stronger');
+    expect(msg).toContain('531 Strength');
   });
 });
 

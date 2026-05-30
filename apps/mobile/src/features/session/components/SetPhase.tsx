@@ -7,15 +7,6 @@ import { displayUnit as displayUnitGlyph } from '@/domain/units';
 import { View } from 'react-native';
 import { LiveHeader } from './LiveHeader';
 
-/**
- * The "live, mid-set" surface on the Live screen — the LiveHeader (caps
- * eyebrow + lift headline + AMRAP chip + elapsed clock) over a TopSetBlock
- * showing the bar, weight, plate decomposition, and rep prescription. An
- * optional plate-change hint underneath calls out how much weight the user
- * needs to add per side vs the previous set.
- *
- * Pure presentational composition; parent owns all data + CTA wiring.
- */
 export type SetPhaseProps = {
   setIndex: 0 | 1 | 2;
   isAmrap: boolean;

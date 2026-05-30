@@ -18,11 +18,6 @@ export type SessionCompleteTitleProps = {
   cycleDay: number;
 };
 
-/**
- * The big "In the / book." headline + DateStamp + paragraph that sits below
- * the receipt masthead. Pure presentational — all values arrive pre-derived
- * from `useSessionCompleteData`.
- */
 export function SessionCompleteTitle({
   completedThisCycle,
   eyebrowDate,

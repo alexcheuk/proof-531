@@ -11,11 +11,7 @@ export type NoTrainingMaxStateProps = {
   onOpenSettings: () => void;
 };
 
-/**
- * Empty state rendered on Today when no TM exists for the lift. Explains
- * the gap and routes the user to Settings. A blank canvas reads as "broken
- * app", which is why this shipped instead.
- */
+// A completely blank screen reads as "broken app" — this empty state explains the gap and routes to Settings.
 export function NoTrainingMaxState({ lift, onOpenSettings }: NoTrainingMaxStateProps) {
   const { colors, spacing } = useTheme();
   const wrap: ViewStyle = {

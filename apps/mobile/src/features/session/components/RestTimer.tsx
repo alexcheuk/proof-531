@@ -3,18 +3,8 @@ import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { formatMmSs } from '@/domain/time';
-/**
- * Rest count-DOWN display + ±30s / Skip controls.
- *
- * Shows `remaining` directly (was count-up — flipped 2026-05-24 per user
- * request). Count-down matches how lifters time rests in their head ("90
- * left, 60 left…") and the giant `0:00` moment doubles as a clean "time
- * to lift" cue.
- *
- * Once the user is meaningfully past target, the headline switches to an
- * "Over by +N:NN" frame (amber) so the screen reads as a pacing alert
- * rather than a stuck zero.
- */
+// Count-down (not count-up): flipped 2026-05-24 per user request — matches how lifters think
+// ("90 left…") and the 0:00 moment is a clean "time to lift" cue.
 import { useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import Animated, {
@@ -49,16 +39,10 @@ export function RestTimer({ remaining, onAddRest, onSubRest, onSkip, testID }: R
   const overtime = remaining < 0;
   const overBySeconds = overtime ? Math.abs(remaining) : 0;
   const showOverByHint = overBySeconds >= PACE_HINT_THRESHOLD_SECONDS;
-  // Count-down view: positive remaining → mm:ss, ≤ 0 → 0:00 until the
-  // pace-hint threshold flips the label to "+over-by". Avoids the user
-  // staring at "1:30" while waiting (the old count-up framing).
   const label = showOverByHint
     ? `+${formatMmSs(overBySeconds)}`
     : formatMmSs(Math.max(0, remaining));
 
-  // Overtime pulse — gentle opacity sway between 1 and 0.7 over ~1.4s while
-  // the user is past target. Reset to 1 the moment they're back inside the
-  // target window so the headline doesn't flash on phase change.
   const pulse = useSharedValue(1);
   useEffect(() => {
     if (!overtime) {

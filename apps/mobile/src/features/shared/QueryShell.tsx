@@ -1,15 +1,3 @@
-/**
- * QueryShell — DRY loading/error gate for screens fronted by a TanStack
- * Query (or a small set of them, combined upstream into a single shape).
- *
- * Renders a caps-mono "LOADING…" line on the paper surface while
- * `isLoading` is true, a "COULDN'T LOAD" + message + optional Retry while
- * `isError` is true, and otherwise yields the children. The shell never
- * branches on `data` — the parent owns shape-checking.
- *
- * Boundary: lives under `features/shared/` and composes design primitives
- * only — no drizzle, no hex literals.
- */
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { ReactNode } from 'react';
@@ -88,11 +76,6 @@ export function QueryShell({
   return <>{children}</>;
 }
 
-/**
- * Combine N query-likes into a single shape suitable for `QueryShell`.
- * `isLoading` is true if any are loading; `isError` true if any are; the
- * first error wins. `refetch` triggers refetch on all of them.
- */
 export function combineQueries(...queries: QueryLike[]): QueryLike {
   const isLoading = queries.some((q) => q.isLoading);
   const errored = queries.find((q) => q.isError);

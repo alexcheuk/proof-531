@@ -8,12 +8,6 @@ export type CycleCompleteBandProps = {
   cycle: number;
 };
 
-/**
- * Subtle "Cycle N · COMPLETE" band rendered on SessionCompleteScreen when
- * the just-finished session closes the cycle. Caps-mono, hairline framed
- * at top and bottom so it reads as a stamp without competing with the
- * receipt that follows.
- */
 export function CycleCompleteBand({ cycle }: CycleCompleteBandProps) {
   const { colors, spacing, layout } = useTheme();
   const wrap: ViewStyle = {

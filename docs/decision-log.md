@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-05-29 — PRCertificate: guard ComparisonRow on prevE1RM > 0 && delta > 0
+
+**Tags:** `bug`, `mobile`
+**Files:** `apps/mobile/src/features/session/components/PRCertificate/PRCertificate.tsx`, `apps/mobile/src/features/session/components/SharePrPill.tsx`
+
+`PRCertificate` always rendered `ComparisonRow` regardless of whether there was a prior record or whether the display delta was non-zero. Two failure modes: (1) first-ever PR on a lift — `prevE1RM = 0` → "Previous best: 0 lb" struck through, showing `+[full e1RM] lb` stronger; (2) sub-increment improvement where new raw e1RM is larger but both old and new snap to the same 5 lb bucket → "Stronger by: +0 lb". Both show wrong text. Fixed by gating `ComparisonRow` on `prevE1RM > 0 && delta > 0`. Also fixed `buildPrShareMessage` to omit the "+N stronger" line when delta is 0. The PR detection threshold stays on raw Epley values — storage precision is preserved.
+
+**Why:** The Expedition 55 plate-snapping change introduced the delta=0 case (raw improvements smaller than one plate step now snap to 0 displayed delta). The first-ever-PR case was latent since initial build. Both were undetected because the test mock always provided prevBestStorage=0, matching the first-PR path rather than testing the delta render.
+
 ### 2026-05-29 — Comment sweep completed across full codebase (expeditions 63–66)
 
 **Tags:** `convention`, `refactor`

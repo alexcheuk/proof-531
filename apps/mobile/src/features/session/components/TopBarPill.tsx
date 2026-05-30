@@ -2,13 +2,6 @@ import { useTheme } from '@/design/theme';
 import * as Haptics from 'expo-haptics';
 import { Pressable, Text as RNText, type TextStyle, type ViewStyle } from 'react-native';
 
-/**
- * Shared visual primitive for the session top-bar action pills
- * (Undo / Restart / Cancel / Complete). All four used to be 95%-duplicate
- * files; this single component takes a label + optional glyph + variant
- * and renders the same 28px mono-semibold pill those wrappers were
- * cargo-culting independently.
- */
 export type TopBarPillVariant = 'outlined' | 'filled';
 
 export type TopBarPillProps = {
@@ -52,12 +45,7 @@ export function TopBarPill({
     textTransform: 'uppercase',
   };
   const handlePress = () => {
-    // Light impact haptic on every top-bar pill press so the four pills
-    // (Undo / Restart / Cancel / Complete) read tactile and consistent —
-    // some used to fire haptics from their own bespoke handlers, others
-    // didn't. Centralizing here means the four wrappers stay one-liners
-    // and the haptic stays consistent. Wrapped in try because expo-haptics
-    // throws on unsupported platforms (web preview).
+    // expo-haptics throws on unsupported platforms (e.g. web preview).
     try {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch {

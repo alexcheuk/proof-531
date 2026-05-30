@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-/**
- * Animation hooks used by the PR-celebration intro sequence.
- *
- * Both hooks are JS-side (setInterval-driven) rather than Reanimated-driven
- * because the values they produce — a growing substring and a counting
- * integer — need to drive `<Text>` content, not transform styles. Reanimated
- * shared values can't be rendered into Text without `useAnimatedProps`,
- * which adds plumbing for no real win here (~16ms tick rate is enough for
- * 600–1200ms transitions at a glance).
- */
+// JS-side (setInterval) rather than Reanimated: these values drive <Text> content, not transform
+// styles. Reanimated shared values can't feed Text without useAnimatedProps — extra plumbing for
+// no gain at ~16ms tick rate.
 
 export type UseTypewriterOptions = {
   /** The full string to type out. */
@@ -22,13 +15,6 @@ export type UseTypewriterOptions = {
   onComplete?: () => void;
 };
 
-/**
- * Returns the typed-so-far prefix of `text`. While `active === false` the
- * displayed text resets to empty so the next activation always starts at 0.
- *
- * Caller is responsible for unmounting / flipping `active` to false when the
- * sequence advances — the hook will then clear its interval.
- */
 export function useTypewriter({
   text,
   charMs = 40,
@@ -73,19 +59,6 @@ export type UseTypewriterTransitionOptions = {
   active: boolean;
 };
 
-/**
- * Reactive typewriter that backspaces then retypes whenever `text` changes.
- *
- * Behaviour: each tick compares the currently-shown string to `text` and
- * either deletes one trailing character (when the shown string still has
- * characters past the longest common prefix) or appends the next character
- * from `text`. The two-state machine — backspace, then forward — happens
- * inside a single setInterval so a target change mid-flight cleanly
- * switches directions without stranding characters.
- *
- * Initial value of `shown` is `text` itself, so the first render of a
- * stable target is a no-op. The interval clears itself once `shown === text`.
- */
 export function useTypewriterTransition({
   text,
   charMs = 45,
@@ -145,20 +118,8 @@ export type UseCountUpOptions = {
   onComplete?: () => void;
 };
 
-/**
- * Ease-in-out cubic interpolation from `from` → `to` over `durationMs`,
- * ticking every ~16ms. The hook always renders an integer (rounded each
- * tick) since its only caller renders weight values.
- *
- * Ease-in-out is the right curve for a "counter winds up then settles":
- * pure ease-out felt like the number darted away from the prior value
- * and crawled to the new one — visually too front-loaded. Ease-in-out
- * gives a deliberate ramp on both ends, which reads as "this is the
- * number changing", not "this is the number arriving".
- *
- * `from === to` (no actual delta to animate) is a single-tick no-op that
- * fires `onComplete` immediately so the sequence doesn't stall.
- */
+// Ease-in-out cubic: pure ease-out felt front-loaded (darted away, crawled to the new value).
+// Ease-in-out gives a deliberate ramp on both ends — reads as "number changing" not "arriving".
 export function useCountUp({
   from,
   to,

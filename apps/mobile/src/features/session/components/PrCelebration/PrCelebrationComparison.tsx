@@ -12,24 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PAPER_28, PAPER_45, PAPER_55 } from '../PRCertificate/paperTints';
 
-/**
- * The "Previous best (struck through) · Stronger by +X" comparison row
- * shown below the e1RM block on the PR celebration screen.
- *
- * Extracted from `PrCelebrationNumbers` so it can live outside the
- * scaled wrapper that emphasises the numbers block — keeps the
- * separator hairline and the metric blocks at their natural 1× size
- * while the e1RM number above them is being typewriter-revealed at
- * 1.25× emphasis. The row is also always mounted regardless of
- * `visible`, so its layout box is reserved from the first render and
- * the body's `justifyContent: center` doesn't shift the rest of the
- * celebration upward when this row first appears.
- *
- * Entrance: each metric block fades in from a small left offset with
- * a stagger between them. Driven by shared-value progress rather than
- * Reanimated's `entering` so the animation can be triggered on phase
- * change rather than mount.
- */
+// Always mounted (even when not visible) so its layout box is reserved from the first render —
+// prevents justifyContent:center from shifting the celebration upward when this row appears.
 export type PrCelebrationComparisonProps = {
   prevE1RMDisplay: number;
   e1RMDelta: number;

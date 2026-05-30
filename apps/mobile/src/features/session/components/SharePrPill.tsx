@@ -91,7 +91,7 @@ export function buildPrShareMessage({
   const lines = [
     '★ NEW RECORD ★',
     `${liftLabel} · ${e1RM} ${unit} estimated 1RM`,
-    `+${delta} ${unit} stronger`,
+    ...(delta > 0 ? [`+${delta} ${unit} stronger`] : []),
     '',
     '531 Strength',
   ];

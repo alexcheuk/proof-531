@@ -30,14 +30,8 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
   if (!tm) {
     throw new Error(`createSession: no TrainingMax exists for lift '${lift}'`);
   }
-  // Snapshot BOTH units AND this lift's own cycle/week:
-  //   cycle/week ← lift_progress[lift] (per-lift split — each lift moves
-  //     through its own 5/3/1 cycle independently; see liftProgress.ts).
-  //   storageUnitSnapshot ← tm.unit  (drives the snap math + writes for
-  //     this session — invariant from docs/technical-design.md §4).
-  //   displayUnitSnapshot ← settings.displayUnit (drives the render
-  //     conversion). A mid-session display flip in Settings must NOT
-  //     change which currency this session renders in.
+  // displayUnitSnapshot is snapshotted at creation so a mid-session Settings flip doesn't
+  // change which unit this session renders in.
   const row = {
     lift,
     cycle: progress.currentCycle,
@@ -54,19 +48,11 @@ export async function createSession(db: AnyDb, lift: Lift): Promise<Session> {
   return result;
 }
 
-/** Look up a session row by id. Returns null when no row matches. */
 export async function getSession(db: AnyDb, sessionId: number): Promise<Session | null> {
   const rows = await Promise.resolve(db.select().from(sessions).where(eq(sessions.id, sessionId)));
   return (rows as Session[])[0] ?? null;
 }
 
-/**
- * Return the (single) currently in-progress session, if any.
- *
- * The data model assumes the single-session invariant (§4): at most one row
- * with `status === 'in_progress'` exists. This accessor returns the first
- * such row.
- */
 export async function getActiveSession(db: AnyDb): Promise<Session | null> {
   const rows = (await Promise.resolve(
     db.select().from(sessions).where(eq(sessions.status, 'in_progress')),
@@ -74,13 +60,7 @@ export async function getActiveSession(db: AnyDb): Promise<Session | null> {
   return rows[0] ?? null;
 }
 
-/**
- * Return every session, newest first. Backs the History tab list.
- *
- * Ordered by `startedAt DESC` (then `id DESC` as a tiebreaker for sessions
- * created within the same millisecond — rare in practice, but keeps the
- * ordering deterministic for tests).
- */
+// id DESC tiebreaker for sessions created in the same millisecond — rare but keeps ordering deterministic in tests.
 export async function getSessions(db: AnyDb): Promise<Session[]> {
   const rows = await Promise.resolve(
     db.select().from(sessions).orderBy(desc(sessions.startedAt), desc(sessions.id)),
@@ -88,15 +68,6 @@ export async function getSessions(db: AnyDb): Promise<Session[]> {
   return rows as Session[];
 }
 
-/**
- * Mark a session complete and advance THIS lift's progress (which may wrap
- * into the next cycle, bumping that lift's TM — see
- * `liftProgress.advanceLift`). Other lifts' progress is untouched, because
- * each lift runs its own 5/3/1 cycle independently.
- *
- * Idempotent — calling on an already-completed (or cancelled, or missing)
- * session is a no-op. Callers do not need to guard on status.
- */
 export async function completeSession(db: AnyDb, sessionId: number): Promise<void> {
   const row = await getSession(db, sessionId);
   if (!row || row.status !== 'in_progress') return;
@@ -109,12 +80,8 @@ export async function completeSession(db: AnyDb, sessionId: number): Promise<voi
   await advanceLift(db, row.lift);
 }
 
-/**
- * Mark a session cancelled. Idempotent — no-ops for missing or already-
- * finished sessions. Used when the user disables a lift that still has
- * an in-progress session for it (otherwise that ghost session keeps
- * stealing every Begin-CTA tap on Home — Discord 1508768403).
- */
+// Cancelling a session for a disabled lift prevents the ghost session from stealing every
+// Begin-CTA tap on Home (Discord 1508768403).
 export async function cancelSession(db: AnyDb, sessionId: number): Promise<void> {
   const row = await getSession(db, sessionId);
   if (!row || row.status !== 'in_progress') return;
@@ -126,28 +93,8 @@ export async function cancelSession(db: AnyDb, sessionId: number): Promise<void>
   );
 }
 
-/**
- * Reset a still-in-progress session: delete every set log for it,
- * stamp a fresh `startedAt`, and rebuild the lift's `prs.bestE1RM`
- * from the remaining (other-session) AMRAP rows. Leaves
- * `status === 'in_progress'`. Used by the Restart pill on the Today
- * top bar (loop-004; previously Live) so the user can scrap a
- * miss-logged attempt and start over without cycling through the
- * cancel → today → begin flow.
- *
- * Throws if the session row is missing or already finished
- * (completed / cancelled).
- *
- * PR-rebuild contract (loop-005): if this session set a PR via its
- * now-deleted AMRAP row, the stale `prs.bestE1RM` would otherwise
- * survive — the History tab's best-lift badge and the AMRAP
- * projection chip would both compare against a number with no
- * supporting set_log. We recompute: select max estimated_1rm across
- * remaining completed/in-progress sessions' AMRAP logs for this
- * lift; if none remain, delete the prs row entirely; otherwise
- * update it. The setLogId pointer is best-effort — we point it at
- * the newest remaining AMRAP row with the new max e1RM.
- */
+// PR rebuild: if this session set a PR via its now-deleted AMRAP row, the stale prs.bestE1RM
+// would otherwise survive and give the badge/chip a ghost number with no supporting set_log.
 export async function resetSession(db: AnyDb, sessionId: number): Promise<void> {
   const rows = (await Promise.resolve(
     db.select().from(sessions).where(eq(sessions.id, sessionId)),
@@ -159,12 +106,8 @@ export async function resetSession(db: AnyDb, sessionId: number): Promise<void> 
   if (session.status !== 'in_progress') {
     throw new Error(`resetSession: session ${sessionId} is ${session.status}, not in_progress`);
   }
-  // PR rebuild must happen BEFORE we delete this session's set_logs,
-  // because `prs.set_log_id` is a NOT NULL FK to `set_logs.id` with
-  // no ON DELETE CASCADE. Deleting a set_log that `prs` points at
-  // would fail with `FOREIGN KEY constraint failed`. So: compute the
-  // surviving best across other sessions, repoint or delete the prs
-  // row, THEN delete this session's set_logs.
+  // Must rebuild PRs BEFORE deleting set_logs: prs.set_log_id is a NOT NULL FK with no
+  // ON DELETE CASCADE — deleting a set_log that prs points at would fail with FK constraint.
   const surviving = (await Promise.resolve(
     db
       .select({ id: setLogs.id, e1rm: setLogs.estimated1RM })

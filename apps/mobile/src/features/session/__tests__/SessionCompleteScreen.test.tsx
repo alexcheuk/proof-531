@@ -167,8 +167,9 @@ jest.mock('@/data/queries/useSettings', () => ({
   }),
 }));
 
+// 295 lbs previous best — below the 325 lb new e1RM so the comparison row renders.
 jest.mock('@/data/queries/usePreviousBestE1RM', () => ({
-  usePreviousBestE1RM: () => ({ data: 0, isLoading: false, error: null }),
+  usePreviousBestE1RM: () => ({ data: 295, isLoading: false, error: null }),
 }));
 
 // Import after mocks so the screen sees the stubs.

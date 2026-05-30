@@ -1,22 +1,6 @@
 import { useTheme } from '@/design/theme';
-/**
- * Wet-ink circular date stamp for the session-complete receipt.
- *
- * The original web implementation rendered an SVG with arc-text on a circular path
- * (`textPath`). React Native ships without `react-native-svg`, and we are
- * holding the line on extra native deps for the Expo-Go scaffold — so this
- * implementation approximates the wet-stamp character with a bordered circle + three
- * stacked caps-mono labels (top arc, weekday + date center, year footer).
- *
- * Pure presentational. The parent feeds pre-formatted strings from
- * `formatDateLabel` (domain/summary). The `topArcLabel` swaps to
- * `★  NEW RECORD  ★` on a PR session (parent decides — Rev 5 §B).
- *
- * Boundary note: this file lives under `features/` and uses px/numeric
- * style literals for sizing — same pattern as the rest of the Live/Today
- * components (the hex-only rule in CLAUDE.md is enforced strictly for
- * colors; layout numerics are part of the per-component composition).
- */
+// SVG arc-text (textPath) would be ideal but react-native-svg is a native dep we're avoiding;
+// this approximates the wet-stamp with a bordered circle + stacked caps-mono labels.
 import { Text as RNText, type TextStyle, View, type ViewStyle } from 'react-native';
 
 export type DateStampProps = {

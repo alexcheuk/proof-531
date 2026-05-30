@@ -1,11 +1,3 @@
-/**
- * Pure helper: pick the heaviest PR from the user's `prs` rows.
- *
- * Returns null when no PRs exist yet. When two lifts tie on `bestE1RM`
- * (e.g. early in a cycle when the values are still small integers),
- * the earlier-achieved one wins so the badge doesn't oscillate as new
- * PRs arrive at the same magnitude.
- */
 import type { Lift, Unit } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
 
@@ -38,7 +30,7 @@ export function pickBestLift(
     if (p.bestE1RM > best.bestE1RM) {
       best = p;
     } else if (p.bestE1RM === best.bestE1RM && p.achievedAt < best.achievedAt) {
-      // tie-break by earlier achievement
+      // earlier-achieved wins ties so the badge doesn't oscillate when two lifts share the same e1RM
       best = p;
     }
   }

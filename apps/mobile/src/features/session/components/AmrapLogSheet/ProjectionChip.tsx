@@ -27,16 +27,6 @@ export type ProjectionChipProps = {
   testID?: string;
 };
 
-/**
- * Inline e1RM caption + delta chip + PR badge for the AMRAP sheet.
- *
- * Three slots:
- *   - "EST. 1RM 245 lb" (always)
- *   - "↑ +12" or "↓ 3" — only when the user has a prior PR and reps > 0
- *   - PR badge — only when the projection beats the prior PR
- *
- * Pure presentational; the parent owns prediction math.
- */
 export function ProjectionChip({
   predictedE1RM,
   unit,

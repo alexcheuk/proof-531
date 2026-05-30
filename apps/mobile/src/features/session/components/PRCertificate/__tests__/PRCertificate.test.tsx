@@ -1,10 +1,3 @@
-/**
- * Behavioral tests for the PRCertificate composition shell.
- *
- * Sub-rows (HeroNumberRow, ComparisonRow, SignOffRow) have their own
- * tests — here we cover the shell: panel chrome, eyebrow, hero word,
- * a11y label, and prop flow-through to each row.
- */
 import { ThemeProvider } from '@/design/theme';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
@@ -55,8 +48,40 @@ describe('PRCertificate', () => {
     );
     const panel = screen.getByTestId('cert');
     expect(panel.props.accessibilityLabel).toBe(
-      'A new record on the squat: 300 lb estimated 1RM, stronger by 15.',
+      'A new record on the squat: 300 lb estimated 1RM, stronger by 15 lb.',
     );
+  });
+
+  it('omits comparison row and delta from a11y label when prevE1RM is 0 (first-ever PR)', () => {
+    const screen = renderCert(
+      <PRCertificate
+        e1RM={280}
+        prevE1RM={0}
+        delta={280}
+        unit="lb"
+        liftLabel="bench"
+        testID="cert"
+      />,
+    );
+    expect(screen.queryByText('Previous best')).toBeNull();
+    expect(screen.queryByText('Stronger by')).toBeNull();
+    const panel = screen.getByTestId('cert');
+    expect(panel.props.accessibilityLabel).toBe('A new record on the bench: 280 lb estimated 1RM.');
+  });
+
+  it('omits comparison row when delta is 0 (sub-increment improvement)', () => {
+    const screen = renderCert(
+      <PRCertificate
+        e1RM={280}
+        prevE1RM={280}
+        delta={0}
+        unit="lb"
+        liftLabel="press"
+        testID="cert"
+      />,
+    );
+    expect(screen.queryByText('Previous best')).toBeNull();
+    expect(screen.queryByText('Stronger by')).toBeNull();
   });
 
   it('flows props through to HeroNumberRow + ComparisonRow + SignOffRow', () => {

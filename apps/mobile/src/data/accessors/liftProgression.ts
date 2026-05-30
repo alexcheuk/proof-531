@@ -1,24 +1,3 @@
-/**
- * Per-lift session + AMRAP accessor for the Progress screen.
- *
- * Returns, for one lift, every completed session paired with that
- * session's AMRAP row (if any). The Progress grid uses this to render
- * each past cycle's right-column e1RM (max across the cycle's AMRAP
- * sets) and to drive the past-cell tap target → SessionComplete.
- *
- * Implemented as a LEFT JOIN: a completed session might not have an
- * AMRAP row if logging was interrupted, so we surface it as a row with
- * `amrap === null`. Rows are returned newest-first by `startedAt` for
- * deterministic ordering (matching `getSessions`).
- *
- * One row per session — the spec's reshape hook groups by `cycle` /
- * `day` downstream. Working sets are NOT joined here; PAST e1RM
- * displayed in the grid is computed from AMRAP rows alone (the
- * heaviest e1RM event of any cycle is always the AMRAP top set). Per
- * the spec's `bestE1RMForCycle` contract, the caller could expand to
- * include working sets too, but the Progress feature only needs the
- * AMRAP top per (session, day).
- */
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';
@@ -66,16 +45,7 @@ export type CompletedSessionWithAmrap = {
   amrap: CompletedSessionTopSet | null;
 };
 
-/**
- * Every completed session for `lift`, newest first, each paired with its
- * AMRAP set-log row (or `null` if no AMRAP was logged).
- *
- * Cross-driver LEFT JOIN: drizzle returns `{ session, amrap }` shaped
- * rows; we flatten to the export shape so consumers don't need to know
- * about the join wrapper. The AMRAP filter sits inside the join `ON`
- * clause — otherwise a session without an AMRAP would be filtered out
- * by the WHERE.
- */
+// AMRAP filter is inside the JOIN ON clause (not WHERE) so sessions without an AMRAP aren't dropped.
 export async function getCompletedSessionsWithAmrapForLift(
   db: AnyDb,
   lift: Lift,

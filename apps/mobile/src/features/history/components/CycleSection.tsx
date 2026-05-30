@@ -15,10 +15,6 @@ export type CycleSectionProps = {
   onPressPr?: (lift: Lift) => void;
 };
 
-/**
- * One cycle's worth of session rows, prefaced with a "Cycle NN" header and
- * a hint summarising completion + PRs (e.g. `3 of 4 done · 1 PR`).
- */
 export function CycleSection({ cycle, sessions, prSessionIds, onPressPr }: CycleSectionProps) {
   const { layout } = useTheme();
   const hint = computeCycleHint(sessions, prSessionIds);

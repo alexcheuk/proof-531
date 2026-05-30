@@ -3,10 +3,6 @@ import { useTheme } from '@/design/theme';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/**
- * Bottom CTA stack for the PR celebration screen — outlined "Continue →"
- * that reads as paper-on-ink without competing with the headline.
- */
 export type PrCelebrationCtasProps = {
   onContinue: () => void;
 };

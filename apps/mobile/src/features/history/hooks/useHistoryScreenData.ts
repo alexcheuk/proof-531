@@ -1,17 +1,3 @@
-/**
- * `useHistoryScreenData()` — composes the History screen's read surface.
- *
- * Centralizes the four TanStack Query reads (`useSessions`, `useSessionPrIds`,
- * `usePrs`, `useSettings`) and every derived shape the screen renders. Keeping
- * this together — instead of inlining seven `useMemo` calls in the screen body
- * — mirrors the pattern used by `useHomeScreenState`, `useLiveScreenState`,
- * and `useSettingsScreenData` and makes the derived shapes independently
- * testable.
- *
- * Accepts the active `HistoryFilter` so the hook can pre-compute the filtered
- * row list + cycle grouping. Filter state itself stays in the screen — it's
- * UI state, not derived data.
- */
 import type { Session } from '@/data/accessors/session';
 import { useLifetimeVolume } from '@/data/queries/useLifetimeVolume';
 import { usePrs } from '@/data/queries/usePrs';

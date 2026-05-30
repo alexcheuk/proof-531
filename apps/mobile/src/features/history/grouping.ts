@@ -5,17 +5,7 @@ export type CycleGroup = {
   sessions: Session[];
 };
 
-/**
- * Group sessions by their `cycle` field, preserving first-seen order so the
- * caller's row ordering decides which cycle's group appears first.
- *
- * Sessions with a missing `cycle` are bucketed under cycle `1` — historical
- * data from pre-cycle migrations carries no cycle number; collapsing to 1
- * keeps the History list legible without a "cycle ?" bucket.
- *
- * Pure helper — kept out of the screen file so the grouping rule is
- * independently testable and reusable.
- */
+// Missing `cycle` bucketed under 1 — historical data from pre-cycle migrations has no cycle number.
 export function groupByCycle(sessions: ReadonlyArray<Session>): CycleGroup[] {
   const order: number[] = [];
   const byCycle = new Map<number, Session[]>();
