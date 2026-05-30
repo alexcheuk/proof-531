@@ -122,6 +122,10 @@ Add new files freely when a topic doesn't fit existing ones — keep each focuse
   will not receive the OTA update. Expo Go testers are unaffected. Note this
   in the Discord summary whenever a native module is added.
 
+## Math.round vs round() in display conversions (expedition 71 + 78)
+
+- **Any code that converts a value from storage units to display units and then shows it to the user must use `round(value, displayU)` from `domain/units`, NOT `Math.round()`.** `Math.round` produces unsnapped integers; `round()` snaps to the plate increment (5 lb / 2.5 kg). The same bug class appeared in expedition 71 (onKindChange) and expedition 78 (persistedValue). Both times the fix was identical. Each loop, check: if you see `Math.round(displayWeight(...))` or `Math.round(convert(...))` anywhere in the features layer, that's the bug.
+
 ## Jest "Force exiting" warning (expedition 77)
 
 - **`expo-notifications` keeps alive an internal timer in the Jest environment.** This causes
