@@ -11,6 +11,7 @@ loopIso: '2026-05-30T05:16:53Z'
 commitCount: 1
 expedition: 75
 loggerName: 'Zara'
+audio: '/audio/expedition-75.mp3'
 tags: ['refactor', 'session', 'design-system', 'test']
 scope: ['mobile', 'expedition']
 ---

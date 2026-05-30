@@ -13,6 +13,7 @@ loopIso: '2026-05-30T05:43:57Z'
 commitCount: 1
 expedition: 76
 loggerName: 'Dayo'
+audio: '/audio/expedition-76.mp3'
 tags: ['copy', 'web', 'mobile', 'marketing']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:
