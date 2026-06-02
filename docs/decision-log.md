@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-02 - Expedition field-log demoted to a discretionary, non-gating side-effect
+
+**Tags:** `process`, `loop`, `convention`
+**Files:** `.claude/skills/do-work/SKILL.md`, `do-work/DOCTRINE.md`
+
+Made `commission-expedition-log` a true side-effect of a do-work tick rather than a mandatory step. The tick is now explicitly COMPLETE after the `#auto-improvements` summary posts; Phase 7's distiller and field-log are "trailing best-effort side-effects" that run because a tick happened but never gate it. The field-log is commissioned only when the skill's bar is met ("the Logger would have something to say"), skipped with a LOG note on thin/no-op ticks, committed in its own trailing `docs(blog):` commit so a blog hiccup can never block shipped code, and fire-and-best-effort (one retry then move on). It remains a pure downstream output, never read back into Orient/Prioritize.
+
+**Why:** Alex's directive. As a numbered "step 8" the post read as obligatory every tick, which on the inaugural tick produced a forced expedition-79 log on what was really a thin migration-plus-correction tick. A forced post on an empty tick is exactly the templated drone the Logger fiction is meant to avoid; gating tick completion on a downstream artifact also risked a blog failure blocking shipped code.
+
+**Trade-off / what we didn't do:** Kept the data-flow invariant untouched (the blog still never feeds Orient/Prioritize) and did not change the persona, schema, or the skill's own bar; only the do-work flow's obligation to call it. Operating-decision change (not constitution-level), so do-work-auditor APPROVED was the gate; no #needs-input blessing required.
+
 ### 2026-06-01 - First do-work tick: third Math.round-vs-round instance; loop-criteria retargeted
 
 **Tags:** `bug`, `process`, `loop`

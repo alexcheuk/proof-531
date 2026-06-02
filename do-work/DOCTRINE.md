@@ -43,9 +43,13 @@ Process invariants:
   future reader would want context (new or removed skills, agents, conventions; architectural calls;
   process changes; bug post-mortems worth remembering; a path considered and rejected). The
   Expedition field-log (the `commission-expedition-log` skill, the Verso / Logger fiction under
-  `apps/web/src/content/blog/`) is a **pure downstream side-effect**: it is written at the Record
-  step as output only, in the same commit as the code, and it MUST NOT feed back into the loop's
-  Orient or Prioritize steps. The loop never reads the blog to decide work.
+  `apps/web/src/content/blog/`) is a **pure, discretionary downstream side-effect**: it is a
+  best-effort output of the Record step, NOT a completion gate. The tick is done once work shipped,
+  records were written, the push landed, and the `#auto-improvements` summary posted; the field-log
+  then fires only when the tick is worth narrating (the skill's bar, "the Logger would have something
+  to say") and is skipped on thin / no-op ticks. It commits in its own trailing `docs(blog):` commit
+  so a blog hiccup never blocks shipped code, and it MUST NOT feed back into the loop's Orient or
+  Prioritize steps. The loop never reads the blog to decide work.
 
 - **Validation.** UI changes ship and commit, then accrue **validation debt** (`validation.mjs debt`).
   At a threshold or milestone, `build-and-validate.sh` runs out-of-band (local APK build, install on
