@@ -47,7 +47,7 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
   useLastCompletedSessionForLift: () => ({ startedAt: null, isLoading: false }),
 }));
 
-import { LiftPage } from '../components/LiftPage';
+import { LiftPage } from '../components/LiftPage/LiftPage';
 
 type TestDb = ReturnType<typeof drizzle<typeof schema>>;
 

@@ -19,7 +19,7 @@ import { NoTrainingMaxState } from './components/NoTrainingMaxState';
 import { ResetConfirmSheet } from './components/ResetConfirmSheet';
 import { SessionLayout } from './components/SessionLayout';
 import { SessionTopBar } from './components/SessionTopBar';
-import { TodayBody } from './components/TodayBody';
+import { TodayBody } from './components/TodayBody/TodayBody';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { useTodayScreenState } from './hooks/useTodayScreenState';
 import { useTodaySessionActions } from './hooks/useTodaySessionActions';

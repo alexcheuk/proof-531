@@ -7,7 +7,7 @@ import type { Lift, Unit } from '@/domain/types';
  * Step 4 — Review the computed training maxes and commit.
  */
 import { View } from 'react-native';
-import { OnboardingShell } from '../../components/OnboardingShell';
+import { OnboardingShell } from '../../components/OnboardingShell/OnboardingShell';
 import { TmTable } from './TmTable';
 
 export interface ReviewProps {

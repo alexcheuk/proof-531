@@ -45,7 +45,7 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
 }));
 
 // Import after mocks.
-import { LiftPage } from '../components/LiftPage';
+import { LiftPage } from '../components/LiftPage/LiftPage';
 
 const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 

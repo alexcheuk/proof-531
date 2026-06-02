@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { useOnboardingFlow } from './hooks/useOnboardingFlow';
 import { Intro } from './steps/Intro';
-import { OneRmEntry } from './steps/OneRmEntry';
+import { OneRmEntry } from './steps/OneRmEntry/OneRmEntry';
 import { PickLifts } from './steps/PickLifts';
-import { Review } from './steps/Review';
+import { Review } from './steps/Review/Review';
 
 export function OnboardingScreen() {
   const { state, dispatch, computed, finishing, handleFinish } = useOnboardingFlow();

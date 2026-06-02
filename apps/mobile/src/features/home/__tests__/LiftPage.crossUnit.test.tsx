@@ -37,7 +37,7 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
   useLastCompletedSessionForLift: () => ({ startedAt: null, isLoading: false }),
 }));
 
-import { LiftPage } from '../components/LiftPage';
+import { LiftPage } from '../components/LiftPage/LiftPage';
 
 const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 

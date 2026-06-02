@@ -9,7 +9,7 @@ import type { Lift, Unit } from '@/domain/types';
  */
 import { View } from 'react-native';
 import { LiftToggleRow } from '../components/LiftToggleRow';
-import { OnboardingShell } from '../components/OnboardingShell';
+import { OnboardingShell } from '../components/OnboardingShell/OnboardingShell';
 import { LIFT_ORDER } from '../lifts';
 
 export interface PickLiftsProps {

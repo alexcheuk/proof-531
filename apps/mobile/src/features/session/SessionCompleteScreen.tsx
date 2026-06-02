@@ -12,7 +12,7 @@ import { captureRef } from 'react-native-view-shot';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleCompleteBand } from './components/CycleCompleteBand';
 import { CycleGrid } from './components/CycleGrid';
-import { PRCertificate } from './components/PRCertificate';
+import { PRCertificate } from './components/PRCertificate/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
 import { SessionCompleteTitle } from './components/SessionCompleteTitle';

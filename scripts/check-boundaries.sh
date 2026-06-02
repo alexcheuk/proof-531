@@ -82,8 +82,21 @@ if [ -n "$gorhom_hits" ]; then
   done <<< "$gorhom_hits"
 fi
 
+# 5. Barrel files in features/ or domain/. CLAUDE.md rule 5 + features/CLAUDE.md
+# rule 3: import directly from the file that exports the symbol. Barrels are
+# allowed only inside design/primitives/. An index.ts/index.tsx anywhere under
+# features/ or domain/ is a barrel and is flagged.
+barrel_hits=$(find "$SRC/features" "$SRC/domain" \
+  -type f \( -name 'index.ts' -o -name 'index.tsx' \) 2>/dev/null || true)
+if [ -n "$barrel_hits" ]; then
+  violations+=("Barrel file in features/ or domain/ (import directly from the source file; barrels are only allowed in design/primitives/):")
+  while IFS= read -r line; do
+    violations+=("  $line")
+  done <<< "$barrel_hits"
+fi
+
 if [ "${#violations[@]}" -eq 0 ]; then
-  echo "✓ boundary rules clean: no hex outside design, no React/async in domain, no drizzle outside data, no prop-driven BottomSheet index."
+  echo "✓ boundary rules clean: no hex outside design, no React/async in domain, no drizzle outside data, no prop-driven BottomSheet index, no barrels in features/ or domain/."
   exit 0
 fi
 

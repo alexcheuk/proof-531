@@ -9,7 +9,7 @@ import type { Unit } from '@/domain/types';
  * Step 1 — Intro screen. Welcome copy + unit picker + Begin CTA.
  */
 import { View, type ViewStyle } from 'react-native';
-import { OnboardingShell } from '../components/OnboardingShell';
+import { OnboardingShell } from '../components/OnboardingShell/OnboardingShell';
 
 export interface IntroProps {
   onNext: () => void;

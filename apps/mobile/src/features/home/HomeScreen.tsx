@@ -17,7 +17,7 @@ import { FlatList, type ListRenderItem, View, useWindowDimensions } from 'react-
 import { DateBadge } from './components/DateBadge';
 import { HomeContainer } from './components/HomeContainer';
 import { HomeSkeleton } from './components/HomeSkeleton';
-import { LiftPage } from './components/LiftPage';
+import { LiftPage } from './components/LiftPage/LiftPage';
 import { useHomeScreenState } from './hooks/useHomeScreenState';
 
 export function HomeScreen() {

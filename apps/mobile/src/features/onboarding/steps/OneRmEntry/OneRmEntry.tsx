@@ -10,7 +10,7 @@ import type { Lift, Unit } from '@/domain/types';
  * lives in `useOneRmEntryState`, layout pieces in sibling files.
  */
 import { View } from 'react-native';
-import { OnboardingShell } from '../../components/OnboardingShell';
+import { OnboardingShell } from '../../components/OnboardingShell/OnboardingShell';
 import type { LiftInput, OnboardingMode } from '../../hooks/useOnboardingState';
 import { InputFrame } from './InputFrame';
 import { LiftHeader } from './LiftHeader';
