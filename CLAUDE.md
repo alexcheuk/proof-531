@@ -104,13 +104,13 @@ There are two entry points, each with its own orchestrator. Pick the one that ma
 
 Team: `rn-designer` → `rn-frontend` → `rn-qa` (agent team mode). Audit trail in `_workspace/`. The orchestrator commits but does not push, PR, or merge.
 
-### Queue-driven entry: `initial-implement`
+### Autonomous improvement loop: `do-work`
 
-**Goal:** drain `docs/superpowers/queue.yaml` autonomously when a plan already exists.
+**Goal:** drive the app toward its SOUL through whatever work matters most, every iteration, unattended.
 
-Invoked via `/initial-implement` (and its flags `--batch`, `--max-tasks N`, `--task <id>`, `--retry <id>`, `--status`). Spawns planner/implementer/verifier/fixer/reviewer subagents, runs the full harness, squash-merges to main.
+Invoked via `/do-work` (directly or under `/loop`, e.g. `/loop 30m /do-work`). Each tick orients on `do-work/SOUL.md` + `do-work/DOCTRINE.md` + the work-graph (`do-work/work/backlog.md`), prioritizes by the impact rubric, covers the `loop-memory/loop-criteria.md` categories, ships 12 to 15 substantive items end-to-end, and never claims an item done without the proof its type requires. It pulls Discord `#task-queue`, reads `#loop-criteria` pins and `#needs-input` answers, commits and pushes (OTA on CI), posts a `#auto-improvements` summary, and commissions the Expedition field-log as a downstream side-effect. Self-edits are scoped: `loop-memory/` learnings and the backlog are free; `do-work/SOUL.md`, `do-work/DOCTRINE.md`, and the skill itself go through the `do-work-auditor`.
 
-See `.claude/skills/initial-implement/SKILL.md` for the orchestrator's full behavior. See `.claude/skills/initial-implement/queue-format.md` for the task schema.
+See `.claude/skills/do-work/SKILL.md` for the full seven-phase tick. (`/auto-improve` is a deprecated alias that redirects here.) The earlier `queue.yaml` + `initial-implement` five-subagent pipeline was retired on 2026-06-01 once the queue fully drained; it now lives under `docs/_retired/`.
 
 ### Forbidden paths
 
@@ -126,7 +126,7 @@ Never edit, regardless of plan: `docs/superpowers/specs/`, `docs/superpowers/pla
 
 **Goal:** ship a 531 feature end-to-end (idea → PR-ready commit) via a coordinated design/frontend/QA agent team.
 
-**Trigger:** any feature work originating from an idea, description, or wireframe — use the `rn-expo-pipeline` skill. Queue-driven work continues to use `initial-implement`. Simple questions and small fixes do not need the pipeline.
+**Trigger:** any feature work originating from an idea, description, or wireframe - use the `rn-expo-pipeline` skill. Unattended improvement work runs under the `do-work` loop (the queue-driven `initial-implement` pipeline is retired). Simple questions and small fixes do not need the pipeline.
 
 **Components:** agents at `.claude/agents/{rn-designer,rn-frontend,rn-qa}.md`; role skills at `.claude/skills/{rn-design-spec,rn-feature-implementation,rn-feature-qa}/`; orchestrator at `.claude/skills/rn-expo-pipeline/`.
 
@@ -152,7 +152,7 @@ Posts under `apps/web/src/content/blog/` are written through the **`commission-e
 
 When to invoke `commission-expedition-log`:
 
-- At the end of any `/loop` iteration (`/auto-improve`, `/initial-implement`, `rn-expo-pipeline`) once the harness is green and the diff is staged — the post ships in the same commit as the code.
+- At the end of any `/loop` iteration (`/do-work`, `rn-expo-pipeline`) once the harness is green and the diff is staged - the post ships in the same commit as the code.
 - Off-cycle, when an ad-hoc session produced a real decision or learning worth recording. Bar: "the Logger would have something to say."
 
 The skill expects the caller to assemble inputs (what shipped, loop metadata, Discord prompts, any notes — including an optional `expedition_number`) and to handle the commit. It does NOT commit, push, or open a PR.

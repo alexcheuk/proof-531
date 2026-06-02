@@ -63,9 +63,10 @@ Rejected alternatives (Nativewind, WatermelonDB, MMKV, raw React Navigation) and
 │   ├── decision-log.md               # what we decided and why
 │   └── superpowers/
 │       ├── specs/                    # engineering specs (read-only to orchestrators)
-│       ├── plans/                    # per-task plans (read-only to orchestrators)
-│       └── queue.yaml                # orchestrator backlog
-├── loop-memory/                      # /auto-improve loop's cross-iteration memory
+│       └── plans/                    # per-task plans (read-only to orchestrators)
+├── do-work/                          # /do-work loop's soul, doctrine, work-graph
+│   └── work/backlog.md               # single task model (replaced queue.yaml)
+├── loop-memory/                      # /do-work loop's cross-iteration memory
 ├── .claude/                          # skills, subagents, slash commands
 ├── CLAUDE.md                         # repo-root agent orientation
 └── README.md
@@ -132,11 +133,12 @@ Branch protection: no merge without green.
 
 ## How work happens
 
-Three entry points, each with its own orchestrator:
+Two entry points, each with its own orchestrator:
 
-- **`/auto-improve`** — the standing 30-minute loop. Polls Discord `#task-queue`, picks queue items + at least one item per category from `loop-memory/loop-criteria.md`, ships them, commits, and pushes. OTA is published automatically by CI on the push. Pacing rules in `loop-memory/00-loop-pacing.md`.
+- **`/do-work`**: the standing autonomous loop. Polls Discord `#task-queue`, picks items from the work-graph (`do-work/work/backlog.md`) plus at least one item per category from `loop-memory/loop-criteria.md`, ships them, commits, and pushes. OTA is published automatically by CI on the push. Pacing rules in `loop-memory/00-loop-pacing.md`.
 - **`rn-expo-pipeline`** — idea-driven feature work. A coordinated design / frontend / QA team (`rn-designer` → `rn-frontend` → `rn-qa`) takes an idea or wireframe and produces a PR-ready commit on `feat/<slug>`.
-- **`/initial-implement`** — queue-driven backlog drain. Picks the next ready task from `docs/superpowers/queue.yaml`, spawns planner → implementer → verifier → fixer → reviewer subagents inside a per-task git worktree, then squash-merges to `main` as `[auto] <task-id> <title>`. Used when a spec + plan already exist.
+
+The old queue-driven `initial-implement` orchestrator (planner → implementer → verifier → fixer → reviewer over `docs/superpowers/queue.yaml`) is retired; the queue was fully drained and the machinery moved to `docs/_retired/`.
 
 Forbidden paths for orchestrator-run tasks: `docs/superpowers/specs/`, `docs/superpowers/plans/`. The running mobile app itself is the behavioral reference for any new work — port the existing interaction model faithfully, do not reinvent.
 

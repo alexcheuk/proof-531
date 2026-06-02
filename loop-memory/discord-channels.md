@@ -17,6 +17,16 @@ Channels:
 
 Bot self-react detection: use `GET /channels/:id/messages` and check whether the bot's own user ID appears in `reactions[].me` — saves a round-trip per message.
 
+## Channel routing (do-work loop)
+
+The 531 server has these four channels and no others. The do-work architecture was ported from a project (koresore) that also used `#alerts` and `#memory` channels; those do NOT exist here, so route their traffic as follows:
+
+- **Build / validation FAILURES** (a `build-and-validate.sh` FAIL ingested by `validation.mjs`): post to `#needs-input`, not a separate `#alerts`. Lead with the failing flow and the fix-forward plan.
+- **SOUL / DOCTRINE blessing requests** (the constitution-level half of the scoped self-edit gate): post the proposed change to `#needs-input` and wait for Alex's reply (the `:white_check_mark:` reaction or a confirming message). There is no separate `#memory` channel; `#needs-input` carries both questions and constitution-blessing requests.
+- **Tactical distilled learnings** (the `do-work-distiller`): saved straight to `loop-memory/` (the self-edit gate is scoped, so the learnings layer is free) and mentioned in the `#auto-improvements` tick summary; they do not need their own channel.
+
+So: `#task-queue` (work in), `#auto-improvements` (tick summary out), `#loop-criteria` (live pinned criteria), `#needs-input` (questions, escalations, build/validation failures, and constitution-blessing requests).
+
 # Curl recipes
 
 Every Discord call the loop makes, written out so the agent doesn't have to remember endpoint shapes, version pins, auth header format, or rate-limit gotchas. Source them in order from `.env.claude.local` first:

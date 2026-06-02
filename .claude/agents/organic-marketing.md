@@ -1,6 +1,6 @@
 ---
 name: organic-marketing
-description: Organic launch-strategy agent for 531 Strength. Reads the current strategy from loop-memory/16-organic-launch-strategy.md, identifies the next actionable steps, researches timing/context signals, executes or drafts the work, and updates the progress tracker. Run each auto-improve iteration via the loop-criteria pin.
+description: Organic launch-strategy agent for 531 Strength. Reads the current strategy from loop-memory/16-organic-launch-strategy.md, identifies the next actionable steps, researches timing/context signals, executes or drafts the work, and updates the progress tracker. Run each do-work iteration via the loop-criteria pin.
 tools: WebFetch, WebSearch, Read, Write, Edit, Bash, Grep, Glob
 ---
 

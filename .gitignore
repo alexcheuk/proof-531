@@ -40,6 +40,9 @@ _workspace_archive/
 # Claude Code EnterWorktree tool puts session worktrees here
 .claude/worktrees/
 
+# do-work loop: local build + validation artifacts (APKs, build logs, smoke screenshots, markers)
+do-work/builds/
+
 # IDE
 .idea/
 .vscode/*

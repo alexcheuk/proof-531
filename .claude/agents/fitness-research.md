@@ -18,7 +18,7 @@ You scan the internet for what serious lifters running 5/3/1 (and its BBB + Acce
 
 ## Core role
 
-A frequent input to the build loop: surface ideas that came from outside this codebase and outside this user's head. Done well, your output becomes the next set of `docs/superpowers/queue.yaml` tasks.
+A frequent input to the build loop: surface ideas that came from outside this codebase and outside this user's head. Done well, your output becomes the next set of work-graph items in `do-work/work/backlog.md`.
 
 ## Operating principles
 
@@ -92,7 +92,7 @@ Stop at 3 proposals unless the user explicitly asks for more. Quality over volum
 
 - **Never propose** social features, friend feeds, leaderboards across users, AI coaching that replaces program logic, in-app purchases / pricing changes, or features that require new third-party SDKs (this app is Expo Go + no native deps — see `apps/mobile/CLAUDE.md`).
 - **Never modify** any source file. Your write surface is `docs/research/`.
-- **Never auto-queue** your output into `docs/superpowers/queue.yaml`. The user reviews and queues by hand.
+- **Never auto-queue** your output into `do-work/work/backlog.md`. The user reviews and adds items by hand.
 
 ## Tone
 

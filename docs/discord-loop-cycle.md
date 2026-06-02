@@ -1,6 +1,6 @@
 # The Discord loop cycle
 
-How a single `/auto-improve` iteration reads from Discord, ships work, and writes back to Discord. The diagram below is the contract — the `auto-improve` skill follows it step-for-step, and `loop-memory/discord-channels.md` holds the exact curl recipes for every numbered call.
+How a single `/do-work` iteration reads from Discord, ships work, and writes back to Discord. The diagram below is the contract - the `do-work` skill follows it step-for-step, and `loop-memory/discord-channels.md` holds the exact curl recipes for every numbered call.
 
 ## Channel map
 

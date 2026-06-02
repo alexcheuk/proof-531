@@ -25,7 +25,7 @@ All three agents use `model: "opus"`.
 
 - **Starts at:** idea / description / wireframe
 - **Ends at:** PR-ready commit on a local feature branch named `feat/<slug>` (or `auto/<slug>` if invoked via batch). Does NOT push, does NOT open a PR, does NOT merge.
-- **Does NOT touch:** the `initial-implement` queue (`docs/superpowers/queue.yaml`) or its run logs. This pipeline is the idea-driven entry; `initial-implement` is the queue-driven entry. They coexist.
+- **Does NOT touch:** the retired `initial-implement` queue machinery (now under `docs/_retired/`). This pipeline is the idea-driven entry; unattended self-improvement runs through the `/do-work` loop.
 
 ## Workflow
 
@@ -236,7 +236,7 @@ The description above lists these for trigger reliability. Reiterating here for 
 
 - Does NOT push or open a PR (user owns shipping).
 - Does NOT merge to main (user owns merge).
-- Does NOT modify `docs/superpowers/queue.yaml` (that's `initial-implement`'s domain).
+- Does NOT modify the retired `initial-implement` queue machinery (now under `docs/_retired/`).
 - Does NOT delete `_workspace/` (audit trail).
 - Does NOT touch `~/Development/531-pwa/` (read-only reference).
 - Does NOT skip QA or commit on FAIL (no exceptions).

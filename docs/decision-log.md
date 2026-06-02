@@ -42,6 +42,15 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-01 - do-work architecture replaces /auto-improve; queue + initial-implement retired
+
+**Tags:** `harness`, `skill`, `architecture`, `process`, `removal`
+**Files:** `.claude/skills/do-work/SKILL.md`, `do-work/SOUL.md`, `do-work/DOCTRINE.md`, `do-work/work/`, `do-work/scripts/`, `.claude/agents/do-work-auditor.md`, `.claude/agents/do-work-distiller.md`, `loop-memory/19-self-edit-protocol.md`, `docs/_retired/`, `CLAUDE.md`
+
+Ported the `do-work` autonomous-loop architecture from the koresore-app project to replace `/auto-improve`. The loop now orients each tick on a north star (`do-work/SOUL.md`), a constitution (`do-work/DOCTRINE.md`), and a single markdown work-graph (`do-work/work/backlog.md`, gated by `check-memory.mjs`), with proof-by-type discipline (never claim done without the proof its type requires) and a decoupled local validation pipeline (`validation-debt.md` + `build-and-validate.sh` running all five Maestro flows against a standalone `build:prod` APK, koresore's app-id-integrity guard preserved). Four decisions were ratified: (1) `do-work/work/backlog.md` is the only task model, so the fully-drained `queue.yaml` and the `initial-implement` five-subagent pipeline are retired to `docs/_retired/`; (2) per-tick continuity is a lightweight rolling `do-work/work/LOG.md`, and the Expedition dev-blog stays a pure downstream side-effect that never feeds Orient/Prioritize; (3) SOUL/DOCTRINE live under `do-work/`, with `docs/INTENT.md` kept as the separate Alex-owned drift-check; (4) the self-edit gate is scoped: `loop-memory/` learnings and the backlog are free, while SOUL/DOCTRINE/the skill go through a new `do-work-auditor` agent (constitution changes additionally wait for Alex in `#needs-input`). The existing `loop-memory/` tree is kept as the durable learnings layer; the auto-improve machinery (curl recipes, the Verso TTS departure, `commission-expedition-log`, 12-to-15 pacing) was grafted in verbatim. `/auto-improve` is now a redirect stub.
+
+**Why:** /auto-improve picked work ad hoc with no explicit north star or proof discipline. do-work adds a principled prioritization lens, a machine-checked work-graph, and a hard proof-by-type rule, while preserving everything 531-specific (the e-ink hard lines, the Expedition lore, the loop-criteria categories, the Discord workflow). The queue pipeline was dead weight once all 57 tasks reached done. Built on `feat/do-work-migration` via a design+critique workflow then a 10-agent authoring workflow; `check-memory.mjs` green, zero em dashes or color emoji in any authored file.
+
 ### 2026-05-30 — Remove currentWeek from LiftProgression return; fix cross-unit goal snap
 
 **Tags:** `bug`, `removal`, `refactor`

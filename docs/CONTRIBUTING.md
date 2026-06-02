@@ -1,8 +1,8 @@
 # Contributing to 531
 
-This guide covers everything you need to land a change — by hand or via the
-`/initial-implement` orchestrator. Read [`CLAUDE.md`](../CLAUDE.md) first; this
-document picks up where that leaves off.
+This guide covers everything you need to land a change: by hand, via the
+`/do-work` loop, or via the `rn-expo-pipeline` feature team. Read
+[`CLAUDE.md`](../CLAUDE.md) first; this document picks up where that leaves off.
 
 ## Setup
 
@@ -13,7 +13,7 @@ document picks up where that leaves off.
 | Node | 22 (pinned in `.nvmrc`) | Runtime for Metro and tooling. |
 | pnpm | 9.15+ | Workspace manager. Install via Corepack: `corepack enable && corepack prepare pnpm@latest --activate`. |
 | bash | 4+ | Orchestrator scripts use `mapfile` and `declare -A`. macOS ships 3.2 — `brew install bash`. |
-| yq (mikefarah) | v4 | Queue scripts. `brew install yq`, or download from https://github.com/mikefarah/yq/releases. |
+| yq (mikefarah) | v4 | Only needed for the retired queue scripts in `docs/_retired/`. `brew install yq`, or download from https://github.com/mikefarah/yq/releases. |
 | Android SDK + JDK 17 | — | For local dev-client builds (`pnpm build:dev`). Alternatively use `eas build` (cloud, no local SDK needed). |
 
 ### Bootstrap
@@ -41,7 +41,7 @@ pnpm verify                               # `pnpm run ci` PLUS `pnpm bundle-chec
 ```
 
 `pnpm verify` is the green-bar gate before every commit. If it does not pass
-locally, neither will the orchestrator's verifier (and CI will fail too).
+locally, the `/do-work` loop will not ship the change (and CI will fail too).
 
 ### Local pre-commit hook (optional, recommended)
 
@@ -99,107 +99,42 @@ For the full picture see:
 - `src/domain/CLAUDE.md`, `src/design/CLAUDE.md`, `src/data/CLAUDE.md`,
   `src/features/CLAUDE.md` — folder-scoped rules the reviewer enforces
 
-## Adding a task to the queue
+## Adding a task
 
-The orchestrator's backlog lives in [`docs/superpowers/queue.yaml`](./superpowers/queue.yaml).
-To add work:
+The single task model is the work-graph at [`do-work/work/backlog.md`](../do-work/work/backlog.md).
+To add work, append an item there; the `/do-work` loop prioritizes via the
+impact-rubric in `do-work/DOCTRINE.md` and ships items end-to-end. Idea-driven
+feature work goes through the `rn-expo-pipeline` skill instead (design →
+frontend → QA team to a PR-ready commit on `feat/<slug>`).
 
-1. Open `docs/superpowers/queue.yaml`.
-2. Append a task entry. The schema:
-
-   ```yaml
-   - id: P3-04-press-button         # kebab-case, prefix with phase number
-     title: Port PressButton primitive
-     phase: 3
-     depends_on: [P3-01-tokens]     # ids that must be `done` first
-     status: todo
-     spec_ref: docs/superpowers/specs/2026-05-19-expo-scaffold-design.md#section
-     done_when:
-       - "pnpm typecheck passes"
-       - "src/design/primitives/PressButton.tsx exists"
-       - "jest test for accessibility role passes"
-     notes: |
-       Match the existing PressButton interaction model on the live app.
-   ```
-
-3. See [`.claude/skills/initial-implement/queue-format.md`](../.claude/skills/initial-implement/queue-format.md)
-   for the full schema and invariants.
-
-### `done_when` rules
-
-Every criterion **must be machine-checkable**. The verifier runs them all in
-order and aggregates pass/fail.
+When you write an item, keep its "done" condition machine-checkable where it
+can be:
 
 - Good: `"pnpm typecheck passes"`, `"file X exists"`, `"rg pattern returns empty"`.
 - Bad: `"looks good"`, `"accessibility is correct"`, `"works on iOS"`.
 
-### Dependencies
+## How the loop ships work
 
-Use `depends_on: [id, id]` to encode ordering. A task is **ready** only when
-its status is `todo` and every dep resolves to a task with `status: done`. The
-orchestrator picks the lowest-phase ready task first, ties broken by id.
+The `/do-work` loop orients on `do-work/SOUL.md` + `do-work/DOCTRINE.md` + the
+work-graph, picks items, implements them across layers, runs `pnpm verify`,
+commits, and pushes. OTA is published automatically by CI on the push.
 
-## Running `/initial-implement`
-
-The orchestrator picks the next ready task, spawns subagents, runs the harness,
-and merges. Invoke from Claude Code:
-
-| Command | Effect |
-|---|---|
-| `/initial-implement` | Run exactly one ready task, then stop. |
-| `/initial-implement --batch --max-tasks N` | Loop, halt after N tasks (default 5) or on blocker. |
-| `/initial-implement --task <id>` | Run a specific ready task (deps must be `done`). |
-| `/initial-implement --retry <id>` | Reset `<id>` to `todo` (even if `done`/`blocked`) and run it. |
-| `/initial-implement --status` | Print the queue with status icons and exit. |
-| `/initial-implement --batch --unsafe-unbounded` | Disable the `--max-tasks` ceiling. Discouraged. |
-
-`--status`, `--task`, `--retry`, and `--batch` are mutually exclusive with each
-other (`--max-tasks` is only meaningful with `--batch`).
-
-## The harness
-
-Each task runs through five subagent roles:
-
-```
-planner → implementer → verifier → fixer (≤3 attempts) → reviewer (≤2 cycles)
-       → squash-merge to main → mark done
-```
-
-1. **Planner** — produces an ordered implementation plan.
-2. **Implementer** — edits inside `.worktrees/<task-id>` on branch `auto/<task-id>`.
-3. **Verifier** — runs every `done_when` criterion, returns structured pass/fail.
-4. **Fixer** — up to 3 attempts to address verifier failures.
-5. **Reviewer** — checks diff against `done_when` and boundary rules. Up to
-   2 fixer cycles if it requests changes.
-
-On success the orchestrator squash-merges to `main` with a commit prefixed
-`[auto] <task-id> <title>` and marks the task `done`. On terminal failure it
-marks the task `blocked` with a reason and stops (or, in `--batch`, halts after
-two consecutive blockers).
-
-All five subagents log to [`docs/superpowers/runs/<task-id>/<timestamp>/`](./superpowers/runs/).
-The timestamp is shared across the run via `RUN_LOG_TS`, so every artifact for
-one run lands in the same directory:
-
-- `planner.md`, `implementer.diff`, `verifier.json`, `fixer*.diff`,
-  `reviewer.md`, `outcome.md`.
-
-### Recovery
-
-| Situation | Action |
-|---|---|
-| SIGINT mid-task | `/initial-implement --retry <id>` — restarts from scratch. |
-| Orphaned `in_progress` | `.claude/skills/initial-implement/scripts/mark-status.sh <id> todo` |
-| Stuck worktree | `git worktree remove .worktrees/<id> && git branch -D auto/<id>` |
+> **Retired:** the old queue-driven `/initial-implement` orchestrator (a
+> five-subagent planner → implementer → verifier → fixer → reviewer pipeline
+> over `docs/superpowers/queue.yaml`) is no longer in use. The queue was fully
+> drained and the machinery, including the queue file and the per-task
+> `done_when` schema, now lives under [`docs/_retired/`](./_retired/). New work
+> uses `/do-work` or `rn-expo-pipeline`; it is not replaced one-for-one.
 
 ## Forbidden paths
 
-The orchestrator and its subagents must never edit:
+Any orchestrator-run work (`/do-work`, `rn-expo-pipeline`) must never edit:
 
-- `docs/superpowers/specs/` — the engineering spec is frozen for a task.
-- `docs/superpowers/plans/` — planner output is read-only for the implementer.
+- `docs/superpowers/specs/`: the engineering spec is frozen.
+- `docs/superpowers/plans/`: per-task plans are read-only.
 
-Authorized files for any task are listed in its plan's `## Files` section.
+Authorized files for a given task are whatever its active plan or work-graph
+item scopes.
 
 ## Conventional commits
 
@@ -213,8 +148,7 @@ Use Conventional Commits for direct human commits:
 - `refactor:` — non-behavioral change
 
 Direct human commits **must not** start with `[auto]`. That prefix is reserved
-for the orchestrator's squash merges (`[auto] <task-id> <title>`), which carry
-the `done_when` checklist and a link to the run log in the body.
+for orchestrator squash merges (`[auto] <task-id> <title>`).
 
 ## Test discipline
 
@@ -233,12 +167,11 @@ the `done_when` checklist and a link to the run log in the body.
 
 - `pnpm verify` must pass locally before opening a PR (typecheck + lint +
   boundary check + test + Metro bundle export + web build).
-- The orchestrator's reviewer subagent enforces boundary rules (no hex outside
-  `tokens.ts`, no React/async/Drizzle in `domain/`, no `drizzle` imports
-  outside `data/`, no barrels in `features/` or `domain/`, one-way import
-  direction).
-- Domain-layer coverage thresholds are configured per-task on the queue when
-  needed; there is no global 95% gate today.
+- The `rn-qa` reviewer (and `pnpm check-boundaries`) enforces boundary rules
+  (no hex outside `tokens.ts`, no React/async/Drizzle in `domain/`, no
+  `drizzle` imports outside `data/`, no barrels in `features/` or `domain/`,
+  one-way import direction).
+- There is no global 95% domain-coverage gate today.
 
-If the reviewer requests changes, fix them and re-run `pnpm run ci`. The
-orchestrator handles this automatically; humans should follow the same loop.
+If review requests changes, fix them and re-run `pnpm run ci`. The `/do-work`
+loop and `rn-expo-pipeline` handle this automatically; humans follow the same loop.

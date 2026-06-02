@@ -1,6 +1,6 @@
 ---
 name: commission-expedition-log
-description: Commission a dev-blog post — written by the Logger of Expedition N inside the `verso` agent file. The canonical entry point for any code path that needs a post written under apps/web/src/content/blog/ — used at the end of /loop iterations (auto-improve, initial-implement, rn-expo-pipeline) and for off-cycle posts when an ad-hoc session produced a real decision worth recording. Direct Write calls on blog files are no longer the way; go through this skill so voice continuity, frontmatter schema, and build verification all happen consistently.
+description: Commission a dev-blog post - written by the Logger of Expedition N inside the `verso` agent file. The canonical entry point for any code path that needs a post written under apps/web/src/content/blog/ - used at the end of /loop iterations (do-work, rn-expo-pipeline) and for off-cycle posts when an ad-hoc session produced a real decision worth recording. Direct Write calls on blog files are no longer the way; go through this skill so voice continuity, frontmatter schema, and build verification all happen consistently.
 ---
 
 # /commission-expedition-log — Commission a dev-blog post

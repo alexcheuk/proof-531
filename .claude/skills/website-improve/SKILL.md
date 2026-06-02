@@ -1,6 +1,6 @@
 # website-improve
 
-Run each auto-improve iteration via the loop-criteria "Make the website better" category.
+Run each do-work iteration via the loop-criteria "Make the website better" category.
 Reads strategy from `loop-memory/17-website-improve-strategy.md`, identifies the next
 actionable step, executes it, posts questions to Discord `#needs-input` when blocked,
 and updates the progress tracker.
