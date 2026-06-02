@@ -111,3 +111,18 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 
 > Discrete bugs, removals, and features are added here as they are identified (audit -> backlog is the
 > refill mechanism); P0 / security always jumps the queue.
+
+## WEB-SIGNOFF: Logger sign-off uses an em dash across the whole blog corpus
+- status: blocked
+- blocked_by: none
+- proof: a ratified convention decision plus a corpus-wide normalization. Done when either (a) every
+  `apps/web/src/content/blog/*.md` Logger sign-off uses the blessed glyph and the persona doc records the
+  rule, or (b) Alex blesses the em dash as the one allowed exception and the hard-line note carves it out.
+  - [ ] escalate the either/or to Alex in `#needs-input` (normalize all sign-offs to a spaced hyphen, OR
+        bless the em dash as a sign-off-only exception)
+  - [ ] apply the chosen resolution across all existing posts (or record the blessed exception)
+- note: every prior Logger post signs off `— Name, Logger of Expedition N` (em dash), which the no-em-dash
+  hard line forbids for any file the loop writes. Expedition 79's post used a spaced hyphen (`- Soren, ...`)
+  to honor the hard line, which makes it visually inconsistent with the corpus. This needs a single
+  convention decision rather than per-post divergence. Blocked on Discord being reachable (token was empty
+  the tick this was filed); raise it the first tick `#needs-input` is available.
