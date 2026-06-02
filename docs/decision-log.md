@@ -42,6 +42,32 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-01 - Barrel files banned in features/ and domain/ are now CI-enforced; missed-rep correction design
+
+**Tags:** `convention`, `harness`, `architecture`
+**Files:** `scripts/check-boundaries.sh`, `apps/mobile/src/features/`, `_workspace/01_design_spec.md`
+
+Removed all 8 barrel `index.ts` files under `apps/mobile/src/features/` (a documented but previously
+unenforced rule 5 / features-rule-3 violation), rewired their import sites to the concrete source files, and
+added a `find`-based barrel guard to `check-boundaries.sh` so the rule can't silently regress (the guard
+scopes to features/ + domain/ and leaves the legitimate `design/primitives/` barrels alone). Separately,
+adopted the design for the missed-rep program-correction feature: it reuses the existing TM-Test suggestion
+card + apply sheet rather than inventing a new surface, suggests-never-mutates the TM, and tracks consecutive
+misses in a new `lift_miss_state` table.
+
+**Why:** the barrel rule was real but only lived in prose, so CI passed green while 8 violations sat in the
+tree; codifying it closes the gap. The missed-rep feature (Alex's task-queue ask) touches the trust-critical
+TM math, so mirroring the proven, already-shipped TM-Test suggestion interaction keeps it correct and
+on-aesthetic instead of risking a bespoke flow.
+
+**Trade-off / what we didn't do:** did NOT rename the internal `Week` domain type (~103 refs) to `Day` this
+tick: the user-facing wording is already "Day", so the rename is pure churn with no user benefit and high
+diff risk. Left it for a deliberate future slice. Did NOT blind-sweep the ~157 web em dashes: many are
+intentional UI placeholder glyphs, so that needs a judgment pass gated on Alex's policy reply.
+
+**Follow-ups:** implement MISSED-REP (domain fns + `lift_miss_state` + UI) via rn-expo-pipeline; resolve the
+em-dash policy escalation in `#needs-input`.
+
 ### 2026-06-02 - Expedition field-log demoted to a discretionary, non-gating side-effect
 
 **Tags:** `process`, `loop`, `convention`

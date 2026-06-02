@@ -25,6 +25,34 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-01 tick-2: Days-not-Week consistency, plate-hint truth fix, barrel purge, missed-rep design
+- shipped (WEB / live pin 1510485259): `apps/web/src/pages/index.astro` user-facing cycle-position labels
+  Week->Day (ledger header + Week01-04 -> Day 01-04; matrix W1-W4 -> D1-D4; renamed dead `week-num` class
+  to `day-num`; "week over week" -> "cycle over cycle"; "Every four weeks the TM bumps" -> "At the end of
+  each cycle the TM bumps", which fixes a self-contradiction with the page's own "not 4 calendar weeks"
+  line). Left legit concepts intact ("7th Week Protocol", "days per week" frequency, "not 4 calendar weeks").
+- shipped (bug fix): `livePlateHint.ts` per-side delta rounding 1-decimal -> 2-decimal. Two snapped weights
+  differ by a multiple of 2.5lb/1.25kg, so per-side is a multiple of 1.25kg; the old `*10)/10` showed a real
+  1.25 kg/side as a lying "1.3". New test asserts `+1.25 kg per side`. lb cases (15, 7.5) unchanged.
+- shipped (Q-QUALITY mandatory slice + removal): deleted all 8 `features/` barrel `index.ts` files
+  (features/CLAUDE.md rule 3 violation CI wasn't catching), rewired ~12 import sites to concrete files, and
+  added a barrel guard to `scripts/check-boundaries.sh` so it can't regress (allows design/primitives/).
+- shipped (feature design, task-queue 1511224654327447663): rn-designer produced the missed-rep program-
+  correction spec (`_workspace/01_design_spec.md`) reusing the TM-Test suggestion card + apply sheet;
+  suggest-never-mutate, first-miss Reset(-10%)/off-day choice, forced reset on 2nd consecutive miss, new
+  `lift_miss_state` table, pure property-tested `missResetTm`/`classifyAmrapMiss`. Backlog item MISSED-REP
+  filed (doing); implementation is next major slice via rn-expo-pipeline. :+1:'d the task (design in flight).
+- shipped (LOOP / escalation): posted the WEB-SIGNOFF em-dash either/or to `#needs-input` (Discord reachable
+  now), broadened to the wider ~157-instance web em-dash debt (options C/D). Filed
+  `loop-memory/22-web-em-dash-debt.md` (do NOT blind-sweep; placeholder glyphs must stay).
+- proof: `pnpm typecheck` (mobile+web) clean; `pnpm lint` clean (503 files); full `jest` 1115/1115 (179
+  suites); `check-boundaries.sh` exit 0; Astro build 153 pages exit 0. do-work-auditor PASS on all 4 code
+  items (independently re-ran the full suite + boundary check, confirmed behavior-preserving).
+- deferred / escalated: WEB-SIGNOFF + web em-dash policy -> awaiting Alex's reply in `#needs-input`.
+  MISSED-REP implementation -> next tick. No UI-visual item marked done; no Maestro debt accrued (web copy +
+  import-only structure + pure-logic fixes, all test-proven). TTS departure fired but homelab unreachable
+  from this seat (non-blocking).
+
 ## 2026-06-01 tick-1: first real do-work tick (steady-state, Discord offline)
 - shipped: committed the do-work migration seed (43 files: SOUL/DOCTRINE/skill/agents/scripts/work-tree
   + retired-machinery moves). Then one correctness/consistency slice and one loop-maintenance slice.

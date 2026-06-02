@@ -118,11 +118,34 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 - proof: a ratified convention decision plus a corpus-wide normalization. Done when either (a) every
   `apps/web/src/content/blog/*.md` Logger sign-off uses the blessed glyph and the persona doc records the
   rule, or (b) Alex blesses the em dash as the one allowed exception and the hard-line note carves it out.
-  - [ ] escalate the either/or to Alex in `#needs-input` (normalize all sign-offs to a spaced hyphen, OR
-        bless the em dash as a sign-off-only exception)
+  - [x] escalate the either/or to Alex in `#needs-input` (normalize all sign-offs to a spaced hyphen, OR
+        bless the em dash as a sign-off-only exception) -- posted 2026-06-01 tick-2, msg in `#needs-input`;
+        broadened to also ask about the wider ~157-instance web-corpus em-dash debt (options C/D)
   - [ ] apply the chosen resolution across all existing posts (or record the blessed exception)
 - note: every prior Logger post signs off `— Name, Logger of Expedition N` (em dash), which the no-em-dash
   hard line forbids for any file the loop writes. Expedition 79's post used a spaced hyphen (`- Soren, ...`)
   to honor the hard line, which makes it visually inconsistent with the corpus. This needs a single
-  convention decision rather than per-post divergence. Blocked on Discord being reachable (token was empty
-  the tick this was filed); raise it the first tick `#needs-input` is available.
+  convention decision rather than per-post divergence. Escalation is now POSTED (Discord reachable since the
+  source-line fix); blocked on Alex's reply (which letters A/B for the blog, C/D for the web corpus). See
+  also `loop-memory/22-web-em-dash-debt.md` for the corpus inventory.
+
+## MISSED-REP: Program correction when a lifter misses a prescribed rep/set
+- status: doing
+- blocked_by: none
+- proof: a shipped, validated feature that surfaces a calm, non-punitive correction suggestion when a lifter
+  misses the prescribed reps on a main set, mirroring the existing TM-Test suggestion card + apply sheet.
+  Logic proven by `tsc`/lint/`jest` (the pure domain functions are property-tested); the UI surfaces ship +
+  accrue validation debt for the eventual Maestro smoke. Done only when the smoke passes.
+  - [x] design spec produced (rn-designer, `_workspace/01_design_spec.md`): reuse `TmAdjustmentNote` +
+        `TmApplySheet`; derive miss from `row.kind==='amrap' && actualReps<prescribedReps` on cycle-days 1-3;
+        suggest-never-mutate; first-miss offers Reset(-10%)/off-day, second consecutive miss forces reset;
+        new `lift_miss_state` table; pure `missResetTm()` + `classifyAmrapMiss()` in `progression.ts`
+  - [ ] implement the pure domain functions (`missResetTm`, `classifyAmrapMiss`) + property tests (TDD)
+  - [ ] implement the `lift_miss_state` data layer (table + accessor + query hook)
+  - [ ] wire the suggestion card + apply sheet on SessionCompleteScreen (+ Today re-surface)
+  - [ ] optional BBB session-scoped back-off adjustment
+  - [ ] Maestro smoke passes for the miss -> reset flow
+- note: task-queue `1511224654327447663` (Alex). Headline feature; design landed tick-2, implementation is the
+  next major slice. Route the implementation through `rn-expo-pipeline` (frontend -> QA) per DOCTRINE feature
+  policy. Correctness is sacred: the 10% reset uses `round()` from `domain/units` so the new TM is plate- and
+  unit-correct.
