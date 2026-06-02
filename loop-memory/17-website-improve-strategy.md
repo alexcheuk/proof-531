@@ -359,7 +359,7 @@ the next iteration reads the channel and acts on the reply.
 
 To post a question:
 ```bash
-set -a; . .env.claude.local; set +a
+set -a; . ./.env.claude.local; set +a   # leading ./ required under zsh
 AUTH="Authorization: Bot $DISCORD_TOKEN"
 UA="User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)"
 curl -s -X POST -H "$AUTH" -H "$UA" -H "Content-Type: application/json" \

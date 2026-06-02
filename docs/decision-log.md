@@ -49,9 +49,18 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 The inaugural do-work tick (post-migration) fixed a third instance of the Math.round-vs-round bug class in `useGoalState`: `defaultValueFor`'s `1rm` branch seeded the estimated-1RM default with `Math.round(currentTm / 0.9)` (unsnapped) instead of `round(currentTm / 0.9, displayU)` (plate-snapped), inconsistent with the already-correct `onKindChange`. The branch is currently unreachable (a persisted `1rm` goal always carries a non-null value, so `defaultValueFor` only ever runs with kind `tm`), so the fix is behavior-preserving: a latent-correctness alignment, not an observable change. Also retargeted `loop-memory/loop-criteria.md` from the retired `/auto-improve` naming to `/do-work` (and swept its em dashes), and documented graceful degradation when `DISCORD_TOKEN` is absent.
 
-**Why:** This is the same bug class fixed in the `onKindChange` (expedition 71) and `persistedValue` (2026-05-30) entries; catching the third instance, even unreachable, closes a latent landmine and keeps the file internally consistent. The loop-criteria/terminology drift was leftover from the migration. Discord was unconfigured this tick (empty token), so the file rubric was the whole criteria set and no summary could be posted; recorded so future ticks degrade cleanly rather than blocking.
+**Why:** This is the same bug class fixed in the `onKindChange` (expedition 71) and `persistedValue` (2026-05-30) entries; catching the third instance, even unreachable, closes a latent landmine and keeps the file internally consistent. The loop-criteria/terminology drift was leftover from the migration.
 
-**Trade-off / what we didn't do:** Resisted padding the tick to the 12-15-item target. The codebase is mature and green (1104 tests), the queue is empty, and Discord was offline, so per the pacing steady-state amendment and the prioritization guardrails a small set of honest, validated slices is correct over manufactured surface area. Surveyed both FlatLists and the PrCelebration animation hooks for a quality slice and found them already correct.
+**Trade-off / what we didn't do:** Resisted padding the tick to the 12-15-item target. The codebase is mature and green (1104 tests), so per the pacing steady-state amendment and the prioritization guardrails a small set of honest, validated slices is correct over manufactured surface area. Surveyed both FlatLists and the PrCelebration animation hooks for a quality slice and found them already correct.
+
+### 2026-06-02 - Harness bug: do-work Discord source recipe silently fails under zsh
+
+**Tags:** `harness`, `bug`, `process`, `loop`
+**Files:** `.claude/skills/do-work/SKILL.md`, `.claude/agents/do-work-distiller.md`, `loop-memory/discord-channels.md`, `loop-memory/17-website-improve-strategy.md`
+
+The first do-work tick concluded "Discord is offline" and skipped the task-queue, the `#loop-criteria` pins, `#needs-input`, and the `#auto-improvements` summary. This was wrong: the token is present and valid. The do-work skill's Phase-0 recipe sourced the env as `. .env.claude.local` (no leading `./`); under zsh the `.`/`source` builtin treats a bare filename as a `$PATH` lookup, does not find it in the cwd, and silently fails, leaving `DISCORD_TOKEN` empty (a stray `2>/dev/null` hid the error). Fixed the recipe to `. ./.env.claude.local` in all four files, added a post-source load-assert, and rewrote the discord-channels.md "empty token" guidance to make the source line the FIRST suspect. The blog post for expedition 79 was written under the wrong premise (its "the radio was dead" conceit); left as a published artifact, with the corrected truth recorded here and in `do-work/work/LOG.md`.
+
+**Why:** A silently-failing env source in the loop's first phase would have blinded every future tick to Discord while reporting green. It surfaced only because Alex caught the false "token is empty" claim. Worth logging as a harness post-mortem so the failure mode (PATH-search source under zsh + a hidden stderr) is recognized fast next time.
 
 
 

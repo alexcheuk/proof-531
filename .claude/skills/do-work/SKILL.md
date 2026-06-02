@@ -16,8 +16,14 @@ The tick is seven phases. Do them in order.
 Source the Discord env first, then read the constitution, the work-graph, and the learnings:
 
 ```bash
-set -a; . .env.claude.local; set +a   # exports DISCORD_TOKEN, HOME_TTS_URL, etc.
+set -a; . ./.env.claude.local; set +a   # exports DISCORD_TOKEN, HOME_TTS_URL, etc.
 ```
+
+**The leading `./` is REQUIRED.** Under zsh, `. .env.claude.local` (no slash) makes the `source`
+builtin search `$PATH` for the file rather than the cwd, so it silently fails to load and
+`DISCORD_TOKEN` stays empty. The loop then wrongly concludes Discord is "offline" and skips the
+task-queue, the pins, `#needs-input`, and the summary. After sourcing, sanity-check it actually
+loaded: `[ -n "$DISCORD_TOKEN" ] || echo "WARN: token not loaded - check the ./ in the source line"`.
 
 Run the memory integrity check **before** anything else:
 

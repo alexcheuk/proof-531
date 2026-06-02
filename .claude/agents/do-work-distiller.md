@@ -30,7 +30,7 @@ Use the inline curl recipes in `loop-memory/discord-channels.md` (copy them; do 
 endpoint shapes, auth headers, or rate-limit handling). Source the env first:
 
 ```bash
-set -a; . .env.claude.local; set +a   # exports DISCORD_TOKEN
+set -a; . ./.env.claude.local; set +a   # exports DISCORD_TOKEN (leading ./ required under zsh)
 AUTH="Authorization: Bot $DISCORD_TOKEN"
 UA="User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)"
 API="https://discord.com/api/v10"

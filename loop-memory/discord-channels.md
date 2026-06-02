@@ -32,7 +32,7 @@ So: `#task-queue` (work in), `#auto-improvements` (tick summary out), `#loop-cri
 Every Discord call the loop makes, written out so the agent doesn't have to remember endpoint shapes, version pins, auth header format, or rate-limit gotchas. Source them in order from `.env.claude.local` first:
 
 ```bash
-set -a; . .env.claude.local; set +a   # exports DISCORD_TOKEN
+set -a; . ./.env.claude.local; set +a   # exports DISCORD_TOKEN -- the leading ./ is REQUIRED (see gotcha below)
 AUTH="Authorization: Bot $DISCORD_TOKEN"
 UA="User-Agent: 531-loop (https://github.com/alexcheuk/proof-531, 1.0)"
 API="https://discord.com/api/v10"
@@ -102,4 +102,16 @@ Returns every channel in the guild. Find the one named `loop-criteria` (or whate
 - **Reactions silently rate-limit** → ≥0.5s between PUTs, re-verify via `reactions[].me`.
 - **404 on a cached channel ID** → channel was deleted or renamed-and-recreated; clear the cache and rediscover.
 - **401 / 403** → bot token rotated or missing scope. Token lives in `.env.claude.local` as `DISCORD_TOKEN`; if it really is gone, surface the error in the summary post and stop — don't try to ship blind.
-- **`DISCORD_TOKEN` empty / absent** (the var exists in `.env.claude.local` but has no value, so every call 401s) → Discord is simply unconfigured in this environment. Do NOT block the tick. Degrade gracefully: the file half of the rubric (`loop-memory/loop-criteria.md`) is then the whole criteria set (no live pins to merge), there is no `#task-queue` / `#needs-input` to read, and the end-of-tick `#auto-improvements` summary cannot be posted. Record the unavailability in `do-work/work/LOG.md` so the next tick knows, do the code/repo work normally, and skip the Discord I/O. The TTS block (`HOME_TTS_URL`) degrades the same way and is already a documented no-op when unset.
+- **`DISCORD_TOKEN` empty after sourcing → FIRST suspect the source line, NOT the config.** The
+  `.env.claude.local` file does contain a valid token. The trap (hit on the 2026-06-01 do-work tick):
+  the recipe was run as `set -a; . .env.claude.local; set +a` **without a leading `./`**. Under zsh
+  the `.`/`source` builtin treats a bare filename as a `$PATH` lookup, does not find it in the cwd,
+  and **silently fails** (an added `2>/dev/null` hid the "not found" error). The var stays empty,
+  every call 401s, and the loop wrongly concludes "Discord is offline." **Fix: always source as
+  `. ./.env.claude.local`** (the recipe above is correct), and after sourcing assert it loaded:
+  `[ -n "$DISCORD_TOKEN" ] || echo "WARN: token not loaded - check the ./ in the source line"`.
+- **Genuinely absent token** (file missing, or the value really is blank) → only then is Discord
+  unconfigured. Do NOT block the tick: the file half of the rubric (`loop-memory/loop-criteria.md`)
+  is then the whole criteria set, there is no `#task-queue` / `#needs-input` to read, and the
+  `#auto-improvements` summary cannot post. Record it in `do-work/work/LOG.md` and do the repo work
+  normally. But confirm it is truly absent (per the bullet above) before claiming it.

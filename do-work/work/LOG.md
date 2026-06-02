@@ -35,12 +35,19 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
   swept its em dashes; added DISCORD_TOKEN-absent graceful-degradation guidance to `discord-channels.md`.
 - proof: `pnpm typecheck` + `pnpm lint` (511 files) clean; full `pnpm test` 1104/178 green (via auditor);
   do-work-auditor PASS on the useGoalState slice (behavior-preserving + genuine improvement confirmed).
-- deferred / escalated: Discord unavailable this tick (`DISCORD_TOKEN` empty in `.env.claude.local`) - no
-  #task-queue/#needs-input read, no #loop-criteria pins merged (file criteria was the whole rubric), no
-  #auto-improvements summary posted, no TTS (`HOME_TTS_URL` also empty). Honest steady-state tick: the
-  codebase is mature and green, so no surface area was manufactured to hit the 12-15 target (per the
-  pacing steady-state amendment + prioritization guardrails). Surveyed FlatLists (Home/Progress) and the
-  PrCelebration animation hooks: both already correct, no genuine quality defect found there.
+- CORRECTION (same tick, after Alex flagged it): Discord was NOT offline. The token is present and valid;
+  the loop's own source recipe `. .env.claude.local` (no leading ./) silently fails under zsh (source
+  searches $PATH, not cwd). Fixed the recipe to `. ./.env.claude.local` in the do-work SKILL, the
+  distiller agent, discord-channels.md, and 17-website-improve-strategy.md; added a load-assert and a
+  gotcha note. THEN read Discord for real: 1 active #loop-criteria pin ("Days of Cycle, not Week"), 1
+  UNACKED #task-queue item (1511224654327447663: design help for correcting a program after a missed
+  rep/set), rest acked. Posted the corrected #auto-improvements summary.
+- pending: the unacked missing-rep/set feature is a sizable rn-expo-pipeline design task; surfaced to Alex
+  rather than auto-started mid-correction. Not :+1:'d yet (only ack when shipping).
+- honest-pacing note: still a steady-state code tick (mature green codebase, 1104 tests); surveyed both
+  FlatLists + the PrCelebration animation hooks and found them already correct, so no surface area was
+  manufactured. TTS departure was skipped (the same sourcing bug suppressed HOME_TTS_URL too, and the
+  expedition had already "departed").
 - shipped: the do-work working tree landed - SOUL.md, DOCTRINE.md, the work-graph (`work/backlog.md`),
   this LOG plus the validation-debt ledger, the `scripts/` (check-memory, validation, build-and-validate),
   and the do-work-auditor + distiller agents. The loop's durable knowledge stays in `loop-memory/`.
