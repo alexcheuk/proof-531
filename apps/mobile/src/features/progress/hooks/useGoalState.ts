@@ -44,7 +44,13 @@ export function useGoalState(
 
   const defaultValueFor = useCallback(
     (kind: LiftGoalKind): number => {
-      const base = kind === 'tm' ? currentTm : Math.round(currentTm / 0.9);
+      // Estimated 1RM (TM / 0.9) is a weight shown to the lifter, so plate-snap it
+      // with round(_, displayU) rather than Math.round - matching the TM<->1RM
+      // conversion in onKindChange. Math.round here would seed an unsnapped weight.
+      // (The '1rm' branch is unreachable today: a persisted '1rm' goal always has a
+      // non-null value, so defaultValueFor is only ever reached with kind 'tm'. This
+      // keeps the branch correct if it ever becomes reachable.)
+      const base = kind === 'tm' ? currentTm : round(currentTm / 0.9, displayU);
       return ceilToStep(base + 4 * tmStep, defaultBumpStep(displayU));
     },
     [currentTm, displayU, tmStep],

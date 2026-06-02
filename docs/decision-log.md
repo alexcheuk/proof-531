@@ -42,7 +42,18 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
-### 2026-06-01 - do-work architecture replaces /auto-improve; queue + initial-implement retired
+### 2026-06-01 - First do-work tick: third Math.round-vs-round instance; loop-criteria retargeted
+
+**Tags:** `bug`, `process`, `loop`
+**Files:** `apps/mobile/src/features/progress/hooks/useGoalState.ts`, `loop-memory/loop-criteria.md`, `loop-memory/discord-channels.md`
+
+The inaugural do-work tick (post-migration) fixed a third instance of the Math.round-vs-round bug class in `useGoalState`: `defaultValueFor`'s `1rm` branch seeded the estimated-1RM default with `Math.round(currentTm / 0.9)` (unsnapped) instead of `round(currentTm / 0.9, displayU)` (plate-snapped), inconsistent with the already-correct `onKindChange`. The branch is currently unreachable (a persisted `1rm` goal always carries a non-null value, so `defaultValueFor` only ever runs with kind `tm`), so the fix is behavior-preserving: a latent-correctness alignment, not an observable change. Also retargeted `loop-memory/loop-criteria.md` from the retired `/auto-improve` naming to `/do-work` (and swept its em dashes), and documented graceful degradation when `DISCORD_TOKEN` is absent.
+
+**Why:** This is the same bug class fixed in the `onKindChange` (expedition 71) and `persistedValue` (2026-05-30) entries; catching the third instance, even unreachable, closes a latent landmine and keeps the file internally consistent. The loop-criteria/terminology drift was leftover from the migration. Discord was unconfigured this tick (empty token), so the file rubric was the whole criteria set and no summary could be posted; recorded so future ticks degrade cleanly rather than blocking.
+
+**Trade-off / what we didn't do:** Resisted padding the tick to the 12-15-item target. The codebase is mature and green (1104 tests), the queue is empty, and Discord was offline, so per the pacing steady-state amendment and the prioritization guardrails a small set of honest, validated slices is correct over manufactured surface area. Surveyed both FlatLists and the PrCelebration animation hooks for a quality slice and found them already correct.
+
+
 
 **Tags:** `harness`, `skill`, `architecture`, `process`, `removal`
 **Files:** `.claude/skills/do-work/SKILL.md`, `do-work/SOUL.md`, `do-work/DOCTRINE.md`, `do-work/work/`, `do-work/scripts/`, `.claude/agents/do-work-auditor.md`, `.claude/agents/do-work-distiller.md`, `loop-memory/19-self-edit-protocol.md`, `docs/_retired/`, `CLAUDE.md`

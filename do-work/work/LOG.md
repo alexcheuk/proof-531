@@ -25,7 +25,22 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
-## 2026-06-01 tick-0: do-work architecture migrated from /auto-improve
+## 2026-06-01 tick-1: first real do-work tick (steady-state, Discord offline)
+- shipped: committed the do-work migration seed (43 files: SOUL/DOCTRINE/skill/agents/scripts/work-tree
+  + retired-machinery moves). Then one correctness/consistency slice and one loop-maintenance slice.
+- shipped (correctness, Q-QUALITY): `useGoalState.ts` `defaultValueFor` 1rm branch `Math.round(currentTm/0.9)`
+  -> `round(currentTm/0.9, displayU)`. The recurring Math.round-vs-round bug class (exps 71/78); aligns
+  with onKindChange. Branch is unreachable today so it is behavior-preserving (latent-correctness fix).
+- shipped (LOOP): retargeted `loop-memory/loop-criteria.md` from /auto-improve to /do-work terminology and
+  swept its em dashes; added DISCORD_TOKEN-absent graceful-degradation guidance to `discord-channels.md`.
+- proof: `pnpm typecheck` + `pnpm lint` (511 files) clean; full `pnpm test` 1104/178 green (via auditor);
+  do-work-auditor PASS on the useGoalState slice (behavior-preserving + genuine improvement confirmed).
+- deferred / escalated: Discord unavailable this tick (`DISCORD_TOKEN` empty in `.env.claude.local`) - no
+  #task-queue/#needs-input read, no #loop-criteria pins merged (file criteria was the whole rubric), no
+  #auto-improvements summary posted, no TTS (`HOME_TTS_URL` also empty). Honest steady-state tick: the
+  codebase is mature and green, so no surface area was manufactured to hit the 12-15 target (per the
+  pacing steady-state amendment + prioritization guardrails). Surveyed FlatLists (Home/Progress) and the
+  PrCelebration animation hooks: both already correct, no genuine quality defect found there.
 - shipped: the do-work working tree landed - SOUL.md, DOCTRINE.md, the work-graph (`work/backlog.md`),
   this LOG plus the validation-debt ledger, the `scripts/` (check-memory, validation, build-and-validate),
   and the do-work-auditor + distiller agents. The loop's durable knowledge stays in `loop-memory/`.
