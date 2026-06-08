@@ -86,7 +86,16 @@ export function ProgressGridCell({
         numeric
         style={{ letterSpacing: 0.36, marginTop: 3 }}
       >
-        {marker ? marker : typeof reps === 'number' && reps > 0 ? `× ${reps}` : ''}
+        {(() => {
+          const hasReps = typeof reps === 'number' && reps > 0;
+          // TM-test (Day 4) cells carry BOTH a direction marker and a rep
+          // count, so they read e.g. "↑ × 5": the lifter sees how many reps
+          // they hit and whether the TM moves. AMRAP cells show "× N";
+          // deload/projected cells show just the marker.
+          if (marker && hasReps) return `${marker} × ${reps}`;
+          if (marker) return marker;
+          return hasReps ? `× ${reps}` : '';
+        })()}
       </Text>
     </>
   );

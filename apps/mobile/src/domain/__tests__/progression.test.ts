@@ -11,6 +11,7 @@ import {
   projectTopSetWeight,
   tmAdjustmentSuggestion,
 } from '../progression';
+import { prescription } from '../schemes';
 import type { Lift, Unit } from '../types';
 import { round, trainingMaxFrom } from '../units';
 
@@ -88,9 +89,37 @@ describe('projectTmForCycle', () => {
 });
 
 describe('projectTopSetWeight', () => {
+  it('day 1 uses week-1 top set (0.85), day 2 week-2 (0.90), day 3 week-3 (0.95)', () => {
+    // Each grid day d maps to week d and shows that week's top working set,
+    // matching the live Today/Home headline (`prescription(week)[2]`).
+    // squat TM 200 at the current cycle (no projection bump):
+    //   day 1 → 200 × 0.85 = 170; day 2 → 200 × 0.90 = 180; day 3 → 200 × 0.95 = 190.
+    expect(projectTopSetWeight(7, 1, 200, 7, 'squat', 'lbs')).toBe(170);
+    expect(projectTopSetWeight(7, 2, 200, 7, 'squat', 'lbs')).toBe(180);
+    expect(projectTopSetWeight(7, 3, 200, 7, 'squat', 'lbs')).toBe(190);
+  });
+
   it('day 3 uses week-3 0.95 percentage; snaps to unit step', () => {
     // squat, current TM 230, future cycle 8 → TM 240; 240 × 0.95 = 228 → 230.
     expect(projectTopSetWeight(8, 3, 230, 7, 'squat', 'lbs')).toBe(230);
+  });
+
+  it('property: projection equals the live top-set percentage for days 1–3', () => {
+    // Guards against the day→week regression: the grid headline must equal
+    // the same percentage the Today/Home screens prescribe for that week's
+    // AMRAP set (`prescription(day)[2]`), at the current cycle (no TM bump).
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...LIFTS),
+        fc.constantFrom(...UNITS),
+        fc.integer({ min: 50, max: 600 }),
+        fc.constantFrom(1 as const, 2 as const, 3 as const),
+        (lift, unit, tm, day) => {
+          const topPct = prescription(day)[2]?.pct ?? 0;
+          return projectTopSetWeight(5, day, tm, 5, lift, unit) === round(tm * topPct, unit);
+        },
+      ),
+    );
   });
 
   it('day 4 (TM test) uses 100% TM (snapped)', () => {

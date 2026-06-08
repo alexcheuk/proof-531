@@ -1,6 +1,6 @@
 import type { LiftGoalKind } from '@/data/accessors/liftGoal';
 import type { LiftProgression } from '@/data/queries/useLiftProgression';
-import { ProgressGridCell } from '@/design/primitives/ProgressGridCell';
+import { ProgressGridCell, type ProgressGridCellProps } from '@/design/primitives/ProgressGridCell';
 import { ProgressGridRow } from '@/design/primitives/ProgressGridRow';
 import { TmCell } from '@/design/primitives/TmCell';
 import { tmAdjustmentSuggestion } from '@/domain/progression';
@@ -102,32 +102,24 @@ export function ProgressLiftRow({
                 ? ' deload logged'
                 : '';
           const cellKey = `progress-cell-${row.cycle}-${cell.day}`;
-          if (justCompletedSessionId === cell.sessionId) {
-            return (
-              <JustCompletedAnimator key={`${cellKey}-anim-${cell.sessionId}`}>
-                <ProgressGridCell
-                  variant={variant}
-                  weight={cell.topWeight}
-                  reps={cell.amrap ? cell.topReps : null}
-                  marker={marker}
-                  onPress={() => onPastCellPress(cell.sessionId)}
-                  accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`}
-                  testID={cellKey}
-                />
-              </JustCompletedAnimator>
-            );
-          }
-          return (
-            <ProgressGridCell
-              key={cellKey}
-              variant={variant}
-              weight={cell.topWeight}
-              reps={cell.amrap ? cell.topReps : null}
-              marker={marker}
-              onPress={() => onPastCellPress(cell.sessionId)}
-              accessibilityLabel={`${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`}
-              testID={cellKey}
-            />
+          // Single source for the cell props so the two render paths (plain,
+          // or wrapped in JustCompletedAnimator for the just-closed session)
+          // can never drift apart.
+          const cellProps: ProgressGridCellProps = {
+            variant,
+            weight: cell.topWeight,
+            reps: cell.amrap || tmTestBand ? cell.topReps : null,
+            marker,
+            onPress: () => onPastCellPress(cell.sessionId),
+            accessibilityLabel: `${a11yPrefix}Cycle ${row.cycle}, day ${cell.day}: top set ${cell.topWeight} ${unitGlyph}${a11ySuffix}`,
+            testID: cellKey,
+          };
+          return justCompletedSessionId === cell.sessionId ? (
+            <JustCompletedAnimator key={`${cellKey}-anim-${cell.sessionId}`}>
+              <ProgressGridCell {...cellProps} />
+            </JustCompletedAnimator>
+          ) : (
+            <ProgressGridCell key={cellKey} {...cellProps} />
           );
         })}
         <TmCell

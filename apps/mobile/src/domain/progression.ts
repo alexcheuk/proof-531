@@ -41,10 +41,14 @@ export function projectTopSetWeight(
 ): number {
   const tm = projectTmForCycle(currentTm, currentCycle, futureCycle, lift, unit);
   if (day === 4) return round(tm, unit);
-  const week3 = prescription(3);
-  const set = week3[day - 1];
-  if (!set) return 0;
-  return round(tm * set.pct, unit);
+  // Progress-grid day d (1–3) IS week d, and its headline number is that
+  // week's top working set, the AMRAP set at index 2: 85% (wk1) / 90% (wk2)
+  // / 95% (wk3) of TM. This must match the live Today/Home top set
+  // (`prescription(week)[2]`); the previous code indexed `prescription(3)`
+  // by `day - 1`, which made day 1 read 75% and day 2 read 85% (both wrong).
+  const topSet = prescription(day)[2];
+  if (!topSet) return 0;
+  return round(tm * topSet.pct, unit);
 }
 
 export function goalTargetTm(kind: GoalKind, value: number, unit: Unit): number {

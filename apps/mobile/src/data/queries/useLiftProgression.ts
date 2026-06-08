@@ -225,13 +225,29 @@ export function useLiftProgression(lift: Lift) {
             deload: day === 4,
           } satisfies ProgressionCellFuture;
         });
+        // TM column. Past cycles must show the TM the lifter actually trained
+        // at, not today's TM. `projectCycleRows` flattens every past cycle to
+        // the current TM (projectTmForCycle returns currentTm for targetCycle
+        // <= currentCycle), so a completed cycle would wrongly display the
+        // latest TM. Recover the historical value from any logged session's
+        // `trainingMaxSnapshot` in that cycle (all four share the cycle's TM).
+        // Falls back to the projected TM only when a past cycle has no logged
+        // session (a gap), where there is no historical truth to show.
+        let rowTm = round(s.tm, displayU);
+        if (s.cycle < currentCycle) {
+          const hist = byCycleDay.get(s.cycle)?.values().next().value;
+          if (hist) {
+            const histUnit = hist.storageUnitSnapshot ?? currentTmStorageUnit;
+            rowTm = round(displayWeight(hist.trainingMaxSnapshot, histUnit, displayU), displayU);
+          }
+        }
         return {
           cycle: s.cycle,
           isPast: s.cycle < currentCycle,
           isCurrent: s.cycle === currentCycle,
           isFuture: s.cycle > currentCycle,
           cells,
-          tm: round(s.tm, displayU),
+          tm: rowTm,
         };
       });
 
