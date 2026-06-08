@@ -19,7 +19,16 @@
 > smoke passes.
 
 ## Status
-- last-validated: (none) - debt: 0 - no builds validated yet (do-work migration bootstrap).
+- last-validated: (none) - no builds validated yet (do-work migration bootstrap; the local-APK + Maestro
+  smoke has not been run out-of-band on this seat). UI work below is jest/behavior-proven at the logic layer
+  and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
+
+## Pending on-device smoke (accrued, newest first)
+- tick-3 (Expedition 81) Progress grid: corrected future/now cell weights (day 1 -> 85%, day 2 -> 90%, were
+  75/85%), past-cycle historical TM column, and D4 TM-test cells now showing "↑ × 5" (marker + reps). All
+  three are jest-proven (exact-value, property, integration, and primitive behavior tests; 1121 green), but
+  the rendered grid + the new D4 secondary-line layout owe a Progress-screen Maestro smoke before
+  PROG-GRID-FIX flips to `done`.
 
 ## How to run a validated smoke
 1. Build the local release APK (background; out of band):

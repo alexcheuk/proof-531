@@ -149,3 +149,37 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   next major slice. Route the implementation through `rn-expo-pipeline` (frontend -> QA) per DOCTRINE feature
   policy. Correctness is sacred: the 10% reset uses `round()` from `domain/units` so the new TM is plate- and
   unit-correct.
+
+## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
+- status: doing
+- blocked_by: none
+- proof: the three Progress-grid task-queue reports fixed, each with the proof its type requires. Domain/data
+  fixes proven by jest (exact-value + property tests); the D4 rep-display is a render change with a behavior
+  test, and accrues validation debt for the on-device Progress smoke.
+  - [x] BUG (1513375490184843334) future/now cell weight wrong: `projectTopSetWeight` mapped every grid day
+        through `prescription(3)[day-1]` (day 1 read 75%, day 2 read 85%); now maps day d -> week d top set
+        `prescription(d)[2]` (85/90/95%), matching the live Today/Home headline. Property test asserts parity.
+  - [x] BUG (1513368638764093490) past cycles showed the latest TM: `projectCycleRows` flattens past cycles to
+        the current TM. `useLiftProgression` now reads the historical `trainingMaxSnapshot` from a logged
+        session in each past cycle. Integration test (complete a cycle, assert past row = old TM, current = new).
+  - [x] FEAT (1513375762559008789) D4 shows reps + TM direction: `ProgressGridCell` secondary line renders
+        marker AND reps together ("↑ × 5") on TM-test cells; `ProgressLiftRow` passes reps for tm-test cells.
+        Behavior test on the primitive covers all three branches (marker+reps / reps-only / marker-only).
+  - [ ] Progress-screen Maestro smoke confirms the grid renders the corrected numbers + D4 "↑ × 5" on device
+- note: all three logic/data layers proven by `pnpm test` (1121 green). The D4 string change is behavior-tested
+  but UI-visible, so the grid still owes one on-device/Maestro smoke before this item flips to `done`.
+
+## WARMUP-PERDAY: Per-day warmup ramp (no more 60% -> 100% jump on TM test)
+- status: doing
+- blocked_by: none
+- proof: a shipped, validated change so warmups bridge to each day's top set (last warmup within ~one increment),
+  killing the 60->100 TM-test jump. Math sacred: %-of-TM only, plate-snapped via `round()`, property-tested.
+  - [x] design spec produced (rn-designer, `apps/mobile/_workspace/warmup-per-day-spec.md`): pure
+        `warmupsForDay(day: Week)`; ramps D1 40/50/60, D2 45/55/65, D3 50/60/70/80, D4 50/60/70/80/90 (reps
+        5/3/2/1); WarmupsBand gains a day prop + builds its summary from the ramp; 10 fast-check invariants
+  - [ ] implement `warmupsForDay` + property tests (TDD), replace the fixed `WARMUPS` consumers
+  - [ ] wire WarmupsBand/TodayBody/livePlateHint to the per-day ramp; adapt the band summary label
+  - [ ] Maestro smoke passes for the TM-test-day warmup ramp
+- note: task-queue `1512218815356862494` (Alex). Route implementation through `rn-expo-pipeline` (frontend -> QA)
+  per DOCTRINE. Two open questions flagged in the spec (day-4 5-step vs 4-step trim; whether days 1-2 also extend
+  to a 4th step) carry specified defaults so implementation can proceed without idling.

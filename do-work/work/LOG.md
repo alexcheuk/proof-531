@@ -25,6 +25,33 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-07 tick-3 (Exp 81): Progress-grid correctness cluster (3 task-queue bugs) + warmup spec
+- shipped (BUG, logic, task 1513375490184843334): `projectTopSetWeight` in `domain/progression.ts` mapped
+  every Progress-grid day through `prescription(3)[day-1]`, so day 1 read 75% and day 2 read 85% of TM instead
+  of that week's real top set. Now maps day d -> week d top set `prescription(d)[2]` (85/90/95%), matching the
+  live Today/Home headline. This corrected BOTH the future projections AND the "now"/next cell. SOUL math line.
+- shipped (BUG, data, task 1513368638764093490): past cycles in the Progress TM column always showed the
+  latest TM (`projectCycleRows` flattens past cycles to current TM). `useLiftProgression` now reads the
+  historical `trainingMaxSnapshot` from a logged session in each past cycle; falls back to projected only for
+  a gap cycle with no session. New integration test (complete a cycle -> past row 250, current 260).
+- shipped (FEAT, UI, task 1513375762559008789): D4 (TM test) cells now show reps AND direction. `ProgressGridCell`
+  secondary line renders marker + reps together ("↑ × 5"); `ProgressLiftRow` passes reps on tm-test cells. New
+  primitive behavior test (marker+reps / reps-only / marker-only). UI -> accrued validation debt for the smoke.
+- shipped (Q-QUALITY mandatory slice): de-duplicated the twin `ProgressGridCell` render paths in
+  `ProgressLiftRow` (plain vs JustCompletedAnimator-wrapped) into one typed `cellProps` object - the exact
+  duplication that forced a two-site `reps` edit minutes earlier. Behavior-preserving; tests unchanged-green.
+- shipped (DESIGN routing, task 1512218815356862494): rn-designer spec for per-day warmup ramps
+  (`apps/mobile/_workspace/warmup-per-day-spec.md`) - bridges to each day's top set so the TM-test day goes
+  90 -> 100 instead of 60 -> 100; pure `warmupsForDay(Week)`, 10 fast-check invariants. Backlog WARMUP-PERDAY
+  filed (doing); implementation routes through rn-expo-pipeline next tick.
+- proof: `pnpm typecheck` clean (mobile+web); `pnpm lint` clean; full `pnpm test` 1121/1121 (181 suites, +6).
+  `projectTopSetWeight`/`projectCycleRows` consumed ONLY by `useLiftProgression`, so the fix is contained to
+  the Progress screen (verified by grep). Days-of-Cycle pin: audited mobile, already consistent (Cycle/Day
+  labels; the only "week" strings are a legit calendar "This week" window + "days per week" frequency) - no change.
+- deferred / escalated: WARMUP-PERDAY + MISSED-REP implementations -> next tick via rn-expo-pipeline.
+  WEB-SIGNOFF still blocked on Alex's em-dash reply in `#needs-input` (no response yet). PROG-GRID-FIX D4
+  visual owes one Progress Maestro smoke before `done`. TTS departure fired but homelab unreachable (non-blocking).
+
 ## 2026-06-01 tick-2: Days-not-Week consistency, plate-hint truth fix, barrel purge, missed-rep design
 - shipped (WEB / live pin 1510485259): `apps/web/src/pages/index.astro` user-facing cycle-position labels
   Week->Day (ledger header + Week01-04 -> Day 01-04; matrix W1-W4 -> D1-D4; renamed dead `week-num` class

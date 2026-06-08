@@ -42,6 +42,35 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-07 - Progress grid showed wrong 5/3/1 numbers: day->week projection bug + lost historical TM
+
+**Tags:** `bug-postmortem`, `domain-math`, `progress-screen`
+**Files:** `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/data/queries/useLiftProgression.ts`,
+`apps/mobile/src/design/primitives/ProgressGridCell.tsx`, `apps/mobile/src/features/progress/components/ProgressLiftRow.tsx`
+
+**Context.** Alex filed three Progress-screen reports in one batch. Two were genuine math-correctness bugs (the
+SOUL hard line): (1) projected/next-cell weights were wrong because `projectTopSetWeight` indexed `prescription(3)`
+by `day - 1` - it treated the three sets WITHIN week 3 as if they were the per-day top sets, so day 1 displayed
+75% of TM and day 2 displayed 85%, when each grid day d is week d and should show that week's top working set
+(85/90/95%). The bug hid for a long time because day 3 (`prescription(3)[2]` = 95%) is coincidentally correct,
+and the only existing test asserted day 3. (2) Every past cycle's TM column showed today's TM, because
+`projectCycleRows` derives past-cycle TM from `projectTmForCycle`, which returns the current TM for any
+target cycle <= current - the historical `trainingMaxSnapshot` already stored on each completed session was
+simply never read for the TM column.
+
+**Decision.** Fix the projection to map grid day d -> week d top set (`prescription(d)[2]`), matching the single
+source the live Today/Home screens already use, and add a property test asserting that parity so the day->week
+mapping can't silently regress again. Read the per-cycle historical TM from the logged session snapshot in
+`useLiftProgression`, falling back to the projection only for a gap cycle with no session. The third report (D4
+should show reps plus the increase/hold/decrease direction) was a render change: the `ProgressGridCell` secondary
+line now composes marker AND reps ("↑ × 5") instead of showing one or the other.
+
+**Consequences.** The Progress grid now tells the truth for past, present, and projected cycles. Lesson logged
+for future ticks: when a function is indexed by a derived offset (`day - 1` into a fixed week), assert EVERY
+branch, not just the one that happens to line up - a single coincidentally-correct test let a wrong-number bug
+live in the sacred-math layer. The fix is contained: `projectTopSetWeight`/`projectCycleRows` are consumed only
+by `useLiftProgression`.
+
 ### 2026-06-01 - Barrel files banned in features/ and domain/ are now CI-enforced; missed-rep correction design
 
 **Tags:** `convention`, `harness`, `architecture`
