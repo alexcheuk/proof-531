@@ -183,3 +183,22 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 - note: task-queue `1512218815356862494` (Alex). Route implementation through `rn-expo-pipeline` (frontend -> QA)
   per DOCTRINE. Two open questions flagged in the spec (day-4 5-step vs 4-step trim; whether days 1-2 also extend
   to a 4th step) carry specified defaults so implementation can proceed without idling.
+
+## LOOP-EMDASH-GUARD: Mechanical em-dash check in the CI chain
+- status: todo
+- blocked_by: none
+- proof: a `scripts/check-no-em-dash.sh` wired into `pnpm run ci` (like `check-temp-markers`) that fails when a
+  U+2014 em dash appears in a file the loop authors, with the right scope so it does not false-positive on
+  pre-existing legitimate uses.
+  - [ ] write the check: scan `apps/mobile/src/**` (code + comments + strings), `do-work/**`, `loop-memory/**`,
+        `docs/decision-log.md` for U+2014; exit non-zero with the offending file:line
+  - [ ] EXCLUDE the known-legitimate carriers so the check starts green: the files that quote the glyph to
+        DEFINE the rule (the no-em-dash memory file, SOUL/DOCTRINE hard-line text, this skill), and ALL of
+        `apps/web/**` (the ~157-instance blog-corpus debt is pending Alex's #needs-input ruling; see
+        `loop-memory/22-web-em-dash-debt.md`)
+  - [ ] wire into `pnpm run ci` after `check-temp-markers`; confirm a clean repo passes and a planted em dash fails
+- note: the loop keeps re-introducing em dashes into code comments and test `describe` strings despite the hard
+  line and the tick-2 em-dash memo (tick-3's auditor caught three; before that the WEB-SIGNOFF debt). The auditor
+  is a backstop, not a gate the loop should depend on for a mechanical rule. A scoped CI check enforces it on
+  every commit. Scope is the whole task: a blanket repo-wide grep would fail immediately on the web corpus and
+  on the rule-defining files, so the exclusion list is load-bearing.
