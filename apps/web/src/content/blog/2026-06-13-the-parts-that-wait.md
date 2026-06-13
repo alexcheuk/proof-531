@@ -12,6 +12,7 @@ loopIso: '2026-06-13T17:06:08Z'
 commitCount: 2
 expedition: 84
 loggerName: 'Parveen'
+audio: '/audio/expedition-84.mp3'
 tags: ['launch', 'mobile', 'marketing']
 scope: ['mobile', 'expedition']
 discordPrompts:

@@ -12,6 +12,7 @@ loopIso: '2026-06-13T20:11:21Z'
 commitCount: 2
 expedition: 87
 loggerName: 'Esi'
+audio: '/audio/expedition-87.mp3'
 tags: ['launch', 'marketing', 'meta']
 scope: ['loop', 'meta', 'expedition']
 discordPrompts:
