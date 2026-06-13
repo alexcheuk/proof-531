@@ -7,7 +7,7 @@ trigger: iOS live on App Store (post 24h after r/531Discussion)
 drafted: 2026-05-28
 ---
 
-# r/weightroom — Launch Post Draft
+# r/weightroom  -  Launch Post Draft
 
 ## Research notes
 
@@ -20,22 +20,22 @@ r/weightroom is a more general strength training subreddit with higher traffic a
 
 ---
 
-## Option A — Show-and-Tell / Brolog thread reply (recommended path)
+## Option A  -  Show-and-Tell / Brolog thread reply (recommended path)
 
 **Context:** Post this as a reply inside the active Show-and-Tell, Brolog, or Tools thread. Do not create a new standalone thread unless r/weightroom community rules explicitly allow app launch posts.
 
 **Copy:**
 
-> Built a free 5/3/1+BBB tracker for myself — couldn't find one that did the BBB math cleanly without a ton of other stuff I didn't want. Local SQLite, no account, no paywall. Android APK on GitHub Releases, iOS on the App Store. [link] Not affiliated with Wendler, just a fan.
+> Built a free 5/3/1+BBB tracker for myself  -  couldn't find one that did the BBB math cleanly without a ton of other stuff I didn't want. Local SQLite, no account, no paywall. Android APK on GitHub Releases, iOS on the App Store. [link] Not affiliated with Wendler, just a fan.
 
 ---
 
-## Option B — Standalone post (only if community rules allow)
+## Option B  -  Standalone post (only if community rules allow)
 
 **Check r/weightroom rules before posting standalone.** If self-promotion requires prior community participation or is banned outright, use Option A only.
 
 **Post title:**
-> Built a free 5/3/1+BBB tracker for myself — sharing it
+> Built a free 5/3/1+BBB tracker for myself  -  sharing it
 
 **Body:**
 
@@ -55,7 +55,7 @@ Not affiliated with Jim Wendler.
 ## Posting guidance
 
 - Post at least 24 hours after the r/531Discussion post. Don't hit both on the same day.
-- If r/weightroom has a weekly thread for tools/apps/side-projects, use that thread — don't create a standalone post unless the community culture clearly allows it. Check the sidebar/about before posting.
+- If r/weightroom has a weekly thread for tools/apps/side-projects, use that thread  -  don't create a standalone post unless the community culture clearly allows it. Check the sidebar/about before posting.
 - Two sentences in the right thread beats a well-crafted standalone post that gets removed.
 - Match the register of other replies in the thread. If people are posting one-liners, post one line. If they're posting short paragraphs, match that.
 - Do not post the same copy used in r/531Discussion. The framing here is even more practitioner and even less developer-announcing-launch.

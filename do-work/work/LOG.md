@@ -25,6 +25,14 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-6 auditor fix: docs/marketing em-dash sweep + guard extension
+- shipped (LOOP-EMDASH-MARKETING): Auditor flagged 37 em dashes re-introduced into
+  ai-experiment-story-outline.md by merge conflict resolution taking wrong side. Swept all
+  docs/marketing/*.md (12 files, ~350 em dashes -> spaced hyphens). Extended
+  check-no-em-dash.sh to guard docs/marketing/ as a new scope. CI green (1195/1195).
+- proof: pnpm run ci green; check-no-em-dash: clean. Pushed.
+- note: auditor APPROVED MissResetSheet JSDoc removal + SessionCompleteScreen dedup as clean.
+
 ## 2026-06-13 tick-6 (Exp 84): IN-APP-REVIEW + marketing launch push + Q-QUALITY MissCorrectionCard animation fix
 - shipped (LAUNCH, IN-APP-REVIEW): Added expo-store-review (new native dep), created `useInAppReview` hook
   that fires when `origin==='live' && isCycleComplete && cycle>=2`; wired into SessionCompleteScreen;

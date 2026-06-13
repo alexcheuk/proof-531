@@ -4,10 +4,11 @@
 # this character in any file the loop writes: use a colon, period, comma,
 # semicolon, parentheses, or a spaced hyphen instead.
 #
-# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/,
-#   apps/web/src/content/blog/2026-06-*.md (do-work-era Logger posts, tick-5+).
+# SCOPE: do-work/, loop-memory/, docs/decision-log.md, docs/marketing/,
+#   apps/mobile/src/, apps/web/src/content/blog/2026-06-*.md (tick-5+).
 #   apps/mobile/src/** pre-existing em dashes swept in tick-5 (LOOP-EMDASH-MOBILE).
-#   apps/web/** pre-June corpus is pending Alex's #needs-input ruling (WEB-SIGNOFF).
+#   docs/marketing/** fully swept in tick-6 (LOOP-EMDASH-MARKETING).
+#   apps/web/** pre-June corpus pending Alex's #needs-input ruling (WEB-SIGNOFF).
 #   The June-2026+ Logger posts are now fully swept (tick-7) and guarded here.
 #
 # EXCLUDED files (intentional U+2014 usage to define or quote the rule):
@@ -31,6 +32,7 @@ violations=$(grep -rn $'\xe2\x80\x94' \
   "$ROOT/do-work" \
   "$ROOT/loop-memory" \
   "$ROOT/docs/decision-log.md" \
+  "$ROOT/docs/marketing" \
   "$ROOT/apps/mobile/src" \
   "${BLOG_JUNE_FILES[@]+"${BLOG_JUNE_FILES[@]}"}" \
   --include="*.ts" \
