@@ -34,13 +34,6 @@ export type MissCorrectionCardProps = {
   testID?: string;
 };
 
-/**
- * The missed-rep Program Correction card. Adopts the `AdjustTmCta` /
- * `TmAdjustmentNote` bordered frame so it reads as a sibling of the existing
- * TM nudges. Two visual identities selected by `variant`:
- *   - choice (first miss): transparent surface, two actions (Reset / Off-day).
- *   - forced (second consecutive miss): amber surface, single Review action.
- */
 export function MissCorrectionCard({
   variant,
   tmDisplay,

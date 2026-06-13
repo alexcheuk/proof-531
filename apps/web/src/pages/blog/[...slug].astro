@@ -48,7 +48,7 @@ const iso = post.data.pubDate.toISOString();
 const authorName = authorForPost(post);
 const isLogger = isLoggerPost(post);
 
-// JSON-LD BlogPosting structured data — lets Google / RSS readers
+// JSON-LD BlogPosting structured data - lets Google / RSS readers
 // understand the post's metadata without scraping the body.
 // `image` is required by Google's Rich Results guidelines for BlogPosting
 // eligibility; we use the same og:image asset across the site so it's always
@@ -75,7 +75,7 @@ const jsonLd = {
 };
 ---
 
-<Base title={`${post.data.title} — 531 Strength dev log`} description={post.data.summary} ogImage="/screenshot-7.png" ogType="article">
+<Base title={`${post.data.title} - 531 Strength dev log`} description={post.data.summary} ogImage="/screenshot-7.png" ogType="article">
   <meta slot="head" name="author" content={authorName} />
   <meta slot="head" property="article:published_time" content={iso} />
   <meta slot="head" property="article:author" content={authorName} />
@@ -107,7 +107,7 @@ const jsonLd = {
       <h1 class="entry__title">{post.data.title.replace(/\.$/, '')}<span class="entry__dot" aria-hidden="true">.</span></h1>
     </header>
 
-    {/* TL;DR block — frontmatter `summary` rendered as a meta-element
+    {/* TL;DR block - frontmatter `summary` rendered as a meta-element
         with the page's amber accent on the left edge, so readers can
         tell it apart from the lede paragraph of the body. Verso's body
         openings always restate the same thesis, so without a visual
@@ -242,7 +242,7 @@ const jsonLd = {
     margin-left: -0.04em;
   }
 
-  /* TL;DR block — amber-accent card. Sits between the entry header
+  /* TL;DR block - amber-accent card. Sits between the entry header
      and the body. The 4px amber left edge + amber caps eyebrow
      visually quote the title's amber period; bg-1 fill sets it off
      from the page surface so the eye reads it as a meta-element, not

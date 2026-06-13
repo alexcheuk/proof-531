@@ -4,7 +4,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
 ---
 
 <Base
-  title="5/3/1 Plate Math Calculator — 531 Strength"
+  title="5/3/1 Plate Math Calculator - 531 Strength"
   description="Free barbell plate calculator for 5/3/1 and any strength program. Enter a target weight, pick your bar, and instantly see which plates to load per side."
   ogImage="/screenshot-6.png"
 >
@@ -12,7 +12,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "5/3/1 Plate Math Calculator — 531 Strength",
+    "name": "5/3/1 Plate Math Calculator - 531 Strength",
     "applicationCategory": "SportsApplication",
     "description": "Free barbell plate calculator for 5/3/1 and any strength program. Enter a target weight, pick your bar, and instantly see which plates to load per side.",
     "url": "https://531strength.com/tools/plate-math",
@@ -113,7 +113,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
         <div class="cta-left">
           <div class="caps cta-label">USE IN THE APP</div>
           <p>
-            The 531 Strength app shows plate math live for every working set — no mental math during your session.
+            The 531 Strength app shows plate math live for every working set - no mental math during your session.
           </p>
         </div>
         <div class="cta-right">
@@ -128,19 +128,19 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
         <div class="faq-grid">
           <div class="faq-item">
             <h3>What is plate math?</h3>
-            <p>Plate math is the process of figuring out which weight plates to load on a barbell to hit a target weight. You subtract the bar weight (usually 45 lb / 20 kg), divide the remainder in half to get the per-side load, then match that against your available plates — starting with the heaviest and working down. This calculator does it automatically.</p>
+            <p>Plate math is the process of figuring out which weight plates to load on a barbell to hit a target weight. You subtract the bar weight (usually 45 lb / 20 kg), divide the remainder in half to get the per-side load, then match that against your available plates - starting with the heaviest and working down. This calculator does it automatically.</p>
           </div>
           <div class="faq-item">
             <h3>How does 5/3/1 plate math work?</h3>
-            <p>In Jim Wendler's 5/3/1 program, your working weights are percentages of your training max. If your squat training max is 300 lb, your Week 1 working set at 65% is 195 lb. Enter 195 in this calculator: subtract the 45 lb bar, split 150 lb across two sides — 75 lb per side, loaded as 45+25+5. The calculator handles this for every set instantly.</p>
+            <p>In Jim Wendler's 5/3/1 program, your working weights are percentages of your training max. If your squat training max is 300 lb, your Week 1 working set at 65% is 195 lb. Enter 195 in this calculator: subtract the 45 lb bar, split 150 lb across two sides - 75 lb per side, loaded as 45+25+5. The calculator handles this for every set instantly.</p>
           </div>
           <div class="faq-item">
             <h3>Standard vs. Women's bar</h3>
-            <p>A standard Olympic barbell weighs 45 lb (20 kg). A women's Olympic bar weighs 35 lb (15 kg). Select the correct bar type before calculating — the starting weight changes the plate breakdown. Most commercial squat racks and bench stations use the standard 45 lb bar.</p>
+            <p>A standard Olympic barbell weighs 45 lb (20 kg). A women's Olympic bar weighs 35 lb (15 kg). Select the correct bar type before calculating - the starting weight changes the plate breakdown. Most commercial squat racks and bench stations use the standard 45 lb bar.</p>
           </div>
           <div class="faq-item">
             <h3>Shareable links</h3>
-            <p>Every calculator state has a unique URL — weight, unit, and bar type are encoded in the query string. Use "Copy shareable link" to grab the current configuration and send it to a training partner or save it for a specific working weight you check often.</p>
+            <p>Every calculator state has a unique URL - weight, unit, and bar type are encoded in the query string. Use "Copy shareable link" to grab the current configuration and send it to a training partner or save it for a specific working weight you check often.</p>
           </div>
         </div>
       </div>
@@ -290,8 +290,8 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
     }
 
     pBar.setAttribute('aria-label', perSide.length
-      ? `${weight} ${unit} — bar plus ${perSideTotal} ${unit} per side`
-      : `${weight} ${unit} — bar only`);
+      ? `${weight} ${unit} - bar plus ${perSideTotal} ${unit} per side`
+      : `${weight} ${unit} - bar only`);
 
     decBtn.disabled = weight - step < customBar;
     incBtn.disabled = weight + step > MAX_BY_UNIT[unit];
@@ -567,7 +567,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
     border-top: 1px solid var(--line-faint);
     padding-top: 12px;
   }
-  /* .pl-row and child classes are in <style is:global> below —
+  /* .pl-row and child classes are in <style is:global> below - 
      they are injected via innerHTML so the scoped hash won't reach them. */
   .pc-result-note {
     font-family: var(--font-mono);
@@ -734,7 +734,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
 </style>
 
 <style is:global>
-  /* Plate list rows are injected via innerHTML in the script block —
+  /* Plate list rows are injected via innerHTML in the script block - 
      Astro's scoped style hash cannot reach them, so these must be global. */
   .pl-row {
     display: flex;

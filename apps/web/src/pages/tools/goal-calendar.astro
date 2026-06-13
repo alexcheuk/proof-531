@@ -3,7 +3,7 @@ import Base from '~/layouts/Base.astro';
 ---
 
 <Base
-  title="5/3/1 Training Max Goal Calculator — 531 Strength"
+  title="5/3/1 Training Max Goal Calculator - 531 Strength"
   description="Calculate how many 5/3/1 cycles it takes to reach your training max goal. See a cycle-by-cycle projection for squat, bench, deadlift, and overhead press."
   ogImage="/screenshot-6.png"
 >
@@ -11,7 +11,7 @@ import Base from '~/layouts/Base.astro';
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "5/3/1 Training Max Goal Calculator — 531 Strength",
+    "name": "5/3/1 Training Max Goal Calculator - 531 Strength",
     "applicationCategory": "SportsApplication",
     "description": "Calculate how many 5/3/1 cycles it takes to reach your training max goal. See a cycle-by-cycle projection for squat, bench, deadlift, and overhead press.",
     "url": "https://531strength.com/tools/goal-calendar",
@@ -66,7 +66,7 @@ import Base from '~/layouts/Base.astro';
             </div>
           </div>
           <p class="prog-note">
-            A cycle is 4 sessions of this lift — not 4 calendar weeks. Each lift runs its own cycle, so you set your own pace.
+            A cycle is 4 sessions of this lift - not 4 calendar weeks. Each lift runs its own cycle, so you set your own pace.
           </p>
         </div>
 
@@ -148,15 +148,15 @@ import Base from '~/layouts/Base.astro';
           </div>
           <div class="faq-item">
             <h3>How long does it take to reach a goal on 5/3/1?</h3>
-            <p>5/3/1 runs in 4-week cycles. With standard progression (+10 lb per cycle on lower-body lifts, +5 lb on upper-body), adding 100 lb to your squat training max takes 10 cycles — roughly 40 weeks. This calculator shows the exact cycle-by-cycle path from your current TM to any goal TM, including total weeks and months.</p>
+            <p>5/3/1 runs in 4-week cycles. With standard progression (+10 lb per cycle on lower-body lifts, +5 lb on upper-body), adding 100 lb to your squat training max takes 10 cycles - roughly 40 weeks. This calculator shows the exact cycle-by-cycle path from your current TM to any goal TM, including total weeks and months.</p>
           </div>
           <div class="faq-item">
             <h3>Squat and deadlift vs. bench and press</h3>
-            <p>5/3/1 uses different increment rates per lift. Lower-body lifts (squat, deadlift) increase by 10 lb (5 kg) per cycle. Upper-body lifts (bench press, overhead press) increase by 5 lb (2.5 kg) per cycle. Select the correct lift to see the accurate projection — the same goal takes different amounts of time depending on which movement you're tracking.</p>
+            <p>5/3/1 uses different increment rates per lift. Lower-body lifts (squat, deadlift) increase by 10 lb (5 kg) per cycle. Upper-body lifts (bench press, overhead press) increase by 5 lb (2.5 kg) per cycle. Select the correct lift to see the accurate projection - the same goal takes different amounts of time depending on which movement you're tracking.</p>
           </div>
           <div class="faq-item">
             <h3>Shareable links</h3>
-            <p>Your current settings (unit, lift, current TM, goal TM) are stored in the URL. Use "Copy shareable link" to save a specific projection or share it with a coach or training partner. The link opens directly to the same state — no account required.</p>
+            <p>Your current settings (unit, lift, current TM, goal TM) are stored in the URL. Use "Copy shareable link" to save a specific projection or share it with a coach or training partner. The link opens directly to the same state - no account required.</p>
           </div>
         </div>
       </div>
@@ -250,7 +250,7 @@ import Base from '~/layouts/Base.astro';
       '<div class="o-l">~' + totalWeeks + ' work days away</div>' +
       '<div class="o-r">≈ ' + totalMonths + ' mo · ' + totalCycles + ' cycle' + (totalCycles !== 1 ? 's' : '') + ' · +' + fmtW(state.goalTM - state.currentTM) + ' ' + ul + '</div>';
 
-    // table rows — show all but mark goal row
+    // table rows - show all but mark goal row
     var html = '';
     cycles.forEach(function (row) {
       var isGoal = row.tm >= state.goalTM;

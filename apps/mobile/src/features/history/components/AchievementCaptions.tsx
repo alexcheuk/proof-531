@@ -9,14 +9,7 @@ export type AchievementCaptionsProps = {
   currentStreak?: number | undefined;
 };
 
-/**
- * Conditional caption stack rendered inside the History achievement
- * strip. Each caption is independent; they appear/disappear based on
- * whether the user has enough data to make the line meaningful.
- *
- * Order is fixed (week → best lift → best streak) because the reading
- * hierarchy matters  -  short-loop signals on top, lifetime milestones below.
- */
+// Order: week -> best lift -> best streak; short-loop signals before lifetime milestones.
 export function AchievementCaptions({
   sessionsThisWeek,
   bestLift,

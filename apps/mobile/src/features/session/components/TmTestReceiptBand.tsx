@@ -16,26 +16,8 @@ export type TmTestReceiptBandProps = {
   elapsedValue: string;
 };
 
-/**
- * Week-4 Session Complete receipt  -  a trimmed `ReceiptCard` variant for TM
- * test sessions:
- *
- *   The record
- *   ─────────────
- *   TM test            225 lb × 5
- *   Elapsed            14:22 minutes
- *
- * No working-volume row (the test set is the work), no BBB row (BBB is
- * hard-skipped on week 4), no e1RM row (a TM test does not produce an
- * e1RM PR  -  bounded by definition).
- *
- * Implemented as its own component rather than a `kind` variant of
- * `ReceiptCard` so neither receipt has to know about the other's row set
- *  -  keeps each card's responsibility coherent. (The spec considered a
- * `kind: 'standard' | 'tm-test'` prop on `ReceiptCard`; preferring two
- * components per the design-system rule of "no boolean-prop proliferation
- * on a primitive when the variants share little besides their chrome".)
- */
+// No volume/BBB/e1RM rows: TM test week hard-skips BBB and a TM test doesn't produce an e1RM PR.
+// Separate component (not a ReceiptCard variant) so neither knows the other's row set.
 export function TmTestReceiptBand({
   tmDisplay,
   reps,

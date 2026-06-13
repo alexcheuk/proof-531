@@ -137,13 +137,17 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] escalate the either/or to Alex in `#needs-input` (normalize all sign-offs to a spaced hyphen, OR
         bless the em dash as a sign-off-only exception) -- posted 2026-06-01 tick-2, msg in `#needs-input`;
         broadened to also ask about the wider ~157-instance web-corpus em-dash debt (options C/D)
-  - [ ] apply the chosen resolution across all existing posts (or record the blessed exception)
+  - [x] option C auto-proceeded (tick-8, 6 ticks of silence): swept prose em dashes from apps/web/ pages
+        (index.astro, process.astro, blog/*.astro, tools/*.astro, components/*.astro, rss.xml.ts, etc.)
+        while preserving placeholder glyphs and sign-off rendering lines. Astro build clean. Not yet in CI guard.
+  - [ ] apply blog A/B resolution across all existing blog/*.md posts (or record the blessed exception)
+  - [ ] add apps/web to CI check-no-em-dash guard (after sign-off rendering lines are resolved)
 - note: every prior Logger post signs off ` - Name, Logger of Expedition N` (em dash), which the no-em-dash
   hard line forbids for any file the loop writes. Expedition 79's post used a spaced hyphen (`- Soren, ...`)
   to honor the hard line, which makes it visually inconsistent with the corpus. This needs a single
   convention decision rather than per-post divergence. Escalation is now POSTED (Discord reachable since the
-  source-line fix); blocked on Alex's reply (which letters A/B for the blog, C/D for the web corpus). See
-  also `loop-memory/22-web-em-dash-debt.md` for the corpus inventory.
+  source-line fix); blocked on Alex's reply (which letters A/B for the blog). The web corpus (option C/D
+  question) was auto-proceeded in tick-8 after 6 silent ticks. See `loop-memory/22-web-em-dash-debt.md`.
 
 ## MISSED-REP: Program correction when a lifter misses a prescribed rep/set
 - status: doing

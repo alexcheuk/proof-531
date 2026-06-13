@@ -18,13 +18,7 @@ export type WarmupsBandProps = {
   week?: Week;
 };
 
-/**
- * Per-day warmup ramp band above the working sets. Ramp bridges to each
- * day's top set so the last warmup is within 10-25% of the working weight.
- *
- * Collapsed by default (Discord 1508998906). Tap the header to expand.
- * When collapsed, the right side reads "TAP TO OPEN" (Discord 1509060717).
- */
+// Collapsed by default + "TAP TO OPEN" label per Discord 1508998906 and 1509060717.
 export function WarmupsBand({
   tm,
   storageUnit,

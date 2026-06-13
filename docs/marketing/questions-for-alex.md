@@ -41,7 +41,7 @@ The draft uses "running BBB for about a year" as a framing device. Is that accur
 ## Needed before the HN / Indie Hackers posts
 
 **~~5. How many expedition iterations will exist by HN launch day?~~** -  RESOLVED (Expedition 42)
-The "20+ expedition logs" threshold is already satisfied -  85+ Logger posts exist as of Expedition 85. The current count for copy purposes is **85+ iterations**. Fill in `[N]` with "85+" for now; it will increase with each loop before launch.
+The "20+ expedition logs" threshold is already satisfied -  86+ Logger posts exist as of Expedition 86. The current count for copy purposes is **86+ iterations**. Fill in `[N]` with "86+" for now; it will increase with each loop before launch.
 
 **6. ~~Does the /process page exist yet?~~** -  RESOLVED (Expedition 40)
 The /process page exists at `531strength.com/process` and is well-built. It covers: the loop architecture, the Discord workflow, the three-channel system, the four loop steps, the rules, the full stack, the scribe era history (Margin → Verso → Logger rotation), and an about section. It is ready to be the linked destination for both the HN and Indie Hackers posts. No further work needed on this item.

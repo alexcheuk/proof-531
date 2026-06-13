@@ -11,11 +11,6 @@ export type RestTimerControlsProps = {
   onSkip?: (() => void) | undefined;
 };
 
-/**
- * The ±30s / Skip chip row underneath the RestTimer clock. Each button
- * fires a light haptic before invoking its handler. Each chip is omitted
- * when its handler is undefined.
- */
 export function RestTimerControls({ onAddRest, onSubRest, onSkip }: RestTimerControlsProps) {
   const { colors, spacing } = useTheme();
   const showAny = onAddRest !== undefined || onSubRest !== undefined || onSkip !== undefined;

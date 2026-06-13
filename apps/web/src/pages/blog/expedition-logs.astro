@@ -29,7 +29,7 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
 ---
 
 <Base
-  title="Expedition Logs — 531 Strength"
+  title="Expedition Logs - 531 Strength"
   description="Field logs from inside the painting. Each entry is written by an expedition's Logger before the expedition ends, addressed to those who will come after."
   ogImage="/screenshot-7.png"
 >
@@ -52,9 +52,9 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
           they leave behind.
         </p>
         <p class="subscribe-line">
-          {audioCount > 0 && <>{audioCount} of {posts.length} entries include the Logger's spoken recording — marked <span class="audio-ref">&#9654; AUDIO</span>.</>}
+          {audioCount > 0 && <>{audioCount} of {posts.length} entries include the Logger's spoken recording - marked <span class="audio-ref">&#9654; AUDIO</span>.</>}
           {audioCount === 0 && <>Entries marked <span class="audio-ref">&#9654; AUDIO</span> include the Logger's spoken recording.</>}
-          {' '}Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> — compatible with Pocket Cast and other podcast apps.
+          {' '}Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> - compatible with Pocket Cast and other podcast apps.
         </p>
         {latestExpedition > 0 && (
           <p class="archive-line">— archived through expedition {latestExpedition}</p>
@@ -126,12 +126,12 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
   }
   .dot { color: var(--amber); margin-left: -0.04em; }
 
-  /* page-scoped mono body — the easter egg */
+  /* page-scoped mono body - the easter egg */
   .log-list,
   .log-list * {
     font-family: var(--font-mono);
   }
-  /* override mono on the title — Sans-Condensed still carries headlines */
+  /* override mono on the title - Sans-Condensed still carries headlines */
   .log-list .title {
     font-family: var(--font-cond);
   }

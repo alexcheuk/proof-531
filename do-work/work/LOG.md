@@ -25,6 +25,25 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-8 (Exp 86): WEB-SIGNOFF option-C auto-proceed + iter count 86+ + Q-QUALITY JSDoc sweep
+- shipped (WEB, WEB-SIGNOFF partial): Option C auto-proceeded after 6 ticks of silence (DOCTRINE threshold:
+  3 ticks). 99+ prose em dashes swept from apps/web/ pages and components (15 files) with placeholder glyphs
+  preserved. Double-space artifact from sweep (` — ` -> `  -  `) caught and normalized same tick. Astro build
+  clean. 3 sign-off rendering lines in blog framework preserved pending WEB-SIGNOFF A/B reply from Alex.
+  apps/web NOT yet in CI guard (3 lines remain). Decision-log entry added.
+- shipped (LAUNCH): Iteration count 85+ -> 86+ across 11 marketing docs + README. Stale "74+" placeholder in
+  launch-day-operations-guide.md updated to "86+". Expedition 86 research notes added to strategy file.
+- shipped (Q-QUALITY): Multi-paragraph "what" JSDoc blocks removed from 13 session/history components
+  (MissCorrectionCard, MissResetSheet, ReceiptCard, LiveHeader, SessionCompleteMasthead, CornerTicks,
+  TmTestReceiptBand, RestTimerControls, LogSheetFooter, WarmupsBand, useStoreReviewOnCycleComplete,
+  useRecordMissOnce, HistoryEmptyState, AchievementCaptions). Each replaced with a single WHY comment or
+  removed. Behavior-preserving; all 1170 tests green.
+- proof: pnpm run ci green (1170/1170 tests, 185 suites; lint clean; typecheck clean; check-no-em-dash clean);
+  pnpm --filter @fivethreeone/web build clean (Astro). All changes are logic/config/docs - no UI validation debt.
+- deferred / escalated: WEB-SIGNOFF A/B (blog sign-off convention) still pending Alex's reply. Reddit posts
+  (r/531Discussion, r/weightroom) still await Alex's go-ahead. Maestro smokes for REST-TIMER-ACCURACY,
+  MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX remain outstanding.
+
 ## 2026-06-13 tick-7 (Exp 85): LOOP-EMDASH-MARKETING + iteration count 85+ + Q-QUALITY animation fix
 - shipped (LOOP, LOOP-EMDASH-MARKETING done): 396 em dashes swept from docs/marketing/ (13 files); CI
   guard (check-no-em-dash.sh) extended to cover docs/marketing/; CI passes clean.

@@ -13,14 +13,6 @@ export type LogSheetFooterProps = {
   saveA11yLabel: string;
 };
 
-/**
- * Shared Cancel + Save button pair for bottom-sheet rep loggers.
- *
- * Both the AMRAP sheet and the TM Test sheet use this exact visual shape  -
- * two full-width bordered buttons side by side, ghost left and filled right,
- * both disabled at 60% opacity while a save is in flight. The only difference
- * between the two sheets is the testID and accessibility label strings.
- */
 export function LogSheetFooter({
   pending,
   onCancel,

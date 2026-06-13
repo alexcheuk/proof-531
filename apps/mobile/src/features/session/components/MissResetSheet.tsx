@@ -22,12 +22,7 @@ export type MissResetSheetProps = {
   onClose: () => void;
 };
 
-/**
- * Apply-confirmation sheet for the missed-rep reset. Mirrors `TmApplySheet`'s
- * structure (Current TM -> New TM row, primary Apply, "Not now" cancel) but
- * applies through `useApplyMissReset`, which writes the new TM AND clears the
- * miss state in one accessor call. The −10% math runs through `missResetTm`.
- */
+// useApplyMissReset writes the new TM and clears miss state atomically; never call each separately.
 export function MissResetSheet({ open, lift, tmDisplay, unit, onClose }: MissResetSheetProps) {
   const { colors, spacing } = useTheme();
   const applyReset = useApplyMissReset();

@@ -42,6 +42,23 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - WEB-SIGNOFF option C auto-proceeded: swept prose em dashes from apps/web corpus
+
+**Tags:** `convention`, `process`, `removal`
+**Files:** `apps/web/src/pages/`, `apps/web/src/components/`, `loop-memory/22-web-em-dash-debt.md`
+
+WEB-SIGNOFF escalation (A/B for blog sign-offs, C/D for web corpus) was posted 2026-06-01 (tick-2).
+After 6 ticks of silence, the loop auto-proceeded with option C (DOCTRINE: reversible escalations
+auto-proceed after ~3 ticks). 99+ prose em dashes swept from all apps/web/src/pages/ and
+apps/web/src/components/ files using a scoped Python script that preserved placeholder glyphs
+(`<span class="reps">—</span>`, `dash.textContent = '—'`, etc.) and sign-off rendering lines
+(3 lines in blog listing templates pending the A/B blog sign-off reply). Double-space artifacts
+(` — ` with surrounding spaces become `  -  `) were caught and normalized in the same tick.
+apps/web not yet added to CI guard - waits for the 3 remaining sign-off rendering lines to resolve.
+
+**Follow-ups:** Alex replies to WEB-SIGNOFF A/B in `#needs-input`; normalize sign-off rendering
+lines; add `apps/web/**` to `scripts/check-no-em-dash.sh`.
+
 ### 2026-06-13 - Missed-rep Program Correction: persisted per-lift miss state, not a per-session suggestion
 
 **Tags:** `architecture`, `feature`, `data-layer`

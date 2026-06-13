@@ -4,13 +4,6 @@ import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { formatClock as formatElapsedClock } from '@/domain/time';
-/**
- * Live screen masthead. Caps eyebrow ("ON THE BAR · SET N OF 3") tells the
- * user *this is the set you're doing right now*; large sans-bold "Set N."
- * gives the screen the same typographic weight as the Today / Rest /
- * SessionComplete titles (period-terminated, single short word). The AMRAP
- * chip sits inline with the title row so it baseline-aligns visually.
- */
 import { View, type ViewStyle } from 'react-native';
 
 const TITLE_SIZE = 64;

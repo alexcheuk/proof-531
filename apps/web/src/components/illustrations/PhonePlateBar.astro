@@ -1,17 +1,17 @@
 ---
 /**
  * In-phone plate-bar visualization. Ports apps/mobile/src/design/primitives/
- * PlateBar/PlateBar.tsx to HTML+CSS — same layout (leftStack | collar |
+ * PlateBar/PlateBar.tsx to HTML+CSS - same layout (leftStack | collar |
  * mid-bar | collar | rightStack), same sizeFor() ramp, same -90° rotated
  * weight labels inside plates that are tall enough.
  *
  * Two visual sizes:
- *   - `mini`: used inside the Home phone TopSetBlock (H=64, plateW=9)
- *   - `full`: used inside Live + Plan phones (H=96, plateW=16)
+ *  - `mini`: used inside the Home phone TopSetBlock (H=64, plateW=9)
+ *  - `full`: used inside Live + Plan phones (H=96, plateW=16)
  *
  * Tone:
- *   - `ink` (default): black plates on paper bg (matches every paper-bg screen)
- *   - `paper`: paper plates on dark bg (only if a dark screen ever appears)
+ *  - `ink` (default): black plates on paper bg (matches every paper-bg screen)
+ *  - `paper`: paper plates on dark bg (only if a dark screen ever appears)
  */
 import { decompose, groupPlates, sizeFor, plateLabel, type Unit } from '~/lib/plates';
 
@@ -21,7 +21,7 @@ interface Props {
   unit?: Unit;
   size?: 'mini' | 'full' | 'hero';
   tone?: 'ink' | 'paper';
-  /** When true, render the "PER SIDE — 2× 45 + 10 = 100 lb" caption row below. */
+  /** When true, render the "PER SIDE - 2× 45 + 10 = 100 lb" caption row below. */
   withCaption?: boolean;
 }
 
@@ -49,12 +49,12 @@ const captionInk3 = tone === 'ink' ? 'var(--ink-3)' : 'rgba(231, 227, 214, 0.4)'
 <div
   class:list={['plate-bar', `size-${size}`, `tone-${tone}`]}
   aria-label={hasPlates
-    ? `${weight} ${unit} loaded — bar plus ${perSideTotal} ${unit} per side`
-    : `${weight} ${unit} loaded — bar only`}
+    ? `${weight} ${unit} loaded - bar plus ${perSideTotal} ${unit} per side`
+    : `${weight} ${unit} loaded - bar only`}
   role="img"
 >
   <div class="row" style={`height: ${H}px;`}>
-    {/* Left stack — row-reverse so heaviest is closest to the bar */}
+    {/* Left stack - row-reverse so heaviest is closest to the bar */}
     <div class="stack stack-left">
       {perSide.map((p) => (
         <div

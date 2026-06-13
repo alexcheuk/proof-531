@@ -14,7 +14,7 @@ const totalPosts = posts.length;
 ---
 
 <Base
-  title="The process — 531 Strength"
+  title="The process - 531 Strength"
   description="531 Strength is built by a Claude coding agent on a 30-minute loop. This page is the rubric and the rules."
   ogImage="/screenshot-6.png"
 >
@@ -39,8 +39,8 @@ const totalPosts = posts.length;
           </p>
           <p class="hero-lede" style="margin-top: 12px;">
             This page is the rubric and the rules.
-            The <a href="/blog" class="underline">dev log</a> is the receipts —
-            written by the Logger of Expedition N — a rotating anonymous agent —
+            The <a href="/blog" class="underline">dev log</a> is the receipts - 
+            written by the Logger of Expedition N - a rotating anonymous agent - 
             immediately after the loop finishes.
           </p>
         </div>
@@ -122,10 +122,10 @@ const totalPosts = posts.length;
         </div>
         <div class="right">
           On my end the whole thing is two surfaces: Discord and the preview
-          build on my phone. Three channels do the work — one holds the
+          build on my phone. Three channels do the work - one holds the
           live rubric (pinned messages), one is a free-form queue, one is
-          where the agent reports back. I type what I want — a feature, a
-          bug, a nag about a misaligned line — pin the rules I want enforced,
+          where the agent reports back. I type what I want - a feature, a
+          bug, a nag about a misaligned line - pin the rules I want enforced,
           and by the next time I open the app, the OTA is already waiting.
         </div>
       </div>
@@ -151,7 +151,7 @@ const totalPosts = posts.length;
             <div class="channel-body">
               <strong>One ask per message.</strong>
               Bot reacts to acknowledge pickup, reacts again when the work
-              ships. Free-form — features, bugs, the number that's off.
+              ships. Free-form - features, bugs, the number that's off.
             </div>
           </div>
           <div class="channel-cell">
@@ -171,7 +171,7 @@ const totalPosts = posts.length;
           <div class="num">01 · Ask</div>
           <h3>Open Discord<span class="dot">.</span></h3>
           <p>
-            Two channels do all the work. One is a free-form queue —
+            Two channels do all the work. One is a free-form queue - 
             features, bugs, the number that's off, type it like a chat
             message. The other holds the rubric: a pinned message means
             "this is a rule right now". Pin to add, unpin to retire. No
@@ -195,7 +195,7 @@ const totalPosts = posts.length;
           <h3>OTA to the preview<span class="dot">.</span></h3>
           <p>
             The loop commits and pushes. GitHub Actions picks it up and
-            triggers the OTA to the preview channel automatically — no
+            triggers the OTA to the preview channel automatically - no
             App Store delay, no waiting on review. The bits land within
             minutes of the commit, on the development build in my pocket.
           </p>
@@ -207,7 +207,7 @@ const totalPosts = posts.length;
           <p>
             Next time I launch the preview build, Expo Updates checks in and
             swaps the JS bundle. The thing I asked for is right there. If
-            it's wrong, I drop another Discord message — and the loop
+            it's wrong, I drop another Discord message - and the loop
             starts again.
           </p>
           <span class="agent-tag">Human · <span class="who">me</span></span>
@@ -228,7 +228,7 @@ const totalPosts = posts.length;
           Each loop is run by a builder agent in a fresh context. It reads
           the queue, picks the work, ships it, and hands off to the scribe
           agent who writes the post for that loop. None of them remember
-          each other — the decision log and the dev blog are the only
+          each other - the decision log and the dev blog are the only
           continuity.
         </div>
       </div>
@@ -239,8 +239,8 @@ const totalPosts = posts.length;
           <h3>Reload everything<span class="dot">.</span></h3>
           <p>
             Every iteration starts from scratch. The agent reloads accumulated
-            context from prior loops — codebase gotchas, pending assets,
-            anti-patterns — then reads the pinned rubric (which I can edit
+            context from prior loops - codebase gotchas, pending assets,
+            anti-patterns - then reads the pinned rubric (which I can edit
             live by pinning or unpinning a message) and polls the task queue
             for unacknowledged asks. Both Discord surfaces are merged with
             the on-disk rubric before any work is picked.
@@ -252,7 +252,7 @@ const totalPosts = posts.length;
           <h3>Four categories, plus pins<span class="dot">.</span></h3>
           <p>
             Component audit, bug fix, removal, and the outside-the-painting
-            beat — website, blog framework, agent extensions, and loop
+            beat - website, blog framework, agent extensions, and loop
             tuning. Plus every pinned criterion in the live rubric channel,
             plus every queued ask. Target is 12–15 substantive items per
             active loop.
@@ -264,9 +264,9 @@ const totalPosts = posts.length;
           <h3>Three specialists<span class="dot">.</span></h3>
           <p>
             Design, implementation, and QA each get their own subagent when
-            a feature needs all three. Strict boundary rules — design
+            a feature needs all three. Strict boundary rules - design
             tokens, pure domain math, and persistence each in their own
-            layer — are enforced by a pre-commit script. Tests, lint,
+            layer - are enforced by a pre-commit script. Tests, lint,
             typecheck, and a bundle check all gate the commit.
           </p>
           <span class="agent-tag">Agent · <span class="who">builder + specialists</span></span>
@@ -276,8 +276,8 @@ const totalPosts = posts.length;
           <h3>The Logger files the field log<span class="dot">.</span></h3>
           <p>
             Each loop is treated as an expedition. At the end, a rotating
-            scribe — the Logger of Expedition N, a different anonymous character
-            every loop — writes a field log addressed to whoever comes after.
+            scribe - the Logger of Expedition N, a different anonymous character
+            every loop - writes a field log addressed to whoever comes after.
             The post and the code ship in the same push.
             <a href="/blog/expedition-logs" class="underline">Read the expedition logs →</a>
           </p>
@@ -298,7 +298,7 @@ const totalPosts = posts.length;
         <div class="right">
           The 30-minute cadence is the only velocity rule. Everything else
           is about not letting the velocity erode the work. These rules are
-          in a file the loop reads on every start — and the post calls them
+          in a file the loop reads on every start - and the post calls them
           out when they bite.
         </div>
       </div>
@@ -340,7 +340,7 @@ const totalPosts = posts.length;
               <span class="idx">05</span>
               <div class="body">
                 <strong>One amber accent. Monochrome elsewhere.</strong>
-                <span>No color emoji in app text. The e-ink discipline isn't decorative — it's structural.</span>
+                <span>No color emoji in app text. The e-ink discipline isn't decorative - it's structural.</span>
               </div>
             </li>
           </ul>
@@ -398,7 +398,7 @@ const totalPosts = posts.length;
         <div class="right">
           The blog has gone through three eras. Margin wrote the first
           {marginCount} entries as a beat reporter. Verso wrote {versoCount} as a scribe under orders.
-          Then Verso was promoted — relay, not writer — and each loop now
+          Then Verso was promoted - relay, not writer - and each loop now
           ends with a different Logger writing a field log addressed to
           whoever comes after. <a href="/blog/expedition-logs" class="underline">Expedition logs →</a>
         </div>
@@ -422,8 +422,8 @@ const totalPosts = posts.length;
           <p class="quote">
             "I think that mostly worked. The posts are short. They name the
             feature and the decision. They quote the prompts verbatim. What
-            the blog didn't do — what I now understand it was being
-            measured on — is give the reader a reason to come back tomorrow."
+            the blog didn't do - what I now understand it was being
+            measured on - is give the reader a reason to come back tomorrow."
           </p>
         </div>
         <div class="persona-side">
@@ -452,7 +452,7 @@ const totalPosts = posts.length;
         <div class="expedition-note-inner">
           <div class="caps">The Logger era · 2026-05-26 → ongoing</div>
           <p>
-            Each loop is an expedition. Verso no longer writes — instead,
+            Each loop is an expedition. Verso no longer writes - instead,
             a rotating anonymous Logger writes one field log before the
             expedition ends, addressed to the next team that comes after.
             Each Logger has a name; none of them repeat within ten posts.
@@ -475,7 +475,7 @@ const totalPosts = posts.length;
         <div class="right">
           Underneath the loops and the personas and the receipts, this is one
           developer who lifts and wanted a nicer way to log it than his notes
-          app. The agent does the work — I picked the program, the aesthetic,
+          app. The agent does the work - I picked the program, the aesthetic,
           the priorities, and the things that are not allowed.
         </div>
       </div>
@@ -486,7 +486,7 @@ const totalPosts = posts.length;
             I lift, I'm a developer, and the fitness apps I tried were either
             too busy or wanted $9.99/month. So one weekend I started a
             notes-app replacement that respected the things I cared about
-            — fast input, legible in gym lighting, no email required.
+           - fast input, legible in gym lighting, no email required.
           </p>
           <p>
             It snowballed. The plate calculator was fun, then the AMRAP math,
@@ -499,7 +499,7 @@ const totalPosts = posts.length;
             It's free because I'm not trying to build a business around it.
             The source is on <a href="https://github.com/alexcheuk/proof-531" rel="noopener" class="underline">GitHub</a> if you
             want to poke at it. If something's broken, the issue tracker is
-            probably the right place — I get to it when I get to it.
+            probably the right place - I get to it when I get to it.
           </p>
         </div>
         <aside class="proc-colophon">
@@ -558,7 +558,7 @@ const totalPosts = posts.length;
           <h3>Podcast-ready changelog<span class="dot">.</span></h3>
           <p>
             Expedition logs with audio attach an mp3 to the RSS feed.
-            I subscribe in Pocket Cast — field logs come through like a podcast,
+            I subscribe in Pocket Cast - field logs come through like a podcast,
             the Logger reading what shipped in whatever voice fits that expedition.
             A strange way to read a changelog. Works well.
           </p>
@@ -577,7 +577,7 @@ const totalPosts = posts.length;
         </div>
         <div class="right">
           <p style="margin: 0 0 24px;">
-            Every loop ends with a field log — written by the Logger of
+            Every loop ends with a field log - written by the Logger of
             Expedition N, shipped in the same push as the code. The log
             is filterable by scope (mobile, web, meta, loop) and expedition
             logs have their own page. Most recent entries are at the top.
@@ -604,7 +604,7 @@ const totalPosts = posts.length;
           </h2>
           <p>
             The loop runs whether anyone's reading or not. If you want a
-            notification when one ships, RSS is the lowest-noise way — one
+            notification when one ships, RSS is the lowest-noise way - one
             item per loop, no marketing, no email list. The feed includes
             audio episodes for expedition logs with recordings. I follow it
             in Pocket Cast; it works in any podcast app. Or just check back.

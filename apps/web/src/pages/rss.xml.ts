@@ -10,7 +10,7 @@ function audioEnclosure(
   site: string,
 ): { url: string; length: number; type: 'audio/mpeg' } | undefined {
   try {
-    // audioPath is like "/audio/expedition-33.mp3" — resolve under public/
+    // audioPath is like "/audio/expedition-33.mp3" - resolve under public/
     const localPath = join(process.cwd(), 'public', audioPath);
     const { size } = statSync(localPath);
     const siteBase = site.replace(/\/$/, '');
@@ -25,9 +25,9 @@ export async function GET(context: APIContext) {
   const posts = sortPostsNewestFirst(await getCollection('blog', ({ data }) => !data.draft));
 
   return rss({
-    title: '531 Strength — Dev Log',
+    title: '531 Strength - Dev Log',
     description:
-      'Field logs from each expedition — what an AI coding agent shipped, every 30 minutes.',
+      'Field logs from each expedition - what an AI coding agent shipped, every 30 minutes.',
     site: context.site ?? 'https://531strength.com',
     // iTunes podcast namespace so Pocket Cast and other podcast apps pick this
     // up as a proper podcast feed.

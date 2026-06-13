@@ -14,7 +14,7 @@ import {
 
 export async function getStaticPaths() {
   // 'expedition' has its own dedicated route at /blog/expedition-logs with
-  // a colophon and oldest-first ordering — don't generate a duplicate
+  // a colophon and oldest-first ordering - don't generate a duplicate
   // generic tag page for it.
   return SCOPES.filter((scope) => scope !== 'expedition').map((scope) => ({
     params: { scope },
@@ -40,8 +40,8 @@ const scribeFor = (post: (typeof posts)[number]) => {
 ---
 
 <Base
-  title={`${label} — Dev Log — 531 Strength`}
-  description={`531 Strength dev log — ${label.toLowerCase()} posts. What shipped, what was tried, and what broke each loop.`}
+  title={`${label} - Dev Log - 531 Strength`}
+  description={`531 Strength dev log - ${label.toLowerCase()} posts. What shipped, what was tried, and what broke each loop.`}
   ogImage="/screenshot-7.png"
 >
   <section class="hero">
@@ -55,7 +55,7 @@ const scribeFor = (post: (typeof posts)[number]) => {
       </h1>
       <p class="hero-lede">
         Posts that touched the {label.toLowerCase()} side of the build. Filter
-        applies to the post's primary scope — many posts wear more than one.
+        applies to the post's primary scope - many posts wear more than one.
       </p>
     </div>
   </section>

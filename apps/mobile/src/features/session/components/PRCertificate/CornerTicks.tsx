@@ -1,14 +1,7 @@
 import { View } from 'react-native';
 
-/**
- * Four bracket corner ticks framing the PR certificate or the
- * celebration screen. Decorative only  -  no a11y role.
- *
- * `size` is the side length of each corner square (default 14).
- * `thickness` is the border width (default 2). Loop-018 bumped the
- * defaults up  -  the previous 10×10/1.5 was barely visible at glance
- * on a real device.
- */
+// Decorative only - no a11y role. Defaults (14px/2px border) bumped from 10px/1.5px in loop-018;
+// the original was barely visible at a glance on a real device.
 export function CornerTicks({
   color,
   size = 14,

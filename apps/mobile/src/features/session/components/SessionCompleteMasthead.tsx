@@ -5,12 +5,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { ViewStyle } from 'react-native';
 
-/**
- * The "531 . ledger" wordmark + Filed chip header that crowns the session
- * receipt. Visually distinct from the app-wide `Masthead` (which uses the
- * mark-and-rightSlot pattern)  -  the receipt masthead is purpose-built and
- * needs slightly tighter spacing.
- */
+// Purpose-built masthead for the session receipt; tighter spacing than the app-wide Masthead.
 export function SessionCompleteMasthead() {
   const { layout } = useTheme();
 
