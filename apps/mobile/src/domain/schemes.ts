@@ -25,6 +25,37 @@ export const WARMUPS: readonly WorkingSet[] = [
   { pct: 0.6, reps: 3, kind: 'warmup' },
 ];
 
+const WARMUPS_BY_WEEK: Record<Week, readonly WorkingSet[]> = {
+  // D1 top set 85%: last warmup 60%, bridges within 25%.
+  1: WARMUPS,
+  // D2 top set 90%: last warmup 65%, bridges within 25%.
+  2: [
+    { pct: 0.45, reps: 5, kind: 'warmup' },
+    { pct: 0.55, reps: 5, kind: 'warmup' },
+    { pct: 0.65, reps: 3, kind: 'warmup' },
+  ],
+  // D3 top set 95%: four-step ramp, last warmup 80%, bridges within 15%.
+  3: [
+    { pct: 0.5, reps: 5, kind: 'warmup' },
+    { pct: 0.6, reps: 3, kind: 'warmup' },
+    { pct: 0.7, reps: 2, kind: 'warmup' },
+    { pct: 0.8, reps: 1, kind: 'warmup' },
+  ],
+  // D4 TM test 100%: five-step ramp, last warmup 90%, bridges within 10%.
+  4: [
+    { pct: 0.5, reps: 5, kind: 'warmup' },
+    { pct: 0.6, reps: 3, kind: 'warmup' },
+    { pct: 0.7, reps: 2, kind: 'warmup' },
+    { pct: 0.8, reps: 1, kind: 'warmup' },
+    { pct: 0.9, reps: 1, kind: 'warmup' },
+  ],
+};
+
+/** Per-day warmup ramp that bridges to each day's top set. Returns a fresh array. */
+export function warmupsForDay(week: Week): WorkingSet[] {
+  return WARMUPS_BY_WEEK[week].map((s) => ({ ...s }));
+}
+
 const WEEK_SETS: Record<Week, readonly WorkingSet[]> = {
   1: [
     { pct: 0.65, reps: 5, kind: 'working' },

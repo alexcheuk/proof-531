@@ -10,7 +10,7 @@ import { displayUnit } from '@/domain/units';
 import { View, type ViewStyle } from 'react-native';
 
 export type SetRowProps = {
-  index: 1 | 2 | 3;
+  index: 1 | 2 | 3 | 4 | 5;
   isLast: boolean;
   weight: number;
   unit: Unit;

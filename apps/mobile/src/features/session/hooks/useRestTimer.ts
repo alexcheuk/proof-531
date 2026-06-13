@@ -41,9 +41,37 @@ export function useRestTimer({
   initialRemainingRef.current = initialRemaining;
   const deadlineRef = useRef<number | null>(null);
 
+  // Precise alarm: a setTimeout that fires the done haptic at the exact deadline,
+  // bypassing the setInterval jitter that can accumulate 1-2s over a 3-min rest.
+  const preciseAlarmRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Always-fresh haptic ref so the setTimeout callback calls the latest prop
+  // without re-creating the arming function on every render.
+  const fireDoneHapticRef = useRef(fireDoneHaptic);
+  fireDoneHapticRef.current = fireDoneHaptic;
+
+  // Stable arming function - all closures are over refs (stable objects).
+  const armAlarmRef = useRef((endsAtMs: number) => {
+    if (preciseAlarmRef.current != null) {
+      clearTimeout(preciseAlarmRef.current);
+      preciseAlarmRef.current = null;
+    }
+    const delay = Math.max(0, endsAtMs - Date.now());
+    preciseAlarmRef.current = setTimeout(() => {
+      preciseAlarmRef.current = null;
+      if (doneFiredRef.current) return;
+      doneFiredRef.current = true;
+      fireDoneHapticRef.current?.();
+    }, delay);
+  });
+
   useEffect(() => {
     if (!active) {
       deadlineRef.current = null;
+      if (preciseAlarmRef.current != null) {
+        clearTimeout(preciseAlarmRef.current);
+        preciseAlarmRef.current = null;
+      }
       return;
     }
     warningFiredRef.current = false;
@@ -57,6 +85,9 @@ export function useRestTimer({
     }
     deadlineRef.current = Date.now() + seed * 1000;
     setRemaining(seed);
+    if (!doneFiredRef.current) {
+      armAlarmRef.current(deadlineRef.current);
+    }
     const recompute = () => {
       if (deadlineRef.current == null) return;
       setRemaining(Math.round((deadlineRef.current - Date.now()) / 1000));
@@ -68,6 +99,10 @@ export function useRestTimer({
     return () => {
       clearInterval(id);
       sub.remove();
+      if (preciseAlarmRef.current != null) {
+        clearTimeout(preciseAlarmRef.current);
+        preciseAlarmRef.current = null;
+      }
     };
   }, [active, seconds, warningThresholdSeconds]);
 
@@ -98,6 +133,7 @@ export function useRestTimer({
     }
     if (next > 0) {
       doneFiredRef.current = false;
+      armAlarmRef.current(deadlineRef.current);
     }
     setRemaining(next);
   }, [active, warningThresholdSeconds]);
@@ -110,6 +146,7 @@ export function useRestTimer({
     if (next > warningThresholdSeconds) {
       warningFiredRef.current = false;
     }
+    armAlarmRef.current(deadlineRef.current);
     setRemaining(next);
   }, [active, warningThresholdSeconds]);
 
@@ -122,7 +159,10 @@ export function useRestTimer({
       // Re-arm latches so a re-anchor that lands above the thresholds can still
       // fire the warning / done cues on the way down.
       if (next > warningThresholdSeconds) warningFiredRef.current = false;
-      if (next > 0) doneFiredRef.current = false;
+      if (next > 0) {
+        doneFiredRef.current = false;
+        armAlarmRef.current(endsAtMs);
+      }
       setRemaining(next);
     },
     [warningThresholdSeconds],

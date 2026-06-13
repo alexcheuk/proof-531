@@ -181,4 +181,77 @@ describe('useRestTimer', () => {
     expect(result.current.remaining).toBeLessThanOrEqual(0);
     expect(done).toHaveBeenCalledTimes(1);
   });
+
+  it('precise alarm fires done haptic at the deadline (not on the next interval tick)', () => {
+    const done = jest.fn();
+    renderHook(() =>
+      useRestTimer({
+        active: true,
+        seconds: 5,
+        fireWarningHaptic: jest.fn(),
+        fireDoneHaptic: done,
+      }),
+    );
+    // Advance exactly to the deadline — the precise setTimeout should fire.
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+    expect(done).toHaveBeenCalledTimes(1);
+  });
+
+  it('done haptic fires exactly once even when both precise alarm and interval fire at expiry', () => {
+    const done = jest.fn();
+    renderHook(() =>
+      useRestTimer({
+        active: true,
+        seconds: 5,
+        fireWarningHaptic: jest.fn(),
+        fireDoneHaptic: done,
+      }),
+    );
+    act(() => {
+      jest.advanceTimersByTime(5000); // fires both the precise alarm AND the 5s interval tick
+    });
+    act(() => {
+      jest.advanceTimersByTime(2000); // additional ticks
+    });
+    expect(done).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-arms precise alarm after addTime extends the deadline', () => {
+    const done = jest.fn();
+    const { result } = renderHook(() =>
+      useRestTimer({
+        active: true,
+        seconds: 5,
+        fireWarningHaptic: jest.fn(),
+        fireDoneHaptic: done,
+      }),
+    );
+    act(() => jest.advanceTimersByTime(3000)); // 2s remaining
+    expect(done).not.toHaveBeenCalled();
+
+    act(() => result.current.addTime()); // extends to ~32s
+
+    // Old deadline (5000ms total) would have fired — verify it was cancelled.
+    act(() => jest.advanceTimersByTime(2100)); // would be past old deadline
+    expect(done).not.toHaveBeenCalled();
+
+    // New deadline fires ~30s later.
+    act(() => jest.advanceTimersByTime(30000));
+    expect(done).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears the precise alarm when active becomes false', () => {
+    const done = jest.fn();
+    const { rerender } = renderHook(
+      ({ active }: { active: boolean }) =>
+        useRestTimer({ active, seconds: 5, fireWarningHaptic: jest.fn(), fireDoneHaptic: done }),
+      { initialProps: { active: true } },
+    );
+    // Deactivate before deadline
+    rerender({ active: false });
+    act(() => jest.advanceTimersByTime(6000));
+    expect(done).not.toHaveBeenCalled();
+  });
 });

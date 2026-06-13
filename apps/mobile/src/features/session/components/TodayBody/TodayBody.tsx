@@ -107,6 +107,7 @@ export function TodayBody({
         storageUnit={storageUnit}
         renderUnit={renderUnit}
         unitGlyph={unitGlyph}
+        week={week}
       />
 
       {isTmTestDay ? (

@@ -2,8 +2,8 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { WARMUPS } from '@/domain/schemes';
-import type { Unit } from '@/domain/types';
+import { warmupsForDay } from '@/domain/schemes';
+import type { Unit, Week } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
@@ -15,17 +15,28 @@ export type WarmupsBandProps = {
   storageUnit: Unit;
   renderUnit: Unit;
   unitGlyph: 'lb' | 'kg';
+  week?: Week;
 };
 
 /**
- * "WARMUPS · 40/50/60% × 5/5/3" preview band above the working sets.
+ * Per-day warmup ramp band above the working sets. Ramp bridges to each
+ * day's top set so the last warmup is within 10-25% of the working weight.
  *
  * Collapsed by default (Discord 1508998906). Tap the header to expand.
  * When collapsed, the right side reads "TAP TO OPEN" (Discord 1509060717).
  */
-export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsBandProps) {
+export function WarmupsBand({
+  tm,
+  storageUnit,
+  renderUnit,
+  unitGlyph,
+  week = 1,
+}: WarmupsBandProps) {
   const { layout, spacing } = useTheme();
   const [expanded, setExpanded] = useState(false);
+
+  const warmups = warmupsForDay(week);
+  const collapsedLabel = `${warmups.map((s) => `${Math.round(s.pct * 100)}`).join(' · ')}% TM`;
 
   const toggle = () => {
     void Haptics.selectionAsync();
@@ -51,22 +62,22 @@ export function WarmupsBand({ tm, storageUnit, renderUnit, unitGlyph }: WarmupsB
             </Text>
           </Row>
           <CapsLabel size="xs" color="ink3">
-            {expanded ? '40 · 50 · 60% TM' : 'TAP TO OPEN'}
+            {expanded ? collapsedLabel : 'TAP TO OPEN'}
           </CapsLabel>
         </Row>
       </Pressable>
       {expanded ? (
         <>
           <View>
-            {WARMUPS.map((s, i) => {
+            {warmups.map((s, i) => {
               const wStorage = round(tm * s.pct, storageUnit);
               const w = displayWeight(wStorage, storageUnit, renderUnit);
               const key = `warmup-${s.pct}-${s.reps}`;
               return (
                 <SetRow
                   key={key}
-                  index={(i + 1) as 1 | 2 | 3}
-                  isLast={i === WARMUPS.length - 1}
+                  index={(i + 1) as 1 | 2 | 3 | 4 | 5}
+                  isLast={i === warmups.length - 1}
                   weight={w}
                   unit={renderUnit}
                   reps={s.reps}
