@@ -3,7 +3,7 @@ import { type UseLogSheetStateResult, useLogSheetState } from './useLogSheetStat
 /**
  * AmrapLogSheet state container.
  *
- * Thin wrapper around `useLogSheetState` — seeds at `prescribedReps` so the
+ * Thin wrapper around `useLogSheetState`  -  seeds at `prescribedReps` so the
  * user can save immediately if they hit the floor. Resets reps + pending
  * whenever `open` flips to true so a previous error path doesn't bleed into
  * the next attempt.

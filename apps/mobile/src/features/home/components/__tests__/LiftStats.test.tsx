@@ -20,7 +20,7 @@ describe('LiftStats', () => {
 
   it('renders an em-dash when no best e1RM has been recorded', () => {
     const screen = renderStats(<LiftStats tmValue={140} tmUnit="kg" bestE1RM={null} cycle={1} />);
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getByText(' - ')).toBeTruthy();
     expect(screen.getByText('140 kg')).toBeTruthy();
   });
 

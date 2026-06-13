@@ -15,11 +15,11 @@ export type ProgressGridCellProps = {
    * Secondary glyph that replaces the reps line. The set widens by one
    * triplet on Week 4 TM-test cells:
    *
-   *   - `✓` — legacy week-4 deload completion (kept for forward-only history).
-   *   - `─` — projected future deload-style cell.
-   *   - `↑` — TM test passed strong (≥5 reps, increment band).
-   *   - `=` — TM test held (3–4 reps, hold band).
-   *   - `↓` — TM test reset (0–2 reps, reset band).
+   *   - `✓`  -  legacy week-4 deload completion (kept for forward-only history).
+   *   - `─`  -  projected future deload-style cell.
+   *   - `↑`  -  TM test passed strong (≥5 reps, increment band).
+   *   - `=`  -  TM test held (3–4 reps, hold band).
+   *   - `↓`  -  TM test reset (0–2 reps, reset band).
    */
   marker?: '✓' | '↑' | '↓' | '=' | '─' | null;
   onPress?: () => void;
@@ -62,7 +62,7 @@ export function ProgressGridCell({
   // Future cells use ink3 (muted). Now/present cells use ink0 (primary).
   const weightColorToken: ColorToken = filled ? 'bg0' : isFuture ? 'ink3' : 'ink0';
   // Brighten the rep count on filled cells from paperMuted → bg0 (full
-  // paper white) so the "× N" reads clearly against ink-0 — and bump to
+  // paper white) so the "× N" reads clearly against ink-0  -  and bump to
   // fontSize 10 so it pulls its weight next to the bolded weight number.
   const secondaryColorToken: ColorToken = filled ? 'bg0' : isFuture ? 'ink3' : 'ink2';
 
@@ -159,7 +159,7 @@ export function ProgressGridCell({
 
   // "NEXT" cell highlight: a 4-px amber accent border inset 2 px from
   // the cell's outer line. Amber is the project's lone accent color and
-  // is reserved for "you are here" / wordmark dots — using it here gives
+  // is reserved for "you are here" / wordmark dots  -  using it here gives
   // the next-session cell a clear visual lock without inventing a new
   // tint. Inset position keeps the cell geometry identical to neighbors.
   const nextRingOverlay = isNow ? (

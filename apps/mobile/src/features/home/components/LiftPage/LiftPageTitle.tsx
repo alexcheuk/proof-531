@@ -10,7 +10,7 @@ export type LiftPageTitleProps = {
   onPress?: () => void;
 };
 
-// Title typography contract — frozen so LiftPage + a future split don't
+// Title typography contract  -  frozen so LiftPage + a future split don't
 // drift from each other.
 const TITLE_SIZE = 64;
 // PWA `tracking-[-0.04em]` × 64px = -2.56 letter spacing.

@@ -36,7 +36,7 @@ export function HomeScreen() {
     enabledLifts,
   );
 
-  // Live width — rotates with the device so carousel page math, item
+  // Live width  -  rotates with the device so carousel page math, item
   // layout, and momentum-end index calculation stay correct under
   // orientation change.
   const { width: screenWidth } = useWindowDimensions();
@@ -61,7 +61,7 @@ export function HomeScreen() {
       // start a second one. Navigate to that lift instead.
       // Session creation itself happens in TodayScreen (preview mode) so we
       // don't insert a row that an unrelated tap-back leaves orphaned.
-      // Skip the redirect when the in-progress lift is no longer enabled —
+      // Skip the redirect when the in-progress lift is no longer enabled  -
       // useToggleLift now cancels that session at toggle-time, but this is
       // belt-and-braces in case any future code path leaves a ghost.
       const shouldRedirect =
@@ -90,7 +90,7 @@ export function HomeScreen() {
     }
     return map;
   }, [progress.data]);
-  // Set count for the in-progress session — drives the "Resume · set N of 3"
+  // Set count for the in-progress session  -  drives the "Resume · set N of 3"
   // CTA copy on the LiftPage for the in-progress lift. Query is gated on
   // the session id so we don't fire it when there's nothing in flight.
   const activeSession = useActiveSession();
@@ -157,7 +157,7 @@ export function HomeScreen() {
   );
 
   const combined = combineQueries(settings, tms, prs);
-  // Errors keep the QueryShell's retry surface — that's still the right
+  // Errors keep the QueryShell's retry surface  -  that's still the right
   // recovery. The loading branch swaps to a paper-themed skeleton so the
   // first paint feels intentional instead of flashing blank.
   if (combined.isError) {

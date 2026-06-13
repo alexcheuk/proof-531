@@ -11,7 +11,7 @@ export type NoTrainingMaxStateProps = {
   onOpenSettings: () => void;
 };
 
-// A completely blank screen reads as "broken app" — this empty state explains the gap and routes to Settings.
+// A completely blank screen reads as "broken app"  -  this empty state explains the gap and routes to Settings.
 export function NoTrainingMaxState({ lift, onOpenSettings }: NoTrainingMaxStateProps) {
   const { colors, spacing } = useTheme();
   const wrap: ViewStyle = {

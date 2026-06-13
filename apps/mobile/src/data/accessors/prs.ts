@@ -1,4 +1,4 @@
-// _upsertPR is for setLog.appendSetLog only — PR writes are side effects of AMRAP logging, never direct.
+// _upsertPR is for setLog.appendSetLog only  -  PR writes are side effects of AMRAP logging, never direct.
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift } from '../../domain/types';

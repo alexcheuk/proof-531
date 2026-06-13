@@ -5,8 +5,8 @@ import { SegRail } from '@/design/primitives/SegRail';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
- * Step 3 — Per-lift 1RM entry. The wizard walks each enabled lift in
- * `LIFT_ORDER`; one screen per lift. Composition shell only — view-model
+ * Step 3  -  Per-lift 1RM entry. The wizard walks each enabled lift in
+ * `LIFT_ORDER`; one screen per lift. Composition shell only  -  view-model
  * lives in `useOneRmEntryState`, layout pieces in sibling files.
  */
 import { View } from 'react-native';

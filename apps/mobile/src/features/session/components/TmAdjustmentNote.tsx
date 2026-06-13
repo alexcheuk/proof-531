@@ -8,7 +8,7 @@ import { Pressable, View, type ViewStyle } from 'react-native';
 
 export type TmAdjustmentNoteProps = {
   suggestion: TmAdjustmentSuggestion;
-  /** Current TM in display units — drives the reset target on the reset variant. */
+  /** Current TM in display units  -  drives the reset target on the reset variant. */
   tmDisplay: number;
   unit: Unit;
   onPress: () => void;

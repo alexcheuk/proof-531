@@ -1,4 +1,4 @@
-// RN doesn't support alignItems:'baseline' — header row uses 'center' instead of the PWA's items-baseline.
+// RN doesn't support alignItems:'baseline'  -  header row uses 'center' instead of the PWA's items-baseline.
 
 import type { ReactNode } from 'react';
 import { Text as RNText, type StyleProp, type TextStyle, View, type ViewStyle } from 'react-native';

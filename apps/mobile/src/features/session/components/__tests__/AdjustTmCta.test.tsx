@@ -9,7 +9,7 @@ describe('AdjustTmCta', () => {
   it('renders the label, delta sub-copy, and chevron', () => {
     const screen = renderCta(<AdjustTmCta delta={12} unitGlyph="lb" onPress={() => {}} />);
     expect(screen.getByText('Adjust training max')).toBeTruthy();
-    expect(screen.getByText('e1rm jumped 12 lb — consider a bump')).toBeTruthy();
+    expect(screen.getByText('e1rm jumped 12 lb  -  consider a bump')).toBeTruthy();
     expect(screen.getByText('›')).toBeTruthy();
   });
 
@@ -22,7 +22,7 @@ describe('AdjustTmCta', () => {
 
   it('renders the kg unit glyph correctly', () => {
     const screen = renderCta(<AdjustTmCta delta={7} unitGlyph="kg" onPress={() => {}} />);
-    expect(screen.getByText('e1rm jumped 7 kg — consider a bump')).toBeTruthy();
+    expect(screen.getByText('e1rm jumped 7 kg  -  consider a bump')).toBeTruthy();
   });
 
   it('honors a custom testID', () => {

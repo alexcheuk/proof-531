@@ -213,7 +213,7 @@ describe('ProgressScreen', () => {
     expect(screen.getByText(/per cycle · lower body/)).toBeTruthy();
   });
 
-  it('renders cycle labels (C1, C3, C4 — no leading zeros)', () => {
+  it('renders cycle labels (C1, C3, C4  -  no leading zeros)', () => {
     const screen = wrap(<ProgressScreen lift="squat" />);
     expect(screen.getByText('C1')).toBeTruthy();
     // C3 appears both in the stats triplet "Cycle" column and as the current-cycle row label.

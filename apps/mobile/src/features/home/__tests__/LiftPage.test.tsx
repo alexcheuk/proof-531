@@ -143,7 +143,7 @@ describe('LiftPage', () => {
     expect(screen.getByTestId('cycle-strip-cell-3')).toBeTruthy();
     expect(screen.getByTestId('cycle-strip-cell-4')).toBeTruthy();
 
-    // Active (next) cell has transparent background + amber ring overlay —
+    // Active (next) cell has transparent background + amber ring overlay  -
     // matching the Progress grid's "now" cell design. Completed cells use ink0.
     const flatten = (s: unknown): Record<string, unknown> => {
       if (Array.isArray(s)) return Object.assign({}, ...s.map(flatten));

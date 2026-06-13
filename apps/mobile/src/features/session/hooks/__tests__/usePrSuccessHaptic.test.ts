@@ -38,7 +38,7 @@ describe('usePrSuccessHaptic', () => {
   });
 
   it('does NOT fire when hasPR flips false→true→false→true across re-renders', () => {
-    // Latch holds — once fired the hook never re-fires inside the same
+    // Latch holds  -  once fired the hook never re-fires inside the same
     // component instance, even if hasPR oscillates (which it shouldn't in
     // practice but the latch is the contract).
     const { rerender } = renderHook((hasPR: boolean) => usePrSuccessHaptic(hasPR), {

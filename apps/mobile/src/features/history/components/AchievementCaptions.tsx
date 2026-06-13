@@ -15,7 +15,7 @@ export type AchievementCaptionsProps = {
  * whether the user has enough data to make the line meaningful.
  *
  * Order is fixed (week → best lift → best streak) because the reading
- * hierarchy matters — short-loop signals on top, lifetime milestones below.
+ * hierarchy matters  -  short-loop signals on top, lifetime milestones below.
  */
 export function AchievementCaptions({
   sessionsThisWeek,

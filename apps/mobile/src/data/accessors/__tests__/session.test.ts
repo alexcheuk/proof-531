@@ -90,7 +90,7 @@ describe('session accessor', () => {
     await setTrainingMax(db, 'squat', 250, 'lbs');
     await setTrainingMax(db, 'bench', 200, 'lbs');
     const a = await createSession(db, 'squat');
-    // Complete the first session before creating the second — the
+    // Complete the first session before creating the second  -  the
     // single-session invariant means createSession would reuse the
     // existing in_progress row otherwise.
     await completeSession(db, a.id as number);

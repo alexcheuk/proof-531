@@ -80,7 +80,7 @@ describe('ProjectionChip', () => {
   });
 
   it('shows an em-dash placeholder when reps=0 (loop-011)', () => {
-    // Fresh sheet open before the user dials a rep — predictedE1RM is 0
+    // Fresh sheet open before the user dials a rep  -  predictedE1RM is 0
     // (`estimateOneRm` returns 0 for non-positive reps). Showing "EST.
     // 1RM 0 lb" reads as a real number that's actively wrong; the dash
     // signals "waiting for input" without claiming a bogus value.
@@ -93,7 +93,7 @@ describe('ProjectionChip', () => {
         isPotentialPR={false}
       />,
     );
-    expect(screen.getByText('EST. 1RM — lb')).toBeTruthy();
+    expect(screen.getByText('EST. 1RM  -  lb')).toBeTruthy();
     expect(screen.queryByText('EST. 1RM 0 lb')).toBeNull();
   });
 

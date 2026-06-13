@@ -8,7 +8,7 @@ import type { ViewStyle } from 'react-native';
 /**
  * The "531 . ledger" wordmark + Filed chip header that crowns the session
  * receipt. Visually distinct from the app-wide `Masthead` (which uses the
- * mark-and-rightSlot pattern) — the receipt masthead is purpose-built and
+ * mark-and-rightSlot pattern)  -  the receipt masthead is purpose-built and
  * needs slightly tighter spacing.
  */
 export function SessionCompleteMasthead() {

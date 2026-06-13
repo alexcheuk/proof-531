@@ -11,7 +11,7 @@ export type PerSideCaptionProps = {
 };
 
 /**
- * "PER SIDE — 2× 45 + 10 = 100 lb" caption row beneath the bar (full
+ * "PER SIDE  -  2× 45 + 10 = 100 lb" caption row beneath the bar (full
  * variant only; mini omits this).
  */
 export function PerSideCaption({ grouped, total, unitGlyph, testID }: PerSideCaptionProps) {
@@ -79,7 +79,7 @@ export function PerSideCaption({ grouped, total, unitGlyph, testID }: PerSideCap
       <RNText style={labelStyle}>PER SIDE</RNText>
       <View style={valueRowStyle}>
         {grouped.length === 0 ? (
-          <RNText style={dashStyle}>—</RNText>
+          <RNText style={dashStyle}> - </RNText>
         ) : (
           <>
             {grouped.map((g, i) => (

@@ -10,11 +10,11 @@
 
 ## What lives here
 
-- `tokens.ts` — the color palette, typography scale, spacing, and radius values.
-- `theme.ts` — `useTheme()` hook that reads the system dark/light mode and maps tokens to a typed `ThemeColors` object.
-- `primitives/` — reusable atoms: `Text`, `Heading`, `Row`, `Card`, `Sheet`, `PrimaryPillButton`, `NumberStepper`, etc.
-- `hooks/` — design-system-scoped hooks (`useScrolledPast`, etc.).
-- `statusBarTint.ts` — module-level subject for driving the global status-bar color (used by `PrCelebrationScreen`).
+- `tokens.ts`  -  the color palette, typography scale, spacing, and radius values.
+- `theme.ts`  -  `useTheme()` hook that reads the system dark/light mode and maps tokens to a typed `ThemeColors` object.
+- `primitives/`  -  reusable atoms: `Text`, `Heading`, `Row`, `Card`, `Sheet`, `PrimaryPillButton`, `NumberStepper`, etc.
+- `hooks/`  -  design-system-scoped hooks (`useScrolledPast`, etc.).
+- `statusBarTint.ts`  -  module-level subject for driving the global status-bar color (used by `PrCelebrationScreen`).
 
 ## Adding a primitive
 
@@ -27,7 +27,7 @@ Check the existing catalog in `primitives/` before adding. If something close al
 | `bg0` / `paper` | `#E7E3D6` | Main canvas |
 | `bg2` / `paperDim` | `#D2CEC0` | Recessed surfaces |
 | `ink0` | `#1A1812` | Primary text (≈ black) |
-| `ink3` | — | Muted text |
+| `ink3` |  -  | Muted text |
 | `accent` | `#8E5345` | Amber accent dot |
 
-No color emojis in UI text — monochrome unicode only. The e-ink aesthetic is intentional.
+No color emojis in UI text  -  monochrome unicode only. The e-ink aesthetic is intentional.

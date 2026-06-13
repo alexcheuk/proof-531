@@ -19,7 +19,7 @@ export type TmTableRowProps = {
  * One row of the onboarding Review TM table. Renders:
  *   [#index]  [Lift name]   [1RM input]    [TM (90%)]
  *
- * Pure presentational — TM math runs through `trainingMaxFrom` so the
+ * Pure presentational  -  TM math runs through `trainingMaxFrom` so the
  * displayed value matches what `appendOnboarding` will persist.
  */
 export function TmTableRow({ lift, index, oneRM, unit, isLast }: TmTableRowProps) {

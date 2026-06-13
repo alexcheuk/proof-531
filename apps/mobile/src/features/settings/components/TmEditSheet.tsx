@@ -26,9 +26,9 @@ function formatDeltaPct(pct: number): string {
 export interface TmEditSheetProps {
   lift: Lift;
   currentValue: number;
-  /** The TM row's own unit — stepper step and commit use this, not displayUnit. */
+  /** The TM row's own unit  -  stepper step and commit use this, not displayUnit. */
   storageUnit: Unit;
-  /** Settings.displayUnit — used only for the storage ≠ display caption. */
+  /** Settings.displayUnit  -  used only for the storage ≠ display caption. */
   displayUnit: Unit;
   onClose: () => void;
 }
@@ -55,12 +55,12 @@ export function TmEditSheet({
   const saveDisabled = pending || isUnchanged || isBelowBar;
   // Percent change of the delta vs the current TM. Surfaced so the user
   // can sanity-check the edit (Wendler's rule of thumb is +5 lb upper /
-  // +10 lb lower per cycle — ≈ 2–5% jumps).
+  // +10 lb lower per cycle  -  ≈ 2–5% jumps).
   const deltaPctLabel =
     currentValue > 0 && !isUnchanged ? formatDeltaPct((delta / currentValue) * 100) : null;
   // Flag deltas that exceed 2× the program's recommended per-cycle bump
   // so the user gets a quiet nudge to verify their edit. Only positive
-  // deltas trigger the warning — slashing the TM is usually a deload /
+  // deltas trigger the warning  -  slashing the TM is usually a deload /
   // recovery move and isn't a "jump" in the dangerous sense.
   const recommendedBump = tmIncrement(storageUnit, lift);
   const isBigJump = delta > recommendedBump * BIG_JUMP_MULTIPLIER;

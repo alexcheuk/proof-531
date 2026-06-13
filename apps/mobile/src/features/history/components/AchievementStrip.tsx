@@ -25,14 +25,14 @@ export type AchievementStripProps = {
    * user being on their longest run ever.
    */
   currentStreak?: number;
-  /** Date of the user's first completed session — drives the "training since" caption. */
+  /** Date of the user's first completed session  -  drives the "training since" caption. */
   trainingSince?: Date | null;
   /** Total elapsed days since first session. Caption only renders when ≥ 30. */
   totalTrainingDays?: number;
   /**
    * Lifetime sum of `prescribedWeight × actualReps` across every working/amrap
    * SetLog in completed sessions. Surfaces as a third "total volume" stat
-   * cell beside `sessions filed` + `personal records` — only when > 0.
+   * cell beside `sessions filed` + `personal records`  -  only when > 0.
    */
   lifetimeVolume?: number;
   /** Display unit for the lifetime-volume glyph. Defaults to `lbs`. */
@@ -44,7 +44,7 @@ export type AchievementStripProps = {
 /**
  * Lifetime achievement strip rendered under the History title block.
  *
- * Composition shell — the stat row, caption stack, and sparkline each
+ * Composition shell  -  the stat row, caption stack, and sparkline each
  * live in their own files. Renders nothing when the user has no
  * completed sessions yet (the empty state below the strip already
  * speaks to that case).

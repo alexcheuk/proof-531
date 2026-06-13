@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
-// Wall-clock anchored (not tick-decrement) — Android suspends the JS thread when backgrounded,
+// Wall-clock anchored (not tick-decrement)  -  Android suspends the JS thread when backgrounded,
 // so a tick-based timer would freeze. Each tick recomputes from the absolute deadline instead.
 export type UseRestTimerOptions = {
   active: boolean;

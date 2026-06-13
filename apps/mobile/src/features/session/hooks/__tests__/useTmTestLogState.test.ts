@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-native';
 import { useTmTestLogState } from '../useTmTestLogState';
 
 describe('useTmTestLogState', () => {
-  it('seeds reps to 0 on first render (deliberate entry — no editorial pressure)', () => {
+  it('seeds reps to 0 on first render (deliberate entry  -  no editorial pressure)', () => {
     const { result } = renderHook(() =>
       useTmTestLogState({
         open: true,

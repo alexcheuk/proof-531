@@ -52,7 +52,7 @@ type MockViewProps = { children?: React.ReactNode; testID?: string };
 
 // Sheet primitive uses imperative ref control (always mounted, drives
 // snapToIndex/close via ref). Always render children so the test can
-// access sheet contents — open/close transitions are out-of-scope for
+// access sheet contents  -  open/close transitions are out-of-scope for
 // these query-shell tests.
 jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
@@ -201,7 +201,7 @@ describe('SettingsScreen', () => {
       expect(mockReplace).toHaveBeenCalledWith('/onboarding');
     });
 
-    // training_maxes / sessions / set_logs / prs are wiped — the
+    // training_maxes / sessions / set_logs / prs are wiped  -  the
     // FirstLaunchGate uses the empty training_maxes table to redirect to
     // onboarding. The settings singleton may be re-seeded by a subsequent
     // useSettings refetch (queryClient.clear() invalidates the cache); the

@@ -79,7 +79,7 @@ jest.mock('@/data/DbProvider', () => ({
   useDb: () => ({ __stub: 'db' }),
 }));
 
-// @gorhom/bottom-sheet stub — requires Reanimated worklets bridge which
+// @gorhom/bottom-sheet stub  -  requires Reanimated worklets bridge which
 // is not available in Jest. Render children passthrough is enough for
 // behavioral tests on the screen that hosts TmApplySheet.
 jest.mock('react-native-view-shot', () => ({
@@ -103,7 +103,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   };
 });
 
-// Session row — happy path: endedAt set, lift = squat, week 1, lbs.
+// Session row  -  happy path: endedAt set, lift = squat, week 1, lbs.
 // startedAt + endedAt give a 30s elapsed for the receipt row.
 const startedAt = 1_700_000_000_000;
 const endedAt = startedAt + 30 * 60 * 1000; // +30 min
@@ -170,7 +170,7 @@ jest.mock('@/data/queries/useSettings', () => ({
   }),
 }));
 
-// 295 lbs previous best — below the 325 lb new e1RM so the comparison row renders.
+// 295 lbs previous best  -  below the 325 lb new e1RM so the comparison row renders.
 jest.mock('@/data/queries/usePreviousBestE1RM', () => ({
   usePreviousBestE1RM: () => ({ data: 295, isLoading: false, error: null }),
 }));
@@ -455,7 +455,7 @@ describe('SessionCompleteScreen', () => {
       fireEvent.press(screen.getByTestId('session-complete-close'));
     });
 
-    // Discord 1508935241 / 1509284142 — session stack is popped FIRST so
+    // Discord 1508935241 / 1509284142  -  session stack is popped FIRST so
     // the cross-stack hop lands on a clean tab navigator. navigate()
     // from inside the session group was not reliably switching tabs in the
     // parent navigator (Discord 1509284142 regression), so we dismiss

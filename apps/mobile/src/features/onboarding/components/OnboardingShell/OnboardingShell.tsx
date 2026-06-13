@@ -18,11 +18,11 @@ export interface OnboardingShellProps {
   onBack?: () => void;
   /** Small caps label next to the back-arrow / wordmark. */
   label?: string;
-  /** Step counter slots — both must be provided to render the `NN / MM` chip. */
+  /** Step counter slots  -  both must be provided to render the `NN / MM` chip. */
   step?: number;
   total?: number;
   children: ReactNode;
-  /** Sticky-bottom slot — typically a `<PrimaryPillButton>`. Omitted on steps with no CTA. */
+  /** Sticky-bottom slot  -  typically a `<PrimaryPillButton>`. Omitted on steps with no CTA. */
   footer?: ReactNode;
 }
 

@@ -2,7 +2,7 @@ import type { Session } from '@/data/accessors/session';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// Uses Date.setDate (not ms - n*DAY_MS) — DST days are 23 or 25 hours wide; naive ms-subtraction breaks streak math.
+// Uses Date.setDate (not ms - n*DAY_MS)  -  DST days are 23 or 25 hours wide; naive ms-subtraction breaks streak math.
 function previousLocalMidnight(ms: number, daysAgo = 1): number {
   const d = new Date(ms);
   d.setHours(0, 0, 0, 0);
@@ -43,7 +43,7 @@ export function recentActivity(
   // Bucket session timestamps by local-day epoch.
   const filledDays = new Set<number>();
   for (const s of sessions) {
-    // Only count completed sessions — in-progress/cancelled rows aren't a
+    // Only count completed sessions  -  in-progress/cancelled rows aren't a
     // training rep.
     if (s.status !== 'completed') continue;
     const ts = new Date(s.startedAt);
@@ -60,7 +60,7 @@ export function recentActivity(
   return out;
 }
 
-// Grace: if today is empty but yesterday is filled, start from yesterday — streak doesn't reset until two empty days.
+// Grace: if today is empty but yesterday is filled, start from yesterday  -  streak doesn't reset until two empty days.
 export function currentStreak(activity: ReadonlyArray<boolean>): number {
   if (activity.length === 0) return 0;
   const lastIdx = activity.length - 1;
@@ -91,7 +91,7 @@ export function currentStreakDays(
   today.setHours(0, 0, 0, 0);
   const todayMs = today.getTime();
   // If today is already a training day, count it. Otherwise start the walk
-  // from yesterday — today's emptiness is grace, not failure.
+  // from yesterday  -  today's emptiness is grace, not failure.
   let cursor = dayBuckets.has(todayMs) ? todayMs : previousLocalMidnight(todayMs);
   let streak = 0;
   while (dayBuckets.has(cursor)) {

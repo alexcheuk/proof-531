@@ -99,7 +99,7 @@ export async function postRestChronometer(opts: {
   }
 }
 
-// Same id as the chronometer — the OS replaces the ticking notification at T-0 with no JS needed.
+// Same id as the chronometer  -  the OS replaces the ticking notification at T-0 with no JS needed.
 export async function scheduleRestComplete(opts: {
   endsAtMs: number;
   sessionId: number;
@@ -163,7 +163,7 @@ export async function readDisplayedDeadline(): Promise<number | null> {
   }
 }
 
-// Used when rest expires in the foreground — no trigger was scheduled, so the OS swap never fires.
+// Used when rest expires in the foreground  -  no trigger was scheduled, so the OS swap never fires.
 export async function fireRestDoneAlarmForeground(): Promise<void> {
   const m = load();
   if (!m) return;
@@ -180,7 +180,7 @@ export async function fireRestDoneAlarmForeground(): Promise<void> {
       },
     });
   } catch {
-    // Non-fatal — foreground alarm degrades to haptics-only.
+    // Non-fatal  -  foreground alarm degrades to haptics-only.
   }
 }
 

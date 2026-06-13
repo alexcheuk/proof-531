@@ -102,9 +102,9 @@ function exec(db: MigrationTarget, sql: string): void {
 /**
  * Returns the list of column names for a table, or [] if the table doesn't
  * exist. Uses PRAGMA table_info which is supported by both expo-sqlite and
- * better-sqlite3 — but they return rows differently, so we accept either.
+ * better-sqlite3  -  but they return rows differently, so we accept either.
  *
- * Returns `null` when introspection isn't possible on this driver — callers
+ * Returns `null` when introspection isn't possible on this driver  -  callers
  * must NOT assume the schema is fine in that case (the previous behavior of
  * sentinel-returning the required column list silently skipped real
  * staleness on unfamiliar drivers).
@@ -147,7 +147,7 @@ function isDevEnv(): boolean {
  * On a DB whose schema is missing required columns:
  *   - Production: attempt non-destructive `ALTER TABLE ADD COLUMN` for any
  *     known additive column (see {@link ADDITIVE_COLUMNS}). Never drops a
- *     table — user data is preserved.
+ *     table  -  user data is preserved.
  *   - Dev (`__DEV__ !== false`): drop every table first so the canonical
  *     migration can recreate them. Convenient while the schema is in flux.
  */
@@ -156,7 +156,7 @@ export function runMigrations(database: MigrationTarget): void {
   const settingsCols = getColumns(database, 'settings');
   const liftGoalsCols = getColumns(database, 'lift_goals');
 
-  // Try additive ALTER first — safe in both dev and prod, and resolves
+  // Try additive ALTER first  -  safe in both dev and prod, and resolves
   // stale schemas without dropping user data.
   if (settingsCols && settingsCols.length > 0) {
     for (const additive of ADDITIVE_COLUMNS) {
@@ -233,7 +233,7 @@ export function runMigrations(database: MigrationTarget): void {
       // Production: never destroy user data. Surface the gap loudly so the
       // failing query reveals what additive entry is missing.
       console.error(
-        '[runMigrations] stale schema detected in production build; missing column(s) cannot be added automatically — add an entry to ADDITIVE_COLUMNS.',
+        '[runMigrations] stale schema detected in production build; missing column(s) cannot be added automatically  -  add an entry to ADDITIVE_COLUMNS.',
       );
     }
   }

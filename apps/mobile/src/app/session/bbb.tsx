@@ -3,7 +3,7 @@ import { parseRouteId } from '@/lib/parseRouteId';
 import { useLocalSearchParams } from 'expo-router';
 
 /**
- * Thin route shell — parses `sessionId` from the query string and hands it
+ * Thin route shell  -  parses `sessionId` from the query string and hands it
  * to the feature component. Reached automatically after AMRAP via
  * `useLiveScreenEffects` (phase === 'awaiting-bbb'). Invalid id renders
  * nothing.

@@ -9,9 +9,9 @@ import { GoalRuleRow } from './GoalRuleRow';
 import { JustCompletedAnimator } from './JustCompletedAnimator';
 
 type ProgressLiftRowProps = {
-  /** Lift owning this row — needed to band-classify TM-test cells. */
+  /** Lift owning this row  -  needed to band-classify TM-test cells. */
   lift: Lift;
-  /** Display unit — passed to `tmAdjustmentSuggestion` for TM-test cells. */
+  /** Display unit  -  passed to `tmAdjustmentSuggestion` for TM-test cells. */
   unit: 'lbs' | 'kg';
   row: LiftProgression['rows'][number];
   unitGlyph: 'lb' | 'kg';

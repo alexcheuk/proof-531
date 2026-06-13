@@ -20,7 +20,7 @@ export function __resetHomeScreenStateForTests(): void {
  * Initialize with the first enabled lift; caller resets via `setSelectedLift`.
  *
  * Passing `enabledLifts` lets the hook re-anchor `selectedLift` if the user
- * disables the previously-selected lift in Settings — without it, internal
+ * disables the previously-selected lift in Settings  -  without it, internal
  * state would linger on a now-disabled lift and desync from the carousel.
  */
 export function useHomeScreenState(

@@ -17,7 +17,7 @@ import { View } from 'react-native';
  * to the bar. No haptics; no animation; no interaction.
  *
  * Composition of existing primitives (`Card` + `CapsLabel` + `Text`). Lives
- * locally — feature scope, not a primitive.
+ * locally  -  feature scope, not a primitive.
  */
 export function TmTestNote() {
   const { layout, spacing } = useTheme();

@@ -17,11 +17,11 @@ import { ThemeProvider } from '@/design/theme';
 import { fireEvent, render, within } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
-// Reanimated 4 boots `react-native-worklets` at module load — that native
+// Reanimated 4 boots `react-native-worklets` at module load  -  that native
 // init never lands under jest, so any `import 'react-native-reanimated'`
 // throws. The shipping `mock.js` also pulls worklets, so we substitute a
 // minimal inline mock: `Animated.View` falls through to a plain RN View
-// and `LinearTransition` becomes an opaque object — exactly what the
+// and `LinearTransition` becomes an opaque object  -  exactly what the
 // behavioral test for lift-switch needs.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
@@ -263,7 +263,7 @@ describe('HomeScreen', () => {
   it('updates LiftTabs selection when a different lift tab is pressed', () => {
     const screen = renderScreen(<HomeScreen />);
 
-    // Bench tab — second entry in enabledLifts.
+    // Bench tab  -  second entry in enabledLifts.
     fireEvent.press(screen.getByTestId('lift-tab-bench'));
 
     expect(screen.getByTestId('lift-tab-bench').props.accessibilityState.selected).toBe(true);
@@ -281,7 +281,7 @@ describe('HomeScreen', () => {
     expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(true);
 
     // Simulate a swipe to the second page. jest-expo's Dimensions returns
-    // a 750px window — pageWidth = 750 → contentOffset.x = 750 for idx 1.
+    // a 750px window  -  pageWidth = 750 → contentOffset.x = 750 for idx 1.
     const carousel = screen.getByTestId('home-lift-carousel');
     fireEvent(carousel, 'momentumScrollEnd', {
       nativeEvent: {
@@ -314,7 +314,7 @@ describe('HomeScreen', () => {
     // Squat page is the default. Tap its primary CTA ("Begin session").
     fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
 
-    // createSession must NOT be called — we're redirecting to bench.
+    // createSession must NOT be called  -  we're redirecting to bench.
     expect(mockCreateSession).not.toHaveBeenCalled();
 
     // Router should be pushed to the bench session.

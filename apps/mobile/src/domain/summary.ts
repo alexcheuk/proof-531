@@ -22,7 +22,7 @@ const MONTH = [
   'DEC',
 ] as const;
 
-// Avoids Intl.DateTimeFormat — output must be locale-stable across environments.
+// Avoids Intl.DateTimeFormat  -  output must be locale-stable across environments.
 export function formatDateLabel(date: Date): DateLabelParts {
   return {
     weekday: WEEKDAY[date.getDay()] as (typeof WEEKDAY)[number],

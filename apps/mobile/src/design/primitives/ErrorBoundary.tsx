@@ -11,7 +11,7 @@ import { Text } from './Text';
  *
  * The boundary catches the error, logs it for ops, and renders a paper-themed
  * recovery surface with a Reset button that re-mounts the children. State is
- * reset by bumping a key on the rendered subtree — React unmounts the prior
+ * reset by bumping a key on the rendered subtree  -  React unmounts the prior
  * tree and re-mounts a fresh one, which clears any feature-local state that
  * provoked the crash.
  *
@@ -95,7 +95,7 @@ function DefaultFallback({ error, reset }: { error: Error; reset: () => void }) 
         color="ink2"
         style={{ marginTop: spacing.md, maxWidth: 320, lineHeight: 21 }}
       >
-        The app hit an unexpected error. Your training data is safe — tap Reset to try again.
+        The app hit an unexpected error. Your training data is safe - tap Reset to try again.
       </Text>
       <Text
         variant="mono"

@@ -20,9 +20,9 @@ export type TmApplySheetProps = {
   suggestion: TmAdjustmentSuggestion;
   /** Current TM in display units. */
   tmDisplay: number;
-  /** Display/render unit — the unit tmDisplay and suggestion.delta are expressed in. */
+  /** Display/render unit  -  the unit tmDisplay and suggestion.delta are expressed in. */
   unit: Unit;
-  /** Storage unit — the unit written to the DB. */
+  /** Storage unit  -  the unit written to the DB. */
   storageUnit: Unit;
   onClose: () => void;
 };

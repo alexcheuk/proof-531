@@ -22,9 +22,9 @@ export type PRCertificateProps = {
   prevE1RM: number;
   /** e1RM - prevE1RM, positive int (rounded). */
   delta: number;
-  /** Unit token — `lb` or `kg`. */
+  /** Unit token  -  `lb` or `kg`. */
   unit: 'lb' | 'kg';
-  /** Lower-case lift name — `squat` / `bench` / `deadlift` / `press`. */
+  /** Lower-case lift name  -  `squat` / `bench` / `deadlift` / `press`. */
   liftLabel: string;
   testID?: string;
 };
@@ -39,7 +39,7 @@ export function PRCertificate({
 }: PRCertificateProps) {
   const { colors, spacing, type } = useTheme();
 
-  // Impact entrance — slides in fast, lands on a hard cubic-out, no spring
+  // Impact entrance  -  slides in fast, lands on a hard cubic-out, no spring
   // bounce. Uses explicit shared-value animation instead of Reanimated's
   // `entering` prop because the layout-animation registry is stateful and
   // can throw "Should not already be working" when PRCertificate remounts
@@ -79,7 +79,7 @@ export function PRCertificate({
     >
       <CornerTicks color={colors.bg0} />
 
-      {/* Eyebrow — ★ A NEW RECORD ★ */}
+      {/* Eyebrow  -  ★ A NEW RECORD ★ */}
       <View
         style={{
           flexDirection: 'row',
@@ -92,7 +92,7 @@ export function PRCertificate({
         <PaperCapsText variant="eyebrow">{'★  A new record  ★'}</PaperCapsText>
       </View>
 
-      {/* Hero — Stronger. */}
+      {/* Hero  -  Stronger. */}
       <RNText
         style={{
           fontFamily: `${type.display}-Bold`,

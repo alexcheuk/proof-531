@@ -41,7 +41,7 @@ export function ResetConfirmSheet({
           testID="reset-confirm-destructive"
           accessibilityRole="button"
           accessibilityLabel={
-            armed ? 'Confirm restart — tap again to wipe every set' : 'Restart session from set 1'
+            armed ? 'Confirm restart  -  tap again to wipe every set' : 'Restart session from set 1'
           }
           onPress={armed ? onConfirmSecondTap : onConfirmFirstTap}
           style={destructiveStyle}

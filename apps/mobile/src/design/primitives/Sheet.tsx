@@ -36,7 +36,7 @@ export function Sheet({
   const sheetRef = useRef<BottomSheet>(null);
   // Capture the initial `open` value once so we can seed gorhom's
   // initial `index` (gorhom v5 docs say `index` is initial-only). This
-  // matters for screens that conditionally mount the sheet AS open —
+  // matters for screens that conditionally mount the sheet AS open  -
   // Settings' TM-edit / unit-migration / reset-everything sheets all
   // do this. Without seeding, the sheet would mount at -1 and rely on
   // the effect below to snap it open, which races gorhom's internal
@@ -80,12 +80,12 @@ export function Sheet({
   }, [onDismiss]);
 
   // Drive open/close imperatively for subsequent state changes. gorhom
-  // v5 documents `index` as initial-only — re-rendering with
+  // v5 documents `index` as initial-only  -  re-rendering with
   // `index={-1}` does not reliably close the sheet (AmrapLogSheet
   // cancel regression, Discord 1508365310359633990). So we keep the
   // imperative effect for transitions, BUT we also seed the initial
   // index off `open` below so a fresh mount with `open=true` (Settings
-  // conditionally mounts its sheets — TM edit, unit migration, reset
+  // conditionally mounts its sheets  -  TM edit, unit migration, reset
   // everything) shows the sheet on first paint instead of waiting for
   // an effect-driven snap that races gorhom's ref attachment.
   useEffect(() => {

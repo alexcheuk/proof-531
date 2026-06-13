@@ -99,7 +99,7 @@ describe('useRestTimer', () => {
     });
     expect(haptic).toHaveBeenCalledTimes(1);
 
-    // User taps +30s after hearing the warning — extends rest to 32s.
+    // User taps +30s after hearing the warning  -  extends rest to 32s.
     // The latch must re-arm so the second pass through T-2s fires again.
     act(() => {
       result.current.addTime();
@@ -192,7 +192,7 @@ describe('useRestTimer', () => {
         fireDoneHaptic: done,
       }),
     );
-    // Advance exactly to the deadline — the precise setTimeout should fire.
+    // Advance exactly to the deadline  -  the precise setTimeout should fire.
     act(() => {
       jest.advanceTimersByTime(5000);
     });
@@ -233,7 +233,7 @@ describe('useRestTimer', () => {
 
     act(() => result.current.addTime()); // extends to ~32s
 
-    // Old deadline (5000ms total) would have fired — verify it was cancelled.
+    // Old deadline (5000ms total) would have fired  -  verify it was cancelled.
     act(() => jest.advanceTimersByTime(2100)); // would be past old deadline
     expect(done).not.toHaveBeenCalled();
 

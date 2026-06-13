@@ -1,5 +1,5 @@
 /**
- * Behavioral test for the BBB prompt screen — the intermediate stop
+ * Behavioral test for the BBB prompt screen  -  the intermediate stop
  * between AMRAP completion and the SessionComplete receipt.
  *
  * Asserts that:

@@ -5,7 +5,7 @@ export type CycleGroup = {
   sessions: Session[];
 };
 
-// Missing `cycle` bucketed under 1 — historical data from pre-cycle migrations has no cycle number.
+// Missing `cycle` bucketed under 1  -  historical data from pre-cycle migrations has no cycle number.
 export function groupByCycle(sessions: ReadonlyArray<Session>): CycleGroup[] {
   const order: number[] = [];
   const byCycle = new Map<number, Session[]>();

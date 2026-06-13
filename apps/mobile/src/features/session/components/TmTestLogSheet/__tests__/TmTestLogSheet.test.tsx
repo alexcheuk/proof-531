@@ -171,7 +171,7 @@ describe('TmTestLogSheet', () => {
     fireEvent.press(incBtn);
     expect(getByText('3')).toBeTruthy();
 
-    // Close and reopen — reps should reset to 0
+    // Close and reopen  -  reps should reset to 0
     rerender(
       <ThemeProvider>
         <TmTestLogSheet

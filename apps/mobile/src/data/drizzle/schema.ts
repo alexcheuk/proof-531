@@ -1,6 +1,6 @@
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-// `settings` is a singleton — id is always 1.
+// `settings` is a singleton  -  id is always 1.
 export const settings = sqliteTable('settings', {
   id: integer('id').primaryKey(),
   storageUnit: text('storage_unit', { enum: ['lbs', 'kg'] }).notNull(),
@@ -12,7 +12,7 @@ export const settings = sqliteTable('settings', {
   week: integer('week').notNull(),
   day: integer('day').notNull(),
   restTargetSeconds: integer('rest_target_seconds').notNull(),
-  // BBB rest is shorter than the working-set rest by design — the BBB
+  // BBB rest is shorter than the working-set rest by design  -  the BBB
   // sets are 5×10 at 50% TM, light enough that 3 minutes between is
   // wasted time. Default 90s. Additive column; see ADDITIVE_COLUMNS in
   // runMigrations.ts so existing installs pick it up via ALTER TABLE.
@@ -73,7 +73,7 @@ export const prs = sqliteTable('prs', {
 });
 
 /**
- * Per-lift e1RM goal — the Progress screen's "where am I headed" target.
+ * Per-lift e1RM goal  -  the Progress screen's "where am I headed" target.
  *
  * One row per lift (lift is PK), stored in storage units to match
  * `trainingMaxes`. Zero rows for a lift = "no goal set" (the correct
@@ -82,7 +82,7 @@ export const prs = sqliteTable('prs', {
  */
 /**
  * Per-lift progression state. Each lift runs its own 5/3/1 cycle and
- * week-of-cycle independently — completing a bench session advances bench's
+ * week-of-cycle independently  -  completing a bench session advances bench's
  * (cycle, week) without touching squat. Replaces the global
  * `settings.currentCycle` / `settings.week` for app code; the old columns
  * stay on `settings` as legacy + a migration source until callers stop

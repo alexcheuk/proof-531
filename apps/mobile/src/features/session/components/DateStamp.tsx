@@ -5,11 +5,11 @@ import { useTheme } from '@/design/theme';
 import { View, type ViewStyle } from 'react-native';
 
 export type DateStampProps = {
-  /** Uppercased short weekday — `WED`, `TODAY` for the fallback. */
+  /** Uppercased short weekday  -  `WED`, `TODAY` for the fallback. */
   weekday: string;
-  /** Uppercased short month + day — `MAY 22`. Empty string hides the center date. */
+  /** Uppercased short month + day  -  `MAY 22`. Empty string hides the center date. */
   dateLine: string;
-  /** Four-digit year string — `2026`. */
+  /** Four-digit year string  -  `2026`. */
   year: string;
   // defaults to "531 · ENTERED"; PR sessions pass "★ NEW RECORD ★" (U+00B7 middle-dot)
   topArcLabel?: string;
@@ -102,7 +102,7 @@ type StampLabelProps = {
   style: StampLabelStyle;
   /** Absolute positioning slot (top or bottom). Undefined leaves the label in flow. */
   position?: { top?: number; bottom?: number };
-  /** Adds marginBottom in flow layout — useful for the weekday + date stack. */
+  /** Adds marginBottom in flow layout  -  useful for the weekday + date stack. */
   spacingBelow?: number;
   testID?: string;
 };

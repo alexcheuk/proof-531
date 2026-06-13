@@ -21,7 +21,7 @@ describe('parseRouteId', () => {
   });
 
   it('returns null for floating-point strings (parseInt stops at decimal)', () => {
-    // parseInt('3.5', 10) → 3, not NaN — this is intentional behavior
+    // parseInt('3.5', 10) → 3, not NaN  -  this is intentional behavior
     expect(parseRouteId('3.5')).toBe(3);
   });
 

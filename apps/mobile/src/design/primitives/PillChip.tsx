@@ -4,8 +4,8 @@ import { Pressable, Text as RNText, type TextStyle, type ViewStyle } from 'react
 /**
  * Caps-mono chip used in horizontal selectors (History filter row,
  * future toolbar slots). Two tones:
- *   - `default` — hairline border, ink fill when selected
- *   - `ghost`   — dashed border + lighter copy; used for clear/reset chips
+ *   - `default`  -  hairline border, ink fill when selected
+ *   - `ghost`    -  dashed border + lighter copy; used for clear/reset chips
  *
  * Composition rules:
  *   - Selected chips invert to bg-on-ink

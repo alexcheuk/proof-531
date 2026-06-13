@@ -7,7 +7,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
-// LinearTransition animates layout when the selected lift changes — swap feels like a smooth strip, not a hard cut.
+// LinearTransition animates layout when the selected lift changes  -  swap feels like a smooth strip, not a hard cut.
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
 import { View, type ViewStyle } from 'react-native';
@@ -93,7 +93,7 @@ export function LiftPage({
       <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
       <LiftPageTitle lift={lift} onPress={openProgress} />
       {week === 4 ? (
-        // Test-week callout — testID still uses `deload-callout` to preserve
+        // Test-week callout  -  testID still uses `deload-callout` to preserve
         // any existing test references; the copy itself shifts to the TM
         // test framing.
         <LiftPageHint testID={`lift-page-${lift}-deload-callout`}>

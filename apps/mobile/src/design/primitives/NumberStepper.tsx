@@ -107,7 +107,7 @@ export function NumberStepper({
         </Pressable>
         <Row align="baseline" justify="center" gap="sm" style={{ flex: 1, gap: CENTER_GAP }}>
           {/* Mark the value text as the live region so a screen reader
-              announces the new count after each step press — otherwise a
+              announces the new count after each step press  -  otherwise a
               VoiceOver / TalkBack user only knows the button fired, not
               what the value became. */}
           <RNText

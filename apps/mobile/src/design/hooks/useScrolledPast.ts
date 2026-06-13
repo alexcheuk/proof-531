@@ -7,7 +7,7 @@ import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
  * header to elevate (shadow / hairline) once content has scrolled, then
  * return to flat when scrolled back to the top.
  *
- * Returns `{ scrolled, onScroll, scrollEventThrottle }` — spread the latter
+ * Returns `{ scrolled, onScroll, scrollEventThrottle }`  -  spread the latter
  * two onto the scrollable. The state only re-renders when the boolean
  * *flips*; intermediate scroll positions are dropped so animation isn't
  * re-rendering the whole tree.
@@ -25,7 +25,7 @@ export function useScrolledPast(threshold = 4): UseScrolledPastResult {
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const y = e.nativeEvent.contentOffset.y;
       const next = y > threshold;
-      // Only setState on flip — every intermediate scroll tick would
+      // Only setState on flip  -  every intermediate scroll tick would
       // otherwise re-render the masthead + sibling content.
       setScrolled((prev) => (prev === next ? prev : next));
     },

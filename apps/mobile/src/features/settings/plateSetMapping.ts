@@ -1,4 +1,4 @@
-// 'custom' is a disabled "soon" affordance — it is never persisted; callers guard on null from uiToSchemaPlateSet.
+// 'custom' is a disabled "soon" affordance  -  it is never persisted; callers guard on null from uiToSchemaPlateSet.
 import type { PlateSet } from '@/domain/types';
 
 export type PlateSetUi = 'standard' | 'metric' | 'custom';

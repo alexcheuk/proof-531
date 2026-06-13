@@ -4,7 +4,7 @@
  * SegRail isn't used because it doesn't support per-option suffix slots
  * (needed for the in-progress dot + PR star affordances). The lift
  * currently mid-session displays the dot next to its name; lifts that
- * have ever set a PR get a small ★ glyph after their name — always-on
+ * have ever set a PR get a small ★ glyph after their name  -  always-on
  * visual reinforcement of the user's records.
  */
 import { Row } from '@/design/primitives/Row';
@@ -48,7 +48,7 @@ export function LiftTabs({
     ...(elevated
       ? {
           // Numbers match Masthead so the two stacked surfaces share one
-          // shadow language — anything heavier reads as Material, which
+          // shadow language  -  anything heavier reads as Material, which
           // is wrong for the e-ink-paper aesthetic.
           shadowColor: colors.ink0,
           shadowOpacity: 0.08,

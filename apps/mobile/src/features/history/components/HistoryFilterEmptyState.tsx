@@ -3,7 +3,7 @@ import { useTheme } from '@/design/theme';
 import { Pressable, View, type ViewStyle } from 'react-native';
 
 export type HistoryFilterEmptyStateProps = {
-  /** Called when the user taps "Show all sessions" — should reset the active filter. */
+  /** Called when the user taps "Show all sessions"  -  should reset the active filter. */
   onClearFilter: () => void;
 };
 

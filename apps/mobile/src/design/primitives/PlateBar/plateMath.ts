@@ -1,5 +1,5 @@
 /**
- * Pure helpers for the PlateBar visualization. No React — kept here so the
+ * Pure helpers for the PlateBar visualization. No React  -  kept here so the
  * size ramp + grouping rules can be unit-tested independently.
  */
 

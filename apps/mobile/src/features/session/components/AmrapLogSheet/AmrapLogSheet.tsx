@@ -23,7 +23,7 @@ export type AmrapLogSheetProps = {
   existingBestE1RM?: number | undefined;
   onCancel: () => void;
   /**
-   * Called when the user confirms a rep count. May be sync or async — the
+   * Called when the user confirms a rep count. May be sync or async  -  the
    * sheet awaits the returned value so the disabled state resolves on parent
    * resolution (and on parent error, falls back to re-enabling the buttons so
    * the user can retry).

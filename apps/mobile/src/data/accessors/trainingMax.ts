@@ -1,4 +1,4 @@
-// TM history is append-only — setTrainingMax always INSERTs, never overwrites.
+// TM history is append-only  -  setTrainingMax always INSERTs, never overwrites.
 import { desc, eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift, Unit } from '../../domain/types';

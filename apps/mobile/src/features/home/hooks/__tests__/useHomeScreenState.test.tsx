@@ -28,7 +28,7 @@ describe('useHomeScreenState', () => {
     act(() => result.current.setSelectedLift('deadlift'));
     expect(result.current.selectedLift).toBe('deadlift');
 
-    // Mount a fresh hook — module cache should keep the prior selection.
+    // Mount a fresh hook  -  module cache should keep the prior selection.
     const { result: result2 } = renderHook(() =>
       useHomeScreenState('squat', ['squat', 'bench', 'deadlift', 'press']),
     );

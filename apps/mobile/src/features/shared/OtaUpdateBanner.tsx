@@ -2,8 +2,8 @@
  * Global OTA banner. Sits at the top of the safe area and surfaces two
  * states that the user would otherwise never see:
  *
- *   1. `isDownloading` — Expo is pulling a new bundle in the background.
- *   2. `isUpdatePending` — bundle is on disk and waiting for a reload.
+ *   1. `isDownloading`  -  Expo is pulling a new bundle in the background.
+ *   2. `isUpdatePending`  -  bundle is on disk and waiting for a reload.
  *
  * The pending state shows a "Restart" pill that calls `Updates.reloadAsync()`.
  * Otherwise the banner stays unmounted so the screen layout never shifts on

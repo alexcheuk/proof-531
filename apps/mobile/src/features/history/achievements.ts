@@ -37,7 +37,7 @@ export function computeCycleHint(
   }
   if (finished && total >= 2) {
     const span = cycleSpanDays(sessions);
-    // Suppress when the span collapses to 1 day — every cycle is at least
+    // Suppress when the span collapses to 1 day  -  every cycle is at least
     // one day, so the clause only adds signal when it's larger.
     if (span !== null && span >= 2) {
       parts.push(`${span} days`);

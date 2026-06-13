@@ -30,10 +30,10 @@ export type LivePhase =
   | 'complete'
   | 'reset-confirm';
 
-// 180s (3 min) — previously 90s (PWA carry-over), raised after user feedback that it was too short for the top set.
+// 180s (3 min)  -  previously 90s (PWA carry-over), raised after user feedback that it was too short for the top set.
 const REST_SECONDS = 180;
 const WARNING_THRESHOLD = 3;
-// Disarms the Restart confirm button after 8s — prevents an accidental first tap from arming a later destructive tap.
+// Disarms the Restart confirm button after 8s  -  prevents an accidental first tap from arming a later destructive tap.
 const CANCEL_ARM_TIMEOUT_MS = 8000;
 
 export type UseLiveScreenStateOptions = {
@@ -87,7 +87,7 @@ function defaultFireWarningHaptic() {
     const Haptics = require('expo-haptics') as any;
     Haptics.notificationAsync?.(Haptics.NotificationFeedbackType?.Warning ?? 'warning');
   } catch (err) {
-    // No-op — haptics are best-effort.
+    // No-op  -  haptics are best-effort.
     console.warn('useLiveScreenState: warning haptic unavailable', err);
   }
 }
@@ -172,14 +172,14 @@ export function useLiveScreenState(
   // overwriting subsequent local advances (after we manually setSetIndex on
   // log-and-advance, the query refetches and arrives with one MORE row,
   // which would otherwise re-derive the same setIndex value and cause a
-  // benign re-render — guard so the read only happens once per session).
+  // benign re-render  -  guard so the read only happens once per session).
   const bootstrappedRef = useRef(false);
   // The phase to return to when the Reset confirm sheet is dismissed.
   // Captured at open time so the reset flow doesn't disturb the
   // underlying state.
   const phaseBeforeResetRef = useRef<LivePhase>('set');
 
-  // Rest-timer driver — extracted hook owns the countdown, warning latch,
+  // Rest-timer driver  -  extracted hook owns the countdown, warning latch,
   // and ±30s controls. `initialRemaining` carries the restored snapshot
   // value on first mount; null on every subsequent rest entry so the timer
   // uses the configured rest target.
@@ -195,7 +195,7 @@ export function useLiveScreenState(
   // Bootstrap setIndex (and possibly phase) from persisted set_logs the
   // first time the query resolves. If every working/AMRAP slot is already
   // filled we transition straight to `complete` (idempotent
-  // completeSession — protects against the edge case where the row update
+  // completeSession  -  protects against the edge case where the row update
   // landed but the navigation effect never fired, e.g. due to crash).
   useEffect(() => {
     if (bootstrappedRef.current) return;
@@ -204,7 +204,7 @@ export function useLiveScreenState(
     const weekForCompute = (session?.week ?? 1) as 1 | 2 | 3 | 4;
     const next = computeNextSetIndex(setLogsData, weekForCompute);
     // A restored snapshot already seeded setIndex above (the set after the
-    // most recent log). When restoring rest, trust the snapshot — the user
+    // most recent log). When restoring rest, trust the snapshot  -  the user
     // is mid-rest, so we don't want to bounce them back to the set surface
     // because of a race between query refetch and snapshot write.
     if (initialSnapshotRef.current && next !== null) {
@@ -224,7 +224,7 @@ export function useLiveScreenState(
     setSetIndex(next);
   }, [setLogsData, session?.id, session?.week, db]);
 
-  // Per-set view model — derived from the session week + current index.
+  // Per-set view model  -  derived from the session week + current index.
   // Defaults are safe (week=1, snapshot=0) so the hook never throws while
   // the session row is still loading.
   const week = (session?.week ?? 1) as 1 | 2 | 3 | 4;

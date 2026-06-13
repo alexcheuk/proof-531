@@ -42,7 +42,7 @@ export type PrCelebrationScreenProps = {
   sessionId: number;
 };
 
-// Phase ordering — used to gate when each block opens (opacity 0 → 1)
+// Phase ordering  -  used to gate when each block opens (opacity 0 → 1)
 // and when CTAs reveal themselves.
 const PHASE_ORDER: Phase[] = [
   'idle',
@@ -127,7 +127,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     onComplete: onTitleTyped,
   }).length;
 
-  // Type only the number — unit glyph renders as a smaller sibling, not part of the typed string.
+  // Type only the number  -  unit glyph renders as a smaller sibling, not part of the typed string.
   const prevValueText = v ? formatWeight(v.prevE1RMDisplay) : '';
   const prevActive = phase === 'prev-type' || phase === 'prev-hold';
   const prevValueTyped = useTypewriter({
@@ -188,7 +188,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
   // centered body layout); it only reveals itself at phase === 'final'.
   const comparisonVisible = phase === 'final';
 
-  // Hero typewriter prop — when not in title phases, render fully.
+  // Hero typewriter prop  -  when not in title phases, render fully.
   const heroTypedChars = phase === 'title-type' ? typedTitleChars : undefined;
 
   const surfaceStyle: ViewStyle = {
@@ -204,7 +204,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     justifyContent: 'center',
   };
 
-  // Discord 1508779690 — tapping during the intro sequence fast-forwards
+  // Discord 1508779690  -  tapping during the intro sequence fast-forwards
   // to the next animated phase. Disabled once we're at `final` so taps
   // don't shadow the CTA button (which has its own Pressable).
   const skipEnabled = phase !== 'final';
@@ -282,7 +282,7 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
              * 1.25× emphasis on the e1RM block doesn't push the
              * "Previous best · Stronger by" hairline + content off
              * the right edge. Always mounted to keep the centered body
-             * layout stable across phase changes — its own internal
+             * layout stable across phase changes  -  its own internal
              * animation handles the left-to-right reveal at 'final'. */}
             {hasComparison ? (
               <Animated.View style={numbersOpacityStyle}>

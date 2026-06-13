@@ -91,7 +91,7 @@ describe('PrimaryPillButton', () => {
         Begin
       </PrimaryPillButton>,
     );
-    // Three rapid synchronous taps — happens when a user's finger rebounds.
+    // Three rapid synchronous taps  -  happens when a user's finger rebounds.
     fireEvent.press(getByTestId('cta'));
     fireEvent.press(getByTestId('cta'));
     fireEvent.press(getByTestId('cta'));

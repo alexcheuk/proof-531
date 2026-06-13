@@ -156,7 +156,7 @@ export function SettingsScreen() {
 
 type TmsByLift = ReturnType<typeof useSettingsScreenData>['tmsByLift'];
 
-// Preview every TM that the migration will actually rewrite — including TMs for
+// Preview every TM that the migration will actually rewrite  -  including TMs for
 // currently-disabled lifts. Iterating only enabledLifts would silently migrate
 // disabled-lift TMs without surfacing to the user.
 function buildTmPreviews(

@@ -12,7 +12,7 @@ export type LiveCtaButtonProps = {
   onLogWorkingSet: () => void;
 };
 
-// The rest CTA advances to the NEXT SET, not to the receipt — earlier label "Complete session" was wrong.
+// The rest CTA advances to the NEXT SET, not to the receipt  -  earlier label "Complete session" was wrong.
 export function LiveCtaButton({
   phase,
   setIndex,

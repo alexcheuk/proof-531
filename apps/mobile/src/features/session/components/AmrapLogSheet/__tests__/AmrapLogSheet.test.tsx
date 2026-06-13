@@ -28,7 +28,7 @@ jest.mock('@/features/session/hooks/useAmrapLogState', () => ({
   useAmrapLogState: () => mockState,
 }));
 
-// @gorhom/bottom-sheet stub — the real lib needs the Reanimated worklets
+// @gorhom/bottom-sheet stub  -  the real lib needs the Reanimated worklets
 // bridge. We just need the children to render.
 jest.mock('@gorhom/bottom-sheet', () => {
   const React = jest.requireActual('react');
@@ -115,13 +115,13 @@ describe('AmrapLogSheet', () => {
   it('flips the projection chip into PR state when existingBestE1RM is exceeded', () => {
     mockState.reps = 8;
     const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={250} />);
-    // 225 × (1 + 8/30) = 285 — well over 250 → PR.
+    // 225 × (1 + 8/30) = 285  -  well over 250 → PR.
     expect(screen.getByTestId('amrap-pr-badge')).toBeTruthy();
   });
 
   it('surfaces a TIE caption + badge when reps would match (not beat) the existing best', () => {
     // Epley: 225 × (1 + 5/30) = 262.5 → plate-snaps to 265 (nearest 5lb step).
-    // Set existingBestE1RM to 262.5 so round(predictedE1RM) === round(existingBest) — triggers isTiePR.
+    // Set existingBestE1RM to 262.5 so round(predictedE1RM) === round(existingBest)  -  triggers isTiePR.
     mockState.reps = 5;
     const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={262.5} />);
     expect(screen.getByTestId('amrap-tie-badge')).toBeTruthy();

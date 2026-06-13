@@ -55,7 +55,7 @@ describe('PillChip', () => {
       <PillChip label="Clear" selected={false} tone="ghost" onPress={() => {}} testID="c" />,
     );
     const style = getByTestId('c').props.style;
-    // Style is a function (Pressable callback) — invoke it with pressed=false
+    // Style is a function (Pressable callback)  -  invoke it with pressed=false
     // to get the flattened resolved style.
     const resolved = typeof style === 'function' ? style({ pressed: false }) : style;
     const flat = Array.isArray(resolved)

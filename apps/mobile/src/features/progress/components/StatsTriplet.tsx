@@ -5,7 +5,7 @@ import { View, type ViewStyle } from 'react-native';
 
 export type StatsTripletProps = {
   tm: number;
-  /** Best lifetime e1RM in display units. 0/null renders as `—` with no unit suffix. */
+  /** Best lifetime e1RM in display units. 0/null renders as ` - ` with no unit suffix. */
   bestE1RM: number | null;
   cycle: number;
   unitGlyph: 'lb' | 'kg';
@@ -28,7 +28,7 @@ export function StatsTriplet({ tm, bestE1RM, cycle, unitGlyph, testID }: StatsTr
     { label: 'Training max', value: String(tm), suffix: unitGlyph },
     {
       label: 'Best e1RM',
-      value: e1rmHas ? String(bestE1RM) : '—',
+      value: e1rmHas ? String(bestE1RM) : ' - ',
       suffix: e1rmHas ? unitGlyph : null,
     },
     { label: 'Cycle', value: `C${cycle}`, suffix: null },

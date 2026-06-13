@@ -3,7 +3,7 @@ import { Text as RNText, type StyleProp, type TextStyle, View, type ViewStyle } 
 import { useTheme } from '../theme';
 
 // Vertical centering: lineHeight === fontSize collapses the line-box, but IBM Plex Mono Bold caps render
-// in the top ~76% of their em box — asymmetric paddingVertical (top > bottom) nudges the glyph to optical center.
+// in the top ~76% of their em box  -  asymmetric paddingVertical (top > bottom) nudges the glyph to optical center.
 
 type MonoBadgeSize = 'sm' | 'md';
 

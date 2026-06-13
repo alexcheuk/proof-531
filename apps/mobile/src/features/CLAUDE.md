@@ -4,7 +4,7 @@
 
 ## Rules (enforced by reviewer)
 
-1. **Features compose; they do not define fundamentals.** No hex/px literals — use `useTheme()`. No raw SQL — use `data/` hooks. No 5/3/1 math inline — use `domain/` functions.
+1. **Features compose; they do not define fundamentals.** No hex/px literals  -  use `useTheme()`. No raw SQL  -  use `data/` hooks. No 5/3/1 math inline  -  use `domain/` functions.
 2. **Import direction is one-way:** `features/ → (design/ | data/ | domain/)`. Never `design/ → features/` or `data/ → features/`.
 3. **No barrel files.** Import directly from the file that exports the symbol. No `features/index.ts` or `features/session/index.ts`.
 4. **One component per file.** Large screens are composed from smaller components in a `components/` subfolder. Hooks live in `hooks/`. Tests live in `__tests__/`.
@@ -41,7 +41,7 @@ Test behavior and accessibility, not pixels. A good component test:
 - Fires user interactions (`fireEvent.press`, etc.).
 - Asserts on visible text, `accessibilityRole`, or state changes.
 - Does NOT assert on style props (color, size, layout).
-- Mocks `@gorhom/bottom-sheet` when the component tree reaches `Sheet` or `SheetLayout` (Reanimated worklets don't run in Jest — see `loop-memory/01-known-codebase.md` for the standard mock).
+- Mocks `@gorhom/bottom-sheet` when the component tree reaches `Sheet` or `SheetLayout` (Reanimated worklets don't run in Jest  -  see `loop-memory/01-known-codebase.md` for the standard mock).
 
 ## Violations
 

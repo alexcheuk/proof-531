@@ -34,7 +34,7 @@ export type TopSetHeroProps = {
 };
 
 /**
- * Today's "NEXT SET" hero — full PlateBar + weight + reps eyebrow.
+ * Today's "NEXT SET" hero  -  full PlateBar + weight + reps eyebrow.
  *
  * Pure presentation; the parent supplies the resolved set and units.
  */

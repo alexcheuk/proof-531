@@ -10,7 +10,7 @@ export type StepProgressProps = {
 };
 
 /**
- * Tick row at the top of the OneRmEntry screen — one bar per lift,
+ * Tick row at the top of the OneRmEntry screen  -  one bar per lift,
  * filled up to the current step.
  */
 export function StepProgress({ step, total }: StepProgressProps) {

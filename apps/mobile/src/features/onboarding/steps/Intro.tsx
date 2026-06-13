@@ -6,7 +6,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 /**
- * Step 1 — Intro screen. Welcome copy + unit picker + Begin CTA.
+ * Step 1  -  Intro screen. Welcome copy + unit picker + Begin CTA.
  */
 import { View, type ViewStyle } from 'react-native';
 import { OnboardingShell } from '../components/OnboardingShell/OnboardingShell';
@@ -62,7 +62,7 @@ export function Intro({ onNext, unit, onUnitChange }: IntroProps) {
           style={{ lineHeight: 22, marginTop: spacing.xl, maxWidth: 320 }}
         >
           Four lifts. Four days. Small jumps every cycle. We calculate your training max so the
-          program does the math — you just lift.
+          program does the math - you just lift.
         </Text>
 
         <View style={{ marginTop: spacing.xxl }}>

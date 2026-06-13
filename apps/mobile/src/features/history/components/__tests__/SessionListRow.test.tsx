@@ -1,5 +1,5 @@
 /**
- * Behavioral tests for SessionListRow — the History list row.
+ * Behavioral tests for SessionListRow  -  the History list row.
  *
  * Covers the navigation matrix (completed → /session/complete,
  * in_progress → /session/today, cancelled → no nav), the PR ★ chip
@@ -26,7 +26,7 @@ import { SessionListRow } from '../SessionListRow';
 const wrap = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
 function makeSession(over: Partial<Session> = {}): Session {
-  // 2026-05-01 noon — far enough from "today" so isToday is false
+  // 2026-05-01 noon  -  far enough from "today" so isToday is false
   // unless overridden by the test.
   const base = new Date(2026, 4, 1, 12).getTime();
   return {
@@ -55,7 +55,7 @@ describe('SessionListRow', () => {
     expect(screen.getByText('Squat')).toBeTruthy();
     expect(screen.getByText('FRI · MAY 1')).toBeTruthy();
     expect(screen.getByText('C2 · D3')).toBeTruthy();
-    // 60_000 ms span → "1m" — completed rows surface duration instead of
+    // 60_000 ms span → "1m"  -  completed rows surface duration instead of
     // the redundant "COMPLETED" status caption.
     expect(screen.getByText('1m')).toBeTruthy();
     expect(screen.queryByText('COMPLETED')).toBeNull();

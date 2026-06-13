@@ -7,7 +7,7 @@ import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
 import { goTo } from '@/lib/routes';
 /**
- * Today screen — preview of the upcoming session + Start CTA.
+ * Today screen  -  preview of the upcoming session + Start CTA.
  *
  * Thin composition shell. Delegates state to `useTodayScreenState`.
  * Boundary: design primitives + data query hooks only; no drizzle, no hex.
@@ -28,7 +28,7 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   const router = useRouter();
   const settings = useSettings();
   const tm = useLatestTm(lift);
-  // Per-lift cycle/week — the preview shows where THIS lift sits in its own
+  // Per-lift cycle/week  -  the preview shows where THIS lift sits in its own
   // 5/3/1 cycle, independent of any other lift the user is also training.
   const progress = useLiftProgress(lift);
   const state = useTodayScreenState(lift);
@@ -38,12 +38,12 @@ export function TodayScreen({ lift }: { lift: Lift }) {
   // re-renders; controls only surface when state.mode === 'active'.
   const sessionActions = useTodaySessionActions(state.sessionId);
 
-  // Match the visible back chip — always return to Home, never the tab the
+  // Match the visible back chip  -  always return to Home, never the tab the
   // user originated from. Stack-default back lands on whichever tab pushed
   // here (often History), which doesn't match the user's mental model.
   useHardwareBack({ enabled: true, onBack: () => goTo.home(router) });
 
-  // Loading — blank paper canvas, no flicker.
+  // Loading  -  blank paper canvas, no flicker.
   if (settings.isLoading || tm.isLoading) {
     return (
       <SessionLayout>

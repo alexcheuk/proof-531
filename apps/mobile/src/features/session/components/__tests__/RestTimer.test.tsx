@@ -1,4 +1,4 @@
-// RestTimer uses Reanimated to pulse the clock during overtime — stub the
+// RestTimer uses Reanimated to pulse the clock during overtime  -  stub the
 // native bridge so jest doesn't crash on import.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');

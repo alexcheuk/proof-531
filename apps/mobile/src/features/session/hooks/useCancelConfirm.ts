@@ -28,7 +28,7 @@ export function useCancelConfirm(options: UseCancelConfirmOptions = {}): UseCanc
   // Auto-disarm: when the destructive button has been armed for `timeoutMs`
   // without a second tap, silently revert. The user must tap once more to
   // re-arm. Without this, the armed state could persist for the rest of the
-  // session — a real footgun.
+  // session  -  a real footgun.
   useEffect(() => {
     if (!armed) return;
     const id = setTimeout(() => {

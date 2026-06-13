@@ -1,5 +1,5 @@
 // Invariant: createSession snapshots the TM value/unit AND displayUnit into the row.
-// That snapshot is the source of truth for prescribed weights — TM edits and unit flips must NOT mutate it.
+// That snapshot is the source of truth for prescribed weights  -  TM edits and unit flips must NOT mutate it.
 // No transactions: the mobile DB is single-writer (JS event loop), so sequential reads/writes are safe.
 import { and, desc, eq, isNotNull, ne } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
@@ -60,7 +60,7 @@ export async function getActiveSession(db: AnyDb): Promise<Session | null> {
   return rows[0] ?? null;
 }
 
-// id DESC tiebreaker for sessions created in the same millisecond — rare but keeps ordering deterministic in tests.
+// id DESC tiebreaker for sessions created in the same millisecond  -  rare but keeps ordering deterministic in tests.
 export async function getSessions(db: AnyDb): Promise<Session[]> {
   const rows = await Promise.resolve(
     db.select().from(sessions).orderBy(desc(sessions.startedAt), desc(sessions.id)),
@@ -107,7 +107,7 @@ export async function resetSession(db: AnyDb, sessionId: number): Promise<void> 
     throw new Error(`resetSession: session ${sessionId} is ${session.status}, not in_progress`);
   }
   // Must rebuild PRs BEFORE deleting set_logs: prs.set_log_id is a NOT NULL FK with no
-  // ON DELETE CASCADE — deleting a set_log that prs points at would fail with FK constraint.
+  // ON DELETE CASCADE  -  deleting a set_log that prs points at would fail with FK constraint.
   const surviving = (await Promise.resolve(
     db
       .select({ id: setLogs.id, e1rm: setLogs.estimated1RM })

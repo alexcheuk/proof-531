@@ -8,12 +8,12 @@ import { View, type ViewStyle } from 'react-native';
  * rows of any status. The achievement strip above is suppressed in this
  * case, so this block is the only signal the page renders.
  *
- * Replaces the previous one-liner caption (loop-006) — a fresh-install
+ * Replaces the previous one-liner caption (loop-006)  -  a fresh-install
  * user landing on a blank tab needed more orientation than a single
  * 11pt caps line. The eyebrow names the screen, the headline acts as
  * a soft challenge (mirrors the rest of the app's voice), and the
  * supporting copy gestures back to Today without trying to navigate
- * for the user (no CTA — the tab bar is the right affordance).
+ * for the user (no CTA  -  the tab bar is the right affordance).
  */
 export function HistoryEmptyState() {
   const { layout, spacing } = useTheme();
@@ -29,7 +29,7 @@ export function HistoryEmptyState() {
         Nothing filed yet.
       </Text>
       <Text variant="sans" weight="regular" size={15} color="ink2" style={{ lineHeight: 22 }}>
-        Finished sessions land here — PRs starred, lifetime volume tallied, streaks tracked. Pop
+        Finished sessions land here - PRs starred, lifetime volume tallied, streaks tracked. Pop
         over to Today to start one.
       </Text>
     </View>

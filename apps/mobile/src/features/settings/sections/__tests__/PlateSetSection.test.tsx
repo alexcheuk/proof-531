@@ -41,7 +41,7 @@ describe('PlateSetSection', () => {
   });
 
   it('maps schema "kg-standard" to the metric UI value', () => {
-    // Visual mapping happens via SegRail.value — we only assert the section
+    // Visual mapping happens via SegRail.value  -  we only assert the section
     // mounts with metric without error.
     const screen = wrap(<PlateSetSection plateSet="kg-standard" />);
     expect(screen.getByTestId('settings-plate-set')).toBeTruthy();

@@ -99,7 +99,7 @@ describe('LiftTabs', () => {
   it('shows only the in-progress dot when a lift has BOTH a PR and is in progress', () => {
     // Previously the tab rendered "★ ▪" side-by-side which read as visual
     // clutter. In-progress takes priority because it's the more actionable
-    // signal — the user is mid-session and the dot is asking them to come
+    // signal  -  the user is mid-session and the dot is asking them to come
     // finish. The PR badge still appears in the e1RM card and history.
     const { getByTestId, queryByTestId } = renderWithTheme(
       <LiftTabs

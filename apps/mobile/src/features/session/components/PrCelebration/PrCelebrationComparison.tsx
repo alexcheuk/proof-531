@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PAPER_28, PAPER_45 } from '../PRCertificate/paperTints';
 
-// Always mounted (even when not visible) so its layout box is reserved from the first render —
+// Always mounted (even when not visible) so its layout box is reserved from the first render  -
 // prevents justifyContent:center from shifting the celebration upward when this row appears.
 export type PrCelebrationComparisonProps = {
   prevE1RMDisplay: number;

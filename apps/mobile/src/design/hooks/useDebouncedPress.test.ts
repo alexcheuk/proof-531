@@ -49,7 +49,7 @@ describe('useDebouncedPress', () => {
         result.current();
       });
       expect(first).toHaveBeenCalledTimes(1);
-      // Re-render with a different handler — gate should reset immediately,
+      // Re-render with a different handler  -  gate should reset immediately,
       // even though the debounce timeout hasn't elapsed.
       rerender({ h: second as () => void });
       act(() => {

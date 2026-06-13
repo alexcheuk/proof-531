@@ -7,7 +7,7 @@ import { historyDateLabel, liftDisplayName } from '@/domain/labels';
 import { formatElapsedCompact } from '@/domain/summary';
 import type { Lift, Week } from '@/domain/types';
 /**
- * Single row in the History list — one completed/in-progress/cancelled
+ * Single row in the History list  -  one completed/in-progress/cancelled
  * session. Tapping a row drills into the session's surface:
  *   - completed → /session/complete?sessionId  (the stamped receipt)
  *   - in_progress → /session/today?lift        (resume)
@@ -38,7 +38,7 @@ function statusCaps(status: Session['status']): string {
 
 /**
  * Caption for the right-hand sub line. Completed rows show the elapsed
- * session duration (`47m`, `1h 5m`) — a more useful at-a-glance signal
+ * session duration (`47m`, `1h 5m`)  -  a more useful at-a-glance signal
  * than the redundant `COMPLETED` token. Non-terminal rows keep the
  * status caps so the user still sees `IN PROGRESS` / `CANCELLED`.
  */

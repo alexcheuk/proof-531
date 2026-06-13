@@ -1,5 +1,5 @@
 /**
- * resetSession accessor — covers the loop-005 PR-rebuild contract
+ * resetSession accessor  -  covers the loop-005 PR-rebuild contract
  * documented in `session.ts`. The base "wipe set_logs + bump startedAt"
  * is asserted; the new rebuild paths (no surviving AMRAP → delete prs;
  * surviving AMRAP → update prs with the next-best e1RM) are the focus.

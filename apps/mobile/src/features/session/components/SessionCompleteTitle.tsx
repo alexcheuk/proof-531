@@ -77,7 +77,7 @@ export function SessionCompleteTitle({
             <Text variant="sans" weight="bold" size={14} color="ink0">
               {`a new estimated 1RM on the ${liftLower}`}
             </Text>
-            {' — the bar moved further today than ever before.'}
+            {'  -  the bar moved further today than ever before.'}
           </>
         ) : (
           `${liftLower} day, day ${cycleDay}. work done, weight moved, page turned.`

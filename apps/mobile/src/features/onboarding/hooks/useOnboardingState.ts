@@ -122,7 +122,7 @@ export function onboardingReducer(
       const { lift } = action;
       const currentlyEnabled = state.enabledLifts.includes(lift);
       if (currentlyEnabled && state.enabledLifts.length === 1) {
-        // Last remaining lift — no-op.
+        // Last remaining lift  -  no-op.
         return state;
       }
       const nextEnabled = currentlyEnabled

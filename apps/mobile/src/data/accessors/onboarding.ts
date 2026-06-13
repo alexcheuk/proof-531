@@ -1,12 +1,12 @@
 // No DB transaction: all oneRMs are validated up-front so the write loop can't be reached with
-// invalid input — no partial-write window in normal use. (Disk-full between writes is accepted.)
+// invalid input  -  no partial-write window in normal use. (Disk-full between writes is accepted.)
 import { eq } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { DEFAULT_SETTINGS, type Lift, type Settings, type Unit } from '../../domain/types';
 import { trainingMaxFrom } from '../../domain/units';
 import { settings, trainingMaxes } from '../drizzle/schema';
 
-// Structural-poly across sqlite drivers — see trainingMax.ts for rationale.
+// Structural-poly across sqlite drivers  -  see trainingMax.ts for rationale.
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 

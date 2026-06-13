@@ -1,4 +1,4 @@
-// TM history is append-only (PD-04 invariant) — new rows are INSERTed, never mutated.
+// TM history is append-only (PD-04 invariant)  -  new rows are INSERTed, never mutated.
 // The whole operation runs inside a raw BEGIN/COMMIT so a mid-flight crash can't leave a
 // hybrid state (some TMs in the new unit, settings.storageUnit still naming the old one).
 // Falls back to sequential writes when the driver doesn't expose execSync/exec (test handles).
@@ -14,7 +14,7 @@ import { getCurrentTrainingMaxes } from './trainingMax';
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
 // Reach the underlying driver via the same shape runMigrations uses (execSync for expo-sqlite,
-// exec for better-sqlite3). Returns false when neither is available — caller falls back to
+// exec for better-sqlite3). Returns false when neither is available  -  caller falls back to
 // sequential writes.
 function execRaw(db: AnyDb, sql: string): boolean {
   // biome-ignore lint/suspicious/noExplicitAny: structural reach across drivers
@@ -54,7 +54,7 @@ export async function migrateStorageUnit(db: AnyDb, newUnit: Unit): Promise<void
         }),
       );
     }
-    // prs.bestE1RM has no unit column — it's bare numbers in whatever storage unit was active
+    // prs.bestE1RM has no unit column  -  it's bare numbers in whatever storage unit was active
     // when the AMRAP set was logged. Converting them all keeps pickBestLift's numeric > honest:
     // without this, a 100 kg PR (stored as 100) would lose to a 220 lb PR (stored as 220).
     const existingPrs = (await Promise.resolve(db.select().from(prs))) as Array<{

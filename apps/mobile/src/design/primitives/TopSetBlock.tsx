@@ -5,7 +5,7 @@ import { PlateBar } from './PlateBar';
 import { Row } from './Row';
 import { SectionBand } from './SectionBand';
 
-// Pure — caller computes the displayed weight and perSide decomposition; plate math stays in the domain.
+// Pure  -  caller computes the displayed weight and perSide decomposition; plate math stays in the domain.
 
 export type TopSetBlockProps = {
   /** Total weight on the bar, in the display unit (already converted). */
@@ -24,12 +24,12 @@ export type TopSetBlockProps = {
    */
   repsRange?: readonly [number, number];
   /**
-   * Right-side eyebrow meta — e.g. "85%". When both `pctLabel` and `tmLabel`
+   * Right-side eyebrow meta  -  e.g. "85%". When both `pctLabel` and `tmLabel`
    * are omitted the right meta cell is hidden, so the eyebrow can carry all
    * the context.
    */
   pctLabel?: string;
-  /** Right-side eyebrow meta — e.g. "TM 245". */
+  /** Right-side eyebrow meta  -  e.g. "TM 245". */
   tmLabel?: string;
   /** Pre-computed plate decomposition (heaviest first). */
   perSide: readonly number[];

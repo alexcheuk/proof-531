@@ -12,7 +12,7 @@ describe('MonoBadge', () => {
     expect(getByText('AMRAP')).toBeTruthy();
   });
 
-  it('defaults to size="sm" — 9px font, 1.98 letterSpacing, IBMPlexMono-Bold', () => {
+  it('defaults to size="sm"  -  9px font, 1.98 letterSpacing, IBMPlexMono-Bold', () => {
     const { getByText } = wrap(<MonoBadge>UP NEXT</MonoBadge>);
     const textStyle = StyleSheet.flatten(getByText('UP NEXT').props.style);
     expect(textStyle.fontFamily).toBe('IBMPlexMono-Bold');
@@ -23,7 +23,7 @@ describe('MonoBadge', () => {
     expect(textStyle.textTransform).toBe('uppercase');
   });
 
-  it('applies size="md" — 10px font, 2.2 letterSpacing', () => {
+  it('applies size="md"  -  10px font, 2.2 letterSpacing', () => {
     const { getByText } = wrap(<MonoBadge size="md">FILED</MonoBadge>);
     const textStyle = StyleSheet.flatten(getByText('FILED').props.style);
     expect(textStyle.fontSize).toBe(10);

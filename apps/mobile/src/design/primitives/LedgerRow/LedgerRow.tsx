@@ -1,4 +1,4 @@
-// Renders as Pressable when onPress is provided — so non-pressable rows don't advertise a tap target to a11y tooling.
+// Renders as Pressable when onPress is provided  -  so non-pressable rows don't advertise a tap target to a11y tooling.
 import type { ReactNode } from 'react';
 import { Pressable, type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../../theme';
@@ -10,7 +10,7 @@ export type LedgerRowProps = {
   children: ReactNode;
   testID?: string;
   style?: StyleProp<ViewStyle>;
-  /** Composed accessibility label — overrides the auto-derived label. */
+  /** Composed accessibility label  -  overrides the auto-derived label. */
   accessibilityLabel?: string;
 };
 

@@ -1,5 +1,5 @@
 /**
- * Behavioral test for SetPhase — the live mid-set composition.
+ * Behavioral test for SetPhase  -  the live mid-set composition.
  *
  * Confirms LiveHeader props flow through (lift label, elapsed clock,
  * AMRAP chip), the TopSetBlock renders weight / unit / pct eyebrow,
@@ -52,7 +52,7 @@ describe('SetPhase', () => {
 
   it('renders the AMRAP coaching banner inside LiveHeader only when isAmrap', () => {
     // The banner moved from the SetPhase body into LiveHeader so it sits
-    // next to the AMRAP chip — testID is now `live-amrap-coaching`.
+    // next to the AMRAP chip  -  testID is now `live-amrap-coaching`.
     const amrap = renderPhase(<SetPhase setIndex={2} isAmrap {...BASE} />);
     expect(amrap.getByTestId('live-amrap-coaching')).toBeTruthy();
 

@@ -36,7 +36,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
-describe('useLogWorkingSets — onLogWorkingSet', () => {
+describe('useLogWorkingSets  -  onLogWorkingSet', () => {
   beforeEach(() => {
     _resetSessionRuntimeForTests();
     mockAppendSetLog.mockReset();
@@ -108,7 +108,7 @@ describe('useLogWorkingSets — onLogWorkingSet', () => {
   });
 });
 
-describe('useLogWorkingSets — onSaveAmrap', () => {
+describe('useLogWorkingSets  -  onSaveAmrap', () => {
   beforeEach(() => {
     mockAppendSetLog.mockReset();
     mockCompleteSession.mockReset();

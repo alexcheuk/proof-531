@@ -175,7 +175,7 @@ export function useLiftProgression(lift: Lift) {
             );
           }
           if (isPastCycle || isPastInCurrent) {
-            // No session logged for a past/current-past slot — render as ghosted
+            // No session logged for a past/current-past slot  -  render as ghosted
             // future-style cell anchored to the projected weight for that day.
             const projected = projectTopSetWeight(
               s.cycle,
@@ -252,7 +252,7 @@ export function useLiftProgression(lift: Lift) {
       });
 
       // Mark crossesGoal on the first row (with cycle > currentCycle) whose
-      // tm reaches the target. The current cycle is excluded — we treat the
+      // tm reaches the target. The current cycle is excluded  -  we treat the
       // goal as a forward-looking target.
       if (goal) {
         for (const row of rows) {

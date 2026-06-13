@@ -8,7 +8,7 @@ import { BackHandler } from 'react-native';
  * doesn't match the user's mental "up" navigation.
  *
  * The hook is a no-op when `enabled` is false so callers always invoke it
- * unconditionally and gate via the flag — keeps hook order stable.
+ * unconditionally and gate via the flag  -  keeps hook order stable.
  */
 export type UseHardwareBackOptions = {
   enabled: boolean;

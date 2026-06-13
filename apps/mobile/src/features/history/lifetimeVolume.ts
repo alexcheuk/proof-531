@@ -1,4 +1,4 @@
-// BBB is included (added loop-008) — per-session 'volumeOfWorkingSets' in domain/summary.ts still excludes it
+// BBB is included (added loop-008)  -  per-session 'volumeOfWorkingSets' in domain/summary.ts still excludes it
 // because the receipt's "Volume · working sets" band is 5/3/1 main work only; BBB is a sibling, not a sum.
 import type { Session } from '@/data/accessors/session';
 import type { SetLog } from '@/domain/types';

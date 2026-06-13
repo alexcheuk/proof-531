@@ -22,10 +22,10 @@ export type ReceiptCardProps = {
 };
 
 /**
- * "The record" — receipt rows summarising the just-filed session.
+ * "The record"  -  receipt rows summarising the just-filed session.
  *
  * Pure presentational; the parent screen does the math. The BBB row is
- * conditional — when the user took the "Skip · close the day" path on
+ * conditional  -  when the user took the "Skip · close the day" path on
  * `BbbPromptScreen` no rows are written and the receipt deliberately
  * omits the BBB stat. Counting zero BBB volume as "done" would corrupt
  * the user's training record.

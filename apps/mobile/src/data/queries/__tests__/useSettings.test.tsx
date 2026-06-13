@@ -3,7 +3,7 @@ import { type AppDb, DbProvider } from '@/data/DbProvider';
  * Hook smoke test: renders `useSettings()` against an in-memory better-sqlite3
  * db and asserts the query resolves to the seeded singleton row.
  *
- * Mirrors the accessor tests' `freshDb()` pattern — the structural db type
+ * Mirrors the accessor tests' `freshDb()` pattern  -  the structural db type
  * crosses driver boundaries cleanly via the AnyDb pattern in accessors.
  */
 import { seedDefaultSettings } from '@/data/accessors/settings';
@@ -60,7 +60,7 @@ describe('useSettings (hook smoke test)', () => {
       expect(node).toBeTruthy();
     });
     const node = await findByTestId('result');
-    // children may be a string or array depending on RN version — normalise.
+    // children may be a string or array depending on RN version  -  normalise.
     const text = Array.isArray(node.props.children)
       ? node.props.children.join('')
       : String(node.props.children);
@@ -69,7 +69,7 @@ describe('useSettings (hook smoke test)', () => {
 
   it('seeds defaults on first call when no row exists', async () => {
     const db = freshDb();
-    // NOTE: no explicit seed — getSettings should self-seed via the accessor.
+    // NOTE: no explicit seed  -  getSettings should self-seed via the accessor.
     const Wrapper = makeWrapper(db);
 
     const { findByTestId } = render(

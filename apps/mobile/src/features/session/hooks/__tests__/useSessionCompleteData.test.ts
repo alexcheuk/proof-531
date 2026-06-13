@@ -172,7 +172,7 @@ describe('deriveView (useSessionCompleteData)', () => {
     });
     expect(v.bbbSetsCompleted).toBe(5);
     expect(v.bbbWeightDisplay).toBe(150);
-    // Working volume must NOT include BBB — that's the receipt's contract.
+    // Working volume must NOT include BBB  -  that's the receipt's contract.
     expect(v.workingVolume).toBe(1000); // 200 × 5
   });
 

@@ -58,7 +58,7 @@ export function useOnboardingFlow(): UseOnboardingFlowResult {
         oneRMs,
       });
       // Refetch (not invalidate) so we navigate AFTER the cache holds the
-      // new TMs/settings — invalidateQueries marks stale + triggers a
+      // new TMs/settings  -  invalidateQueries marks stale + triggers a
       // refetch but does NOT await it, so the gate would race the refetch
       // and bounce us right back to /onboarding. refetchQueries awaits.
       await Promise.all([

@@ -2,7 +2,7 @@ import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { useTheme } from '@/design/theme';
 
 export type LiftPageHintProps = {
-  /** Hint copy — caller is responsible for upper-casing if desired. */
+  /** Hint copy  -  caller is responsible for upper-casing if desired. */
   children: string;
   testID?: string;
 };

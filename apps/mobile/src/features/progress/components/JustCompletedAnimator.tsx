@@ -24,7 +24,7 @@ import Animated, {
  * signal store + a stuck-true state flag inside `ProgressLiftPage`, which
  * created a Reanimated runtime race on the second consecutive session
  * close (black-screen-of-death). The cell-local mount-driven model
- * removes both the store and the state flag — there is no across-session
+ * removes both the store and the state flag  -  there is no across-session
  * shared state for the runtime to confuse.
  */
 const FILL_IN_DURATION_MS = 480;

@@ -4,20 +4,20 @@ import type { ColorToken } from '../tokens';
 import { Text } from './Text';
 
 /**
- * Caps mono label primitive — the one canonical implementation of the
+ * Caps mono label primitive  -  the one canonical implementation of the
  * "letter-spaced uppercase mono caption" pattern used everywhere in this
  * codebase (Masthead right-slot, section eyebrows, list captions, the
- * "— END OF REGISTER —" colophon).
+ * " -  END OF REGISTER  - " colophon).
  *
  * Before this primitive existed every feature hand-rolled the same
  * `fontFamily: 'IBMPlexMono-Medium'`, `letterSpacing: 2.2`,
  * `textTransform: 'uppercase'` style inline. Use this everywhere a caps
- * label is needed — the tab bar, section eyebrows, masthead slots, colophons.
+ * label is needed  -  the tab bar, section eyebrows, masthead slots, colophons.
  *
  * Sizing presets:
- *   - `xs` (9px / 1.62 ls) — colophons, ultra-fine print
- *   - `sm` (10px / 2.2 ls) — default; section eyebrows, masthead right-slot
- *   - `md` (11px / 1.98 ls) — strong eyebrows
+ *   - `xs` (9px / 1.62 ls)  -  colophons, ultra-fine print
+ *   - `sm` (10px / 2.2 ls)  -  default; section eyebrows, masthead right-slot
+ *   - `md` (11px / 1.98 ls)  -  strong eyebrows
  *
  * Pass `weight` to escalate emphasis (medium → semibold → bold).
  */
@@ -30,7 +30,7 @@ export type CapsLabelProps = {
   /** Ink color token; defaults to `ink2` (tertiary). */
   color?: ColorToken;
   testID?: string;
-  /** Escape hatch for one-off spacing/margins — do not pass typography overrides here. */
+  /** Escape hatch for one-off spacing/margins  -  do not pass typography overrides here. */
   style?: StyleProp<TextStyle>;
 };
 
@@ -49,7 +49,7 @@ export function CapsLabel({
   style,
 }: CapsLabelProps) {
   const { size: fontSize, ls } = SIZE_MAP[size];
-  // Spread testID conditionally — the underlying Text primitive types testID
+  // Spread testID conditionally  -  the underlying Text primitive types testID
   // as a required string under exactOptionalPropertyTypes, so passing
   // `testID={undefined}` is a type error.
   return (

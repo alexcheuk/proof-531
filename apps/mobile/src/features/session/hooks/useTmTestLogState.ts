@@ -3,7 +3,7 @@ import { type UseLogSheetStateResult, useLogSheetState } from './useLogSheetStat
 /**
  * TmTestLogSheet state container.
  *
- * Thin wrapper around `useLogSheetState` — seeds at 0 so the count is always
+ * Thin wrapper around `useLogSheetState`  -  seeds at 0 so the count is always
  * a deliberate input (a pre-filled rep count would pre-populate the PASS chip
  * and read as editorial pressure, which the spec rejects). Resets reps +
  * pending whenever `open` flips to true.

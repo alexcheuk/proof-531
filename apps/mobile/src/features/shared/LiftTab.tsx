@@ -75,7 +75,7 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
     onSelect(lift);
   };
 
-  // Explicit fade-in for the PR star — avoids Reanimated's layout-animation
+  // Explicit fade-in for the PR star  -  avoids Reanimated's layout-animation
   // registry which can throw "Should not already be working" when the tab
   // bar is re-mounted (e.g. after app foreground or a navigation reset).
   const starOpacity = useSharedValue(hasPr ? 0 : 1);
@@ -117,7 +117,7 @@ export function LiftTab({ lift, active, inProgress, hasPr, onSelect }: LiftTabPr
           {shortName(lift)}
         </Text>
         {inProgress ? (
-          // In-progress is the more actionable signal — the user is mid-session
+          // In-progress is the more actionable signal  -  the user is mid-session
           // and the dot is asking them to come finish. The PR star is still
           // implicit (PR carries over to the next session anyway) so hiding it
           // while a session is live is acceptable. Showing both produced a

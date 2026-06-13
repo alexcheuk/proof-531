@@ -6,12 +6,12 @@ import { Text } from './Text';
  * Right-column TM cell for the Progress grid. Three variants matching the
  * canonical design (`canonical-progress-v3.jsx::TMCellV3`):
  *
- *   - `current` — current cycle's TM. Bold display 18, color `ink0`, with
+ *   - `current`  -  current cycle's TM. Bold display 18, color `ink0`, with
  *                 a `bg2` cell background (subtle ink-on-paper highlight).
- *   - `past`    — past cycle TM. Display 18 semibold, color `ink1`.
- *   - `future`  — projected TM. Display 18 semibold, color `ink3`.
+ *   - `past`     -  past cycle TM. Display 18 semibold, color `ink1`.
+ *   - `future`   -  projected TM. Display 18 semibold, color `ink3`.
  *
- * The per-row unit glyph was removed in loop-024 — the column header
+ * The per-row unit glyph was removed in loop-024  -  the column header
  * already carries `→ TM lb` / `kg` so per-row duplication was just noise.
  */
 export type TmCellProps = {

@@ -95,7 +95,7 @@ describe('historyDateLabel', () => {
     const d = new Date(2026, 4, 1); // 3 weeks earlier
     expect(historyDateLabel(d, now)).toBe('FRI · MAY 1');
   });
-  it('treats future dates as TODAY (defensive — clock skew should not yield negatives)', () => {
+  it('treats future dates as TODAY (defensive  -  clock skew should not yield negatives)', () => {
     const d = new Date(2026, 4, 23, 10); // tomorrow
     // Future delta is negative; dayDelta rounds → 0 → TODAY (safe fallback).
     expect(historyDateLabel(d, now)).toBe('TODAY');

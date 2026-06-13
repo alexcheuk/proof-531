@@ -78,7 +78,7 @@ const WEEK_SETS: Record<Week, readonly WorkingSet[]> = {
   4: [{ pct: 1.0, reps: 5, kind: 'tm-test' }],
 };
 
-// Week 4 returns a single set (the TM test); destructuring [0..2] on week 4 throws — use tmTestSet() instead.
+// Week 4 returns a single set (the TM test); destructuring [0..2] on week 4 throws  -  use tmTestSet() instead.
 export function prescription(week: Week): WorkingSet[] {
   return WEEK_SETS[week].map((s) => ({ ...s }));
 }

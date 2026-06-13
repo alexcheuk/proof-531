@@ -16,7 +16,7 @@ describe('initialOnboardingState', () => {
   });
 });
 
-describe('onboardingReducer — NEXT/BACK', () => {
+describe('onboardingReducer  -  NEXT/BACK', () => {
   it('NEXT walks step 1 → 2', () => {
     const s = onboardingReducer(initialOnboardingState(), { type: 'NEXT' });
     expect(s.step).toBe(2);
@@ -63,7 +63,7 @@ describe('onboardingReducer — NEXT/BACK', () => {
   });
 });
 
-describe('onboardingReducer — TOGGLE_LIFT', () => {
+describe('onboardingReducer  -  TOGGLE_LIFT', () => {
   it('removes a lift when present', () => {
     const s = onboardingReducer(initialOnboardingState(), {
       type: 'TOGGLE_LIFT',
@@ -84,12 +84,12 @@ describe('onboardingReducer — TOGGLE_LIFT', () => {
       enabledLifts: ['squat' as const, 'press' as const],
     };
     const s = onboardingReducer(start, { type: 'TOGGLE_LIFT', lift: 'deadlift' });
-    // LIFT_ORDER is squat, bench, deadlift, press — so deadlift slots before press.
+    // LIFT_ORDER is squat, bench, deadlift, press  -  so deadlift slots before press.
     expect(s.enabledLifts).toEqual(['squat', 'deadlift', 'press']);
   });
 });
 
-describe('onboardingReducer — SET_LIFT_INPUT', () => {
+describe('onboardingReducer  -  SET_LIFT_INPUT', () => {
   it('clamps reps into [1, 15]', () => {
     const start = initialOnboardingState();
     const high = onboardingReducer(start, {
@@ -134,7 +134,7 @@ describe('onboardingReducer — SET_LIFT_INPUT', () => {
   });
 });
 
-describe('onboardingReducer — SET_UNIT', () => {
+describe('onboardingReducer  -  SET_UNIT', () => {
   it('is a no-op when the unit is unchanged', () => {
     const start = initialOnboardingState('lbs');
     const s = onboardingReducer(start, { type: 'SET_UNIT', unit: 'lbs' });
@@ -145,7 +145,7 @@ describe('onboardingReducer — SET_UNIT', () => {
     const start = initialOnboardingState('lbs');
     const s = onboardingReducer(start, { type: 'SET_UNIT', unit: 'kg' });
     expect(s.unit).toBe('kg');
-    // kg defaults differ from lbs defaults — squat goes from 225 lbs to 100 kg.
+    // kg defaults differ from lbs defaults  -  squat goes from 225 lbs to 100 kg.
     expect(s.perLift.squat.weight).toBe(100);
   });
 
@@ -163,7 +163,7 @@ describe('onboardingReducer — SET_UNIT', () => {
   });
 });
 
-describe('onboardingReducer — GOTO', () => {
+describe('onboardingReducer  -  GOTO', () => {
   it('jumps to an arbitrary step', () => {
     const s = onboardingReducer(initialOnboardingState(), { type: 'GOTO', step: 4 });
     expect(s.step).toBe(4);

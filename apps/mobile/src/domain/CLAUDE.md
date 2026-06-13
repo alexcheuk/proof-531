@@ -1,6 +1,6 @@
 # Domain layer rules
 
-`src/domain/` is the pure business-logic core of the app. Every file in this directory is a plain TypeScript module — no framework, no async, no I/O.
+`src/domain/` is the pure business-logic core of the app. Every file in this directory is a plain TypeScript module  -  no framework, no async, no I/O.
 
 ## Rules (enforced by reviewer)
 
@@ -26,4 +26,4 @@ Write the test first (TDD). The test lives in `__tests__/` next to the source fi
 
 ## Violations
 
-If you see a React/async/Drizzle import here, it's a boundary violation — remove it and move the logic to the right layer (`data/` for persistence, `features/` for UI state).
+If you see a React/async/Drizzle import here, it's a boundary violation  -  remove it and move the logic to the right layer (`data/` for persistence, `features/` for UI state).

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *   - `handleSave` awaits async parents, clears pending on both success and
  *     failure, guards against setState on an unmounted parent.
  *   - `handleCancel` is a no-op while pending or when the sheet is already
- *     closed (gorhom fires dismiss on auto-close after a successful save —
+ *     closed (gorhom fires dismiss on auto-close after a successful save  -
  *     without this guard the just-set phase is overwritten).
  *
  * The only per-sheet difference is `initialReps`:

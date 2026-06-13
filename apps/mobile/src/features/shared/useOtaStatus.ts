@@ -27,7 +27,7 @@ export function useOtaStatus(): OtaStatus {
     try {
       await Updates.checkForUpdateAsync();
     } catch {
-      // Errors surface through `useUpdates().checkError` — swallow here so
+      // Errors surface through `useUpdates().checkError`  -  swallow here so
       // the press handler never rejects.
     }
   }, []);
@@ -36,7 +36,7 @@ export function useOtaStatus(): OtaStatus {
     try {
       await Updates.fetchUpdateAsync();
     } catch {
-      // See above — surfaced via `downloadError`.
+      // See above  -  surfaced via `downloadError`.
     }
   }, []);
 

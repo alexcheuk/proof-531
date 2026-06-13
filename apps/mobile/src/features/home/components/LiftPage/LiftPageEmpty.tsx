@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 
 export type LiftPageEmptyProps = {
-  /** testID prefix — the CTA tag is `${prefix}-open-settings`. */
+  /** testID prefix  -  the CTA tag is `${prefix}-open-settings`. */
   testIDPrefix?: string;
 };
 

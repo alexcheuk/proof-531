@@ -25,7 +25,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // 5 minutes — settings / TMs / PRs change rarely; the rest is driven by
+      // 5 minutes  -  settings / TMs / PRs change rarely; the rest is driven by
       // explicit `queryClient.invalidateQueries` from mutation handlers.
       staleTime: 5 * 60 * 1000,
     },
@@ -37,7 +37,7 @@ const queryClient = new QueryClient({
  * top stripe of `insets.top` height. The status bar itself is set to `dark`
  * (ink glyphs on the paper bg), so the stripe + glyphs blend into one strip.
  *
- * Per-screen bottom safe-area is handled by CtaBar / the tab bar, not here —
+ * Per-screen bottom safe-area is handled by CtaBar / the tab bar, not here  -
  * forcing a global paddingBottom would fight those components.
  */
 function SafeTopFrame() {
@@ -83,7 +83,7 @@ export default function RootLayout() {
     }
   }, []);
 
-  // Open the live session when a rest notification is tapped — on cold start
+  // Open the live session when a rest notification is tapped  -  on cold start
   // (getInitialNotification) and while running (foreground press). Android only;
   // the native module is lazy-required so iOS / jest never load it.
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function RootLayout() {
     return null;
   }
   if (!migrationsReady && !migrationError) {
-    // Fonts are ready but the SQLite migrations haven't completed yet —
+    // Fonts are ready but the SQLite migrations haven't completed yet  -
     // paint the branded boot splash (paper bg + 531 wordmark) so the
     // handoff from OS splash to first screen never flashes blank.
     return (
@@ -121,7 +121,7 @@ export default function RootLayout() {
   }
 
   if (migrationError) {
-    // DB migration failed — the app cannot function. Show a blocking error
+    // DB migration failed  -  the app cannot function. Show a blocking error
     // so the user knows to force-quit and try again (usually fixes it) or
     // reinstall if the DB is corrupt.
     return (
@@ -162,7 +162,7 @@ export default function RootLayout() {
               {/*
                * The boundary sits inside ThemeProvider/DbProvider/QueryClient
                * so the default fallback can read tokens and a reset can keep
-               * the data/query layer warm — only the feature subtree remounts.
+               * the data/query layer warm  -  only the feature subtree remounts.
                */}
               <ErrorBoundary scope="root">
                 <SafeTopFrame />

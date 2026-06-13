@@ -1,4 +1,4 @@
-// No red on the destructive action — the e-ink theme aliases red → ink-0; copy and filled chrome carry the weight.
+// No red on the destructive action  -  the e-ink theme aliases red → ink-0; copy and filled chrome carry the weight.
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SheetLayout } from '@/design/primitives/SheetLayout';
 import { Text } from '@/design/primitives/Text';

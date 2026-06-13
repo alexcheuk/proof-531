@@ -10,7 +10,7 @@ export type LabeledSegRailProps = {
   hint?: string;
   /** The SegRail (or any selector) the caller composes in. */
   children: ReactNode;
-  /** Outer container style — falls through to the wrapping View. */
+  /** Outer container style  -  falls through to the wrapping View. */
   style?: ViewStyle;
 };
 
@@ -20,7 +20,7 @@ export type LabeledSegRailProps = {
  * trio that recurs across Settings sections (Units, RestTarget, etc).
  *
  * The selector is rendered as `children` so callers retain full control
- * over the rail's typing — this primitive cannot know which option
+ * over the rail's typing  -  this primitive cannot know which option
  * generic the rail uses.
  */
 export function LabeledSegRail({ label, hint, children, style }: LabeledSegRailProps) {

@@ -16,7 +16,7 @@ describe('HeroNumberRow', () => {
 
   it('renders the kg unit when storage is metric', () => {
     // Callers pre-round to int before passing in (see PRCertificate.tsx
-    // prop doc — "rounded int"). formatWeight applies that contract.
+    // prop doc  -  "rounded int"). formatWeight applies that contract.
     const screen = renderHero(<HeroNumberRow e1RM={143} unit="kg" />);
     expect(screen.getByText('143')).toBeTruthy();
     expect(screen.getByText('kg')).toBeTruthy();

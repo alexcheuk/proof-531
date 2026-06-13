@@ -14,21 +14,21 @@ import { TmTestBandChip } from './TmTestBandChip';
 import { TmTestCaption } from './TmTestCaption';
 
 /**
- * Bottom-sheet TM Test rep logger — sibling to {@link AmrapLogSheet} but
+ * Bottom-sheet TM Test rep logger  -  sibling to {@link AmrapLogSheet} but
  * with distinct semantics:
  *
- *   - Stepper cap at 10 (vs AMRAP's 30) — the band tops out at 5, this is
+ *   - Stepper cap at 10 (vs AMRAP's 30)  -  the band tops out at 5, this is
  *     honest record-keeping room without making the stepper feel infinite.
- *   - Seed value is 0 (vs AMRAP's prescribedReps) — TM test logging is a
+ *   - Seed value is 0 (vs AMRAP's prescribedReps)  -  TM test logging is a
  *     deliberate count entry, not a near-default save.
- *   - No e1RM projection chip — bounded set, no max-effort.
- *   - No PR-edge haptic — the TM test is information, not celebration.
+ *   - No e1RM projection chip  -  bounded set, no max-effort.
+ *   - No PR-edge haptic  -  the TM test is information, not celebration.
  *   - PASS / HOLD / RESET band chip on the right of the question line, live
  *     caption beneath the stepper.
  *
  * Composition discipline (per the Vercel design-system rules):
  *   - Two booleans at most (`open`, `pending`).
- *   - Children over render-props — the band chip and caption are
+ *   - Children over render-props  -  the band chip and caption are
  *     sub-components.
  *   - State is internal (rep count, pending). No provider, no sibling
  *     cross-talk.
@@ -40,14 +40,14 @@ export type TmTestLogSheetProps = {
   open: boolean;
   lift: Lift;
   /**
-   * Training Max in display units — drives the header weight readout. The
+   * Training Max in display units  -  drives the header weight readout. The
    * tm-test set is 100% TM, so this is the bar weight too.
    */
   tm: number;
   unit: Unit;
   onCancel: () => void;
   /**
-   * Called when the user confirms a rep count. May be sync or async — the
+   * Called when the user confirms a rep count. May be sync or async  -  the
    * sheet awaits the returned value so the disabled state resolves on
    * parent resolution.
    */

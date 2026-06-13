@@ -5,7 +5,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
- * Step 2 — Pick the lifts you want to train.
+ * Step 2  -  Pick the lifts you want to train.
  */
 import { View } from 'react-native';
 import { LiftToggleRow } from '../components/LiftToggleRow';

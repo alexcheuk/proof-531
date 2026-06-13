@@ -6,7 +6,7 @@ import { Pressable, View, type ViewStyle } from 'react-native';
 export type AdjustTmCtaProps = {
   /** e1RM delta over the previous best, in display unit (e.g. 12). */
   delta: number;
-  /** Display unit glyph — "lb" or "kg". */
+  /** Display unit glyph  -  "lb" or "kg". */
   unitGlyph: 'lb' | 'kg';
   onPress: () => void;
   testID?: string;
@@ -51,7 +51,7 @@ export function AdjustTmCta({
           Adjust training max
         </CapsLabel>
         <CapsLabel size="xs" color="ink3" style={{ marginTop: 2 }}>
-          {`e1rm jumped ${delta} ${unitGlyph} — consider a bump`}
+          {`e1rm jumped ${delta} ${unitGlyph}  -  consider a bump`}
         </CapsLabel>
       </View>
       <Text variant="mono" weight="semibold" size={16} color="ink0">

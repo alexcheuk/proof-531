@@ -18,7 +18,7 @@ import type { LivePhase } from './useLiveScreenState';
  *      surface and routes the user to either the home screen (cancelled)
  *      or the receipt (completed).
  *   3. Bounces the user home if the session row disappears or transitions
- *      out of `in_progress` from another surface — guarded so it doesn't
+ *      out of `in_progress` from another surface  -  guarded so it doesn't
  *      race the complete-flow navigation.
  *
  * Pulled out of the screen component so the render tree stays focused on
@@ -46,7 +46,7 @@ export function useLiveScreenEffects({
   const queryClient = useQueryClient();
   // A LiveScreen pushed beneath a newer screen (e.g., a stack-duplicate
   // created by a fast double-tap on the Begin CTA) keeps its hooks running
-  // — including this exit gate. Without the focus check, the hidden Live's
+  //  -  including this exit gate. Without the focus check, the hidden Live's
   // sessionStatus would flip to 'completed' on the next SESSION_KEY
   // invalidation and the gate would `router.replace('/')` over whatever
   // route is actually visible (BBB / Complete / Progress), bouncing the
@@ -95,7 +95,7 @@ export function useLiveScreenEffects({
       });
   }, [phase, sessionId, queryClient, router]);
 
-  // PR celebration — same routing pattern but lands on the full-screen
+  // PR celebration  -  same routing pattern but lands on the full-screen
   // inverted celebration before the BBB prompt. Only entered when
   // `onSaveAmrap` detected `isPR` on the appended row.
   useEffect(() => {
@@ -118,7 +118,7 @@ export function useLiveScreenEffects({
   // The awaiting-bbb / pr-celebration exclusions matter because
   // completeSession runs inside onSaveAmrap BEFORE setPhase, so by the time
   // we render with phase='awaiting-bbb' the SESSION_KEY refetch can land
-  // sessionStatus='completed' — without these excludes, the gate fires
+  // sessionStatus='completed'  -  without these excludes, the gate fires
   // goTo.home in the same render window and the user lands on Home
   // instead of BBB.
   useEffect(() => {
@@ -149,11 +149,11 @@ function routeFromCompletePhase(
 
 function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): Promise<unknown> {
   // completeSession runs advanceLift (advances THIS lift's cycle/week and,
-  // on cycle wrap, bumps THIS lift's TM — see liftProgress.ts) and AMRAP
+  // on cycle wrap, bumps THIS lift's TM  -  see liftProgress.ts) and AMRAP
   // saves may have set a new PR, so we invalidate the broader session-shaped
   // surface alongside the three core keys. `lifetimeVolume` is included
   // (loop-008) so the History tab's volume stat refreshes the moment the day
-  // closes — the new working + amrap rows (plus any BBB rows written by
+  // closes  -  the new working + amrap rows (plus any BBB rows written by
   // BbbPromptScreen) need to be counted on next render.
   return Promise.all([
     queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
@@ -167,7 +167,7 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
     queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
     // Prefix invalidate the Progress screen's per-lift projection cache so
     // the cycle/day grid, e1RM column, and "cycles to goal" all refresh
-    // the moment the user closes a session. Same for per-lift progress —
+    // the moment the user closes a session. Same for per-lift progress  -
     // headers reading lift_progress[lift] need the new (cycle, week).
     queryClient.invalidateQueries({ queryKey: ['liftProgression'] }),
     queryClient.invalidateQueries({ queryKey: ['liftProgress'] }),

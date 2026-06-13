@@ -5,7 +5,7 @@ import { ProgressScreen } from '@/features/progress/ProgressScreen';
 import { useLocalSearchParams } from 'expo-router';
 
 /**
- * Progress tab — renders the per-lift cycle×day grid. The tab takes an
+ * Progress tab  -  renders the per-lift cycle×day grid. The tab takes an
  * optional `?lift=` param so deep links (`/(tabs)/progress?lift=squat`) and
  * in-app `goTo.progress(router, lift)` calls land on the right lift; when
  * absent (a plain tab tap), we default to the first enabled lift and the

@@ -21,7 +21,7 @@ export function LiftStats({ tmValue, tmUnit, bestE1RM, cycle }: LiftStatsProps) 
         },
         {
           label: 'BEST e1RM',
-          value: bestE1RM != null ? `${bestE1RM} ${unitLabel}` : '—',
+          value: bestE1RM != null ? `${bestE1RM} ${unitLabel}` : ' - ',
         },
         {
           label: 'CYCLE',

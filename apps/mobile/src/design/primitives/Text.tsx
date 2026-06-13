@@ -21,7 +21,7 @@ type TextProps = {
   weight: 'regular' | 'medium' | 'semibold' | 'bold';
   size: number;
   color?: ColorToken;
-  /** Apply tabular + lining numerals — for weight / clock readouts. */
+  /** Apply tabular + lining numerals  -  for weight / clock readouts. */
   numeric?: boolean;
   style?: StyleProp<TextStyle>;
   children?: ReactNode;

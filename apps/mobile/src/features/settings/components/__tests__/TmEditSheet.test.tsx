@@ -198,7 +198,7 @@ describe('TmEditSheet', () => {
         onClose={() => {}}
       />,
     );
-    // currentValue < bar (45 lb) — the editor opens on a below-bar draft and
+    // currentValue < bar (45 lb)  -  the editor opens on a below-bar draft and
     // refuses to save. The delta strip explains why.
     expect(screen.getByTestId('tm-edit-delta').props.children).toBe(
       "Training max can't go below the bar (45 lb)",

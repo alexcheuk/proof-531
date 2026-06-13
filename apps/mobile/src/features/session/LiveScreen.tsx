@@ -151,7 +151,7 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
             onAddRest={live.onAddRest}
             onSubRest={live.onSubRest}
             onSkip={live.onAdvanceFromRest}
-            // setIndex advanced past rest — prescribedWeight already describes the NEXT set.
+            // setIndex advanced past rest  -  prescribedWeight already describes the NEXT set.
             nextSet={{
               weight: prescribedDisplay,
               reps: live.prescribedReps,
@@ -218,7 +218,7 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
 }
 
 function LiveStatusBar({ inverted }: { inverted: boolean }) {
-  // Use base palette directly — the inverted ThemeProvider would swap ink0↔bg0 before this reaches the tint store.
+  // Use base palette directly  -  the inverted ThemeProvider would swap ink0↔bg0 before this reaches the tint store.
   if (inverted) return <StatusBarShim color={baseColors.ink0} style="light" />;
   return <StatusBar style="dark" />;
 }

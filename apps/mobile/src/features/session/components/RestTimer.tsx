@@ -3,7 +3,7 @@ import { Row } from '@/design/primitives/Row';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import { formatMmSs } from '@/domain/time';
-// Count-down (not count-up): flipped 2026-05-24 per user request — matches how lifters think
+// Count-down (not count-up): flipped 2026-05-24 per user request  -  matches how lifters think
 // ("90 left…") and the 0:00 moment is a clean "time to lift" cue.
 import { useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';

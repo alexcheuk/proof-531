@@ -7,7 +7,7 @@ import { type WorkingSetIndex, nextWorkingSetIndex } from '@/domain/schemes';
 import type { Lift } from '@/domain/types';
 import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
-// active mode: never call createSession again — that orphans the original row and breaks getActiveSession.
+// active mode: never call createSession again  -  that orphans the original row and breaks getActiveSession.
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 
@@ -30,7 +30,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
   const queryClient = useQueryClient();
   const [starting, setStarting] = useState(false);
   // Synchronous re-entrancy guard. `starting` is a React state value, so
-  // setStarting(true) only takes effect on the next render — two taps within
+  // setStarting(true) only takes effect on the next render  -  two taps within
   // a single render cycle both see `starting === false` and both fire. The
   // ref flips synchronously inside the handler, so the second tap reads
   // `true` no matter how fast it arrives. Without this, spam-tapping the
@@ -55,7 +55,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
   const completedCount = sessionForLift ? uniqueCompleted.length : 0;
   // `nextWorkingSetIndex` defaults to the 3-slot contract for weeks 1–3 when
   // `week` is omitted. The Today screen does not branch its CTA copy on
-  // week-4 specifically (see TodayScreen.tsx — week 4 still routes through
+  // week-4 specifically (see TodayScreen.tsx  -  week 4 still routes through
   // the same Begin → Live flow), so leaving the call signature unchanged is
   // intentional. On an in-flight week-4 session, `uniqueCompleted` is either
   // [] (not started) or [0] (test logged → session is `completed` and lives
@@ -87,7 +87,7 @@ export function useTodayScreenState(lift: Lift): UseTodayScreenStateResult {
         return;
       }
 
-      // preview — create the session, invalidate so Home/Today/History see the
+      // preview  -  create the session, invalidate so Home/Today/History see the
       // new row, then route to Live.
       const session = await createSession(db, lift);
       await Promise.all([

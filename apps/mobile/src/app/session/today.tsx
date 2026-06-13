@@ -13,7 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View, type ViewStyle } from 'react-native';
 
 /**
- * Thin route shell — parses `:lift` off the URL and hands it to the feature
+ * Thin route shell  -  parses `:lift` off the URL and hands it to the feature
  * component. Invalid or missing lifts now render an explicit recovery screen
  * (used to silently return null, which presented as a blank white page if the
  * user landed here via a malformed deep link or stale back-stack entry).

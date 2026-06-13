@@ -75,7 +75,7 @@ describe('migrateStorageUnit', () => {
     await migrateStorageUnit(db, 'kg');
     const s = await getSettings(db);
     expect(s.storageUnit).toBe('kg');
-    // Display was already kg (≠ old storage 'lbs') so it stays put — but
+    // Display was already kg (≠ old storage 'lbs') so it stays put  -  but
     // the value lands at kg either way, so the user-visible currency is kg.
     expect(s.displayUnit).toBe('kg');
   });
@@ -102,7 +102,7 @@ describe('migrateStorageUnit', () => {
     const squatHistory = await getTrainingMaxHistory(db, 'squat');
     const benchHistory = await getTrainingMaxHistory(db, 'bench');
     expect(squatHistory).toHaveLength(2); // appended
-    expect(benchHistory).toHaveLength(1); // skipped — already kg
+    expect(benchHistory).toHaveLength(1); // skipped  -  already kg
     expect(benchHistory[0]?.unit).toBe('kg');
     expect(benchHistory[0]?.value).toBe(90);
   });
@@ -113,7 +113,7 @@ describe('migrateStorageUnit', () => {
     // Seed minimal session + set_log + prs rows directly so we can assert
     // on the post-migration prs.bestE1RM in isolation (without going
     // through the full AMRAP flow, which would require a full LiveScreen
-    // render). 399 lb e1RM on squat, 220 lb on bench — both pre-migration.
+    // render). 399 lb e1RM on squat, 220 lb on bench  -  both pre-migration.
     const sqlite = (db as unknown as { session: { client: BetterSqlite3.Database } }).session
       .client;
     sqlite
@@ -140,7 +140,7 @@ describe('migrateStorageUnit', () => {
     }>;
     const squat = rows.find((r) => r.lift === 'squat');
     const bench = rows.find((r) => r.lift === 'bench');
-    // 399 lb × 0.45359237 ≈ 180.98 kg (no snap — e1RM keeps full precision)
+    // 399 lb × 0.45359237 ≈ 180.98 kg (no snap  -  e1RM keeps full precision)
     expect(squat?.bestE1RM).toBeCloseTo(180.98, 1);
     // 220 lb × 0.45359237 ≈ 99.79 kg
     expect(bench?.bestE1RM).toBeCloseTo(99.79, 1);

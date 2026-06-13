@@ -3,7 +3,7 @@ import { LedgerSection } from '@/design/primitives/LedgerSection';
 import Constants from 'expo-constants';
 
 function getAppVersion(): string {
-  return Constants.expoConfig?.version ?? '—';
+  return Constants.expoConfig?.version ?? '--';
 }
 
 export function AboutSection() {

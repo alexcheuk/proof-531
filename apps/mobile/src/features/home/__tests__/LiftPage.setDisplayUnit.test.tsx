@@ -8,7 +8,7 @@
  *   4. Assert Home renders kg-snapped numbers AND the underlying TM row
  *      in the storage table is untouched (still 250 lb).
  *
- * Asserts the contract that `setDisplayUnit` is a display-only flip — no
+ * Asserts the contract that `setDisplayUnit` is a display-only flip  -  no
  * weights are migrated, no rows mutated, just the per-render conversion
  * function picks up the new currency.
  */
@@ -65,12 +65,12 @@ describe('Home cross-unit render via setDisplayUnit (integration)', () => {
     await seedDefaultSettings(db); // storageUnit=lbs, displayUnit=lbs
     await setTrainingMax(db, 'squat', 250, 'lbs');
 
-    // Sanity — initial settings.
+    // Sanity  -  initial settings.
     const before = await getSettings(db);
     expect(before.storageUnit).toBe('lbs');
     expect(before.displayUnit).toBe('lbs');
 
-    // Flip displayUnit only — must not touch any TM row.
+    // Flip displayUnit only  -  must not touch any TM row.
     await setDisplayUnit(db, 'kg');
 
     const after = await getSettings(db);
@@ -79,7 +79,7 @@ describe('Home cross-unit render via setDisplayUnit (integration)', () => {
 
     const tms = await getCurrentTrainingMaxes(db);
     const squat = tms.find((t) => t.lift === 'squat');
-    // Storage row is untouched — still 250 lb (no migration row appended).
+    // Storage row is untouched  -  still 250 lb (no migration row appended).
     expect(squat?.value).toBe(250);
     expect(squat?.unit).toBe('lbs');
     expect(tms.filter((t) => t.lift === 'squat')).toHaveLength(1);

@@ -17,7 +17,7 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: jest.fn(), push: jest.fn(), back: jest.fn() }),
 }));
 
-// Reanimated 4 boots `react-native-worklets` at module load — that native
+// Reanimated 4 boots `react-native-worklets` at module load  -  that native
 // init never lands under jest. Substitute a minimal inline mock.
 jest.mock('react-native-reanimated', () => {
   const RN = jest.requireActual('react-native');
@@ -30,7 +30,7 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
-// Render the gorhom bottom-sheet's children inline — mirrors SettingsScreen.test.tsx.
+// Render the gorhom bottom-sheet's children inline  -  mirrors SettingsScreen.test.tsx.
 type MockBottomSheetProps = { index?: number; children?: React.ReactNode };
 type MockViewProps = { children?: React.ReactNode; testID?: string };
 jest.mock('@gorhom/bottom-sheet', () => {
@@ -88,7 +88,7 @@ const renderScreen = (ui: ReactElement) => {
   );
 };
 
-describe('SettingsScreen — QueryShell states', () => {
+describe('SettingsScreen  -  QueryShell states', () => {
   beforeEach(() => {
     mockScreenDataState.settings = undefined;
     mockScreenDataState.tmsByLift = undefined;

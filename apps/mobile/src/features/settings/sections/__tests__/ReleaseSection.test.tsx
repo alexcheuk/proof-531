@@ -1,5 +1,5 @@
 /**
- * ReleaseSection — behavioral tests around the OTA visibility surface.
+ * ReleaseSection  -  behavioral tests around the OTA visibility surface.
  *
  * Drives `useOtaStatus` directly so we exercise the four states a tester
  * cares about: embedded launch (hidden), OTA-launched (visible with id),

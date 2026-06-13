@@ -11,7 +11,7 @@ import { type HistoryFilter, historyFilterKey } from '../filter';
  * Renders `All`, `PRs`, plus one chip per enabled lift. Scrollable so the
  * chip set grows gracefully (and stays usable on narrow screens). A
  * trailing `✕ Clear` ghost chip appears whenever a non-All filter is
- * active. Pure presentational — the parent owns the active filter state.
+ * active. Pure presentational  -  the parent owns the active filter state.
  */
 export type FilterChipsProps = {
   enabledLifts: ReadonlyArray<Lift>;

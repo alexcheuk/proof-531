@@ -95,7 +95,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
         queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
       ]);
     } catch (err) {
-      // Don't block navigation on failure — user already did the work.
+      // Don't block navigation on failure  -  user already did the work.
       console.error('BbbPromptScreen.onMarkComplete failed', err);
     } finally {
       setLogging(false);

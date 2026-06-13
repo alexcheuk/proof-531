@@ -89,7 +89,7 @@ export function usePrCelebrationSequence({
 
   // Tap-to-skip: jump to the next visible new animation. Holds/settles
   // collapse into the next animated phase. Mid-typewriter, this lets go
-  // of the partial reveal — rendering already falls back to the full
+  // of the partial reveal  -  rendering already falls back to the full
   // value once `phase` advances past the type-phase.
   const skip = useCallback(() => {
     setPhase((prev) => {

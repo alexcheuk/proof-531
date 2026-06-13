@@ -1,7 +1,7 @@
 import type { Session } from '@/data/accessors/session';
 /**
  * Unit tests for the lifetime-volume aggregator + its formatter. Mirrors
- * the per-session `volumeOfWorkingSets` style — plain unit assertions plus a
+ * the per-session `volumeOfWorkingSets` style  -  plain unit assertions plus a
  * fast-check property on the formatter's bucket boundaries.
  */
 import type { SetLog } from '@/domain/types';
@@ -57,7 +57,7 @@ describe('computeLifetimeVolume', () => {
   });
 
   it('skips non-counted kinds (warmup, assistance) but COUNTS bbb (loop-012)', () => {
-    // BBB is counted as of loop-012 — `getLifetimeVolume`'s SQL filter
+    // BBB is counted as of loop-012  -  `getLifetimeVolume`'s SQL filter
     // was widened in loop-008 when BbbPromptScreen started writing
     // `kind: 'bbb'` rows, and this in-memory helper finally matches.
     // The single-session `volumeOfWorkingSets` in `domain/summary.ts`

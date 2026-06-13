@@ -27,7 +27,7 @@ export type Theme = {
  * Lines re-derive from paper instead of ink so divider hairlines stay
  * subtle on the dark surface.
  */
-// Widened — the inverted variant intentionally substitutes different
+// Widened  -  the inverted variant intentionally substitutes different
 // literal strings for each key, so the strict `typeof baseColors` type
 // (literal-typed at the token site) would reject every assignment.
 // Same structural shape, broader leaf types.
@@ -56,7 +56,7 @@ const invertedColors: ColorTable = {
   paper: baseColors.ink0,
   paperDim: baseColors.ink2,
   paperMuted: 'rgba(26, 24, 18, 0.6)',
-  // amber stays — it's the project's single accent and reads on both
+  // amber stays  -  it's the project's single accent and reads on both
   // ink and paper surfaces.
 };
 

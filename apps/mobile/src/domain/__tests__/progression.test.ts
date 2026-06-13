@@ -129,7 +129,7 @@ describe('projectTopSetWeight', () => {
     expect(projectTopSetWeight(7, 4, 230, 7, 'squat', 'lbs')).toBe(230);
     // Future cycle 8 → projected TM 240; tm-test set is 100% of that.
     expect(projectTopSetWeight(8, 4, 230, 7, 'squat', 'lbs')).toBe(240);
-    // Bench TM 185 in kg unit (5kg step) — still 100% TM, snapped.
+    // Bench TM 185 in kg unit (5kg step)  -  still 100% TM, snapped.
     expect(projectTopSetWeight(5, 4, 100, 5, 'bench', 'kg')).toBe(round(100, 'kg'));
   });
 
@@ -289,7 +289,7 @@ describe('tmAdjustmentSuggestion', () => {
     expect(tmAdjustmentSuggestion(-10, 'squat', 'lbs')).toEqual({ kind: 'reset', resetPct: 0.9 });
   });
 
-  it('property: band closure — total function over reps [-5..50]', () => {
+  it('property: band closure  -  total function over reps [-5..50]', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: -5, max: 50 }),

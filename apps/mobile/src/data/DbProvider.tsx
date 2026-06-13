@@ -2,7 +2,7 @@
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { type ReactNode, createContext, createElement, useContext } from 'react';
 
-// Structural-poly across sqlite drivers — see accessors/trainingMax.ts.
+// Structural-poly across sqlite drivers  -  see accessors/trainingMax.ts.
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 export type AppDb = BaseSQLiteDatabase<any, any, any>;
 

@@ -5,8 +5,8 @@
  * PWA spec.
  *
  * Mocks:
- *  - `expo-haptics`                       — silence native binding
- *  - `react-native-safe-area-context`    — stable insets in jest
+ *  - `expo-haptics`                        -  silence native binding
+ *  - `react-native-safe-area-context`     -  stable insets in jest
  */
 import { ThemeProvider } from '@/design/theme';
 import type { Lift } from '@/domain/types';

@@ -8,11 +8,11 @@ import { StatusBar } from 'expo-status-bar';
  *
  * Two effects, both required:
  *
- * 1. `<StatusBar translucent={false} backgroundColor={color} />` — on
+ * 1. `<StatusBar translucent={false} backgroundColor={color} />`  -  on
  *    Android `backgroundColor` is only honored when `translucent` is
  *    `false`. Without this the OS draws its own default tint over the
  *    screen.
- * 2. `useStatusBarTint(color)` — pushes the color into the module
+ * 2. `useStatusBarTint(color)`  -  pushes the color into the module
  *    subject the `SafeTopFrame` reads. The frame paints an absolute
  *    strip over its own paper bg in the safe-area area. This is the
  *    iOS path; it also works as a belt for Android.
@@ -21,7 +21,7 @@ import { StatusBar } from 'expo-status-bar';
  * the consuming screen's tree, but the native-stack card has
  * `overflow: hidden`, which clipped the strip back at the card
  * boundary. The user reported "still not black" four times before we
- * pinned that down — see `loop-memory/07-status-bar-fill.md`.
+ * pinned that down  -  see `loop-memory/07-status-bar-fill.md`.
  *
  * `style="light" | "dark"` follows the foreground-glyph contract from
  * expo-status-bar (light glyphs on dark, dark glyphs on light).

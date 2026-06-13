@@ -197,7 +197,7 @@ describe('TodayScreen', () => {
   });
 
   it('renders the warmups band collapsed by default; tapping expands to 3 rows (loop-021)', () => {
-    // squat TM 300 → 40% = 120, 50% = 150, 60% = 180 — all lb-snapped.
+    // squat TM 300 → 40% = 120, 50% = 150, 60% = 180  -  all lb-snapped.
     const screen = renderScreen(<TodayScreen lift="squat" />);
     // Header is always visible.
     expect(screen.getByText('WARMUPS')).toBeTruthy();

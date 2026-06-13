@@ -61,7 +61,7 @@ const MONTH_ABBR = [
   'DEC',
 ] as const;
 
-// Avoids Intl.DateTimeFormat — output must be locale-stable across environments.
+// Avoids Intl.DateTimeFormat  -  output must be locale-stable across environments.
 export function dateLabel(date: Date): string {
   const weekday = WEEKDAY_ABBR[date.getDay()];
   const month = MONTH_ABBR[date.getMonth()];
@@ -107,7 +107,7 @@ export function historyDateLabel(date: Date, now: number = Date.now()): string {
   const target = startOfDay(date.getTime());
   const dayDelta = Math.round((today - target) / (24 * 60 * 60 * 1000));
   // Future timestamps (clock skew, restored backup with stale clock) collapse
-  // to TODAY rather than falling through to dateLabel — keeps the row from
+  // to TODAY rather than falling through to dateLabel  -  keeps the row from
   // reading as a meaningfully-past date.
   if (dayDelta <= 0) return 'TODAY';
   if (dayDelta === 1) return 'YESTERDAY';

@@ -28,7 +28,7 @@ describe('useLiftPageState', () => {
     if (result.current.empty) {
       throw new Error('expected non-empty');
     }
-    // Week 1 top set is 85% — 250 * 0.85 = 212.5, snapped to 5 lb step.
+    // Week 1 top set is 85%  -  250 * 0.85 = 212.5, snapped to 5 lb step.
     expect(result.current.topSet.pct).toBeCloseTo(0.85);
     expect(result.current.topWeight).toBe(215);
     expect(result.current.tmDisplay).toBe(250);

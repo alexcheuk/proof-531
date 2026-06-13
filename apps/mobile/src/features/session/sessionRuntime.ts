@@ -1,7 +1,7 @@
 import type { LastLoggedSet } from './hooks/useLiveScreenState';
 
 // Module-level (not React) so LiveScreen remounts during rest don't lose the countdown.
-// Does not survive an app kill — persisting to SQLite is deferred until there's evidence of demand.
+// Does not survive an app kill  -  persisting to SQLite is deferred until there's evidence of demand.
 export type LiveRestSnapshot = {
   sessionId: number;
   /** Absolute wall-clock ms when the rest timer should reach 0. */
@@ -28,7 +28,7 @@ export function clearRestSnapshot(sessionId: number): void {
   }
 }
 
-/** Test-only — full reset between cases. */
+/** Test-only  -  full reset between cases. */
 export function _resetSessionRuntimeForTests(): void {
   snapshot = null;
 }

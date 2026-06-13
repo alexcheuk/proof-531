@@ -5,7 +5,7 @@ import { View } from 'react-native';
 // Empty slices show a single space so line heights stay stable during the typewriter reveal.
 export const PR_CELEBRATION_HERO_TEXT = 'Stronger.';
 
-// Combined eyebrow + hero length — the typewriter walks across both strings as one sequence.
+// Combined eyebrow + hero length  -  the typewriter walks across both strings as one sequence.
 export function prCelebrationTypeLength(eyebrow: string): number {
   return eyebrow.length + PR_CELEBRATION_HERO_TEXT.length;
 }
@@ -51,7 +51,7 @@ export function PrCelebrationHero({
         color="bg0"
         style={{
           // 92 (≈1.21× font size) clears the 'g' descender + amber
-          // period without clipping. 82 was too tight on iOS — the
+          // period without clipping. 82 was too tight on iOS  -  the
           // line box ended just below the baseline.
           lineHeight: 92,
           letterSpacing: -2.8,

@@ -1,4 +1,4 @@
-/** SQL mirror of 0001_init.sql — kept as a TS template literal so Metro can bundle it. */
+/** SQL mirror of 0001_init.sql  -  kept as a TS template literal so Metro can bundle it. */
 export const MIGRATION_0001 = `
 CREATE TABLE IF NOT EXISTS settings (
   id INTEGER PRIMARY KEY,

@@ -1,5 +1,5 @@
 // No transaction wrapper: mobile DB is single-writer (JS event loop), so sequential reads/writes are safe.
-// A crash between isPR=true and the prs upsert would leave a stale state — accepted trade-off vs. drizzle tx typing.
+// A crash between isPR=true and the prs upsert would leave a stale state  -  accepted trade-off vs. drizzle tx typing.
 import { desc, eq, sql } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import { estimateOneRm } from '../../domain/epley';
@@ -52,7 +52,7 @@ export async function appendSetLog(db: AnyDb, input: AppendSetLogInput): Promise
   return row;
 }
 
-// Only undoes 'working' rows — undoing 'amrap' would cascade into prs, which is out of scope.
+// Only undoes 'working' rows  -  undoing 'amrap' would cascade into prs, which is out of scope.
 export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<SetLog | null> {
   const rows = (await Promise.resolve(
     db
@@ -69,7 +69,7 @@ export async function undoLastWorkingSet(db: AnyDb, sessionId: number): Promise<
   return last;
 }
 
-// Orders by id (not completedAt) — completedAt can collide on rapid back-to-back writes; autoincrement id is safe.
+// Orders by id (not completedAt)  -  completedAt can collide on rapid back-to-back writes; autoincrement id is safe.
 export async function getSetLogsForSession(db: AnyDb, sessionId: number): Promise<SetLog[]> {
   return (await Promise.resolve(
     db.select().from(setLogs).where(eq(setLogs.sessionId, sessionId)).orderBy(setLogs.id),

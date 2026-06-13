@@ -67,7 +67,7 @@ describe('setLog + prs accessors', () => {
 
   it('AMRAP set with lower estimated1RM than prior PR is NOT a PR', async () => {
     const { db, session } = await setup();
-    // First AMRAP — sets the PR at ~269
+    // First AMRAP  -  sets the PR at ~269
     await appendSetLog(db, {
       sessionId: session.id as number,
       index: 2,
@@ -76,7 +76,7 @@ describe('setLog + prs accessors', () => {
       prescribedReps: 5,
       actualReps: 8,
     });
-    // Second AMRAP — lower estimate
+    // Second AMRAP  -  lower estimate
     const log = await appendSetLog(db, {
       sessionId: session.id as number,
       index: 2,
@@ -174,7 +174,7 @@ describe('getSessionIdsWithPrs', () => {
 
   it('does NOT include sessions whose AMRAP did not beat the prior PR', async () => {
     const { db, session: first } = await setup();
-    // First AMRAP — sets the PR
+    // First AMRAP  -  sets the PR
     await appendSetLog(db, {
       sessionId: first.id as number,
       index: 2,
@@ -313,7 +313,7 @@ describe('undoLastWorkingSet', () => {
         actualReps: 10,
       });
     }
-    // 1 warmup: 100×5 = 500 — must be excluded.
+    // 1 warmup: 100×5 = 500  -  must be excluded.
     await appendSetLog(db, {
       sessionId: session.id as number,
       index: 0,

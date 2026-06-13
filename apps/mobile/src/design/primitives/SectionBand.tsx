@@ -20,7 +20,7 @@ const PADDING_MAP: Record<Padding, number> = {
 };
 
 /**
- * Horizontal LEDGER band — top + bottom hairlines around children.
+ * Horizontal LEDGER band  -  top + bottom hairlines around children.
  * Horizontal layout is intentionally NOT owned here; pass margins or
  * padding via `style`.
  */

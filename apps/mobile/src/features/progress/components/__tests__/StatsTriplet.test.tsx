@@ -30,7 +30,7 @@ describe('StatsTriplet', () => {
       cycle: 1,
       unitGlyph: 'lb',
     });
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getByText(' - ')).toBeTruthy();
   });
 
   it('renders em-dash for bestE1RM when 0', () => {
@@ -40,7 +40,7 @@ describe('StatsTriplet', () => {
       cycle: 1,
       unitGlyph: 'lb',
     });
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getByText(' - ')).toBeTruthy();
   });
 
   it('omits unit suffix alongside the em-dash (no spurious unit when no e1RM)', () => {
@@ -52,7 +52,7 @@ describe('StatsTriplet', () => {
     });
     // When bestE1RM is null, the suffix 'lb' should not appear next to the dash.
     // TM cell still has 'lb', so we verify the dash exists and is present.
-    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.getByText(' - ')).toBeTruthy();
   });
 
   it('renders kg glyph when unitGlyph is kg', () => {

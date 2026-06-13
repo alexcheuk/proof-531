@@ -46,7 +46,7 @@ jest.mock('@/data/queries/useSessionPrIds', () => ({
 }));
 
 const mockPrsRefetch = jest.fn(() => Promise.resolve({ data: [] }));
-// HistoryScreen now reads usePrs to derive the "best lift" badge — stub
+// HistoryScreen now reads usePrs to derive the "best lift" badge  -  stub
 // with an empty list so the badge stays hidden in existing assertions.
 jest.mock('@/data/queries/usePrs', () => ({
   usePrs: () => ({
@@ -171,7 +171,7 @@ describe('HistoryScreen', () => {
     expect(mockRefetch).toHaveBeenCalledTimes(1);
     expect(mockPrIdsRefetch).toHaveBeenCalledTimes(1);
     // Bug fix: pull-to-refresh must also refetch the PRs + settings queries
-    // that feed the best-lift chip — otherwise stale-after-refresh.
+    // that feed the best-lift chip  -  otherwise stale-after-refresh.
     expect(mockPrsRefetch).toHaveBeenCalledTimes(1);
     expect(mockSettingsRefetch).toHaveBeenCalledTimes(1);
   });

@@ -4,7 +4,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
 /**
- * Step 4 — Review the computed training maxes and commit.
+ * Step 4  -  Review the computed training maxes and commit.
  */
 import { View } from 'react-native';
 import { OnboardingShell } from '../../components/OnboardingShell/OnboardingShell';
@@ -76,7 +76,7 @@ export function Review({ enabledLifts, computed, unit, onBack, onFinish, finishi
           <Text variant="sans" weight="bold" size={13} color="ink0">
             90% of your 1RM
           </Text>
-          {` — the working number you build from. Wendler's rule of thumb: train below your max so every cycle adds weight cleanly.`}
+          {`  -  the working number you build from. Wendler's rule of thumb: train below your max so every cycle adds weight cleanly.`}
         </Text>
       </View>
     </OnboardingShell>

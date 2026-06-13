@@ -98,7 +98,7 @@ export function ProgressLiftPage({
     setLayoutTick((t) => t + 1);
   }, []);
   const currentCycleForScroll = data?.currentCycle;
-  // `layoutTick` is intentionally in the dep list — it's a re-run trigger
+  // `layoutTick` is intentionally in the dep list  -  it's a re-run trigger
   // bumped by `handleRowLayout` when row offsets arrive after first
   // paint. The void reference keeps it read so the dep is non-dead.
   useEffect(() => {

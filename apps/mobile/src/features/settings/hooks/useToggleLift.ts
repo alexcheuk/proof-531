@@ -1,5 +1,5 @@
 import { useDb } from '@/data/DbProvider';
-// Disabling a lift with an in-progress session cancels the session (Discord 1508768403) — otherwise
+// Disabling a lift with an in-progress session cancels the session (Discord 1508768403)  -  otherwise
 // Home's Begin CTA keeps redirecting to the disabled lift.
 import { cancelSession, getActiveSession } from '@/data/accessors/session';
 import { getSettings, updateSettings } from '@/data/accessors/settings';
@@ -19,7 +19,7 @@ export function useToggleLift(): (lift: Lift) => Promise<void> {
       const current = await getSettings(db);
       const next = nextEnabledLifts(current.enabledLifts, lift);
       // `nextEnabledLifts` returns the same array reference when toggling
-      // the only enabled lift — we can skip the write.
+      // the only enabled lift  -  we can skip the write.
       if (next === current.enabledLifts) return;
       const disabled = current.enabledLifts.filter((l) => !next.includes(l));
       await updateSettings(db, { enabledLifts: next });

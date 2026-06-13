@@ -33,7 +33,7 @@ export function useLiftPageState({
     const topSet = week === 4 ? tmTestSet() : prescription(week)[2];
     if (tm == null || topSet == null) return { empty: true };
 
-    // Snap in storage units, then convert for render — keeps the snap to
+    // Snap in storage units, then convert for render  -  keeps the snap to
     // the storage step (5 lb / 2.5 kg of the underlying TM row) while the
     // user sees the number in whichever unit Settings currently picks.
     const topWeightStorage = round(tm * topSet.pct, storageUnit);

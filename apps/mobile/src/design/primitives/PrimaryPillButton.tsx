@@ -27,7 +27,7 @@ export function PrimaryPillButton({
 }: PrimaryPillButtonProps) {
   const { colors } = useTheme();
   // Compose haptic + caller's onPress so the debounce wraps both. Stable per
-  // (disabled, onPress) — the hook resets its gate when this identity swaps,
+  // (disabled, onPress)  -  the hook resets its gate when this identity swaps,
   // which matches the LiveScreen CTA-position-reuse case.
   const onPressWithHaptic = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

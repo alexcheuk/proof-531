@@ -15,7 +15,7 @@ export type BbbBandProps = {
   storageUnit: Unit;
   renderUnit: Unit;
   unitGlyph: 'lb' | 'kg';
-  // Uses settings.bbbRestTargetSeconds (not restTargetSeconds) — BBB rest is shorter by design.
+  // Uses settings.bbbRestTargetSeconds (not restTargetSeconds)  -  BBB rest is shorter by design.
   bbbRestTargetSeconds?: number;
 };
 

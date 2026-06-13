@@ -12,7 +12,7 @@ import { useTheme } from '../theme';
 
 /**
  * Secondary, low-emphasis text-link button. Used wherever the design calls
- * for a centered, mono-uppercase, ink-3 / ink-2 action under a primary CTA —
+ * for a centered, mono-uppercase, ink-3 / ink-2 action under a primary CTA  -
  * "SKIP · CLOSE THE DAY", "SEE FULL RECORD →", "MAYBE LATER".
  *
  * The primitive bundles the four bits that every site was re-implementing

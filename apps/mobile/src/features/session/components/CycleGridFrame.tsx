@@ -37,7 +37,7 @@ export function CycleGridFrame({
           />
         ))}
       </Row>
-      {/* gap="xs" must match the cells row above — otherwise label columns drift from their cell groups */}
+      {/* gap="xs" must match the cells row above  -  otherwise label columns drift from their cell groups */}
       <Row gap="xs" style={{ marginTop: 10 }}>
         {DAY_LABELS.map((d) => (
           <CapsLabel key={d} size="xs" color="ink3" style={{ flex: 1, textAlign: 'center' }}>

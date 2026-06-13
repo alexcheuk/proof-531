@@ -53,7 +53,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
-describe('useLiveScreenState — bootstrap', () => {
+describe('useLiveScreenState  -  bootstrap', () => {
   beforeEach(() => {
     _resetSessionRuntimeForTests();
     mockCompleteSession.mockReset();
@@ -96,7 +96,7 @@ describe('useLiveScreenState — bootstrap', () => {
   });
 });
 
-describe('useLiveScreenState — phase transitions', () => {
+describe('useLiveScreenState  -  phase transitions', () => {
   beforeEach(() => {
     _resetSessionRuntimeForTests();
     mockCompleteSession.mockReset();

@@ -89,7 +89,7 @@ function resetStubs() {
 
 const ALL_FILTER: HistoryFilter = { kind: 'all' };
 
-/** Build a minimal Session row — only the fields the derived helpers read. */
+/** Build a minimal Session row  -  only the fields the derived helpers read. */
 function mkSession(over: Partial<Session> & { id: number; startedAt: number }): Session {
   return {
     id: over.id,

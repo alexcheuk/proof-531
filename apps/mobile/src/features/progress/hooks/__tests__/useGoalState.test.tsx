@@ -77,7 +77,7 @@ describe('useGoalState', () => {
     });
 
     // switching tm → 1rm divides by 0.9 and plate-snaps to 5 lb
-    // 270 / 0.9 = 300 — already plate-snapped
+    // 270 / 0.9 = 300  -  already plate-snapped
     expect(result.current.draftKind).toBe('1rm');
     expect(result.current.draftValue % 5).toBe(0);
     expect(result.current.draftValue).toBe(300);
@@ -92,7 +92,7 @@ describe('useGoalState', () => {
     });
 
     // switching 1rm → tm multiplies by 0.9 and plate-snaps to 5 lb
-    // 300 * 0.9 = 270 — already plate-snapped
+    // 300 * 0.9 = 270  -  already plate-snapped
     expect(result.current.draftKind).toBe('tm');
     expect(result.current.draftValue % 5).toBe(0);
     expect(result.current.draftValue).toBe(270);

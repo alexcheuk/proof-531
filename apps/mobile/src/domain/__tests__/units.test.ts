@@ -23,7 +23,7 @@ describe('round', () => {
     expect(round(58.8, 'kg')).toBe(60);
   });
 
-  it('property: idempotent — round(round(x)) === round(x)', () => {
+  it('property: idempotent  -  round(round(x)) === round(x)', () => {
     fc.assert(
       fc.property(
         fc.float({ min: 0, max: 1000, noNaN: true }),

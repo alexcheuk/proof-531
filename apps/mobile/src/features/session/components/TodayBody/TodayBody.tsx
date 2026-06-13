@@ -25,17 +25,17 @@ export type TodayBodyProps = {
   lift: Lift;
   week: Week;
   cycle: number;
-  /** Storage unit of the TM — drives the snap math. */
+  /** Storage unit of the TM  -  drives the snap math. */
   storageUnit: Unit;
   displayUnit?: Unit;
   tm: number;
-  /** Configured plate set — drives plate decomposition (bar + plate inventory). */
+  /** Configured plate set  -  drives plate decomposition (bar + plate inventory). */
   plateSet: PlateSet;
   // 1-based; defaults to 1 (first set is "next" when no progress is known)
   nextSetIndex?: 1 | 2 | 3;
-  // 0-based; defaults to [] (preview mode — nothing done yet)
+  // 0-based; defaults to [] (preview mode  -  nothing done yet)
   completedIndices?: ReadonlyArray<0 | 1 | 2>;
-  // BBB-specific rest target — NOT the working-set rest target
+  // BBB-specific rest target  -  NOT the working-set rest target
   bbbRestTargetSeconds?: number;
 };
 
@@ -186,7 +186,7 @@ export function TodayBody({
         color="ink3"
         style={{ textAlign: 'center', marginTop: spacing.xxxl, letterSpacing: 2.88 }}
       >
-        — END OF SESSION —
+        - END OF SESSION -
       </CapsLabel>
     </View>
   );

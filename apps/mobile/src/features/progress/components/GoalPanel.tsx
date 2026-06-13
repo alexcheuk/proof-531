@@ -18,12 +18,12 @@ export type GoalPanelProps = {
   minValue: number;
   // 0 = already past goal; null = unreachable within the 120-cycle lookahead
   cyclesUntilGoal: number | null;
-  // null = unset; drives the "≈ N mo at K/wk" estimate — days-only without it
+  // null = unset; drives the "≈ N mo at K/wk" estimate  -  days-only without it
   daysPerWeek: number | null;
   onKindChange: (kind: LiftGoalKind) => void;
   onValueChange: (value: number) => void;
   onDaysPerWeekChange: (daysPerWeek: number | null) => void;
-  /** `true` when no goal is persisted yet — value is a default placeholder. Steppers create the goal on first tap. */
+  /** `true` when no goal is persisted yet  -  value is a default placeholder. Steppers create the goal on first tap. */
   unset?: boolean;
   testID?: string;
 };
@@ -142,7 +142,7 @@ export function GoalPanel({
             justifyContent: 'center',
           }}
         >
-          {/* rn-line-height-ok: digit-only display (tabular-nums); '—' fallback */}
+          {/* rn-line-height-ok: digit-only display (tabular-nums); ' - ' fallback */}
           <Text
             variant="sans"
             weight="bold"
@@ -151,7 +151,7 @@ export function GoalPanel({
             numeric
             style={{ letterSpacing: -2.52, lineHeight: 56 }}
           >
-            {value > 0 ? String(value) : '—'}
+            {value > 0 ? String(value) : ' - '}
           </Text>
           <Text
             variant="mono"
@@ -230,7 +230,7 @@ export function GoalPanel({
             style={{ minWidth: 22, textAlign: 'center' }}
             testID={`${testID ?? 'goal-panel'}-dpw-value`}
           >
-            {dpw !== null ? String(dpw) : '—'}
+            {dpw !== null ? String(dpw) : ' - '}
           </Text>
           <GoalPanelStepper
             glyph="+"

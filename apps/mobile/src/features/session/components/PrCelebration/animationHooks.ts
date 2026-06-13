@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 // JS-side (setInterval) rather than Reanimated: these values drive <Text> content, not transform
-// styles. Reanimated shared values can't feed Text without useAnimatedProps — extra plumbing for
+// styles. Reanimated shared values can't feed Text without useAnimatedProps  -  extra plumbing for
 // no gain at ~16ms tick rate.
 
 export type UseTypewriterOptions = {
@@ -70,11 +70,11 @@ export function useTypewriterTransition({
   const [shown, setShown] = useState('');
 
   // Reset to empty while inactive. Two reasons:
-  //   1. Replay correctness — without this, a settled value from a
+  //   1. Replay correctness  -  without this, a settled value from a
   //      prior run (e.g. "NEW ESTIMATED 1RM") would survive the
   //      sequence reset and cause the next activation to animate
   //      backwards to the new target.
-  //   2. Consistent type-in feel — every activation starts from a
+  //   2. Consistent type-in feel  -  every activation starts from a
   //      clean slate and types forward.
   useEffect(() => {
     if (!active) setShown('');
@@ -119,7 +119,7 @@ export type UseCountUpOptions = {
 };
 
 // Ease-in-out cubic: pure ease-out felt front-loaded (darted away, crawled to the new value).
-// Ease-in-out gives a deliberate ramp on both ends — reads as "number changing" not "arriving".
+// Ease-in-out gives a deliberate ramp on both ends  -  reads as "number changing" not "arriving".
 export function useCountUp({
   from,
   to,

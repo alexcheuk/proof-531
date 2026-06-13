@@ -12,7 +12,7 @@ function scrollEvent(x: number): NativeSyntheticEvent<NativeScrollEvent> {
   } as unknown as NativeSyntheticEvent<NativeScrollEvent>;
 }
 
-describe('useLiftCarouselSync — onMomentumScrollEnd', () => {
+describe('useLiftCarouselSync  -  onMomentumScrollEnd', () => {
   it('dispatches setSelectedLift when scroll lands on a new page', () => {
     const setSelectedLift = jest.fn();
     const { result } = renderHook(() =>
@@ -86,7 +86,7 @@ describe('useLiftCarouselSync — onMomentumScrollEnd', () => {
   });
 });
 
-describe('useLiftCarouselSync — listRef effect', () => {
+describe('useLiftCarouselSync  -  listRef effect', () => {
   it('returns a listRef the caller can attach to a FlatList', () => {
     const { result } = renderHook(() =>
       useLiftCarouselSync({
@@ -119,7 +119,7 @@ describe('useLiftCarouselSync — listRef effect', () => {
       result.current.listRef as { current: { scrollToIndex: typeof scrollToIndex } | null }
     ).current = { scrollToIndex };
     // Re-render WITHOUT changing selectedLift to flush the now-attached
-    // ref through the effect — this is the "first run with a non-null
+    // ref through the effect  -  this is the "first run with a non-null
     // ref" the hook now treats as the initial sync and SKIPS, matching
     // real-mount semantics (FlatList already positioned at the index).
     rerender({ selectedLift: 'bench' });

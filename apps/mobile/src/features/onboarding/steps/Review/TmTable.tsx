@@ -16,7 +16,7 @@ export type TmTableProps = {
 /**
  * The "Training maxes" four-column table on the onboarding Review step.
  * Header row + one row per enabled lift + a trailing "all values in …"
- * caption. Pure presentational composition shell — see TmTableRow /
+ * caption. Pure presentational composition shell  -  see TmTableRow /
  * TmTableHeaderCell for the cell rendering.
  */
 export function TmTable({ enabledLifts, computed, unit }: TmTableProps) {

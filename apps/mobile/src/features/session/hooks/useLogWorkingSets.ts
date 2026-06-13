@@ -71,7 +71,7 @@ export function useLogWorkingSets({
         setPhase('complete');
         return;
       }
-      // Advance setIndex locally — the query refetch above will eventually
+      // Advance setIndex locally  -  the query refetch above will eventually
       // confirm the same value, but local advance keeps the transition
       // synchronous and the UI in step with the user's tap.
       setSetIndex((loggedIndex + 1) as WorkingSetIndex);
@@ -157,7 +157,7 @@ export function useLogWorkingSets({
           actualReps: reps,
         });
         await queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) });
-        // TM test is a single-set session — no rest, no celebration. Set the
+        // TM test is a single-set session  -  no rest, no celebration. Set the
         // snapshot for any chrome that reads `lastLogged` and immediately
         // complete the session.
         setLastLogged({

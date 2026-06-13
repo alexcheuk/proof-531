@@ -29,7 +29,7 @@ describe('LiveCtaButton', () => {
     expect(handlers.onAdvanceFromRest).toHaveBeenCalledTimes(1);
   });
 
-  it('rest + final set ahead → "Final set" (the prior "Complete session" copy was a UX bug — pressing it advances to set 3, not the receipt)', () => {
+  it('rest + final set ahead → "Final set" (the prior "Complete session" copy was a UX bug  -  pressing it advances to set 3, not the receipt)', () => {
     const screen = renderCta(
       <LiveCtaButton phase="rest" setIndex={2} isAmrap={false} isTmTest={false} {...handlers} />,
     );
@@ -74,7 +74,7 @@ describe('LiveCtaButton', () => {
   it('renders null on an unrecognised phase', () => {
     const screen = renderCta(
       <LiveCtaButton
-        // @ts-expect-error — phase "bogus" is intentionally outside the union
+        // @ts-expect-error  -  phase "bogus" is intentionally outside the union
         phase="bogus"
         setIndex={0}
         isAmrap={false}

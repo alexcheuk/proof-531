@@ -19,7 +19,7 @@ export type SetLog = {
   estimated1RM?: number;
 };
 
-// id is always 1 — singleton row in the settings Drizzle table.
+// id is always 1  -  singleton row in the settings Drizzle table.
 export interface Settings {
   id: 1;
   storageUnit: Unit;

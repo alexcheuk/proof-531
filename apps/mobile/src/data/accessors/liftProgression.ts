@@ -37,7 +37,7 @@ export type CompletedSessionWithAmrap = {
    * AMRAP set for weeks 1–3 (`kind === 'amrap'`). On week-4 TM-test sessions
    * (post-migration) the same field surfaces the tm-test top set
    * (`kind === 'tm-test'`). Legacy `'working'` deload sessions still resolve
-   * to `null` — they had no AMRAP and predate the TM test.
+   * to `null`  -  they had no AMRAP and predate the TM test.
    *
    * Field name unchanged for backward compatibility with the consumer; the
    * Progress grid branches on the inner `kind` to pick the right cell shape.
@@ -130,7 +130,7 @@ export async function getCompletedSessionsWithAmrapForLift(
     }
     // Replace the existing top set when this row's e1RM is strictly higher.
     // tm-test rows carry `estimated1RM === null` (no PR semantics), so the
-    // existing amrap row wins ties — keeping the AMRAP preference on the
+    // existing amrap row wins ties  -  keeping the AMRAP preference on the
     // pathological "both kinds logged for one session" path. A session that
     // only logged a tm-test stores it via the !existing branch above.
     if (

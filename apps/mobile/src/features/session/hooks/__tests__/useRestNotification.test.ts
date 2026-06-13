@@ -65,7 +65,7 @@ describe('useRestNotification (iOS path)', () => {
     });
     unmount();
     // The promise resolved before unmount, so the ref was set before cleanup ran.
-    // Cleanup cancels with the resolved id — the notification is still cleaned up.
+    // Cleanup cancels with the resolved id  -  the notification is still cleaned up.
     expect(mockCancel).toHaveBeenCalledWith('late-id');
   });
 });

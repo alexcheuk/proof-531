@@ -6,7 +6,7 @@ export type SignOffRowProps = {
   liftLabel: string;
 };
 
-/** "On the squat — filed · 531 · ledger" sign-off bar at the bottom. */
+/** "On the squat  -  filed · 531 · ledger" sign-off bar at the bottom. */
 export function SignOffRow({ liftLabel }: SignOffRowProps) {
   return (
     <Row

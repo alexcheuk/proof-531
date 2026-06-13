@@ -4,7 +4,7 @@ import { useTheme } from '../theme';
 import type { SpacingToken } from '../tokens';
 
 /**
- * Row primitive — the canonical horizontal flex container. Replaces the
+ * Row primitive  -  the canonical horizontal flex container. Replaces the
  * dozens of inline `{ flexDirection: 'row', alignItems: 'center', gap: ... }`
  * style objects scattered across features.
  *
@@ -22,7 +22,7 @@ export type RowProps = {
     | 'space-between'
     | 'space-around'
     | 'space-evenly';
-  /** Gap between children — pass a spacing token. */
+  /** Gap between children  -  pass a spacing token. */
   gap?: SpacingToken;
   /** Allow wrapping when content exceeds row width. */
   wrap?: boolean;

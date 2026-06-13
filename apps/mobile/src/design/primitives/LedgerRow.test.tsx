@@ -56,7 +56,7 @@ describe('LedgerRow', () => {
       </LedgerRow>,
     );
     const node = getByTestId('row');
-    // The non-pressable branch renders a plain View — no onPress prop is forwarded.
+    // The non-pressable branch renders a plain View  -  no onPress prop is forwarded.
     expect(node.props.onPress).toBeUndefined();
     expect(node.props.accessibilityState).toEqual({ disabled: true });
   });

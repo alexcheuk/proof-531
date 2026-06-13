@@ -7,7 +7,7 @@ import { useTheme } from '../theme';
  * Sticky bottom CTA strip. Houses a primary action element passed as
  * `children` on Today, Live, SessionComplete, and onboarding screens.
  *
- * Surface: `colors.bg0`. Positioning is intentionally NOT owned here — the
+ * Surface: `colors.bg0`. Positioning is intentionally NOT owned here  -  the
  * caller decides whether to place CtaBar at the bottom via
  * `position: 'absolute'`, `mt-auto`-style flex, or as the last child of a
  * column.

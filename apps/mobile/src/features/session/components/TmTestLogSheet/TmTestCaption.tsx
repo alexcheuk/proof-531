@@ -19,7 +19,7 @@ export type TmTestCaptionProps = {
  *   3..4 → "Suggests hold · TM is honest"
  *   ≥5   → "Suggests +N {unit} · TM was conservative"
  *
- * Pure derivation of `tmAdjustmentSuggestion`. No haptics, no animation —
+ * Pure derivation of `tmAdjustmentSuggestion`. No haptics, no animation  -
  * the brief is emphatic that crossing the rep band is information, not a
  * "PR moment".
  */

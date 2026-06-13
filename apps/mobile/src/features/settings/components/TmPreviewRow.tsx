@@ -12,7 +12,7 @@ export type TmPreviewRowProps = {
   oldUnit: Unit;
   newValue: number;
   targetUnit: Unit;
-  /** Index in the parent list — drives the top hairline (skip on the first row). */
+  /** Index in the parent list  -  drives the top hairline (skip on the first row). */
   index: number;
 };
 
@@ -33,7 +33,7 @@ export function TmPreviewRow({
     borderTopWidth: index === 0 ? 0 : 1,
     borderTopColor: colors.line,
   };
-  // Inline glyph spans nested inside Text — must be RNText for inline text flow.
+  // Inline glyph spans nested inside Text  -  must be RNText for inline text flow.
   // letterSpacing 1.26 is intentionally tighter than CapsLabel presets.
   const oldGlyphStyle: TextStyle = {
     fontFamily: `${type.mono}-SemiBold`,

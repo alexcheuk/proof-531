@@ -4,7 +4,7 @@ import { useTheme } from '../theme';
 import type { ColorToken, SpacingToken } from '../tokens';
 
 /**
- * Bordered container primitive — replaces the recurring `borderWidth: 1,
+ * Bordered container primitive  -  replaces the recurring `borderWidth: 1,
  * borderColor: colors.line, padding...` blobs scattered across feature
  * components.
  *
@@ -14,7 +14,7 @@ import type { ColorToken, SpacingToken } from '../tokens';
  *   - `dashed`   Polaroid-style dashed border (used in callouts)
  *
  * `borders` controls which sides get a 1px stroke:
- *   - `all`        all four sides (default — typical card)
+ *   - `all`        all four sides (default  -  typical card)
  *   - `topBottom`  band-style stroke top + bottom
  *   - `bottom`     hairline bottom only (anchors under an existing top border)
  */
@@ -57,7 +57,7 @@ export function Card({
     cardStyle.borderBottomWidth = 1;
     cardStyle.borderColor = borderColor;
   } else {
-    // bottom — hairline anchor below the card, no top/sides. Use this
+    // bottom  -  hairline anchor below the card, no top/sides. Use this
     // when the card sits directly under another border (e.g. a TitleBlock)
     // and a top hairline would double the line.
     cardStyle.borderBottomWidth = 1;

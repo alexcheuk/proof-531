@@ -47,7 +47,7 @@ export function trainingMaxFrom(oneRM: number, unit: Unit): number {
   return round(oneRM * 0.9, unit);
 }
 
-// Non-finite input falls back to '0' — NaN/Infinity must not reach the UI.
+// Non-finite input falls back to '0'  -  NaN/Infinity must not reach the UI.
 export function formatWeight(value: number): string {
   if (!Number.isFinite(value)) return '0';
   const rounded = Math.round(value);

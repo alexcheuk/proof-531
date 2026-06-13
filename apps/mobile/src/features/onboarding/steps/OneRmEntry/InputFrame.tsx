@@ -13,7 +13,7 @@ export type InputFrameProps = {
 };
 
 /**
- * Mode-aware input cluster — single weight stepper in `direct` mode,
+ * Mode-aware input cluster  -  single weight stepper in `direct` mode,
  * weight + reps in `calculate` mode. The mode toggle itself lives in the
  * parent so it can sit above this frame.
  */

@@ -4,7 +4,7 @@ import { Text as RNText, type TextStyle } from 'react-native';
 import { PAPER_45, PAPER_55, PAPER_65 } from './paperTints';
 
 // Lives next to the certificate (not in src/design/primitives/) because the paper tints are
-// specific to the inverted-ink panel — no consumers outside this directory.
+// specific to the inverted-ink panel  -  no consumers outside this directory.
 export type PaperCapsTextProps = {
   children: ReactNode;
   /** Visual weight bucket. */

@@ -6,7 +6,7 @@ export function goalStep(unit: Unit): number {
 }
 
 /**
- * Bump granularity for the default-goal seed — picks a round number so the
+ * Bump granularity for the default-goal seed  -  picks a round number so the
  * initial goal lands on a recognisable target weight (225, 250, … in lbs;
  * 100, 110, … in kg) rather than a fractional step.
  */

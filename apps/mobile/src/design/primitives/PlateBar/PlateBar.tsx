@@ -4,7 +4,7 @@ import { PerSideCaption } from './PerSideCaption';
 import { PlateRect } from './PlateRect';
 import { groupPlates, sizeFor } from './plateMath';
 
-// Pure-presentational — plate-size ramp and grouping rules live in ./plateMath.ts for independent unit-testing.
+// Pure-presentational  -  plate-size ramp and grouping rules live in ./plateMath.ts for independent unit-testing.
 export type PlateBarProps = {
   /** Plates per side, heaviest first (greedy decomposition order). */
   perSide: readonly number[];
@@ -37,8 +37,8 @@ export function PlateBar({
 
   const perSideTotal = perSide.reduce((sum, p) => sum + p, 0);
   const accessibilityLabel = hasPlates
-    ? `${weight} ${unitGlyph} loaded — bar plus ${perSideTotal} ${unitGlyph} per side`
-    : `${weight} ${unitGlyph} loaded — bar only`;
+    ? `${weight} ${unitGlyph} loaded  -  bar plus ${perSideTotal} ${unitGlyph} per side`
+    : `${weight} ${unitGlyph} loaded  -  bar only`;
 
   const grouped = groupPlates(perSide);
 

@@ -1,5 +1,5 @@
 /**
- * Banner visibility + restart wiring. Mocks `useOtaStatus` directly — the
+ * Banner visibility + restart wiring. Mocks `useOtaStatus` directly  -  the
  * underlying expo-updates plumbing is tested by Expo itself.
  */
 import { ThemeProvider } from '@/design/theme';

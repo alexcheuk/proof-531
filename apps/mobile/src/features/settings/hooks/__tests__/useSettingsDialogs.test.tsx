@@ -34,7 +34,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
-describe('useSettingsDialogs — TM editor', () => {
+describe('useSettingsDialogs  -  TM editor', () => {
   it('opens and closes the TM editor', () => {
     const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
     expect(result.current.editingLift).toBeNull();
@@ -47,7 +47,7 @@ describe('useSettingsDialogs — TM editor', () => {
   });
 });
 
-describe('useSettingsDialogs — unit migration', () => {
+describe('useSettingsDialogs  -  unit migration', () => {
   beforeEach(() => {
     mockMigrate.mockReset();
   });
@@ -98,7 +98,7 @@ describe('useSettingsDialogs — unit migration', () => {
   });
 });
 
-describe('useSettingsDialogs — lift rollback', () => {
+describe('useSettingsDialogs  -  lift rollback', () => {
   beforeEach(() => {
     mockRollback.mockReset();
   });
@@ -169,7 +169,7 @@ describe('useSettingsDialogs — lift rollback', () => {
   });
 });
 
-describe('useSettingsDialogs — destructive reset', () => {
+describe('useSettingsDialogs  -  destructive reset', () => {
   beforeEach(() => {
     mockReset.mockReset();
     mockReplace.mockReset();

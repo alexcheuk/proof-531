@@ -11,7 +11,7 @@
  *
  * Every cross-cutting dependency is mocked so the screen renders headless
  * under jest-expo. The bottom-sheet mock follows the pattern from
- * `apps/mobile/src/design/primitives/Sheet.test.tsx` — render children
+ * `apps/mobile/src/design/primitives/Sheet.test.tsx`  -  render children
  * directly inside a Fragment.
  */
 import { ThemeProvider } from '@/design/theme';
@@ -73,7 +73,7 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
   // Sheet primitive now drives open/close imperatively (snapToIndex /
   // close via ref). The BottomSheet is always mounted in the tree, so
-  // the mock always renders children — the Sheet wrapper itself gates
+  // the mock always renders children  -  the Sheet wrapper itself gates
   // visibility with a conditional render inside `BottomSheetView` based
   // on the `open` prop, which the test stub forwards via a sentinel.
   return {
@@ -270,7 +270,7 @@ describe('LiveScreen', () => {
     mockSettingsState.error = null;
     mockSetLogsState.data = [];
     // The session-runtime snapshot lives at module scope so it would leak
-    // between tests — explicitly clear it so each case starts from a clean
+    // between tests  -  explicitly clear it so each case starts from a clean
     // boot state.
     _resetSessionRuntimeForTests();
   });
@@ -308,7 +308,7 @@ describe('LiveScreen', () => {
       expect(mockAppendSetLog).toHaveBeenCalledTimes(1);
     });
 
-    // Rest phase mounted — RestTimer now visible.
+    // Rest phase mounted  -  RestTimer now visible.
     await waitFor(() => {
       expect(screen.getByTestId('rest-phase')).toBeTruthy();
     });
@@ -320,7 +320,7 @@ describe('LiveScreen', () => {
     expect(mockNotificationAsync).toHaveBeenCalledWith('warning');
     expect(mockNotificationAsync).toHaveBeenCalledTimes(1);
 
-    // Advance to T-0 (90s elapsed) — "done" alarm haptic fires (Error type
+    // Advance to T-0 (90s elapsed)  -  "done" alarm haptic fires (Error type
     // is a naturally multi-pulse alarm feel, stronger than Success).
     act(() => {
       jest.advanceTimersByTime(3_000);
@@ -386,7 +386,7 @@ describe('LiveScreen', () => {
       expect.arrayContaining([['activeSession'], ['sessions'], ['session', 7]]),
     );
 
-    // Router replaced to the BBB prompt screen — the intermediate step
+    // Router replaced to the BBB prompt screen  -  the intermediate step
     // between AMRAP completion and the receipt (Discord ask
     // 1508265973554348032). The user closes the day from there.
     await waitFor(() => {
@@ -439,7 +439,7 @@ describe('LiveScreen', () => {
       fireEvent.press(screen.getByTestId('cta-advance-rest'));
     });
 
-    // Set 2 is AMRAP on week 1 — CTA is "Log AMRAP".
+    // Set 2 is AMRAP on week 1  -  CTA is "Log AMRAP".
     expect(screen.getByTestId('cta-log-amrap')).toBeTruthy();
 
     await act(async () => {
@@ -453,7 +453,7 @@ describe('LiveScreen', () => {
   });
 
   it('redirects to "/" when the session row no longer exists', async () => {
-    // getSession returns null (not undefined) for missing rows — the exit
+    // getSession returns null (not undefined) for missing rows  -  the exit
     // gate must handle null specifically.
     mockSessionState.data = null;
     mockSessionState.isLoading = false;
@@ -489,7 +489,7 @@ describe('LiveScreen', () => {
 
   it('uses settings.restTargetSeconds for the rest countdown (warning haptic fires at T-3s from the new target)', async () => {
     // Bump the rest target to 120s. The warning haptic should fire at T-3s,
-    // i.e. after 117s advance — not after 87s (which is the default 90s case).
+    // i.e. after 117s advance  -  not after 87s (which is the default 90s case).
     mockSettingsState.data = {
       id: 1,
       storageUnit: 'lbs',
@@ -557,7 +557,7 @@ describe('LiveScreen', () => {
       await Promise.resolve();
     });
 
-    // Set 3 on week 1 is AMRAP — the CTA should be the AMRAP one, proving
+    // Set 3 on week 1 is AMRAP  -  the CTA should be the AMRAP one, proving
     // setIndex bootstrapped to 2 (not 0).
     expect(screen.getByTestId('cta-log-amrap')).toBeTruthy();
     // The working-set CTA must NOT be rendered (we'd be at set 0 if state
@@ -566,7 +566,7 @@ describe('LiveScreen', () => {
   });
 
   it('resume regression: bootstrap with all 3 logs auto-completes the session', async () => {
-    // Edge case — session left in_progress with all three slots filled
+    // Edge case  -  session left in_progress with all three slots filled
     // (e.g. completeSession write was interrupted). Resume should call
     // completeSession + transition to the SessionComplete screen rather
     // than re-prompting any set.

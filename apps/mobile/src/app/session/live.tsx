@@ -3,7 +3,7 @@ import { parseRouteId } from '@/lib/parseRouteId';
 import { useLocalSearchParams } from 'expo-router';
 
 /**
- * Thin route shell — parses `sessionId` from the query string and hands it to
+ * Thin route shell  -  parses `sessionId` from the query string and hands it to
  * the feature component. Invalid/missing renders nothing; the Today CTA is
  * the only sanctioned entry point.
  */

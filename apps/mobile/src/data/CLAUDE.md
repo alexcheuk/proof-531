@@ -12,10 +12,10 @@
 
 ## What lives here
 
-- `DbProvider.tsx` — React context that boots the Drizzle client, runs migrations, and exposes `useDb()`.
-- `accessors/` — raw read/write functions (e.g. `createSession`, `setTrainingMax`, `getSetLogs`).
-- `drizzle/` — SQLite client, schema, migrations, and the `runMigrations` boot function.
-- `queries/` — TanStack Query hooks (e.g. `useSession`, `usePrs`, `useSettings`). Each file exports one hook + its query key constant.
+- `DbProvider.tsx`  -  React context that boots the Drizzle client, runs migrations, and exposes `useDb()`.
+- `accessors/`  -  raw read/write functions (e.g. `createSession`, `setTrainingMax`, `getSetLogs`).
+- `drizzle/`  -  SQLite client, schema, migrations, and the `runMigrations` boot function.
+- `queries/`  -  TanStack Query hooks (e.g. `useSession`, `usePrs`, `useSettings`). Each file exports one hook + its query key constant.
 
 ## Query key conventions
 
@@ -31,7 +31,7 @@ After a mutation that changes TMs, call `queryClient.invalidateQueries({ queryKe
 
 ## Testing
 
-Accessor tests live in `accessors/__tests__/` and run against an in-memory `better-sqlite3` driver (not the Expo runtime). The `freshDb()` test helper creates a clean schema for each test. No mocking of Drizzle — tests hit the real query API.
+Accessor tests live in `accessors/__tests__/` and run against an in-memory `better-sqlite3` driver (not the Expo runtime). The `freshDb()` test helper creates a clean schema for each test. No mocking of Drizzle  -  tests hit the real query API.
 
 Query hooks are tested by mocking the accessor layer at the module boundary.
 

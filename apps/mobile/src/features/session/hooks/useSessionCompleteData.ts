@@ -17,7 +17,7 @@ import { useMemo } from 'react';
 export type SessionCompleteData = {
   ready: boolean;
   loading: boolean;
-  // 'in_progress' is not bounced — it's a transient cache fluke the next refetch resolves (see Discord 1508935260).
+  // 'in_progress' is not bounced  -  it's a transient cache fluke the next refetch resolves (see Discord 1508935260).
   cancelled: boolean;
   missing: boolean;
   view: SessionCompleteView | null;
@@ -61,7 +61,7 @@ export type SessionCompleteView = {
   // one-shot `recordMiss` and the MissCorrectionCard surface. The D4 exclusion
   // is structural: `isTmTestSession` sessions never set this true.
   amrapIsMiss: boolean;
-  /** Current TM in display units — the MissResetSheet's Current/New TM math. */
+  /** Current TM in display units  -  the MissResetSheet's Current/New TM math. */
   tmDisplay: number;
 };
 
@@ -71,7 +71,7 @@ export function useSessionCompleteData(sessionId: number): SessionCompleteData {
   const settingsQuery = useSettings();
   const session = sessionQuery.data;
   const liftForQuery = session ? (session.lift as Lift) : null;
-  // `prs` alone reports the CURRENT best — and `appendSetLog` has already
+  // `prs` alone reports the CURRENT best  -  and `appendSetLog` has already
   // upserted it to this session's e1RM by the time we mount. Query the
   // prior best directly (max estimated1RM across other completed-session
   // AMRAP rows for the same lift) so the certificate can show a real delta.
@@ -132,7 +132,7 @@ export function deriveView({
   const isTmTestSession = tmTestLog !== null;
   const hasPR = workingLogs.some((l) => l.isPR === true);
 
-  // Date stamp parts — `endedAt` is set on the happy path.
+  // Date stamp parts  -  `endedAt` is set on the happy path.
   const stampTs = session.endedAt ?? null;
   const stampDate = stampTs ? new Date(stampTs) : null;
   const stampParts = stampDate
@@ -144,7 +144,7 @@ export function deriveView({
       }${stampParts.dateLine.slice(1).toLowerCase()}`
     : 'Today';
 
-  // e1RM — derived from the AMRAP log when present; otherwise the heaviest
+  // e1RM  -  derived from the AMRAP log when present; otherwise the heaviest
   // Epley estimate across working sets. Round once for display.
   const amrapLog = workingLogs.find((l) => l.kind === 'amrap');
   const newE1RMStorage =
@@ -175,7 +175,7 @@ export function deriveView({
   const workingVolumeStorage = volumeOfWorkingSets(workingLogs);
   const workingVolume = Math.round(convertWeight(workingVolumeStorage, storageUnit, renderUnit));
 
-  // BBB rollup — the prompt screen writes 5 `kind: 'bbb'` rows on
+  // BBB rollup  -  the prompt screen writes 5 `kind: 'bbb'` rows on
   // "Mark complete" (loop-008). Each row carries the same
   // prescribedWeight (50% TM in storage units); the first row's weight
   // is the canonical BBB weight for this session.
@@ -184,7 +184,7 @@ export function deriveView({
   const bbbWeightStorageRow = bbbLogs[0]?.prescribedWeight ?? 0;
   const bbbWeightDisplay = convert(bbbWeightStorageRow, storageUnit, renderUnit);
 
-  // TM Test rollup — when present, drives the week-4 receipt + adjustment
+  // TM Test rollup  -  when present, drives the week-4 receipt + adjustment
   // surface in place of the standard PR / receipt / adjust-tm chrome.
   const tmTestReps = tmTestLog?.actualReps ?? 0;
   const tmTestWeightStorage = tmTestLog?.prescribedWeight ?? 0;
@@ -193,17 +193,17 @@ export function deriveView({
     ? tmAdjustmentSuggestion(tmTestReps, lift, renderUnit)
     : null;
 
-  // Missed-rep classification — only the AMRAP row on a non-TM-test session.
+  // Missed-rep classification  -  only the AMRAP row on a non-TM-test session.
   // A D4 (tm-test) session has no AMRAP row and is excluded here AND at the
   // call site (the card lives in the non-TM-test branch).
   const amrapIsMiss =
     !isTmTestSession &&
     amrapLog !== undefined &&
     classifyAmrapMiss(amrapLog.actualReps, amrapLog.prescribedReps) === 'miss';
-  // Current TM in display units — the snapshot stored with the session.
+  // Current TM in display units  -  the snapshot stored with the session.
   const tmDisplay = convert(session.trainingMaxSnapshot, storageUnit, renderUnit);
 
-  // Cycle position math — falls back to 4-lift defaults if settings haven't
+  // Cycle position math  -  falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
   // grid ceiling cannot disagree.
   const enabledLifts = settingsData?.enabledLifts ?? [...LIFTS];

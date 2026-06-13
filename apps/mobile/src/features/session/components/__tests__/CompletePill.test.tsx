@@ -13,7 +13,7 @@ jest.mock('expo-haptics', () => ({
 describe('CompletePill', () => {
   it('renders the complete session label', () => {
     const screen = wrap(<CompletePill onPress={() => {}} />);
-    // textTransform: 'uppercase' is a style prop — the underlying string is lowercase
+    // textTransform: 'uppercase' is a style prop  -  the underlying string is lowercase
     expect(screen.getByText('Complete session')).toBeTruthy();
   });
 

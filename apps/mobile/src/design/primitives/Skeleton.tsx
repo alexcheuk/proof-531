@@ -7,18 +7,18 @@ import { useTheme } from '../theme';
  * subtly-inked rectangle so the first paint feels intentional.
  *
  * Static (no pulse animation). The skeleton typically flashes for <300ms
- * before real content swaps in — a pulse over that window reads as visual
+ * before real content swaps in  -  a pulse over that window reads as visual
  * noise, not as motion. The fixed-opacity treatment also keeps the test
  * surface free of Reanimated runtime dependencies. Tone defaults to the
  * hairline `line` token so it disappears against the paper bg while still
  * hinting at structure.
  */
 export type SkeletonProps = {
-  /** Width — number (px) or percentage string. */
+  /** Width  -  number (px) or percentage string. */
   width?: number | `${number}%`;
   /** Height in px. Defaults to 12. */
   height?: number;
-  /** Visual tone — defaults to the hairline `line` token. */
+  /** Visual tone  -  defaults to the hairline `line` token. */
   tone?: 'line' | 'lineStrong';
   testID?: string;
   style?: StyleProp<ViewStyle>;

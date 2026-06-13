@@ -1,5 +1,5 @@
 /**
- * Behavioral test for SetRow — the working-set row on Today.
+ * Behavioral test for SetRow  -  the working-set row on Today.
  *
  * Covers the four visual states the row encodes via props:
  *   - default (un-done, not-next): index "01", pct, no badge
@@ -109,7 +109,7 @@ describe('SetRow', () => {
         testID="amrap-up-next"
       />,
     );
-    // The label wraps everything the visual row encodes — index +
+    // The label wraps everything the visual row encodes  -  index +
     // state, weight + reps + amrap flag, and the % of TM. Plain words
     // so VoiceOver / TalkBack reads it as a sentence.
     const labelled = screen.UNSAFE_root.findByProps({

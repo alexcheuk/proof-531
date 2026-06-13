@@ -68,7 +68,7 @@ describe('PlateBar', () => {
     expect(widthOf(getByTestId('pb-plate-l-0'))).toBe(16);
   });
 
-  it('PER SIDE row renders in full variant — groups equal adjacent plates with grouped count', () => {
+  it('PER SIDE row renders in full variant  -  groups equal adjacent plates with grouped count', () => {
     const { getByTestId, getByText, getAllByText } = wrap(
       <PlateBar testID="pb" perSide={[45, 45, 25]} unitGlyph="lb" weight={185} />,
     );
@@ -77,7 +77,7 @@ describe('PlateBar', () => {
     expect(getByText('PER SIDE')).toBeTruthy();
     // Two 45s collapse to "2× " + "45"; one 25 stays as a bare "25". The
     // weight numerics appear both as in-plate stamps AND in the PER SIDE
-    // numerics — `getAllByText` confirms each shows up at least once.
+    // numerics  -  `getAllByText` confirms each shows up at least once.
     expect(getByText(/^2×/)).toBeTruthy();
     expect(getAllByText('45').length).toBeGreaterThanOrEqual(1);
     expect(getAllByText('25').length).toBeGreaterThanOrEqual(1);
@@ -107,7 +107,7 @@ describe('PlateBar', () => {
     );
     expect(getByTestId('pb-caption')).toBeTruthy();
     expect(getByText('PER SIDE')).toBeTruthy();
-    expect(getByText('—')).toBeTruthy();
+    expect(getByText(' - ')).toBeTruthy();
   });
 
   it('accessibilityLabel includes weight and unitGlyph (loaded with plates)', () => {

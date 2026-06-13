@@ -1,4 +1,4 @@
-// Excludes the current session because appendSetLog already overwrote the prs row — querying prs alone gives delta=0.
+// Excludes the current session because appendSetLog already overwrote the prs row  -  querying prs alone gives delta=0.
 import { useQuery } from '@tanstack/react-query';
 import type { Lift } from '../../domain/types';
 import { useDb } from '../DbProvider';

@@ -38,7 +38,7 @@ describe('RestPhase', () => {
   it('renders the "Rest" headline word', () => {
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={90} />);
     // The headline RNText holds a string child plus a sibling amber-period
-    // Text — getByText can't match the bare word, so assert on the
+    // Text  -  getByText can't match the bare word, so assert on the
     // children array of the testID'd node.
     const headline = screen.getByTestId('rest-phase-headline');
     expect(headline.props.children).toEqual(expect.arrayContaining(['Rest']));
@@ -64,7 +64,7 @@ describe('RestPhase', () => {
   });
 
   it('formats the timer label as count-DOWN remaining', () => {
-    // Flipped from count-up 2026-05-24 per user feedback — lifters time
+    // Flipped from count-up 2026-05-24 per user feedback  -  lifters time
     // rests in their head as "N left", and 0:00 is the cleaner "go" cue.
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={87} />);
     // remaining 87 → 1:27 (was 90-87=3 → 0:03 under count-up framing)
@@ -86,7 +86,7 @@ describe('RestPhase', () => {
 
   it('does not render an inline undo affordance (lives on the top bar now)', () => {
     // The undo affordance was removed from RestPhase on 2026-05-24 per user
-    // feedback — undo lives on the SessionTopBar during rest, no duplicate
+    // feedback  -  undo lives on the SessionTopBar during rest, no duplicate
     // inside the rest body.
     const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={45} />);
     expect(screen.queryByTestId('rest-phase-undo')).toBeNull();

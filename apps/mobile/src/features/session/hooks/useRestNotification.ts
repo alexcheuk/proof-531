@@ -38,7 +38,7 @@ export function useRestNotification({
 }): void {
   const iosNotificationId = useRef<string | null>(null);
 
-  // iOS — schedule the single completion notification; cancel on exit.
+  // iOS  -  schedule the single completion notification; cancel on exit.
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     if (!active) return;
@@ -55,7 +55,7 @@ export function useRestNotification({
     };
   }, [active, restSeconds]);
 
-  // Android — live chronometer notification while backgrounded mid-rest.
+  // Android  -  live chronometer notification while backgrounded mid-rest.
   useEffect(() => {
     if (Platform.OS !== 'android') return;
     if (!active || sessionId == null) return;
@@ -65,7 +65,7 @@ export function useRestNotification({
     // Copy the deadline back from a displayed rest notification (cold start
     // from a tap, or a +30s pressed while the process was dead), then clear
     // the chronometer if rest is still running. If it already elapsed, leave
-    // the "Rest complete" alert up — it stays until dismissed.
+    // the "Rest complete" alert up  -  it stays until dismissed.
     const reconcile = async () => {
       const displayed = await readDisplayedDeadline();
       if (displayed != null) {

@@ -6,7 +6,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
-// Never interactive — entry into Live happens only via the bottom "Start/Resume working set N" CTA.
+// Never interactive  -  entry into Live happens only via the bottom "Start/Resume working set N" CTA.
 import { View, type ViewStyle } from 'react-native';
 
 export type SetRowProps = {
@@ -59,7 +59,7 @@ export function SetRow({
   ].join('. ');
 
   // Wrap the Row in a View just so we can attach `accessible` +
-  // `accessibilityLabel` — Row's API stays minimal (intentional). The
+  // `accessibilityLabel`  -  Row's API stays minimal (intentional). The
   // Row keeps the layout + testID (existing tests query
   // `getByTestId(...).props.style` for borderBottomWidth assertions);
   // the View is purely the a11y handle.

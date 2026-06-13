@@ -2,12 +2,12 @@ import { type StyleProp, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
 /**
- * 1px hairline divider — replaces the recurring `borderTopWidth: 1 +
+ * 1px hairline divider  -  replaces the recurring `borderTopWidth: 1 +
  * borderColor: colors.line` blobs that appear inside session bands, set
  * rows, and the session top bar.
  *
  * `tone="default"` uses the faint `line` color; `tone="strong"` uses the
- * heavier `lineStrong` — match whatever the surrounding section uses.
+ * heavier `lineStrong`  -  match whatever the surrounding section uses.
  */
 export type DividerProps = {
   tone?: 'default' | 'strong';

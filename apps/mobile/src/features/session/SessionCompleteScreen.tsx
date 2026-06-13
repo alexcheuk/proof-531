@@ -47,7 +47,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   usePrSuccessHaptic(data.view?.hasPR ?? false);
 
   // Missed-rep Program Correction. The one-shot recorder only acts on a
-  // settled non-TM-test session (D1..D3) — `ready` is false for D4 and while
+  // settled non-TM-test session (D1..D3)  -  `ready` is false for D4 and while
   // loading, so the latch never fires there. A miss increments missCount; a
   // hit clears it (literal "consecutive"). `useMissState` then drives the
   // card variant from the persisted count.
@@ -75,7 +75,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     }
   }, []);
 
-  // Stale 'in_progress' reads are NOT a bounce — the view waits for 'completed'.
+  // Stale 'in_progress' reads are NOT a bounce  -  the view waits for 'completed'.
   // Missing/cancelled sessions have no receipt to show, so send the user home.
   useEffect(() => {
     if (data.loading) return;
@@ -84,10 +84,10 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     }
   }, [data.loading, data.missing, data.cancelled, router]);
 
-  // Keep all hooks above the early return — moving them below `if (!data.view)` crashes
+  // Keep all hooks above the early return  -  moving them below `if (!data.view)` crashes
   // with "Rendered more hooks than during the previous render" when data.view resolves.
   const handleBackToHistory = useCallback(() => {
-    // router.back() is unreliable from inside the session group — can land on Today.
+    // router.back() is unreliable from inside the session group  -  can land on Today.
     goTo.history(router);
   }, [router]);
 
@@ -112,7 +112,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
     // subsequent navigate() lands cleanly.
     // See loop-memory/12-cross-stack-navigation.md.
     //
-    // `justCompleted` is the just-closed session id — the Progress screen
+    // `justCompleted` is the just-closed session id  -  the Progress screen
     // matches it against `cell.sessionId` to mount a one-shot fill-in on
     // the corresponding cell. Travels as a route param (not a module
     // singleton) so the trigger is naturally scoped to this navigation.

@@ -13,7 +13,7 @@ import { Heading } from './Heading';
 import { Sheet } from './Sheet';
 
 /**
- * Sheet shell primitive — wraps `Sheet` with the standard
+ * Sheet shell primitive  -  wraps `Sheet` with the standard
  * `[eyebrow + title] → body → primary CTA → ghost cancel` chrome shared by
  * `TmEditSheet`, `ResetConfirmSheet`, and `UnitMigrationSheet`.
  *
@@ -37,9 +37,9 @@ export type SheetLayoutProps = {
   children?: ReactNode;
   /** Wrap body content in a ScrollView (use for long previews). */
   scroll?: boolean;
-  /** Primary CTA — typically a `<PrimaryPillButton>`. */
+  /** Primary CTA  -  typically a `<PrimaryPillButton>`. */
   primary: ReactNode;
-  /** Ghost cancel button — pass `{ label, onPress, variant }`. Omit to suppress. */
+  /** Ghost cancel button  -  pass `{ label, onPress, variant }`. Omit to suppress. */
   cancel?: SheetCancelProps;
   /** True while the primary action is mid-flight; disables the cancel. */
   pending?: boolean;
@@ -48,7 +48,7 @@ export type SheetLayoutProps = {
 export type SheetCancelProps = {
   label: string;
   onPress: () => void;
-  /** `outlined` — bordered ghost (confirm/destructive sheets). `text` — bare caps mono (editors). */
+  /** `outlined`  -  bordered ghost (confirm/destructive sheets). `text`  -  bare caps mono (editors). */
   variant?: 'outlined' | 'text';
   accessibilityLabel?: string;
   testID?: string;
@@ -70,7 +70,7 @@ export function SheetLayout({
 }: SheetLayoutProps) {
   const { colors, spacing } = useTheme();
 
-  // Match AmrapLogSheet (which uses `Sheet` directly) — paper bg0 across
+  // Match AmrapLogSheet (which uses `Sheet` directly)  -  paper bg0 across
   // every sheet body so the user sees one consistent surface, not a
   // dimmed bg2 panel on the editor/confirm sheets.
   const bodyStyle: ViewStyle = {

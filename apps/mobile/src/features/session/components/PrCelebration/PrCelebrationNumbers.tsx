@@ -7,9 +7,9 @@ import { PAPER_28 } from '../PRCertificate/paperTints';
 export type PrCelebrationNumbersProps = {
   e1RMDisplay: number;
   unitGlyph: string;
-  /** Overrides "NEW ESTIMATED 1RM" — used by the intro sequence for "PREVIOUS BEST" and the backspace→retype transition. */
+  /** Overrides "NEW ESTIMATED 1RM"  -  used by the intro sequence for "PREVIOUS BEST" and the backspace→retype transition. */
   eyebrowOverride?: string;
-  /** Overrides the formatted e1RM number — used for the prior-best and count-up values during intro. */
+  /** Overrides the formatted e1RM number  -  used for the prior-best and count-up values during intro. */
   valueOverride?: string;
   /** The caller renders the border externally so scale animation on this block doesn't push it off-screen. */
   hideTopBorder?: boolean;

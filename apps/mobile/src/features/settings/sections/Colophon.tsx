@@ -12,7 +12,7 @@ export function Colophon() {
   return (
     <View style={wrap}>
       <CapsLabel size="xs" color="ink3" style={{ textAlign: 'center', letterSpacing: 2.88 }}>
-        — end of register —
+        - end of register -
       </CapsLabel>
     </View>
   );

@@ -1,4 +1,4 @@
-// settings.currentCycle / week / day are legacy columns — liftProgress.ts is now the source
+// settings.currentCycle / week / day are legacy columns  -  liftProgress.ts is now the source
 // of truth. They survive only to seed lift_progress rows for users upgrading from the
 // single-cycle build.
 import { eq } from 'drizzle-orm';
@@ -15,7 +15,7 @@ import { trainingMaxFrom } from '../../domain/units';
 import { settings } from '../drizzle/schema';
 import { type TrainingMax, setTrainingMax } from './trainingMax';
 
-// Structural-poly across sqlite drivers — see trainingMax.ts for rationale.
+// Structural-poly across sqlite drivers  -  see trainingMax.ts for rationale.
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
 type AnyDb = BaseSQLiteDatabase<any, any, any>;
 
@@ -93,7 +93,7 @@ export async function updateSettings(
   return next;
 }
 
-// Distinct from migrateStorageUnit which rewrites TM rows — this only changes the display conversion.
+// Distinct from migrateStorageUnit which rewrites TM rows  -  this only changes the display conversion.
 export async function setDisplayUnit(db: AnyDb, unit: Unit): Promise<Settings> {
   return updateSettings(db, { displayUnit: unit });
 }

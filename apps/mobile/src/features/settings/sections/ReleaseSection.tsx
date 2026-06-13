@@ -1,4 +1,4 @@
-// Hidden when running outside expo-updates (isEmbeddedLaunch + no channel/updateId) — the
+// Hidden when running outside expo-updates (isEmbeddedLaunch + no channel/updateId)  -  the
 // section would just render dashes and confuse non-OTA testers.
 import { LedgerRow, LedgerRowLabel, LedgerRowValue } from '@/design/primitives/LedgerRow';
 import { LedgerSection } from '@/design/primitives/LedgerSection';
@@ -14,8 +14,8 @@ export function ReleaseSection() {
   const sourceLabel = ota.isEmbeddedLaunch ? 'Embedded' : 'OTA';
   const sourceSub = ota.isEmbeddedLaunch ? 'shipped in build' : 'over-the-air';
 
-  const idShort = ota.updateId ? shortenId(ota.updateId) : '—';
-  const released = ota.createdAt ? formatRelativeTime(ota.createdAt.getTime()) : '—';
+  const idShort = ota.updateId ? shortenId(ota.updateId) : '--';
+  const released = ota.createdAt ? formatRelativeTime(ota.createdAt.getTime()) : '--';
 
   const checkValue = ota.isChecking
     ? 'Checking…'
@@ -69,7 +69,7 @@ export function ReleaseSection() {
   );
 }
 
-// First eight chars of the UUID — enough to disambiguate consecutive
+// First eight chars of the UUID  -  enough to disambiguate consecutive
 // publishes, short enough to fit in the value column.
 function shortenId(id: string): string {
   return id.slice(0, 8);

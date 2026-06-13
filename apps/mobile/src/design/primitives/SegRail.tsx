@@ -37,7 +37,7 @@ export function SegRail<T extends string>({
         // Borders live on each segment (top/bottom always, left always for the
         // divider/outer edge, right only on the last segment) instead of on
         // the parent. This makes the active segment's ink0 background paint
-        // flush to its own borders — eliminating the hairline gap RN sub-
+        // flush to its own borders  -  eliminating the hairline gap RN sub-
         // pixel rounding leaves when borders are on the container.
         const segmentStyle: ViewStyle = {
           flex: 1,

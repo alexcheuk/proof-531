@@ -18,11 +18,11 @@ type Options = {
  * Wrap a press handler with a debounce that swallows accidental rapid retaps
  * without sacrificing legitimate intent. Two layers:
  *
- *   1. **Time gate** — a second press within `debounceMs` of the previous
+ *   1. **Time gate**  -  a second press within `debounceMs` of the previous
  *      one is dropped. Uses `setTimeout` (not `Date.now()`) so jest fake
  *      timers can advance the window in tests.
  *
- *   2. **Identity-swap reset** — when `handler` swaps identity (a CTA
+ *   2. **Identity-swap reset**  -  when `handler` swaps identity (a CTA
  *      position flipping copy between phases, or one Pressable rendering
  *      different rows of a list), the gate resets synchronously in the
  *      render body so the legitimate follow-up press isn't swallowed.

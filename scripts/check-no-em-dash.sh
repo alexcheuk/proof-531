@@ -4,11 +4,10 @@
 # this character in any file the loop writes: use a colon, period, comma,
 # semicolon, parentheses, or a spaced hyphen instead.
 #
-# SCOPE: do-work/, loop-memory/, docs/decision-log.md
-#   These are the paths the loop actively authors. apps/mobile/src/** has
-#   ~200 pre-existing em dashes in legacy code comments; those are tracked
-#   under LOOP-EMDASH-MOBILE in the backlog and swept separately.
-#   apps/web/** is pending Alex's #needs-input ruling (WEB-SIGNOFF backlog).
+# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/
+#   apps/mobile/src/** pre-existing em dashes swept in tick-5 (LOOP-EMDASH-MOBILE).
+#   CI guard now covers that directory. apps/web/** is pending Alex's
+#   #needs-input ruling (WEB-SIGNOFF backlog).
 #
 # EXCLUDED files (intentional U+2014 usage to define or quote the rule):
 #   - do-work/SOUL.md / do-work/DOCTRINE.md  (hard-line text quotes the glyph)
@@ -25,6 +24,7 @@ violations=$(grep -rn $'\xe2\x80\x94' \
   "$ROOT/do-work" \
   "$ROOT/loop-memory" \
   "$ROOT/docs/decision-log.md" \
+  "$ROOT/apps/mobile/src" \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.md" \

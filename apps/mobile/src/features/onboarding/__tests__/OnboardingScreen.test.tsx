@@ -6,12 +6,12 @@
  * routes to `/`.
  *
  * Mocks:
- *  - `expo-router` `useRouter`           — capture `replace` calls
- *  - `expo-haptics`                       — silence native binding
- *  - `@/data/accessors/onboarding`       — capture accessor args
- *  - `@/data/DbProvider` `useDb`         — return a stub `{}`
- *  - `@/data/queries/useSettings`        — return `{ data: undefined }`
- *  - `react-native-safe-area-context`    — stable insets in jest
+ *  - `expo-router` `useRouter`            -  capture `replace` calls
+ *  - `expo-haptics`                        -  silence native binding
+ *  - `@/data/accessors/onboarding`        -  capture accessor args
+ *  - `@/data/DbProvider` `useDb`          -  return a stub `{}`
+ *  - `@/data/queries/useSettings`         -  return `{ data: undefined }`
+ *  - `react-native-safe-area-context`     -  stable insets in jest
  */
 import { ThemeProvider } from '@/design/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -71,19 +71,19 @@ describe('OnboardingScreen', () => {
   it('walks all four steps and invokes completeOnboarding with the entered data', async () => {
     const screen = renderScreen(<OnboardingScreen />);
 
-    // Step 1 — Intro. Press Begin.
+    // Step 1  -  Intro. Press Begin.
     fireEvent.press(screen.getByTestId('onboarding-begin'));
 
-    // Step 2 — PickLifts. Default state has all four lifts enabled. Press Next.
+    // Step 2  -  PickLifts. Default state has all four lifts enabled. Press Next.
     fireEvent.press(screen.getByTestId('onboarding-picklifts-next'));
 
-    // Step 3 — OneRmEntry. The wizard renders four screens, one per
+    // Step 3  -  OneRmEntry. The wizard renders four screens, one per
     // enabled lift, with sensible defaults preloaded. Press Next on each.
     for (let i = 0; i < 4; i++) {
       fireEvent.press(screen.getByTestId('onboarding-onerm-next'));
     }
 
-    // Step 4 — Review. Press Start.
+    // Step 4  -  Review. Press Start.
     await act(async () => {
       fireEvent.press(screen.getByTestId('onboarding-finish'));
     });
@@ -104,7 +104,7 @@ describe('OnboardingScreen', () => {
     expect(input.unit).toBe('lbs');
     expect(input.enabledLifts).toEqual(['squat', 'bench', 'deadlift', 'press']);
     // Epley(weight, reps): w * (1 + r/30) → plate-snapped to nearest 5 lb
-    // (same rounding as all other e1RM display sites — expedition 61 fix).
+    // (same rounding as all other e1RM display sites  -  expedition 61 fix).
     // Defaults: squat 225×5, bench 185×5, deadlift 275×5, press 115×5.
     expect(input.oneRMs.squat).toBe(265); // 262.5 → 265
     expect(input.oneRMs.bench).toBe(215); // 215.83 → 215

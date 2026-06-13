@@ -4,7 +4,7 @@ import { useTheme } from '@/design/theme';
 import { View, type ViewStyle } from 'react-native';
 
 export type CycleCompleteBandProps = {
-  /** 1-based cycle number — the one the user just finished. */
+  /** 1-based cycle number  -  the one the user just finished. */
   cycle: number;
 };
 

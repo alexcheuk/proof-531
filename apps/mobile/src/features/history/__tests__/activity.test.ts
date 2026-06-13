@@ -47,7 +47,7 @@ describe('recentActivity', () => {
     expect(out.slice(0, -1).every((b) => b === false)).toBe(true);
   });
 
-  it('respects local-day bucketing — a session 30 minutes apart on the same day collapses', () => {
+  it('respects local-day bucketing  -  a session 30 minutes apart on the same day collapses', () => {
     const sessions = [
       makeSession(TODAY_MIDNIGHT + 8 * 60 * 60 * 1000),
       makeSession(TODAY_MIDNIGHT + 8.5 * 60 * 60 * 1000),
@@ -78,7 +78,7 @@ describe('recentActivity', () => {
 
 describe('currentStreak', () => {
   it('keeps the streak alive when today is empty but yesterday is filled', () => {
-    // Grace-day rule — matches currentStreakDays.
+    // Grace-day rule  -  matches currentStreakDays.
     expect(currentStreak([true, true, false])).toBe(2);
   });
 
@@ -168,7 +168,7 @@ describe('daysSinceFirstSession', () => {
 
   it('counts inclusive day span from earliest completed session', () => {
     // Window of 60 days back from mid-May avoids the March/November DST
-    // crossings — the helper uses local-midnight setHours bucketing, which
+    // crossings  -  the helper uses local-midnight setHours bucketing, which
     // is rounded against MS arithmetic and would otherwise be off by ±1.
     const sessions = [
       makeSession(TODAY_MIDNIGHT - 60 * DAY),
@@ -189,7 +189,7 @@ describe('daysSinceFirstSession', () => {
 
 describe('currentStreakDays', () => {
   it('keeps the streak alive when today is a rest day but yesterday was trained', () => {
-    // "Don't break the chain" — the user gets one grace day before the
+    // "Don't break the chain"  -  the user gets one grace day before the
     // streak resets. Trained yesterday with nothing today → still 1.
     const sessions = [makeSession(TODAY_MIDNIGHT - 1 * DAY)];
     expect(currentStreakDays(sessions, NOW)).toBe(1);
@@ -246,7 +246,7 @@ describe('currentStreakDays', () => {
     // killing the streak at 1. Calendar-day arithmetic survives.
     //
     // In TZs without DST this test exercises the same code path with
-    // identical results — it's a no-op there, but a guard on DST locales.
+    // identical results  -  it's a no-op there, but a guard on DST locales.
     const now = new Date('2026-03-09T12:00:00');
     const sessions = [0, 1, 2].map((i) => {
       const d = new Date(now);

@@ -34,7 +34,7 @@ export async function requestNotificationPermissions(): Promise<boolean> {
   return status === 'granted';
 }
 
-// Fires even when backgrounded or screen-off — that's the point.
+// Fires even when backgrounded or screen-off  -  that's the point.
 export async function scheduleRestDoneNotification(seconds: number): Promise<string | null> {
   const Notifications = getNotifications();
   if (!Notifications) return null;

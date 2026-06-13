@@ -7,8 +7,8 @@
  *   3. `useLatestTms()` is still loading → render nothing (no flash).
  *
  * Mocks:
- *  - `expo-router` `Redirect`             — record the `href` it was called with
- *  - `@/data/queries/useLatestTm`         — drive the gate's decision
+ *  - `expo-router` `Redirect`              -  record the `href` it was called with
+ *  - `@/data/queries/useLatestTm`          -  drive the gate's decision
  */
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';

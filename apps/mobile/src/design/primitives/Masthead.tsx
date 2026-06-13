@@ -8,7 +8,7 @@ type MastheadProps = {
   rightSlot?: ReactNode;
   underline?: 'hairline' | 'none';
   /**
-   * When true, paint a subtle drop shadow under the masthead — used by
+   * When true, paint a subtle drop shadow under the masthead  -  used by
    * screens that pair with a scrollable body to signal "there is content
    * above the visible area". Pair with `useScrolledPast()` to flip on/off
    * based on the body's scroll position.
@@ -19,7 +19,7 @@ type MastheadProps = {
 };
 
 /**
- * Minimal masthead — wordmark `531. ledger` on the left, caller-supplied
+ * Minimal masthead  -  wordmark `531. ledger` on the left, caller-supplied
  * right slot (date label / cycle marker / "settings" caps) on the right.
  *
  * Ported from the PWA `masthead.tsx`. Purely presentational; no collapse,
@@ -27,7 +27,7 @@ type MastheadProps = {
  * the screen body below the masthead.
  *
  * `underline="hairline"` adds a 1px bottom rule (used on Today). Home and
- * Settings keep the masthead un-ruled — the underline appears below the
+ * Settings keep the masthead un-ruled  -  the underline appears below the
  * title block instead.
  *
  * Note: React Native does not support `alignItems: 'baseline'`, so the
@@ -51,7 +51,7 @@ export function Masthead({
     paddingTop: 12,
     // Background is opaque so the elevated shadow has something to cast
     // from. Non-elevated rendering looks identical to the previous
-    // transparent treatment — every consumer's parent paints bg0.
+    // transparent treatment  -  every consumer's parent paints bg0.
     backgroundColor: colors.bg0,
     ...(underline === 'hairline' ? { borderBottomWidth: 1, borderBottomColor: colors.line } : null),
     // zIndex keeps the (elevated) masthead above the scrollable body
@@ -60,7 +60,7 @@ export function Masthead({
     ...(elevated
       ? {
           // Subtle drop shadow under the masthead while content scrolls
-          // beneath it. The numbers are deliberately small — anything
+          // beneath it. The numbers are deliberately small  -  anything
           // heavier reads as a Material elevation, which is wrong for an
           // e-ink-paper aesthetic. Shadow extends outside the box so the
           // box geometry stays identical between elevated/non-elevated.

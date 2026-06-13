@@ -28,7 +28,7 @@ export interface HistoryScreenData {
   prIds: ReadonlySet<number>;
   /** Lifts the user has enabled in Settings, or the default four. */
   enabledLifts: ReadonlyArray<Lift>;
-  /** Lifetime totals — `filed` and `prs` counts across the FULL history. */
+  /** Lifetime totals  -  `filed` and `prs` counts across the FULL history. */
   stats: HistoryStats;
   /** 14-day activity bitmap, oldest first. */
   activity: boolean[];
@@ -99,7 +99,7 @@ export function useHistoryScreenData(filter: HistoryFilter): HistoryScreenData {
     const displayUnit = settingsQuery.data?.displayUnit ?? storageUnit;
     return pickBestLift(prsQuery.data ?? [], storageUnit, displayUnit);
   }, [prsQuery.data, settingsQuery.data]);
-  // History list shows past records — in-progress sessions belong on Home
+  // History list shows past records  -  in-progress sessions belong on Home
   // (the lift tile surfaces them with a Resume CTA). Drop them before the
   // chip-row filter runs so they never appear in the cycle-grouped list.
   const filteredRows = useMemo(

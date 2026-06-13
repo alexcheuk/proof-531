@@ -22,12 +22,12 @@ export function useLiftCarouselSync({
   setSelectedLift,
 }: UseLiftCarouselSyncOptions): UseLiftCarouselSyncResult {
   const listRef = useRef<FlatList<Lift>>(null);
-  // Skip the initial sync — `initialScrollIndex` on the FlatList already
+  // Skip the initial sync  -  `initialScrollIndex` on the FlatList already
   // positions the carousel at `selectedLift` on mount. Animating on first
   // run causes the visible "scroll back to selected lift" flash when the
   // user returns to Home from a session (HomeScreen remounts, this hook
   // re-fires, the animation plays even though we're already at the target).
-  // Only animate on selection changes that happen AFTER mount — taps on
+  // Only animate on selection changes that happen AFTER mount  -  taps on
   // LiftTabs, deep-link route param updates, etc.
   const hasMounted = useRef(false);
 
@@ -36,7 +36,7 @@ export function useLiftCarouselSync({
     hasMounted.current = true;
     // Flip the mount flag BEFORE the early returns so the ref-null path
     // (which can happen on a parent that mounts the FlatList lazily)
-    // still consumes the initial-mount allowance — otherwise the first
+    // still consumes the initial-mount allowance  -  otherwise the first
     // effect run with a usable ref would always animate, defeating the
     // fix.
     if (!wasMounted) return;
