@@ -18,6 +18,7 @@
     "@fontsource-variable/ibm-plex-sans": "^5.2.5",
     "@fontsource/ibm-plex-mono": "^5.2.5",
     "@fontsource/ibm-plex-sans-condensed": "^5.2.5",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^5.7.10",
     "typescript": "^5.8.3"
   }

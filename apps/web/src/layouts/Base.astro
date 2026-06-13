@@ -1,5 +1,6 @@
 ---
 import '~/styles/global.css';
+import Analytics from '@vercel/analytics/astro';
 import Footer from '~/components/Footer.astro';
 import TopBar from '~/components/TopBar.astro';
 
@@ -52,6 +53,7 @@ const image = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 
     <link rel="alternate" type="application/rss+xml" title="531 Strength dev blog" href="/rss.xml" />
     <slot name="head" />
+    <Analytics />
   </head>
   <body>
     {/* Skip-to-content link — first focusable element, visually hidden
