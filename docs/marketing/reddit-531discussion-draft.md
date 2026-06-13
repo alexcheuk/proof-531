@@ -1,11 +1,11 @@
 ---
 tactic: 2
 channel: r/531Discussion
-status: draft
-ready_to_post: false
-trigger: iOS live on App Store
+status: draft — UNBLOCKED on Android (Play Store live 2026-06-13)
+ready_to_post: false (awaiting Alex personal 5/3/1 history + Play Store URL fill-in)
+trigger: live store listing — MET (Google Play approved 2026-06-13)
 drafted: 2026-05-28
-last_reviewed: 2026-05-29 (Expedition 60)
+last_reviewed: 2026-06-13 (Expedition 82 — Play Store pivot)
 ---
 
 # r/531Discussion — Launch Post Draft
@@ -55,8 +55,9 @@ So I built my own.
 - No ads, no paywalls, no analytics
 - Data stays on your device in a local SQLite database
 
-Android: [GitHub Releases link — fill in]
-iOS: [App Store link — fill in on launch day]
+Android (Play Store): [Play Store link — fill in: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone]
+iOS: in App Store review, coming soon
+(also on GitHub Releases as an APK if you'd rather sideload)
 
 Not affiliated with Jim Wendler or Wendler LLC. Just a fan of the program.
 
@@ -88,7 +89,8 @@ Not affiliated with Jim Wendler. Free, local SQLite, no sign-in.
 
 ## Posting guidance
 
-- Post on iOS launch day, not before. Android-only post gets half the audience.
+- **Expedition 82 update — Android launch is the trigger, do NOT wait for iOS.** The original guidance ("post on iOS launch day, Android-only gets half the audience") was written when "Android" meant "sideload an APK from GitHub" — a real friction wall for non-technical lifters. The Play Store listing removes that wall: one-tap install from a trusted store, identical friction to any other app, and Android is ~70% of global mobile. Launch this post now on the Play Store link. Run a lighter "now on iOS too" reply/edit when the App Store clears.
+- In the body, lead the install line with the Play Store: `Android (Play Store): [link]` then `iOS: in App Store review, coming soon`. Keep the GitHub APK as an optional aside for the dev-minded, not the headline.
 - Post between 7am–10am US Eastern on a Tuesday or Wednesday (best engagement window for lifting subreddits).
 - Do not cross-post to r/weightroom the same day — stagger by at least 24 hours, use different copy (see tactic 3 draft).
 - If the post gets traction, reply to every comment within the first 2 hours. Engagement velocity matters.
