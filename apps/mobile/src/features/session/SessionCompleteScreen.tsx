@@ -1,9 +1,12 @@
+import { useClearMissState } from '@/data/queries/useClearMissState';
+import { useMissState } from '@/data/queries/useMissState';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { useTheme } from '@/design/theme';
 import { goTo } from '@/lib/routes';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,6 +15,8 @@ import { captureRef } from 'react-native-view-shot';
 import { AdjustTmCta } from './components/AdjustTmCta';
 import { CycleCompleteBand } from './components/CycleCompleteBand';
 import { CycleGrid } from './components/CycleGrid';
+import { MissCorrectionCard } from './components/MissCorrectionCard';
+import { MissResetSheet } from './components/MissResetSheet';
 import { PRCertificate } from './components/PRCertificate/PRCertificate';
 import { ReceiptCard } from './components/ReceiptCard';
 import { SessionCompleteMasthead } from './components/SessionCompleteMasthead';
@@ -23,6 +28,7 @@ import { TmApplySheet } from './components/TmApplySheet';
 import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHardwareBack } from './hooks/useHardwareBack';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
+import { useRecordMissOnce } from './hooks/useRecordMissOnce';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 import { useSessionCompleteHaptic } from './hooks/useSessionCompleteHaptic';
 
@@ -39,6 +45,25 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   useSessionCompleteHaptic(data.view !== null && data.view !== undefined);
   usePrSuccessHaptic(data.view?.hasPR ?? false);
+
+  // Missed-rep Program Correction. The one-shot recorder only acts on a
+  // settled non-TM-test session (D1..D3) — `ready` is false for D4 and while
+  // loading, so the latch never fires there. A miss increments missCount; a
+  // hit clears it (literal "consecutive"). `useMissState` then drives the
+  // card variant from the persisted count.
+  const missLift = data.view && !data.view.isTmTestSession ? data.view.lift : null;
+  useRecordMissOnce({
+    sessionId,
+    lift: missLift,
+    isMiss: data.view?.amrapIsMiss ?? false,
+    ready: data.view != null && !data.view.isTmTestSession,
+  });
+  const missState = useMissState(data.view?.lift ?? 'squat');
+  const clearMiss = useClearMissState();
+  const [missResetOpen, setMissResetOpen] = useState(false);
+  // missCount drives the card's presence + variant. While loading or on error
+  // the data is undefined → missCount 0 → no card, so the receipt never shifts.
+  const missCount = missState.data?.missCount ?? 0;
 
   const certContainerRef = useRef<View>(null);
   const handleCaptureCert = useCallback(async (): Promise<string | null> => {
@@ -193,6 +218,36 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
               bbbSetsCompleted={v.bbbSetsCompleted}
               bbbWeightDisplay={v.bbbWeightDisplay}
             />
+
+            {missCount > 0 ? (
+              <>
+                <MissCorrectionCard
+                  variant={missCount >= 2 ? 'forced' : 'choice'}
+                  tmDisplay={v.tmDisplay}
+                  unit={v.renderUnit}
+                  onReset={() => {
+                    void Haptics.selectionAsync();
+                    setMissResetOpen(true);
+                  }}
+                  {...(missCount >= 2
+                    ? {}
+                    : {
+                        onOffDay: () => {
+                          void Haptics.selectionAsync();
+                          clearMiss.mutate({ lift: v.lift });
+                        },
+                      })}
+                  animateEntrance
+                />
+                <MissResetSheet
+                  open={missResetOpen}
+                  lift={v.lift}
+                  tmDisplay={v.tmDisplay}
+                  unit={v.renderUnit}
+                  onClose={() => setMissResetOpen(false)}
+                />
+              </>
+            ) : null}
           </>
         )}
 

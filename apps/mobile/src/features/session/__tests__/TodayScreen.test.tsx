@@ -88,6 +88,36 @@ jest.mock('@/data/accessors/session', () => ({
   createSession: (...args: unknown[]) => mockCreateSession(...args),
 }));
 
+// Missed-rep Program Correction hooks. Default: no miss state so the
+// re-surface card is absent and pre-existing preview assertions stay valid.
+const todayMissState: { missCount: number | null } = { missCount: null };
+jest.mock('@/data/queries/useMissState', () => ({
+  MISS_STATE_KEY: (lift: string) => ['liftMissState', lift],
+  useMissState: () => ({
+    data: todayMissState.missCount === null ? null : { missCount: todayMissState.missCount },
+    isLoading: false,
+    error: null,
+  }),
+}));
+const mockTodayClearMiss = jest.fn();
+jest.mock('@/data/queries/useClearMissState', () => ({
+  useClearMissState: () => ({ mutate: mockTodayClearMiss }),
+}));
+jest.mock('@/data/queries/useApplyMissReset', () => ({
+  useApplyMissReset: () => ({ mutate: jest.fn(), isPending: false }),
+}));
+
+jest.mock('react-native-reanimated', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: { View: RN.View, Text: RN.Text, ScrollView: RN.ScrollView },
+    useReducedMotion: () => false,
+    FadeIn: { duration: () => ({ easing: () => ({}) }) },
+    Easing: { bezier: () => () => 0 },
+  };
+});
+
 const mockActiveSessionState: { data: unknown } = { data: undefined };
 jest.mock('@/data/queries/useActiveSession', () => ({
   useActiveSession: () => mockActiveSessionState,
@@ -137,6 +167,8 @@ describe('TodayScreen', () => {
     mockInvalidateQueries.mockClear();
     mockActiveSessionState.data = undefined;
     mockSetLogsState.data = [];
+    todayMissState.missCount = null;
+    mockTodayClearMiss.mockClear();
     mockCreateSession.mockReset();
     mockCreateSession.mockResolvedValue({
       id: 42,

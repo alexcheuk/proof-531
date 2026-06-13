@@ -42,6 +42,33 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - Missed-rep Program Correction: persisted per-lift miss state, not a per-session suggestion
+
+**Tags:** `architecture`, `feature`, `data-layer`
+**Files:** `apps/mobile/src/domain/progression.ts`, `apps/mobile/src/data/accessors/liftMissState.ts`,
+`apps/mobile/src/data/queries/useMissState.ts`, `apps/mobile/src/features/session/components/MissCorrectionCard.tsx`,
+`apps/mobile/src/features/session/components/MissResetSheet.tsx`, `apps/mobile/src/features/session/hooks/useRecordMissOnce.ts`
+
+Shipped the missed-AMRAP correction as a new persisted `lift_miss_state` table
+(one row per lift, ISO-string timestamps) rather than a transient per-session
+suggestion like the D4 `tmAdjustmentSuggestion` path. A miss increments
+`missCount`; the card surfaces on SessionComplete (the instant the miss is
+logged) and re-surfaces on Today until the lifter Applies (a 10% TM reset via
+the append-only TM history) or takes an Off-day. The reset math lives entirely
+in the pure `missResetTm(tm, unit) = round(tm * 0.9, unit)` domain helper.
+
+**Why:** a miss must outlive the SessionComplete screen. The 5/3/1 answer to a
+stall is a deliberate reset, and the lifter needs to be reminded on Today if
+they close the receipt without deciding. Persisted state is the only way the
+"second consecutive miss forces the choice" rule and the Today re-surface work.
+
+**Trade-off / what we didn't do:** considered reusing `TmApplySheet` for the
+apply flow; forked a dedicated `MissResetSheet` instead because its apply path
+(clear-miss-state-plus-write, success haptic, miss-state survives a failed
+write) could not be injected without adding a third boolean to `TmApplySheet`,
+which the composition rules disfavor. Also ruled: a D1..D3 AMRAP **hit** clears
+the counter, so "second consecutive miss" is literally consecutive.
+
 ### 2026-06-07 - Progress grid showed wrong 5/3/1 numbers: day->week projection bug + lost historical TM
 
 **Tags:** `bug-postmortem`, `domain-math`, `progress-screen`

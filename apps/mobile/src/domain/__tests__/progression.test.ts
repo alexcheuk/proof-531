@@ -3,9 +3,11 @@ import { estimateOneRm } from '../epley';
 import { tmIncrement } from '../increments';
 import {
   bestE1RMForCycle,
+  classifyAmrapMiss,
   cycleGoalEstimate,
   cyclesUntilTmGoal,
   goalTargetTm,
+  missResetTm,
   projectCycleRows,
   projectTmForCycle,
   projectTopSetWeight,
@@ -347,6 +349,107 @@ describe('tmAdjustmentSuggestion', () => {
           return r.resetPct === 0.9;
         },
       ),
+    );
+  });
+});
+
+describe('classifyAmrapMiss', () => {
+  it("returns 'miss' when actualReps < prescribedReps", () => {
+    expect(classifyAmrapMiss(2, 5)).toBe('miss');
+    expect(classifyAmrapMiss(0, 1)).toBe('miss');
+  });
+
+  it("returns 'hit' when actualReps >= prescribedReps", () => {
+    expect(classifyAmrapMiss(5, 5)).toBe('hit'); // boundary: equal is a hit
+    expect(classifyAmrapMiss(8, 5)).toBe('hit');
+  });
+
+  it('never throws on zero, negative, or large integer inputs', () => {
+    expect(() => classifyAmrapMiss(0, 0)).not.toThrow();
+    expect(() => classifyAmrapMiss(-3, 5)).not.toThrow();
+    expect(() => classifyAmrapMiss(1_000_000, 1)).not.toThrow();
+  });
+
+  it('property: monotonic in actualReps for fixed prescribed (once a hit, stays a hit)', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 0, max: 30 }),
+        fc.integer({ min: 0, max: 30 }),
+        fc.integer({ min: 0, max: 30 }),
+        (prescribed, a, extra) => {
+          // a is the lower actual; a + extra is the higher actual.
+          if (classifyAmrapMiss(a, prescribed) === 'hit') {
+            return classifyAmrapMiss(a + extra, prescribed) === 'hit';
+          }
+          return true;
+        },
+      ),
+    );
+  });
+
+  it('property: equivalence to the < comparison over wide integer inputs', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: -10, max: 100 }),
+        fc.integer({ min: 0, max: 100 }),
+        (actual, prescribed) => {
+          const expected = actual < prescribed ? 'miss' : 'hit';
+          return classifyAmrapMiss(actual, prescribed) === expected;
+        },
+      ),
+    );
+  });
+});
+
+describe('missResetTm', () => {
+  it('computes round(tm * 0.9, unit)', () => {
+    // round(275 * 0.9, lbs) = round(247.5, lbs) = 250
+    expect(missResetTm(275, 'lbs')).toBe(round(275 * 0.9, 'lbs'));
+    expect(missResetTm(275, 'lbs')).toBe(250);
+    // kg snaps to 2.5
+    expect(missResetTm(100, 'kg')).toBe(round(90, 'kg'));
+    expect(missResetTm(100, 'kg')).toBe(90);
+  });
+
+  it('clamps non-positive input to 0 (round contract)', () => {
+    expect(missResetTm(0, 'lbs')).toBe(0);
+    expect(missResetTm(0, 'kg')).toBe(0);
+  });
+
+  it('property: result equals the rounding contract round(tm * 0.9, unit)', () => {
+    fc.assert(
+      fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 0, max: 1000 }), (unit, tm) => {
+        return missResetTm(tm, unit) === round(tm * 0.9, unit);
+      }),
+    );
+  });
+
+  it('property: result is plate-snapped (round(result, unit) === result)', () => {
+    fc.assert(
+      fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 0, max: 1000 }), (unit, tm) => {
+        const r = missResetTm(tm, unit);
+        return round(r, unit) === r;
+      }),
+    );
+  });
+
+  it('property: result is always non-negative', () => {
+    fc.assert(
+      fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 0, max: 1000 }), (unit, tm) => {
+        return missResetTm(tm, unit) >= 0;
+      }),
+    );
+  });
+
+  it('property: never raises the TM for any realistic loadable TM', () => {
+    // Nearest-plate `round` can round tiny values up (e.g. round(1.8, kg) = 2.5),
+    // so the `result <= tm` bound only holds above one plate step. The spec
+    // flags this: assert the bound for realistic TMs, not the degenerate tail.
+    fc.assert(
+      fc.property(fc.constantFrom(...UNITS), fc.integer({ min: 20, max: 1000 }), (unit, tm) => {
+        const r = missResetTm(tm, unit);
+        return r >= 0 && r <= tm;
+      }),
     );
   });
 });

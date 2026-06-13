@@ -17,6 +17,7 @@ type MigrationTarget =
 const ALL_TABLES = [
   'lift_progress',
   'lift_goals',
+  'lift_miss_state',
   'prs',
   'set_logs',
   'sessions',

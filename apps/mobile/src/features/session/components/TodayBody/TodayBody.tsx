@@ -1,4 +1,6 @@
+import { useClearMissState } from '@/data/queries/useClearMissState';
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
+import { useMissState } from '@/data/queries/useMissState';
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Masthead } from '@/design/primitives/Masthead';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
@@ -8,7 +10,11 @@ import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
+import * as Haptics from 'expo-haptics';
+import { useState } from 'react';
 import { View } from 'react-native';
+import { MissCorrectionCard } from '../MissCorrectionCard';
+import { MissResetSheet } from '../MissResetSheet';
 import { BbbBand } from './BbbBand';
 import { TmTestNote } from './TmTestNote';
 import { TopSetHero } from './TopSetHero';
@@ -51,6 +57,16 @@ export function TodayBody({
   const tmInDisplay = convert(tm, storageUnit, renderUnit);
   const lastTrained = useLastCompletedSessionForLift(lift);
 
+  // Missed-rep Program Correction re-surface. An unresolved miss (missCount > 0,
+  // reset not yet applied) shows the card at the very top of the body. While
+  // loading or on error the data is undefined → missCount 0 → no card, so the
+  // preview never shifts. No entrance animation here (the card is present on
+  // mount, not a just-happened event).
+  const missState = useMissState(lift);
+  const clearMiss = useClearMissState();
+  const [missResetOpen, setMissResetOpen] = useState(false);
+  const missCount = missState.data?.missCount ?? 0;
+
   const isTmTestDay = week === 4;
   // Day 4 is a single TM-test set; route via the dedicated helper so the
   // index-based API on days 1–3 stays unchanged.
@@ -65,6 +81,34 @@ export function TodayBody({
 
   return (
     <View style={{ backgroundColor: colors.bg0 }}>
+      {missCount > 0 ? (
+        <>
+          <MissCorrectionCard
+            variant={missCount >= 2 ? 'forced' : 'choice'}
+            tmDisplay={tmInDisplay}
+            unit={renderUnit}
+            onReset={() => {
+              void Haptics.selectionAsync();
+              setMissResetOpen(true);
+            }}
+            {...(missCount >= 2
+              ? {}
+              : {
+                  onOffDay: () => {
+                    void Haptics.selectionAsync();
+                    clearMiss.mutate({ lift });
+                  },
+                })}
+          />
+          <MissResetSheet
+            open={missResetOpen}
+            lift={lift}
+            tmDisplay={tmInDisplay}
+            unit={renderUnit}
+            onClose={() => setMissResetOpen(false)}
+          />
+        </>
+      ) : null}
       <Masthead rightSlot={<CapsLabel>{`c${cycle}·d${week}`}</CapsLabel>} />
       <TitleBlock
         eyebrow={`${dateLabel(new Date())} · ${daySchemeLabel(week)}`}
