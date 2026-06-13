@@ -261,8 +261,8 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   verify, or (b) the check-no-em-dash.sh CI guard is extended to cover apps/web/src/content/blog/*.md so the
   pre-commit hook catches any that slip through. Done when the Logger authoring path is provably clean.
   - [ ] extend check-no-em-dash.sh to cover apps/web/src/content/blog/*.md (or add a targeted sign-off check)
-  - [ ] update loop-memory/04-dev-blog-persona.md and commission-expedition-log skill prompt with explicit
-        no-em-dash instruction
+  - [x] update loop-memory/04-dev-blog-persona.md with explicit no-em-dash instruction (tick-6, Exp 84):
+        added "Won't use em dash (—)" to the "What you won't do" section with sign-off and prose examples
   - [ ] verify: commission a test post and confirm no em dashes reach the committed file
 - note: Auditor finding from tick-6 (Expedition 84): Priya's blog post had 6 em dashes (sign-off + body prose).
   The WEB-SIGNOFF fix normalized 82 prior posts but did not fix the authoring path, so each new Logger post
