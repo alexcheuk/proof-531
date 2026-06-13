@@ -5,8 +5,16 @@ import { useTheme } from '@/design/theme';
 import { missResetTm } from '@/domain/progression';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { useEffect } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
-import Animated, { Easing, FadeIn, useReducedMotion } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 export type MissCorrectionVariant = 'choice' | 'forced';
 
@@ -49,6 +57,20 @@ export function MissCorrectionCard({
   const u = displayUnit(unit);
   const target = missResetTm(tmDisplay, unit);
 
+  // Safe entrance fade: explicit hook avoids the Reanimated registry "should not
+  // already be working" crash that entering={FadeIn} triggers on re-mount.
+  const shouldAnimate = animateEntrance && !reduceMotion;
+  const opacity = useSharedValue(shouldAnimate ? 0 : 1);
+  useEffect(() => {
+    if (!shouldAnimate) return;
+    opacity.value = withTiming(1, {
+      duration: motion.durationBase,
+      easing: Easing.bezier(0.2, 0.7, 0.2, 1),
+    });
+    return () => cancelAnimation(opacity);
+  }, [shouldAnimate, opacity, motion.durationBase]);
+  const fadeStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
   const cardStyle: ViewStyle = {
     marginHorizontal: spacing.lg,
     marginTop: spacing.md + 2,
@@ -66,16 +88,6 @@ export function MissCorrectionCard({
   const eyebrow = isForced ? 'Second miss · reset recommended' : 'Missed reps · 5/3/1 says reset';
   const body = isForced ? 'Two misses in a row' : 'You fell short of the target';
   const resetLabel = `−10% · reset to ${target} ${u}`;
-
-  // Entrance is only animated when the miss just occurred AND reduce-motion is off.
-  const shouldAnimate = animateEntrance && !reduceMotion;
-  const enteringProp = shouldAnimate
-    ? {
-        entering: FadeIn.duration(motion.durationBase).easing(
-          Easing.bezier(...motion.easeStandardBezier),
-        ),
-      }
-    : {};
 
   const content = (
     <>
@@ -150,7 +162,7 @@ export function MissCorrectionCard({
   );
 
   return (
-    <Animated.View testID={testID} style={cardStyle} {...enteringProp}>
+    <Animated.View testID={testID} style={[cardStyle, fadeStyle]}>
       {content}
     </Animated.View>
   );

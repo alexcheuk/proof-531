@@ -238,14 +238,12 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] verify CI green after extension
 
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
-- status: todo
+- status: done
 - blocked_by: none
-- proof: `scripts/check-no-em-dash.sh` extended to cover `docs/marketing/**`; all em dashes replaced with
-  spaced hyphens or colons; CI green after extension.
-  - [ ] sweep docs/marketing/*.md: replace U+2014 with spaced hyphen or colon throughout
-  - [ ] extend scripts/check-no-em-dash.sh to scan docs/marketing/
-  - [ ] verify CI green after extension
-- note: auditor finding from tick-6 (Expedition 84). 16 added lines in the 84+ count update carried
-  pre-existing em dashes. The docs/marketing/ corpus is not yet scanned by the CI em-dash guard.
-  Pre-existing violations - not newly introduced - but any line the loop modifies must come out clean per
-  the SOUL hard line. Drafts are not yet published so no external exposure. Fix before publishing any draft.
+- proof: `scripts/check-no-em-dash.sh` extended to cover `docs/marketing/**`; all 396 em dashes replaced with
+  spaced hyphens; CI green (1170/1170 tests, check-no-em-dash: clean). Shipped tick-7 (Expedition 85).
+  - [x] sweep docs/marketing/*.md: replace U+2014 with spaced hyphen or colon throughout
+  - [x] extend scripts/check-no-em-dash.sh to scan docs/marketing/
+  - [x] verify CI green after extension
+- note: 396 em dashes across 13 files swept. CI guard extended. Any future line the loop edits in docs/marketing/
+  will now be caught by CI if an em dash is introduced.

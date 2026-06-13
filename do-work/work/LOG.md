@@ -25,6 +25,20 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-7 (Exp 85): LOOP-EMDASH-MARKETING + iteration count 85+ + Q-QUALITY animation fix
+- shipped (LOOP, LOOP-EMDASH-MARKETING done): 396 em dashes swept from docs/marketing/ (13 files); CI
+  guard (check-no-em-dash.sh) extended to cover docs/marketing/; CI passes clean.
+- shipped (LAUNCH): Iteration count 84+ -> 85+ across 10 marketing docs + README. last_reviewed dates
+  updated to Expedition 85 in both ready-to-post reddit drafts.
+- shipped (Q-QUALITY): MissCorrectionCard animation converted from forbidden entering={FadeIn} to safe
+  useSharedValue/useEffect/cancelAnimation pattern (per Reanimated rule in known-codebase). Test mock
+  updated to expose useSharedValue, useAnimatedStyle, withTiming, cancelAnimation. 4/4 tests pass.
+- proof: pnpm run ci green: typecheck clean (mobile+web), lint clean, 1170/1170 tests (185 suites),
+  check-no-em-dash clean. All items behavior-preserving.
+- deferred / escalated: WEB-SIGNOFF (em dash ruling) still blocked on Alex's #needs-input reply.
+  IN-APP-REVIEW, MISSED-REP, WARMUP-PERDAY, REST-TIMER-ACCURACY, PROG-GRID-FIX still owe Maestro
+  smokes. iOS App Store submission still pending. Reddit posts wait for Alex's go-ahead.
+
 ## 2026-06-13 tick-6 (Exp 84): Android launch marketing prep + IN-APP-REVIEW + Q-QUALITY
 - shipped (LAUNCH): Reddit drafts updated for Android-live state (Play Store link, "iOS coming soon",
   ready_to_post:true) for r/531Discussion and r/weightroom. Iteration count 82+ -> 84+ across 9 marketing

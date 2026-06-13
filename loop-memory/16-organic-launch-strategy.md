@@ -6,8 +6,8 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength  - Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-05-29 (Expedition 77)
-**Status**: Android LIVE on Google Play (Expedition 83, versionCode 25). iOS App Store submission still in progress. r/531Discussion and r/weightroom drafts updated for Android-only launch (Expedition 84) and marked ready_to_post. IN-APP-REVIEW (tactic 12) implemented (Expedition 84): expo-store-review installed, storeReviewRequested flag in settings schema, hook fires once per install on first cycle complete. Needs next production build to activate native dialog.
+**Last updated**: 2026-06-13 (Expedition 85)
+**Status**: Android LIVE on Google Play (Expedition 83, versionCode 25). iOS App Store submission still in progress. r/531Discussion and r/weightroom drafts updated for Android-only launch (Expedition 84) and marked ready_to_post. IN-APP-REVIEW (tactic 12) implemented (Expedition 84): expo-store-review installed, storeReviewRequested flag in settings schema, hook fires once per install on first cycle complete. Needs next production build to activate native dialog. Expedition 85: all marketing docs swept of 396 em dashes (SOUL hard line), iteration count updated to 85+ throughout. docs/marketing/ now covered by CI em-dash guard.
 
 ## The competitive anchor
 

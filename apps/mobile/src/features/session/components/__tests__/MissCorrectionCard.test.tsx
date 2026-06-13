@@ -8,8 +8,11 @@ jest.mock('react-native-reanimated', () => {
     __esModule: true,
     default: { View: RN.View },
     useReducedMotion: () => false,
-    FadeIn: { duration: () => ({ easing: () => ({}) }) },
     Easing: { bezier: () => () => 0 },
+    useSharedValue: (init: number) => ({ value: init }),
+    useAnimatedStyle: (fn: () => object) => fn(),
+    withTiming: (val: number) => val,
+    cancelAnimation: () => {},
   };
 });
 
