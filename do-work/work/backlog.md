@@ -252,3 +252,20 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] extend `scripts/check-no-em-dash.sh` to also scan `apps/mobile/src/**`
   - [x] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
   - [x] verify CI green after extension
+
+## LOGGER-EMDASH-GUARD: Prevent em dashes in future Logger blog posts at authoring time
+- status: todo
+- blocked_by: none
+- proof: the `verso` agent / `commission-expedition-log` skill no longer produces em dashes in Logger sign-offs
+  or body prose. Either (a) the skill prompt explicitly forbids em dashes and uses a post-authoring sweep to
+  verify, or (b) the check-no-em-dash.sh CI guard is extended to cover apps/web/src/content/blog/*.md so the
+  pre-commit hook catches any that slip through. Done when the Logger authoring path is provably clean.
+  - [ ] extend check-no-em-dash.sh to cover apps/web/src/content/blog/*.md (or add a targeted sign-off check)
+  - [ ] update loop-memory/04-dev-blog-persona.md and commission-expedition-log skill prompt with explicit
+        no-em-dash instruction
+  - [ ] verify: commission a test post and confirm no em dashes reach the committed file
+- note: Auditor finding from tick-6 (Expedition 84): Priya's blog post had 6 em dashes (sign-off + body prose).
+  The WEB-SIGNOFF fix normalized 82 prior posts but did not fix the authoring path, so each new Logger post
+  continues to produce em-dash violations until this guard is added. The CI check does not currently cover
+  blog/*.md (that scan is still pending Alex's C/D decision on the broader web corpus). This item is the
+  Logger-specific guard, independent of the broader web corpus question.
