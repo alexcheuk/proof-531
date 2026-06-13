@@ -355,6 +355,21 @@ Session component tests added through expedition 75 (all in `components/__tests_
   target value directly (`withTiming(0.45)`) and put `fadeStyle` LAST in
   the style array so the animated value is not shadowed by an inline
   `opacity` property that comes after it.
+- **When you convert a component FROM `entering={FadeIn}` TO this hook
+  pattern, its test's Reanimated mock must be extended.** A FadeIn-based
+  component only needs `FadeIn` + `Easing` stubbed; the hook pattern needs
+  `useSharedValue`, `useAnimatedStyle`, `withTiming`, and `cancelAnimation`
+  too, or the test throws at render. Minimal stubs (from
+  `MissCorrectionCard.test.tsx`, tick-7):
+  ```ts
+  useSharedValue: (init: number) => ({ value: init }),
+  useAnimatedStyle: (fn: () => object) => fn(),
+  withTiming: (val: number) => val,
+  cancelAnimation: () => {},
+  ```
+  Drop the now-unused `FadeIn` stub in the same edit. This mock gap does
+  not surface in CI signatures other than the failing test itself, so it
+  is easy to miss if you change the component but not the mock.
 
 ## Cross-stack navigation (session → tabs)  - expedition-010 fix
 

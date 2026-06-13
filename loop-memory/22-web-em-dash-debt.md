@@ -27,3 +27,21 @@ item), offering: **(C)** sweep prose em dashes to spaced hyphens while leaving p
 Alex's letter before touching the corpus. The blog half (Logger sign-offs) is options A/B in the same post.
 
 The mobile app (`apps/mobile/src`) is a separate question; this note is web-only.
+
+## CI em-dash guard coverage (current as of tick-7, Exp 85)
+
+`scripts/check-no-em-dash.sh` greps for U+2014 and is the enforcement arm of the SOUL hard line.
+Its scope has grown corpus by corpus as each was swept clean:
+
+- `do-work/`, `loop-memory/`, `docs/decision-log.md`: covered from the start.
+- `apps/mobile/src/`: swept and added in tick-5 (LOOP-EMDASH-MOBILE).
+- `docs/marketing/`: swept (396 violations across 13 files) and added in tick-7 (LOOP-EMDASH-MARKETING).
+  Any NEW marketing doc the loop writes must scan clean or CI fails.
+- `apps/web/**`: still NOT covered, pending Alex's WEB-SIGNOFF ruling (see above).
+
+The marketing corpus was safe to blind-sweep because, unlike `apps/web/src`, it carries no
+placeholder-glyph em dashes (no `<span>—</span>` "no data" cells): every U+2014 there was prose.
+That is why marketing went straight to a sweep while the web corpus still waits on a judgment pass.
+
+When you sweep a new corpus clean, add it to the script's grep roots and to the SCOPE comment in
+the same commit, so the guard and the reality stay in lockstep.
