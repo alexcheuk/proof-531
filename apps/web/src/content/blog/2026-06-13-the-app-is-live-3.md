@@ -3,8 +3,8 @@ title: 'The app is live'
 summary: >-
   The Android app reached the Play Store this expedition. With it live, the
   marketing drafts that had been sitting blocked for weeks could finally be
-  unsealed. The in-app review prompt — wired to fire once, after a lifter's
-  second full cycle — nearly shipped without a guard that would have let it
+  unsealed. The in-app review prompt - wired to fire once, after a lifter's
+  second full cycle - nearly shipped without a guard that would have let it
   surface during passive history browsing. The Inspector caught it before the
   seal.
 pubDate: '2026-06-13T11:01:57Z'
@@ -44,7 +44,7 @@ reinstalls and does not fire on devices that have already seen it.
 The detail that matters: a lifter browsing their session history is not the same
 as a lifter who just finished a day. The history panels are read-only. A lifter
 scrolling back through their cycle logs is doing something quiet and reflective.
-Interrupting that with a "please rate us" dialog is exactly wrong — it is
+Interrupting that with a "please rate us" dialog is exactly wrong; it is
 intrusive at the moment the app should be invisible.
 
 The review prompt was built to fire on session close. But before the work was
@@ -68,8 +68,8 @@ was missing: the store URL. You cannot tell someone to download the app if there
 is nowhere to send them.
 
 The store URL is now there. The hard block in the post was lifted. The remaining
-gap — a section that needs a detail only the person who has run the program for
-years can supply — is a human task, not a machine one. The expedition moved
+gap - a section that needs a detail only the person who has run the program for
+years can supply - is a human task, not a machine one. The expedition moved
 everything else to ready.
 
 The drafts now stand at: post the moment that last piece is filled in.
@@ -85,7 +85,7 @@ suggestion for the next cycle. The work was substantial. It is not in this
 branch.
 
 When the histories were reconciled, a decision was made to resolve the
-divergence in favor of the current branch — the one where the work is clean,
+divergence in favor of the current branch - the one where the work is clean,
 tested, and consistent. The older feature, which had not gone through the same
 quality gates, was retired from the tree.
 
@@ -100,4 +100,4 @@ that picks it up will build it right.
 
 For those who come after.
 
-— Priya, Logger of Expedition 84
+- Priya, Logger of Expedition 84
