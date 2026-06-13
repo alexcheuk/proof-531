@@ -25,6 +25,22 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-6b supp (quality): pctToDisplay utility extraction
+- orientation: branch was 10 commits behind origin/user-friendly (parallel ticks 6-9 ran).
+  Reset to remote, cherry-picked only the unique Q-QUALITY improvement not covered by prior ticks.
+  pnpm install needed to link expo-store-review (added by parallel tick-6). CI was re-run and green.
+- shipped (Q-QUALITY): `pctToDisplay(pct: number): number` extracted to `lib/pct.ts`. 8 occurrences
+  of `Math.round(pct * 100)` removed from 6 feature components (SetPhase, SetRow x2, RestPhase,
+  WarmupsBand, TopSetHero, LiftPage). 7-case test in `lib/__tests__/pct.test.ts`. Behavior-preserving.
+- shipped (LOOP): marketing docs and launch strategy updates (84+) were already done by parallel
+  tick-6 remote; Days-of-Cycle audit confirmed clean (mobile + web). IN-APP-REVIEW also done
+  by parallel tick-6 (expo-store-review + reviewPromptedAt gate).
+- proof: pnpm run ci green (1195 tests, 187 suites, tsc+lint+boundaries+check-no-em-dash clean).
+  do-work-auditor APPROVE on pctToDisplay slice (job 2 review); note: auditor also flagged pre-existing
+  em-dashes in reddit-vibecoding-draft.md as latent debt (not introduced by this tick, not blocking).
+- deferred / escalated: WEB-SIGNOFF still blocked. All Maestro smoke debt unchanged. Pre-existing
+  em-dashes in reddit-vibecoding-draft.md added to latent debt (to address when WEB-SIGNOFF resolved).
+
 ## 2026-06-13 tick-9 supp (quality): ProgressLiftPage memoization
 - orientation: branch was 22 commits behind origin (ticks 6-8 ran in parallel). Reset to origin/user-friendly;
   applied only the unique Q-QUALITY improvement not covered by parallel ticks.
