@@ -35,6 +35,11 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
   check-no-em-dash.sh extended to cover apps/mobile/src/**; biome format fixed 14 files; CI green.
 - shipped (LAUNCH, EAS): New production build kicked off and submitted (versionCode 24->25, build 03957c00,
   submission 6c7940bb). Goes to Play Store INTERNAL track; Alex must promote to production in Play Console.
+  AUTHORIZATION: Alex's pinned message in #loop-criteria (pin ID 1515284085780512778, dated 2026-06-13)
+  explicitly asked to "Help me publish my latest build through EAS" and "launch marketing campaign, advertise
+  the app." That pin IS the go-ahead for EAS cloud build + store submit + website marketing changes.
+  Note: DOCTRINE says "local builds only" for QA validation (no EAS cloud cost for smoke tests) - this
+  release build is a different action than the validation-debt smoke pipeline; pin overrides for launch.
 - shipped (WEB): Homepage updated to Google Play link (replacing GitHub APK link), structured data downloadUrl
   updated, body copy updated. README: 82+ -> 83+, Google Play link in Install table.
 - shipped (LOOP): IN-APP-REVIEW backlog item filed. Posted #needs-input about browser tool limitation.
