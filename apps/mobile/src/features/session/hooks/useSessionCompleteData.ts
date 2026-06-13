@@ -46,6 +46,8 @@ export type SessionCompleteView = {
   topWeight: number;
   topReps: number;
   topIsAmrap: boolean;
+  /** Prescribed minimum reps for the top set  -  drives the receipt "Matched target." note. */
+  topPrescribedReps: number;
   workingVolume: number;
   elapsedReady: boolean;
   elapsedValue: string;
@@ -170,6 +172,7 @@ export function deriveView({
   const topWeight = displayWeight(topWeightStorage, storageUnit, renderUnit);
   const topReps = topSet?.actualReps ?? 0;
   const topIsAmrap = topSet?.kind === 'amrap';
+  const topPrescribedReps = topSet?.prescribedReps ?? 0;
 
   // Volume.
   const workingVolumeStorage = volumeOfWorkingSets(workingLogs);
@@ -247,6 +250,7 @@ export function deriveView({
     topWeight,
     topReps,
     topIsAmrap,
+    topPrescribedReps,
     workingVolume,
     elapsedReady,
     elapsedValue,

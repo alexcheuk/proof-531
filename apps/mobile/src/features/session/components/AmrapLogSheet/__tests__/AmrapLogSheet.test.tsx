@@ -112,6 +112,23 @@ describe('AmrapLogSheet', () => {
     expect(screen.getByText('BIG SET.')).toBeTruthy();
   });
 
+  it('always renders the target reminder with the prescribed minimum', () => {
+    const screen = renderSheet(<AmrapLogSheet {...baseProps} />);
+    expect(screen.getByTestId('amrap-target-reminder')).toBeTruthy();
+    expect(screen.getByText('Target: 5 reps minimum. Log every rep you complete.')).toBeTruthy();
+  });
+
+  it('reflects a different prescribedReps in the target reminder copy', () => {
+    const screen = renderSheet(<AmrapLogSheet {...baseProps} prescribedReps={3} />);
+    expect(screen.getByText('Target: 3 reps minimum. Log every rep you complete.')).toBeTruthy();
+  });
+
+  it('keeps the target reminder visible at zero reps', () => {
+    mockState.reps = 0;
+    const screen = renderSheet(<AmrapLogSheet {...baseProps} />);
+    expect(screen.getByTestId('amrap-target-reminder')).toBeTruthy();
+  });
+
   it('flips the projection chip into PR state when existingBestE1RM is exceeded', () => {
     mockState.reps = 8;
     const screen = renderSheet(<AmrapLogSheet {...baseProps} existingBestE1RM={250} />);

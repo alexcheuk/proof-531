@@ -223,6 +223,8 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
               unitGlyph={v.unitGlyph}
               bbbSetsCompleted={v.bbbSetsCompleted}
               bbbWeightDisplay={v.bbbWeightDisplay}
+              prescribedReps={v.topPrescribedReps}
+              missCardShown={missCount > 0}
             />
 
             {missCount > 0 ? (

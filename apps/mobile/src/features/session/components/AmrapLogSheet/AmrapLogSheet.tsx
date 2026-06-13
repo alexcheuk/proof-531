@@ -137,6 +137,24 @@ export function AmrapLogSheet({
           </CapsLabel>
         ) : null}
 
+        <View
+          accessible
+          accessibilityRole="text"
+          accessibilityLabel={`Target: ${prescribedReps} reps minimum. Log every rep you complete.`}
+          style={{ marginTop: spacing.md }}
+        >
+          <Text
+            variant="sans"
+            weight="regular"
+            size={13}
+            color="ink3"
+            style={{ textAlign: 'center' }}
+            testID="amrap-target-reminder"
+          >
+            {`Target: ${prescribedReps} reps minimum. Log every rep you complete.`}
+          </Text>
+        </View>
+
         <LogSheetFooter
           pending={pending}
           onCancel={handleCancel}

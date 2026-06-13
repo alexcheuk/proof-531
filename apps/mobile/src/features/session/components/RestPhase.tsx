@@ -87,6 +87,23 @@ export function RestPhase({
             style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.lg }}
             testID="rest-phase-next-set"
           >
+            {nextSet.amrap ? (
+              <View
+                accessible
+                accessibilityRole="text"
+                accessibilityLabel="AMRAP next. Push past the minimum."
+                style={{ marginBottom: spacing.sm }}
+                testID="rest-phase-amrap-heads-up"
+              >
+                <CapsLabel weight="semibold" color="ink2" testID="rest-phase-amrap-eyebrow">
+                  AMRAP NEXT
+                </CapsLabel>
+                <Text variant="sans" weight="regular" size={14} color="ink2">
+                  Push past the minimum.
+                </Text>
+              </View>
+            ) : null}
+
             <TopSetBlock
               eyebrow="NEXT SET"
               weight={nextSet.weight}

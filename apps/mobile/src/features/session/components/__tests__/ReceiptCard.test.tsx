@@ -16,6 +16,8 @@ const defaults = {
   unitGlyph: 'lb' as const,
   bbbSetsCompleted: 0,
   bbbWeightDisplay: 0,
+  prescribedReps: 5,
+  missCardShown: false,
 };
 
 describe('ReceiptCard', () => {
@@ -72,5 +74,41 @@ describe('ReceiptCard', () => {
   it('omits elapsed row when not ready', () => {
     const screen = wrap(<ReceiptCard {...defaults} elapsedReady={false} />);
     expect(screen.queryByTestId('receipt-elapsed')).toBeNull();
+  });
+
+  describe('"Matched target." note', () => {
+    const matched = {
+      ...defaults,
+      topIsAmrap: true,
+      topReps: 5,
+      prescribedReps: 5,
+      missCardShown: false,
+    };
+
+    it('shows the note when an AMRAP top set matched its target exactly', () => {
+      const screen = wrap(<ReceiptCard {...matched} />);
+      expect(screen.getByTestId('receipt-matched-target')).toBeTruthy();
+      expect(screen.getByText('Matched target.')).toBeTruthy();
+    });
+
+    it('hides the note when the top set was not an AMRAP', () => {
+      const screen = wrap(<ReceiptCard {...matched} topIsAmrap={false} />);
+      expect(screen.queryByTestId('receipt-matched-target')).toBeNull();
+    });
+
+    it('hides the note when the AMRAP exceeded the target (surplus)', () => {
+      const screen = wrap(<ReceiptCard {...matched} topReps={8} prescribedReps={5} />);
+      expect(screen.queryByTestId('receipt-matched-target')).toBeNull();
+    });
+
+    it('hides the note when the AMRAP fell short of the target', () => {
+      const screen = wrap(<ReceiptCard {...matched} topReps={3} prescribedReps={5} />);
+      expect(screen.queryByTestId('receipt-matched-target')).toBeNull();
+    });
+
+    it('hides the note when the miss-correction card is shown', () => {
+      const screen = wrap(<ReceiptCard {...matched} missCardShown={true} />);
+      expect(screen.queryByTestId('receipt-matched-target')).toBeNull();
+    });
   });
 });

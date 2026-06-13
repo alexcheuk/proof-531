@@ -19,6 +19,10 @@ export type ReceiptCardProps = {
   bbbSetsCompleted: number;
   /** BBB weight in display units (matches the weight written to set_logs). */
   bbbWeightDisplay: number;
+  /** Prescribed minimum reps for the top (AMRAP) set  -  drives the "Matched target." note. */
+  prescribedReps: number;
+  /** Whether the MissCorrectionCard is shown on this screen  -  the note yields to it. */
+  missCardShown: boolean;
 };
 
 /**
@@ -41,8 +45,15 @@ export function ReceiptCard({
   unitGlyph,
   bbbSetsCompleted,
   bbbWeightDisplay,
+  prescribedReps,
+  missCardShown,
 }: ReceiptCardProps) {
-  const { layout } = useTheme();
+  const { layout, spacing } = useTheme();
+
+  // Quiet acknowledgement when the AMRAP top set met its floor exactly, with
+  // no surplus (the `Est. 1rm` row owns the surplus story) and no active miss
+  // correction (that path owns the under-target story).
+  const matchedTarget = topIsAmrap && topReps === prescribedReps && !missCardShown;
 
   return (
     <View style={{ paddingTop: 24, paddingHorizontal: layout.gutter }}>
@@ -82,6 +93,19 @@ export function ReceiptCard({
         ) : null}
         {elapsedReady ? (
           <ReceiptRow testID="receipt-elapsed" label="Elapsed" value={elapsedValue} sub="minutes" />
+        ) : null}
+        {matchedTarget ? (
+          <View
+            accessible
+            accessibilityRole="text"
+            accessibilityLabel="Matched target."
+            style={{ paddingHorizontal: spacing.sm, paddingVertical: spacing.sm }}
+            testID="receipt-matched-target"
+          >
+            <CapsLabel size="xs" color="ink3">
+              Matched target.
+            </CapsLabel>
+          </View>
         ) : null}
       </SectionBand>
     </View>

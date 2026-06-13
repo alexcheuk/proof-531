@@ -63,6 +63,50 @@ describe('RestPhase', () => {
     expect(screen.getByText('NEXT SET')).toBeTruthy();
   });
 
+  it('shows the AMRAP NEXT heads-up when the next set is an AMRAP', () => {
+    const screen = renderWithTheme(
+      <RestPhase
+        loggedUnit="lbs"
+        remaining={45}
+        nextSet={{
+          weight: 245,
+          reps: 5,
+          amrap: true,
+          pct: 0.85,
+          perSide: [45, 10],
+          tmDisplay: 300,
+        }}
+      />,
+    );
+    expect(screen.getByTestId('rest-phase-amrap-heads-up')).toBeTruthy();
+    expect(screen.getByText('AMRAP NEXT')).toBeTruthy();
+    expect(screen.getByText('Push past the minimum.')).toBeTruthy();
+  });
+
+  it('omits the AMRAP NEXT heads-up when the next set is a straight set', () => {
+    const screen = renderWithTheme(
+      <RestPhase
+        loggedUnit="lbs"
+        remaining={45}
+        nextSet={{
+          weight: 245,
+          reps: 5,
+          amrap: false,
+          pct: 0.75,
+          perSide: [45, 10],
+          tmDisplay: 300,
+        }}
+      />,
+    );
+    expect(screen.queryByTestId('rest-phase-amrap-heads-up')).toBeNull();
+    expect(screen.queryByText('AMRAP NEXT')).toBeNull();
+  });
+
+  it('omits the AMRAP NEXT heads-up entirely when there is no next set', () => {
+    const screen = renderWithTheme(<RestPhase loggedUnit="lbs" remaining={45} />);
+    expect(screen.queryByTestId('rest-phase-amrap-heads-up')).toBeNull();
+  });
+
   it('formats the timer label as count-DOWN remaining', () => {
     // Flipped from count-up 2026-05-24 per user feedback  -  lifters time
     // rests in their head as "N left", and 0:00 is the cleaner "go" cue.
