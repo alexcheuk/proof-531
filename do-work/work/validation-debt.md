@@ -24,6 +24,9 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-6 (Expedition 84) IN-APP-REVIEW: expo-store-review native module wired; native dialog requires a new
+  EAS production build (versionCode >= 26) to activate. Until then, `isAvailableAsync()` returns false and
+  the review is silently skipped. Not a UI regression - just inert until rebuilt.
 - tick-5 (Expedition 83) MISSED-REP correction card: MissCorrectionCard (choice/forced variants) +
   MissResetSheet on SessionCompleteScreen and TodayBody. 1170/1170 jest tests. Owes Maestro smoke for the
   miss -> correction card -> reset flow before MISSED-REP flips to `done`.

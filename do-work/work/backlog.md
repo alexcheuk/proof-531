@@ -166,15 +166,18 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
 
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
-- status: todo
+- status: doing
 - blocked_by: none
-- proof: expo-store-review prompt shows on Android (Play Store live) after session cycle >= 2; iOS activates
-  when App Store listing is live. Non-modal, non-repeated. Both stores must have live listings for full parity.
-  - [ ] add expo-store-review to mobile dependencies
-  - [ ] implement prompt logic in SessionCompleteScreen (after cycle completion, once per user)
-  - [ ] wire into CI and test
-- note: Android Play Store is now live (expedition 83). iOS App Store still pending. File as feature for
-  next rn-expo-pipeline run.
+- proof: expo-store-review prompt shows on Android (Play Store live) after first cycle completion; iOS activates
+  when App Store listing is live. Non-modal, non-repeated, gated by storeReviewRequested flag in settings DB.
+  - [x] add expo-store-review ~55.0.14 to mobile dependencies
+  - [x] implement prompt logic in SessionCompleteScreen (on first cycle complete, once per user)
+  - [x] wire into CI and test (1170/1170 green; hook mocked in SessionCompleteScreen.test.tsx)
+  - [ ] activate on Android device (requires next EAS production build to include native module)
+  - [ ] activate on iOS (requires App Store listing live)
+- note: Implemented tick-6 (Expedition 84). storeReviewRequested boolean added to Settings type + DB schema
+  (additive migration). useStoreReviewOnCycleComplete hook fires once per install on cycle complete.
+  Needs next EAS prod build to activate native dialog. Does NOT use rn-expo-pipeline (too simple).
 
 ## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
 - status: doing

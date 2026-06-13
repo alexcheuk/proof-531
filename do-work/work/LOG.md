@@ -25,6 +25,27 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-6 (Exp 84): Android launch marketing prep + IN-APP-REVIEW + Q-QUALITY
+- shipped (LAUNCH): Reddit drafts updated for Android-live state (Play Store link, "iOS coming soon",
+  ready_to_post:true) for r/531Discussion and r/weightroom. Iteration count 82+ -> 84+ across 9 marketing
+  docs. Launch strategy tracker updated (tactics 2, 3, 12). Pin 1515284085780512778 drives this tick.
+- shipped (FEAT, IN-APP-REVIEW): expo-store-review ~55.0.14 installed (SDK 55 compatible).
+  storeReviewRequested boolean added to Settings type + DB schema (additive ALTER TABLE migration, runs on
+  existing installs). useMarkStoreReviewRequested mutation hook. useStoreReviewOnCycleComplete hook fires
+  once per install on first cycle complete; falls back when native module unavailable. Wired into
+  SessionCompleteScreen. 1170/1170 tests green. Needs next EAS prod build for native dialog to activate.
+- shipped (Q-QUALITY): ProgressLiftPage liftPr IIFE -> useMemo (avoids recomputing on unrelated re-renders;
+  deps: prs.data, lift, storageUnit, displayU). Import added; behavior preserved.
+- shipped (LOOP): loop-memory/01-known-codebase.md updated with MISSED-REP components + IN-APP-REVIEW hooks.
+- proof: pnpm run ci green: typecheck clean (mobile+web), lint clean (519 files), 1170/1170 tests (185 suites).
+  Pushed to main.
+- deferred / escalated: IN-APP-REVIEW needs next EAS production build to activate native dialog. iOS still
+  pending App Store approval. Reddit posts themselves wait for Alex (SOUL growth-autonomy rule). WEB-SIGNOFF
+  still blocked on Alex's #needs-input reply (em-dash convention). Maestro smokes for WARMUP-PERDAY,
+  REST-TIMER-ACCURACY, MISSED-REP, PROG-GRID-FIX remain outstanding.
+- git note: local main had diverged from origin/main (stash/checkout collision); resolved by reset --hard
+  origin/main and re-applying all changes. Pushed clean to origin/main at fae46a4.
+
 ## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
 - shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +
   frontend + QA PASS). 20 files: classifyAmrapMiss/missResetTm in progression.ts (property-tested), lift_miss_state
