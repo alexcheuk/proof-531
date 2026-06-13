@@ -24,6 +24,12 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-7 (Expedition 85) AMRAP-COACHING: three coaching annotations added to rendered session surfaces.
+  RestPhase shows "AMRAP NEXT" + "Push past the minimum." when nextSet.amrap. AmrapLogSheet shows "Target: N
+  reps minimum." always-on in the AMRAP sheet. ReceiptCard shows "Matched target." when topReps==prescribedReps
+  and no miss card is showing. MissCorrectionCard replaced FadeIn with useSharedValue pattern (Reanimated fix -
+  behavior-preserving but changes animation wiring). 1187/1187 jest + tsc + lint clean. Owes general session
+  Maestro smoke before AMRAP-COACHING flips to done.
 - tick-6 (Expedition 84) IN-APP-REVIEW: `expo-store-review` wired into `SessionCompleteScreen` via
   `useInAppReview` hook. Fires once per install when cycle >= 2 and cycle just completed. Gated by
   `settings.reviewPromptedAt` additive column (null = never prompted). 1178/1178 jest tests + tsc + lint clean.

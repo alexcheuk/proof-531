@@ -42,6 +42,13 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - CI em-dash guard scoped to do-work-era blog posts only; full corpus pending Alex ruling
+
+**Tags:** `process`, `ci`
+**Files:** `scripts/check-no-em-dash.sh`
+
+The em-dash CI guard (LOOP-EMDASH-GUARD) was extended to cover blog posts but NOT to all `apps/web/src/content/blog/*.md`. Instead it covers only `apps/web/src/content/blog/2026-06-*.md` (June 2026, the do-work era). Reason: the pre-June corpus has ~999 em dashes in body prose, and extending the guard to all blog posts would break CI immediately. Alex has been asked (WEB-SIGNOFF, #needs-input) whether to sweep or bless; no reply after 5 ticks. The narrow scope guards new Logger posts without touching the undecided corpus. When Alex replies, extend the guard to cover all blog posts (or add an explicit exclude-old-corpus pattern) in one step.
+
 ### 2026-06-13 - Missed-rep Program Correction: persisted per-lift miss state, not a per-session suggestion
 
 **Tags:** `architecture`, `feature`, `data-layer`

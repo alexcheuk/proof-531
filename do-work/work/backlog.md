@@ -166,18 +166,22 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
 
 ## AMRAP-COACHING: AMRAP coaching cards in RestPhase and SessionComplete
-- status: todo
+- status: doing
 - blocked_by: none
-- proof: coaching cards surface at the right moment: RestPhase shows eyebrow + guidance when upcoming set is
-  AMRAP; AmrapLogSheet shows target framing; BbbPromptScreen shows optional back-off nudge if main sets were
-  tough; ReceiptCard shows "BBB SKIPPED" nudge. All proven by behavior tests + tsc + lint + Maestro smoke.
-  - [ ] design spec via rn-designer (calm, non-punitive tone; reuse Card/CapsLabel primitives)
-  - [ ] implement: RestPhase, AmrapLogSheet, BbbPromptScreen, ReceiptCard coaching additions
-  - [ ] behavior tests for each coaching card (appears/absent at correct conditions)
-  - [ ] Maestro smoke
-- note: this feature was in the old queue-based system (Expedition 85, May 30 2026) and was lost when do-work
-  force-pushed to user-friendly on 2026-06-13. Re-implement via rn-expo-pipeline. The feature is valuable:
-  calm, contextual coaching at the AMRAP moment is on-SOUL. File added tick-6 so it isn't forgotten.
+- proof: coaching notes surface at the right moment, proven by behavior tests + tsc + lint. Maestro smoke
+  pending before item flips done.
+  - [x] design spec via rn-designer (tick-7, Exp 85): spec at `_workspace/amrap-coaching-spec.md`;
+        surfaces 1 (RestPhase), 2 (AmrapLogSheet), 3 (ReceiptCard); BbbPromptScreen descoped per spec.
+  - [x] implement RestPhase, AmrapLogSheet, ReceiptCard (tick-7, Exp 85): rn-frontend + rn-qa PASS.
+        "AMRAP NEXT" + "Push past the minimum." in RestPhase; "Target: N reps minimum." in AmrapLogSheet;
+        "Matched target." in ReceiptCard (only when topReps==prescribedReps && !missCardShown).
+        `useSessionCompleteData` gained `topPrescribedReps`; SessionCompleteScreen wires the two new props.
+  - [x] behavior tests (9 new: RestPhase 3, AmrapLogSheet 2, ReceiptCard 4). QA PASS. CI green (1187 tests).
+  - [ ] Maestro smoke (owes on-device validation before item flips done)
+- note: BbbPromptScreen was explicitly descoped by the rn-designer spec (an "out of scope" note in
+  `amrap-coaching-spec.md`). The AMRAP moment (RestPhase + AmrapLogSheet + ReceiptCard) is fully implemented.
+  BBB back-off coaching belongs in the missed-rep / MISSED-REP flow. The validation debt (Maestro smoke)
+  accrues alongside the other pending UI smokes.
 
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
 - status: doing
@@ -254,18 +258,20 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] verify CI green after extension
 
 ## LOGGER-EMDASH-GUARD: Prevent em dashes in future Logger blog posts at authoring time
-- status: todo
+- status: doing
 - blocked_by: none
 - proof: the `verso` agent / `commission-expedition-log` skill no longer produces em dashes in Logger sign-offs
   or body prose. Either (a) the skill prompt explicitly forbids em dashes and uses a post-authoring sweep to
   verify, or (b) the check-no-em-dash.sh CI guard is extended to cover apps/web/src/content/blog/*.md so the
   pre-commit hook catches any that slip through. Done when the Logger authoring path is provably clean.
-  - [ ] extend check-no-em-dash.sh to cover apps/web/src/content/blog/*.md (or add a targeted sign-off check)
+  - [x] extend check-no-em-dash.sh to cover apps/web/src/content/blog/2026-06-*.md (tick-7, Exp 85): covers
+        all do-work-era Logger posts; 4 pre-existing June posts swept (14 em dashes); CI guard now blocks new
+        violations in any June 2026+ post. Not the full blog/*.md (that awaits Alex's C/D ruling).
   - [x] update loop-memory/04-dev-blog-persona.md with explicit no-em-dash instruction (tick-6, Exp 84):
         added "Won't use em dash (U+2014)" to the "What you won't do" section with sign-off and prose examples
-  - [ ] verify: commission a test post and confirm no em dashes reach the committed file
+  - [ ] verify: next commissioned Logger post (Expedition 85) passes CI em-dash check with zero violations
 - note: Auditor finding from tick-6 (Expedition 84): Priya's blog post had 6 em dashes (sign-off + body prose).
   The WEB-SIGNOFF fix normalized 82 prior posts but did not fix the authoring path, so each new Logger post
-  continues to produce em-dash violations until this guard is added. The CI check does not currently cover
-  blog/*.md (that scan is still pending Alex's C/D decision on the broader web corpus). This item is the
-  Logger-specific guard, independent of the broader web corpus question.
+  continues to produce em-dash violations until this guard is added. Tick-7 extended the CI check to cover June
+  2026+ blog posts and swept 4 pre-existing violating posts. The next commissioned post will confirm the guard
+  works end-to-end.

@@ -25,6 +25,30 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-7 (Exp 85): AMRAP coaching + blog em-dash sweep + Show HN draft + process page
+- orientation: branch was 11 commits behind origin (concurrent loop ran tick-6). Fast-forward pulled first.
+  All task-queue items still ✅. #loop-criteria pins unchanged (launch marketing pin + Days-of-Cycle pin).
+  WEB-SIGNOFF still blocked (no Alex reply after 5+ ticks). pnpm install needed to link expo-store-review.
+- shipped (FEAT, AMRAP-COACHING): rn-designer spec + rn-frontend implementation + rn-qa PASS (9 new tests).
+  RestPhase shows "AMRAP NEXT" + "Push past the minimum." when nextSet.amrap. AmrapLogSheet shows "Target: N
+  reps minimum." always-on. ReceiptCard shows "Matched target." when topReps==prescribedReps && !missCardShown.
+  useSessionCompleteData gained topPrescribedReps. 1187/1187 tests. Accrues validation debt for Maestro smoke.
+- shipped (Q-QUALITY, MissCorrectionCard): Replaced entering={FadeIn} Reanimated anti-pattern with explicit
+  useSharedValue/useAnimatedStyle pattern. Known remount hazard per loop-memory/01-known-codebase.md. Test mock
+  updated. Behavior-preserving (fade still plays when animateEntrance=true).
+- shipped (LOOP, LOGGER-EMDASH-GUARD): extended check-no-em-dash.sh to cover apps/web/src/content/blog/2026-06-*.md;
+  swept 14 em dashes from 4 pre-existing June posts. CI guard now blocks new violations in do-work-era Logger posts.
+  LOGGER-EMDASH-GUARD advanced from todo->doing; verify step pending the next commissioned post.
+- shipped (LAUNCH, Show HN): Created docs/marketing/show-hn-submission.md - complete ready-to-post Show HN
+  submission with title options, first comment, 5 pre-answered HN questions, and timing guidance.
+- shipped (WEB): process.astro updated with "Android live on Google Play; iOS in review" story + Google Play
+  CTA pill added to bottom row. Loop-memory website strategy tracker updated for expeditions 83-85.
+- proof: pnpm -w run ci green (tsc + lint + check-boundaries + check-no-em-dash + 1187/1187 tests); web build
+  exit 0 (158 pages). rn-qa PASS on AMRAP-COACHING + MissCorrectionCard fix. Pushed to origin.
+- deferred / escalated: AMRAP-COACHING, MISSED-REP, IN-APP-REVIEW, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY
+  all owe Maestro smokes (no device from this seat). WEB-SIGNOFF broader corpus still blocked on Alex reply.
+  LOGGER-EMDASH-GUARD final verify step on next expedition log commission.
+
 ## 2026-06-13 tick-6 (Exp 84): Marketing campaign prep + IN-APP-REVIEW implementation
 - orientation: new #loop-criteria pin (2026-06-13, pin 1515284085780512778): "Android app is live. Launch
   marketing campaign. Goal is to increase downloads." All task-queue items already acked from prior ticks. No
