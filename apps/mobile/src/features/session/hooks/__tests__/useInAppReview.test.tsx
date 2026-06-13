@@ -40,35 +40,42 @@ describe('useInAppReview', () => {
 
   it('does nothing when cycle < 2', async () => {
     mockUseSettings.mockReturnValue(settingsStub());
-    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 1 }));
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 1, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).not.toHaveBeenCalled();
   });
 
   it('does nothing when cycle is complete is false', async () => {
     mockUseSettings.mockReturnValue(settingsStub());
-    renderHook(() => useInAppReview({ isCycleComplete: false, cycle: 3 }));
+    renderHook(() => useInAppReview({ isCycleComplete: false, cycle: 3, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).not.toHaveBeenCalled();
   });
 
   it('does nothing when already prompted (reviewPromptedAt set)', async () => {
     mockUseSettings.mockReturnValue(settingsStub(1700000000000));
-    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2 }));
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).not.toHaveBeenCalled();
   });
 
   it('does nothing while settings are loading', async () => {
     mockUseSettings.mockReturnValue({ isLoading: true, isError: false, data: undefined });
-    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2 }));
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).not.toHaveBeenCalled();
   });
 
-  it('requests review and marks prompted when cycle >= 2 and never prompted', async () => {
+  it('does nothing when origin is history (browsing past sessions)', async () => {
     mockUseSettings.mockReturnValue(settingsStub());
-    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2 }));
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2, origin: 'history' }));
+    await act(async () => {});
+    expect(mockIsAvailableAsync).not.toHaveBeenCalled();
+  });
+
+  it('requests review and marks prompted on live flow when cycle >= 2 and never prompted', async () => {
+    mockUseSettings.mockReturnValue(settingsStub());
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).toHaveBeenCalledTimes(1);
     expect(mockRequestReview).toHaveBeenCalledTimes(1);
@@ -78,7 +85,7 @@ describe('useInAppReview', () => {
   it('marks prompted even when review is unavailable', async () => {
     mockIsAvailableAsync.mockResolvedValue(false);
     mockUseSettings.mockReturnValue(settingsStub());
-    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 3 }));
+    renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 3, origin: 'live' }));
     await act(async () => {});
     expect(mockIsAvailableAsync).toHaveBeenCalledTimes(1);
     expect(mockRequestReview).not.toHaveBeenCalled();
@@ -87,7 +94,9 @@ describe('useInAppReview', () => {
 
   it('fires only once even when re-rendered', async () => {
     mockUseSettings.mockReturnValue(settingsStub());
-    const { rerender } = renderHook(() => useInAppReview({ isCycleComplete: true, cycle: 2 }));
+    const { rerender } = renderHook(() =>
+      useInAppReview({ isCycleComplete: true, cycle: 2, origin: 'live' }),
+    );
     await act(async () => {});
     rerender({});
     await act(async () => {});

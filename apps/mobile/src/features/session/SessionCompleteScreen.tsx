@@ -49,6 +49,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   useInAppReview({
     isCycleComplete: data.view?.isCycleComplete ?? false,
     cycle: data.view?.session.cycle ?? 1,
+    origin,
   });
 
   // Missed-rep Program Correction. The one-shot recorder only acts on a

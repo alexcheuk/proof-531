@@ -165,6 +165,20 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   rn-designer spec + rn-frontend (TDD, 1170/1170 tests) + rn-qa PASS. MissCorrectionCard (choice/forced
   variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
 
+## AMRAP-COACHING: AMRAP coaching cards in RestPhase and SessionComplete
+- status: todo
+- blocked_by: none
+- proof: coaching cards surface at the right moment: RestPhase shows eyebrow + guidance when upcoming set is
+  AMRAP; AmrapLogSheet shows target framing; BbbPromptScreen shows optional back-off nudge if main sets were
+  tough; ReceiptCard shows "BBB SKIPPED" nudge. All proven by behavior tests + tsc + lint + Maestro smoke.
+  - [ ] design spec via rn-designer (calm, non-punitive tone; reuse Card/CapsLabel primitives)
+  - [ ] implement: RestPhase, AmrapLogSheet, BbbPromptScreen, ReceiptCard coaching additions
+  - [ ] behavior tests for each coaching card (appears/absent at correct conditions)
+  - [ ] Maestro smoke
+- note: this feature was in the old queue-based system (Expedition 85, May 30 2026) and was lost when do-work
+  force-pushed to user-friendly on 2026-06-13. Re-implement via rn-expo-pipeline. The feature is valuable:
+  calm, contextual coaching at the AMRAP moment is on-SOUL. File added tick-6 so it isn't forgotten.
+
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
 - status: doing
 - blocked_by: none
