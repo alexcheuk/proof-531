@@ -6,12 +6,15 @@ import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { DayPreviewSheet } from '@/features/shared/DayPreviewSheet/DayPreviewSheet';
 import { WorkingSetsBand } from '@/features/shared/WorkingSetsBand';
 // LinearTransition animates layout when the selected lift changes — swap feels like a smooth strip, not a hard cut.
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
+import { useCycleDaySessionId } from '../../hooks/useCycleDaySessionId';
 import { useLiftPageState } from '../../hooks/useLiftPageState';
 import { CycleStrip } from '../CycleStrip';
 import { LiftPageEmpty } from './LiftPageEmpty';
@@ -52,6 +55,12 @@ export function LiftPage({
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
   const openProgress = () => goTo.progress(router, lift);
   const lastTrained = useLastCompletedSessionForLift(lift);
+
+  // DayPreviewSheet state — which day of the CURRENT cycle is being previewed.
+  // `null` = closed. The session id (mini-receipt) is resolved from the cached
+  // progression query for the previewed day; current/future days resolve null.
+  const [previewWeek, setPreviewWeek] = useState<Week | null>(null);
+  const previewSessionId = useCycleDaySessionId(lift, cycle, previewWeek ?? week);
   const lastTrainedHint =
     !isInProgress && lastTrained.startedAt !== null
       ? `LAST TRAINED ${formatRelativeTime(lastTrained.startedAt).toUpperCase()}`
@@ -135,7 +144,7 @@ export function LiftPage({
         />
       </View>
 
-      <CycleStrip currentDay={week} />
+      <CycleStrip currentDay={week} onCellPress={(d) => setPreviewWeek(d)} />
 
       <View style={{ flex: 1, minHeight: 18 }} />
 
@@ -150,6 +159,22 @@ export function LiftPage({
             : 'Resume session'
           : 'Begin session'}
       </PrimaryPillButton>
+
+      {previewWeek !== null ? (
+        <DayPreviewSheet
+          open
+          lift={lift}
+          cycle={cycle}
+          week={previewWeek}
+          storageUnit={storageUnit}
+          displayUnit={displayUnitProp}
+          tm={tm}
+          plateSet={plateSet}
+          sessionId={previewSessionId}
+          onDismiss={() => setPreviewWeek(null)}
+          testID={`lift-page-${lift}-day-preview`}
+        />
+      ) : null}
     </Animated.View>
   );
 }

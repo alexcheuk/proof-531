@@ -44,6 +44,13 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
   }),
 }));
 
+// LiftPage now resolves a per-day sessionId for the DayPreviewSheet via this
+// selector (which reads useLiftProgression → useDb). Mock it so the page
+// renders without a DbProvider; the preview sheet stays closed in these tests.
+jest.mock('@/features/home/hooks/useCycleDaySessionId', () => ({
+  useCycleDaySessionId: () => null,
+}));
+
 // Import after mocks.
 import { LiftPage } from '../components/LiftPage/LiftPage';
 

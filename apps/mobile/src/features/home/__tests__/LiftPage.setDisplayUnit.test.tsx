@@ -47,6 +47,13 @@ jest.mock('@/data/queries/useLastCompletedSessionForLift', () => ({
   useLastCompletedSessionForLift: () => ({ startedAt: null, isLoading: false }),
 }));
 
+// LiftPage now resolves a per-day sessionId for the DayPreviewSheet via this
+// selector (which reads useLiftProgression → useDb). Mock it so the page
+// renders without exercising that query; the preview sheet stays closed.
+jest.mock('@/features/home/hooks/useCycleDaySessionId', () => ({
+  useCycleDaySessionId: () => null,
+}));
+
 import { LiftPage } from '../components/LiftPage/LiftPage';
 
 type TestDb = ReturnType<typeof drizzle<typeof schema>>;

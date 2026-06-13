@@ -16,6 +16,13 @@ type ProgressLiftRowProps = {
   row: LiftProgression['rows'][number];
   unitGlyph: 'lb' | 'kg';
   onPastCellPress: (sessionId: number) => void;
+  /**
+   * Opens the read-only DayPreviewSheet for a now / future / past-empty cell
+   * (cells with no completed session and therefore no receipt to route to).
+   * Past + completed cells keep their existing `onPastCellPress` → full
+   * receipt navigation.
+   */
+  onPreviewCellPress: (cycle: number, day: 1 | 2 | 3 | 4) => void;
   goalCycle: number | null;
   draftKind: LiftGoalKind;
   draftValue: number;
@@ -30,6 +37,7 @@ export function ProgressLiftRow({
   row,
   unitGlyph,
   onPastCellPress,
+  onPreviewCellPress,
   goalCycle,
   draftKind,
   draftValue,
@@ -60,7 +68,8 @@ export function ProgressLiftRow({
                 key={`cell-${row.cycle}-${cell.day}`}
                 variant="now"
                 weight={cell.prescribedWeight}
-                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: next, prescribed ${cell.prescribedWeight} ${unitGlyph}`}
+                onPress={() => onPreviewCellPress(row.cycle, cell.day)}
+                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: next, prescribed ${cell.prescribedWeight} ${unitGlyph}. Tap to preview`}
                 testID={`progress-cell-${row.cycle}-${cell.day}`}
               />
             );
@@ -72,7 +81,8 @@ export function ProgressLiftRow({
                 variant="future"
                 weight={cell.projectedWeight}
                 marker={cell.deload ? '─' : null}
-                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: projected ${cell.projectedWeight} ${unitGlyph}`}
+                onPress={() => onPreviewCellPress(row.cycle, cell.day)}
+                accessibilityLabel={`Cycle ${row.cycle}, day ${cell.day}: projected ${cell.projectedWeight} ${unitGlyph}. Tap to preview`}
                 testID={`progress-cell-${row.cycle}-${cell.day}`}
               />
             );

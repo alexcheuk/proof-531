@@ -1,6 +1,13 @@
 import { ThemeProvider } from '@/design/theme';
-import { render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
+
+jest.mock('expo-haptics', () => ({
+  selectionAsync: jest.fn(),
+  impactAsync: jest.fn(),
+  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+}));
+
 import { CycleStrip } from '../CycleStrip';
 
 const renderStrip = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
@@ -48,5 +55,25 @@ describe('CycleStrip', () => {
   it('renders exactly one ✓ glyph when on day 2 (only day 1 done)', () => {
     const screen = renderStrip(<CycleStrip currentDay={2} />);
     expect(screen.queryAllByText('✓').length).toBe(1);
+  });
+
+  it('makes cells buttons that fire onCellPress with the tapped day', () => {
+    const onCellPress = jest.fn();
+    const screen = renderStrip(<CycleStrip currentDay={2} onCellPress={onCellPress} />);
+    fireEvent.press(screen.getByTestId('cycle-strip-cell-3'));
+    expect(onCellPress).toHaveBeenCalledWith(3);
+  });
+
+  it('exposes a11y button labels with completion/current state', () => {
+    const screen = renderStrip(<CycleStrip currentDay={2} onCellPress={jest.fn()} />);
+    // day 1 is completed, day 2 is current, day 4 is a plain future day.
+    expect(screen.getByLabelText('Preview week 1 day, 5·5·5+, completed')).toBeTruthy();
+    expect(screen.getByLabelText('Preview week 2 day, 3·3·3+, current day')).toBeTruthy();
+    expect(screen.getByLabelText('Preview week 4 day, TM TEST')).toBeTruthy();
+  });
+
+  it('leaves cells as non-button decoration when onCellPress is omitted', () => {
+    const screen = renderStrip(<CycleStrip currentDay={2} />);
+    expect(screen.queryByLabelText('Preview week 1 day, 5·5·5+, completed')).toBeNull();
   });
 });

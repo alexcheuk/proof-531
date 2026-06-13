@@ -4,7 +4,8 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { ColorToken } from '@/design/tokens';
 import type { Week } from '@/domain/types';
-import { View, type ViewStyle } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Pressable, View, type ViewStyle } from 'react-native';
 
 type Cell = { w: Week; scheme: string; compact?: boolean };
 
@@ -17,9 +18,16 @@ const CELLS: readonly Cell[] = [
 
 type CycleStripProps = {
   currentDay: Week;
+  /**
+   * When supplied, each cell becomes a Pressable button that opens the
+   * DayPreviewSheet for that day of the current cycle. Omitting it keeps the
+   * strip as inert decoration (no behavior change for callers that don't wire
+   * the preview).
+   */
+  onCellPress?: (day: Week) => void;
 };
 
-export function CycleStrip({ currentDay }: CycleStripProps) {
+export function CycleStrip({ currentDay, onCellPress }: CycleStripProps) {
   const { colors, spacing } = useTheme();
 
   return (
@@ -43,8 +51,17 @@ export function CycleStrip({ currentDay }: CycleStripProps) {
 
           const schemeColorToken: ColorToken = isDone ? 'bg0' : isNext ? 'ink0' : 'ink3';
 
-          return (
-            <View key={c.w} style={cellStyle} testID={`cycle-strip-cell-${c.w}`}>
+          const doneSuffix = isDone ? ', completed' : isNext ? ', current day' : '';
+          const a11yLabel = `Preview week ${c.w} day, ${c.scheme}${doneSuffix}`;
+          const handlePress = onCellPress
+            ? () => {
+                void Haptics.selectionAsync();
+                onCellPress(c.w);
+              }
+            : undefined;
+
+          const cellBody = (
+            <>
               <CapsLabel size="xs" weight="semibold" color={isDone ? 'paperMuted' : 'ink3'}>
                 {`D${c.w}`}
               </CapsLabel>
@@ -94,6 +111,28 @@ export function CycleStrip({ currentDay }: CycleStripProps) {
                   }}
                 />
               ) : null}
+            </>
+          );
+
+          if (handlePress) {
+            return (
+              <Pressable
+                key={c.w}
+                onPress={handlePress}
+                style={cellStyle}
+                testID={`cycle-strip-cell-${c.w}`}
+                accessibilityRole="button"
+                accessibilityLabel={a11yLabel}
+                hitSlop={{ top: 8, bottom: 8, left: 0, right: 0 }}
+              >
+                {cellBody}
+              </Pressable>
+            );
+          }
+
+          return (
+            <View key={c.w} style={cellStyle} testID={`cycle-strip-cell-${c.w}`}>
+              {cellBody}
             </View>
           );
         })}

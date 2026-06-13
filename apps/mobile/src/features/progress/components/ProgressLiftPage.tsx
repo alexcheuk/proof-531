@@ -8,8 +8,9 @@ import { useTheme } from '@/design/theme';
 import { LOWER_BODY, tmIncrement } from '@/domain/increments';
 import { liftLongName } from '@/domain/labels';
 import { cyclesUntilTmGoal } from '@/domain/progression';
-import type { Lift } from '@/domain/types';
+import type { Lift, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
+import { DayPreviewSheet } from '@/features/shared/DayPreviewSheet/DayPreviewSheet';
 import { QueryShell } from '@/features/shared/QueryShell';
 import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
@@ -72,6 +73,12 @@ export function ProgressLiftPage({
     tmStep,
     currentTm: data?.tm ?? 0,
   });
+
+  // DayPreviewSheet state for now / future / past-empty matrix cells. The
+  // row's TM (display units, already historical-aware) is captured at press
+  // time so the preview shows the prescription at that cycle's TM. `null` =
+  // closed. Past+completed cells route to the full receipt instead (unchanged).
+  const [preview, setPreview] = useState<{ cycle: number; day: Week; tm: number } | null>(null);
 
   const { scrolled, onScroll, scrollEventThrottle } = useScrolledPast();
   useEffect(() => {
@@ -136,91 +143,119 @@ export function ProgressLiftPage({
   const minGoal = data.tm + tmStep;
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      style={{ flex: 1, backgroundColor: colors.bg0 }}
-      contentContainerStyle={{ paddingBottom: spacing.xxl }}
-      onScroll={onScroll}
-      scrollEventThrottle={scrollEventThrottle}
-      testID={`progress-lift-${lift}`}
-    >
-      <TitleBlock eyebrow={`On the ${liftLongName(lift)}`} title="Progress." />
+    <>
+      <ScrollView
+        ref={scrollRef}
+        style={{ flex: 1, backgroundColor: colors.bg0 }}
+        contentContainerStyle={{ paddingBottom: spacing.xxl }}
+        onScroll={onScroll}
+        scrollEventThrottle={scrollEventThrottle}
+        testID={`progress-lift-${lift}`}
+      >
+        <TitleBlock eyebrow={`On the ${liftLongName(lift)}`} title="Progress." />
 
-      <StatsTriplet
-        tm={data.tm}
-        bestE1RM={liftPr}
-        cycle={data.currentCycle}
-        unitGlyph={ugDisplay}
-        testID={`stats-triplet-${lift}`}
-      />
+        <StatsTriplet
+          tm={data.tm}
+          bestE1RM={liftPr}
+          cycle={data.currentCycle}
+          unitGlyph={ugDisplay}
+          testID={`stats-triplet-${lift}`}
+        />
 
-      <GoalPanel
-        kind={draftKind}
-        value={draftValue}
-        unitGlyph={ugDisplay}
-        step={goalStep(displayU)}
-        minValue={minGoal}
-        cyclesUntilGoal={cyclesUntilDraft}
-        daysPerWeek={persistedDaysPerWeek}
-        onKindChange={onKindChange}
-        onValueChange={onValueChange}
-        onDaysPerWeekChange={onDaysPerWeekChange}
-        unset={unset}
-        testID={`goal-panel-${lift}`}
-      />
+        <GoalPanel
+          kind={draftKind}
+          value={draftValue}
+          unitGlyph={ugDisplay}
+          step={goalStep(displayU)}
+          minValue={minGoal}
+          cyclesUntilGoal={cyclesUntilDraft}
+          daysPerWeek={persistedDaysPerWeek}
+          onKindChange={onKindChange}
+          onValueChange={onValueChange}
+          onDaysPerWeekChange={onDaysPerWeekChange}
+          unset={unset}
+          testID={`goal-panel-${lift}`}
+        />
 
-      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.xl }}>
+        <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.xl }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'baseline',
+              marginBottom: spacing.md,
+            }}
+          >
+            <CapsLabel weight="semibold">Cycle matrix</CapsLabel>
+            <CapsLabel size="xs" color="ink3">{`weight · amreps · ${ugDisplay}`}</CapsLabel>
+          </View>
+
+          <View style={{ borderWidth: 1, borderColor: colors.ink0 }}>
+            <ProgressGridHeader unitGlyph={ugDisplay} />
+            {data.rows.map((row) => (
+              <View key={`row-${row.cycle}`} onLayout={(e) => handleRowLayout(row.cycle, e)}>
+                <ProgressLiftRow
+                  lift={lift}
+                  unit={displayU}
+                  row={row}
+                  unitGlyph={ugDisplay}
+                  onPastCellPress={(sessionId) => {
+                    void Haptics.selectionAsync();
+                    goTo.complete(router, sessionId, { from: 'history' });
+                  }}
+                  onPreviewCellPress={(cycle, day) => {
+                    void Haptics.selectionAsync();
+                    setPreview({ cycle, day, tm: row.tm });
+                  }}
+                  goalCycle={goalCycle}
+                  draftKind={draftKind}
+                  draftValue={draftValue}
+                  draftTargetTm={draftTargetTm}
+                  justCompletedSessionId={justCompletedSessionId}
+                />
+              </View>
+            ))}
+            {goalBeyondChart ? (
+              <BeyondChartFooter
+                cyclesBeyond={cyclesBeyondChart}
+                goalValue={draftValue}
+                unitGlyph={ugDisplay}
+                testID={`progress-beyond-${lift}`}
+              />
+            ) : null}
+          </View>
+        </View>
+
         <View
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            marginBottom: spacing.md,
+            paddingHorizontal: layout.gutter,
+            paddingTop: spacing.xxl,
+            alignItems: 'center',
           }}
         >
-          <CapsLabel weight="semibold">Cycle matrix</CapsLabel>
-          <CapsLabel size="xs" color="ink3">{`weight · amreps · ${ugDisplay}`}</CapsLabel>
+          <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 2.88 }}>
+            {`+${tmStep} per cycle · ${LOWER_BODY.has(lift) ? 'lower body' : 'upper body'}`}
+          </CapsLabel>
         </View>
-
-        <View style={{ borderWidth: 1, borderColor: colors.ink0 }}>
-          <ProgressGridHeader unitGlyph={ugDisplay} />
-          {data.rows.map((row) => (
-            <View key={`row-${row.cycle}`} onLayout={(e) => handleRowLayout(row.cycle, e)}>
-              <ProgressLiftRow
-                lift={lift}
-                unit={displayU}
-                row={row}
-                unitGlyph={ugDisplay}
-                onPastCellPress={(sessionId) => {
-                  void Haptics.selectionAsync();
-                  goTo.complete(router, sessionId, { from: 'history' });
-                }}
-                goalCycle={goalCycle}
-                draftKind={draftKind}
-                draftValue={draftValue}
-                draftTargetTm={draftTargetTm}
-                justCompletedSessionId={justCompletedSessionId}
-              />
-            </View>
-          ))}
-          {goalBeyondChart ? (
-            <BeyondChartFooter
-              cyclesBeyond={cyclesBeyondChart}
-              goalValue={draftValue}
-              unitGlyph={ugDisplay}
-              testID={`progress-beyond-${lift}`}
-            />
-          ) : null}
-        </View>
-      </View>
-
-      <View
-        style={{ paddingHorizontal: layout.gutter, paddingTop: spacing.xxl, alignItems: 'center' }}
-      >
-        <CapsLabel size="xs" color="ink3" style={{ letterSpacing: 2.88 }}>
-          {`+${tmStep} per cycle · ${LOWER_BODY.has(lift) ? 'lower body' : 'upper body'}`}
-        </CapsLabel>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      {preview !== null ? (
+        <DayPreviewSheet
+          open
+          lift={lift}
+          cycle={preview.cycle}
+          week={preview.day}
+          // Progression weights are computed in display units throughout, so the
+          // captured row TM is already a display-unit number; pass displayU as
+          // both storage and render unit so no second conversion is applied.
+          storageUnit={displayU}
+          displayUnit={displayU}
+          tm={preview.tm}
+          plateSet={settings.data.plateSet}
+          sessionId={null}
+          onDismiss={() => setPreview(null)}
+          testID={`progress-day-preview-${lift}`}
+        />
+      ) : null}
+    </>
   );
 }

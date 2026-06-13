@@ -207,8 +207,15 @@ jest.mock('@/data/queries/useSessions', () => ({
 // "Resume · set N of 3" CTA. Mock returns an empty list so the CTA stays
 // at the generic "Resume session" copy in tests that don't opt in.
 jest.mock('@/data/queries/useSetLogsForSession', () => ({
-  useSetLogsForSession: () => ({ data: [], isLoading: false }),
+  useSetLogsForSession: () => ({ data: [], isLoading: false, isError: false }),
   SET_LOGS_FOR_SESSION_KEY: (id: number) => ['setLogsForSession', id],
+}));
+
+// LiftPage now resolves a per-day sessionId for the DayPreviewSheet via
+// useCycleDaySessionId, which reads useLiftProgression. Mock that query so the
+// real useQuery doesn't run without a QueryClientProvider in these tests.
+jest.mock('@/data/queries/useLiftProgression', () => ({
+  useLiftProgression: () => ({ data: undefined, isLoading: false, isError: false }),
 }));
 
 // Import after mocks.
