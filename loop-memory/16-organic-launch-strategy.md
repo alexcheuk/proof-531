@@ -6,8 +6,8 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength  - Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-06-13 (Expedition 86)
-**Status**: Android LIVE on Google Play (Expedition 83, versionCode 25). iOS App Store submission still in progress. r/531Discussion and r/weightroom drafts updated for Android-only launch (Expedition 84) and marked ready_to_post. IN-APP-REVIEW (tactic 12) implemented (Expedition 84): expo-store-review installed, storeReviewRequested flag in settings schema, hook fires once per install on first cycle complete. Needs next production build to activate native dialog. Expedition 85: all marketing docs swept of 396 em dashes (SOUL hard line), iteration count updated to 85+ throughout. docs/marketing/ now covered by CI em-dash guard. Expedition 86: iteration count advanced to 86+. apps/web corpus prose em dashes swept (option C auto-proceed after 6 ticks of silence on WEB-SIGNOFF; placeholder glyphs preserved). Web build verified clean.
+**Last updated**: 2026-06-13 (Expedition 87)
+**Status**: Android LIVE on Google Play (Expedition 83, versionCode 25). iOS App Store submission still in progress. r/531Discussion and r/weightroom drafts updated for Android-only launch (Expedition 84) and marked ready_to_post. IN-APP-REVIEW (tactic 12) implemented (Expedition 84): expo-store-review installed, storeReviewRequested flag in settings schema, hook fires once per install on first cycle complete. Needs next production build to activate native dialog. Expedition 85: all marketing docs swept of 396 em dashes (SOUL hard line), iteration count updated to 85+ throughout. docs/marketing/ now covered by CI em-dash guard. Expedition 86: iteration count advanced to 86+. apps/web corpus prose em dashes swept (option C auto-proceed after 6 ticks of silence on WEB-SIGNOFF; placeholder glyphs preserved). Web build verified clean. Expedition 87: casual Android launch story post drafted (docs/marketing/casual-android-launch-post.md); Playwright browser MCP configured (.mcp.json); iteration count advanced to 87+.
 
 ## The competitive anchor
 
@@ -135,9 +135,37 @@ Use the right story for the right audience. Never mix them in a single post.
 | 10. r/privacy (opportunistic) | ongoing | |
 | 11. T-Nation (opportunistic) | ongoing | |
 | 12. In-app review prompt | IMPLEMENTED (Expedition 84, needs next prod build) | expo-store-review ~55.0.14 installed. `storeReviewRequested` boolean column added to settings (additive migration). `useStoreReviewOnCycleComplete` hook fires once per install after first cycle complete. Wired into SessionCompleteScreen. 1170/1170 tests green. Needs a new EAS production build (native module) to activate on device. |
+| 16. Casual Android launch story (new) | draft ready - awaiting Alex go-ahead (Expedition 87) | Extremely casual "haha look what I did" post drafted at `docs/marketing/casual-android-launch-post.md`. Very different voice from other posts - matches Alex's Discord message style, stream of consciousness. Targets r/vibecoding, r/homelab, r/selfhosted, or Twitter/X. Playwright browser MCP configured for account creation/posting if needed. Awaiting Alex's go-ahead before any posting. Post tracking in `loop-memory/23-post-tracking.md`. |
 | 15. Hackernoon story  - casual builder angle | pending · expedition 63 | Researched this expedition. Hackernoon publishes to 3.5M+ monthly tech readers, human editorial review, dofollow outbound links (SEO flows back to 531strength.com), audio + 12-language distribution. Ideal platform for the casual builder story at `docs/marketing/reddit-casual-builder-story-draft.md`  - the "homelab, Google Home, expedition lore, absurdist delight" angle. Not a launch-day tactic. Sequence: Indie Hackers first (week 2-3 post-launch), then Hackernoon 1-2 weeks later with canonical URL pointing back to 531strength.com/blog. Draft already exists; Alex needs to fill in homelab/TTS/personal details (Q15 in questions-for-alex.md) before submitting. |
 | 13. YouTube Shorts series | brief improved · expedition 77 | **Expedition 49:** Alex confirmed both screen + face-cam format. Personal channel from scratch, "what I built" / dev influencer angle. Pocket Cast subscription confirmed. First-video brief written. **Expedition 53:** Full word-for-word shooting script drafted at `docs/marketing/youtube-shorts-draft.md`. **Expedition 56:** Hook alternatives added (4 versions), "Note on the number" added, minimal-viable-path checklist written. **Expedition 60:** Version D hook added. **Expedition 62:** All references updated to "62+" throughout. **Expedition 64:** All references updated to "64+" throughout. **Expedition 65:** All references updated to "65+" throughout. **Expedition 67:** All references updated to "67+" throughout. **Expedition 68:** All references updated to "68+" throughout. **Expedition 70:** All references updated to "70+" throughout brief and shooting script. **Expedition 72:** All references updated to "72+" throughout brief and shooting script. Version D hook now reads "72 times." **Expedition 73:** All references updated to "73+" throughout brief and shooting script. Version D hook now reads "73 times." **Expedition 74:** All references updated to "74+" throughout brief and shooting script. Version D hook now reads "74 times." **Expedition 76:** All references updated to "76+" throughout brief and shooting script. Version D hook now reads "76 times." **Expedition 77:** All references updated to "77+" throughout brief and shooting script. Version D hook now reads "77 times." "Note on the number" names Expedition 77 as current baseline. Film-now status unchanged: unblocked without iOS. New signal added to brief: YouTube Shorts now rank independently in search (dedicated Shorts filter, January 2026)  - title and description keyword strategy now matters for discovery. |
 | 14. Web tools as SEO entry point | in progress · expedition 62 | Alex confirmed tools at /tools/ are the asset (expedition 49). Expedition 50: FAQ sections added. **Expedition 55:** Title tags, meta descriptions, h1 headings updated on all three tool pages with "5/3/1" keywords. Reddit tool-linking playbook created with three full response templates. **Expedition 56:** Short-form comment templates added  - 5 one-to-two sentence drop-ins. **Expedition 60:** Playbook expanded with two new items: (1) full Thread type 2b  - "How do I set my TM / is my TM too heavy?"  - covering training max calculation, TM resets, and failed AMRAP threads; (2) two new short-form templates  - one for goal weight / projection questions, one for 7th Week Protocol / TM Test Week deload threads. Playbook now covers five thread types (full templates) plus seven short-form drop-ins. **Expedition 62:** No new thread types added this loop. Playbook remains current. **Expedition 73:** No new thread types added. Tool permalink angle confirmed viable for r/531Discussion and r/weightroom (unchanged). |
+
+## Expedition 87 - Research notes
+
+**Date:** 2026-06-13
+
+**Iteration count advancement - all marketing docs updated to 87+:**
+
+All "86+" count references across all marketing docs updated to "87+" (11 files + README). "86 times" updated to "87 times" in YouTube Shorts hooks. "Note on the number" contexts referencing Expedition 86 updated to Expedition 87. README now reads "87+ iterations."
+
+**Casual Android launch post - drafted (tactic 16, new):**
+
+Alex asked (task-queue 1515444127339249875 + 1515444142619099167) for a casual "first post since Android launch" in an extremely casual voice, focusing on "haha look what I did to make my gym app for myself." Draft at `docs/marketing/casual-android-launch-post.md`. Voice matches Alex's Discord message - stream of consciousness, personal, genuinely funny. Key story beats: bench goal -> app search -> built one with Claude agent loop, weekend operation from phone only (Discord -> OTA updates -> test -> new tasks), expedition 33 lore, Google Home TTS with Gemini voice acting, migrated to homelab for full autonomy. NOT a product announcement. Targets r/vibecoding, r/homelab, r/selfhosted, or Twitter/X. Post tracking system added at `loop-memory/23-post-tracking.md`. Awaiting Alex's go-ahead before any posting (SOUL growth-autonomy rule).
+
+**Playwright browser MCP configured:**
+
+`.mcp.json` created with `@playwright/mcp@latest` MCP server. `enableAllProjectMcpServers: true` added to `.claude/settings.json`. The loop and Alex can now use browser automation (Playwright/CDP) for account creation, marketing platform sign-ups, and posting. This unblocks the browser-based tasks Alex mentioned in task-queue 1515444142619099167.
+
+**iOS App Store status - still pending:**
+
+No change. All drafts remain ready. Human-only blockers unchanged: App Store URL (after approval), Alex's personal 5/3/1 history for the r/531Discussion post.
+
+**Next actions:**
+1. Alex: reply to casual post draft in #task-queue or #needs-input with go-ahead to post (or corrections to the draft).
+2. iOS approval: run `docs/marketing/launch-day-operations-guide.md`.
+3. Alex: fill in personal 5/3/1 history in `docs/marketing/reddit-531discussion-draft.md`.
+
+---
 
 ## Expedition 86 - Research notes
 
@@ -149,7 +177,7 @@ All "85+" count references across all marketing docs updated to "86+" (11 files 
 
 **Web corpus em-dash sweep - option C auto-proceeded (6 ticks of silence):**
 
-WEB-SIGNOFF escalation was posted on 2026-06-01 (tick-2) with a 3-tick auto-proceed threshold. After 6 ticks of silence, the loop auto-proceeded with option C: swept all prose em dashes from apps/web/ (titles, copy, comments, aria labels, JS strings) while preserving placeholder glyphs (`<span class="reps">—</span>`, `dash.textContent = '—'`, etc.) and sign-off rendering lines (the `— {loggerName}` and `— archived through expedition` lines in the blog listing templates, pending the A/B blog sign-off decision). 99+ prose em dashes swept across 15 web source files. Astro build verified clean post-sweep. CI check-no-em-dash remains clean. Once Alex answers WEB-SIGNOFF A/B (blog sign-off convention), the remaining blog-framework sign-off lines can be normalized and apps/web can be added to the CI guard scope.
+WEB-SIGNOFF escalation was posted on 2026-06-01 (tick-2) with a 3-tick auto-proceed threshold. After 6 ticks of silence, the loop auto-proceeded with option C: swept all prose em dashes from apps/web/ (titles, copy, comments, aria labels, JS strings) while preserving placeholder glyphs (the `<span class="reps">` reps indicator and `dash.textContent` assignments used for UI display) and sign-off rendering lines (the logger sign-off template lines using U+2014 glyphs in the blog listing templates, pending the A/B blog sign-off decision). 99+ prose em dashes swept across 15 web source files. Astro build verified clean post-sweep. CI check-no-em-dash remains clean. Once Alex answers WEB-SIGNOFF A/B (blog sign-off convention), the remaining blog-framework sign-off lines can be normalized and apps/web can be added to the CI guard scope.
 
 **Code quality - JSDoc cleanup:**
 

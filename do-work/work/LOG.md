@@ -28,7 +28,7 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 ## 2026-06-13 tick-8 (Exp 86): WEB-SIGNOFF option-C auto-proceed + iter count 86+ + Q-QUALITY JSDoc sweep
 - shipped (WEB, WEB-SIGNOFF partial): Option C auto-proceeded after 6 ticks of silence (DOCTRINE threshold:
   3 ticks). 99+ prose em dashes swept from apps/web/ pages and components (15 files) with placeholder glyphs
-  preserved. Double-space artifact from sweep (` — ` -> `  -  `) caught and normalized same tick. Astro build
+  preserved. Double-space artifact from sweep (` [emdash] ` -> `  -  `) caught and normalized same tick. Astro build
   clean. 3 sign-off rendering lines in blog framework preserved pending WEB-SIGNOFF A/B reply from Alex.
   apps/web NOT yet in CI guard (3 lines remain). Decision-log entry added.
 - shipped (LAUNCH): Iteration count 85+ -> 86+ across 11 marketing docs + README. Stale "74+" placeholder in

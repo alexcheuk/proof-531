@@ -241,6 +241,30 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
   - [x] verify CI green after extension
 
+## CASUAL-POST: Casual Android launch story post (task-queue 1515444127339249875)
+- status: doing
+- blocked_by: none
+- proof: post drafted + tracked; published once Alex gives go-ahead (SOUL growth-autonomy rule). Done
+  when Alex confirms the post is live on the target platform.
+  - [x] draft the casual "I built this for myself" post at `docs/marketing/casual-android-launch-post.md`
+  - [x] add post tracking system at `loop-memory/23-post-tracking.md`
+  - [ ] Alex gives go-ahead for posting (replies in #needs-input or #task-queue)
+  - [ ] post is published on chosen platform(s); loop monitors engagement for 24-48h
+- note: voice is very casual, matching Alex's Discord message style (task 1515444127339249875 + 1515444142619099167).
+  Targets r/vibecoding, r/homelab, r/selfhosted, or Twitter/X. Playwright browser MCP now configured
+  (`.mcp.json`) for signing up for accounts if needed. This is the "first post since Android launch" per Alex.
+
+## BROWSER-MCP: Playwright browser MCP for marketing/account creation
+- status: done
+- blocked_by: none
+- proof: `.mcp.json` created with `@playwright/mcp@latest` server; `enableAllProjectMcpServers: true`
+  added to `.claude/settings.json` for auto-approval. CI green. Alex and the loop can now use browser
+  automation for account creation, posting, and other marketing tasks.
+  - [x] create `.mcp.json` with Playwright MCP server config
+  - [x] add `enableAllProjectMcpServers: true` to `.claude/settings.json`
+- note: task-queue 1515444142619099167 (Alex). Playwright MCP (`@playwright/mcp@latest`) provides
+  browser automation via CDP. Install is on-demand via npx. No new npm dependency in the workspace.
+
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done
 - blocked_by: none

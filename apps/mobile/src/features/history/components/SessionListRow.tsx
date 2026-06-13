@@ -6,19 +6,6 @@ import { Row } from '@/design/primitives/Row';
 import { historyDateLabel, liftDisplayName } from '@/domain/labels';
 import { formatElapsedCompact } from '@/domain/summary';
 import type { Lift, Week } from '@/domain/types';
-/**
- * Single row in the History list  -  one completed/in-progress/cancelled
- * session. Tapping a row drills into the session's surface:
- *   - completed → /session/complete?sessionId  (the stamped receipt)
- *   - in_progress → /session/today?lift        (resume)
- *   - cancelled → no-op (no detail surface yet)
- *
- * Left column: lift name (primary) + dated/status caption (secondary).
- * Right column: a small tappable PR star (when this session set a PR) +
- * cycle/week glyph (value) + status (sub). The PR star is its own press
- * target so users can jump straight to a per-lift filter on tap; tapping
- * the rest of the row still navigates to the session surface.
- */
 import { goTo } from '@/lib/routes';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -63,6 +50,7 @@ export type SessionListRowProps = {
   onPressPr?: (lift: Lift) => void;
 };
 
+// PR star is its own Pressable so users can filter to a lift without triggering row navigation.
 export function SessionListRow({
   session,
   first = false,

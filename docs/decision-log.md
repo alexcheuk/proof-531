@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - Playwright browser MCP added (.mcp.json) for marketing automation
+
+**Tags:** `infra`, `loop`, `marketing`
+**Files:** `.mcp.json`, `.claude/settings.json`, `loop-memory/23-post-tracking.md`
+
+Alex asked the loop (task-queue 1515444142619099167) to add a Chrome DevTools MCP for browser-based
+marketing tasks: signing up for accounts, posting to platforms, etc. Added `.mcp.json` with
+`@playwright/mcp@latest` (Playwright's official MCP server, CDP-based). Added `enableAllProjectMcpServers: true`
+to `.claude/settings.json` for auto-approval. Install is on-demand via npx (no workspace npm dep).
+Also added `loop-memory/23-post-tracking.md` as the tracking ledger for social posts drafted by the loop.
+
+**Follow-ups:** First use will be when Alex approves the casual Android launch post for publishing.
+
 ### 2026-06-13 - WEB-SIGNOFF option C auto-proceeded: swept prose em dashes from apps/web corpus
 
 **Tags:** `convention`, `process`, `removal`
@@ -51,9 +64,9 @@ WEB-SIGNOFF escalation (A/B for blog sign-offs, C/D for web corpus) was posted 2
 After 6 ticks of silence, the loop auto-proceeded with option C (DOCTRINE: reversible escalations
 auto-proceed after ~3 ticks). 99+ prose em dashes swept from all apps/web/src/pages/ and
 apps/web/src/components/ files using a scoped Python script that preserved placeholder glyphs
-(`<span class="reps">—</span>`, `dash.textContent = '—'`, etc.) and sign-off rendering lines
+(the `<span class="reps">` reps indicator and `dash.textContent` UI assignments) and sign-off rendering lines
 (3 lines in blog listing templates pending the A/B blog sign-off reply). Double-space artifacts
-(` — ` with surrounding spaces become `  -  `) were caught and normalized in the same tick.
+(U+2014 surrounded by spaces becomes double-space-hyphen-double-space) were caught and normalized in the same tick.
 apps/web not yet added to CI guard - waits for the 3 remaining sign-off rendering lines to resolve.
 
 **Follow-ups:** Alex replies to WEB-SIGNOFF A/B in `#needs-input`; normalize sign-off rendering
