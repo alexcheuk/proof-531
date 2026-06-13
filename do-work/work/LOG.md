@@ -25,6 +25,17 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-9 supp (quality): ProgressLiftPage memoization
+- orientation: branch was 22 commits behind origin (ticks 6-8 ran in parallel). Reset to origin/user-friendly;
+  applied only the unique Q-QUALITY improvement not covered by parallel ticks.
+- shipped (Q-QUALITY): `ProgressLiftPage.tsx` - `liftPr` IIFE converted to `useMemo(deps: prs.data/lift/storageUnit/displayU)`
+  to avoid repeated prs.data.find on every re-render; `onPastCellPress` inline lambda extracted to
+  `useCallback(deps: router)` for stable reference. Behavior-preserving. 1188/1188 tests, CI green.
+- proof: pnpm run ci green (1188 tests, tsc+lint+boundaries clean). Pushed 7ef947e to origin.
+- deferred / escalated: marketing 84+ already done in tick-6; IN-APP-REVIEW already done in tick-6 by
+  parallel instance. My local marketing doc updates superseded by remote; local IN-APP-REVIEW superseded by
+  remote's richer implementation (reviewPromptedAt gate). All Maestro smokes still pending.
+
 ## 2026-06-13 tick-8 supp (Exp 84 catchup): parallel-tick merge resolution + onboarding refactor
 - orientation: branch started 19 commits behind origin (ticks 6+7 ran in parallel). Fast-forward pulled; merge
   conflicts in schema/types/settings/backlog files. Upstream used expo-store-review (reviewPromptedAt); mine used
