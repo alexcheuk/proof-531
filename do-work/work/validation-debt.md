@@ -24,6 +24,11 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-6 (Expedition 84) IN-APP-REVIEW: `expo-store-review` wired into `SessionCompleteScreen` via
+  `useInAppReview` hook. Fires once per install when cycle >= 2 and cycle just completed. Gated by
+  `settings.reviewPromptedAt` additive column (null = never prompted). 1178/1178 jest tests + tsc + lint clean.
+  Owes on-device smoke on an Android device connected to Play Store to confirm the native review dialog
+  appears. (Dev-client requires a rebuild; production APK picks it up automatically.)
 - tick-5 (Expedition 83) MISSED-REP correction card: MissCorrectionCard (choice/forced variants) +
   MissResetSheet on SessionCompleteScreen and TodayBody. 1170/1170 jest tests. Owes Maestro smoke for the
   miss -> correction card -> reset flow before MISSED-REP flips to `done`.

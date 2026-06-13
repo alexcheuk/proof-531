@@ -166,15 +166,20 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
 
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
-- status: todo
+- status: doing
 - blocked_by: none
 - proof: expo-store-review prompt shows on Android (Play Store live) after session cycle >= 2; iOS activates
-  when App Store listing is live. Non-modal, non-repeated. Both stores must have live listings for full parity.
-  - [ ] add expo-store-review to mobile dependencies
-  - [ ] implement prompt logic in SessionCompleteScreen (after cycle completion, once per user)
-  - [ ] wire into CI and test
-- note: Android Play Store is now live (expedition 83). iOS App Store still pending. File as feature for
-  next rn-expo-pipeline run.
+  when App Store listing is live. Non-modal, non-repeated. Owes on-device smoke to confirm the native
+  review dialog appears.
+  - [x] add expo-store-review to mobile dependencies (~55.0.14)
+  - [x] implement prompt logic: useInAppReview hook + settings.reviewPromptedAt additive column; fires once
+        per install when isCycleComplete && cycle >= 2; 7 unit tests + settings accessor test
+  - [x] wire into SessionCompleteScreen + CI green (1178/1178 tests, tsc + lint clean)
+  - [ ] on-device smoke confirms native review dialog appears on cycle completion
+- note: Android Play Store is now live. Implemented tick-6 (Expedition 84) directly without pipeline since
+  design was clear from backlog. iOS dialog activates automatically once App Store listing is live (expo-store-review
+  handles both platforms via one call). Dev-client rebuild required for native module to appear in dev; production
+  APK picks it up automatically.
 
 ## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
 - status: doing

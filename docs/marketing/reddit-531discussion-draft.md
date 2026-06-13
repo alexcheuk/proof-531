@@ -55,7 +55,7 @@ So I built my own.
 - No ads, no paywalls, no analytics
 - Data stays on your device in a local SQLite database
 
-Android: [GitHub Releases link — fill in]
+Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
 iOS: [App Store link — fill in on launch day]
 
 Not affiliated with Jim Wendler or Wendler LLC. Just a fan of the program.
@@ -78,7 +78,7 @@ These three tell the complete story: what the program looks like before you star
 
 Ran out of patience with existing options — too expensive, too many features I didn't need, or the BBB block wasn't complete. Built my own. Sharing it here in case it's useful to anyone else.
 
-Android APK on GitHub Releases. iOS on the App Store.
+Android on the Play Store. iOS on the App Store (coming soon).
 
 Not affiliated with Jim Wendler. Free, local SQLite, no sign-in.
 
@@ -88,7 +88,7 @@ Not affiliated with Jim Wendler. Free, local SQLite, no sign-in.
 
 ## Posting guidance
 
-- Post on iOS launch day, not before. Android-only post gets half the audience.
+- Post on iOS launch day for maximum reach. Android is already live; waiting for iOS gives the full dual-store audience.
 - Post between 7am–10am US Eastern on a Tuesday or Wednesday (best engagement window for lifting subreddits).
 - Do not cross-post to r/weightroom the same day — stagger by at least 24 hours, use different copy (see tactic 3 draft).
 - If the post gets traction, reply to every comment within the first 2 hours. Engagement velocity matters.

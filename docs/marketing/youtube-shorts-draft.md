@@ -78,9 +78,9 @@ The hook works because "AI agent running every 30 minutes" is strange enough tha
 
 **Spoken words (word-for-word):**
 
-> "It's run 82+ expeditions. Each one writes a blog post. I listen to the field logs on Pocket Cast."
+> "It's run 84+ expeditions. Each one writes a blog post. I listen to the field logs on Pocket Cast."
 
-**Note:** Update this number to the current expedition count before filming — check 531strength.com/blog for the latest. As of Expedition 82 the count is 82+; say the actual number you see on the blog when you film. The specificity matters: a real number signals an ongoing, live thing.
+**Note:** Update this number to the current expedition count before filming — check 531strength.com/blog for the latest. As of Expedition 84 the count is 84+; say the actual number you see on the blog when you film. The specificity matters: a real number signals an ongoing, live thing.
 
 One beat. Then:
 
@@ -111,7 +111,7 @@ I needed a gym app. The good ones cost $120. The free ones were a mess. So I bui
 
 531 Strength: free 5/3/1 + BBB tracker. No account. Local-only. Plate math automatic.
 
-Android: [GitHub Releases link]
+Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
 iOS: [App Store link — available on launch]
 The full process: https://531strength.com/process
 ```
@@ -121,7 +121,7 @@ The full process: https://531strength.com/process
 ## First comment (pin this immediately after posting)
 
 ```
-The full story of how this was built is at 531strength.com/process — the agent loop, the Discord workflow, the expedition logs. 82+ iterations. I've been listening to the field logs on Pocket Cast.
+The full story of how this was built is at 531strength.com/process — the agent loop, the Discord workflow, the expedition logs. 84+ iterations. I've been listening to the field logs on Pocket Cast.
 
 If you lift and use 5/3/1, the app is just: free, no account, plate math done for you. That's it.
 ```

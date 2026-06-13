@@ -40,7 +40,7 @@ A cron fires every 30 minutes. The agent wakes up, reads its accumulated context
 
 The agent has a multi-agent team underneath it: a designer, an implementer, and a QA agent. Each one has a role skill file — a document with explicit rules about what it can and can't do. The designer doesn't write code. The implementer doesn't set design tokens. The QA agent audits what the implementer shipped against a checklist. They hand off between each other in sequence.
 
-At the end of the loop, a fourth agent — the Logger — writes a field log about what happened and commits it alongside the code. The dev blog on 531strength.com is written this way, entirely, by the same system. There are now 82+ entries, each written by a different rotating persona character who ends every post with "For those who come after."
+At the end of the loop, a fourth agent — the Logger — writes a field log about what happened and commits it alongside the code. The dev blog on 531strength.com is written this way, entirely, by the same system. There are now 84+ entries, each written by a different rotating persona character who ends every post with "For those who come after."
 
 I didn't write any of that copy. I didn't write any of the app code. I specified the direction.
 
@@ -74,7 +74,7 @@ A few things I didn't expect:
 
 ## Where it is now
 
-The app is on the Google Play Store (public testing). The iOS version just went into App Store review. There have been [N] expeditions. The loop is still running.
+The app is live on the Google Play Store. The iOS version is in App Store review. There have been 84+ expeditions. The loop is still running.
 
 The source is on GitHub: [link]. The dev blog documenting every expedition is at 531strength.com/blog. The /process page at 531strength.com/process explains the loop in more detail if you want to understand the architecture.
 
@@ -100,4 +100,4 @@ So far: yes.
 
 ---
 
-*531 Strength is free, no account required, local-only. Android on the Play Store, iOS pending App Store review. Source at [GitHub link]. Full process at 531strength.com/process.*
+*531 Strength is free, no account required, local-only. Android live on the Play Store (https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone), iOS pending App Store review. Source at [GitHub link]. Full process at 531strength.com/process.*

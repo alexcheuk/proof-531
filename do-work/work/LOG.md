@@ -25,6 +25,28 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-6 (Exp 84): Marketing campaign prep + IN-APP-REVIEW implementation
+- orientation: new #loop-criteria pin (2026-06-13, pin 1515284085780512778): "Android app is live. Launch
+  marketing campaign. Goal is to increase downloads." All task-queue items already acked from prior ticks. No
+  new #needs-input answers (WEB-SIGNOFF still blocked).
+- shipped (LAUNCH, mandatory pin): updated all 10 marketing docs to "84+" iteration count and Android-live
+  status. `reddit-531discussion-draft.md` unblocked (Android live; only human-only blocker is Alex's personal
+  5/3/1 history). `loop-memory/16-organic-launch-strategy.md` updated with Expedition 84 research notes.
+  `README.md` updated to "84+ iterations".
+- shipped (FEAT, IN-APP-REVIEW): `expo-store-review ~55.0.14` added to dependencies; `useInAppReview` hook
+  fires once per install after cycle completion >= 2; `settings.reviewPromptedAt` additive column persists
+  the "prompted" flag; `useMarkReviewPrompted` mutation; 7 hook tests + 1 accessor test; SessionCompleteScreen
+  wired; mocks in SessionCompleteScreen.test.tsx. Accrues validation debt (on-device native review dialog smoke).
+- shipped (Q-QUALITY mandatory slice): added `reviewPromptedAt` round-trip test to settings.test.ts; this was
+  the natural quality improvement adjacent to the IN-APP-REVIEW feature (ensures the new column persists and
+  round-trips correctly across DB reads).
+- proof: `pnpm run ci` green - tsc + lint + check-boundaries + check-line-heights + check-temp-markers +
+  check-no-em-dash + 1178/1178 jest tests (186 suites). Settings accessor test confirms `reviewPromptedAt`
+  defaults to `undefined` and round-trips a timestamp.
+- deferred / escalated: WEB-SIGNOFF still blocked on Alex's em-dash reply. Maestro smokes for PROG-GRID-FIX,
+  WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending on-device build. TTS departure
+  fired (homelab reachable status unknown - non-blocking).
+
 ## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
 - shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +
   frontend + QA PASS). 20 files: classifyAmrapMiss/missResetTm in progression.ts (property-tested), lift_miss_state

@@ -70,7 +70,7 @@ The app is free, no account, local SQLite. Source on GitHub.
 
 ---
 
-**Timing note:** Post after 20+ expedition logs exist (already satisfied — 82+ iterations as of Expedition 82). HN will ask "how many iterations?" — the answer at 70+ is credible. Post on a weekday between 8am–10am US Eastern.
+**Timing note:** Post after 20+ expedition logs exist (already satisfied — 84+ iterations as of Expedition 84). HN will ask "how many iterations?" — the answer at 70+ is credible. Post on a weekday between 8am–10am US Eastern.
 
 **What HN will likely ask:**
 - "Did you actually write any code?" — Answer: minimal, some emergency fixes. The constraint was mostly held.
@@ -95,7 +95,7 @@ The app is free, no account, local SQLite. Source on GitHub.
 
 **New signal (Expedition 76) — Claude Opus 4.8 + Dynamic Workflows (May 28, 2026):** Anthropic shipped Claude Opus 4.8 and Dynamic Workflows (research preview in Claude Code) on May 28, 2026. Dynamic Workflows inverts the builder approach: Claude writes the orchestration script at runtime, spawning up to 1,000 parallel subagents, deploying adversarial verification, and iterating until answers converge. The intended use cases are one-shot high-parallelism tasks: codebase audits, large migrations (Jarred Sumner used it to port 750,000 lines of Bun from Zig to Rust in 11 days), adversarial verification.
 
-The 531 Strength harness is architecturally different and deliberately so. If HN asks "isn't this just something you could do with Dynamic Workflows now?", the comment-ready answer: Dynamic Workflows optimizes for one-shot high-parallelism tasks — Claude decides at runtime how to decompose, what to spawn, when it's done. The 531 Strength harness optimizes for bounded, consistent execution across 82+ iterations of a production app. The roles are fixed in advance (designer → implementer → QA), the boundaries are enforced by CI (not runtime instructions), and the handoffs are deterministic. That's not a limitation — it's the architecture that makes iteration 77 reliable without the human reviewing every decision. Dynamic Workflows would make a different decomposition call on iteration 77 than it made on iteration 1. The 531 Strength harness makes the same call. That's the tradeoff the architecture was designed to favor.
+The 531 Strength harness is architecturally different and deliberately so. If HN asks "isn't this just something you could do with Dynamic Workflows now?", the comment-ready answer: Dynamic Workflows optimizes for one-shot high-parallelism tasks - Claude decides at runtime how to decompose, what to spawn, when it's done. The 531 Strength harness optimizes for bounded, consistent execution across 84+ iterations of a production app. The roles are fixed in advance (designer - implementer - QA), the boundaries are enforced by CI (not runtime instructions), and the handoffs are deterministic. That's not a limitation - it's the architecture that makes iteration 84 reliable without the human reviewing every decision. Dynamic Workflows would make a different decomposition call on iteration 84 than it made on iteration 1. The 531 Strength harness makes the same call. That's the tradeoff the architecture was designed to favor.
 
 Don't lead with this in the post body. It's a comment-prep answer for the "isn't this obsolete now that Anthropic has Dynamic Workflows?" challenge — which will come up on HN given the May 28 timing of both.
 
