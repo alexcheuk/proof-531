@@ -164,6 +164,7 @@ jest.mock('@/data/queries/useSettings', () => ({
       restTargetSeconds: 90,
       bbbRestTargetSeconds: 90,
       liveScreenInverted: false,
+      reviewPromptedAt: null,
     },
     isLoading: false,
     error: null,
@@ -197,7 +198,6 @@ jest.mock('@/data/queries/useClearMissState', () => ({
 jest.mock('@/data/queries/useApplyMissReset', () => ({
   useApplyMissReset: () => ({ mutate: jest.fn(), isPending: false }),
 }));
-
 jest.mock('@/data/queries/useMarkReviewPrompted', () => ({
   useMarkReviewPrompted: () => ({ mutate: jest.fn() }),
 }));

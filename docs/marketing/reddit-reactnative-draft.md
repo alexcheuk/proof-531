@@ -35,7 +35,7 @@ Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeon
 iOS: [App Store link - coming soon]
 Source: [GitHub link]
 
-Screenshots — use the newer high-quality set from docs/screenshots/ (added Expedition 82):
+Screenshots — use the newer high-quality set from docs/screenshots/ (added Expedition 84):
 1. screenshot-6.png — Today screen (Bench, C2D1, plate viz, START SESSION) — context shot showing the program flow
 2. screenshot-7.png — Live AMRAP (Bench now., AMRAP sheet open, e1RM calculation) — lead image for r/reactnative; shows the @gorhom/bottom-sheet interaction and the plate visualization together
 3. screenshot-8.png — Session receipt with embedded PR certificate (In the book., +25 LB) — shows the receipt design and PR detection

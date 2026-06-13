@@ -54,7 +54,7 @@ function fromRow(row: SettingsRow): Settings {
     restTargetSeconds: row.restTargetSeconds,
     bbbRestTargetSeconds: row.bbbRestTargetSeconds,
     liveScreenInverted: !!row.liveScreenInverted,
-    ...(row.reviewPromptedAt != null ? { reviewPromptedAt: row.reviewPromptedAt } : {}),
+    reviewPromptedAt: row.reviewPromptedAt ?? null,
   };
 }
 

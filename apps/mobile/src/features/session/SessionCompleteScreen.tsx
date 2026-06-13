@@ -110,6 +110,7 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   }
 
   const v = data.view;
+
   const handleClose = () => {
     // Dismiss the session stack first, then switch to Progress.
     // router.navigate('/(tabs)/progress') from inside the session group

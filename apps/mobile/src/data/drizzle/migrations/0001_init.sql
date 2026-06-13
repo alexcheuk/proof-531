@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS settings (
   day INTEGER NOT NULL,
   rest_target_seconds INTEGER NOT NULL DEFAULT 90,
   bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90,
-  live_screen_inverted INTEGER NOT NULL DEFAULT 0
+  live_screen_inverted INTEGER NOT NULL DEFAULT 0,
+  review_prompted_at INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS training_maxes (

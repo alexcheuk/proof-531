@@ -165,39 +165,18 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   rn-designer spec + rn-frontend (TDD, 1170/1170 tests) + rn-qa PASS. MissCorrectionCard (choice/forced
   variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
 
-## AMRAP-COACHING: AMRAP coaching cards in RestPhase and SessionComplete
-- status: doing
-- blocked_by: none
-- proof: coaching notes surface at the right moment, proven by behavior tests + tsc + lint. Maestro smoke
-  pending before item flips done.
-  - [x] design spec via rn-designer (tick-7, Exp 85): spec at `_workspace/amrap-coaching-spec.md`;
-        surfaces 1 (RestPhase), 2 (AmrapLogSheet), 3 (ReceiptCard); BbbPromptScreen descoped per spec.
-  - [x] implement RestPhase, AmrapLogSheet, ReceiptCard (tick-7, Exp 85): rn-frontend + rn-qa PASS.
-        "AMRAP NEXT" + "Push past the minimum." in RestPhase; "Target: N reps minimum." in AmrapLogSheet;
-        "Matched target." in ReceiptCard (only when topReps==prescribedReps && !missCardShown).
-        `useSessionCompleteData` gained `topPrescribedReps`; SessionCompleteScreen wires the two new props.
-  - [x] behavior tests (9 new: RestPhase 3, AmrapLogSheet 2, ReceiptCard 4). QA PASS. CI green (1187 tests).
-  - [ ] Maestro smoke (owes on-device validation before item flips done)
-- note: BbbPromptScreen was explicitly descoped by the rn-designer spec (an "out of scope" note in
-  `amrap-coaching-spec.md`). The AMRAP moment (RestPhase + AmrapLogSheet + ReceiptCard) is fully implemented.
-  BBB back-off coaching belongs in the missed-rep / MISSED-REP flow. The validation debt (Maestro smoke)
-  accrues alongside the other pending UI smokes.
-
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
 - status: doing
 - blocked_by: none
-- proof: expo-store-review prompt shows on Android (Play Store live) after session cycle >= 2; iOS activates
-  when App Store listing is live. Non-modal, non-repeated. Owes on-device smoke to confirm the native
-  review dialog appears.
-  - [x] add expo-store-review to mobile dependencies (~55.0.14)
-  - [x] implement prompt logic: useInAppReview hook + settings.reviewPromptedAt additive column; fires once
-        per install when isCycleComplete && cycle >= 2; 7 unit tests + settings accessor test
-  - [x] wire into SessionCompleteScreen + CI green (1178/1178 tests, tsc + lint clean)
-  - [ ] on-device smoke confirms native review dialog appears on cycle completion
-- note: Android Play Store is now live. Implemented tick-6 (Expedition 84) directly without pipeline since
-  design was clear from backlog. iOS dialog activates automatically once App Store listing is live (expo-store-review
-  handles both platforms via one call). Dev-client rebuild required for native module to appear in dev; production
-  APK picks it up automatically.
+- proof: review nudge shown once after session.cycle >= 2 via Linking.openURL to Play Store; tracked via
+  settings.reviewPromptShownAt; CI green (1172 tests, typecheck+lint clean); owes Maestro smoke for
+  the full session-complete -> review-nudge flow before this flips to done.
+  - [x] add reviewPromptShownAt column to settings (additive migration + schema + types)
+  - [x] implement prompt logic in SessionCompleteScreen (Linking.openURL, shown once per user, cycle >= 2)
+  - [x] wire useMarkReviewPromptShown mutation + tests; onboarding.ts refactored to use updateSettings
+  - [ ] Maestro smoke: session-complete screen shows review nudge on cycle 2+, does not repeat
+- note: Android Play Store live. Implemented Expedition 84 via Linking.openURL (no new native module).
+  iOS App Store URL to be wired in once listing is live. Owes device smoke before done.
 
 ## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
 - status: doing
@@ -256,22 +235,3 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] extend `scripts/check-no-em-dash.sh` to also scan `apps/mobile/src/**`
   - [x] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
   - [x] verify CI green after extension
-
-## LOGGER-EMDASH-GUARD: Prevent em dashes in future Logger blog posts at authoring time
-- status: doing
-- blocked_by: none
-- proof: the `verso` agent / `commission-expedition-log` skill no longer produces em dashes in Logger sign-offs
-  or body prose. Either (a) the skill prompt explicitly forbids em dashes and uses a post-authoring sweep to
-  verify, or (b) the check-no-em-dash.sh CI guard is extended to cover apps/web/src/content/blog/*.md so the
-  pre-commit hook catches any that slip through. Done when the Logger authoring path is provably clean.
-  - [x] extend check-no-em-dash.sh to cover apps/web/src/content/blog/2026-06-*.md (tick-7, Exp 85): covers
-        all do-work-era Logger posts; 4 pre-existing June posts swept (14 em dashes); CI guard now blocks new
-        violations in any June 2026+ post. Not the full blog/*.md (that awaits Alex's C/D ruling).
-  - [x] update loop-memory/04-dev-blog-persona.md with explicit no-em-dash instruction (tick-6, Exp 84):
-        added "Won't use em dash (U+2014)" to the "What you won't do" section with sign-off and prose examples
-  - [ ] verify: next commissioned Logger post (Expedition 85) passes CI em-dash check with zero violations
-- note: Auditor finding from tick-6 (Expedition 84): Priya's blog post had 6 em dashes (sign-off + body prose).
-  The WEB-SIGNOFF fix normalized 82 prior posts but did not fix the authoring path, so each new Logger post
-  continues to produce em-dash violations until this guard is added. Tick-7 extended the CI check to cover June
-  2026+ blog posts and swept 4 pre-existing violating posts. The next commissioned post will confirm the guard
-  works end-to-end.

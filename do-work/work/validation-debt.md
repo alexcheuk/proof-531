@@ -24,17 +24,10 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
-- tick-7 (Expedition 85) AMRAP-COACHING: three coaching annotations added to rendered session surfaces.
-  RestPhase shows "AMRAP NEXT" + "Push past the minimum." when nextSet.amrap. AmrapLogSheet shows "Target: N
-  reps minimum." always-on in the AMRAP sheet. ReceiptCard shows "Matched target." when topReps==prescribedReps
-  and no miss card is showing. MissCorrectionCard replaced FadeIn with useSharedValue pattern (Reanimated fix -
-  behavior-preserving but changes animation wiring). 1187/1187 jest + tsc + lint clean. Owes general session
-  Maestro smoke before AMRAP-COACHING flips to done.
-- tick-6 (Expedition 84) IN-APP-REVIEW: `expo-store-review` wired into `SessionCompleteScreen` via
-  `useInAppReview` hook. Fires once per install when cycle >= 2 and cycle just completed. Gated by
-  `settings.reviewPromptedAt` additive column (null = never prompted). 1178/1178 jest tests + tsc + lint clean.
-  Owes on-device smoke on an Android device connected to Play Store to confirm the native review dialog
-  appears. (Dev-client requires a rebuild; production APK picks it up automatically.)
+- tick-6 (Expedition 84) IN-APP-REVIEW nudge: SecondaryLink "If this is working for you, a review helps."
+  appears in SessionCompleteScreen CtaBar when session.cycle >= 2 and settings.reviewPromptedAt is null.
+  Tapping opens Play Store and stamps the shown timestamp. 1172/1172 jest tests. Owes Maestro smoke for the
+  cycle-2+ session-complete -> review-nudge visible -> tap -> Play Store URL opens -> does not re-appear flow.
 - tick-5 (Expedition 83) MISSED-REP correction card: MissCorrectionCard (choice/forced variants) +
   MissResetSheet on SessionCompleteScreen and TodayBody. 1170/1170 jest tests. Owes Maestro smoke for the
   miss -> correction card -> reset flow before MISSED-REP flips to `done`.

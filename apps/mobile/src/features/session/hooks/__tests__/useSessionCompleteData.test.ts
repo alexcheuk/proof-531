@@ -130,6 +130,7 @@ describe('deriveView (useSessionCompleteData)', () => {
         restTargetSeconds: 90,
         bbbRestTargetSeconds: 90,
         liveScreenInverted: false,
+        reviewPromptedAt: null,
       },
       prevBestStorage: 0,
     });

@@ -47,6 +47,7 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'rest_target_seconds',
   'bbb_rest_target_seconds',
   'live_screen_inverted',
+  'review_prompted_at',
 ] as const;
 
 const REQUIRED_LIFT_GOALS_COLUMNS = ['kind', 'target_value', 'unit'] as const;

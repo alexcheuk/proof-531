@@ -22,6 +22,8 @@ export const settings = sqliteTable('settings', {
   // Additive column; existing installs pick it up via ALTER TABLE in
   // `runMigrations.ts`. Discord 1508984314.
   liveScreenInverted: integer('live_screen_inverted').notNull(),
+  // Unix ms timestamp the Play Store / App Store review prompt was shown.
+  // Null = never prompted. Additive column; existing installs get NULL via ALTER TABLE.
   reviewPromptedAt: integer('review_prompted_at'),
 });
 

@@ -32,8 +32,8 @@ export interface Settings {
   restTargetSeconds: number;
   bbbRestTargetSeconds: number;
   liveScreenInverted: boolean;
-  /** Epoch ms when the in-app review prompt was last requested. Null = never prompted. */
-  reviewPromptedAt?: number;
+  /** Unix ms timestamp the review prompt was first shown; null = never shown. */
+  reviewPromptedAt: number | null;
 }
 
 export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
@@ -47,4 +47,5 @@ export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
   liveScreenInverted: false,
+  reviewPromptedAt: null,
 };
