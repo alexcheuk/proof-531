@@ -109,6 +109,24 @@ export function tmAdjustmentSuggestion(
   return { kind: 'reset', resetPct: 0.9 };
 }
 
+/**
+ * Classifies an AMRAP working set against its prescribed rep target. A set is
+ * a 'miss' only when the lifter logged strictly fewer reps than prescribed;
+ * meeting the target exactly is a 'hit'. Total function over any integer input.
+ */
+export function classifyAmrapMiss(actualReps: number, prescribedReps: number): 'miss' | 'hit' {
+  return actualReps < prescribedReps ? 'miss' : 'hit';
+}
+
+/**
+ * The 5/3/1 missed-lift reset: a 10% training-max cut, plate-snapped so the new
+ * TM lands on a loadable weight. Uses `round` from `./units` (never Math.round)
+ * so the result is a multiple of the unit's plate step.
+ */
+export function missResetTm(tm: number, unit: Unit): number {
+  return round(tm * 0.9, unit);
+}
+
 export function projectCycleRows(
   startCycle: number,
   endCycle: number,

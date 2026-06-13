@@ -71,4 +71,11 @@ CREATE TABLE IF NOT EXISTS lift_progress (
   week INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS lift_miss_state (
+  lift TEXT PRIMARY KEY,
+  miss_count INTEGER NOT NULL DEFAULT 0,
+  last_miss_date TEXT,
+  updated_at TEXT NOT NULL
+);
 `;

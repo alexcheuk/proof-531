@@ -108,6 +108,21 @@ export const liftGoals = sqliteTable('lift_goals', {
   daysPerWeek: integer('days_per_week'),
 });
 
+/**
+ * Per-lift missed-rep state for the Program Correction feature. One row per
+ * lift (lift is PK), lazily seeded on the first miss. `missCount` counts
+ * consecutive AMRAP misses on cycle-days 1..3; a hit or an applied reset /
+ * off-day clears the row. `lastMissDate` and `updatedAt` are ISO-8601 strings
+ * (per the brief: TEXT, human-readable), unlike `trainingMaxes.updatedAt`'s
+ * INTEGER epoch.
+ */
+export const liftMissState = sqliteTable('lift_miss_state', {
+  lift: text('lift', { enum: ['squat', 'bench', 'deadlift', 'press'] }).primaryKey(),
+  missCount: integer('miss_count').notNull().default(0),
+  lastMissDate: text('last_miss_date'),
+  updatedAt: text('updated_at').notNull(),
+});
+
 export const DEFAULT_SETTINGS_VALUES = {
   id: 1,
   storageUnit: 'lbs' as const,

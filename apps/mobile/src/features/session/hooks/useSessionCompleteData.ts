@@ -4,7 +4,11 @@ import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
 import { useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
 import { LIFTS } from '@/domain/labels';
-import { type TmAdjustmentSuggestion, tmAdjustmentSuggestion } from '@/domain/progression';
+import {
+  type TmAdjustmentSuggestion,
+  classifyAmrapMiss,
+  tmAdjustmentSuggestion,
+} from '@/domain/progression';
 import { formatDateLabel, formatElapsed, volumeOfWorkingSets } from '@/domain/summary';
 import type { Lift, SetLog, Unit } from '@/domain/types';
 import { convert, convertWeight, displayUnit, displayWeight } from '@/domain/units';
@@ -52,6 +56,13 @@ export type SessionCompleteView = {
   tmTestReps: number;
   tmTestWeight: number;
   tmAdjustment: TmAdjustmentSuggestion | null;
+  // Missed-rep Program Correction: true when this is a non-TM-test (D1..D3)
+  // session whose AMRAP row fell short of its prescribed reps. Drives the
+  // one-shot `recordMiss` and the MissCorrectionCard surface. The D4 exclusion
+  // is structural: `isTmTestSession` sessions never set this true.
+  amrapIsMiss: boolean;
+  /** Current TM in display units — the MissResetSheet's Current/New TM math. */
+  tmDisplay: number;
 };
 
 export function useSessionCompleteData(sessionId: number): SessionCompleteData {
@@ -182,6 +193,16 @@ export function deriveView({
     ? tmAdjustmentSuggestion(tmTestReps, lift, renderUnit)
     : null;
 
+  // Missed-rep classification — only the AMRAP row on a non-TM-test session.
+  // A D4 (tm-test) session has no AMRAP row and is excluded here AND at the
+  // call site (the card lives in the non-TM-test branch).
+  const amrapIsMiss =
+    !isTmTestSession &&
+    amrapLog !== undefined &&
+    classifyAmrapMiss(amrapLog.actualReps, amrapLog.prescribedReps) === 'miss';
+  // Current TM in display units — the snapshot stored with the session.
+  const tmDisplay = convert(session.trainingMaxSnapshot, storageUnit, renderUnit);
+
   // Cycle position math — falls back to 4-lift defaults if settings haven't
   // loaded. Single resolved `liftsPerCycle` so the position math and the
   // grid ceiling cannot disagree.
@@ -235,5 +256,7 @@ export function deriveView({
     tmTestReps,
     tmTestWeight,
     tmAdjustment,
+    amrapIsMiss,
+    tmDisplay,
   };
 }

@@ -63,11 +63,14 @@ jest.mock('react-native-reanimated', () => {
     withTiming: (v: unknown) => v,
     withDelay: (_d: unknown, v: unknown) => v,
     cancelAnimation: () => {},
+    useReducedMotion: () => false,
+    FadeIn: { duration: () => ({ easing: () => ({}) }) },
     Easing: {
       out: () => () => 0,
       inOut: () => () => 0,
       ease: () => 0,
       cubic: () => 0,
+      bezier: () => () => 0,
     },
   };
 });
@@ -172,6 +175,29 @@ jest.mock('@/data/queries/usePreviousBestE1RM', () => ({
   usePreviousBestE1RM: () => ({ data: 295, isLoading: false, error: null }),
 }));
 
+// Missed-rep Program Correction hooks. Default: no miss state (the common
+// case for these PR/receipt tests, which log AMRAP hits) so the card is absent.
+const missStateHolder: { missCount: number | null } = { missCount: null };
+jest.mock('@/data/queries/useMissState', () => ({
+  MISS_STATE_KEY: (lift: string) => ['liftMissState', lift],
+  useMissState: () => ({
+    data: missStateHolder.missCount === null ? null : { missCount: missStateHolder.missCount },
+    isLoading: false,
+    error: null,
+  }),
+}));
+const mockRecordMiss = jest.fn();
+const mockClearMiss = jest.fn();
+jest.mock('@/data/queries/useRecordMiss', () => ({
+  useRecordMiss: () => ({ mutate: mockRecordMiss }),
+}));
+jest.mock('@/data/queries/useClearMissState', () => ({
+  useClearMissState: () => ({ mutate: mockClearMiss }),
+}));
+jest.mock('@/data/queries/useApplyMissReset', () => ({
+  useApplyMissReset: () => ({ mutate: jest.fn(), isPending: false }),
+}));
+
 // Import after mocks so the screen sees the stubs.
 import { SessionCompleteScreen } from '../SessionCompleteScreen';
 
@@ -223,6 +249,9 @@ describe('SessionCompleteScreen', () => {
     mockNotificationAsync.mockClear();
     routerCanGoBack.value = true;
     setLogsState.rows = [];
+    missStateHolder.missCount = null;
+    mockRecordMiss.mockClear();
+    mockClearMiss.mockClear();
   });
 
   it('renders the date stamp, title, and receipt rows for a completed session', async () => {
@@ -313,6 +342,82 @@ describe('SessionCompleteScreen', () => {
       await Promise.resolve();
     });
     expect(mockNotificationAsync).not.toHaveBeenCalled();
+  });
+
+  // Missed-rep Program Correction. A missed AMRAP row (actual < prescribed) on
+  // a D1..D3 session records a miss; the card surfaces from persisted state.
+  const missedLogs = () => [
+    {
+      id: 1,
+      sessionId: 42,
+      index: 0,
+      kind: 'working' as const,
+      prescribedWeight: 195,
+      prescribedReps: 5,
+      actualReps: 5,
+      completedAt: startedAt + 5 * 60 * 1000,
+    },
+    {
+      id: 2,
+      sessionId: 42,
+      index: 1,
+      kind: 'working' as const,
+      prescribedWeight: 225,
+      prescribedReps: 5,
+      actualReps: 5,
+      completedAt: startedAt + 15 * 60 * 1000,
+    },
+    {
+      id: 3,
+      sessionId: 42,
+      index: 2,
+      kind: 'amrap' as const,
+      prescribedWeight: 255,
+      prescribedReps: 5,
+      actualReps: 2, // miss
+      completedAt: startedAt + 25 * 60 * 1000,
+      isPR: false,
+      estimated1RM: 270,
+    },
+  ];
+
+  it('records a miss once when the AMRAP row falls short on a D1..D3 session', async () => {
+    setLogsState.rows = missedLogs();
+    renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => expect(mockRecordMiss).toHaveBeenCalledTimes(1));
+    expect(mockRecordMiss).toHaveBeenCalledWith({ lift: 'squat' });
+    expect(mockClearMiss).not.toHaveBeenCalled();
+  });
+
+  it('clears the miss state when the AMRAP row hits on a D1..D3 session', async () => {
+    setLogsState.rows = buildLogs({ isPR: false }); // actualReps 8 >= 5 = hit
+    renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => expect(mockClearMiss).toHaveBeenCalledTimes(1));
+    expect(mockClearMiss).toHaveBeenCalledWith({ lift: 'squat' });
+    expect(mockRecordMiss).not.toHaveBeenCalled();
+  });
+
+  it('surfaces the choice card with Reset and Off-day when missCount === 1', async () => {
+    missStateHolder.missCount = 1;
+    setLogsState.rows = missedLogs();
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('miss-correction-card')).toBeTruthy();
+      expect(screen.getByTestId('miss-correction-card-reset')).toBeTruthy();
+      expect(screen.getByTestId('miss-correction-card-off-day')).toBeTruthy();
+    });
+    fireEvent.press(screen.getByTestId('miss-correction-card-off-day'));
+    expect(mockClearMiss).toHaveBeenCalledWith({ lift: 'squat' });
+  });
+
+  it('surfaces the forced card (no Off-day) when missCount >= 2', async () => {
+    missStateHolder.missCount = 2;
+    setLogsState.rows = missedLogs();
+    const screen = renderScreen(<SessionCompleteScreen sessionId={42} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('miss-correction-card-reset')).toBeTruthy();
+    });
+    expect(screen.queryByTestId('miss-correction-card-off-day')).toBeNull();
   });
 
   it('renders the masthead wordmark + Filed chip and the cycle grid', async () => {
