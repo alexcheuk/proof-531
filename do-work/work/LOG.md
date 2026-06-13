@@ -25,6 +25,20 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-8 supp (Exp 84 catchup): parallel-tick merge resolution + onboarding refactor
+- orientation: branch started 19 commits behind origin (ticks 6+7 ran in parallel). Fast-forward pulled; merge
+  conflicts in schema/types/settings/backlog files. Upstream used expo-store-review (reviewPromptedAt); mine used
+  Linking.openURL (reviewPromptShownAt). Accepted upstream's native approach; renamed to align.
+- shipped (Q-QUALITY): refactored `onboarding.ts` to call `updateSettings()` instead of hand-mapping every Settings
+  row field twice. Eliminates the duplicate fromRow/toRow pattern that caused the tick-8 CI miss (reviewPromptedAt
+  was not propagated). Settings accessors are now the single source of truth for row->domain mapping.
+- shipped (LAUNCH): marketing doc count advances to 84+ (some docs were at 82/77 still; now consistent);
+  YouTube shorts brief/script, reddit-vibecoding/reactnative, producthunt, ai-experiment-story-outline updated.
+- shipped (LOOP): SessionCompleteScreen.test.tsx - removed now-deleted useMarkReviewPromptShown mock; launch
+  strategy tactic-12 tracker updated to reflect expo-store-review implementation.
+- proof: pnpm run ci green (1188/1188 tests, tsc+lint+boundaries clean). Pushed to origin.
+- deferred / escalated: all pending smokes from prior ticks unchanged. WEB-SIGNOFF still blocked.
+
 ## 2026-06-13 tick-7 (Exp 85): AMRAP coaching + blog em-dash sweep + Show HN draft + process page
 - orientation: branch was 11 commits behind origin (concurrent loop ran tick-6). Fast-forward pulled first.
   All task-queue items still ✅. #loop-criteria pins unchanged (launch marketing pin + Days-of-Cycle pin).
