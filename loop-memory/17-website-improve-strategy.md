@@ -6,7 +6,7 @@ description: Strategy and progress tracker for the self-improving website loop. 
 # 531strength.com  - Website Self-Improvement Strategy
 
 **Created**: 2026-05-28 (Expedition 45)
-**Last updated**: 2026-05-29 (Expedition 77)
+**Last updated**: 2026-06-13 (Expedition 85)
 **Status**: Active  - iterating each loop
 
 ## Purpose
@@ -95,6 +95,22 @@ On-going: keep colophon accurate to the current fiction (Logger era).
 - [x] expedition-logs ScopeFilter count label fixed (expedition 74)  - was showing "73 of 133 · expedition" (filtered view wording on a dedicated listing page); corrected to show "73 posts" by passing `total={posts.length}` instead of `total={all.length}`.
 
 ## Progress tracker
+
+### Expedition 85 notes
+
+1. **Process page - Android live copy + Play Store CTA** (Track B/C): The process page's story paragraph said "put it on the App Store"; updated to "put it on the app stores" and added "Android is live now on Google Play; iOS is in App Store review." Added a "Google Play" CTA pill to the bottom CTA row - now first in the list, as the immediately actionable download option. Visitors arriving from the Show HN submission can now easily reach the app.
+
+2. **Track A: Blog posts scoped to June 2026 em-dash sweep** (Track D/E): The check-no-em-dash.sh CI guard now covers `apps/web/src/content/blog/2026-06-*.md`. Four June blog posts with em dashes in body prose were cleaned up. Future Logger posts from the do-work era are now CI-blocked on em dash violations.
+
+### Expedition 84 notes
+
+1. **Homepage Google Play link** (Track B): Replaced GitHub APK direct-download link with the live Play Store listing URL (https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone). The APK download is no longer the primary install path now that the app is on the store.
+
+2. **README 83+ count** (Track B): Updated iteration count in README from 82+ to 83+ (further updated to 84+ in tick-6). Google Play link added to the Install table.
+
+### Expedition 83 notes
+
+1. **Homepage CTA hero** (Track B/C): Hero lede updated to reflect Android live on Play Store. Direct download (APK) replaced with Google Play store link. `downloadUrl` in structured data updated. "Android is live on the Play Store now" now in hero body copy.
 
 ### Expedition 77 notes
 

@@ -49,8 +49,8 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
   browsing). INFO finding noted (pipeline bypass for simple feature, defensible).
 - field-log: Expedition 84 post written by Priya. Build: 158 pages, exit 0. TTS gommage fired (homelab timeout,
   non-blocking). Committed + pushed as docs(blog): expedition-84 field log (Priya).
-- shipped (WEB-SIGNOFF, additional push): 82 blog post sign-offs normalized from em-dash (—) to spaced hyphen
-  (-). loop-memory/03-dev-blog.md always specified spaced hyphen; the em-dashes were a Logger execution bug.
+- shipped (WEB-SIGNOFF, additional push): 82 blog post sign-offs normalized from em-dash (U+2014) to spaced
+  hyphen (-). loop-memory/03-dev-blog.md always specified spaced hyphen; the em-dashes were a Logger execution bug.
   Applied after 4-tick silence on #needs-input escalation (autonomous-proceed threshold). Corpus .astro/.tsx
   em-dashes (options C/D) still pending Alex's reply. CI green (1176/1176 tests post domain cleanup).
 - shipped (Q-QUALITY, additional push): removed dead domain export `bestE1RMForCycle` from progression.ts (no

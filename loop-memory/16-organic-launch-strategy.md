@@ -6,8 +6,8 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength  - Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-06-13 (Expedition 84)
-**Status**: Android live on Play Store (2026-06-13). iOS App Store submission in progress. All drafts ready for tactics 1-9; launch-day operations guide complete.
+**Last updated**: 2026-06-13 (Expedition 85)
+**Status**: Android live on Play Store (2026-06-13). iOS App Store submission in progress. All drafts ready for tactics 1-9; launch-day operations guide + Show HN submission complete.
 
 ## The competitive anchor
 
@@ -1208,6 +1208,33 @@ The Discord task queue raised making the plate math calculator and goal calendar
 - [Ask HN: How far has vibe coding come?](https://news.ycombinator.com/item?id=46807308)
 - [Vibe Coding on Reddit  - MorphLLM analysis](https://www.morphllm.com/reddit-vibe-coding)
 - [Product Hunt Launch Guide  - Tom Dekan](https://tomdekan.com/articles/product-hunt-launch-guide)
+
+## Expedition 85  - Research notes
+
+**Date:** 2026-06-13
+
+**Show HN submission draft created (Tactic 5):**
+
+A complete, ready-to-submit Show HN post is now at `docs/marketing/show-hn-submission.md`. Includes the recommended title ("Show HN: 531 Strength - I let a Claude agent build my gym app, start to finish"), a full first comment, and prepared answers for 5 anticipated HN questions ("isn't this just Dynamic Workflows?", "did you actually not write code?", "is it usable?", "why a gym app?", "how much did this cost?"). Timing guidance: post on iOS launch day between 8-10am ET. The timing condition (20+ expedition logs) was met 65+ expeditions ago.
+
+**Progress page updated - Play Store CTA added:**
+
+`apps/web/src/pages/process.astro` now mentions "Android is live on Google Play; iOS is in App Store review" in the story section, and has a "Google Play" CTA pill in the bottom CTA row alongside RSS and GitHub. The process page is the main destination for HN visitors.
+
+**AMRAP coaching notes (app quality, pre-launch):**
+
+Expedition 85 shipped AMRAP coaching notes in RestPhase, AmrapLogSheet, and ReceiptCard. This improves the AMRAP moment - the set that matters most for 5/3/1 progression - before the Reddit/HN launch. A well-coached AMRAP moment reduces TM miscalibration (which is the #1 reason lifters abandon 5/3/1 programs).
+
+**em-dash sweep - June blog posts now guarded by CI:**
+
+4 June 2026 blog posts had em dashes in body prose (pre-persona-doc-update posts). All fixed. CI guard extended to cover `apps/web/src/content/blog/2026-06-*.md` - new Logger posts in the do-work era are now CI-blocked if they contain em dashes.
+
+**Next actions:**
+1. iOS approval: run `docs/marketing/launch-day-operations-guide.md` + `docs/marketing/show-hn-submission.md`.
+2. Alex: fill in personal 5/3/1 history in `docs/marketing/reddit-531discussion-draft.md`.
+3. Alex: film the YouTube Short.
+
+---
 
 ## Expedition 84  - Research notes
 
