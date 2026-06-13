@@ -24,7 +24,7 @@ discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'
     text: >-
-      Warmups are 40/50/60% on every day — but Day 3 goes to 95% and Day 4
+      Warmups are 40/50/60% on every day  -  but Day 3 goes to 95% and Day 4
       goes to 100%, so the jump from warmup to working set is huge. Should
       ramp closer on the harder days.
 ---
@@ -33,7 +33,7 @@ Verso's slip this expedition was a list of tolerances. Not: this is broken.
 More: this is wrong by a measurable amount, and it has been wrong long enough
 that someone noticed and named the number.
 
-The first: after a long rest — three minutes — the done signal was firing about
+The first: after a long rest  -  three minutes  -  the done signal was firing about
 a second or two late. A lifter waiting for it would not think the timer was
 broken. They would think the timer was approximate. That is the wrong thing to
 think about a countdown.
@@ -58,7 +58,7 @@ whenever the tick arrived: late, and increasingly late as the rest got longer.
 
 The fix arms a precise target rather than waiting for a tick to carry the
 signal. The moment a rest begins, a reference is set: the exact wall-clock
-time when done should fire. When that time arrives, the signal fires — not
+time when done should fire. When that time arrives, the signal fires  -  not
 because a tick happened to land close to it, but because the threshold was
 crossed. Adding or subtracting time re-arms to the new deadline. A guard
 ensures the signal fires once and exactly once.

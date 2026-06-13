@@ -4,10 +4,11 @@
 # this character in any file the loop writes: use a colon, period, comma,
 # semicolon, parentheses, or a spaced hyphen instead.
 #
-# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/
+# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/,
+#   apps/web/src/content/blog/2026-06-*.md (do-work-era Logger posts, tick-5+).
 #   apps/mobile/src/** pre-existing em dashes swept in tick-5 (LOOP-EMDASH-MOBILE).
-#   CI guard now covers that directory. apps/web/** is pending Alex's
-#   #needs-input ruling (WEB-SIGNOFF backlog).
+#   apps/web/** pre-June corpus is pending Alex's #needs-input ruling (WEB-SIGNOFF).
+#   The June-2026+ Logger posts are now fully swept (tick-7) and guarded here.
 #
 # EXCLUDED files (intentional U+2014 usage to define or quote the rule):
 #   - do-work/SOUL.md / do-work/DOCTRINE.md  (hard-line text quotes the glyph)
@@ -20,11 +21,18 @@ set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Collect June-2026+ blog post paths for explicit inclusion
+BLOG_JUNE_FILES=()
+while IFS= read -r -d '' f; do
+  BLOG_JUNE_FILES+=("$f")
+done < <(find "$ROOT/apps/web/src/content/blog" -name "2026-06-*.md" -print0 2>/dev/null)
+
 violations=$(grep -rn $'\xe2\x80\x94' \
   "$ROOT/do-work" \
   "$ROOT/loop-memory" \
   "$ROOT/docs/decision-log.md" \
   "$ROOT/apps/mobile/src" \
+  "${BLOG_JUNE_FILES[@]+"${BLOG_JUNE_FILES[@]}"}" \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.md" \

@@ -17,7 +17,7 @@ discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'
     text: >-
-      Progress screen weights look wrong — the projected numbers don't match
+      Progress screen weights look wrong  -  the projected numbers don't match
       what I actually trained at.
   - author: 'ragedmonkey'
     channel: '#task-queue'
@@ -31,7 +31,7 @@ discordPrompts:
   - author: 'ragedmonkey'
     channel: '#task-queue'
     text: >-
-      Warmups on Day 4 start at 60% and go straight to 100% — that makes no
+      Warmups on Day 4 start at 60% and go straight to 100%  -  that makes no
       sense for a max-effort test day.
 ---
 
