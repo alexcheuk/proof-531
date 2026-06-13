@@ -5,8 +5,16 @@ import { useTheme } from '@/design/theme';
 import { missResetTm } from '@/domain/progression';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { useEffect } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
-import Animated, { Easing, FadeIn, useReducedMotion } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 export type MissCorrectionVariant = 'choice' | 'forced';
 
@@ -68,14 +76,21 @@ export function MissCorrectionCard({
   const resetLabel = `−10% · reset to ${target} ${u}`;
 
   // Entrance is only animated when the miss just occurred AND reduce-motion is off.
+  // Uses explicit shared-value pattern (never `entering=` prop) - the entering prop
+  // risks "Should not already be working" on remount when this card appears on Today
+  // between sessions (known-codebase.md Reanimated rules).
   const shouldAnimate = animateEntrance && !reduceMotion;
-  const enteringProp = shouldAnimate
-    ? {
-        entering: FadeIn.duration(motion.durationBase).easing(
-          Easing.bezier(...motion.easeStandardBezier),
-        ),
-      }
-    : {};
+  const opacity = useSharedValue(shouldAnimate ? 0 : 1);
+  useEffect(() => {
+    if (shouldAnimate) {
+      opacity.value = withTiming(1, {
+        duration: motion.durationBase,
+        easing: Easing.bezier(...motion.easeStandardBezier),
+      });
+    }
+    return () => cancelAnimation(opacity);
+  }, [opacity, shouldAnimate, motion.durationBase, motion.easeStandardBezier]);
+  const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   const content = (
     <>
@@ -150,7 +165,7 @@ export function MissCorrectionCard({
   );
 
   return (
-    <Animated.View testID={testID} style={cardStyle} {...enteringProp}>
+    <Animated.View testID={testID} style={[cardStyle, animStyle]}>
       {content}
     </Animated.View>
   );
