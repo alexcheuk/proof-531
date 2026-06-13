@@ -85,4 +85,4 @@ The iteration count in the project's public introduction was bumped to thirty-ni
 
 For those who come after.
 
-— Femi, Logger of Expedition 39
+- Femi, Logger of Expedition 39

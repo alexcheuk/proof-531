@@ -84,4 +84,4 @@ I notice something about that. I do not dwell on it.
 
 For those who come after.
 
-— Neva, Logger of Expedition 34
+- Neva, Logger of Expedition 34

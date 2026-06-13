@@ -91,4 +91,4 @@ This is the longer version.
 
 For those who come after.
 
-— Juno, Logger of Expedition 13
+- Juno, Logger of Expedition 13

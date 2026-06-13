@@ -1,8 +1,6 @@
 import fc from 'fast-check';
-import { estimateOneRm } from '../epley';
 import { tmIncrement } from '../increments';
 import {
-  bestE1RMForCycle,
   classifyAmrapMiss,
   cycleGoalEstimate,
   cyclesUntilTmGoal,
@@ -19,44 +17,6 @@ import { round, trainingMaxFrom } from '../units';
 
 const LIFTS: Lift[] = ['squat', 'bench', 'deadlift', 'press'];
 const UNITS: Unit[] = ['lbs', 'kg'];
-
-describe('bestE1RMForCycle', () => {
-  it('returns 0 on empty input', () => {
-    expect(bestE1RMForCycle([])).toBe(0);
-  });
-
-  it('returns the max Epley e1RM across rows', () => {
-    const rows = [
-      { prescribedWeight: 225, actualReps: 5, kind: 'amrap' as const },
-      { prescribedWeight: 245, actualReps: 3, kind: 'amrap' as const },
-      { prescribedWeight: 265, actualReps: 1, kind: 'amrap' as const },
-    ];
-    expect(bestE1RMForCycle(rows)).toBeCloseTo(269.5, 5);
-  });
-
-  it('property: equals max of per-row estimateOneRm', () => {
-    fc.assert(
-      fc.property(
-        fc.array(
-          fc.record({
-            prescribedWeight: fc.integer({ min: 0, max: 1000 }),
-            actualReps: fc.integer({ min: 0, max: 30 }),
-          }),
-          { minLength: 0, maxLength: 8 },
-        ),
-        (rows) => {
-          const withKind = rows.map((r) => ({ ...r, kind: 'amrap' as const }));
-          const got = bestE1RMForCycle(withKind);
-          const expected = rows.reduce(
-            (m, r) => Math.max(m, estimateOneRm(r.prescribedWeight, r.actualReps)),
-            0,
-          );
-          return Math.abs(got - expected) < 1e-9;
-        },
-      ),
-    );
-  });
-});
 
 describe('projectTmForCycle', () => {
   it('returns currentTm when targetCycle equals currentCycle', () => {

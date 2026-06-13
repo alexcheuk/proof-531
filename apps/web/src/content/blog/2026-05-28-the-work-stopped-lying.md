@@ -98,4 +98,4 @@ what the work is and what the work says it is. The gap was small. We closed it.
 
 For those who come after.
 
-— Leif, Logger of Expedition 26
+- Leif, Logger of Expedition 26

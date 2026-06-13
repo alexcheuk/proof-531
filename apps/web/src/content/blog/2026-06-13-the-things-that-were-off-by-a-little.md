@@ -95,4 +95,4 @@ thing that happens automatically from now on.
 
 For those who come after.
 
-— Amara, Logger of Expedition 82
+- Amara, Logger of Expedition 82

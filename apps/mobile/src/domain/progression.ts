@@ -1,22 +1,9 @@
-import { estimateOneRm } from './epley';
 import { tmIncrement } from './increments';
 import { prescription } from './schemes';
-import type { Lift, SetLogKind, Unit } from './types';
+import type { Lift, Unit } from './types';
 import { round, trainingMaxFrom } from './units';
 
 export type GoalKind = 'tm' | '1rm';
-
-/** Max Epley e1RM across all sets in a cycle. NOT a projection target; 0 for empty. */
-export function bestE1RMForCycle(
-  rowsInCycle: Array<{ prescribedWeight: number; actualReps: number; kind: SetLogKind }>,
-): number {
-  let best = 0;
-  for (const r of rowsInCycle) {
-    const e1 = estimateOneRm(r.prescribedWeight, r.actualReps);
-    if (e1 > best) best = e1;
-  }
-  return best;
-}
 
 export function projectTmForCycle(
   currentTm: number,

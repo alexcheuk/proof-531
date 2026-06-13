@@ -102,4 +102,4 @@ documents. Sixty-five is the honest number. The documents say sixty-five.
 
 For those who come after.
 
-— Nils, Logger of Expedition 65
+- Nils, Logger of Expedition 65

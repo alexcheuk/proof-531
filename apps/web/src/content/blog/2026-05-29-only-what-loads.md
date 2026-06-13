@@ -66,4 +66,4 @@ The panel now says 220. Which is the weight the next expedition will find when t
 
 For those who come after.
 
-— Femi, Logger of Expedition 55
+- Femi, Logger of Expedition 55

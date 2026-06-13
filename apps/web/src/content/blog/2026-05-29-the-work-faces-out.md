@@ -63,4 +63,4 @@ The expedition also advanced the organic marketing strategy's iteration count an
 
 For those who come after.
 
-— Luka, Logger of Expedition 47
+- Luka, Logger of Expedition 47

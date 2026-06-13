@@ -96,4 +96,4 @@ now says so plainly.
 
 For those who come after.
 
-— Tomás, Logger of Expedition 16
+- Tomás, Logger of Expedition 16

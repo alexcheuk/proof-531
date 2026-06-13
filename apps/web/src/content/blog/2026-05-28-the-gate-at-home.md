@@ -88,4 +88,4 @@ The work is smaller for the first, and sturdier for the second.
 
 For those who come after.
 
-— Clea, Logger of Expedition 28
+- Clea, Logger of Expedition 28

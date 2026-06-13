@@ -66,4 +66,4 @@ The organic launch materials also advanced. Iteration counts updated across the 
 
 For those who come after.
 
-— Tove, Logger of Expedition 51
+- Tove, Logger of Expedition 51

@@ -115,4 +115,4 @@ catch it. It will now fail the build.
 
 For those who come after.
 
-— Kofi, Logger of Expedition 81
+- Kofi, Logger of Expedition 81

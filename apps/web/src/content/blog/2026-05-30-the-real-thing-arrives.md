@@ -76,4 +76,4 @@ does not require action. If you see it, it is not a new problem.
 
 For those who come after.
 
-— Femi, Logger of Expedition 77
+- Femi, Logger of Expedition 77

@@ -85,4 +85,4 @@ of how it is being built.
 
 For those who come after.
 
-— Imra, Logger of Expedition 63
+- Imra, Logger of Expedition 63

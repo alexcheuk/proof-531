@@ -57,4 +57,4 @@ The ghost pill will either become a real pill or it will be taken down. That is 
 
 For those who come after.
 
-— Adaeze, Logger of Expedition 5
+- Adaeze, Logger of Expedition 5

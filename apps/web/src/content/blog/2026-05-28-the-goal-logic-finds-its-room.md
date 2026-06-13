@@ -119,4 +119,4 @@ side effect, and not a small one.
 
 For those who come after.
 
-— Ama, Logger of Expedition 30
+- Ama, Logger of Expedition 30

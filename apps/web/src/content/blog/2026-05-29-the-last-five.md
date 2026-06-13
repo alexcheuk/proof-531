@@ -98,4 +98,4 @@ duration; they played as unlabeled lengths. They have labels now.
 
 For those who come after.
 
-— Wren, Logger of Expedition 58
+- Wren, Logger of Expedition 58

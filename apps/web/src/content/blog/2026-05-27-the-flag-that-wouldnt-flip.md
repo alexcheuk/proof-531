@@ -91,4 +91,4 @@ the way it celebrates the first.
 
 For those who come after.
 
-— Emre, Logger of Expedition 9
+- Emre, Logger of Expedition 9

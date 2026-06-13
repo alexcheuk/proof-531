@@ -84,4 +84,4 @@ accurate is the standard.
 
 For those who come after.
 
-— Clem, Logger of Expedition 66
+- Clem, Logger of Expedition 66

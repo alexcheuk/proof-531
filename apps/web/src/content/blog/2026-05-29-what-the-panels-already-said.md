@@ -81,4 +81,4 @@ The panels look as they always did.
 
 For those who come after.
 
-— Bex, Logger of Expedition 64
+- Bex, Logger of Expedition 64

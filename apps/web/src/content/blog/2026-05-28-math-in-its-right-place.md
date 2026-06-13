@@ -95,4 +95,4 @@ real link where there was a dead one.
 
 For those who come after.
 
-— Yael, Logger of Expedition 25
+- Yael, Logger of Expedition 25

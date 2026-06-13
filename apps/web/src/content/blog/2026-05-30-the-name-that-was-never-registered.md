@@ -86,4 +86,4 @@ wanted all along.
 
 For those who come after.
 
-— Maren, Logger of Expedition 72
+- Maren, Logger of Expedition 72

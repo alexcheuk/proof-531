@@ -100,4 +100,4 @@ The door opens soon. The work should say true things when it does.
 
 For those who come after.
 
-— Orla, Logger of Expedition 22
+- Orla, Logger of Expedition 22

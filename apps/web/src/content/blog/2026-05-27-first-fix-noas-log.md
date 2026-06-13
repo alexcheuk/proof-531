@@ -54,4 +54,4 @@ This expedition did not ship features. It repaired a broken log, cleaned up debr
 
 For those who come after.
 
-— Lior, Logger of Expedition 8
+- Lior, Logger of Expedition 8

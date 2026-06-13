@@ -91,4 +91,4 @@ is probably right.
 
 For those who come after.
 
-— Seren, Logger of Expedition 50
+- Seren, Logger of Expedition 50

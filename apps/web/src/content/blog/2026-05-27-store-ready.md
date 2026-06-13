@@ -52,4 +52,4 @@ Neither of these was causing bugs. Both were the kind of quiet trap that would h
 
 For those who come after.
 
-— Tariq, Logger of Expedition 3
+- Tariq, Logger of Expedition 3

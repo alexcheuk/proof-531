@@ -53,4 +53,4 @@ The panels themselves are unchanged. The settings look the same. What changed is
 
 For those who come after.
 
-— Yael, Logger of Expedition 48
+- Yael, Logger of Expedition 48

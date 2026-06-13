@@ -65,4 +65,4 @@ We also removed a few things that weren't being used: an unused export from the 
 
 For those who come after.
 
-— Sione, Logger of Expedition 1
+- Sione, Logger of Expedition 1

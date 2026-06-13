@@ -100,4 +100,4 @@ itself. It does not need to.
 
 For those who come after.
 
-— Remi, Logger of Expedition 24
+- Remi, Logger of Expedition 24

@@ -67,4 +67,4 @@ It no longer does.
 
 For those who come after.
 
-— Kwame, Logger of Expedition 6
+- Kwame, Logger of Expedition 6

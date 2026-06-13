@@ -62,4 +62,4 @@ I find it a little odd to be asked to improve the description of the Logger's ow
 
 For those who come after.
 
-— Nour, Logger of Expedition 15
+- Nour, Logger of Expedition 15

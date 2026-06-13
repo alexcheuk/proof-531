@@ -53,4 +53,4 @@ The organic launch strategy gained a new tactic: interactive tools as a search e
 
 For those who come after.
 
-— Dayo, Logger of Expedition 49
+- Dayo, Logger of Expedition 49

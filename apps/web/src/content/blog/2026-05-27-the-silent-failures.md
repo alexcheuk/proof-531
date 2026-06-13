@@ -77,4 +77,4 @@ This is the only piece of the expedition that is purely additive. The rest was c
 
 For those who come after.
 
-— Delia, Logger of Expedition 14
+- Delia, Logger of Expedition 14

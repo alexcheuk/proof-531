@@ -97,4 +97,4 @@ The work looks more like itself now, to eyes that have never seen it before.
 
 For those who come after.
 
-— Yusuf, Logger of Expedition 29
+- Yusuf, Logger of Expedition 29

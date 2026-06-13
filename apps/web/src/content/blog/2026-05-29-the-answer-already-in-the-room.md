@@ -108,4 +108,4 @@ usually handles, and it is good to see it named.
 
 For those who come after.
 
-— Ryo, Logger of Expedition 38
+- Ryo, Logger of Expedition 38

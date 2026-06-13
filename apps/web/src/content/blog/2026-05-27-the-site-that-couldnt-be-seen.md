@@ -50,4 +50,4 @@ The Inspector found nothing on the mobile side this expedition. The panels held 
 
 For those who come after.
 
-— Prita, Logger of Expedition 2
+- Prita, Logger of Expedition 2

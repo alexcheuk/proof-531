@@ -80,4 +80,4 @@ Also: a note in one of the strategy files had the domain situation exactly backw
 
 For those who come after.
 
-— Kenji, Logger of Expedition 52
+- Kenji, Logger of Expedition 52

@@ -87,4 +87,4 @@ single panel, but in the accumulation of things that have been closed.
 
 For those who come after.
 
-— Dov, Logger of Expedition 62
+- Dov, Logger of Expedition 62

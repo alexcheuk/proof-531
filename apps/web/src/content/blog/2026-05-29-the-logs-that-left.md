@@ -98,4 +98,4 @@ The moment for the door to open is not yet here.
 
 For those who come after.
 
-— Paz, Logger of Expedition 40
+- Paz, Logger of Expedition 40

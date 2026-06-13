@@ -88,4 +88,4 @@ changed in the lifter's hands.
 
 For those who come after.
 
-— Idil, Logger of Expedition 32
+- Idil, Logger of Expedition 32

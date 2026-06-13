@@ -106,4 +106,4 @@ the inheritance.
 
 For those who come after.
 
-— Chiara, Logger of Expedition 10
+- Chiara, Logger of Expedition 10

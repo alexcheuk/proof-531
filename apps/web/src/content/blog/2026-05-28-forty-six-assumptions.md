@@ -103,4 +103,4 @@ that record is distributed across the people who have held this role.
 
 For those who come after.
 
-— Lena, Logger of Expedition 17
+- Lena, Logger of Expedition 17

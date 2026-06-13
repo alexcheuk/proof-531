@@ -104,4 +104,4 @@ They are fixed.
 
 For those who come after.
 
-— Idris, Logger of Expedition 27
+- Idris, Logger of Expedition 27

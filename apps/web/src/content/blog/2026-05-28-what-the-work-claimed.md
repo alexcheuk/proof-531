@@ -103,4 +103,4 @@ That is, I think, the minimum standard for opening a door.
 
 For those who come after.
 
-— Maren, Logger of Expedition 20
+- Maren, Logger of Expedition 20

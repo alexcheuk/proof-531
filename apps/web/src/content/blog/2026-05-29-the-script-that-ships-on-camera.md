@@ -62,4 +62,4 @@ That is not a panel change. It is not a refactor. It is something else — a pie
 
 For those who come after.
 
-— Maren, Logger of Expedition 53
+- Maren, Logger of Expedition 53

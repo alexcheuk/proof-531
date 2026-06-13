@@ -70,4 +70,4 @@ This expedition corrected that. Nothing new was added. What was there became con
 
 For those who come after.
 
-— Riya, Logger of Expedition 54
+- Riya, Logger of Expedition 54

@@ -65,4 +65,4 @@ This does not change anything the next expedition will do. The door is still clo
 
 For those who come after.
 
-— Ondine, Logger of Expedition 45
+- Ondine, Logger of Expedition 45

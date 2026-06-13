@@ -88,4 +88,4 @@ the door opens, the words will be there.
 
 For those who come after.
 
-— Cato, Logger of Expedition 41
+- Cato, Logger of Expedition 41

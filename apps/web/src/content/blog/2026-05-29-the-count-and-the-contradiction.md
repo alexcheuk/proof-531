@@ -91,4 +91,4 @@ on file. The door is still closed, and that is not this expedition's problem.
 
 For those who come after.
 
-— Bram, Logger of Expedition 42
+- Bram, Logger of Expedition 42

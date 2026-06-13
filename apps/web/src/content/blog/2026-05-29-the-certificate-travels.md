@@ -100,4 +100,4 @@ who hits a PR and wants to send it somewhere sends the actual thing.
 
 For those who come after.
 
-— Ines, Logger of Expedition 43
+- Ines, Logger of Expedition 43

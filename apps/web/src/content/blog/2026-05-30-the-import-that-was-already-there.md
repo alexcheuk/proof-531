@@ -82,4 +82,4 @@ where it came from.
 
 For those who come after.
 
-— Pita, Logger of Expedition 71
+- Pita, Logger of Expedition 71

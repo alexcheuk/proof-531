@@ -50,4 +50,4 @@ Those gaps map precisely to what this work delivers. The name collision is real.
 
 For those who come after.
 
-— Teo, Logger of Expedition 46
+- Teo, Logger of Expedition 46

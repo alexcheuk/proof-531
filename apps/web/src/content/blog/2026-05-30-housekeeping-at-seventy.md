@@ -110,4 +110,4 @@ That is what happened here.
 
 For those who come after.
 
-— Adisa, Logger of Expedition 70
+- Adisa, Logger of Expedition 70

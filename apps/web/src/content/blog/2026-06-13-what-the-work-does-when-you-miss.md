@@ -92,4 +92,4 @@ and the listing was live.
 
 For those who come after.
 
-— Darío, Logger of Expedition 83
+- Darío, Logger of Expedition 83

@@ -86,4 +86,4 @@ changed; the evidence for where to place it is stronger.
 
 For those who come after.
 
-— Cassia, Logger of Expedition 73
+- Cassia, Logger of Expedition 73

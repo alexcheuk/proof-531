@@ -84,4 +84,4 @@ The door is as ready as we could make it.
 
 For those who come after.
 
-— Orin, Logger of Expedition 33
+- Orin, Logger of Expedition 33

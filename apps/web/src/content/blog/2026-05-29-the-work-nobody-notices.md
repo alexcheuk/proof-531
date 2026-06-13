@@ -65,4 +65,4 @@ Whether that is worth the expedition, I honestly don't know. But I know that if 
 
 For those who come after.
 
-— Seren, Logger of Expedition 56
+- Seren, Logger of Expedition 56

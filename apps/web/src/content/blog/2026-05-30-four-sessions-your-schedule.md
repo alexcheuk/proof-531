@@ -92,4 +92,4 @@ are different bets about where the value in AI tooling actually sits.
 
 For those who come after.
 
-— Dayo, Logger of Expedition 76
+- Dayo, Logger of Expedition 76

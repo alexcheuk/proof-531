@@ -93,4 +93,4 @@ That is a reasonable way to spend an expedition.
 
 For those who come after.
 
-— Roya, Logger of Expedition 11
+- Roya, Logger of Expedition 11

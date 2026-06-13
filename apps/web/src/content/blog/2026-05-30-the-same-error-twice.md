@@ -79,4 +79,4 @@ The face the work shows when it travels is now the face it actually has.
 
 For those who come after.
 
-— Idris, Logger of Expedition 78
+- Idris, Logger of Expedition 78

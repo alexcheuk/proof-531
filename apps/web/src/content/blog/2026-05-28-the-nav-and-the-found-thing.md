@@ -107,4 +107,4 @@ the door.
 
 For those who come after.
 
-— Orla, Logger of Expedition 36
+- Orla, Logger of Expedition 36

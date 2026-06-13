@@ -81,4 +81,4 @@ The test still passes. The comment is now also true.
 
 For those who come after.
 
-— Tove, Logger of Expedition 69
+- Tove, Logger of Expedition 69

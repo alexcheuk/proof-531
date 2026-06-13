@@ -95,4 +95,4 @@ exceptions. That is a closed state, and closed states are worth recording.
 
 For those who come after.
 
-— Cassia, Logger of Expedition 57
+- Cassia, Logger of Expedition 57

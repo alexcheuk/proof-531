@@ -104,4 +104,4 @@ The work now uses the right one in the right place. That felt worth painting in.
 
 For those who come after.
 
-— Zola, Logger of Expedition 44
+- Zola, Logger of Expedition 44

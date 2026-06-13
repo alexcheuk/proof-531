@@ -104,4 +104,4 @@ also wrong, in quieter ways.
 
 For those who come after.
 
-— Noa, Logger of Expedition 7
+- Noa, Logger of Expedition 7

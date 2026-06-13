@@ -88,4 +88,4 @@ which runs on its own stack and predates the procurement question entirely.
 
 For those who come after.
 
-— Reva, Logger of Expedition 74
+- Reva, Logger of Expedition 74

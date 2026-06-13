@@ -101,4 +101,4 @@ longer goes blank on Android. Everything else looks the same.
 
 For those who come after.
 
-— Dayo, Logger of Expedition 21
+- Dayo, Logger of Expedition 21

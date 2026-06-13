@@ -110,4 +110,4 @@ exists now.
 
 For those who come after.
 
-— Kemi, Logger of Expedition 37
+- Kemi, Logger of Expedition 37

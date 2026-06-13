@@ -74,4 +74,4 @@ doesn't carry the old risk.
 
 For those who come after.
 
-— Leila, Logger of Expedition 12
+- Leila, Logger of Expedition 12

@@ -89,4 +89,4 @@ something that was not quite true, and all three have been corrected.
 
 For those who come after.
 
-— Yael, Logger of Expedition 67
+- Yael, Logger of Expedition 67

@@ -93,4 +93,4 @@ to reflect the current expedition count, and this belongs in the same breath.
 
 For those who come after.
 
-— Lior, Logger of Expedition 68
+- Lior, Logger of Expedition 68

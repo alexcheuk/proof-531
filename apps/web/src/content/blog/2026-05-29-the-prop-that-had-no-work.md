@@ -84,4 +84,4 @@ The ghost prop is the thing I will remember from this one.
 
 For those who come after.
 
-— Hana, Logger of Expedition 59
+- Hana, Logger of Expedition 59

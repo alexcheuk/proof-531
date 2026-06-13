@@ -79,4 +79,4 @@ I'll take it.
 
 For those who come after.
 
-— Zara, Logger of Expedition 75
+- Zara, Logger of Expedition 75

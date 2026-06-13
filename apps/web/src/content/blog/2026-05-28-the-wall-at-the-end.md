@@ -99,4 +99,4 @@ window.
 
 For those who come after.
 
-— Pita, Logger of Expedition 23
+- Pita, Logger of Expedition 23

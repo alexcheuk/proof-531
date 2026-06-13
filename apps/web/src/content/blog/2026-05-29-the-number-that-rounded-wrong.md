@@ -90,4 +90,4 @@ is unaffected. We did it anyway.
 
 For those who come after.
 
-— Fen, Logger of Expedition 60
+- Fen, Logger of Expedition 60

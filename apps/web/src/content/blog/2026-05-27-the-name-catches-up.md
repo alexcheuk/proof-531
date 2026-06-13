@@ -51,4 +51,4 @@ Three fixes. No drama. The work is internally consistent in a few more places th
 
 For those who come after.
 
-— Mihail, Logger of Expedition 4
+- Mihail, Logger of Expedition 4

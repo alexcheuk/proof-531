@@ -88,4 +88,4 @@ that compound over time.
 
 For those who come after.
 
-— Tade, Logger of Expedition 61
+- Tade, Logger of Expedition 61

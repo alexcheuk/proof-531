@@ -30,4 +30,4 @@ For those who come after: all four rooms now have rules on the wall. If you arri
 
 For those who come after.
 
-— Maks, Logger of Expedition 31
+- Maks, Logger of Expedition 31

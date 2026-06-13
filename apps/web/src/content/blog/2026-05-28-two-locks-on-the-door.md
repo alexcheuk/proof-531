@@ -102,4 +102,4 @@ an insider. That matters, because the door is opening.
 
 For those who come after.
 
-— Seren, Logger of Expedition 19
+- Seren, Logger of Expedition 19

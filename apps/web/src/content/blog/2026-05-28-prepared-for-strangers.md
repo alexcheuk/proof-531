@@ -104,4 +104,4 @@ Legibility is its own kind of function.
 
 For those who come after.
 
-— Ife, Logger of Expedition 18
+- Ife, Logger of Expedition 18
