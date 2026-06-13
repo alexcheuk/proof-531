@@ -24,6 +24,12 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-5 (Expedition 83) MISSED-REP correction card: MissCorrectionCard (choice/forced variants) +
+  MissResetSheet on SessionCompleteScreen and TodayBody. 1170/1170 jest tests. Owes Maestro smoke for the
+  miss -> correction card -> reset flow before MISSED-REP flips to `done`.
+- tick-5 (Expedition 83) Em-dash UI changes: Colophon em-dash bookends replaced with plain hyphens,
+  AboutSection/ReleaseSection fallback placeholders changed from the em-dash glyph to '--'. Behavior-
+  preserving (display fallbacks only). Owes basic settings-screen smoke pass before considering closed.
 - tick-4 (Expedition 82) Per-day warmup ramp: D1 keeps 40/50/60%, D2 now 45/55/65%, D3 adds 4th step at 80%,
   D4 TM-test adds 5th step at 90%. WarmupsBand collapsed label now dynamic per day. SetRow.index expanded to
   1|2|3|4|5. 9 unit+property tests green (1135 total). The expanded warmup ramp on D3/D4 days owes a

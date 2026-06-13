@@ -25,6 +25,26 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
+- shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +
+  frontend + QA PASS). 20 files: classifyAmrapMiss/missResetTm in progression.ts (property-tested), lift_miss_state
+  table/migration/accessors/hooks (4+4), MissCorrectionCard (choice/forced) + MissResetSheet, surfaced on
+  SessionCompleteScreen and TodayBody. 1170/1170 tests. Accrues validation debt for miss->reset Maestro smoke.
+- shipped (LOOP, LOOP-EMDASH-MOBILE done): 242 mobile source files swept clean of em dashes (545 occurrences
+  replaced with spaced hyphens); user-visible strings fixed precisely (Colophon, AboutSection, ReleaseSection);
+  check-no-em-dash.sh extended to cover apps/mobile/src/**; biome format fixed 14 files; CI green.
+- shipped (LAUNCH, EAS): New production build kicked off and submitted (versionCode 24->25, build 03957c00,
+  submission 6c7940bb). Goes to Play Store INTERNAL track; Alex must promote to production in Play Console.
+- shipped (WEB): Homepage updated to Google Play link (replacing GitHub APK link), structured data downloadUrl
+  updated, body copy updated. README: 82+ -> 83+, Google Play link in Install table.
+- shipped (LOOP): IN-APP-REVIEW backlog item filed. Posted #needs-input about browser tool limitation.
+  Marketing docs updated 77+ -> 82+. Launch strategy tracker updated for Android-live reality.
+- proof: pnpm run ci green (1170/1170 tests, 185 suites); pnpm --filter @fivethreeone/web build clean (156 pages);
+  check-no-em-dash clean on mobile; Astro build exit 0. Pushed to main.
+- deferred / escalated: MISSED-REP and em-dash UI changes owe Maestro smoke (validation-debt). WEB-SIGNOFF
+  still blocked on Alex's reply. Play Store promotion to production requires Alex (Play Console). Browser
+  tool account creation not possible without interactive browser.
+
 ## 2026-06-12 tick-4 (Exp 82): Rest timer accuracy + per-day warmup ramps + CI em-dash guard
 - shipped (BUG, task 1515166601270530048): useRestTimer now arms a precise setTimeout at the exact deadline
   for the done haptic/alarm; setInterval(1000) accumulated 1-2s of jitter over a 3-min rest. addTime,

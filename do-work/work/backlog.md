@@ -156,15 +156,25 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
         `TmApplySheet`; derive miss from `row.kind==='amrap' && actualReps<prescribedReps` on cycle-days 1-3;
         suggest-never-mutate; first-miss offers Reset(-10%)/off-day, second consecutive miss forces reset;
         new `lift_miss_state` table; pure `missResetTm()` + `classifyAmrapMiss()` in `progression.ts`
-  - [ ] implement the pure domain functions (`missResetTm`, `classifyAmrapMiss`) + property tests (TDD)
-  - [ ] implement the `lift_miss_state` data layer (table + accessor + query hook)
-  - [ ] wire the suggestion card + apply sheet on SessionCompleteScreen (+ Today re-surface)
+  - [x] implement the pure domain functions (`missResetTm`, `classifyAmrapMiss`) + property tests (TDD)
+  - [x] implement the `lift_miss_state` data layer (table + accessor + query hook)
+  - [x] wire the suggestion card + apply sheet on SessionCompleteScreen (+ Today re-surface)
   - [ ] optional BBB session-scoped back-off adjustment
   - [ ] Maestro smoke passes for the miss -> reset flow
-- note: task-queue `1511224654327447663` (Alex). Headline feature; design landed tick-2, implementation is the
-  next major slice. Route the implementation through `rn-expo-pipeline` (frontend -> QA) per DOCTRINE feature
-  policy. Correctness is sacred: the 10% reset uses `round()` from `domain/units` so the new TM is plate- and
-  unit-correct.
+- note: task-queue `1511224654327447663` (Alex). Implemented tick-5 (Expedition 83) via rn-expo-pipeline:
+  rn-designer spec + rn-frontend (TDD, 1170/1170 tests) + rn-qa PASS. MissCorrectionCard (choice/forced
+  variants) + MissResetSheet on SessionComplete and Today. BBB back-off deferred. Owes Maestro smoke.
+
+## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
+- status: todo
+- blocked_by: none
+- proof: expo-store-review prompt shows on Android (Play Store live) after session cycle >= 2; iOS activates
+  when App Store listing is live. Non-modal, non-repeated. Both stores must have live listings for full parity.
+  - [ ] add expo-store-review to mobile dependencies
+  - [ ] implement prompt logic in SessionCompleteScreen (after cycle completion, once per user)
+  - [ ] wire into CI and test
+- note: Android Play Store is now live (expedition 83). iOS App Store still pending. File as feature for
+  next rn-expo-pipeline run.
 
 ## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
 - status: doing
@@ -215,13 +225,11 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] wire into `pnpm run ci`; repo is green; planted em dash in loop-memory/ would fail
 
 ## LOOP-EMDASH-MOBILE: Sweep pre-existing em dashes from apps/mobile/src
-- status: todo
+- status: done
 - blocked_by: none
-- proof: `pnpm check-no-em-dash` extended to cover `apps/mobile/src/**` exits 0 (all violations fixed or scoped
-  out with documented rationale).
-  - [ ] extend `scripts/check-no-em-dash.sh` to also scan `apps/mobile/src/**`
-  - [ ] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
-  - [ ] verify CI green after extension
-- note: tick-4 sweep of do-work/+loop-memory/ found 23 files with em dashes; the mobile source has ~200 more
-  in code comments and test strings. Those are pre-existing (before the do-work architecture) and are tracked
-  here for a future sweep. The CI guard is scoped to loop-authored paths until this is clean.
+- proof: `scripts/check-no-em-dash.sh` extended to cover `apps/mobile/src/**`; 242 files swept; 0 remaining
+  violations; CI green (1170/1170 tests, lint clean). User-visible strings fixed specifically (Colophon,
+  AboutSection, ReleaseSection).
+  - [x] extend `scripts/check-no-em-dash.sh` to also scan `apps/mobile/src/**`
+  - [x] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
+  - [x] verify CI green after extension
