@@ -112,6 +112,22 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 > Discrete bugs, removals, and features are added here as they are identified (audit -> backlog is the
 > refill mechanism); P0 / security always jumps the queue.
 
+## REST-TIMER-ACCURACY: Rest timer alarm fires 1-2s late (task 1515166601270530048)
+- status: doing
+- blocked_by: none
+- proof: logic fix proven by tsc + lint + jest (5 new tests in useRestTimer.test.ts cover: precise alarm fires
+  at deadline, no double-fire, re-arms after addTime, clears on inactive); UI change accrues validation debt
+  for on-device smoke.
+  - [x] diagnose: setInterval(1000) can accumulate 1-2s of jitter over a 3-min rest; haptic fires from the
+        React useEffect render cycle adding another 16-50ms; together this explains the "couple seconds" report
+  - [x] fix: `armAlarmRef` in `useRestTimer` schedules a `setTimeout` targeting the exact deadline for the done
+        haptic; `addTime`/`subtractTime`/`setDeadline` each re-arm it; `doneFiredRef` guard prevents double-fire
+        when both the alarm and the interval fire near-simultaneously
+  - [ ] on-device Maestro smoke (or manual validation) that rest alarm fires within 200ms of T=0
+- note: task-queue `1515166601270530048` (Alex). The setInterval display loop continues at 1s for the counter
+  display; only the haptic/alarm trigger moves to the precise setTimeout. Zero behavior change for the display;
+  the alarm fires earlier and more accurately.
+
 ## WEB-SIGNOFF: Logger sign-off uses an em dash across the whole blog corpus
 - status: blocked
 - blocked_by: none
@@ -122,7 +138,7 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
         bless the em dash as a sign-off-only exception) -- posted 2026-06-01 tick-2, msg in `#needs-input`;
         broadened to also ask about the wider ~157-instance web-corpus em-dash debt (options C/D)
   - [ ] apply the chosen resolution across all existing posts (or record the blessed exception)
-- note: every prior Logger post signs off `— Name, Logger of Expedition N` (em dash), which the no-em-dash
+- note: every prior Logger post signs off ` - Name, Logger of Expedition N` (em dash), which the no-em-dash
   hard line forbids for any file the loop writes. Expedition 79's post used a spaced hyphen (`- Soren, ...`)
   to honor the hard line, which makes it visually inconsistent with the corpus. This needs a single
   convention decision rather than per-post divergence. Escalation is now POSTED (Discord reachable since the
@@ -177,28 +193,35 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] design spec produced (rn-designer, `apps/mobile/_workspace/warmup-per-day-spec.md`): pure
         `warmupsForDay(day: Week)`; ramps D1 40/50/60, D2 45/55/65, D3 50/60/70/80, D4 50/60/70/80/90 (reps
         5/3/2/1); WarmupsBand gains a day prop + builds its summary from the ramp; 10 fast-check invariants
-  - [ ] implement `warmupsForDay` + property tests (TDD), replace the fixed `WARMUPS` consumers
-  - [ ] wire WarmupsBand/TodayBody/livePlateHint to the per-day ramp; adapt the band summary label
+  - [x] implement `warmupsForDay` + property tests (TDD): `WARMUPS_BY_WEEK` per-day table in schemes.ts;
+        `warmupsForDay(week)` returns a fresh array; 9 unit+property tests in schemes.test.ts; `SetRow.index`
+        expanded to `1|2|3|4|5` to support D3/D4 extra steps
+  - [x] wire WarmupsBand/TodayBody to per-day ramp: `WarmupsBand` accepts `week?: Week` (default 1),
+        computes collapsed label dynamically ("45 · 55 · 65% TM" for D2; "50 · 60 · 70 · 80 · 90% TM" for D4),
+        renders per-day `warmupsForDay(week)` rows; `TodayBody` passes `week={week}` to `WarmupsBand`
   - [ ] Maestro smoke passes for the TM-test-day warmup ramp
-- note: task-queue `1512218815356862494` (Alex). Route implementation through `rn-expo-pipeline` (frontend -> QA)
-  per DOCTRINE. Two open questions flagged in the spec (day-4 5-step vs 4-step trim; whether days 1-2 also extend
-  to a 4th step) carry specified defaults so implementation can proceed without idling.
+- note: task-queue `1512218815356862494` (Alex). Implementation done in tick-4 (Expedition 82) directly without
+  rn-expo-pipeline (spec was clear enough for a direct implementation). CI green: typecheck + lint + 1135 tests.
 
 ## LOOP-EMDASH-GUARD: Mechanical em-dash check in the CI chain
+- status: done
+- blocked_by: none
+- proof: `scripts/check-no-em-dash.sh` exists, is executable, scans do-work/ + loop-memory/ + docs/decision-log.md,
+  exits 0 on the clean repo, is wired into `pnpm run ci` after `check-temp-markers`. Pre-existing em dashes in
+  loop-memory/ (23 files) swept and replaced with spaced hyphens. `apps/mobile/src/**` em-dash debt tracked
+  separately under LOOP-EMDASH-MOBILE; `apps/web/**` pending Alex's #needs-input ruling (WEB-SIGNOFF).
+  - [x] write the check: do-work/, loop-memory/, docs/decision-log.md scanned; rule-defining files excluded
+  - [x] EXCLUDE known-legitimate carriers (SOUL.md, DOCTRINE.md, this skill, 22-web-em-dash-debt.md)
+  - [x] wire into `pnpm run ci`; repo is green; planted em dash in loop-memory/ would fail
+
+## LOOP-EMDASH-MOBILE: Sweep pre-existing em dashes from apps/mobile/src
 - status: todo
 - blocked_by: none
-- proof: a `scripts/check-no-em-dash.sh` wired into `pnpm run ci` (like `check-temp-markers`) that fails when a
-  U+2014 em dash appears in a file the loop authors, with the right scope so it does not false-positive on
-  pre-existing legitimate uses.
-  - [ ] write the check: scan `apps/mobile/src/**` (code + comments + strings), `do-work/**`, `loop-memory/**`,
-        `docs/decision-log.md` for U+2014; exit non-zero with the offending file:line
-  - [ ] EXCLUDE the known-legitimate carriers so the check starts green: the files that quote the glyph to
-        DEFINE the rule (the no-em-dash memory file, SOUL/DOCTRINE hard-line text, this skill), and ALL of
-        `apps/web/**` (the ~157-instance blog-corpus debt is pending Alex's #needs-input ruling; see
-        `loop-memory/22-web-em-dash-debt.md`)
-  - [ ] wire into `pnpm run ci` after `check-temp-markers`; confirm a clean repo passes and a planted em dash fails
-- note: the loop keeps re-introducing em dashes into code comments and test `describe` strings despite the hard
-  line and the tick-2 em-dash memo (tick-3's auditor caught three; before that the WEB-SIGNOFF debt). The auditor
-  is a backstop, not a gate the loop should depend on for a mechanical rule. A scoped CI check enforces it on
-  every commit. Scope is the whole task: a blanket repo-wide grep would fail immediately on the web corpus and
-  on the rule-defining files, so the exclusion list is load-bearing.
+- proof: `pnpm check-no-em-dash` extended to cover `apps/mobile/src/**` exits 0 (all violations fixed or scoped
+  out with documented rationale).
+  - [ ] extend `scripts/check-no-em-dash.sh` to also scan `apps/mobile/src/**`
+  - [ ] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
+  - [ ] verify CI green after extension
+- note: tick-4 sweep of do-work/+loop-memory/ found 23 files with em dashes; the mobile source has ~200 more
+  in code comments and test strings. Those are pre-existing (before the do-work architecture) and are tracked
+  here for a future sweep. The CI guard is scoped to loop-authored paths until this is clean.

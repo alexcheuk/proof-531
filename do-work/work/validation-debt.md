@@ -24,8 +24,16 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-4 (Expedition 82) Per-day warmup ramp: D1 keeps 40/50/60%, D2 now 45/55/65%, D3 adds 4th step at 80%,
+  D4 TM-test adds 5th step at 90%. WarmupsBand collapsed label now dynamic per day. SetRow.index expanded to
+  1|2|3|4|5. 9 unit+property tests green (1135 total). The expanded warmup ramp on D3/D4 days owes a
+  TodayBody/WarmupsBand smoke on device before WARMUP-PERDAY flips to `done`.
+- tick-4 (Expedition 82) Rest timer precise alarm: `useRestTimer` now arms a `setTimeout` at the exact
+  deadline for the done haptic/alarm. Jest-proven (5 new tests). The timing improvement is device-verifiable
+  (alarm should fire within 200ms of T=0 vs up to 2s before). Owes a manual rest-timer smoke before
+  REST-TIMER-ACCURACY flips to `done`.
 - tick-3 (Expedition 81) Progress grid: corrected future/now cell weights (day 1 -> 85%, day 2 -> 90%, were
-  75/85%), past-cycle historical TM column, and D4 TM-test cells now showing "↑ × 5" (marker + reps). All
+  75/85%), past-cycle historical TM column, and D4 TM-test cells now showing "up × 5" (marker + reps). All
   three are jest-proven (exact-value, property, integration, and primitive behavior tests; 1121 green), but
   the rendered grid + the new D4 secondary-line layout owe a Progress-screen Maestro smoke before
   PROG-GRID-FIX flips to `done`.

@@ -3,11 +3,11 @@ name: date-fns-attempted
 description: We tried swapping `src/domain/relativeTime.ts` to `date-fns` (Discord 1508377597, loop-003). It broke 7 SettingsScreen tests deterministically under jest-expo. Reverted; do not retry unless jest-expo / date-fns ship a fix.
 ---
 
-# date-fns in `relativeTime.ts` — attempted, reverted
+# date-fns in `relativeTime.ts`  - attempted, reverted
 
 ## The ask
 
-Discord `1508377597820801085` — "can we just use like date-fn for
+Discord `1508377597820801085`  - "can we just use like date-fn for
 relativeTime instead of rolling our own".
 
 ## What we tried
@@ -26,7 +26,7 @@ export function formatRelativeTime(ts: number, now = Date.now()): string {
 ```
 
 Subpath import (`date-fns/formatDistanceStrict`) instead of the root
-barrel — same failure.
+barrel  - same failure.
 
 ## Why it didn't ship
 
@@ -47,7 +47,7 @@ throws.
 
 Kept the hand-rolled bucketing. ~20 LOC, zero deps. Documented in
 the file's header that we tried date-fns. Not a refactor we lost
-points on — the test gauntlet is the gate.
+points on  - the test gauntlet is the gate.
 
 ## Do not retry until
 

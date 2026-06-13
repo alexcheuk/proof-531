@@ -1,9 +1,9 @@
 ---
 name: status-bar-fill
-description: Full-bleed RN screens that need a non-paper status-bar area use `StatusBarShim` + the global tint layer in `_layout.tsx`. Per-screen `marginTop: -insets.top` escapes do NOT work — the native-stack card clips them.
+description: Full-bleed RN screens that need a non-paper status-bar area use `StatusBarShim` + the global tint layer in `_layout.tsx`. Per-screen `marginTop: -insets.top` escapes do NOT work  - the native-stack card clips them.
 ---
 
-# Full-bleed status bar — use `StatusBarShim` + the global tint layer
+# Full-bleed status bar  - use `StatusBarShim` + the global tint layer
 
 ## The pattern (loop-018)
 
@@ -32,16 +32,16 @@ Loop-018 finally pinned down that root cause.
 
 The PR celebration screen broke this four times:
 
-- loop-002 (2026-05-24, Discord 1508365993) — first ask. Set
+- loop-002 (2026-05-24, Discord 1508365993)  - first ask. Set
   `<StatusBar style="light" />` + negative-margin escape. iOS worked
   on the simulator, Android default tint stayed visible on device.
-- loop-003 (2026-05-25 01:30) — added `backgroundColor={colors.ink0}
+- loop-003 (2026-05-25 01:30)  - added `backgroundColor={colors.ink0}
   translucent={true}`. Still broken because `translucent={true}`
   silently ignores `backgroundColor`.
-- loop-004 (2026-05-25 02:00, Discord 1508386282) — fixed Android
+- loop-004 (2026-05-25 02:00, Discord 1508386282)  - fixed Android
   with the two-layer approach (`translucent={false}` + StatusBar BG).
   Extracted as `StatusBarShim` in loop-005.
-- loop-018 (2026-05-25 08:30, Discord 1508489171) — user reported
+- loop-018 (2026-05-25 08:30, Discord 1508489171)  - user reported
   iOS *still* showed a paper sliver above. Root cause:
   `marginTop: -insets.top` was visually clipped by the native-stack
   card's overflow:hidden. Fix: drop the negative margin, paint the
@@ -49,24 +49,24 @@ The PR celebration screen broke this four times:
   subject (`src/design/statusBarTint.ts`).
 
 If you find yourself reaching for `<StatusBar backgroundColor=...>`
-plus a manual absolute strip plus a negative-margin escape — stop.
+plus a manual absolute strip plus a negative-margin escape  - stop.
 Use `StatusBarShim` and the tint layer.
 
 ## When NOT to use it
 
-For screens that paint paper (`colors.bg0`) at the top — i.e. every
-non-full-bleed screen in the app — let the root `SafeTopFrame` handle
+For screens that paint paper (`colors.bg0`) at the top  - i.e. every
+non-full-bleed screen in the app  - let the root `SafeTopFrame` handle
 the status-bar area. The global `<StatusBar style="dark" />` in
 `_layout.tsx` is sufficient there.
 
 ## Files involved
 
-- `src/design/statusBarTint.ts` — module-level subject +
+- `src/design/statusBarTint.ts`  - module-level subject +
   `useStatusBarTint` / `useStatusBarTintValue` /
   `_resetStatusBarTintForTests`.
-- `src/design/primitives/StatusBarShim.tsx` — the screen-facing
+- `src/design/primitives/StatusBarShim.tsx`  - the screen-facing
   primitive.
-- `src/app/_layout.tsx` — `SafeTopFrame` mounts the absolute strip
+- `src/app/_layout.tsx`  - `SafeTopFrame` mounts the absolute strip
   when tint is non-null.
-- `src/features/session/PrCelebrationScreen.tsx` — the only consumer
+- `src/features/session/PrCelebrationScreen.tsx`  - the only consumer
   in the app today.

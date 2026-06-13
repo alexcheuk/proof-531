@@ -1,9 +1,9 @@
 ---
 name: astro-css-dynamic-injection
-description: Gotcha — Astro scoped CSS does not apply to HTML injected via innerHTML in <script is:inline> blocks. Use <style is:global> for those rules.
+description: Gotcha  - Astro scoped CSS does not apply to HTML injected via innerHTML in <script is:inline> blocks. Use <style is:global> for those rules.
 ---
 
-# Astro CSS scoping — the innerHTML trap
+# Astro CSS scoping  - the innerHTML trap
 
 ## The problem
 
@@ -15,11 +15,11 @@ When JavaScript uses `element.innerHTML = html` to inject new DOM, those new ele
 
 ## Symptom
 
-The static wrapper elements look fine (borders, padding, backgrounds from scoped CSS). But the content *inside* those wrappers — injected by JS — has no grid layout, no flex, no typography. In the goal-calendar, cycle rows showed as inline spans concatenated like "1295 LB4 WK". In the plate-math barbell, the flex diagram collapsed.
+The static wrapper elements look fine (borders, padding, backgrounds from scoped CSS). But the content *inside* those wrappers  - injected by JS  - has no grid layout, no flex, no typography. In the goal-calendar, cycle rows showed as inline spans concatenated like "1295 LB4 WK". In the plate-math barbell, the flex diagram collapsed.
 
 ## Root cause discovered
 
-`apps/web/src/pages/tools/goal-calendar.astro` and `apps/web/src/pages/tools/plate-math.astro` — both use `<script is:inline>` blocks that set `element.innerHTML` to render dynamic output. All the CSS for that injected content lived in the scoped `<style>` block.
+`apps/web/src/pages/tools/goal-calendar.astro` and `apps/web/src/pages/tools/plate-math.astro`  - both use `<script is:inline>` blocks that set `element.innerHTML` to render dynamic output. All the CSS for that injected content lived in the scoped `<style>` block.
 
 ## The fix (expedition 51)
 
@@ -39,4 +39,4 @@ Use option 1 for pages where the dynamic content is the primary content (tools, 
 
 CI (`typecheck + lint + test`) does NOT catch this. The HTML renders correctly in build output (static elements have correct structure), and the CSS is valid. The bug only manifests in a browser. There is no automated browser test yet.
 
-**What would catch this:** a Playwright or Puppeteer smoke test that loads each tool page and checks that key elements have the expected `display` computed style (e.g., assert `.cycle-row` has `display: grid`). Not yet in the harness — flagged here as a future improvement.
+**What would catch this:** a Playwright or Puppeteer smoke test that loads each tool page and checks that key elements have the expected `display` computed style (e.g., assert `.cycle-row` has `display: grid`). Not yet in the harness  - flagged here as a future improvement.

@@ -3,7 +3,7 @@ name: rn-text-clipping
 description: React Native clips text descenders when `lineHeight` is too close to `fontSize`. For display-size text containing lowercase letters with descenders (g j p q y), always set `lineHeight ≥ 1.14 × fontSize`. This bug keeps coming back; it has its own memory now.
 ---
 
-# RN text clipping — the lineHeight / fontSize ratio
+# RN text clipping  - the lineHeight / fontSize ratio
 
 ## The rule
 
@@ -24,10 +24,10 @@ value from the PWA verbatim for any display text.
 |------|------|-----------|-------|----------|
 | `ProgressTitleBlock` "Progress." | 56 | 52 → **64** | 0.93× → 1.14× | yes (loop-020) |
 | `PickLifts` "are you training?" | 44 | 48 → **52** | 1.09× → 1.18× | suspected (loop-020) |
-| `LiftPageTitle` "Squat." | 64 | 74 | 1.16× | safe — comment in source |
+| `LiftPageTitle` "Squat." | 64 | 74 | 1.16× | safe  - comment in source |
 | `Intro` "Get strong / slowly." | 56 | 64 | 1.14× | safe (has 'y' descender) |
-| `Heading.xl` default ("In the / book") | 64 | 60 | 0.94× | currently safe only because "book" has no descender — **next consumer with a descender will hit this** |
-| `Heading.huge` default (PR cert digits) | 92 | 90 | 0.98× | safe — digit-only consumer |
+| `Heading.xl` default ("In the / book") | 64 | 60 | 0.94× | currently safe only because "book" has no descender  - **next consumer with a descender will hit this** |
+| `Heading.huge` default (PR cert digits) | 92 | 90 | 0.98× | safe  - digit-only consumer |
 
 ## Why we keep getting this
 
@@ -39,7 +39,7 @@ value from the PWA verbatim for any display text.
   `g`; "training?" has a `g`. Test fixtures rarely use words with
   descenders.
 - The clipping is subtle on simulators with default fonts but obvious
-  on physical Android. Some renders are 1 px clipped — still wrong,
+  on physical Android. Some renders are 1 px clipped  - still wrong,
   still ugly, still hard to spot on screenshot diff.
 
 ## How to audit going forward
@@ -54,12 +54,12 @@ leading-[0.92] × 64px = 58.88   # browser-safe
 When reviewing a PR that adds inline `style={{ fontSize: N, lineHeight:
 M }}` and `M < N * 1.14`, flag it. If the text is digits-only (e.g.
 `numeric` prop, RestTimer's clock, GoalPanel's value display) the rule
-relaxes — digits don't descend.
+relaxes  - digits don't descend.
 
 ## Heading primitive defaults
 
 The `Heading` primitive's `xl` default (size 64, lh 60) is technically
-unsafe — the only consumer today (`SessionCompleteTitle`'s "In the /
+unsafe  - the only consumer today (`SessionCompleteTitle`'s "In the /
 book") just happens to use a descender-free word. Bumping the default
 to 74 would shift the two-line stacking of "In the / book" upward by
 14 px in aggregate, which is a real visual change; it was not done
