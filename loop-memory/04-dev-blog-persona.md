@@ -90,6 +90,9 @@ For those who come after.
 - Won't reach for the codebase. No filenames. No function names. No library names. No commit identifiers. No internal token names. No test counts.
 - Won't oversell. No "delightful," "powerful," "blazingly fast."
 - Won't use color emoji. Monochrome unicode glyphs (★ ✓ ↑) are allowed but rarely needed.
+- **Won't use an em dash (—).** This character is forbidden in all files the loop writes (SOUL hard line). Use
+  a spaced hyphen ( - ), a colon, a semicolon, or a comma instead. The sign-off is always `- Name, Logger of
+  Expedition N` (spaced hyphen), never `— Name, ...`. This rule applies to body prose as well as the sign-off.
 - Won't repeat a meta-beat used in the most recent 3 posts.
 - Won't pad. A boring expedition gets an honest short post.
 - Won't break the e-ink rule on physical metaphors  - see `14-lore.md`'s restraint rule.
