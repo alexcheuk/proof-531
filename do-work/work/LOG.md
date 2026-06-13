@@ -25,6 +25,29 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-9 (Exp 87): casual post + Playwright MCP + Q-QUALITY + 87+ bump
+- shipped (LAUNCH, task-queue 1515444127339249875 + 1515444142619099167): Casual "haha look what I did"
+  Android launch post drafted at docs/marketing/casual-android-launch-post.md. Extremely casual voice
+  matching Alex's Discord messages - bench goal/app search/built one with agent loop, weekend phone-only
+  operation, expedition 33 lore, Google Home TTS, homelab migration. Target: r/vibecoding, r/homelab,
+  r/selfhosted, or Twitter/X. Awaiting Alex go-ahead (SOUL growth-autonomy). Post tracking system added
+  at loop-memory/23-post-tracking.md. #needs-input notified.
+- shipped (LOOP, task-queue 1515444142619099167): Playwright browser MCP configured (.mcp.json with
+  @playwright/mcp@latest; enableAllProjectMcpServers: true in .claude/settings.json). Loop and Alex can
+  now use browser automation for marketing tasks. Decision-log entry added.
+- shipped (Q-QUALITY): Removed 9-line "what" JSDoc block from SessionListRow.tsx import block (was
+  sitting awkwardly between import groups). Added single WHY comment before function. Behavior-preserving.
+  do-work-auditor PASS.
+- shipped (LAUNCH): Iteration count 86+ -> 87+ across 11 marketing docs + README. Tactic 16 (casual post)
+  added to launch strategy tracker. Expedition 87 research notes added.
+- shipped (LOOP): Fixed 4 em-dash violations in LOG.md/loop-memory/decision-log.md from tick-8's
+  quoting of the U+2014 glyph; replaced with "U+2014"/"[emdash]" descriptions. CI clean.
+- proof: pnpm run ci green (1170/1170 tests, 185 suites; typecheck clean; lint clean; check-no-em-dash clean);
+  do-work-auditor PASS. Pushed to main (113e819).
+- deferred / escalated: Casual post awaits Alex go-ahead in #needs-input. WEB-SIGNOFF A/B still pending.
+  Reddit posts wait for Alex. Maestro smokes for REST-TIMER-ACCURACY, MISSED-REP, WARMUP-PERDAY,
+  PROG-GRID-FIX still outstanding. iOS App Store still pending.
+
 ## 2026-06-13 tick-8 (Exp 86): WEB-SIGNOFF option-C auto-proceed + iter count 86+ + Q-QUALITY JSDoc sweep
 - shipped (WEB, WEB-SIGNOFF partial): Option C auto-proceeded after 6 ticks of silence (DOCTRINE threshold:
   3 ticks). 99+ prose em dashes swept from apps/web/ pages and components (15 files) with placeholder glyphs
