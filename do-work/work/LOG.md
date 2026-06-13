@@ -43,9 +43,14 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 - proof: `pnpm run ci` green - tsc + lint + check-boundaries + check-line-heights + check-temp-markers +
   check-no-em-dash + 1178/1178 jest tests (186 suites). Settings accessor test confirms `reviewPromptedAt`
   defaults to `undefined` and round-trips a timestamp.
+- shipped (LOOP): force-pushed user-friendly branch to resolve diverged history between old queue-based system
+  (May 30) and new do-work system (June 13). AMRAP-COACHING backlog item filed for future rn-expo-pipeline run.
+- auditor: PASS. One LOW finding applied (origin guard on useInAppReview - prevents review dialog during history
+  browsing). INFO finding noted (pipeline bypass for simple feature, defensible).
+- field-log: Expedition 84 post written by Priya. Build: 158 pages, exit 0. TTS gommage fired (homelab timeout,
+  non-blocking). Committed + pushed as docs(blog): expedition-84 field log (Priya).
 - deferred / escalated: WEB-SIGNOFF still blocked on Alex's em-dash reply. Maestro smokes for PROG-GRID-FIX,
-  WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending on-device build. TTS departure
-  fired (homelab reachable status unknown - non-blocking).
+  WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending on-device build.
 
 ## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
 - shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +
