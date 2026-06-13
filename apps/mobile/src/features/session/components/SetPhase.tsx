@@ -4,6 +4,7 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit as displayUnitGlyph } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 import { View } from 'react-native';
 import { LiveHeader } from './LiveHeader';
 
@@ -38,7 +39,7 @@ export function SetPhase({
 }: SetPhaseProps) {
   const { spacing, layout } = useTheme();
 
-  const eyebrow = isTmTest ? 'On the bar · 100% TM' : `On the bar · ${Math.round(pct * 100)}% TM`;
+  const eyebrow = isTmTest ? 'On the bar · 100% TM' : `On the bar · ${pctToDisplay(pct)}% TM`;
 
   return (
     <>

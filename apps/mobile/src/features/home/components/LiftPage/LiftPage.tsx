@@ -7,6 +7,7 @@ import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 // LinearTransition animates layout when the selected lift changes  -  swap feels like a smooth strip, not a hard cut.
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
@@ -110,7 +111,7 @@ export function LiftPage({
           unitGlyph={displayUnit(displayUnitProp)}
           reps={state.topSet.reps}
           amrap={!!state.topSet.amrap}
-          pctLabel={`${Math.round(state.topSet.pct * 100)}% TM`}
+          pctLabel={`${pctToDisplay(state.topSet.pct)}% TM`}
           tmLabel={`TM ${state.tmDisplay} ${displayUnit(displayUnitProp)}`}
           perSide={state.perSide}
           plateVariant="mini"

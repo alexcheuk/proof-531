@@ -5,6 +5,7 @@ import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 import { View, type ViewStyle } from 'react-native';
 import { RestTimer } from './RestTimer';
 
@@ -110,7 +111,7 @@ export function RestPhase({
               unitGlyph={unitLabel}
               reps={nextSet.reps}
               amrap={nextSet.amrap}
-              pctLabel={`${Math.round(nextSet.pct * 100)}%`}
+              pctLabel={`${pctToDisplay(nextSet.pct)}%`}
               tmLabel={`TM ${nextSet.tmDisplay} ${unitLabel}`}
               perSide={nextSet.perSide}
               plateVariant="full"

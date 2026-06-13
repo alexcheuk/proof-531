@@ -3,6 +3,7 @@ import { useTheme } from '@/design/theme';
 import { decompose } from '@/domain/plates';
 import type { PlateSet, Unit } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 import { View, type ViewStyle } from 'react-native';
 
 export type TopSetHeroProps = {
@@ -20,7 +21,7 @@ export type TopSetHeroProps = {
    */
   eyebrow?: string;
   /**
-   * Optional pct-label override. Defaults to `Math.round(set.pct * 100)%`.
+   * Optional pct-label override. Defaults to `pctToDisplay(set.pct)%`.
    * Week-4 passes `"100% TM"` to make the percentage and TM context one
    * caption rather than two ("100%" + "TM 245 lb" reads as redundant when
    * pct is exactly 100).
@@ -72,7 +73,7 @@ export function TopSetHero({
         reps={set.reps}
         amrap={!!set.amrap}
         {...(repsRange ? { repsRange } : {})}
-        pctLabel={pctLabel ?? `${Math.round(set.pct * 100)}%`}
+        pctLabel={pctLabel ?? `${pctToDisplay(set.pct)}%`}
         tmLabel={`TM ${tmInDisplay} ${unitGlyph}`}
         perSide={heroDecomposed.perSide}
         plateVariant="full"

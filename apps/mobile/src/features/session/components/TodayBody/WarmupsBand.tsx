@@ -5,6 +5,7 @@ import { useTheme } from '@/design/theme';
 import { warmupsForDay } from '@/domain/schemes';
 import type { Unit, Week } from '@/domain/types';
 import { displayWeight, round } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
@@ -36,7 +37,7 @@ export function WarmupsBand({
   const [expanded, setExpanded] = useState(false);
 
   const warmups = warmupsForDay(week);
-  const collapsedLabel = `${warmups.map((s) => `${Math.round(s.pct * 100)}`).join(' · ')}% TM`;
+  const collapsedLabel = `${warmups.map((s) => `${pctToDisplay(s.pct)}`).join(' · ')}% TM`;
 
   const toggle = () => {
     void Haptics.selectionAsync();

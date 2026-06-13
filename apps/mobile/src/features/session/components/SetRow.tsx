@@ -6,6 +6,7 @@ import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
+import { pctToDisplay } from '@/lib/pct';
 // Never interactive  -  entry into Live happens only via the bottom "Start/Resume working set N" CTA.
 import { View, type ViewStyle } from 'react-native';
 
@@ -51,7 +52,7 @@ export function SetRow({
   // assertions.
   const stateLabel = done ? 'done' : next ? 'up next' : '';
   const repsLabel = `${reps} reps${amrap ? ', AMRAP' : ''}`;
-  const pctLabel = `${Math.round(pct * 100)} percent of training max`;
+  const pctLabel = `${pctToDisplay(pct)} percent of training max`;
   const a11yLabel = [
     `Set ${index}${stateLabel ? `, ${stateLabel}` : ''}`,
     `${weight} ${displayUnit(unit)} × ${repsLabel}`,
@@ -111,7 +112,7 @@ export function SetRow({
             color="ink2"
             style={{ letterSpacing: 0.22 }}
           >
-            {Math.round(pct * 100)}%
+            {pctToDisplay(pct)}%
           </Text>
         </Row>
       </Row>
