@@ -49,8 +49,17 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
   browsing). INFO finding noted (pipeline bypass for simple feature, defensible).
 - field-log: Expedition 84 post written by Priya. Build: 158 pages, exit 0. TTS gommage fired (homelab timeout,
   non-blocking). Committed + pushed as docs(blog): expedition-84 field log (Priya).
-- deferred / escalated: WEB-SIGNOFF still blocked on Alex's em-dash reply. Maestro smokes for PROG-GRID-FIX,
-  WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending on-device build.
+- shipped (WEB-SIGNOFF, additional push): 82 blog post sign-offs normalized from em-dash (—) to spaced hyphen
+  (-). loop-memory/03-dev-blog.md always specified spaced hyphen; the em-dashes were a Logger execution bug.
+  Applied after 4-tick silence on #needs-input escalation (autonomous-proceed threshold). Corpus .astro/.tsx
+  em-dashes (options C/D) still pending Alex's reply. CI green (1176/1176 tests post domain cleanup).
+- shipped (Q-QUALITY, additional push): removed dead domain export `bestE1RMForCycle` from progression.ts (no
+  production consumers; only tested in own tests). Cleaned up now-dead `estimateOneRm` + `SetLogKind` imports.
+  3 dead tests removed. Behavior-preserving.
+- deferred / escalated: Broader web corpus em-dash (C/D) still blocked on Alex's reply in #needs-input.
+  Maestro smokes for PROG-GRID-FIX, WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending
+  on-device build. Note: concurrent loop instance ran during this tick; remote had 5 commits before my push.
+  Resolved by: applying unique patches (blog sign-offs + domain cleanup) on top of the remote's state.
 
 ## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
 - shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +
