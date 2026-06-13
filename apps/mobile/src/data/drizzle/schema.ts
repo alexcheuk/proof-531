@@ -22,6 +22,7 @@ export const settings = sqliteTable('settings', {
   // Additive column; existing installs pick it up via ALTER TABLE in
   // `runMigrations.ts`. Discord 1508984314.
   liveScreenInverted: integer('live_screen_inverted').notNull(),
+  reviewPromptedAt: integer('review_prompted_at'),
 });
 
 export const trainingMaxes = sqliteTable('training_maxes', {

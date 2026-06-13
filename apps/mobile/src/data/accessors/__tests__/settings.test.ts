@@ -121,4 +121,17 @@ describe('settings accessor', () => {
     expect(row.value).toBe(90);
     expect(row.unit).toBe('kg');
   });
+
+  it('reviewPromptedAt defaults to undefined and round-trips a timestamp', async () => {
+    const db = freshDb();
+    const initial = await getSettings(db);
+    expect(initial.reviewPromptedAt).toBeUndefined();
+
+    const ts = 1718000000000;
+    const updated = await updateSettings(db, { reviewPromptedAt: ts });
+    expect(updated.reviewPromptedAt).toBe(ts);
+
+    const reread = await getSettings(db);
+    expect(reread.reviewPromptedAt).toBe(ts);
+  });
 });

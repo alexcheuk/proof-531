@@ -37,6 +37,7 @@ function toRow(s: Settings): SettingsInsert {
     // Drizzle's column type for this is INTEGER NOT NULL (no `mode:
     // 'boolean'`) so we round-trip the flag as 0/1 ourselves.
     liveScreenInverted: s.liveScreenInverted ? 1 : 0,
+    reviewPromptedAt: s.reviewPromptedAt ?? null,
   };
 }
 
@@ -53,6 +54,7 @@ function fromRow(row: SettingsRow): Settings {
     restTargetSeconds: row.restTargetSeconds,
     bbbRestTargetSeconds: row.bbbRestTargetSeconds,
     liveScreenInverted: !!row.liveScreenInverted,
+    ...(row.reviewPromptedAt != null ? { reviewPromptedAt: row.reviewPromptedAt } : {}),
   };
 }
 

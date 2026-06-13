@@ -198,6 +198,15 @@ jest.mock('@/data/queries/useApplyMissReset', () => ({
   useApplyMissReset: () => ({ mutate: jest.fn(), isPending: false }),
 }));
 
+jest.mock('@/data/queries/useMarkReviewPrompted', () => ({
+  useMarkReviewPrompted: () => ({ mutate: jest.fn() }),
+}));
+
+jest.mock('expo-store-review', () => ({
+  isAvailableAsync: jest.fn().mockResolvedValue(false),
+  requestReview: jest.fn().mockResolvedValue(undefined),
+}));
+
 // Import after mocks so the screen sees the stubs.
 import { SessionCompleteScreen } from '../SessionCompleteScreen';
 

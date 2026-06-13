@@ -83,6 +83,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     column: 'live_screen_inverted',
     ddl: 'ALTER TABLE settings ADD COLUMN live_screen_inverted INTEGER NOT NULL DEFAULT 0',
   },
+  {
+    table: 'settings',
+    column: 'review_prompted_at',
+    ddl: 'ALTER TABLE settings ADD COLUMN review_prompted_at INTEGER',
+  },
 ];
 
 function exec(db: MigrationTarget, sql: string): void {

@@ -27,6 +27,7 @@ import { TmAdjustmentNote } from './components/TmAdjustmentNote';
 import { TmApplySheet } from './components/TmApplySheet';
 import { TmTestReceiptBand } from './components/TmTestReceiptBand';
 import { useHardwareBack } from './hooks/useHardwareBack';
+import { useInAppReview } from './hooks/useInAppReview';
 import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useRecordMissOnce } from './hooks/useRecordMissOnce';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
@@ -45,6 +46,10 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
 
   useSessionCompleteHaptic(data.view !== null && data.view !== undefined);
   usePrSuccessHaptic(data.view?.hasPR ?? false);
+  useInAppReview({
+    isCycleComplete: data.view?.isCycleComplete ?? false,
+    cycle: data.view?.session.cycle ?? 1,
+  });
 
   // Missed-rep Program Correction. The one-shot recorder only acts on a
   // settled non-TM-test session (D1..D3)  -  `ready` is false for D4 and while
