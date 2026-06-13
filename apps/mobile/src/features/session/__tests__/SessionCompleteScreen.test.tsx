@@ -164,10 +164,16 @@ jest.mock('@/data/queries/useSettings', () => ({
       restTargetSeconds: 90,
       bbbRestTargetSeconds: 90,
       liveScreenInverted: false,
+      storeReviewRequested: false,
     },
     isLoading: false,
     error: null,
   }),
+}));
+
+// In-app review: no-op in tests (would crash: needs a QueryClient + native module).
+jest.mock('@/features/session/hooks/useStoreReviewOnCycleComplete', () => ({
+  useStoreReviewOnCycleComplete: jest.fn(),
 }));
 
 // 295 lbs previous best  -  below the 325 lb new e1RM so the comparison row renders.

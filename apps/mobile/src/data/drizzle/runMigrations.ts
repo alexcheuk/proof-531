@@ -47,6 +47,7 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'rest_target_seconds',
   'bbb_rest_target_seconds',
   'live_screen_inverted',
+  'store_review_requested',
 ] as const;
 
 const REQUIRED_LIFT_GOALS_COLUMNS = ['kind', 'target_value', 'unit'] as const;
@@ -82,6 +83,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     table: 'settings',
     column: 'live_screen_inverted',
     ddl: 'ALTER TABLE settings ADD COLUMN live_screen_inverted INTEGER NOT NULL DEFAULT 0',
+  },
+  {
+    table: 'settings',
+    column: 'store_review_requested',
+    ddl: 'ALTER TABLE settings ADD COLUMN store_review_requested INTEGER NOT NULL DEFAULT 0',
   },
 ];
 

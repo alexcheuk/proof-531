@@ -22,6 +22,10 @@ export const settings = sqliteTable('settings', {
   // Additive column; existing installs pick it up via ALTER TABLE in
   // `runMigrations.ts`. Discord 1508984314.
   liveScreenInverted: integer('live_screen_inverted').notNull(),
+  // Set to 1 after expo-store-review fires the in-app review prompt.
+  // Ensures the prompt shows at most once per install. Default 0 (not yet requested).
+  // Additive column; existing installs pick it up via ALTER TABLE in `runMigrations.ts`.
+  storeReviewRequested: integer('store_review_requested').notNull(),
 });
 
 export const trainingMaxes = sqliteTable('training_maxes', {
@@ -135,4 +139,5 @@ export const DEFAULT_SETTINGS_VALUES = {
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
   liveScreenInverted: 0 as 0 | 1,
+  storeReviewRequested: 0 as 0 | 1,
 };

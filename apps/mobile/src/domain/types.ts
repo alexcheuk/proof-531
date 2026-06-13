@@ -32,6 +32,8 @@ export interface Settings {
   restTargetSeconds: number;
   bbbRestTargetSeconds: number;
   liveScreenInverted: boolean;
+  /** True after the Play / App Store in-app review has been requested once. */
+  storeReviewRequested: boolean;
 }
 
 export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
@@ -45,4 +47,5 @@ export const DEFAULT_SETTINGS: Omit<Settings, 'id'> = {
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
   liveScreenInverted: false,
+  storeReviewRequested: false,
 };

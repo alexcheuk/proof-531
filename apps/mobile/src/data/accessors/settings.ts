@@ -34,9 +34,10 @@ function toRow(s: Settings): SettingsInsert {
     day: s.day,
     restTargetSeconds: s.restTargetSeconds,
     bbbRestTargetSeconds: s.bbbRestTargetSeconds,
-    // Drizzle's column type for this is INTEGER NOT NULL (no `mode:
-    // 'boolean'`) so we round-trip the flag as 0/1 ourselves.
+    // Drizzle's column type for these is INTEGER NOT NULL (no `mode:
+    // 'boolean'`) so we round-trip the flags as 0/1 ourselves.
     liveScreenInverted: s.liveScreenInverted ? 1 : 0,
+    storeReviewRequested: s.storeReviewRequested ? 1 : 0,
   };
 }
 
@@ -53,6 +54,7 @@ function fromRow(row: SettingsRow): Settings {
     restTargetSeconds: row.restTargetSeconds,
     bbbRestTargetSeconds: row.bbbRestTargetSeconds,
     liveScreenInverted: !!row.liveScreenInverted,
+    storeReviewRequested: !!row.storeReviewRequested,
   };
 }
 

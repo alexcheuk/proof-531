@@ -3,7 +3,7 @@ name: known-codebase
 description: Pre-computed facts about the 531 codebase so future loops don't re-discover them.
 ---
 
-# Codebase facts (updated 2026-05-29, expedition 77)
+# Codebase facts (updated 2026-06-13, expedition 84)
 
 ## Architecture
 
@@ -13,6 +13,22 @@ description: Pre-computed facts about the 531 codebase so future loops don't re-
 - `src/features/`  - composition. Each feature has `components/`, `hooks/`, sometimes `sections/`. Tests colocated. See `src/features/CLAUDE.md` (added expedition 31).
 - `src/app/`  - expo-router routes, thin shells. Do NOT put non-route .ts files here  - the router warns "missing default export" for anything without a default component export.
 - `src/lib/`  - pure helpers: haptics, time, plate logic, Android notification wrapper, and `routes.ts` (navigation helpers). Relocated from `src/app/routes.ts` in expedition 22.
+
+## Missed-rep Program Correction (expedition 83-84)
+
+- `classifyAmrapMiss` / `missResetTm` in `domain/progression.ts` - pure domain functions for miss detection and TM reset calculation. Property-tested.
+- `lift_miss_state` table in `data/drizzle/schema.ts` - per-lift consecutive miss count. Lazily seeded on first miss.
+- `useMissState(lift)` / `useRecordMiss()` / `useClearMissState()` / `useApplyMissReset()` - TanStack Query hooks.
+- `useRecordMissOnce` (`features/session/hooks/`) - one-shot latch mirroring `usePrSuccessHaptic`.
+- `MissCorrectionCard` (`features/session/components/`) - variants: `choice` (first miss) and `forced` (second miss). On `SessionCompleteScreen` and `TodayBody`.
+- `MissResetSheet` (`features/session/components/`) - applies the TM reset via `useApplyMissReset`.
+
+## In-app review (expedition 84)
+
+- `expo-store-review ~55.0.14` installed. Native module; needs a new production build to activate.
+- `storeReviewRequested: boolean` added to `Settings` (`domain/types.ts` + DB schema, default false). Mapped as `0`/`1` in `settings.ts` accessor.
+- `useMarkStoreReviewRequested()` - mutation hook calling `updateSettings(db, { storeReviewRequested: true })`.
+- `useStoreReviewOnCycleComplete(isCycleComplete, alreadyRequested)` (`features/session/hooks/`) - fires once per install when a cycle completes. No-ops when native module unavailable. Wired into `SessionCompleteScreen`. Mocked in tests via `jest.mock`.
 
 ## Log sheet hooks (expedition 11)
 

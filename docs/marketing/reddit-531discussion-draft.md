@@ -2,10 +2,10 @@
 tactic: 2
 channel: r/531Discussion
 status: draft
-ready_to_post: false
-trigger: iOS live on App Store
+ready_to_post: true
+trigger: Android live on Google Play (done as of Expedition 83). iOS App Store submission still in progress - post now or wait for iOS parity (Alex's call).
 drafted: 2026-05-28
-last_reviewed: 2026-05-29 (Expedition 60)
+last_reviewed: 2026-06-13 (Expedition 84)
 ---
 
 # r/531Discussion — Launch Post Draft
@@ -55,8 +55,8 @@ So I built my own.
 - No ads, no paywalls, no analytics
 - Data stays on your device in a local SQLite database
 
-Android: [GitHub Releases link — fill in]
-iOS: [App Store link — fill in on launch day]
+Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
+iOS: Coming soon (App Store submission in progress)
 
 Not affiliated with Jim Wendler or Wendler LLC. Just a fan of the program.
 
@@ -88,9 +88,10 @@ Not affiliated with Jim Wendler. Free, local SQLite, no sign-in.
 
 ## Posting guidance
 
-- Post on iOS launch day, not before. Android-only post gets half the audience.
-- Post between 7am–10am US Eastern on a Tuesday or Wednesday (best engagement window for lifting subreddits).
-- Do not cross-post to r/weightroom the same day — stagger by at least 24 hours, use different copy (see tactic 3 draft).
+- Android is live on Google Play (as of Expedition 83). iOS App Store submission is in progress. Alex's call whether to post now or wait for iOS parity.
+- If posting Android-only: note "iOS coming soon" at the bottom of the post body.
+- Post between 7am-10am US Eastern on a Tuesday or Wednesday (best engagement window for lifting subreddits).
+- Do not cross-post to r/weightroom the same day - stagger by at least 24 hours, use different copy (see tactic 3 draft).
 - If the post gets traction, reply to every comment within the first 2 hours. Engagement velocity matters.
 - If asked about future features, be honest: "I'm focused on getting the 5/3/1+BBB core right. Feature requests noted." Don't promise a roadmap.
 - If asked about affiliation: "No affiliation with Jim Wendler or Wendler LLC. I just run the program."

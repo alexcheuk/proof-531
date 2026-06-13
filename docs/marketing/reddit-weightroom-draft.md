@@ -2,9 +2,10 @@
 tactic: 3
 channel: r/weightroom
 status: draft
-ready_to_post: false
-trigger: iOS live on App Store (post 24h after r/531Discussion)
+ready_to_post: true
+trigger: Android live on Google Play (done as of Expedition 83). Post 24h after r/531Discussion.
 drafted: 2026-05-28
+last_reviewed: 2026-06-13 (Expedition 84)
 ---
 
 # r/weightroom — Launch Post Draft
@@ -26,7 +27,7 @@ r/weightroom is a more general strength training subreddit with higher traffic a
 
 **Copy:**
 
-> Built a free 5/3/1+BBB tracker for myself — couldn't find one that did the BBB math cleanly without a ton of other stuff I didn't want. Local SQLite, no account, no paywall. Android APK on GitHub Releases, iOS on the App Store. [link] Not affiliated with Wendler, just a fan.
+> Built a free 5/3/1+BBB tracker for myself - couldn't find one that did the BBB math cleanly without a ton of other stuff I didn't want. Local SQLite, no account, no paywall. Android on Google Play (https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone), iOS coming soon. Not affiliated with Wendler, just a fan.
 
 ---
 
@@ -35,7 +36,7 @@ r/weightroom is a more general strength training subreddit with higher traffic a
 **Check r/weightroom rules before posting standalone.** If self-promotion requires prior community participation or is banned outright, use Option A only.
 
 **Post title:**
-> Built a free 5/3/1+BBB tracker for myself — sharing it
+> Built a free 5/3/1+BBB tracker for myself - sharing it
 
 **Body:**
 
@@ -43,8 +44,8 @@ Been running 5/3/1+BBB for a while. Couldn't find a tracker that did the volume 
 
 Built my own. Paper-style UI, local-first (SQLite on-device), no account. Free.
 
-Android: [GitHub Releases]
-iOS: [App Store]
+Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
+iOS: coming soon
 
 Not affiliated with Jim Wendler.
 
@@ -55,6 +56,7 @@ Not affiliated with Jim Wendler.
 ## Posting guidance
 
 - Post at least 24 hours after the r/531Discussion post. Don't hit both on the same day.
+- Android is live on Google Play. iOS App Store submission still in progress - "iOS coming soon" is an honest status.
 - If r/weightroom has a weekly thread for tools/apps/side-projects, use that thread — don't create a standalone post unless the community culture clearly allows it. Check the sidebar/about before posting.
 - Two sentences in the right thread beats a well-crafted standalone post that gets removed.
 - Match the register of other replies in the thread. If people are posting one-liners, post one line. If they're posting short paragraphs, match that.

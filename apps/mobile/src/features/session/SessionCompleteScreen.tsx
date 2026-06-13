@@ -1,5 +1,6 @@
 import { useClearMissState } from '@/data/queries/useClearMissState';
 import { useMissState } from '@/data/queries/useMissState';
+import { useSettings } from '@/data/queries/useSettings';
 import { CtaBar } from '@/design/primitives/CtaBar';
 import { CtaBarReserve } from '@/design/primitives/CtaBarReserve';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
@@ -31,6 +32,7 @@ import { usePrSuccessHaptic } from './hooks/usePrSuccessHaptic';
 import { useRecordMissOnce } from './hooks/useRecordMissOnce';
 import { useSessionCompleteData } from './hooks/useSessionCompleteData';
 import { useSessionCompleteHaptic } from './hooks/useSessionCompleteHaptic';
+import { useStoreReviewOnCycleComplete } from './hooks/useStoreReviewOnCycleComplete';
 
 export type SessionCompleteScreenProps = {
   sessionId: number;
@@ -42,9 +44,17 @@ export function SessionCompleteScreen({ sessionId, origin = 'live' }: SessionCom
   const router = useRouter();
   const { colors } = useTheme();
   const data = useSessionCompleteData(sessionId);
+  const settingsData = useSettings();
 
   useSessionCompleteHaptic(data.view !== null && data.view !== undefined);
   usePrSuccessHaptic(data.view?.hasPR ?? false);
+
+  // In-app review: prompt once per install after a full cycle completes.
+  // Default true (skip) while settings are loading to prevent premature trigger.
+  useStoreReviewOnCycleComplete(
+    data.view?.isCycleComplete ?? false,
+    settingsData.data?.storeReviewRequested ?? true,
+  );
 
   // Missed-rep Program Correction. The one-shot recorder only acts on a
   // settled non-TM-test session (D1..D3)  -  `ready` is false for D4 and while
