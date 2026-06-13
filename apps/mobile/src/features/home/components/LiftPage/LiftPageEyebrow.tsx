@@ -1,21 +1,21 @@
 import { CapsLabel } from '@/design/primitives/CapsLabel';
 import { Row } from '@/design/primitives/Row';
 import { useTheme } from '@/design/theme';
-import type { Lift, Week } from '@/domain/types';
+import type { Lift } from '@/domain/types';
 import { View } from 'react-native';
 
 export type LiftPageEyebrowProps = {
   lift: Lift;
   cycle: number;
-  week: Week;
   isInProgress: boolean;
 };
 
-export function LiftPageEyebrow({ lift, cycle, week, isInProgress }: LiftPageEyebrowProps) {
+export function LiftPageEyebrow({ lift, cycle, isInProgress }: LiftPageEyebrowProps) {
   const { colors } = useTheme();
   return (
     <Row justify="space-between" gap="sm">
-      <CapsLabel weight="semibold">{`Cycle ${cycle} · Day ${week}`}</CapsLabel>
+      {/* Week/day dropped — CycleStrip is the sole owner of that fact now. */}
+      <CapsLabel weight="semibold">{`Cycle ${cycle}`}</CapsLabel>
       {isInProgress ? (
         <Row gap="xs" testID={`lift-page-${lift}-in-progress`}>
           <View style={{ width: 6, height: 6, backgroundColor: colors.ink0 }} />

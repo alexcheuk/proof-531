@@ -2,9 +2,10 @@
  * Behavioral test for the Home screen.
  *
  * Verifies:
- *  - On first render the LiftStats cell for "TM" shows the TM of the first
- *    enabled lift (squat → 315 lb).
- *  - Pressing the second tab (bench) updates the TM cell to bench's TM
+ *  - On first render the working-set ladder's TM caption shows the TM of the
+ *    first enabled lift (squat → 315 lb). (LiftStats was removed; the ladder
+ *    header is now the sole on-Home TM fact.)
+ *  - Pressing the second tab (bench) updates the TM caption to bench's TM
  *    (245 lb), proving the lift-switch flow and the LiftPage swap.
  *  - When another lift is mid-session, tapping Begin on a different lift
  *    routes to the in-progress lift and skips createSession (single-session
@@ -216,14 +217,6 @@ import { __resetHomeScreenStateForTests } from '../hooks/useHomeScreenState';
 
 const renderScreen = (ui: ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>);
 
-const childText = (node: unknown): string => {
-  const n = node as { children?: ReadonlyArray<unknown> };
-  if (!n.children) return '';
-  return n.children
-    .map((c) => (typeof c === 'string' || typeof c === 'number' ? String(c) : ''))
-    .join('');
-};
-
 describe('HomeScreen', () => {
   beforeEach(() => {
     resetMockState();
@@ -249,12 +242,11 @@ describe('HomeScreen', () => {
   it('initially renders the first enabled lift (squat) with its TM', () => {
     const screen = renderScreen(<HomeScreen />);
 
-    // The carousel mounts every enabled lift page at once; assert the
-    // squat page's own LiftStats TM cell value.
+    // The carousel mounts every enabled lift page at once; assert the squat
+    // page's own ladder TM caption value (LiftStats is gone).
     const squatPage = screen.getByTestId('lift-page-squat');
-    const tmCell = within(squatPage).getByTestId('lift-stats-cell-0');
-    const valueText = within(tmCell).getByText(/315/);
-    expect(childText(valueText)).toBe('315 lb');
+    const ladder = within(squatPage).getByTestId('lift-page-squat-ladder');
+    expect(within(ladder).getByText('TM 315 lb')).toBeTruthy();
 
     // Squat tab is selected initially.
     expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(true);
@@ -267,11 +259,10 @@ describe('HomeScreen', () => {
     fireEvent.press(screen.getByTestId('lift-tab-bench'));
 
     expect(screen.getByTestId('lift-tab-bench').props.accessibilityState.selected).toBe(true);
-    // Bench page is mounted in the carousel with its own TM value.
+    // Bench page is mounted in the carousel with its own TM caption.
     const benchPage = screen.getByTestId('lift-page-bench');
-    const tmCell = within(benchPage).getByTestId('lift-stats-cell-0');
-    const valueText = within(tmCell).getByText(/245/);
-    expect(childText(valueText)).toBe('245 lb');
+    const ladder = within(benchPage).getByTestId('lift-page-bench-ladder');
+    expect(within(ladder).getByText('TM 245 lb')).toBeTruthy();
   });
 
   it('updates selectedLift when the carousel swipes (onMomentumScrollEnd)', () => {

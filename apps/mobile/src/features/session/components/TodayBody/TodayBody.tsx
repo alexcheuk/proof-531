@@ -8,12 +8,12 @@ import { formatRelativeTime } from '@/domain/relativeTime';
 import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
 import { convert, displayUnit } from '@/domain/units';
+import { WorkingSetsBand } from '@/features/shared/WorkingSetsBand';
 import { View } from 'react-native';
 import { BbbBand } from './BbbBand';
 import { TmTestNote } from './TmTestNote';
 import { TopSetHero } from './TopSetHero';
 import { WarmupsBand } from './WarmupsBand';
-import { WorkingSetsBand } from './WorkingSetsBand';
 
 export type TodayBodyProps = {
   lift: Lift;

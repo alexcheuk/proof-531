@@ -99,15 +99,15 @@ describe('Home cross-unit render via setDisplayUnit (integration)', () => {
         displayUnit={after.displayUnit}
         plateSet={after.plateSet}
         tm={squat?.value ?? 0}
-        bestE1RM={null}
         isInProgress={false}
         onBegin={() => {}}
         onResume={() => {}}
       />,
     );
 
-    expect(screen.getByText('97.5')).toBeTruthy();
-    expect(screen.getByText(/TM\s+112\.5\s+kg/)).toBeTruthy();
+    // Hero + compact-ladder top-set row both render the kg-snapped weight.
+    expect(screen.getAllByText('97.5').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/TM\s+112\.5\s+kg/).length).toBeGreaterThanOrEqual(1);
     // Raw lbs storage number must not surface as the top weight.
     expect(screen.queryByText('215')).toBeNull();
     expect(screen.queryByText('250')).toBeNull();

@@ -1,12 +1,12 @@
 import { useLastCompletedSessionForLift } from '@/data/queries/useLastCompletedSessionForLift';
 import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
-import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
-import { liftDisplayName } from '@/domain/labels';
 import { formatRelativeTime } from '@/domain/relativeTime';
+import { prescription, tmTestSet } from '@/domain/schemes';
 import type { Lift, PlateSet, Unit, Week } from '@/domain/types';
-import { convert, displayUnit } from '@/domain/units';
+import { displayUnit } from '@/domain/units';
+import { WorkingSetsBand } from '@/features/shared/WorkingSetsBand';
 // LinearTransition animates layout when the selected lift changes — swap feels like a smooth strip, not a hard cut.
 import { goTo } from '@/lib/routes';
 import { useRouter } from 'expo-router';
@@ -14,7 +14,6 @@ import { View, type ViewStyle } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 import { useLiftPageState } from '../../hooks/useLiftPageState';
 import { CycleStrip } from '../CycleStrip';
-import { LiftStats } from '../LiftStats';
 import { LiftPageEmpty } from './LiftPageEmpty';
 import { LiftPageEyebrow } from './LiftPageEyebrow';
 import { LiftPageHint } from './LiftPageHint';
@@ -28,7 +27,6 @@ type LiftPageProps = {
   displayUnit: Unit;
   plateSet: PlateSet;
   tm: number | null;
-  bestE1RM: number | null;
   isInProgress: boolean;
   // sets completed so far in the active session; drives "Resume · set N of 3" copy
   completedCount?: number;
@@ -44,7 +42,6 @@ export function LiftPage({
   displayUnit: displayUnitProp,
   plateSet,
   tm,
-  bestE1RM,
   isInProgress,
   completedCount = 0,
   onBegin,
@@ -53,7 +50,6 @@ export function LiftPage({
   const router = useRouter();
   const { spacing } = useTheme();
   const state = useLiftPageState({ week, storageUnit, displayUnit: displayUnitProp, plateSet, tm });
-  const bestE1RMDisplay = bestE1RM != null ? convert(bestE1RM, storageUnit, displayUnitProp) : null;
   const openProgress = () => goTo.progress(router, lift);
   const lastTrained = useLastCompletedSessionForLift(lift);
   const lastTrainedHint =
@@ -68,7 +64,10 @@ export function LiftPage({
     flex: 1,
   };
 
-  if (state.empty) {
+  // `state.empty` is true whenever `tm == null`, so in the non-empty branch
+  // `tm` is guaranteed non-null — narrow it for the ladder (the band wants a
+  // concrete number).
+  if (state.empty || tm == null) {
     return (
       <Animated.View
         layout={LinearTransition}
@@ -76,7 +75,7 @@ export function LiftPage({
         style={pageStyle}
         testID={`lift-page-${lift}`}
       >
-        <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
+        <LiftPageEyebrow lift={lift} cycle={cycle} isInProgress={isInProgress} />
         <LiftPageTitle lift={lift} onPress={openProgress} />
         <LiftPageEmpty testIDPrefix={`lift-page-${lift}`} />
       </Animated.View>
@@ -90,7 +89,7 @@ export function LiftPage({
       style={pageStyle}
       testID={`lift-page-${lift}`}
     >
-      <LiftPageEyebrow lift={lift} cycle={cycle} week={week} isInProgress={isInProgress} />
+      <LiftPageEyebrow lift={lift} cycle={cycle} isInProgress={isInProgress} />
       <LiftPageTitle lift={lift} onPress={openProgress} />
       {week === 4 ? (
         // Test-week callout — testID still uses `deload-callout` to preserve
@@ -118,24 +117,25 @@ export function LiftPage({
         />
       </View>
 
-      <CycleStrip currentDay={week} />
-
-      <View style={{ marginTop: spacing.lg }}>
-        <LiftStats
-          tmValue={state.tmDisplay}
-          tmUnit={displayUnitProp}
-          bestE1RM={bestE1RMDisplay}
-          cycle={cycle}
+      {/* Read-only working-set ladder — the detail of today's prescription,
+          adjacent to the hero it expands. Tighter `md` top margin reads as a
+          continuation of the hero, not a separate section. Week 4 collapses
+          to the single TM-test row. The band reuses its own weight math so
+          Home and Today never drift. */}
+      <View style={{ marginTop: spacing.md }} testID={`lift-page-${lift}-ladder`}>
+        <WorkingSetsBand
+          variant="compact"
+          sets={week === 4 ? [tmTestSet()] : prescription(week)}
+          tm={tm}
+          storageUnit={storageUnit}
+          renderUnit={displayUnitProp}
+          unitGlyph={displayUnit(displayUnitProp)}
+          tmInDisplay={state.tmDisplay}
+          rowTestIDPrefix={`lift-page-${lift}-ladder-row`}
         />
       </View>
 
-      <SecondaryLink
-        onPress={openProgress}
-        testID={`lift-page-${lift}-see-progress`}
-        accessibilityLabel={`See ${liftDisplayName(lift)} progress`}
-      >
-        SEE PROGRESS →
-      </SecondaryLink>
+      <CycleStrip currentDay={week} />
 
       <View style={{ flex: 1, minHeight: 18 }} />
 

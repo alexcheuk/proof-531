@@ -18,6 +18,10 @@ const TITLE_LETTER_SPACING = -2.56;
 // PWA `leading-[0.92]` ≈ 0.92 × 64 ≈ 58.88; RN clips descenders on tight
 // line heights, so we bump to 74.
 const TITLE_LINE_HEIGHT = 74;
+// ≈ 44% of the 64px title so the chevron reads as a small affordance, not a
+// second word. A typography constant living with the primitive (per the
+// design-system rule) — same as TITLE_SIZE above.
+const CHEVRON_SIZE = 28;
 
 export function LiftPageTitle({ lift, onPress }: LiftPageTitleProps) {
   const { spacing } = useTheme();
@@ -44,6 +48,21 @@ export function LiftPageTitle({ lift, onPress }: LiftPageTitleProps) {
       >
         .
       </Text>
+      {/* Subtle chevron affordance — shown ONLY when the title is tappable.
+          Muted ink3 (never amber — that's reserved for the period), nested
+          inside the single title Text so it inherits the title's one
+          accessible node and adds no separate announcement. */}
+      {onPress ? (
+        <Text
+          variant="sans"
+          weight="bold"
+          size={CHEVRON_SIZE}
+          color="ink3"
+          style={{ lineHeight: TITLE_LINE_HEIGHT, marginLeft: spacing.xs }}
+        >
+          {'›'}
+        </Text>
+      ) : null}
     </Text>
   );
 

@@ -59,7 +59,6 @@ const baseProps: RequiredProps = {
   displayUnit: 'lbs',
   plateSet: 'standard',
   tm: 315,
-  bestE1RM: null,
   isInProgress: false,
   onBegin: () => {},
   onResume: () => {},
@@ -123,15 +122,44 @@ describe('LiftPage', () => {
     expect(onBegin).not.toHaveBeenCalled();
   });
 
-  it('routes to the Progress tab when the "SEE PROGRESS" link is pressed', () => {
+  it('routes to the Progress tab when the (now sole) tappable title is pressed', () => {
+    // The standalone "SEE PROGRESS →" link is gone; the title carries the
+    // affordance (a muted chevron). Tapping it still navigates to Progress.
     const screen = wrap(<LiftPage {...baseProps} />);
-    fireEvent.press(screen.getByTestId('lift-page-squat-see-progress'));
+    expect(screen.queryByTestId('lift-page-squat-see-progress')).toBeNull();
+    fireEvent.press(screen.getByTestId('lift-page-title-squat'));
     // goTo.progress() uses router.navigate() (not push) to reuse the existing
     // (tabs) stack entry and avoid duplicate tab navigators on consecutive sessions.
     expect(mockRouterNavigate).toHaveBeenCalledTimes(1);
     expect(mockRouterNavigate).toHaveBeenCalledWith(
       expect.objectContaining({ pathname: '/(tabs)/progress', params: { lift: 'squat' } }),
     );
+  });
+
+  it('renders the compact working-set ladder with three rows on weeks 1–3', () => {
+    const screen = wrap(<LiftPage {...baseProps} week={1} />);
+    expect(screen.getByTestId('lift-page-squat-ladder')).toBeTruthy();
+    expect(screen.getByTestId('lift-page-squat-ladder-row-0')).toBeTruthy();
+    expect(screen.getByTestId('lift-page-squat-ladder-row-1')).toBeTruthy();
+    expect(screen.getByTestId('lift-page-squat-ladder-row-2')).toBeTruthy();
+    // No fourth row.
+    expect(screen.queryByTestId('lift-page-squat-ladder-row-3')).toBeNull();
+    // Ladder header carries the (now sole) TM caption fact.
+    expect(screen.getByText('WORKING SETS')).toBeTruthy();
+  });
+
+  it('collapses the ladder to a single TM-test row on week 4', () => {
+    const screen = wrap(<LiftPage {...baseProps} week={4} />);
+    expect(screen.getByTestId('lift-page-squat-ladder-row-0')).toBeTruthy();
+    // Only one row — the TM test set.
+    expect(screen.queryByTestId('lift-page-squat-ladder-row-1')).toBeNull();
+    expect(screen.queryByTestId('lift-page-squat-ladder-row-2')).toBeNull();
+  });
+
+  it('no longer renders the LiftStats block on Home', () => {
+    const screen = wrap(<LiftPage {...baseProps} />);
+    expect(screen.queryByTestId('lift-stats')).toBeNull();
+    expect(screen.queryByText('BEST e1RM')).toBeNull();
   });
 
   it('renders 4 CycleStrip cells and inverts the active week', () => {

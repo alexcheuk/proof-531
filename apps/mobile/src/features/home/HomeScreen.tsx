@@ -115,7 +115,6 @@ export function HomeScreen() {
     ({ item: lift }) => {
       if (!settingsData) return null;
       const tmRow = tmsData?.find((t) => t.lift === lift);
-      const pr = prsData?.find((p) => p.lift === lift);
       const storageUnit = tmRow?.unit ?? settingsData.storageUnit;
       const displayUnit = settingsData.displayUnit ?? settingsData.storageUnit;
       const liftProg = progressByLift.get(lift);
@@ -134,7 +133,6 @@ export function HomeScreen() {
             displayUnit={displayUnit}
             plateSet={settingsData.plateSet}
             tm={tmRow?.value ?? null}
-            bestE1RM={pr?.bestE1RM ?? null}
             isInProgress={lift === inProgressLift}
             completedCount={lift === inProgressLift ? inProgressCompletedCount : 0}
             onBegin={() => handleBegin(lift)}
@@ -146,7 +144,6 @@ export function HomeScreen() {
     [
       settingsData,
       tmsData,
-      prsData,
       progressByLift,
       inProgressLift,
       inProgressCompletedCount,
