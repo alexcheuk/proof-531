@@ -5,7 +5,7 @@ import { useTheme } from '@/design/theme';
 import { missResetTm } from '@/domain/progression';
 import type { Unit } from '@/domain/types';
 import { displayUnit } from '@/domain/units';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
@@ -26,21 +26,10 @@ export type MissCorrectionCardProps = {
   onReset: () => void;
   /** Absent on the forced variant (no off-day once two misses stack). */
   onOffDay?: () => void;
-  /**
-   * Play the FadeIn entrance. SessionComplete passes true (the miss just
-   * happened); Today passes false (the card is present on mount, not an event).
-   */
   animateEntrance?: boolean;
   testID?: string;
 };
 
-/**
- * The missed-rep Program Correction card. Adopts the `AdjustTmCta` /
- * `TmAdjustmentNote` bordered frame so it reads as a sibling of the existing
- * TM nudges. Two visual identities selected by `variant`:
- *   - choice (first miss): transparent surface, two actions (Reset / Off-day).
- *   - forced (second consecutive miss): amber surface, single Review action.
- */
 export function MissCorrectionCard({
   variant,
   tmDisplay,
@@ -76,21 +65,21 @@ export function MissCorrectionCard({
   const resetLabel = `−10% · reset to ${target} ${u}`;
 
   // Entrance is only animated when the miss just occurred AND reduce-motion is off.
-  // Uses explicit shared-value pattern (never `entering=` prop) - the entering prop
-  // risks "Should not already be working" on remount when this card appears on Today
-  // between sessions (known-codebase.md Reanimated rules).
+  // Uses explicit useSharedValue instead of `entering=FadeIn` to avoid the
+  // Reanimated registry "Should not already be working" crash on remount.
   const shouldAnimate = animateEntrance && !reduceMotion;
   const opacity = useSharedValue(shouldAnimate ? 0 : 1);
+  const firedRef = useRef(false);
   useEffect(() => {
-    if (shouldAnimate) {
-      opacity.value = withTiming(1, {
-        duration: motion.durationBase,
-        easing: Easing.bezier(...motion.easeStandardBezier),
-      });
-    }
+    if (!shouldAnimate || firedRef.current) return;
+    firedRef.current = true;
+    opacity.value = withTiming(1, {
+      duration: motion.durationBase,
+      easing: Easing.bezier(...motion.easeStandardBezier),
+    });
     return () => cancelAnimation(opacity);
-  }, [opacity, shouldAnimate, motion.durationBase, motion.easeStandardBezier]);
-  const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  }, [shouldAnimate, opacity, motion.durationBase, motion.easeStandardBezier]);
+  const enteringStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   const content = (
     <>
@@ -165,7 +154,7 @@ export function MissCorrectionCard({
   );
 
   return (
-    <Animated.View testID={testID} style={[cardStyle, animStyle]}>
+    <Animated.View testID={testID} style={[cardStyle, enteringStyle]}>
       {content}
     </Animated.View>
   );

@@ -25,106 +25,23 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
-## 2026-06-13 tick-6b supp (quality): pctToDisplay utility extraction
-- orientation: branch was 10 commits behind origin/user-friendly (parallel ticks 6-9 ran).
-  Reset to remote, cherry-picked only the unique Q-QUALITY improvement not covered by prior ticks.
-  pnpm install needed to link expo-store-review (added by parallel tick-6). CI was re-run and green.
-- shipped (Q-QUALITY): `pctToDisplay(pct: number): number` extracted to `lib/pct.ts`. 8 occurrences
-  of `Math.round(pct * 100)` removed from 6 feature components (SetPhase, SetRow x2, RestPhase,
-  WarmupsBand, TopSetHero, LiftPage). 7-case test in `lib/__tests__/pct.test.ts`. Behavior-preserving.
-- shipped (LOOP): marketing docs and launch strategy updates (84+) were already done by parallel
-  tick-6 remote; Days-of-Cycle audit confirmed clean (mobile + web). IN-APP-REVIEW also done
-  by parallel tick-6 (expo-store-review + reviewPromptedAt gate).
-- proof: pnpm run ci green (1195 tests, 187 suites, tsc+lint+boundaries+check-no-em-dash clean).
-  do-work-auditor APPROVE on pctToDisplay slice (job 2 review); note: auditor also flagged pre-existing
-  em-dashes in reddit-vibecoding-draft.md as latent debt (not introduced by this tick, not blocking).
-- deferred / escalated: WEB-SIGNOFF still blocked. All Maestro smoke debt unchanged. Pre-existing
-  em-dashes in reddit-vibecoding-draft.md added to latent debt (to address when WEB-SIGNOFF resolved).
-
-## 2026-06-13 tick-9 supp (quality): ProgressLiftPage memoization
-- orientation: branch was 22 commits behind origin (ticks 6-8 ran in parallel). Reset to origin/user-friendly;
-  applied only the unique Q-QUALITY improvement not covered by parallel ticks.
-- shipped (Q-QUALITY): `ProgressLiftPage.tsx` - `liftPr` IIFE converted to `useMemo(deps: prs.data/lift/storageUnit/displayU)`
-  to avoid repeated prs.data.find on every re-render; `onPastCellPress` inline lambda extracted to
-  `useCallback(deps: router)` for stable reference. Behavior-preserving. 1188/1188 tests, CI green.
-- proof: pnpm run ci green (1188 tests, tsc+lint+boundaries clean). Pushed 7ef947e to origin.
-- deferred / escalated: marketing 84+ already done in tick-6; IN-APP-REVIEW already done in tick-6 by
-  parallel instance. My local marketing doc updates superseded by remote; local IN-APP-REVIEW superseded by
-  remote's richer implementation (reviewPromptedAt gate). All Maestro smokes still pending.
-
-## 2026-06-13 tick-8 supp (Exp 84 catchup): parallel-tick merge resolution + onboarding refactor
-- orientation: branch started 19 commits behind origin (ticks 6+7 ran in parallel). Fast-forward pulled; merge
-  conflicts in schema/types/settings/backlog files. Upstream used expo-store-review (reviewPromptedAt); mine used
-  Linking.openURL (reviewPromptShownAt). Accepted upstream's native approach; renamed to align.
-- shipped (Q-QUALITY): refactored `onboarding.ts` to call `updateSettings()` instead of hand-mapping every Settings
-  row field twice. Eliminates the duplicate fromRow/toRow pattern that caused the tick-8 CI miss (reviewPromptedAt
-  was not propagated). Settings accessors are now the single source of truth for row->domain mapping.
-- shipped (LAUNCH): marketing doc count advances to 84+ (some docs were at 82/77 still; now consistent);
-  YouTube shorts brief/script, reddit-vibecoding/reactnative, producthunt, ai-experiment-story-outline updated.
-- shipped (LOOP): SessionCompleteScreen.test.tsx - removed now-deleted useMarkReviewPromptShown mock; launch
-  strategy tactic-12 tracker updated to reflect expo-store-review implementation.
-- proof: pnpm run ci green (1188/1188 tests, tsc+lint+boundaries clean). Pushed to origin.
-- deferred / escalated: all pending smokes from prior ticks unchanged. WEB-SIGNOFF still blocked.
-
-## 2026-06-13 tick-7 (Exp 85): AMRAP coaching + blog em-dash sweep + Show HN draft + process page
-- orientation: branch was 11 commits behind origin (concurrent loop ran tick-6). Fast-forward pulled first.
-  All task-queue items still ✅. #loop-criteria pins unchanged (launch marketing pin + Days-of-Cycle pin).
-  WEB-SIGNOFF still blocked (no Alex reply after 5+ ticks). pnpm install needed to link expo-store-review.
-- shipped (FEAT, AMRAP-COACHING): rn-designer spec + rn-frontend implementation + rn-qa PASS (9 new tests).
-  RestPhase shows "AMRAP NEXT" + "Push past the minimum." when nextSet.amrap. AmrapLogSheet shows "Target: N
-  reps minimum." always-on. ReceiptCard shows "Matched target." when topReps==prescribedReps && !missCardShown.
-  useSessionCompleteData gained topPrescribedReps. 1187/1187 tests. Accrues validation debt for Maestro smoke.
-- shipped (Q-QUALITY, MissCorrectionCard): Replaced entering={FadeIn} Reanimated anti-pattern with explicit
-  useSharedValue/useAnimatedStyle pattern. Known remount hazard per loop-memory/01-known-codebase.md. Test mock
-  updated. Behavior-preserving (fade still plays when animateEntrance=true).
-- shipped (LOOP, LOGGER-EMDASH-GUARD): extended check-no-em-dash.sh to cover apps/web/src/content/blog/2026-06-*.md;
-  swept 14 em dashes from 4 pre-existing June posts. CI guard now blocks new violations in do-work-era Logger posts.
-  LOGGER-EMDASH-GUARD advanced from todo->doing; verify step pending the next commissioned post.
-- shipped (LAUNCH, Show HN): Created docs/marketing/show-hn-submission.md - complete ready-to-post Show HN
-  submission with title options, first comment, 5 pre-answered HN questions, and timing guidance.
-- shipped (WEB): process.astro updated with "Android live on Google Play; iOS in review" story + Google Play
-  CTA pill added to bottom row. Loop-memory website strategy tracker updated for expeditions 83-85.
-- proof: pnpm -w run ci green (tsc + lint + check-boundaries + check-no-em-dash + 1187/1187 tests); web build
-  exit 0 (158 pages). rn-qa PASS on AMRAP-COACHING + MissCorrectionCard fix. Pushed to origin.
-- deferred / escalated: AMRAP-COACHING, MISSED-REP, IN-APP-REVIEW, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY
-  all owe Maestro smokes (no device from this seat). WEB-SIGNOFF broader corpus still blocked on Alex reply.
-  LOGGER-EMDASH-GUARD final verify step on next expedition log commission.
-
-## 2026-06-13 tick-6 (Exp 84): Marketing campaign prep + IN-APP-REVIEW implementation
-- orientation: new #loop-criteria pin (2026-06-13, pin 1515284085780512778): "Android app is live. Launch
-  marketing campaign. Goal is to increase downloads." All task-queue items already acked from prior ticks. No
-  new #needs-input answers (WEB-SIGNOFF still blocked).
-- shipped (LAUNCH, mandatory pin): updated all 10 marketing docs to "84+" iteration count and Android-live
-  status. `reddit-531discussion-draft.md` unblocked (Android live; only human-only blocker is Alex's personal
-  5/3/1 history). `loop-memory/16-organic-launch-strategy.md` updated with Expedition 84 research notes.
-  `README.md` updated to "84+ iterations".
-- shipped (FEAT, IN-APP-REVIEW): `expo-store-review ~55.0.14` added to dependencies; `useInAppReview` hook
-  fires once per install after cycle completion >= 2; `settings.reviewPromptedAt` additive column persists
-  the "prompted" flag; `useMarkReviewPrompted` mutation; 7 hook tests + 1 accessor test; SessionCompleteScreen
-  wired; mocks in SessionCompleteScreen.test.tsx. Accrues validation debt (on-device native review dialog smoke).
-- shipped (Q-QUALITY mandatory slice): added `reviewPromptedAt` round-trip test to settings.test.ts; this was
-  the natural quality improvement adjacent to the IN-APP-REVIEW feature (ensures the new column persists and
-  round-trips correctly across DB reads).
-- proof: `pnpm run ci` green - tsc + lint + check-boundaries + check-line-heights + check-temp-markers +
-  check-no-em-dash + 1178/1178 jest tests (186 suites). Settings accessor test confirms `reviewPromptedAt`
-  defaults to `undefined` and round-trips a timestamp.
-- shipped (LOOP): force-pushed user-friendly branch to resolve diverged history between old queue-based system
-  (May 30) and new do-work system (June 13). AMRAP-COACHING backlog item filed for future rn-expo-pipeline run.
-- auditor: PASS. One LOW finding applied (origin guard on useInAppReview - prevents review dialog during history
-  browsing). INFO finding noted (pipeline bypass for simple feature, defensible).
-- field-log: Expedition 84 post written by Priya. Build: 158 pages, exit 0. TTS gommage fired (homelab timeout,
-  non-blocking). Committed + pushed as docs(blog): expedition-84 field log (Priya).
-- shipped (WEB-SIGNOFF, additional push): 82 blog post sign-offs normalized from em-dash (U+2014) to spaced
-  hyphen (-). loop-memory/03-dev-blog.md always specified spaced hyphen; the em-dashes were a Logger execution bug.
-  Applied after 4-tick silence on #needs-input escalation (autonomous-proceed threshold). Corpus .astro/.tsx
-  em-dashes (options C/D) still pending Alex's reply. CI green (1176/1176 tests post domain cleanup).
-- shipped (Q-QUALITY, additional push): removed dead domain export `bestE1RMForCycle` from progression.ts (no
-  production consumers; only tested in own tests). Cleaned up now-dead `estimateOneRm` + `SetLogKind` imports.
-  3 dead tests removed. Behavior-preserving.
-- deferred / escalated: Broader web corpus em-dash (C/D) still blocked on Alex's reply in #needs-input.
-  Maestro smokes for PROG-GRID-FIX, WARMUP-PERDAY, REST-TIMER-ACCURACY, MISSED-REP, IN-APP-REVIEW all pending
-  on-device build. Note: concurrent loop instance ran during this tick; remote had 5 commits before my push.
-  Resolved by: applying unique patches (blog sign-offs + domain cleanup) on top of the remote's state.
+## 2026-06-13 tick-6 (Exp 84): IN-APP-REVIEW + marketing launch push + Q-QUALITY MissCorrectionCard animation fix
+- shipped (LAUNCH, IN-APP-REVIEW): Added expo-store-review (new native dep), created `useInAppReview` hook
+  that fires when `origin==='live' && isCycleComplete && cycle>=2`; wired into SessionCompleteScreen;
+  5 new tests; 1175/1175 CI green. OS manages frequency quota. Requires native rebuild to activate on-device.
+  Updated IN-APP-REVIEW backlog item status: doing. Updated Tactic 12 in launch strategy tracker.
+- shipped (LAUNCH, marketing-docs): Updated all marketing docs from 82+ to 84+ iteration counts. Updated
+  launch strategy tracker: r/reactnative and r/vibecoding drafts now ready_to_post=true (Android is live,
+  iOS not required for developer audience). Filled in Play Store + GitHub links in both drafts. README
+  updated 83+ -> 84+. Status line updated to "Android LIVE on Play Store - internal track".
+- shipped (Q-QUALITY): MissCorrectionCard: converted `entering=FadeIn` (Reanimated registry bug class -
+  see loop-memory/01-known-codebase.md) to explicit `useSharedValue`/`useAnimatedStyle`/`withTiming`
+  pattern. Same visual result, safe on remount. Removed multi-line WHAT-JSDoc from MissCorrectionCard
+  and MissResetSheet per project comment convention. Updated Reanimated mock in test file.
+- proof: pnpm run ci green (1175/1175 tests, 186 suites); check-no-em-dash clean; memory check OK.
+- deferred / escalated: IN-APP-REVIEW needs native rebuild to activate (noted in backlog). WEB-SIGNOFF
+  still blocked on Alex's reply (em-dash convention). r/reactnative and r/vibecoding posts need Alex to
+  actually submit. Play Store internal build needs Alex to promote to production in Play Console.
 
 ## 2026-06-13 tick-5 (Exp 83): MISSED-REP implementation + em-dash mobile sweep + EAS build + website update
 - shipped (FEAT, task 1511224654327447663): MISSED-REP program correction via rn-expo-pipeline (designer +

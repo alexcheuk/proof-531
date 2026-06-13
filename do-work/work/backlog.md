@@ -168,15 +168,16 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 ## IN-APP-REVIEW: In-app review prompt after 2+ cycles (Tactic 12 in launch strategy)
 - status: doing
 - blocked_by: none
-- proof: review nudge shown once after session.cycle >= 2 via Linking.openURL to Play Store; tracked via
-  settings.reviewPromptShownAt; CI green (1172 tests, typecheck+lint clean); owes Maestro smoke for
-  the full session-complete -> review-nudge flow before this flips to done.
-  - [x] add reviewPromptShownAt column to settings (additive migration + schema + types)
-  - [x] implement prompt logic in SessionCompleteScreen (Linking.openURL, shown once per user, cycle >= 2)
-  - [x] wire useMarkReviewPromptShown mutation + tests; onboarding.ts refactored to use updateSettings
-  - [ ] Maestro smoke: session-complete screen shows review nudge on cycle 2+, does not repeat
-- note: Android Play Store live. Implemented Expedition 84 via Linking.openURL (no new native module).
-  iOS App Store URL to be wired in once listing is live. Owes device smoke before done.
+- proof: expo-store-review prompt shows on Android (Play Store live) after session cycle >= 2; iOS activates
+  when App Store listing is live. Non-modal, non-repeated. Activates after next native build.
+  - [x] add expo-store-review to mobile dependencies (expedition 84)
+  - [x] implement prompt logic in SessionCompleteScreen (after cycle completion, once per user) (expedition 84)
+  - [x] wire into CI and test (5 tests, 1175/1175, CI green, expedition 84)
+  - [ ] native build shipped with expo-store-review (requires next EAS build to activate on-device)
+- note: Implemented tick-6 (Expedition 84). `useInAppReview` hook fires when `origin === 'live' &&
+  isCycleComplete && session.cycle >= 2`. The OS (Google/Apple) controls frequency quota so no DB tracking
+  needed. Requires a native rebuild to actually run on device (native module, changes fingerprint). Android
+  Play Store is live (internal track, versionCode 25). iOS pending.
 
 ## PROG-GRID-FIX: Progress screen correctness (historical TM, future projection, D4 reps)
 - status: doing

@@ -2,8 +2,8 @@
 tactic: 8
 channel: r/reactnative
 status: draft
-ready_to_post: false
-trigger: iOS live on App Store (post in the monthly side-project showcase thread)
+ready_to_post: true
+trigger: Android live on Play Store -- can post now; iOS App Store live is better but not required
 drafted: 2026-05-29 (Expedition 41)
 ---
 
@@ -32,8 +32,8 @@ Architecture enforces layer boundaries — domain math is a pure layer (no React
 The app is built by a Claude Code agent harness on a 30-minute cron — 84+ iterations. Mentioned because it's an interesting constraint, not as the main story.
 
 Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
-iOS: [App Store link - coming soon]
-Source: [GitHub link]
+iOS: [App Store link]
+Source: https://github.com/alexcheuk/proof-531
 
 Screenshots — use the newer high-quality set from docs/screenshots/ (added Expedition 84):
 1. screenshot-6.png — Today screen (Bench, C2D1, plate viz, START SESSION) — context shot showing the program flow
@@ -70,8 +70,8 @@ Built by a Claude Code agent harness on a 30-minute cron. 84+ iterations. I ment
 Free, no account required.
 
 Android: https://play.google.com/store/apps/details?id=com.alexcheuk.fivethreeone
-iOS: [App Store link - coming soon]
-Source: [GitHub link]
+iOS: [App Store link]
+Source: https://github.com/alexcheuk/proof-531
 
 ---
 
