@@ -25,6 +25,24 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-12 tick-4 (Exp 82): Rest timer accuracy + per-day warmup ramps + CI em-dash guard
+- shipped (BUG, task 1515166601270530048): useRestTimer now arms a precise setTimeout at the exact deadline
+  for the done haptic/alarm; setInterval(1000) accumulated 1-2s of jitter over a 3-min rest. addTime,
+  subtractTime, setDeadline each re-arm it; doneFiredRef guard prevents double-fire. 5 new tests.
+- shipped (FEAT, WARMUP-PERDAY, task 1512218815356862494): warmupsForDay(week) in schemes.ts; D1 40/50/60%,
+  D2 45/55/65%, D3 50/60/70/80%, D4 50/60/70/80/90%; WarmupsBand accepts week prop + dynamic collapsed label;
+  TodayBody passes week through; SetRow.index widened to 1|2|3|4|5; 9 property+unit tests.
+- shipped (LOOP/CI, LOOP-EMDASH-GUARD): scripts/check-no-em-dash.sh scans do-work/+loop-memory/+decision-log;
+  wired into pnpm run ci after check-temp-markers; 23 loop-memory files swept clean of em dashes; LOOP-EMDASH-MOBILE
+  filed for the ~200 pre-existing em dashes in apps/mobile/src/** (tracked separately, CI scope expanded later).
+- shipped (docs): README iteration count 78+ -> 82+; em dashes swept from docs/decision-log.md.
+- proof: pnpm typecheck clean (mobile+web); pnpm lint clean (505 files); 1135/1135 tests (181 suites, +14 new);
+  pnpm run ci green including new check-no-em-dash gate; do-work-auditor PASS (after fixing em dash in new comment
+  and setting REST-TIMER-ACCURACY to doing not done). Pushed to main.
+- deferred / escalated: MISSED-REP implementation -> next tick (rn-expo-pipeline). WARMUP-PERDAY and
+  REST-TIMER-ACCURACY owe on-device Maestro smokes (accrued in validation-debt). WEB-SIGNOFF still blocked on
+  Alex's #needs-input reply. LOOP-EMDASH-MOBILE -> future tick (apps/mobile em-dash sweep).
+
 ## 2026-06-07 tick-3 (Exp 81): Progress-grid correctness cluster (3 task-queue bugs) + warmup spec
 - shipped (BUG, logic, task 1513375490184843334): `projectTopSetWeight` in `domain/progression.ts` mapped
   every Progress-grid day through `prescription(3)[day-1]`, so day 1 read 75% and day 2 read 85% of TM instead
