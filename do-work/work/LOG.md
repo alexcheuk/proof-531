@@ -25,6 +25,27 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-10 (Exp 88): DATA-BACKUP + WEB-SIGNOFF complete + Q-QUALITY + 88+ bump
+- shipped (FEAT, task-queue 1515515701627195694): DATA-BACKUP via rn-expo-pipeline (designer spec +
+  frontend TDD + rn-qa PASS). BackupSection + RestoreBackupSheet + PasteField primitive + backup.ts
+  accessor (exportBackup/importBackup/parseBackup). 15 new tests incl. fast-check round-trip property.
+  No new npm packages - Share.share() for export, TextInput paste for import. SQLite transaction safety.
+  1200/1200 tests green. Merged to main (781ba0d). Owes Maestro smoke.
+- shipped (WEB, WEB-SIGNOFF DONE): Blog corpus em-dash sweep complete (Option A auto-proceed, 9 ticks
+  silence). 1218 em dashes across 143 blog/*.md swept; 3 framework sign-off lines fixed; UI placeholder
+  em dashes converted to &mdash; + JS unicode escape. apps/web/src fully under CI em-dash guard.
+  check-no-em-dash: clean. WEB-SIGNOFF status: done.
+- shipped (Q-QUALITY): Removed "what" JSDoc blocks from TmTestBandChip (13-line), TmTestCaption (12-line),
+  TmTestLogSheet (19-line + 2 prop-level), AdjustTmCta (4-line), TodayScreen (5-line). do-work-auditor PASS.
+- shipped (LAUNCH): Iteration count 87+ to 88+ across 12 marketing docs + README. Decision-log entries
+  added for WEB-SIGNOFF and DATA-BACKUP architectural choices.
+- proof: pnpm run ci green (1200/1200 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash clean;
+  check-boundaries clean). Astro build 161 pages clean. do-work-auditor PASS on Q-QUALITY.
+  Pushed to main (a31ecd0).
+- deferred / escalated: DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY still
+  owe Maestro smokes. Casual post awaits Alex go-ahead. iOS still pending. r/531Discussion + r/weightroom
+  wait for Alex. WEB-SIGNOFF A/B originally pending Alex but now closed via auto-proceed.
+
 ## 2026-06-13 tick-9 (Exp 87): casual post + Playwright MCP + Q-QUALITY + 87+ bump
 - shipped (LAUNCH, task-queue 1515444127339249875 + 1515444142619099167): Casual "haha look what I did"
   Android launch post drafted at docs/marketing/casual-android-launch-post.md. Extremely casual voice

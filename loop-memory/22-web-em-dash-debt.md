@@ -5,7 +5,12 @@ description: The apps/web corpus em-dash situation. Prose em dashes swept (optio
 
 # Web em-dash debt (found 2026-06-01, tick-2; updated tick-8, Exp 86)
 
-## Status (as of tick-8, Expedition 86)
+## Status (as of tick-10, Expedition 88) - CLOSED
+
+WEB-SIGNOFF is now fully resolved. Option A auto-proceeded after 9 ticks of silence. See below for what
+was done and what the final state looks like. This file is kept for historical reference.
+
+## Original status (tick-8, Expedition 86)
 
 **Option C auto-proceeded** in tick-8 after 6 ticks of silence on the WEB-SIGNOFF escalation
 (DOCTRINE: reversible escalations auto-proceed after ~3 ticks). 99+ prose em dashes swept from
