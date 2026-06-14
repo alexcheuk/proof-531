@@ -6,12 +6,6 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { useTheme } from '@/design/theme';
 import type { Lift } from '@/domain/types';
 import { goTo } from '@/lib/routes';
-/**
- * Today screen  -  preview of the upcoming session + Start CTA.
- *
- * Thin composition shell. Delegates state to `useTodayScreenState`.
- * Boundary: design primitives + data query hooks only; no drizzle, no hex.
- */
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, type ViewStyle } from 'react-native';

@@ -12,11 +12,6 @@ export type AdjustTmCtaProps = {
   testID?: string;
 };
 
-/**
- * "Adjust training max →" CTA shown beneath the PR certificate on the
- * Session Complete screen. Nudges the user to bump their TM when the new
- * estimated 1RM jumped significantly over the previous best.
- */
 export function AdjustTmCta({
   delta,
   unitGlyph,
