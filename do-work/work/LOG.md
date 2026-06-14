@@ -25,6 +25,31 @@ Two to four bullets per entry. Add the newest entry at the top, under `## Entrie
 
 ## Entries
 
+## 2026-06-13 tick-11 (Exp 89): restore-scroll bug + v1.0.1 EAS build + Q-QUALITY JSDoc sweep
+- shipped (BUG, task 1515551512082780251): restore backup scroll fixed - PasteField gained maxLines
+  prop (default undefined); RestoreBackupSheet passes maxLines={14} capping the TextInput so CTA stays
+  visible after large JSON paste (85% snap point clipped buttons previously; scrollEnabled was already
+  true so text scrolls within the capped field). do-work-auditor PASS.
+- shipped (RELEASE, task 1515551573969731635): app.json version 1.0.0 -> 1.0.1; EAS production build
+  submitted (versionCode 36, build d55337cd-0e97-4b49-919d-f071dd4cb412, auto-submit to INTERNAL track).
+  Alex must promote from INTERNAL to production in Play Console. Includes DATA-BACKUP, MISSED-REP,
+  IN-APP-REVIEW, warmup ramps, rest timer fix, restore scroll fix. IN-APP-REVIEW native dialog now active.
+- shipped (Q-QUALITY): 8 "what" JSDoc blocks removed from TmTestNote, TopSetHero (function-level only,
+  prop WHY comments kept), StepProgress, AchievementHero, HistorySkeleton, FilterChips,
+  HistoryFilterEmptyState, Intro. All behavior-preserving; do-work-auditor PASS.
+- shipped (WEB): homepage softwareVersion 1.0 -> 1.0.1; backup/restore added to JSON-LD featureList;
+  hero eyebrow updated to v1.0.1.
+- shipped (LAUNCH): iteration count 88+ -> 89+ across 12 marketing docs + README; reddit draft
+  last_reviewed updated to Expedition 89.
+- shipped (LOOP): VERSION-1.0.1 backlog item added; DATA-BACKUP note updated with scroll fix;
+  validation-debt entry added for restore scroll fix; decision-log entry for 1.0.1 patch release.
+- proof: pnpm run ci green (1200/1200 tests, 188 suites; typecheck clean; lint clean;
+  check-no-em-dash clean). do-work-auditor PASS on Q-QUALITY + bug fix. Pushed d155430.
+- deferred / escalated: Alex must promote EAS build d55337cd from INTERNAL to production in Play
+  Console for 1.0.1 to go live. DATA-BACKUP + restore scroll fix owe Maestro smoke before done.
+  REST-TIMER-ACCURACY, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX still owe Maestro smokes.
+  Casual post still awaiting Alex go-ahead.
+
 ## 2026-06-13 tick-10 (Exp 88): DATA-BACKUP + WEB-SIGNOFF complete + Q-QUALITY + 88+ bump
 - shipped (FEAT, task-queue 1515515701627195694): DATA-BACKUP via rn-expo-pipeline (designer spec +
   frontend TDD + rn-qa PASS). BackupSection + RestoreBackupSheet + PasteField primitive + backup.ts
