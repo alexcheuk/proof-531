@@ -10,6 +10,7 @@ export { CtaBar } from './CtaBar';
 export { PrimaryPillButton } from './PrimaryPillButton';
 export { MonoBadge } from './MonoBadge';
 export { NumberStepper } from './NumberStepper';
+export { PasteField, type PasteFieldProps } from './PasteField';
 export { SectionBand } from './SectionBand';
 export { SegRail } from './SegRail';
 export { LabeledSegRail, type LabeledSegRailProps } from './LabeledSegRail';

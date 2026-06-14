@@ -23,6 +23,45 @@ jest.mock('@/data/accessors/rollbackLift', () => ({
   rollbackLift: (db: unknown, lift: unknown, n: unknown) => mockRollback(db, lift, n),
 }));
 
+const mockExport = jest.fn();
+const mockImport = jest.fn();
+const mockShare = jest.fn();
+
+// Replace the accessor exports without evaluating the real module (which pulls
+// in expo-constants → expo-modules-core and the Platform shim). BackupError is
+// re-created here so the hook's `instanceof` check still discriminates.
+jest.mock('@/data/accessors/backup', () => {
+  class BackupError extends Error {
+    reason: string;
+    constructor(reason: string) {
+      super(`backup: ${reason}`);
+      this.name = 'BackupError';
+      this.reason = reason;
+    }
+  }
+  return {
+    BackupError,
+    exportBackup: (db: unknown) => mockExport(db),
+    importBackup: (db: unknown, json: string) => mockImport(db, json),
+  };
+});
+
+jest.mock('expo-haptics', () => ({
+  notificationAsync: jest.fn(),
+  impactAsync: jest.fn(),
+  selectionAsync: jest.fn(),
+  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+  NotificationFeedbackType: { Success: 'success', Error: 'error', Warning: 'warning' },
+}));
+
+import { Share } from 'react-native';
+
+// Spy on the preset's Share.share rather than mocking the whole react-native
+// module (which would eagerly require native TurboModules under jest-expo).
+beforeAll(() => {
+  jest.spyOn(Share, 'share').mockImplementation((...args: unknown[]) => mockShare(...args));
+});
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
 }));
@@ -222,5 +261,88 @@ describe('useSettingsDialogs  -  destructive reset', () => {
     });
 
     expect(result.current.resetting).toBe(false);
+  });
+});
+
+describe('useSettingsDialogs  -  backup export', () => {
+  beforeEach(() => {
+    mockExport.mockReset();
+    mockShare.mockReset();
+  });
+
+  it('serializes the DB and opens the native share sheet', async () => {
+    mockExport.mockResolvedValue('{"schemaVersion":1}');
+    mockShare.mockResolvedValue({ action: Share.sharedAction });
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+
+    await act(async () => {
+      await result.current.exportBackupNow();
+    });
+
+    expect(mockExport).toHaveBeenCalled();
+    expect(mockShare).toHaveBeenCalledWith({ message: '{"schemaVersion":1}', title: '531 backup' });
+    expect(result.current.exporting).toBe(false);
+  });
+
+  it('clears the exporting flag when export fails', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockExport.mockRejectedValue(new Error('read fail'));
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+
+    await act(async () => {
+      await result.current.exportBackupNow();
+    });
+
+    expect(result.current.exporting).toBe(false);
+    consoleError.mockRestore();
+  });
+});
+
+describe('useSettingsDialogs  -  backup restore', () => {
+  beforeEach(() => {
+    mockImport.mockReset();
+  });
+
+  it('arms + cancels the restore sheet', () => {
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRestore());
+    expect(result.current.restoreOpen).toBe(true);
+    act(() => result.current.closeRestore());
+    expect(result.current.restoreOpen).toBe(false);
+  });
+
+  it('confirmRestore imports, clears caches, and resolves ok', async () => {
+    mockImport.mockResolvedValue({ sessionCount: 3, tmCount: 4 });
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRestore());
+
+    let outcome!: Awaited<ReturnType<typeof result.current.confirmRestore>>;
+    await act(async () => {
+      outcome = await result.current.confirmRestore('{"schemaVersion":1}');
+    });
+
+    expect(mockImport).toHaveBeenCalledWith(expect.anything(), '{"schemaVersion":1}');
+    expect(outcome).toEqual({ ok: true });
+    expect(result.current.restoreOpen).toBe(false);
+    expect(result.current.restoring).toBe(false);
+  });
+
+  it('maps a BackupError reason onto the failure result', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { BackupError } = jest.requireMock('@/data/accessors/backup');
+    mockImport.mockRejectedValue(new BackupError('unsupported-version'));
+    const { result } = renderHook(() => useSettingsDialogs('lbs'), { wrapper });
+    act(() => result.current.openRestore());
+
+    let outcome!: Awaited<ReturnType<typeof result.current.confirmRestore>>;
+    await act(async () => {
+      outcome = await result.current.confirmRestore('{"schemaVersion":999}');
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'unsupported-version' });
+    // The sheet stays open on failure so the user can correct the paste.
+    expect(result.current.restoreOpen).toBe(true);
+    expect(result.current.restoring).toBe(false);
+    consoleError.mockRestore();
   });
 });

@@ -1,4 +1,5 @@
 import { useDb } from '@/data/DbProvider';
+import { BackupError, exportBackup, importBackup } from '@/data/accessors/backup';
 import { migrateStorageUnit } from '@/data/accessors/migrateStorageUnit';
 import { resetEverything } from '@/data/accessors/reset';
 import { rollbackLift } from '@/data/accessors/rollbackLift';
@@ -9,8 +10,11 @@ import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import type { Lift, Unit } from '@/domain/types';
 import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
+import { Share } from 'react-native';
+import type { RestoreResult } from '../components/RestoreBackupSheet';
 
 export type UseSettingsDialogsResult = {
   // TM editor
@@ -35,6 +39,15 @@ export type UseSettingsDialogsResult = {
   closeRollback: () => void;
   confirmRollback: (lift: Lift, n: number) => Promise<void>;
   rollingBack: boolean;
+  // Backup export
+  exportBackupNow: () => Promise<void>;
+  exporting: boolean;
+  // Backup restore
+  restoreOpen: boolean;
+  openRestore: () => void;
+  closeRestore: () => void;
+  confirmRestore: (json: string) => Promise<RestoreResult>;
+  restoring: boolean;
 };
 
 export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogsResult {
@@ -49,6 +62,9 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
   const [resetting, setResetting] = useState(false);
   const [rollbackOpen, setRollbackOpen] = useState(false);
   const [rollingBack, setRollingBack] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [restoring, setRestoring] = useState(false);
 
   const openTmEditor = useCallback((lift: Lift) => setEditingLift(lift), []);
   const closeTmEditor = useCallback(() => setEditingLift(null), []);
@@ -127,6 +143,55 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
     [db, queryClient, rollingBack],
   );
 
+  const exportBackupNow = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const json = await exportBackup(db);
+      const result = await Share.share({ message: json, title: '531 backup' });
+      if (result.action === Share.sharedAction) {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (err) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      console.error('exportBackup failed', err);
+    } finally {
+      setExporting(false);
+    }
+  }, [db, exporting]);
+
+  const openRestore = useCallback(() => setRestoreOpen(true), []);
+
+  const closeRestore = useCallback(() => {
+    if (!restoring) setRestoreOpen(false);
+  }, [restoring]);
+
+  const confirmRestore = useCallback(
+    async (json: string): Promise<RestoreResult> => {
+      if (restoring) return { ok: false, reason: 'wrong-shape' };
+      setRestoring(true);
+      try {
+        await importBackup(db, json);
+        queryClient.clear();
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setRestoreOpen(false);
+        return { ok: true };
+      } catch (err) {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        if (err instanceof BackupError) {
+          return { ok: false, reason: err.reason };
+        }
+        // A non-validation failure (DB write error) leaves the data intact via
+        // the import's transaction rollback; surface it as a shape error.
+        console.error('importBackup failed', err);
+        return { ok: false, reason: 'wrong-shape' };
+      } finally {
+        setRestoring(false);
+      }
+    },
+    [db, queryClient, restoring],
+  );
+
   return {
     editingLift,
     openTmEditor,
@@ -146,5 +211,12 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
     closeRollback,
     confirmRollback,
     rollingBack,
+    exportBackupNow,
+    exporting,
+    restoreOpen,
+    openRestore,
+    closeRestore,
+    confirmRestore,
+    restoring,
   };
 }
