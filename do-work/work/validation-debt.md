@@ -24,6 +24,10 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-10 (Expedition 88) DATA-BACKUP: BackupSection + RestoreBackupSheet added to Settings. Export via
+  RN Share.share(); restore via paste-JSON TextInput with full validation + SQLite transaction. 1200/1200
+  jest tests. Owes on-device smoke for the export share sheet + restore paste flow before DATA-BACKUP flips
+  to `done`.
 - tick-6 (Expedition 84) IN-APP-REVIEW: expo-store-review native module wired; native dialog requires a new
   EAS production build (versionCode >= 26) to activate. Until then, `isAvailableAsync()` returns false and
   the review is silently skipped. Not a UI regression - just inert until rebuilt.

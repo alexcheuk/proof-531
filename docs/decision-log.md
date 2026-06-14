@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - WEB-SIGNOFF resolved: blog corpus em-dash sweep + full apps/web CI guard
+
+**Tags:** `convention`, `ci`, `blog`
+**Files:** `apps/web/src/content/blog/*.md` (143 files), `apps/web/src/pages/blog/expedition-logs.astro`, `apps/web/src/pages/blog/index.astro`, `scripts/check-no-em-dash.sh`
+
+After 9 ticks of silence on the WEB-SIGNOFF escalation (DOCTRINE auto-proceed threshold is 3 ticks), proceeded with Option A: normalize all Logger sign-offs to `- Name, Logger of Expedition N` (spaced hyphen). Swept 1218 em dashes from 143 blog posts; fixed 3 sign-off rendering lines in framework templates; replaced UI placeholder em dashes with `&mdash;` HTML entities (preserving visual output). Extended `check-no-em-dash.sh` to cover `apps/web/src/content/blog/`, `apps/web/src/pages/`, and `apps/web/src/components/`. The CI guard now enforces the SOUL hard line across the entire codebase.
+
+**Trade-off:** Option B (bless em dash as sign-off exception) was not chosen because Alex didn't respond. Option A was the more conservative default consistent with the SOUL hard line.
+
+**Follow-ups:** Future Logger posts must use `- Name, Logger of Expedition N` format (enforced by CI).
+
+### 2026-06-13 - Data Backup & Restore: export via RN Share API, import via paste (no new native deps)
+
+**Tags:** `feature`, `architecture`, `data`
+**Files:** `apps/mobile/src/data/accessors/backup.ts`, `apps/mobile/src/design/primitives/PasteField.tsx`, `apps/mobile/src/features/settings/sections/BackupSection.tsx`, `apps/mobile/src/features/settings/components/RestoreBackupSheet.tsx`
+
+Implemented backup/restore for user data (8 tables: settings, TM history, sessions, set logs, PRs, goals, miss state). Key architectural decisions: (1) No new native modules - used `Share.share()` from `react-native` for export; TextInput paste-field for import. This avoids OTA fingerprint change. (2) SQLite transaction wraps the clear+reinsert for import - validation completes fully before any write, so a bad paste never partially clears the user's data. (3) `PasteField` added as the first themed `TextInput` primitive in `design/primitives/` since no TextInput previously existed anywhere in features/ or design/. (4) Did not reuse `resetEverything` for import since it omits `liftMissState`; import does its own scoped 8-table clear.
+
+**Trade-off:** expo-document-picker (better UX for import) not added to avoid native module cost. Paste-from-clipboard is the MVP import UX; can upgrade later with explicit Alex approval.
+
+**Follow-ups:** Owes on-device Maestro smoke before DATA-BACKUP flips to done.
+
 ### 2026-06-13 - Playwright browser MCP added (.mcp.json) for marketing automation
 
 **Tags:** `infra`, `loop`, `marketing`

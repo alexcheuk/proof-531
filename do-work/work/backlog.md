@@ -271,17 +271,18 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 - status: doing
 - blocked_by: none
 - proof: a shipped, validated feature that lets lifters export their data (settings, sessions, PRs, TM history,
-  goals) as a JSON file and restore from it; built using React Native's built-in Share API + expo-sharing
-  (no new native modules). UI: "Backup & Restore" section in Settings. Logic proven by tsc/lint/jest; UI accrues
-  validation debt for on-device smoke before DONE.
-  - [ ] design spec produced (rn-designer)
-  - [ ] domain: pure serialize/deserialize functions for all user tables
-  - [ ] data layer: backup export hook + restore import hook
-  - [ ] UI: BackupSection component in Settings with Export and Import CTAs
-  - [ ] Maestro smoke: backup and restore flow
-- note: task-queue 1515515701627195694 (Alex). Use React Native's built-in Share API for export (no new
-  native modules; expo-file-system is a transitive dep if needed). Import via text paste or file picker.
-  routed through rn-expo-pipeline (Expedition 88).
+  goals) as a JSON blob and restore from it; built using React Native built-in Share API (no new native modules).
+  UI: "Backup & Restore" section in Settings. Logic proven by tsc/lint/jest; UI accrues validation debt for
+  on-device smoke before DONE.
+  - [x] design spec produced (rn-designer): BackupSection + RestoreBackupSheet + PasteField + backup.ts accessor
+  - [x] domain/data layer: parseBackup + exportBackup + importBackup in data/accessors/backup.ts; 15 tests incl.
+        fast-check round-trip property; transaction safety (validate-before-write + BEGIN/COMMIT/ROLLBACK)
+  - [x] UI: BackupSection in Settings (Export + Restore rows); RestoreBackupSheet with PasteField + validation
+        status line + haptics; PasteField primitive in design/primitives/; queryClient.clear() on restore
+  - [x] rn-expo-pipeline PASS (rn-designer + rn-frontend TDD + rn-qa PASS); 1200/1200 tests; merged to main
+  - [ ] Maestro smoke: backup and restore flow (settings screen flow)
+- note: task-queue 1515515701627195694 (Alex). No new npm packages - Share.share() from react-native for
+  export; TextInput paste for import. Shipped tick-10 (Expedition 88). Owes on-device Maestro smoke.
 
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done
