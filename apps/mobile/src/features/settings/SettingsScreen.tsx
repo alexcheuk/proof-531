@@ -9,6 +9,7 @@ import { QueryShell } from '@/features/shared/QueryShell';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, View, type ViewStyle } from 'react-native';
 import { ResetConfirmSheet } from './components/ResetConfirmSheet';
+import { RestoreBackupSheet } from './components/RestoreBackupSheet';
 import { RollbackLiftSheet } from './components/RollbackLiftSheet';
 import { TmEditSheet } from './components/TmEditSheet';
 import { type TmPreview, UnitMigrationSheet } from './components/UnitMigrationSheet';
@@ -16,6 +17,7 @@ import { useSettingsDialogs } from './hooks/useSettingsDialogs';
 import { useSettingsScreenData } from './hooks/useSettingsScreenData';
 import { AboutSection } from './sections/AboutSection';
 import { ActiveLiftsSection } from './sections/ActiveLiftsSection';
+import { BackupSection } from './sections/BackupSection';
 import { Colophon } from './sections/Colophon';
 import { CyclePrescriptionSection } from './sections/CyclePrescriptionSection';
 import { DangerZoneSection } from './sections/DangerZoneSection';
@@ -105,6 +107,11 @@ export function SettingsScreen() {
 
         <ReleaseSection />
 
+        <BackupSection
+          onExport={() => void dialogs.exportBackupNow()}
+          onOpenRestore={dialogs.openRestore}
+        />
+
         <DangerZoneSection onReset={dialogs.requestReset} onRollback={dialogs.openRollback} />
 
         <Colophon />
@@ -138,6 +145,15 @@ export function SettingsScreen() {
           pending={dialogs.resetting}
           onCancel={dialogs.cancelReset}
           onConfirm={() => void dialogs.confirmReset()}
+        />
+      ) : null}
+
+      {dialogs.restoreOpen ? (
+        <RestoreBackupSheet
+          open
+          pending={dialogs.restoring}
+          onCancel={dialogs.closeRestore}
+          onConfirm={dialogs.confirmRestore}
         />
       ) : null}
 
