@@ -282,7 +282,23 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] rn-expo-pipeline PASS (rn-designer + rn-frontend TDD + rn-qa PASS); 1200/1200 tests; merged to main
   - [ ] Maestro smoke: backup and restore flow (settings screen flow)
 - note: task-queue 1515515701627195694 (Alex). No new npm packages - Share.share() from react-native for
-  export; TextInput paste for import. Shipped tick-10 (Expedition 88). Owes on-device Maestro smoke.
+  export; TextInput paste for import. Shipped tick-10 (Expedition 88). Restore scroll bug fixed tick-11
+  (Expedition 89, task 1515551512082780251): PasteField.maxLines={14} caps height so CTA stays visible.
+  Owes on-device Maestro smoke covering the restore-and-scroll flow.
+
+## VERSION-1.0.1: Publish version 1.0.1 to Play Store (task 1515551573969731635)
+- status: doing
+- blocked_by: none
+- proof: app.json version bumped to 1.0.1; EAS production build submitted (versionCode 36, build
+  d55337cd); Alex promotes from INTERNAL track to production in Play Console. Done when production
+  promotion happens.
+  - [x] bump app.json version from 1.0.0 to 1.0.1
+  - [x] EAS production build submitted (versionCode 36, auto-submit to INTERNAL track)
+  - [ ] Alex promotes build to production track in Play Console
+- note: task-queue 1515551573969731635 (Alex). Includes DATA-BACKUP, MISSED-REP, IN-APP-REVIEW,
+  warmup ramps, rest timer fix, restore scroll fix. EAS build started Expedition 89 (build
+  d55337cd-0e97-4b49-919d-f071dd4cb412). Alex must promote from INTERNAL to production in Play Console.
+  IN-APP-REVIEW native dialog activates with this build (storeReviewRequested flag in settings DB).
 
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done

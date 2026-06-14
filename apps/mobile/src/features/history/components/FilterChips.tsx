@@ -5,14 +5,6 @@ import type { Lift } from '@/domain/types';
 import { ScrollView } from 'react-native';
 import { type HistoryFilter, historyFilterKey } from '../filter';
 
-/**
- * Horizontal chip row above the History ledger.
- *
- * Renders `All`, `PRs`, plus one chip per enabled lift. Scrollable so the
- * chip set grows gracefully (and stays usable on narrow screens). A
- * trailing `✕ Clear` ghost chip appears whenever a non-All filter is
- * active. Pure presentational  -  the parent owns the active filter state.
- */
 export type FilterChipsProps = {
   enabledLifts: ReadonlyArray<Lift>;
   active: HistoryFilter;

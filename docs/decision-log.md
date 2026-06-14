@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-06-13 - Version 1.0.1 release: PasteField maxLines bug fix triggers first patch bump
+
+**Tags:** `bug`, `ux`, `release`
+**Files:** `apps/mobile/app.json`, `apps/mobile/src/design/primitives/PasteField.tsx`, `apps/mobile/src/features/settings/components/RestoreBackupSheet.tsx`
+
+After the DATA-BACKUP feature shipped in 1.0.0, Alex reported the restore sheet could not scroll to the CTA after pasting a large JSON blob. The root cause: `PasteField` (a multiline TextInput) had no `maxHeight`, so large pastes grew it unboundedly past the 85% snap point of the BottomSheet, clipping the "Restore & overwrite" and cancel buttons. Fix: added `maxLines?: number` to `PasteField` and passed `maxLines={14}` in `RestoreBackupSheet`, capping the field at 14 lines (scrollEnabled was already true, so text scrolls within the input). This triggered the first patch release: `version` bumped from `1.0.0` to `1.0.1` in `app.json`, EAS production build submitted (versionCode 36, build d55337cd).
+
+**Why:** User-reported usability bug on the very first feature shipped in 1.0.0. Patch release was appropriate because the fix is small and targeted, and several other improvements (MISSED-REP, warmup ramps, rest timer) had already been OTA-shipped.
+
+**Trade-off / what we didn't do:** Considered making the RestoreBackupSheet use `scroll={true}` in SheetLayout, which would wrap the body in a ScrollView. Rejected as more invasive: gesture conflicts are possible with ScrollView inside @gorhom BottomSheetView (though UnitMigrationSheet uses this pattern successfully). Capping PasteField height is simpler, less error-prone, and actually better UX (users don't need to see 500 lines of JSON; they just need to paste it).
+
 ### 2026-06-13 - WEB-SIGNOFF resolved: blog corpus em-dash sweep + full apps/web CI guard
 
 **Tags:** `convention`, `ci`, `blog`

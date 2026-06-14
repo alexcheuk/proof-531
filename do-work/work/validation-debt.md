@@ -24,6 +24,9 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-11 (Expedition 89) DATA-BACKUP restore scroll fix: PasteField.maxLines={14} caps the TextInput
+  height so CTA stays visible after large JSON paste. No jest test added (pure style change). Must be
+  validated as part of the DATA-BACKUP Maestro smoke (share + paste + scroll to CTA flow).
 - tick-10 (Expedition 88) DATA-BACKUP: BackupSection + RestoreBackupSheet added to Settings. Export via
   RN Share.share(); restore via paste-JSON TextInput with full validation + SQLite transaction. 1200/1200
   jest tests. Owes on-device smoke for the export share sheet + restore paste flow before DATA-BACKUP flips

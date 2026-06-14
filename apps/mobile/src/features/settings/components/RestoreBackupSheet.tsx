@@ -109,6 +109,7 @@ export function RestoreBackupSheet({
         onChangeText={handleChange}
         placeholder="Paste your backup JSON here"
         editable={!pending}
+        maxLines={14}
         accessibilityLabel="Backup JSON"
         accessibilityHint="Paste the JSON from a previously exported backup"
         testID="restore-paste-field"

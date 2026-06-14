@@ -10,11 +10,6 @@ export type AchievementHeroProps = {
   volumeDisplay?: string;
 };
 
-/**
- * Top stat row of the History achievement strip. Three numeric cells:
- * sessions filed, personal records, and (when available) total volume.
- * Pluralization is owned here so the parent strip stays composition-only.
- */
 export function AchievementHero({ filed, prs, volumeDisplay }: AchievementHeroProps) {
   return (
     <Row justify="space-between" align="flex-end">

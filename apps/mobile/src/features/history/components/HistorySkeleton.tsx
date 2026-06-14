@@ -2,10 +2,6 @@ import { Skeleton } from '@/design/primitives/Skeleton';
 import { useTheme } from '@/design/theme';
 import { View } from 'react-native';
 
-/**
- * Paper-themed loading skeleton for the History list. Matches the rhythm of
- * `HomeSkeleton`: caps eyebrow + title + a few row blocks.
- */
 export function HistorySkeleton() {
   const { layout } = useTheme();
   return (

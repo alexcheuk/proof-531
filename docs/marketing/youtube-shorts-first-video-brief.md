@@ -13,7 +13,7 @@ purpose: Production brief for the first YouTube Short -  "what I built" origin s
 
 **Format:** Face-cam to open and close. Screen recording in the middle. No special equipment needed -  phone camera for face, screen recording for the app demo.
 
-**Platform context:** Personal channel from scratch. Dev influencer angle -  "what I built" story. This is the identity-setting post: it establishes who Alex is (developer who lifts, built something real), what the project is (the app + the agent loop), and why it's unusual (88+ expeditions, a blog written by AI). Every subsequent Short references back to this one.
+**Platform context:** Personal channel from scratch. Dev influencer angle -  "what I built" story. This is the identity-setting post: it establishes who Alex is (developer who lifts, built something real), what the project is (the app + the agent loop), and why it's unusual (89+ expeditions, a blog written by AI). Every subsequent Short references back to this one.
 
 **2026 Shorts search update (Expedition 82):** YouTube introduced a dedicated Shorts filter in search in January 2026 -  Shorts now rank independently in search results, not just in the algorithmic feed. This means a Short titled "I built a 5/3/1 gym app with an AI agent" can rank in YouTube search for queries like "5/3/1 app" or "531 strength training app." This is a meaningful discoverability change from 2025 behavior. Practical implication: the video title and description should include the searchable terms ("5/3/1", "gym app", "AI agent", "strength training") -  this wasn't load-bearing before but is now. The first pinned comment should also reinforce these terms.
 
@@ -33,7 +33,7 @@ Cut immediately. Do not pause. The hook's job is to make the viewer need to know
 **Hook alternatives if this delivery feels awkward on camera:**
 
 - Version B (question hook): "What if your gym app built itself? Mine does -  every 30 minutes."
-- Version C (outcome hook): "This gym app has been improving itself for 88+ expeditions. I haven't written a line of code."
+- Version C (outcome hook): "This gym app has been improving itself for 89+ expeditions. I haven't written a line of code."
 - Version D (number-first hook): "84 times. My AI agent has shipped code to my phone 84 times. Here's what it built."
 
 Version A is still the strongest for cold viewers because it earns the weird claim by leading with a relatable problem ($120 is a real number, everyone knows a bloated app). Version D is a strong alternative now that the expedition count is genuinely striking -  use it if you want to lead with the scale of the thing rather than the personal backstory. Both work; do not use both in the same video.
@@ -61,13 +61,13 @@ Keep this section brisk -  each cut is 3-4 seconds. The point is "this is a real
 **0:28 – 0:38 -  The scale reveal (face to camera)**
 Back to face-cam. Slightly amused delivery:
 
-"It's run 88+ expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
+"It's run 89+ expeditions. Each one writes a blog post. I subscribe to the field logs on Pocket Cast."
 
 Pause one beat. Then:
 
 "The app is free. No account. Just -  here."
 
-**Note on the number:** Use the actual current expedition count when you film. Check the blog at 531strength.com/blog for the latest expedition count and use that number -  as of Expedition 86 the count is 88+, and it will continue climbing. The specificity is load-bearing -  it signals this is a real, ongoing thing, not a one-time build.
+**Note on the number:** Use the actual current expedition count when you film. Check the blog at 531strength.com/blog for the latest expedition count and use that number -  as of Expedition 86 the count is 89+, and it will continue climbing. The specificity is load-bearing -  it signals this is a real, ongoing thing, not a one-time build.
 
 **0:38 – 0:43 -  CTA (text overlay, face in background)**
 Text on screen: "531 Strength -  free on iOS and Android"

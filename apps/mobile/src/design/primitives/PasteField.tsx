@@ -11,6 +11,9 @@ export type PasteFieldProps = {
   // Orthogonal sizing modifier, not a variant  -  callers set how tall the
   // resting field is before it scrolls internally.
   minLines?: number;
+  // Cap growth so large pastes don't push CTAs off-screen; text scrolls
+  // within the field (scrollEnabled is always true).
+  maxLines?: number;
   editable?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -25,6 +28,7 @@ export function PasteField({
   onChangeText,
   placeholder,
   minLines = 7,
+  maxLines,
   editable = true,
   accessibilityLabel,
   accessibilityHint,
@@ -40,6 +44,9 @@ export function PasteField({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     minHeight: LINE_HEIGHT * minLines + spacing.sm * 2,
+    ...(maxLines !== undefined
+      ? { maxHeight: LINE_HEIGHT * maxLines + spacing.sm * 2 }
+      : undefined),
     color: colors.ink0,
     fontFamily: type.mono,
     fontSize: 12,

@@ -33,11 +33,6 @@ export type TopSetHeroProps = {
   repsRange?: readonly [number, number];
 };
 
-/**
- * Today's "NEXT SET" hero  -  full PlateBar + weight + reps eyebrow.
- *
- * Pure presentation; the parent supplies the resolved set and units.
- */
 export function TopSetHero({
   set,
   tm,

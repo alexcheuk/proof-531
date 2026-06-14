@@ -9,10 +9,6 @@ export type StepProgressProps = {
   total: number;
 };
 
-/**
- * Tick row at the top of the OneRmEntry screen  -  one bar per lift,
- * filled up to the current step.
- */
 export function StepProgress({ step, total }: StepProgressProps) {
   const { colors, layout, spacing } = useTheme();
   return (

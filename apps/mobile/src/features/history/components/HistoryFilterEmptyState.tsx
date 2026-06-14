@@ -7,11 +7,6 @@ export type HistoryFilterEmptyStateProps = {
   onClearFilter: () => void;
 };
 
-/**
- * Empty state rendered when filters are active but match zero rows. Renders
- * an explanation + a button that clears the filter so the user is never
- * stuck staring at an empty page with no obvious recovery.
- */
 export function HistoryFilterEmptyState({ onClearFilter }: HistoryFilterEmptyStateProps) {
   const { colors, layout, spacing } = useTheme();
   const wrap: ViewStyle = {
