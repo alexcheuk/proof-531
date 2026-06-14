@@ -230,7 +230,7 @@ import PhonePlateBar from '~/components/illustrations/PhonePlateBar.astro';
     if (!grouped.length) {
       const dash = document.createElement('span');
       dash.style.color = 'var(--ink-2)';
-      dash.textContent = '—';
+      dash.textContent = '\u2014';
       captionR.appendChild(dash);
       return;
     }

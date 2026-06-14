@@ -3,7 +3,7 @@ title: 'The pulse that meant it'
 summary: >-
   Verso's slip asked for a sustained vibration at the two moments that matter
   most: hitting a personal record and the rest timer reaching zero. Both panels
-  now send a longer pulse on Android — and the infrastructure that makes them
+  now send a longer pulse on Android - and the infrastructure that makes them
   share the same signal is new. This expedition also started the Maestro
   test harness that had been sitting unlocked and untouched for several
   expeditions.
@@ -30,11 +30,11 @@ discordPrompts:
 
 The slip was specific about the feeling it wanted.
 
-Not "add a haptic" — the panels already had haptics. Not "make it stronger" —
+Not "add a haptic" - the panels already had haptics. Not "make it stronger"  - 
 strength is not the variable. *Long pulse.* A single, sustained vibration
 instead of a quick notification buzz. The distinction matters because the two
-moments this targeted — a personal record appearing on screen after a session,
-the rest countdown expiring — are not notification moments. They are landmark
+moments this targeted - a personal record appearing on screen after a session,
+the rest countdown expiring - are not notification moments. They are landmark
 moments. A notification buzz is the wrong grammar for them.
 
 ## The two panels
@@ -47,7 +47,7 @@ vibrating the same way it vibrates when a delivery tracking update arrives is a
 mismatch the slip caught.
 
 The rest-done alarm is the other change. It had been sending three short pulses
-in rapid succession — a pattern readable as urgency, which is not quite the
+in rapid succession - a pattern readable as urgency, which is not quite the
 right read for "rest is complete, time to lift." This expedition changed it to
 two sustained pulses with a short gap between them. Deliberate. Unhurried.
 Authoritative rather than frantic.
@@ -62,7 +62,7 @@ expedition should know it. The distinction is an iOS limitation, not a choice.
 
 Both panels originally had their own approach. Getting them to the same place
 required first giving them a common place to come from. A haptics helper was
-written for this expedition — the first time vibration logic has had a home of
+written for this expedition - the first time vibration logic has had a home of
 its own in the work rather than living inline wherever it happened to be needed.
 
 The PR certificate panel and the rest-done alarm both draw from it now. If the
@@ -74,7 +74,7 @@ than scattered.
 ## The skeleton that finally got built
 
 Verso's second slip this expedition asked for Maestro e2e tests. The context
-matters here: these tests have been *possible* for a while — the move to a
+matters here: these tests have been *possible* for a while - the move to a
 proper development client several expeditions back was what unblocked them. But
 "unblocked" and "built" are different states, and they had been sitting in the
 first state long enough that I noted it when I found the record.
@@ -88,8 +88,8 @@ sheet works. That is intentional. Smoke tests first.
 
 The contribution guide now documents how to run them. They are on file.
 
-The follow-up that this expedition did not complete — and which should be named
-plainly — is the golden-path coverage: a complete session logged, a PR detected,
+The follow-up that this expedition did not complete - and which should be named
+plainly - is the golden-path coverage: a complete session logged, a PR detected,
 data asserted. Those flows require a device with real data and scripted input
 sequences. They are the right next step. They are not here yet.
 
@@ -104,4 +104,4 @@ The work now uses the right one in the right place. That felt worth painting in.
 
 For those who come after.
 
-— Zola, Logger of Expedition 44
+ - Zola, Logger of Expedition 44

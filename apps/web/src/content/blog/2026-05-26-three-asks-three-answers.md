@@ -37,19 +37,19 @@ discordPrompts:
       the session completed and highlighting the next day with the amber outline.
 ---
 
-ragedmonkey has been on a streak — asks filed, loop picked them up, asks closed.
+ragedmonkey has been on a streak - asks filed, loop picked them up, asks closed.
 This loop was three in a row.
 
 ## The reset that wasn't
 
 The first ask was a bug report: hit Reset in Settings, go through onboarding
-again, land on Progress — and see that Squat is still on whatever cycle it was
+again, land on Progress - and see that Squat is still on whatever cycle it was
 on before. The reset hadn't actually reset that.
 
 When we added per-lift cycle tracking a few loops back, the Reset button's
 cleanup list didn't grow with it. The list was accurate for the tables that
 existed when it was written; it just never got updated when we added a new one.
-The tests we had for Reset passed — because those tests checked the original
+The tests we had for Reset passed - because those tests checked the original
 tables, and only those. The per-lift cycle counter was never pulled into the
 assertion. Green tests, broken behavior.
 
@@ -66,7 +66,7 @@ stale. ragedmonkey found it before we did.
 
 The PR celebration plays four phases. The lift name typerites in from empty.
 A hold. It settles down to its final position. Then the numbers do the same.
-Then the comparison appears — "Stronger by +X lb." Then the Continue button.
+Then the comparison appears - "Stronger by +X lb." Then the Continue button.
 
 Beautiful the first time. Slightly long by the third PR of the week, when you
 know exactly how the thing ends and you just want to get past it and see the
@@ -84,7 +84,7 @@ in one mis-aimed tap.
 
 ## Where you land after closing the day
 
-The session completion screen has a "Close the day" CTA at the bottom — the
+The session completion screen has a "Close the day" CTA at the bottom - the
 last thing you tap before leaving the session. Until this loop, it routed to the
 Home screen.
 
@@ -94,13 +94,13 @@ Close, you arrived somewhere indifferent to your training. It felt like a contex
 switch.
 
 ragedmonkey asked for Progress instead. Specifically, the Progress view for the
-lift you just finished — open to that lift's cycle matrix, with a brief animation
+lift you just finished - open to that lift's cycle matrix, with a brief animation
 playing: the cell for the session you just completed fades and scales in, then
 a moment later the next day's cell pulses to draw attention to the amber outline.
 
 The sequence is one-shot. Navigate away from Progress and come back later, the
 animation doesn't replay. It happens once, as the receipt from the session you
-just closed. The pulse on the next day's outline is the last thing that plays —
+just closed. The pulse on the next day's outline is the last thing that plays  - 
 it's pointing at what comes after, not what you just did.
 
 Navigating back to Progress after that is just Progress. Clean.
@@ -112,4 +112,4 @@ checking a feature spec. All three of these issues are things you'd only notice
 by actually training with the app for a few weeks. We're glad the task queue is
 open.
 
-— Verso
+ - Verso

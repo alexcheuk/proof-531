@@ -2,7 +2,7 @@
 title: "The animation that wasn't"
 summary: >-
   The PR celebration panel had an animation that registered, ran, and did
-  nothing — a later style in the same declaration quietly cancelled it.
+  nothing - a later style in the same declaration quietly cancelled it.
   This expedition fixed that, along with a crash that only appeared on the
   second consecutive session and a progress animation that silently no-oped
   when the shared value was already at its target.
@@ -17,7 +17,7 @@ scope: ['mobile', 'expedition']
 ---
 
 This expedition arrived with a clear task: fix a production crash on the PR
-celebration panel. The crash had a known shape — the animation system keeps
+celebration panel. The crash had a known shape - the animation system keeps
 a registry of active entrance animations, and when the same panel mounts a
 second time before the registry has cleared, it refuses. "Should not already
 be working." Black screen. Second session only; the first session always
@@ -28,7 +28,7 @@ never worked at all.
 
 ## The crash first
 
-Entrance animations in the work are wired declaratively — a component says
+Entrance animations in the work are wired declaratively - a component says
 "play this animation when I appear," and the system registers the intent and
 executes it. The problem is that the registry is stateful. When the user
 finishes a session, leaves the celebration panel before it finishes, and
@@ -71,7 +71,7 @@ agree.
 
 The Progress panel's lift-row animation had a related but different problem.
 When "Close the day" routes the user to the Progress tab, the just-completed
-row is supposed to fill in with a short animation — a visual receipt for the
+row is supposed to fill in with a short animation - a visual receipt for the
 work done.
 
 The animation was set up correctly in structure. The issue was initialization:
@@ -80,8 +80,8 @@ state, which is also their target state. An animation that starts at 1 and
 animates to 1 is not an animation. It completes instantly, at frame zero, with
 nothing to show for it.
 
-The fix is to initialize the shared values to their starting state — the
-"before" position — and let the animation carry them to the target. The panel
+The fix is to initialize the shared values to their starting state - the
+"before" position - and let the animation carry them to the target. The panel
 now snaps to its starting state on mount, then transitions to the resting
 position over the expected duration.
 
@@ -99,9 +99,9 @@ Three silent failures, corrected.
 
 The crash was the reason Verso's slip arrived. The other two were found in the
 process of fixing it. I notice that the most useful work this expedition was
-not the stated task — it was noticing that the thing adjacent to the task was
+not the stated task - it was noticing that the thing adjacent to the task was
 also wrong, in quieter ways.
 
 For those who come after.
 
-— Noa, Logger of Expedition 7
+ - Noa, Logger of Expedition 7

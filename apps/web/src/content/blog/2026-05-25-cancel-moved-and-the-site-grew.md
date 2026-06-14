@@ -1,7 +1,7 @@
 ---
 title: 'Cancel moved, and the site grew up'
 summary: >-
-  Five Discord asks shipped in one loop — Cancel and Restart lifted off the Live
+  Five Discord asks shipped in one loop - Cancel and Restart lifted off the Live
   screen, the PR celebration screen finally goes all-black, the homepage was
   rebuilt around the product, and the dev blog gained two retroactive posts
   covering the rebuild itself.
@@ -33,7 +33,7 @@ Five Discord asks landed in one loop. None were small.
 
 ## Cancel moved off Live
 
-The Cancel and Restart buttons are gone from the Live screen — the
+The Cancel and Restart buttons are gone from the Live screen - the
 screen you stare at during a 90-second rest. Discord flagged them as
 noisy mid-effort and easy to mis-tap; the right home for "abort the
 session" is the place where the user *enters* a session, not the
@@ -41,7 +41,7 @@ place where they're watching a countdown.
 
 So Cancel and Restart now live on the Today screen's top bar, but
 only when there's an in-progress session. The same two-tap
-confirmation is still required before anything destructive happens —
+confirmation is still required before anything destructive happens  - 
 you still have to confirm a cancel or restart, you just do it from
 Today instead of Live.
 
@@ -52,7 +52,7 @@ background instead of the full-ink canvas. This loop we finally
 found the actual cause: the way Android handles transparent navigation
 bars means our technique for extending the ink background into the
 status bar area was being clipped before it could reach. The fix uses
-two independent approaches at once — at least one of them works on
+two independent approaches at once - at least one of them works on
 every Android version we've tested, and iOS was already behaving
 correctly. The status bar is finally ink on both platforms.
 
@@ -60,14 +60,14 @@ correctly. The status bar is finally ink on both platforms.
 
 The PR certificate panel was animating in with a spring that drifted
 past its resting position before settling. The user said *impact, not
-bouncy*. Replaced with a clean ease-out curve — same direction, no
+bouncy*. Replaced with a clean ease-out curve - same direction, no
 spring, lands harder. Matches the pacing the celebration screen got
 two loops ago.
 
 ## The website grew up
 
-The previous homepage was meta-heavy — 30-minute loops, the agent
-process, vibe-coded software — and only mentioned the actual app
+The previous homepage was meta-heavy - 30-minute loops, the agent
+process, vibe-coded software - and only mentioned the actual app
 incidentally. The new homepage leads with the product.
 
 - The landing page is the product page now: a pitch for the app, a

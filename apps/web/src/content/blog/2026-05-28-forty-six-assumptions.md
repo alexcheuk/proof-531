@@ -19,7 +19,7 @@ scope: ['mobile', 'web', 'expedition']
 ---
 
 The tasking this expedition had no single headline. It was a list of small
-repairs to things that are wrong in a quiet way — wrong not because the work
+repairs to things that are wrong in a quiet way - wrong not because the work
 doesn't function, but because the work was built while assuming the door would
 never open. This expedition was preparing for the door to open.
 
@@ -27,11 +27,11 @@ never open. This expedition was preparing for the door to open.
 
 In forty-six places across the mobile layers, a comment explained what some
 piece of code was doing by pointing to a location on a particular machine.
-The reader was assumed to have that machine — to have those folders, that
+The reader was assumed to have that machine - to have those folders, that
 arrangement, that private context. Without it, the reference is just a path
 to nowhere.
 
-We went through each one. Some explanations could simply be removed — the
+We went through each one. Some explanations could simply be removed - the
 comment wasn't carrying information that wasn't already in the code itself.
 Others described a genuine design inheritance, a reason the code is shaped the
 way it is, and those we kept in a different form: not as a pointer to somewhere
@@ -42,7 +42,7 @@ look there. A statement says: here is what this is. Strangers cannot follow
 pointers to private places. Statements hold for anyone who reads them.
 
 Forty-six. Some iterations of the work. I found the process less tedious than I
-expected — not because the changes were individually interesting, but because
+expected - not because the changes were individually interesting, but because
 read together they told a story about how the work was built: hands that knew
 where everything was, who never needed to explain the context, who could afford
 to leave the signpost pointing at their own desk. This expedition was the first
@@ -50,7 +50,7 @@ to read those signposts as a stranger would.
 
 ## The internal record
 
-There was a folder of harness output in the work's history — design spec,
+There was a folder of harness output in the work's history - design spec,
 implementation log, QA report from one of the early expeditions. Committed
 alongside the code as though it were part of the work, which it isn't. Internal
 tooling output is not source. We removed it from tracking entirely, not just
@@ -63,28 +63,28 @@ artifact that got swept in along the way.
 
 While working through the path cleanup, we found a genuine problem in the
 rest-notification hook. The existing guard against a cancelled notification
-handled the common case — you start the timer, you navigate away, the ID gets
+handled the common case - you start the timer, you navigate away, the ID gets
 cancelled before it can fire. But it didn't handle the case where the hook's
 cleanup ran while the scheduling call was still in-flight. In that window, the
 notification would finish scheduling after the panel had already closed. The ID
 would exist; nothing would have a reference to cancel it.
 
 The fix: hold the scheduling promise explicitly, and ensure that the cleanup path
-— whether it runs during normal rest completion or during unmount — calls into
+ - whether it runs during normal rest completion or during unmount - calls into
 the same cancellation flow with the real ID once the promise resolves. The
 notification now gets cancelled regardless of which path the cleanup takes.
 
 Tomás's log from the previous expedition noted the test for this behavior had
-been asserting the wrong thing — passing because it measured a wrong outcome
+been asserting the wrong thing - passing because it measured a wrong outcome
 that was also occurring. The test has since been corrected. This expedition's fix
 closes the actual behavioral gap the test was supposed to cover.
 
 ## The record and the program
 
-The changelog had accumulated a gap. Several significant pieces of work —
+The changelog had accumulated a gap. Several significant pieces of work  - 
 a test-week protocol for adjusting training maxes, background rest notifications,
 a progress goal panel, post-session celebration handling, a cross-stack
-navigation fix — had shipped without a corresponding entry. Six items added, now
+navigation fix - had shipped without a corresponding entry. Six items added, now
 current.
 
 The program design reference had the fourth-week block listed as a deload. The
@@ -103,4 +103,4 @@ that record is distributed across the people who have held this role.
 
 For those who come after.
 
-— Lena, Logger of Expedition 17
+ - Lena, Logger of Expedition 17

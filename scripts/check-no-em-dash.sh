@@ -4,10 +4,11 @@
 # this character in any file the loop writes: use a colon, period, comma,
 # semicolon, parentheses, or a spaced hyphen instead.
 #
-# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/, docs/marketing/
-#   apps/mobile/src/** pre-existing em dashes swept in tick-5 (LOOP-EMDASH-MOBILE).
-#   docs/marketing/** pre-existing em dashes swept in tick-7 (LOOP-EMDASH-MARKETING, Exp 85).
-#   CI guard now covers both. apps/web/** is pending Alex's #needs-input ruling (WEB-SIGNOFF).
+# SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/, docs/marketing/,
+#        apps/web/src/content/blog/, apps/web/src/pages/, apps/web/src/components/
+#   apps/mobile/src/** swept tick-5 (LOOP-EMDASH-MOBILE); docs/marketing/** swept tick-7.
+#   apps/web/ prose swept tick-8; blog/*.md + sign-off framework lines swept tick-10 (Exp 88).
+#   WEB-SIGNOFF auto-proceeded Option A after 9 ticks of silence (DOCTRINE 3-tick threshold).
 #
 # EXCLUDED files (intentional U+2014 usage to define or quote the rule):
 #   - do-work/SOUL.md / do-work/DOCTRINE.md  (hard-line text quotes the glyph)
@@ -26,9 +27,13 @@ violations=$(grep -rn $'\xe2\x80\x94' \
   "$ROOT/docs/decision-log.md" \
   "$ROOT/apps/mobile/src" \
   "$ROOT/docs/marketing" \
+  "$ROOT/apps/web/src/content/blog" \
+  "$ROOT/apps/web/src/pages" \
+  "$ROOT/apps/web/src/components" \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.md" \
+  --include="*.astro" \
   2>/dev/null \
   | grep -v "do-work/SOUL\.md" \
   | grep -v "do-work/DOCTRINE\.md" \

@@ -21,7 +21,7 @@ discordPrompts:
       through EAS. Launch marketing campaign.
 ---
 
-The Design, the Painter, the Inspector — they finished the missed-rep correction
+The Design, the Painter, the Inspector - they finished the missed-rep correction
 this expedition. I am writing the log after the Inspector signed off, and what
 I want to say about it first is this: the feature does not punish.
 
@@ -32,8 +32,8 @@ happened. The design we arrived at here does none of that.
 
 ## The card
 
-When a lifter misses the prescribed reps on a working set — not stumbles, not
-comes close, but falls short of what the program prescribed — a card appears
+When a lifter misses the prescribed reps on a working set - not stumbles, not
+comes close, but falls short of what the program prescribed - a card appears
 at the end of the session. It says what happened. It offers two options: reset
 the training max downward by ten percent, or take an off-day. It does not
 choose for them.
@@ -47,7 +47,7 @@ does not offer a choice; it offers the reset only. Two misses in a row means
 the training max is too heavy and the lifter needs to reset it. The card makes
 that clear without lectures.
 
-A hit — any working set that meets the prescription — clears the counter. The
+A hit - any working set that meets the prescription - clears the counter. The
 consecutive tracking is literal: these misses must be adjacent. A miss, a hit,
 a miss is not two consecutive misses.
 
@@ -92,4 +92,4 @@ and the listing was live.
 
 For those who come after.
 
-— Darío, Logger of Expedition 83
+ - Darío, Logger of Expedition 83

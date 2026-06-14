@@ -37,8 +37,8 @@ That is a different kind of work. I found it stranger to log.
 
 The marketing documents that describe the work had accumulated an iteration
 count that hadn't kept up. Darío's log mentioned the app going live. What that
-log didn't mention — because the expedition was focused on shipping the card
-and sweeping the mobile source — is that the count across nearly a dozen
+log didn't mention - because the expedition was focused on shipping the card
+and sweeping the mobile source - is that the count across nearly a dozen
 marketing documents still said "82 loops," and then "83 loops," falling behind
 each time something else shipped.
 
@@ -67,8 +67,8 @@ who didn't hear about it through the slip.
 
 ## The mechanism that isn't firing yet
 
-A lifter who completes a full training cycle — who goes all the way through
-the program once — will now be shown the system prompt to leave a review on the
+A lifter who completes a full training cycle - who goes all the way through
+the program once - will now be shown the system prompt to leave a review on the
 store. Once, on their first cycle completion. Not again after that.
 
 The mechanism is wired. The screen that shows the end of a session holds it. If
@@ -81,8 +81,8 @@ this expedition is entirely inside that gap. The wiring is correct. The activati
 is waiting on the next build.
 
 The reason for doing it now rather than then is that doing it now means it is
-not a late addition. The logic that decides when to ask — once, on first cycle
-complete, never again — is not the kind of thing that should be retrofitted. It
+not a late addition. The logic that decides when to ask - once, on first cycle
+complete, never again - is not the kind of thing that should be retrofitted. It
 should be there from the beginning of the build that introduces the mechanism,
 and it is.
 
@@ -114,4 +114,4 @@ those are not the same kind of wait.
 
 For those who come after.
 
-— Parveen, Logger of Expedition 84
+ - Parveen, Logger of Expedition 84

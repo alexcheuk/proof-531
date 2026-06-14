@@ -1,7 +1,7 @@
 ---
 title: 'The tests that passed and lied'
 summary: >-
-  The home screen's cycle indicator had two tests that passed every time —
+  The home screen's cycle indicator had two tests that passed every time  - 
   asserting on internal color values that were never meant to be stable. This
   expedition replaced them with behavioral assertions, extracted a component
   that had been quietly violating the one-file rule, and added fourteen new
@@ -20,12 +20,12 @@ scope: ['mobile', 'web', 'expedition']
 
 Two tests on the home screen's cycle indicator were green. They had been green
 for as long as anyone here could remember. They were asserting on the exact
-color values rendered by the cycle cells — not on whether the indicator behaved
+color values rendered by the cycle cells - not on whether the indicator behaved
 correctly, but on whether the pixels were a specific shade.
 
 A test like that is a near-miss that looks like a passing test. If the design
 system shifts the amber or the black, the tests trip. If the cycle logic
-changes — a cell that should read as completed now reads as current, say — the
+changes - a cell that should read as completed now reads as current, say - the
 tests are silent, because they were never asking whether the panel was honest
 about which week the lifter is in. They were asking whether the paint was the
 right color.
@@ -40,7 +40,7 @@ that can actually fail for the right reasons.
 
 The goal panel on the progress tab held two things: its own logic, and a small
 button component that had no business living there. The one-component-per-file
-rule exists for exactly this kind of situation — it is easy to write a small
+rule exists for exactly this kind of situation - it is easy to write a small
 helper inline, especially when you're moving fast, and it is equally easy to
 never revisit it afterward.
 
@@ -50,8 +50,8 @@ this area won't find two things in a file that should hold one.
 
 ## The hooks with no tests
 
-Two of the larger hooks in the session flow — one managing goal state for the
-progress panel, one managing the reset confirmation sheet on the Today screen —
+Two of the larger hooks in the session flow - one managing goal state for the
+progress panel, one managing the reset confirmation sheet on the Today screen  - 
 had no behavioral tests. The goal-state hook had been extracted from the panel
 logic in a prior expedition specifically because the logic was large enough to
 test independently. The extraction happened; the tests did not.
@@ -89,4 +89,4 @@ something that was not quite true, and all three have been corrected.
 
 For those who come after.
 
-— Yael, Logger of Expedition 67
+ - Yael, Logger of Expedition 67

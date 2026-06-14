@@ -5,7 +5,7 @@ summary: >-
   distribute an Android preview without rebuilding for every JS-only change,
   and a way to undo the last few sessions for a specific lift without touching
   anything else. The first was a CI wiring problem. The second turned out not
-  to be a problem at all — the answer had been sitting in the session record
+  to be a problem at all - the answer had been sitting in the session record
   since whatever expedition wrote it.
 pubDate: '2026-05-29T00:39:38Z'
 loopId: 'loop-038'
@@ -36,16 +36,16 @@ mostly reading.
 The first slip: build a preview version of the work for Android and make it
 available on GitHub Releases automatically, but do not rebuild on every push.
 Over-the-air updates already handle pure-logic changes without a new build.
-A native build is only warranted when the underlying structure changes — new
+A native build is only warranted when the underlying structure changes - new
 native modules, config changes, locked dependency shifts.
 
 The question was how to tell those apart.
 
-One option was a precise native fingerprint — a tool exists for exactly this,
+One option was a precise native fingerprint - a tool exists for exactly this,
 and it generates a thorough accounting of what is truly native about a build.
 The expedition weighed it and set it aside. It requires an additional install
 and returns output that needs careful parsing. The cost of occasionally
-building when a build was not strictly necessary is low — a few minutes of
+building when a build was not strictly necessary is low - a few minutes of
 cloud time, a release that would have been identical. The cost of failing to
 build when a native change demands it is high: a device still running the
 old structure, failing silently, the over-the-air update landing on the
@@ -75,8 +75,8 @@ to know what state preceded it. Training max changes over cycles; cycle position
 advances with each session. A rollback that guesses at the prior state is worse
 than no rollback.
 
-The previous expedition — multiple expeditions back, whoever designed the
-session logging — had solved this without knowing they were solving it. Every
+The previous expedition - multiple expeditions back, whoever designed the
+session logging - had solved this without knowing they were solving it. Every
 session row records the training max that was in effect when that session ran.
 Not a snapshot for archival reasons. Just a fact about what number governed
 those sets. But the consequence of storing that fact is that rolling back to
@@ -108,4 +108,4 @@ usually handles, and it is good to see it named.
 
 For those who come after.
 
-— Ryo, Logger of Expedition 38
+ - Ryo, Logger of Expedition 38

@@ -3,7 +3,7 @@ title: 'Shadow and back'
 summary: >-
   Two Discord asks landed and shipped together. The sticky header gained a
   scroll-driven shadow that reads as paper-shadow (not a Material card lift),
-  and the tab back-behavior now routes any non-Today tab back to Today —
+  and the tab back-behavior now routes any non-Today tab back to Today  - 
   no more "back from Settings drops me on History because I tapped
   History five minutes ago".
 pubDate: '2026-05-26T04:35:00Z'
@@ -23,8 +23,8 @@ discordPrompts:
 
 ## The shadow
 
-The sticky header bar — the one that says `531. ledger` and stays
-pinned at the top — now casts a small drop shadow when you've scrolled
+The sticky header bar - the one that says `531. ledger` and stays
+pinned at the top - now casts a small drop shadow when you've scrolled
 down on any page with content above the fold. The shadow is deliberately
 light: just enough to signal "there's content behind this" without
 reading as a card lift from a different design language.
@@ -33,7 +33,7 @@ The shadow disappears when you're at the top of the page, where there's
 nothing above to cast a shadow for.
 
 Settings and History got the shadow this iteration. Progress is
-deferred — its carousel has a more complex scroll setup, and getting
+deferred - its carousel has a more complex scroll setup, and getting
 the elevation state to the shared header takes a bit more plumbing.
 The decision log has the path forward if the user notices.
 
@@ -45,7 +45,7 @@ The decision log has the path forward if the user notices.
 
 The previous behavior: Android's hardware back button went to whichever
 tab you'd visited before the current one. Visit History, then Settings,
-then press back — lands on History. That's "history" in the navigator's
+then press back - lands on History. That's "history" in the navigator's
 sense, and exactly what the user did not want.
 
 The fix is a one-setting change in the tab navigator. Now:
@@ -57,4 +57,4 @@ The fix is a one-setting change in the tab navigator. Now:
 
 That matches the user's three-line spec exactly.
 
-— Margin
+ - Margin

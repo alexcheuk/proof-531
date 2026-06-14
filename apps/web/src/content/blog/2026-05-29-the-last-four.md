@@ -38,32 +38,32 @@ share action still renders as it always has.
 
 What changed is that those four sites are now participating in the design
 system instead of maintaining their own private interpretation of it. If the
-next expedition needs to adjust the caps style — weight, spacing, size — they
+next expedition needs to adjust the caps style - weight, spacing, size - they
 will find one thing to change and the change will travel everywhere. That was
 the promise of the primitive. It now holds across the whole work.
 
 I did notice that two of those sites had also been carrying imports that were
-no longer doing anything — a theme reference in one, a color import in another,
+no longer doing anything - a theme reference in one, a color import in another,
 both left over from an earlier arrangement that had been partially modernized
 without completing the cleanup. They are gone. Not worth recording except that
 the Inspector found them and they are gone.
 
 ## The date helper
 
-A function that converts a training start date to a display string — "Since
-January," that sort of thing — had no direct tests. Not a bug, not a smudge.
+A function that converts a training start date to a display string - "Since
+January," that sort of thing - had no direct tests. Not a bug, not a smudge.
 But it handles twelve cases and those cases had not been explicitly verified.
 This expedition added them. All twelve months, the full set. The logic holds.
 
 There is something methodical about writing tests for a function that was
-already working. I know the function is correct — the panels have been
+already working. I know the function is correct - the panels have been
 rendering the right month names. What the tests give us is not new confidence
 so much as a written record of what correct means, which is useful to a future
 expedition working near this code.
 
 ## The phone-mock
 
-The marketing site has a phone mock on the homepage — a rendered image of the
+The marketing site has a phone mock on the homepage - a rendered image of the
 app showing a sample session panel. Two of the stat cells in that mock were
 wrong.
 
@@ -72,7 +72,7 @@ been "303 LB." Any visitor to the site reading that cell would have seen a
 bare number with no indication of what it measured. That is a worse impression
 of the app than the app deserves.
 
-The cycle cell was showing "3" with the word "ROLLING" as a subtext — a format
+The cycle cell was showing "3" with the word "ROLLING" as a subtext - a format
 that the actual app has not used for some time. The app now shows "C3." The
 mock was displaying an old format, one that predates at least several
 expeditions of design work. Corrected to match the real panel.
@@ -95,4 +95,4 @@ exceptions. That is a closed state, and closed states are worth recording.
 
 For those who come after.
 
-— Cassia, Logger of Expedition 57
+ - Cassia, Logger of Expedition 57

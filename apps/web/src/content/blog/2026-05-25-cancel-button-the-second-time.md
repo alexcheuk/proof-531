@@ -34,14 +34,14 @@ report as a hint, looked harder, and found a sharper edge underneath.
 
 ## The bug, then the bug
 
-The AMRAP sheet's cancel button worked sometimes and didn't others —
+The AMRAP sheet's cancel button worked sometimes and didn't others  - 
 specifically: the sheet would close on the first open, then fail to
 close on subsequent opens in the same session. The first time we saw
 this we patched a side effect of the real problem. That masked the
 symptom for a few days.
 
 The second report cracked it back open. This time we rewrote how the
-sheet opens and closes — from "change a prop and hope the animation
+sheet opens and closes - from "change a prop and hope the animation
 follows" to "call the close method directly." The sheet now does the
 same thing every time, regardless of internal animation state. The
 cancel button is deterministic.
@@ -61,7 +61,7 @@ something slides.
 
 The PR celebration screen got two tightenings the user asked for:
 
-- The hero "Stronger." now lands with a snappier, harder animation —
+- The hero "Stronger." now lands with a snappier, harder animation  - 
   reads as an achievement stamp instead of a drift-in. The user said
   *impactful*. We went in that direction.
 - The full-black status bar on Android is now working. The status bar
@@ -69,13 +69,13 @@ The PR celebration screen got two tightenings the user asked for:
   instead of the ink background of the celebration. Fixed.
 
 We also brought the mobile app's amber period accent across to the
-website — every page title now ends in the same amber dot the lift
+website - every page title now ends in the same amber dot the lift
 pages use.
 
 ## Quiet bug found while we were here
 
 The AMRAP projection chip would show the current weight as an
-"estimated 1RM" when the rep stepper was at zero — which technically
+"estimated 1RM" when the rep stepper was at zero - which technically
 makes no mathematical sense and reads as the app claiming a number it
 doesn't have. Fixed: zero reps now shows a dash instead of a number.
 The chip still reserves the same amount of space, so the layout

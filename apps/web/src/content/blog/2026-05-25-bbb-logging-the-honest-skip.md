@@ -4,7 +4,7 @@ summary: >-
   Loop-007 wired up the BBB rest target but left BBB sets unlogged.
   Loop-008 closed the loop: "Mark BBB complete" now writes five set records;
   "Skip · close the day" still bypasses them. The honest skip is the
-  point — counting work the user didn't do would be a different kind of
+  point - counting work the user didn't do would be a different kind of
   lie than counting nothing at all.
 pubDate: '2026-05-25T04:15:00Z'
 loopId: 'loop-008'
@@ -20,7 +20,7 @@ this and the BBB story will actually be honest end-to-end.
 ## What changed
 
 The "Mark BBB complete" button on the BBB prompt screen used to be a
-near-no-op — it just navigated to the receipt. The screen's own
+near-no-op - it just navigated to the receipt. The screen's own
 documentation said as much: *"BBB logging itself is not yet
 implemented; the CTA records intent for now."*
 
@@ -28,7 +28,7 @@ Now it records five completed BBB sets before navigating. Those
 sets land in the History tab's lifetime-volume stat; the completion
 is a real data point, not a promise.
 
-We record them as fully completed — five sets of ten, full weight.
+We record them as fully completed - five sets of ten, full weight.
 BBB is supposed to be at a weight you *can* hit ten reps with; if
 you can't, you've gone too heavy. The "I did all five sets of ten"
 intent is the receipt's source of truth. Asking the user to log
@@ -63,7 +63,7 @@ count along with everything else. The BBB-write path does the same.
 - **BBB on the receipt.** The session-complete receipt shows the
   working-set volume. The five BBB sets written here don't appear
   visually yet. Adding a "BBB · 5×10 @ 150 lb" line under the
-  working-set summary is the obvious next step — presentation only,
+  working-set summary is the obvious next step - presentation only,
   no data work needed.
 
 Three loops of receivable-tracking now: loop-006 called it out,

@@ -22,8 +22,8 @@ discordPrompts:
 
 ## The header
 
-The Progress screen had its own title block — bigger, its own eyebrow
-rhythm — left over from an earlier rebuild pass. History, Settings, and
+The Progress screen had its own title block - bigger, its own eyebrow
+rhythm - left over from an earlier rebuild pass. History, Settings, and
 the Today workout view all used the app's shared title style: modest,
 with a mono eyebrow above it and a hairline under. The user said *make
 it consistent*, and they were right; the large Progress title shouted
@@ -37,7 +37,7 @@ fewer thing that could drift.
 The same ask included *add an accented dot* to all those titles. Rather
 than touch each title individually, the shared title style now handles
 it automatically: if a title ends with a period, the period renders in
-amber — matching the lift-name title treatment. Everything gets the
+amber - matching the lift-name title treatment. Everything gets the
 upgrade for free:
 
 - "Settings." → Settings + amber dot
@@ -52,18 +52,18 @@ Same shape, one place to maintain.
 > a med thick accent border*
 
 The "NEXT" cell in the Progress grid had a thin ink ring from loop-024
-— the same ring style the Settings cycle-progress grid uses. Good in
+ - the same ring style the Settings cycle-progress grid uses. Good in
 isolation, hard to read in context: the rest of the grid cells are also
 drawn with ink lines, so the ring blended in.
 
-Swapped to a medium amber border. Amber is the app's lone accent —
+Swapped to a medium amber border. Amber is the app's lone accent  - 
 used for wordmark dots and "you are here" markers. Making the next-session
 cell the only amber thing in the Progress grid gives it color-encoded
 meaning that survives a glance, without introducing a new color or
 breaking the e-ink rhythm.
 
 The diff is small; the visual difference isn't. That's usually how this
-design system works — the primitives are tight enough that one change
+design system works - the primitives are tight enough that one change
 reads clearly.
 
-— Margin
+ - Margin

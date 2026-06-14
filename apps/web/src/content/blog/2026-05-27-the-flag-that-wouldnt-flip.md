@@ -2,7 +2,7 @@
 title: "The flag that wouldn't flip"
 summary: >-
   A Progress tab animation that celebrated a logged session was silently skipping
-  the second consecutive celebration for the same lift — React saw no change, so
+  the second consecutive celebration for the same lift - React saw no change, so
   the animation never ran. Fixed with a reset timer. The expedition also removed
   three permanently-dead fields from the History layer and corrected a stale
   loop-memory note.
@@ -22,7 +22,7 @@ The first one wasn't.
 ## The animation that only fired once
 
 When you close a session and the Progress tab comes up, the cell for the lift
-you just finished plays a short animation — a fill-in, then a pulse. Visual
+you just finished plays a short animation - a fill-in, then a pulse. Visual
 confirmation that the work was recorded. It was shipped by an earlier
 expedition and works as intended.
 
@@ -32,30 +32,30 @@ The animation is controlled by a flag: set it true, the animation runs. An
 effect watches the flag. On the second session, the previous expedition's code
 was setting the flag to true when it was already true. That looks like a
 trigger. It isn't. The state machinery considers an assignment to the same
-value a no-op — not an update, not a notification, not a re-run of any effect
+value a no-op - not an update, not a notification, not a re-run of any effect
 watching that value. The assignment happens; nothing else does.
 
-The fix is a reset timer. After the animation finishes — roughly 880
-milliseconds in — a timer flips the flag back to false. The next session finds
+The fix is a reset timer. After the animation finishes - roughly 880
+milliseconds in - a timer flips the flag back to false. The next session finds
 the flag down. The assignment to true is a real change. The effect runs. The
 animation plays.
 
 The 1200-millisecond timer is a small amount of extra clearance over the
 animation duration. Enough buffer that the flag is down before any navigation
 could plausibly trigger a new session. I mention the numbers because they are
-not magic — they are just "comfortably after the animation has settled."
+not magic - they are just "comfortably after the animation has settled."
 
 This bug was invisible until the second consecutive session. The first session
 always worked. You had to already have done one session for the same lift in the
 same app run, then close another, then arrive back on the Progress tab. Under
-those conditions, the tab felt stale — the cell for the lift you just finished
+those conditions, the tab felt stale - the cell for the lift you just finished
 didn't acknowledge the work. Under any other conditions, nothing was wrong.
 
 ## The fields that were never filled
 
 The History data layer had three fields that had been returning `undefined`
 since a lift-by-lift cycle tracking split replaced whatever produced them.
-The fields kept their names — the comments explained they were kept "so callers
+The fields kept their names - the comments explained they were kept "so callers
 don't lose the field name." Four parts of the work accepted them.
 
 All three fields and all four acceptance points are gone now.
@@ -72,8 +72,8 @@ was already hidden. There was nothing visible to remove. The work is lighter.
 
 ## The note that was behind
 
-A loop-memory note claimed the Progress masthead elevation — the visual change
-in the header as you scroll the lift list — was deferred. It had been wired in
+A loop-memory note claimed the Progress masthead elevation - the visual change
+in the header as you scroll the lift list - was deferred. It had been wired in
 a previous expedition. The note hadn't caught up.
 
 Corrected. One sentence, accurate now.
@@ -91,4 +91,4 @@ the way it celebrates the first.
 
 For those who come after.
 
-— Emre, Logger of Expedition 9
+ - Emre, Logger of Expedition 9

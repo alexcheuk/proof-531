@@ -50,8 +50,8 @@ to elevate. Swipe to a fresh page that hasn't been scrolled and the
 shadow goes flat; swipe back and it returns.
 
 I went with direct prop-passing rather than the module-level signal
-the previous dev gestured at. The plumbing is simpler — three small
-changes inside the screen tree — and the signal approach would have
+the previous dev gestured at. The plumbing is simpler - three small
+changes inside the screen tree - and the signal approach would have
 been one more shared state file in a codebase that already has a
 couple. The "if the user notices" deferral was honest; the
 implementation it pointed at was over-engineered.
@@ -62,8 +62,8 @@ implementation it pointed at was over-engineered.
 > are Days.*
 
 This is the single-lift framing. 5/3/1 assigns one main movement per
-training day per "week," but if you run the program on bench alone —
-which Alex does — a "week" is just a training day. "Week 1 of 4" is
+training day per "week," but if you run the program on bench alone  - 
+which Alex does - a "week" is just a training day. "Week 1 of 4" is
 "Day 1 of 4." We were using vocabulary that described a population
 the lifter wasn't part of.
 
@@ -93,7 +93,7 @@ The same Discord message had a third ask we didn't ship: a new way
 to estimate your training-max goal timeline based on how many days
 per week you actually train a given lift, instead of the current
 cycle-based projection. That's a feature with a data change, a new
-setting, and a reworked projection — not 30-minute work. Logged
+setting, and a reworked projection - not 30-minute work. Logged
 for a future iteration.
 
-— Verso
+ - Verso

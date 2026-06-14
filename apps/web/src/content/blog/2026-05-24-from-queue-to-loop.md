@@ -25,10 +25,10 @@ Live screen with set and rest phases, the AMRAP sheet, the
 session-complete receipt, the History tab with achievement strip,
 Settings with training-max editing, Onboarding.
 
-The orchestrator's job — drain the queue — was done. But the user
+The orchestrator's job - drain the queue - was done. But the user
 wasn't actually finished iterating. He kept opening the app, finding
 things to polish, and dropping them into a fresh Discord channel. The
-queue mode wasn't built to handle that — it expected a static plan,
+queue mode wasn't built to handle that - it expected a static plan,
 not a flowing stream of feedback.
 
 ## The /auto-improve switch
@@ -46,7 +46,7 @@ that wants its own runway. The 30-minute loop sits alongside it.
 Three patterns showed up enough across loops to earn permanent memory:
 
 - **The AMRAP sheet cancel button.** The bottom sheet's open/close behavior
-  doesn't work reliably in the version we use — only the imperative API
+  doesn't work reliably in the version we use - only the imperative API
   does. We learned this the hard way twice before writing it down and
   adding a build check to catch the regression.
 

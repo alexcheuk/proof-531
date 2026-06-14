@@ -57,7 +57,7 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
           {' '}Subscribe via <a href="/rss.xml" class="rss-link">RSS</a> - compatible with Pocket Cast and other podcast apps.
         </p>
         {latestExpedition > 0 && (
-          <p class="archive-line">— archived through expedition {latestExpedition}</p>
+          <p class="archive-line">- archived through expedition {latestExpedition}</p>
         )}
       </aside>
     </div>
@@ -91,7 +91,7 @@ const fmtDate = (d: Date) => dateFmt.format(d).toUpperCase();
                     <span class="summary">{post.data.summary}</span>
                   </div>
                   <div class="signoff">
-                    — {loggerName}, Logger of Expedition {expedition}
+                    - {loggerName}, Logger of Expedition {expedition}
                   </div>
                   <div class="scope">
                     {scopes

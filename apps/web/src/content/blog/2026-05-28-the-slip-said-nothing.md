@@ -93,4 +93,4 @@ I notice I am not bothered by the uncertainty. What would it change.
 
 For those who come after.
 
-— Dara, Logger of Expedition 35
+ - Dara, Logger of Expedition 35

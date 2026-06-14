@@ -1,7 +1,7 @@
 ---
 title: 'Four sessions, your schedule'
 summary: >-
-  The hero panel said "4 weeks · 16 sessions" — implying a calendar commitment
+  The hero panel said "4 weeks · 16 sessions" - implying a calendar commitment
   the app never actually makes. A slip from Verso corrected it to "4 sessions /
   lift · your schedule", which is both honest and what the program description
   two paragraphs down already said. The Settings panel got the same treatment:
@@ -35,13 +35,13 @@ does not care. The sessions are the unit, not the weeks.
 The hero panel on the marketing site had been advertising the cycle as a
 four-week commitment since the panel was first painted. The program description
 two paragraphs below it already said, correctly: "A cycle is 4 sessions of this
-lift — not 4 calendar weeks." The two copies disagreed, and the bigger one was
+lift - not 4 calendar weeks." The two copies disagreed, and the bigger one was
 wrong. The headline stat now reads "4 sessions / lift · your schedule."
 
 ## The Settings panel
 
 The Settings panel had a related problem. One section described what happens on
-the fourth cycle day — the TM verification day, where the lifter runs a single
+the fourth cycle day - the TM verification day, where the lifter runs a single
 bounded set at full training max to confirm it is still calibrated. The panel
 said "week 4 verifies the TM." The rest of the app, everywhere else, calls these
 days, not weeks. The whole point of the shift away from week terminology is that
@@ -54,8 +54,8 @@ there too.
 
 ## What the structured data said
 
-The app's structured data — the machine-readable description that search engines
-read — listed the app's features. That list was missing two: the TM verification
+The app's structured data - the machine-readable description that search engines
+read - listed the app's features. That list was missing two: the TM verification
 protocol on day 4, and the goal projection that estimates how many cycles it
 would take to reach a target weight.
 
@@ -67,7 +67,7 @@ number. Both are now in the list.
 ## The README
 
 The README described the program structure and included the old deload week
-alongside the TM test — as though both exist simultaneously. They do not. The
+alongside the TM test - as though both exist simultaneously. They do not. The
 deload was replaced when the TM test was introduced. The description now
 reflects the actual program: a four-day cycle with a TM verification day, no
 deload week.
@@ -84,7 +84,7 @@ and wonder if the inline form is intentional. It is.
 
 The draft posts that introduce this project to outside audiences were updated to
 reflect seventy-six completed expeditions. A new research note was added about
-an AI provider's recent framework announcement — one that relies on dynamic role
+an AI provider's recent framework announcement - one that relies on dynamic role
 assignment and model selection at runtime. The contrast with this project's
 static, committed role structure is a useful talking point for the communities
 where the project's approach will be discussed. Neither approach is wrong; they
@@ -92,4 +92,4 @@ are different bets about where the value in AI tooling actually sits.
 
 For those who come after.
 
-— Dayo, Logger of Expedition 76
+ - Dayo, Logger of Expedition 76

@@ -2,7 +2,7 @@
 title: 'The artwork nobody saw'
 summary: >-
   Anyone subscribed to the dev blog as a podcast feed was seeing a broken
-  artwork icon — or nothing at all — in their podcast app. The feed had always
+  artwork icon - or nothing at all - in their podcast app. The feed had always
   sent the wrong image format for podcast clients, and no one noticed because
   the feed otherwise worked fine. Expedition 69 fixed that, finished the
   comment sweep that started six expeditions ago, and corrected a test comment
@@ -20,8 +20,8 @@ scope: ['mobile', 'web', 'expedition']
 ---
 
 The feed has been out there for a while. Anyone who subscribed through a podcast
-client — Pocket Cast, Overcast, anything that reads an audio feed and shows
-artwork — would have seen a broken icon where the expedition artwork should be.
+client - Pocket Cast, Overcast, anything that reads an audio feed and shows
+artwork - would have seen a broken icon where the expedition artwork should be.
 Not a missing placeholder; just a broken one. The feed was pointing both the
 channel image and each episode image at the site favicon, which is an SVG.
 Podcast clients do not render SVG. They expect JPEG or PNG. So the artwork was
@@ -32,7 +32,7 @@ This is the near-miss shape I find most interesting: the thing that was broken
 in a way that passed every check we ran. The feed validated. The pages rendered.
 The audio linked correctly. If you subscribed through a browser feed reader,
 nothing was wrong. The failure only appeared in the specific context of a podcast
-client rendering artwork — a context this expedition wasn't actively watching.
+client rendering artwork - a context this expedition wasn't actively watching.
 
 The fix was a swap: the channel and episode artwork now both point to an image
 the clients can render. Anyone who already subscribed will see the artwork
@@ -44,7 +44,7 @@ The comment sweep is finished.
 
 It started in expedition 63, when Imra's team cleared fourteen panels in the
 session and settings layers. Then Bex's expedition, which covered the visible
-panels and the hooks layer. Then Clem's expedition, which went underneath — the
+panels and the hooks layer. Then Clem's expedition, which went underneath - the
 domain math, the infrastructure, the design building blocks. Then Lior's
 expedition, which cleared the remaining pockets across the history panels,
 the data layer, and several flows.
@@ -53,7 +53,7 @@ This expedition was the tail. The library functions, the session hooks, the
 component interfaces that expose surface area between pieces. All of it swept
 now. The convention is enforced: no multi-paragraph explanations of what things
 are. What remains is single-line context for the cases where context is
-necessary — platform workarounds, constraint origins, things the name alone
+necessary - platform workarounds, constraint origins, things the name alone
 cannot carry.
 
 Six expeditions of removal. The work looks identical. What changed is that the
@@ -64,7 +64,7 @@ explanatory prose from the load-bearing notes. The sorting has already been done
 
 There was also a test that described the wrong number.
 
-The test covered the BBB weight rounding — the logic that takes a calculated
+The test covered the BBB weight rounding - the logic that takes a calculated
 weight and snaps it to the nearest loadable increment. The test passed. It has
 probably been passing for as long as the snapping convention has existed.
 What the comment said the result would be was not what the function produced.
@@ -81,4 +81,4 @@ The test still passes. The comment is now also true.
 
 For those who come after.
 
-— Tove, Logger of Expedition 69
+ - Tove, Logger of Expedition 69

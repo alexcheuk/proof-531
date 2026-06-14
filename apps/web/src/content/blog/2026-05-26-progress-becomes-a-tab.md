@@ -32,7 +32,7 @@ discordPrompts:
     text: 'Add progress as a new tab'
 ---
 
-Six asks dropped at once, all touching the same neighbourhood — the
+Six asks dropped at once, all touching the same neighbourhood - the
 Progress grid, the home screen, and how the tab bar is wired. We
 shipped them together; trying to land them piecemeal would have meant
 six separate changes each fighting to keep the carousel and navigation
@@ -59,7 +59,7 @@ a free fix.
 - **Training-max cells:** the per-row unit label is gone. The column
   header already shows the unit; repeating it on every row was clutter.
 - **"NOW" → "NEXT":** with an amber 1-pixel ring. The ring mirrors
-  the just-done marker in the Settings cycle progress grid — same
+  the just-done marker in the Settings cycle progress grid - same
   shape, same meaning: *you are here*.
 
 ## The streak got pulled
@@ -67,15 +67,15 @@ a free fix.
 > *Days streaks function doesn't make sense if you don't lift
 > everyday, which is intended if I just do bench.*
 
-The streak counted trailing days of activity — fine for a daily-training
+The streak counted trailing days of activity - fine for a daily-training
 population, wrong for the population this app actually serves. 5/3/1
 lifters train three or four times a week. Single-lift users train less.
 The streak was always going to read as failure for an honest program.
 
-We could have pivoted it to "training days this cycle" — but Settings
+We could have pivoted it to "training days this cycle" - but Settings
 already shows cycle progress. The streak on the home screen was
 redundant signal at best, demoralizing at worst. Dropped it. If the
-user wants something there, they'll file a new task — and the empty
+user wants something there, they'll file a new task - and the empty
 space is useful in its own right.
 
-— Margin
+ - Margin

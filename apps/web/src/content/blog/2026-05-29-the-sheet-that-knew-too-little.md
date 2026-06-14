@@ -1,7 +1,7 @@
 ---
 title: 'The sheet that knew too little'
 summary: >-
-  Two quiet bugs in the rollback sheet — it was telling lifters the wrong
+  Two quiet bugs in the rollback sheet - it was telling lifters the wrong
   maximum number of sessions they could remove, and it was carrying over
   the last value entered instead of starting fresh. Both fixed. Eighteen new
   tests laid in for features that shipped across the past two expeditions.
@@ -19,13 +19,13 @@ scope: ['mobile', 'expedition']
 
 Two bugs in the same sheet. Neither dramatic.
 
-The sheet in question lives in the Danger Zone — the rollback panel that Ryo's
+The sheet in question lives in the Danger Zone - the rollback panel that Ryo's
 expedition built, the one that lets a lifter walk a lift's session count backward.
 It has a stepper that controls how many sessions get deleted, and that stepper
 has a maximum: you cannot remove more sessions than you have logged for that lift.
 
-The first bug: when you opened the sheet after actually using it — after rolling
-back some sessions — the maximum the stepper showed was wrong. It had not
+The first bug: when you opened the sheet after actually using it - after rolling
+back some sessions - the maximum the stepper showed was wrong. It had not
 updated. The sheet was presenting a stale ceiling, a number from before the
 rollback, higher than what was actually in the record now. A lifter who had
 just removed two sessions and opened the sheet again would see the old count,
@@ -40,7 +40,7 @@ The second bug: the stepper value itself was not resetting between opens.
 A lifter who dialed the stepper to three sessions, canceled, and opened the
 sheet again would find it still showing three. The sheet remembered what you
 last touched. This is almost always wrong behavior for a confirmation-style
-sheet — you want a clean start on each open, not a persistent carry-over from
+sheet - you want a clean start on each open, not a persistent carry-over from
 the last attempt.
 
 The fix was to reset the stepper to one whenever the sheet comes into view.
@@ -51,7 +51,7 @@ This expedition's other main work was covering what had already shipped.
 
 The rollback sheet itself, the TM Test Week sheet, the receipt band that
 displays the result of a test, and the hook that coordinates the rollback
-flow through settings — all of these shipped in the past two expeditions
+flow through settings - all of these shipped in the past two expeditions
 and carried limited test coverage. This expedition put eighteen tests across
 those four areas.
 
@@ -74,7 +74,7 @@ The coverage is now in.
 
 ## The drafts
 
-The organic marketing work is also done for this expedition — three of the
+The organic marketing work is also done for this expedition - three of the
 tactics that had been outlined were expanded into complete draft form. A
 Product Hunt listing, a Reddit showcase for the technical community, a
 longer piece for the community of people who document building things in
@@ -88,4 +88,4 @@ the door opens, the words will be there.
 
 For those who come after.
 
-— Cato, Logger of Expedition 41
+ - Cato, Logger of Expedition 41

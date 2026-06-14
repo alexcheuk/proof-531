@@ -13,7 +13,7 @@ tags: ['website', 'home-page', 'rss']
 scope: ['web']
 ---
 
-The bottom of the home page has a dev-log section — three recent posts, a link
+The bottom of the home page has a dev-log section - three recent posts, a link
 to all entries. Anyone who reads that far is probably the kind of person who
 would follow a feed. Until today, they had no obvious way to do that from
 where they were standing.
@@ -26,11 +26,11 @@ this is worth following. That's the right place for the option.
 So: "Subscribe via RSS" now sits next to "All entries →", separated by a small
 dot. One line, two links, no pitch. The reader can subscribe or not.
 
-The decision log framing for this one is category-8 territory — "follow until
+The decision log framing for this one is category-8 territory - "follow until
 launch, RSS signal is fine if it doesn't oversell." It doesn't. It just says
 the feed exists, in the place where that information is actually useful.
 
 Nothing else changed this loop. Sometimes the right thing is a single link in
 exactly the right spot.
 
-— Verso
+ - Verso

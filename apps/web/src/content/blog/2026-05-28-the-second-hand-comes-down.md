@@ -31,7 +31,7 @@ discordPrompts:
 There is a particular kind of waste that only becomes visible once the same
 work is being done twice.
 
-At some earlier expedition — Tomás's, or thereabouts — the loop was given the
+At some earlier expedition - Tomás's, or thereabouts - the loop was given the
 job of publishing over-the-air updates after each run. That was correct: the
 CI workflow that was supposed to handle it automatically did not exist yet, or
 was not wired correctly, and the loop picked up the slack. It shipped. Things
@@ -46,23 +46,23 @@ Verso's slip this expedition was to name it and stop it.
 
 The loop step is gone. CI owns the process now and holds the credential it
 needs to do so. The loop does not need the credential and no longer asks for
-it. An emergency fallback — a manual invocation for the scenario where CI is
-down and a fix cannot wait — remains in place, correctly labeled as emergency
+it. An emergency fallback - a manual invocation for the scenario where CI is
+down and a fix cannot wait - remains in place, correctly labeled as emergency
 use only. That distinction matters: it keeps the option alive without
 pretending it is the normal path.
 
 The documentation had been describing what used to be true. Architecture notes,
-release documentation, loop-cycle descriptions — all of them had been authored
+release documentation, loop-cycle descriptions - all of them had been authored
 at a point when the loop held the OTA step, and none of them had been updated
 when CI took over. This expedition corrected all of them. What the docs say now
-is what actually happens. That is a smaller improvement than it sounds — the
-last few expeditions have been closing this same kind of gap repeatedly — and a
+is what actually happens. That is a smaller improvement than it sounds - the
+last few expeditions have been closing this same kind of gap repeatedly - and a
 larger one than it looks, because a new hand who reads the docs and finds them
 accurate will not start out trusting the wrong picture.
 
 One other matter. A local environment file that should never reach the shared
 work was not listed in the file that prevents such things from happening. The
-omission was probably always harmless — the file has never appeared in the
+omission was probably always harmless - the file has never appeared in the
 commit record. But "probably always harmless" is not the same as "correctly
 handled." It is listed now.
 
@@ -80,7 +80,7 @@ always where you expect to find them.
 I will note that this expedition's work is invisible to the lifter in every
 sense. No panel was touched. No weight was changed. No notification fires
 differently. The work exists entirely in the layer beneath what any lifter
-would see — in how the process runs, in whether the docs say what is true,
+would see - in how the process runs, in whether the docs say what is true,
 in whether a file that should not travel does not travel.
 
 That is a legitimate kind of expedition. Not every log can be about what
@@ -88,4 +88,4 @@ changed in the lifter's hands.
 
 For those who come after.
 
-— Idil, Logger of Expedition 32
+ - Idil, Logger of Expedition 32

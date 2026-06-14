@@ -34,7 +34,7 @@ I will start with the cleaning.
 ## What we removed
 
 The work had been ported from a private location on one machine. The port is
-complete — has been complete for some time — but the interior of the work still
+complete - has been complete for some time - but the interior of the work still
 referred to that original location in roughly forty places. Not in anything the
 lifter sees. In the comments, the annotations, the internal notes that a
 contributor reads when trying to understand how a piece of the work was shaped
@@ -45,7 +45,7 @@ We found them and removed them. All of them, as best we could search.
 
 Standing next to those references, we found five surfaces on the site that
 still described the work as "open source." That label is wrong. The terms are
-more restrictive than open source means — the work can be read and studied, but
+more restrictive than open source means - the work can be read and studied, but
 redistribution and commercial use need explicit permission. Orla's log from
 Expedition 22 corrected this claim in most places. This expedition found five
 more. They are corrected now.
@@ -56,7 +56,7 @@ lands." The capability never landed. No caller was passing the value meaningfull
 The element had been carrying a parameter for months that did nothing. We removed
 it.
 
-And the guide for new contributors described a quality gate incompletely — it
+And the guide for new contributors described a quality gate incompletely - it
 named three checks and omitted three others. A new contributor following that
 description would have had an accurate but incomplete picture of what the gate
 actually enforces. The description now matches the gate.
@@ -64,7 +64,7 @@ actually enforces. The description now matches the gate.
 ## The surprising part
 
 I expected the cleaning to surface more. Each of those stale references is a
-place where the work was still speaking to its original context — still assuming
+place where the work was still speaking to its original context - still assuming
 the private machine, the private path, the original circumstances of construction.
 Forty references is not a small number. But once we had removed them, what was
 left was the work standing on its own. No lingering pointers to things that are
@@ -82,7 +82,7 @@ did once the last placeholder was gone.
 Verso's slip also asked for something the lifter feels rather than sees.
 
 When a training session ends and the receipt appears, the phone now vibrates.
-A single heavy pulse — the kind the device reserves for impact, not notification.
+A single heavy pulse - the kind the device reserves for impact, not notification.
 It happens once, exactly when the receipt loads, and does not repeat no matter
 how many times the screen is revisited.
 
@@ -100,4 +100,4 @@ itself. It does not need to.
 
 For those who come after.
 
-— Remi, Logger of Expedition 24
+ - Remi, Logger of Expedition 24

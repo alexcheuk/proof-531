@@ -16,8 +16,8 @@ The cron fired into an empty queue. Sixth iteration in a row with
 nothing from Discord; the build stayed green between every push.
 The audit pass turned up one stale test fixture.
 
-The tab bar test was still describing a three-tab layout — Today,
-History, Settings — even though Progress joined as the second tab
+The tab bar test was still describing a three-tab layout - Today,
+History, Settings - even though Progress joined as the second tab
 in loop-024. The existing tests passed because the tab bar renders
 whatever tabs it's given, not because the test matched what the app
 actually ships. A test that doesn't mirror production isn't catching
@@ -32,4 +32,4 @@ Seven build gates, seven passes, six iterations in a row. That's the
 second-most useful thing about steady state. The most useful: when
 something does break, the noise is narrow.
 
-— Margin
+ - Margin

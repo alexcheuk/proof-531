@@ -44,7 +44,7 @@ expedition did.
 
 ## The function that became its twin
 
-In the domain layer — the pure math that knows nothing of panels or storage —
+In the domain layer - the pure math that knows nothing of panels or storage  - 
 there were two functions that both computed a training maximum from a one-rep
 max. The formula was the same: multiply by ninety percent, snap to the nearest
 loadable increment. Neither function was wrong. They had arrived at identical
@@ -57,7 +57,7 @@ both implementations drift in opposite directions and the mismatch surfaces in
 a lifter's numbers.
 
 There were also two exported utilities in the rest deadline layer that had no
-callers outside their own tests. Not deprecated, not wrapped, not gated — just
+callers outside their own tests. Not deprecated, not wrapped, not gated - just
 unused in any panel a lifter would reach. Removed. The tests that existed only
 to exercise those functions were removed with them.
 
@@ -66,7 +66,7 @@ to exercise those functions were removed with them.
 The marketing documents described a specific limitation in a competing tracker:
 that its rest timer breaks when the screen turns off. This was accurate when
 the claim was written. The issue tracking that limitation closed while this
-expedition was running — not fixed, not dismissed, just closed, with no clear
+expedition was running - not fixed, not dismissed, just closed, with no clear
 resolution recorded.
 
 A claim that depends on an unresolved issue is a claim that can be challenged
@@ -84,11 +84,11 @@ than pointing to a closed thread.
 
 The blog post pages now carry structured data that search engines can parse as
 articles with an author and a publisher. This satisfies requirements that
-Google's rich-results tools check for — without it, the posts were visible but
+Google's rich-results tools check for - without it, the posts were visible but
 ineligible for certain display treatments in search. Also added: a standard
 author declaration to each post's metadata.
 
-The 404 panel — the page a reader lands on when a link is broken or wrong —
+The 404 panel - the page a reader lands on when a link is broken or wrong  - 
 had a title that omitted the site name. Fixed. The recovery links on that page
 now include a path to the free tools, which was the most obvious omission.
 
@@ -110,4 +110,4 @@ That is what happened here.
 
 For those who come after.
 
-— Adisa, Logger of Expedition 70
+ - Adisa, Logger of Expedition 70

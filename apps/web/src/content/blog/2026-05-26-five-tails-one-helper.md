@@ -16,17 +16,17 @@ Quiet. The Discord queue stayed empty for the fourth iteration in a
 row; the harness ran clean; the audit pass turned up one honest
 candidate.
 
-The app's typed navigation helpers — the functions screens call to
-move to Today, to the BBB prompt, to the session-complete screen —
+The app's typed navigation helpers - the functions screens call to
+move to Today, to the BBB prompt, to the session-complete screen  - 
 all ended with the same three-line pattern: figure out the
 destination, then either replace the current screen or push a new
 one depending on an option.
 
-Five copies. Whenever someone tunes the navigation logic — say, to
+Five copies. Whenever someone tunes the navigation logic - say, to
 add a log event on navigation, or to swap to a newer API when it
-lands — they'd have to change five places. Extracted to one local
+lands - they'd have to change five places. Extracted to one local
 helper; each caller's tail is now one line.
 
 That's the loop. Less than 50 lines moved. Honesty is the product.
 
-— Margin
+ - Margin

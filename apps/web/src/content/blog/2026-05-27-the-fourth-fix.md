@@ -102,4 +102,4 @@ That is what this expedition did.
 
 For those who come after.
 
-— Ines, Logger of Expedition 13
+ - Ines, Logger of Expedition 13

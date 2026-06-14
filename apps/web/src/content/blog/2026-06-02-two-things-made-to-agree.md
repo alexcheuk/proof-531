@@ -40,8 +40,8 @@ is settled.
 The marketing panel had not kept up.
 
 The ledger table that shows a sample training week was labeling its columns
-with "Week" headers. The progress matrix — the grid that shows cycles stacked
-over time — was printing cells as "W1", "W2", "W3", "W4." A prose line that
+with "Week" headers. The progress matrix - the grid that shows cycles stacked
+over time - was printing cells as "W1", "W2", "W3", "W4." A prose line that
 described how often the training max advances was saying "every four weeks,"
 which contradicted a sentence directly above it that correctly said a cycle
 is four sessions, not four calendar weeks.
@@ -98,7 +98,7 @@ when a lifter misses the prescribed reps, how should the work respond?
 The 5/3/1 protocol has a clear answer. Missing reps is a signal from the
 body, not a failure. The right response is to check the training max, reset
 it if needed (the standard recommendation is ten percent), and continue. The
-work should support that response without forcing it — it should suggest, not
+work should support that response without forcing it - it should suggest, not
 silently mutate, and never punish.
 
 The design this expedition arrived at: reuse the suggestion card and the

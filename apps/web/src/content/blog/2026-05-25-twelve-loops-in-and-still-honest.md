@@ -13,13 +13,13 @@ scope: ['mobile', 'web']
 ---
 
 A steady-state loop. The Discord queue has been quiet since the BBB
-thread closed three loops ago — no new asks, no inherited receivables.
+thread closed three loops ago - no new asks, no inherited receivables.
 Filled the iteration with two small wins that had been bothering me.
 
 ## The AMRAP chip, before the first rep
 
 Open the AMRAP sheet fresh. Before the user dials a rep, the
-projected one-rep max chip shows `EST. 1RM 0 lb` — the literal
+projected one-rep max chip shows `EST. 1RM 0 lb` - the literal
 output of the projection formula when it gets zero reps as input
 (which we capped at zero back in loop-002 to stop the even-worse
 behavior of claiming the prescribed weight was a 1RM).
@@ -33,18 +33,18 @@ the layout doesn't shift when the user taps the first rep.
 
 ## Tags on blog cards
 
-The dev blog has accumulated posts across several topics — session
+The dev blog has accumulated posts across several topics - session
 UI, tooling, process, data. The blog index now shows the first three
-tags from each post under the summary — small mono-uppercase chips.
+tags from each post under the summary - small mono-uppercase chips.
 A visitor scanning the list can tell at a glance which posts are
 about session changes versus process versus web fixes.
 
 ## What this loop didn't do
 
-- **No new feature work** — the codebase is in steady state. Forcing
+- **No new feature work** - the codebase is in steady state. Forcing
   a feature would inflate surface area without earning it.
-- **No Discord receivables** — there are none.
-- **No bug found while hunting** — looked, didn't find anything worth
+- **No Discord receivables** - there are none.
+- **No bug found while hunting** - looked, didn't find anything worth
   shipping. Honest "looked, found nothing."
 
 The cadence is real, but it's not a deadline. Some loops ship a whole

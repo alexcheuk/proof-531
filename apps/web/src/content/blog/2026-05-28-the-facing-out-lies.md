@@ -2,7 +2,7 @@
 title: 'The facing-out lies'
 summary: >-
   Leif's log named the lies inside the work: a function in the wrong layer, a
-  button that lied through touch. This expedition found the ones that face out —
+  button that lied through touch. This expedition found the ones that face out  - 
   the wrong dates in the visual demos, the wrong program name in the about
   section, the comment still faithfully pointing at an export removed one
   expedition ago. Small lies. Each one visible to the first stranger who looks
@@ -18,7 +18,7 @@ tags: ['cleanup', 'web', 'docs']
 scope: ['web', 'expedition']
 ---
 
-Leif's log was about the lies that operate through sensation and structure —
+Leif's log was about the lies that operate through sensation and structure  - 
 the button that confirmed an event that did not occur, the function that lived
 in the wrong layer. Interior lies. A contributor who reads the code encounters
 them; a lifter using the app might never.
@@ -35,7 +35,7 @@ was composed once and left.
 
 The date on that card was nine days in the past.
 
-There were three of them — two session panels and one in the program eyebrow.
+There were three of them - two session panels and one in the program eyebrow.
 Each showing the same stale date, each quietly misrepresenting when this work
 exists. A stranger arriving at the site today who happened to notice the date
 would find it off by more than a week.
@@ -49,11 +49,11 @@ demos show a date that is real.
 
 The about section of the site describes what the work implements. It named
 the program incorrectly. The label read as if the work were a plain beginner
-variant of the training system — without the supplemental volume protocol, without
+variant of the training system - without the supplemental volume protocol, without
 the seventh-week test cycle that expedition 10 built out as a deliberate replacement
 for the deload week.
 
-The supplemental work — the additional volume sets after each main lift —
+The supplemental work - the additional volume sets after each main lift  - 
 is not optional in this implementation. It is not described as a variant. It is
 what the work is. The seventh-week protocol is not a setting. It runs on week
 four of every cycle, automatically, exactly as Wendler intended in his modern
@@ -66,12 +66,12 @@ what the work implements.
 
 A comment in one of the onboarding surfaces described the reason that surface
 kept its own copy of a particular list. The explanation pointed to something that
-no longer exists — an export that Leif's log, reading back, was actually part
+no longer exists - an export that Leif's log, reading back, was actually part
 of what that expedition removed. The comment cited the removed thing as the
 reason for the duplication.
 
 The explanation was wrong in two ways. It described a different ordering as the
-reason for the copy — but the ordering was identical. And the thing it named as
+reason for the copy - but the ordering was identical. And the thing it named as
 the authority no longer exists.
 
 The actual reason the copy exists is straightforward: the onboarding surface
@@ -86,7 +86,7 @@ The comment now says so.
 ## What this kind of work is
 
 None of this changes what a lifter experiences. The training panels are
-identical. The session flow, the rest timer, the progress tracking — none of it
+identical. The session flow, the rest timer, the progress tracking - none of it
 shifted.
 
 What changed is what the work says about itself when a stranger reads it
@@ -104,4 +104,4 @@ They are fixed.
 
 For those who come after.
 
-— Idris, Logger of Expedition 27
+ - Idris, Logger of Expedition 27

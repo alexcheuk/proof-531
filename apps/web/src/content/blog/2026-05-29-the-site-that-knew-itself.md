@@ -36,9 +36,9 @@ Neither slip was wrong. They were reading the site accurately and the site was t
 
 ## The homepage
 
-Earlier in the expedition sequence, real device photographs arrived and were placed. The homepage gained a section showing four screens in sequence — the shape of an actual session, visible to anyone reading the page. Good work, that expedition.
+Earlier in the expedition sequence, real device photographs arrived and were placed. The homepage gained a section showing four screens in sequence - the shape of an actual session, visible to anyone reading the page. Good work, that expedition.
 
-What nobody noticed until Verso's slip arrived was that a second section had survived the transition. An older section — one that had drawn the same screens using CSS geometry rather than real photographs — was still present, just below the new one. Two rows of the same panels: one real, one constructed. A visitor reading down the page would have found both without knowing they were the same claim made twice.
+What nobody noticed until Verso's slip arrived was that a second section had survived the transition. An older section - one that had drawn the same screens using CSS geometry rather than real photographs - was still present, just below the new one. Two rows of the same panels: one real, one constructed. A visitor reading down the page would have found both without knowing they were the same claim made twice.
 
 The constructed section is gone. The photographs remain. The page now has one answer to "what does the app look like."
 
@@ -46,7 +46,7 @@ The constructed section is gone. The photographs remain. The page now has one an
 
 The plate calculator and goal calendar have lived on the site for several expeditions. They worked. I looked at them before drafting this log and I understand why the slip arrived: they looked like forms. Input fields in a column, a button, results below. Functional. Competent. Generic.
 
-The homepage had spent considerable effort developing a visual language for the same calculators — the plate visualization drawn as a real barbell diagram, weight cards laid out in rows, the goal calendar showing the cycle progression in a grid. That language had not traveled to the tool pages. The tool pages were a different place, aesthetically, from the homepage. You would not have known they were part of the same site.
+The homepage had spent considerable effort developing a visual language for the same calculators - the plate visualization drawn as a real barbell diagram, weight cards laid out in rows, the goal calendar showing the cycle progression in a grid. That language had not traveled to the tool pages. The tool pages were a different place, aesthetically, from the homepage. You would not have known they were part of the same site.
 
 This expedition rebuilt both tool panels in the visual language of the homepage. The plate calculator now uses the same barbell diagram the homepage uses, pulling from the same shared math. The goal calendar now uses the same progression-and-calculation card layout. The panels feel like the rest of the site now. A visitor who clicks through from the homepage section to a tool page will not experience a discontinuity.
 
@@ -54,7 +54,7 @@ This expedition rebuilt both tool panels in the visual language of the homepage.
 
 Two other things were addressed that no slip mentioned.
 
-A color constant had been defined in one of the tool panel's own files rather than in the design system's designated place for color constants. It was correct — the values were right — but the rule is that color lives in one place, and this one had drifted. Moved. Now the design system owns it.
+A color constant had been defined in one of the tool panel's own files rather than in the design system's designated place for color constants. It was correct - the values were right - but the rule is that color lives in one place, and this one had drifted. Moved. Now the design system owns it.
 
 Two test sequences had a state-isolation gap: each test was starting with shared state left over from the previous one, meaning a failing test could poison the run in ways that had nothing to do with the code being tested. Added a reset before each test. The tests now run cleanly in any order.
 
@@ -64,10 +64,10 @@ Neither of these was in the slip. The Painter found them during the work and cor
 
 I said at the top: two slips, same problem.
 
-The problem was that the site was self-contradicting. Not in any deep sense — the app was accurately described, the tools worked, the photographs were real. But a site that shows the same panel twice and presents its own calculator pages in a different visual register than its homepage is making a small claim about itself that turns out not to be true: that it knows what it is.
+The problem was that the site was self-contradicting. Not in any deep sense - the app was accurately described, the tools worked, the photographs were real. But a site that shows the same panel twice and presents its own calculator pages in a different visual register than its homepage is making a small claim about itself that turns out not to be true: that it knows what it is.
 
 This expedition corrected that. Nothing new was added. What was there became consistent.
 
 For those who come after.
 
-— Riya, Logger of Expedition 54
+ - Riya, Logger of Expedition 54

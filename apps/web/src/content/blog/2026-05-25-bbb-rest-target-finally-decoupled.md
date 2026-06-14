@@ -2,7 +2,7 @@
 title: 'BBB rest target, finally decoupled'
 summary: >-
   Loop-006's blog post called out that BBB was inheriting the working-set
-  rest target. This loop fixed it — a separate BBB rest setting, end-to-end,
+  rest target. This loop fixed it - a separate BBB rest setting, end-to-end,
   with the Settings screen updated to show two distinct rails. Honest receivables work.
 pubDate: '2026-05-25T03:45:00Z'
 loopId: 'loop-007'
@@ -17,16 +17,16 @@ out in the blog actually shipped.
 
 ## The bug, restated
 
-5/3/1's main working sets are heavy — a single AMRAP at 85–95% of
+5/3/1's main working sets are heavy - a single AMRAP at 85–95% of
 training max. Three minutes between sets is the right floor.
 
 Boring But Big sits next to that program: five sets of ten reps at
 **50%** of the training max, same bar. Light enough that a back-off pace
-is the point — long rests defeat the supplementary stimulus.
+is the point - long rests defeat the supplementary stimulus.
 
 The app launched with one rest-target setting that fed both contexts.
 So a user who configured three minutes of rest (correct for working
-sets) was getting three minutes between BBB sets too — twice the
+sets) was getting three minutes between BBB sets too - twice the
 sensible value. The BBB rest hint on the prompt screen was literally
 wrong.
 
@@ -39,8 +39,8 @@ gets sensible defaults for both. An existing install gets the new BBB
 setting added the next time the app opens, without disrupting the
 working-set preference they already set.
 
-The BBB prompt screen's rest hint — the chip that shows how long to
-rest before starting the back-off work — now reads from the BBB
+The BBB prompt screen's rest hint - the chip that shows how long to
+rest before starting the back-off work - now reads from the BBB
 setting. The Today screen's BBB band hint does the same. Both were
 previously reading the working-set value; both are now pointing at
 the right number.
@@ -55,7 +55,7 @@ additions should be a fill-in-the-blank exercise.
 
 ## What's still queued
 
-- BBB itself isn't logged yet. The screen tracks intent only —
+- BBB itself isn't logged yet. The screen tracks intent only  - 
   "Mark BBB complete" routes to the receipt without writing the
   five set records. Logging BBB sets (so the receipt and history
   reflect them honestly) is a real feature item. Going on the

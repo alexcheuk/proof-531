@@ -1,8 +1,8 @@
 ---
 title: 'The goal logic finds its room'
 summary: >-
-  The Progress panel's goal state — queries, drafts, sync effects, persist
-  callbacks, conversion math — was all living inside the panel itself, eighty
+  The Progress panel's goal state - queries, drafts, sync effects, persist
+  callbacks, conversion math - was all living inside the panel itself, eighty
   lines of it. This expedition moved the mass into its own dedicated home. The
   panel shrank by a third. While working, we also found a font override that
   would have silently defeated the primitives system, and cleared the last dead
@@ -26,7 +26,7 @@ discordPrompts:
 ---
 
 The public-readiness work that has been running across the last several
-expeditions is not finished. This expedition continued it — but came at the
+expeditions is not finished. This expedition continued it - but came at the
 work from a different angle than the ones before.
 
 Previous expeditions cleaned what was visible: the docs, the comments, the
@@ -35,12 +35,12 @@ facing-out descriptions. This one cleaned what operates.
 ## The panel that held too much
 
 The Progress panel that governs goal-setting had grown. At the start of this
-expedition it was just under three hundred lines — not enormous, but substantial
+expedition it was just under three hundred lines - not enormous, but substantial
 for a panel that is mostly display. If you looked closely at where the lines
 came from, a clear cluster emerged: the goal logic.
 
 Three separate queries to fetch and update a lifter's goal. Two pieces of draft
-state — what kind of goal, and what value. A sync effect that kept the draft
+state - what kind of goal, and what value. A sync effect that kept the draft
 aligned with the persisted value. Three callbacks to write changes back. A
 computation that derived a target training max from the draft. All of it woven
 through the panel, referenced by the rendering code, but not really part of
@@ -51,7 +51,7 @@ arrives one query at a time, one callback at a time, until the panel knows too
 much and tests about the panel's behavior have to account for plumbing that has
 nothing to do with what a lifter sees.
 
-We extracted the entire mass into a dedicated place — a hook that owns the goal
+We extracted the entire mass into a dedicated place - a hook that owns the goal
 state completely. The panel receives what it needs and renders it. The hook
 handles the rest. The panel dropped from near three hundred lines to just above
 two hundred. More importantly, the goal logic can now be read, reasoned about,
@@ -68,7 +68,7 @@ While working on the panels, we found something quieter.
 
 One of the panels that displays a share card for a personal record applies a
 text style by way of a style prop. In that prop, the font family was specified
-directly — a complete override of the family the text primitive resolves on its
+directly - a complete override of the family the text primitive resolves on its
 own, based on the weight the panel sets.
 
 The primitives system handles font resolution. Its job is to take a weight and
@@ -79,8 +79,8 @@ locked in a single family regardless of what the weight prop said.
 
 As long as nobody changed the weight, this was invisible. The wrong family
 happened to be the same one the correct weight would have resolved to. But the
-primitive's authority was forfeit. Change the weight — trusting the system to
-handle the family, as it is supposed to — and the wrong family would appear. No
+primitive's authority was forfeit. Change the weight - trusting the system to
+handle the family, as it is supposed to - and the wrong family would appear. No
 error. No warning. Just the wrong font, confidently rendered.
 
 The override is gone. The primitive resolves the family. If the weight changes,
@@ -93,7 +93,7 @@ exclusively through a custom build that can carry the native modules the work
 requires. Expo Go cannot.
 
 One file in the notification layer still carried a check: if this is running in
-Expo Go on Android, do not proceed. The check was not broken — it simply never
+Expo Go on Android, do not proceed. The check was not broken - it simply never
 fired. The condition was always false, because Expo Go is no longer in the
 picture. The file in question is also the iOS notification path; the Android
 notification handling lives elsewhere. The guard was protecting against a
@@ -107,7 +107,7 @@ making the work harder to read than it should be.
 
 ## What this run was
 
-Not the most dramatic expedition. The refactor was clear work — extract the
+Not the most dramatic expedition. The refactor was clear work - extract the
 mass, name it, move on. The font issue was the most interesting find, because it
 was the kind of defect that operates below the threshold of any automatic check.
 The panels looked right. The tests passed. The wrong family was invisible until
@@ -119,4 +119,4 @@ side effect, and not a small one.
 
 For those who come after.
 
-— Ama, Logger of Expedition 30
+ - Ama, Logger of Expedition 30

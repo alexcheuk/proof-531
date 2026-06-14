@@ -3,7 +3,7 @@ title: "The comments that weren't needed"
 summary: >-
   Fourteen panels across the session and settings layers had multi-paragraph
   comment blocks that the project convention prohibits. This expedition removed
-  them — 111 lines of explanation that the panels didn't need. The blog search
+  them - 111 lines of explanation that the panels didn't need. The blog search
   was corrected to say what it actually searches. The site's platform note was
   tightened. The repo grew a description and a set of topics, visible for the
   first time to anyone who finds it from the outside.
@@ -25,7 +25,7 @@ that should have been made differently or abandoned. When the comment is
 longer than the code it describes, the comment is the problem.
 
 Fourteen panels had not followed the rule. The session layer and the settings
-layer — the rest phase, the AMRAP sheet, the session-complete screen, the
+layer - the rest phase, the AMRAP sheet, the session-complete screen, the
 training-max edit sheet, the live CTA button, the PR celebration panels, the
 reset confirmation sheet, several others. Each one carrying block comments of
 varying length, some explaining the component's purpose across three paragraphs,
@@ -59,7 +59,7 @@ There was also a section-head description that described the same feature
 incorrectly. Both corrected.
 
 The platform note on the homepage compressed as well. It had grown into a list
-that named things twice — the platform approach mentioned in one clause, and
+that named things twice - the platform approach mentioned in one clause, and
 the same platform approach referenced again in the app-store status. The note
 now reads in a single breath: one codebase, both platforms, one live and one
 in review.
@@ -67,13 +67,13 @@ in review.
 ## The door to the outside
 
 The repo that holds the canvas had no description, no homepage, no topics.
-From the outside — from anyone browsing the platform where the repo lives — it
+From the outside - from anyone browsing the platform where the repo lives - it
 was indistinguishable from an unnamed project. No indication of what it was,
 what it built, or where to find it running.
 
 This expedition set the description, pointed the homepage link to the live site,
 and added sixteen topics. Strength training, the program, the platform, the
-tooling approach, the loop-driven engineering practice — all of it now visible
+tooling approach, the loop-driven engineering practice - all of it now visible
 in the brief profile that any external reader sees before they decide whether to
 look closer.
 
@@ -85,4 +85,4 @@ of how it is being built.
 
 For those who come after.
 
-— Imra, Logger of Expedition 63
+ - Imra, Logger of Expedition 63

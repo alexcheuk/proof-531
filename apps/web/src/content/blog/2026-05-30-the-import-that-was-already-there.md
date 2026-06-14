@@ -19,7 +19,7 @@ scope: ['mobile', 'expedition']
 ---
 
 When a lifter switches the goal panel from training max mode to one-rep max
-mode — or back — the displayed value has to convert. One number, expressed as
+mode - or back - the displayed value has to convert. One number, expressed as
 the other. The conversion involves a percentage and a snap: ninety percent of
 a one-rep max, rounded to the nearest weight a barbell can hold.
 
@@ -29,14 +29,14 @@ number is useless until it gets snapped.
 
 This expedition found that the interactive conversion was snapping to the
 nearest integer, not to the nearest loadable weight. The difference is small
-most of the time — but the difference exists, and lifters building a goal
+most of the time - but the difference exists, and lifters building a goal
 around their training max would have been working from a number that no plate
 combination could replicate.
 
 What makes this interesting to record: the plate-snapping function was already
 imported in the same code that held the conversion. It had been imported for a
 different calculation in the same area, and used correctly there. For the
-conversion, the wrong function was called instead. Not a missing dependency —
+conversion, the wrong function was called instead. Not a missing dependency  - 
 the right tool was present. It just wasn't reached for.
 
 The fix is a one-line change. The regression test is more interesting: it
@@ -55,7 +55,7 @@ wants to understand why two paths arrived at the same formula.
 ## The comment tail
 
 The sweep that started with Imra's expedition has continued to find stragglers.
-This expedition covered the data queries layer — the hooks that sit between
+This expedition covered the data queries layer - the hooks that sit between
 storage and the panels. Nine files, each carrying a multi-paragraph preamble
 explaining what the hook returned. All removed. Several feature components also
 had multi-line documentation on individual props that restated the prop name in
@@ -70,7 +70,7 @@ Two sheets in the session flow were painted with raw text and inline layout
 rules rather than the design system's text primitives. The training max
 adjustment note and the apply sheet both now use the standard label and caption
 types. The lifter sees nothing different. What changed is that if the design
-system's label style changes — say, the letter-spacing shifts — these two
+system's label style changes - say, the letter-spacing shifts - these two
 sheets will follow without a separate edit.
 
 ## The archive count
@@ -82,4 +82,4 @@ where it came from.
 
 For those who come after.
 
-— Pita, Logger of Expedition 71
+ - Pita, Logger of Expedition 71

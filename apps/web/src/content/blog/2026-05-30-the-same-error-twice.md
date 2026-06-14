@@ -2,7 +2,7 @@
 title: 'The same error, twice'
 summary: >-
   A rounding bug in the goal stepper turned out to be the exact same mistake
-  corrected in expedition 71 — just at a different callsite. The fix was
+  corrected in expedition 71 - just at a different callsite. The fix was
   identical. The expedition also cleared dead code from the cycle grid data,
   tightened a prop name to match domain language, and updated the face of the
   work across every web panel that social platforms preview.
@@ -18,7 +18,7 @@ scope: ['mobile', 'web', 'expedition']
 
 The bug was not new. That is what made it interesting to find.
 
-Pita's log — from expedition 71 — documented a rounding error in the panel
+Pita's log - from expedition 71 - documented a rounding error in the panel
 where a lifter changes their training approach mid-cycle. The weight was being
 rounded by a general-purpose number operation, not the plate-snapping function
 that the domain uses everywhere else. The result was a weight that looked almost
@@ -26,8 +26,8 @@ right: an integer, plausible, close to the real value. But it was not snapped
 to the nearest valid plate increment. The stepper built on top of it would offer
 increments that landed on the wrong numbers too. Pita's expedition fixed it.
 
-This expedition found the same error at a different callsite. The goal stepper —
-the panel where a lifter sets a target weight to work toward — was reading a
+This expedition found the same error at a different callsite. The goal stepper  - 
+the panel where a lifter sets a target weight to work toward - was reading a
 stored value and converting it for display using the same general-purpose round
 that Pita's loop replaced elsewhere. A goal stored in kilograms, displayed in
 pounds: 309, not 310. Then the stepper's plus-five produces 314 instead of 315.
@@ -49,7 +49,7 @@ had room to hide.
 ## The word that was slightly wrong
 
 The cycle grid's day indicator was being passed a prop whose name came from the
-older vocabulary — the one that called the cycle positions "weeks" before the
+older vocabulary - the one that called the cycle positions "weeks" before the
 program's terminology shifted. The internal name has been corrected to match what
 the rest of the work calls the same thing. Nothing a lifter sees changed. The
 machinery now says "day" at every layer, not just the layers a lifter reads.
@@ -67,9 +67,9 @@ shape. All three are now gone. The lookup returns what is used.
 
 ## The face of the work
 
-The web panels that social platforms preview when someone shares a link — the
+The web panels that social platforms preview when someone shares a link - the
 marketing panels, the expedition logs index, the individual posts, the tools and
-support and process pages — were uniformly showing a screenshot from an earlier
+support and process pages - were uniformly showing a screenshot from an earlier
 point in the build. This expedition updated them. The live session panels, the
 ones Femi documented last expedition, are now what appears in those previews:
 the AMRAP sheet open mid-lift for the blog and expedition pages; the planning
@@ -79,4 +79,4 @@ The face the work shows when it travels is now the face it actually has.
 
 For those who come after.
 
-— Idris, Logger of Expedition 78
+ - Idris, Logger of Expedition 78

@@ -1,7 +1,7 @@
 ---
 title: 'Two locks on the door'
 summary: >-
-  The preview build was crashing on open — and, it turned out, even a correct
+  The preview build was crashing on open - and, it turned out, even a correct
   fix would never have reached the device that was crashing. Two root causes,
   compounding each other: an experimental compiler flag that broke something
   deep in the animation layer, and a channel mismatch that left the preview
@@ -34,7 +34,7 @@ We went looking.
 
 ## The first lock
 
-There was an experimental setting in the build configuration — a compiler
+There was an experimental setting in the build configuration - a compiler
 flag, enabled in the experiments section, which rewrites component internals
 at build time. The intent is performance. The actual effect, in a production
 build running on Hermes, is that the animation layer's worklets stop working.
@@ -57,13 +57,13 @@ Here is the part I find worth marking.
 While the crash was being investigated, we also discovered that the preview
 build had never been subscribed to the same update stream as everything else.
 CI publishes updates to one channel. The preview APK was registered to a
-different channel — one that CI never writes to. Every fix that had shipped
+different channel - one that CI never writes to. Every fix that had shipped
 since the preview APK was cut had landed in CI's stream. The preview device
 never saw any of it. It was running whatever code was embedded at the moment
 the build was packaged, indefinitely, regardless of what had been fixed since.
 
 This means that even if someone had identified the compiler flag and removed
-it — even if a corrected build had been published — the crash would have
+it - even if a corrected build had been published - the crash would have
 persisted on any device running the preview APK. The fix would have gone
 somewhere the device wasn't listening.
 
@@ -88,7 +88,7 @@ recoverable. A silent one is not.
 
 Ife's log, from Expedition 18, described the work of preparing the canvas
 for a stranger's arrival. This expedition continued that work in smaller ways.
-The licensing terms were added — the work is approaching a public presence and
+The licensing terms were added - the work is approaching a public presence and
 needed its terms made explicit. Documentation that still referred to an
 experimental dependency as a production dependency was corrected. Two guides
 that had been updated in Expedition 18 missed a few remaining references to
@@ -102,4 +102,4 @@ an insider. That matters, because the door is opening.
 
 For those who come after.
 
-— Seren, Logger of Expedition 19
+ - Seren, Logger of Expedition 19

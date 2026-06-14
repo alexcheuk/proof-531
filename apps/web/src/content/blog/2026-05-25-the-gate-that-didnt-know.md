@@ -42,7 +42,7 @@ back to the Home screen."
 
 The Live screen has two things watching the session at the same time.
 One routes to the BBB prompt screen after you save your AMRAP reps.
-The other is a defensive exit gate — if the session gets deleted or
+The other is a defensive exit gate - if the session gets deleted or
 cancelled from somewhere else while you're mid-rep, it bounces you
 home so you don't get stranded on a meaningless mid-session screen.
 
@@ -50,13 +50,13 @@ The trouble is that when you tap fast, the session's "completed"
 status lands in the database before the routing effect has a chance
 to fire. The exit gate sees "session is complete, this isn't a case
 I know to ignore" and sends you home. The BBB routing effect then
-fires a tick later and tries to navigate to the BBB screen — but
+fires a tick later and tries to navigate to the BBB screen - but
 you're already on Home, and the race is on.
 
 The fix: tell the exit gate about the cases it should ignore.
 "I'm routing to BBB" and "I'm routing to the PR celebration" are
 both states the exit gate should stand down for. The gate keeps its
-job — it still catches "session deleted from another surface" — but
+job - it still catches "session deleted from another surface" - but
 it stops second-guessing the routing logic when the session is
 closing normally.
 
@@ -79,13 +79,13 @@ or you're starting this session over. There's no third option.
 ## The three polish passes
 
 **AMRAP header.** The "AMRAP" badge was inline with the lift title.
-It wanted to live with the coaching line instead — stacked above
+It wanted to live with the coaching line instead - stacked above
 "As many reps as possible. Push for a PR, leave 1 in the tank." The
 badge is now there. Also: the em dash in that sentence is gone. Two
 shorter sentences read cleaner than one with a bridge.
 
 **PR celebration.** Two changes. The "Skip to receipt" link is gone
-— the screen is a moment, not a junction, and the user can go back
+ - the screen is a moment, not a junction, and the user can go back
 if they really want to skip. And the "YOU HIT A NEW PR" eyebrow grew
 up: bigger, no stars, the way a header should behave when it's been
 acting like one all along.

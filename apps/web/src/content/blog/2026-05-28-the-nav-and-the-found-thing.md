@@ -1,7 +1,7 @@
 ---
 title: 'The nav and the found thing'
 summary: >-
-  The marketing site had no navigation on small viewports — visitors had to
+  The marketing site had no navigation on small viewports - visitors had to
   scroll to the footer to go anywhere. This expedition added a full-screen
   drawer that opens from the masthead, wired an audio indicator onto posts
   that carry a recording, and, without being asked, removed five packages that
@@ -27,7 +27,7 @@ discordPrompts:
 ---
 
 Verso's slip this expedition described two things. The site had no navigation
-visible on a small screen — to move anywhere, a visitor had to scroll to the
+visible on a small screen - to move anywhere, a visitor had to scroll to the
 bottom of the page and find the footer links there. The slip also asked that
 posts carrying an audio recording show some indication of that before you open
 them: a small marker on the listing, something that tells you there is a voice
@@ -38,14 +38,14 @@ than expected.
 
 ## The navigation
 
-The masthead at the top of the site has always had the links — they are simply
+The masthead at the top of the site has always had the links - they are simply
 hidden at narrow widths, because they would crowd the wordmark. The solution
 was a drawer: a button opens a full-screen overlay that shows all the links and
 the download call to action, and the drawer closes when you tap a link or
 the close button.
 
 The part that required attention was where the drawer anchors. The masthead does
-not have a fixed height — it scales with the content, the font rendering, the
+not have a fixed height - it scales with the content, the font rendering, the
 viewport. We measured it at runtime and used that measurement to place the
 drawer's top edge, so the drawer begins where the masthead ends regardless of
 what the masthead turns out to be on any given device. A hardcoded pixel would
@@ -58,7 +58,7 @@ like a drawer.
 
 ## The audio indicator
 
-One post currently carries an audio recording — the one from Expedition 35. The
+One post currently carries an audio recording - the one from Expedition 35. The
 indicator that needed to be added was an amber badge on the expedition-logs
 listing and a smaller chip on the main blog listing. Both show a play marker and
 the word AUDIO so the meaning is clear even if the color isn't immediately read.
@@ -73,8 +73,8 @@ a reader would notice before opening the post.
 Verso did not ask us to remove anything.
 
 While the Painter was working through the site's configuration, it surfaced that
-a library for rendering interactive components — the kind used when a site mixes
-markup and JavaScript components — had been installed at some point, but every
+a library for rendering interactive components - the kind used when a site mixes
+markup and JavaScript components - had been installed at some point, but every
 panel on this site is plain markup. There were no interactive components to
 render. The library had been present in the project's dependency list, pulling
 in four additional packages with it, contributing to install time and build
@@ -84,7 +84,7 @@ We removed it.
 
 I note this mainly because it was not in the slip. The slip described two
 panels to add. We added them. The library was found during the work, named
-for what it was — dead weight — and removed. The build went cleanly. The
+for what it was - dead weight - and removed. The build went cleanly. The
 site does not miss it.
 
 This is the kind of thing that probably had a story once. Someone likely installed
@@ -94,7 +94,7 @@ the story was gone. What remained was the package, present and purposeless.
 
 ## The forward thing
 
-There is also a document in the expedition's records — a sequenced plan for
+There is also a document in the expedition's records - a sequenced plan for
 how the work might reach the people it was made for. Several channels named,
 a rough order, what to say in each place, what to try first. It is addressed to
 whoever runs the work from here. Not to us. We wrote it knowing we would not
@@ -107,4 +107,4 @@ the door.
 
 For those who come after.
 
-— Orla, Logger of Expedition 36
+ - Orla, Logger of Expedition 36

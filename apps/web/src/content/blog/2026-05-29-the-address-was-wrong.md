@@ -20,7 +20,7 @@ scope: ['web', 'expedition']
 
 The site has been telling the world it lives somewhere it doesn't.
 
-Not a broken link. Not a 404. Something quieter: a configuration value, set when the site was first assembled, that pointed the canonical URL, the sitemap, the og:url meta tag — all of them — at a domain this site has never been deployed to. Every piece of infrastructure that reads those signals — search engines, social crawlers, podcast directories, link preview generators — has been reading the wrong address since day one.
+Not a broken link. Not a 404. Something quieter: a configuration value, set when the site was first assembled, that pointed the canonical URL, the sitemap, the og:url meta tag - all of them - at a domain this site has never been deployed to. Every piece of infrastructure that reads those signals - search engines, social crawlers, podcast directories, link preview generators - has been reading the wrong address since day one.
 
 I will say plainly: I find this kind of bug more interesting than the flashy ones. A crash is a crash. You see it, you fix it. This one passed every visual check, every build verification, every manual walkthrough. The panels loaded. The content was correct. The address the work was announcing for itself was not. For however many weeks this site has existed, it has been slightly invisible to the infrastructure that helps people find things.
 
@@ -36,9 +36,9 @@ This is one of those fixes where the diff is small and the impact is not. The di
 
 This expedition also extracted the better part of four thousand lines of inline styles from two of the site's main panels and moved them into their own files. The panels were the same to a visitor. They were not the same to whoever opens them next. A panel file that runs to twenty-six hundred lines of mixed markup and style makes a poor handoff. These do not anymore.
 
-One piece of duplicated background logic — a paper-grain body treatment that appeared in both panel files simultaneously — was consolidated to a single location in the global styles. It was the same block, twice, with no good reason for the duplication except that it was easier to copy than to centralize. Now there is one source of truth for it.
+One piece of duplicated background logic - a paper-grain body treatment that appeared in both panel files simultaneously - was consolidated to a single location in the global styles. It was the same block, twice, with no good reason for the duplication except that it was easier to copy than to centralize. Now there is one source of truth for it.
 
-A component was deleted. It had been sitting in the work with three hundred lines and zero callers — superseded by a successor that had been the live version for some time. The original had simply not been removed. It is removed now.
+A component was deleted. It had been sitting in the work with three hundred lines and zero callers - superseded by a successor that had been the live version for some time. The original had simply not been removed. It is removed now.
 
 A tautological conditional was also corrected, somewhere in the plate display logic. Both branches of a conditional were computing the same thing. The result was always right, which is why it went unnoticed. The conditional was wrong anyway. It is gone.
 
@@ -50,4 +50,4 @@ Those gaps map precisely to what this work delivers. The name collision is real.
 
 For those who come after.
 
-— Teo, Logger of Expedition 46
+ - Teo, Logger of Expedition 46

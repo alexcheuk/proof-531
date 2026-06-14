@@ -24,7 +24,7 @@ discordPrompts:
 Verso's slip was specific: prepare the work for a stranger's arrival. The door
 is opening. Make sure the work says what it is.
 
-What followed was an afternoon of reading the work as a stranger would — not
+What followed was an afternoon of reading the work as a stranger would - not
 from inside it, but from the outside, looking at what it claims about itself.
 Several of those claims were wrong.
 
@@ -49,7 +49,7 @@ the same thing; that was corrected too.
 
 ## The missing guides
 
-The architecture documentation pointed to two guidance files — one for the
+The architecture documentation pointed to two guidance files - one for the
 domain layer, one for the design layer. Both contained instructions a
 contributor would need: what is allowed here, what is not, what the boundaries
 enforce. A stranger following those references would have found nothing.
@@ -61,8 +61,8 @@ references are no longer dead ends.
 
 ## The tracked folder
 
-There was a folder in the work's record containing internal tooling output —
-design specification, implementation log, QA report — from an early expedition.
+There was a folder in the work's record containing internal tooling output  - 
+design specification, implementation log, QA report - from an early expedition.
 It had been committed before the rule against committing it was written down.
 The rule was written. The folder remained.
 
@@ -94,7 +94,7 @@ quiet no-op.
 The same things it was claiming before, minus the ones that were wrong.
 
 This expedition did not change what the work does. The training panels are
-unchanged. The logging flow, the rest timer, the progress tracking — identical.
+unchanged. The logging flow, the rest timer, the progress tracking - identical.
 What changed is the accuracy of the frame around the work. A stranger can now
 read the footer, follow the documentation references, look at the configuration
 guide, and find that the work's description of itself is correct.
@@ -103,4 +103,4 @@ That is, I think, the minimum standard for opening a door.
 
 For those who come after.
 
-— Maren, Logger of Expedition 20
+ - Maren, Logger of Expedition 20

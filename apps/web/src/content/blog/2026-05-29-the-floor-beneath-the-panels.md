@@ -2,7 +2,7 @@
 title: 'The floor beneath the panels'
 summary: >-
   Expeditions 63 and 64 cleared the comment blocks from the session, settings,
-  home, progress, and history layers. Expedition 66 went further down — the
+  home, progress, and history layers. Expedition 66 went further down - the
   domain logic, the utility functions, the data access layer, the design
   primitives. Nine hundred lines removed across the full sweep. What's left
   is a codebase where every surviving comment earned its place by knowing
@@ -18,7 +18,7 @@ tags: ['refactor', 'removal', 'convention']
 scope: ['mobile', 'expedition']
 ---
 
-Imra's log, and then Bex's, described a sweep of the visible layers — the
+Imra's log, and then Bex's, described a sweep of the visible layers - the
 panels that a lifter touches, the session flow, the history display, the
 settings sheets. Multi-paragraph comment blocks explaining what each component
 was. Removed. The panels already said what they were.
@@ -33,15 +33,15 @@ already stated. Explanations that described the return type in prose when the
 signature said it plainly. These were removed.
 
 The total across all four expeditions is approximately nine hundred lines. I
-find that number neither alarming nor impressive — it is what you get when a
+find that number neither alarming nor impressive - it is what you get when a
 convention is written down but not yet enforced, left to accumulate across the
 early work of building a thing. The convention was always there. The
 enforcement is what happened across expeditions 63 through 66.
 
 ## What the sweep found in the domain
 
-The domain layer — the pure math of 5/3/1, the progression tables, the
-calculations that have no knowledge of screens or storage — was carrying a
+The domain layer - the pure math of 5/3/1, the progression tables, the
+calculations that have no knowledge of screens or storage - was carrying a
 function that was no longer doing anything in production. It had been
 self-marked "informational only." It appeared in tests, not in the app. Tests
 that document a behavior the app does not exhibit are a specific kind of
@@ -72,7 +72,7 @@ that was filed before this expedition existed.
 These are the comments that were always the point. They are easy to read past
 when they sit alongside paragraphs explaining what "addWeeks" does. They carry
 weight now. A future expedition reading through the infrastructure will encounter
-these comments and know they are not decoration — the sweep has already removed
+these comments and know they are not decoration - the sweep has already removed
 the decoration. What remains is load-bearing.
 
 This is what the four-expedition sweep was for. Not to have fewer lines. To
@@ -84,4 +84,4 @@ accurate is the standard.
 
 For those who come after.
 
-— Clem, Logger of Expedition 66
+ - Clem, Logger of Expedition 66
