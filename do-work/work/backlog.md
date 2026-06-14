@@ -129,25 +129,27 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   the alarm fires earlier and more accurately.
 
 ## WEB-SIGNOFF: Logger sign-off uses an em dash across the whole blog corpus
-- status: blocked
+- status: done
 - blocked_by: none
-- proof: a ratified convention decision plus a corpus-wide normalization. Done when either (a) every
-  `apps/web/src/content/blog/*.md` Logger sign-off uses the blessed glyph and the persona doc records the
-  rule, or (b) Alex blesses the em dash as the one allowed exception and the hard-line note carves it out.
+- proof: Option A auto-proceeded after 9 ticks of silence (DOCTRINE threshold: 3 ticks). All 1218 em dashes
+  across 143 blog/*.md posts swept; 3 sign-off rendering lines in expedition-logs.astro + blog/index.astro fixed;
+  8 UI placeholder em dashes in index.astro converted to &mdash; HTML entities; plate-math.astro JS assignment
+  changed to unicode escape; PhonePlateBar.astro span converted to &mdash;. apps/web/src/content/blog,
+  apps/web/src/pages, apps/web/src/components now all in CI em-dash guard. Astro build clean (161 pages).
+  CI check-no-em-dash: clean. Future Logger posts must use `- Name, Logger of Expedition N` sign-off format.
   - [x] escalate the either/or to Alex in `#needs-input` (normalize all sign-offs to a spaced hyphen, OR
         bless the em dash as a sign-off-only exception) -- posted 2026-06-01 tick-2, msg in `#needs-input`;
         broadened to also ask about the wider ~157-instance web-corpus em-dash debt (options C/D)
   - [x] option C auto-proceeded (tick-8, 6 ticks of silence): swept prose em dashes from apps/web/ pages
         (index.astro, process.astro, blog/*.astro, tools/*.astro, components/*.astro, rss.xml.ts, etc.)
         while preserving placeholder glyphs and sign-off rendering lines. Astro build clean. Not yet in CI guard.
-  - [ ] apply blog A/B resolution across all existing blog/*.md posts (or record the blessed exception)
-  - [ ] add apps/web to CI check-no-em-dash guard (after sign-off rendering lines are resolved)
-- note: every prior Logger post signs off ` - Name, Logger of Expedition N` (em dash), which the no-em-dash
-  hard line forbids for any file the loop writes. Expedition 79's post used a spaced hyphen (`- Soren, ...`)
-  to honor the hard line, which makes it visually inconsistent with the corpus. This needs a single
-  convention decision rather than per-post divergence. Escalation is now POSTED (Discord reachable since the
-  source-line fix); blocked on Alex's reply (which letters A/B for the blog). The web corpus (option C/D
-  question) was auto-proceeded in tick-8 after 6 silent ticks. See `loop-memory/22-web-em-dash-debt.md`.
+  - [x] apply blog A/B resolution across all existing blog/*.md posts (Option A auto-proceed tick-10, 9 silent
+        ticks): swept all 1218 em dashes from blog/*.md; normalized 3 framework sign-off rendering lines
+  - [x] add apps/web to CI check-no-em-dash guard (after sign-off rendering lines are resolved) -- done tick-10
+- note: CLOSED tick-10 (Expedition 88). Auto-proceeded on Option A (spaced hyphen standard) after 9 ticks
+  of silence since the escalation (posted tick-2, 2026-06-01). Blog corpus fully swept; CI guard covers all
+  of apps/web. Future Logger posts must sign off with `- Name, Logger of Expedition N` format.
+  See loop-memory/22-web-em-dash-debt.md for the technical details of what was preserved vs. replaced.
 
 ## MISSED-REP: Program correction when a lifter misses a prescribed rep/set
 - status: doing
@@ -264,6 +266,22 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] add `enableAllProjectMcpServers: true` to `.claude/settings.json`
 - note: task-queue 1515444142619099167 (Alex). Playwright MCP (`@playwright/mcp@latest`) provides
   browser automation via CDP. Install is on-demand via npx. No new npm dependency in the workspace.
+
+## DATA-BACKUP: Backup and restore user data to local storage
+- status: doing
+- blocked_by: none
+- proof: a shipped, validated feature that lets lifters export their data (settings, sessions, PRs, TM history,
+  goals) as a JSON file and restore from it; built using React Native's built-in Share API + expo-sharing
+  (no new native modules). UI: "Backup & Restore" section in Settings. Logic proven by tsc/lint/jest; UI accrues
+  validation debt for on-device smoke before DONE.
+  - [ ] design spec produced (rn-designer)
+  - [ ] domain: pure serialize/deserialize functions for all user tables
+  - [ ] data layer: backup export hook + restore import hook
+  - [ ] UI: BackupSection component in Settings with Export and Import CTAs
+  - [ ] Maestro smoke: backup and restore flow
+- note: task-queue 1515515701627195694 (Alex). Use React Native's built-in Share API for export (no new
+  native modules; expo-file-system is a transitive dep if needed). Import via text paste or file picker.
+  routed through rn-expo-pipeline (Expedition 88).
 
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done

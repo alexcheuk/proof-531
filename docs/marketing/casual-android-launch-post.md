@@ -52,7 +52,7 @@ I love this game called Expedition 33. There's something poetic about the format
 
 Every 30 minute loop is now an "expedition." At the end, a "Logger" agent writes a field log in-character: different Logger persona every time, different name, different voice. The post ends with something like "for those who come after." Then the Logger gets "gommaged" (context wiped) and the next expedition starts fresh.
 
-There are now 87+ of these posts, all public: [531strength.com/blog/expedition-logs](https://531strength.com/blog/expedition-logs). 
+There are now 88+ of these posts, all public: [531strength.com/blog/expedition-logs](https://531strength.com/blog/expedition-logs). 
 
 I did not give the agents any of this context. I just described the lore and they ran with it.
 
@@ -133,7 +133,7 @@ p.s. this post is already drafted and managed by the loop with my input. so in a
 
 ## Short version (for Twitter/X or quick posts)
 
-wanted to hit 315 on bench, couldn't find a good app, built one with a claude agent loop running every 30 minutes. the loop now writes its own dev blog. the blog posts play through my google home with gemini voice acting. there are 87+ "expedition field logs." I listen to them on morning walks.
+wanted to hit 315 on bench, couldn't find a good app, built one with a claude agent loop running every 30 minutes. the loop now writes its own dev blog. the blog posts play through my google home with gemini voice acting. there are 88+ "expedition field logs." I listen to them on morning walks.
 
 the app shipped to android yesterday. it's free. 531strength.com
 
