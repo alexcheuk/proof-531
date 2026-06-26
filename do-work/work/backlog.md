@@ -126,11 +126,10 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] skip link retained for users who want to skip BBB entirely
   - [x] 8 tests green (1204/1204 total); tsc clean; biome clean
   - [ ] Maestro smoke: BBB set-list interaction (complete one-at-a-time, mark-all-remaining, skip)
-- note: task-queue 1520180996144627802 (Alex). Implemented tick-12 (Expedition 90). The auditor noted
-  a process deviation (should have gone through rn-expo-pipeline per DOCTRINE). The code is correct and
-  spec-clear (SetRow already existed; data model unchanged); the deviation is noted and this item must
-  clear its Maestro smoke before flipping to done. Remaining capacity issues (rn-expo-pipeline routing)
-  will be applied on future feat-scale items.
+- note: task-queue 1520180996144627802 (Alex). Implemented tick-12 (Expedition 90). Tick-13 (Expedition 91):
+  TopSetBlock weight preview (weight + plate visualization) restored after regression - was accidentally
+  removed in the tick-12 redesign. Alex reported missing weight preview (task 1520187127348859113).
+  Still owes Maestro smoke before DONE.
 
 ## REST-TIMER-ACCURACY: Rest timer alarm fires 1-2s late (task 1515166601270530048)
 - status: doing

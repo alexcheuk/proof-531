@@ -16,6 +16,23 @@
 
 ## Entries
 
+## 2026-06-26 tick-13 (Exp 91): BBB weight preview regression fix + Q-QUALITY JSDoc sweep + iteration count 91+
+- shipped (BUG, task 1520187127348859113): Restored TopSetBlock weight preview on BbbPromptScreen.
+  Tick-12 redesign dropped the TopSetBlock (big weight + plate visualization) that was there before.
+  Restored with full plate decomposition (perSide), plateVariant="full", eyebrow "5 sets of 10 · 50% TM".
+  Test updated to assert bbb-plan-topset present and weight appears >=2 times. 1204/1204 tests.
+- shipped (Q-QUALITY, auditor PASS): Removed "what" JSDoc blocks from 5 files:
+  JustCompletedAnimator.tsx (16-line -> 4 inline WHY lines), OneRmEntry.tsx + PickLifts.tsx
+  (blocks sitting between imports), InputFrame.tsx (4-line what above function), useLogSheetState.ts
+  (leading "what" sentence, all WHY/invariant content kept).
+- shipped (LAUNCH): Iteration count 90+ -> 91+ across README + 9 marketing docs. Launch strategy
+  updated to Expedition 91. Reddit drafts last_reviewed updated to 2026-06-26 (Expedition 91).
+- proof: pnpm -w run ci green (1204/1204 tests, 188 suites; typecheck clean; lint clean;
+  check-no-em-dash clean). do-work-auditor PASS on Q-QUALITY. Pushed.
+- deferred / escalated: BBB-REDESIGN owes Maestro smoke (validation debt updated). VERSION-1.0.1
+  still awaits Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead. All prior Maestro
+  smokes (DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY) still outstanding.
+
 ## 2026-06-26 tick-12 (Exp 90): BBB per-set redesign + Q-QUALITY JSDoc sweep + iteration count 90+
 - shipped (FEAT, task 1520180996144627802): BbbPromptScreen redesigned - 5 SetRows with done/next
   state, "Complete set" incremental button (one BBB log per tap), "MARK x/5 COMPLETE" bulk button

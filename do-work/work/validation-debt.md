@@ -24,6 +24,9 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-13 (Expedition 91) BBB TopSetBlock restore: BbbPromptScreen now shows TopSetBlock (big weight +
+  plate visualization) above the 5 SetRows, matching the pre-redesign experience. 1204/1204 tests.
+  Owes Maestro smoke as part of the BBB-REDESIGN flow before it flips to `done`.
 - tick-12 (Expedition 90) BBB per-set redesign: BbbPromptScreen now shows 5 individual SetRows with
   done/next state, "Complete set" incremental button, and "MARK x/5 COMPLETE" bulk button. 8 jest tests
   all green (1204/1204 total). Owes Maestro smoke for the BBB set-list interaction flow (complete
