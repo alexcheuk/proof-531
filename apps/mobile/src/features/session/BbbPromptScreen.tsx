@@ -17,12 +17,14 @@ import { Row } from '@/design/primitives/Row';
 import { SecondaryLink } from '@/design/primitives/SecondaryLink';
 import { Text } from '@/design/primitives/Text';
 import { TitleBlock } from '@/design/primitives/TitleBlock';
+import { TopSetBlock } from '@/design/primitives/TopSetBlock';
 import { useTheme } from '@/design/theme';
 import { BBB_PCT_OF_TM, BBB_REPS, BBB_SETS, bbbWeightFromTm } from '@/domain/bbb';
 import { liftDisplayName } from '@/domain/labels';
+import { decompose, defaultPlateSet } from '@/domain/plates';
 import { formatMmSs } from '@/domain/time';
-import type { Lift, Unit } from '@/domain/types';
-import { convert } from '@/domain/units';
+import type { Lift, PlateSet, Unit } from '@/domain/types';
+import { convert, displayUnit as displayUnitGlyph } from '@/domain/units';
 import { goTo } from '@/lib/routes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -66,9 +68,12 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
   const lift = session.lift as Lift;
   const storageUnit: Unit = session.storageUnitSnapshot ?? 'lbs';
   const renderUnit: Unit = session.displayUnitSnapshot ?? storageUnit;
+  const plateSet: PlateSet = settings.plateSet ?? defaultPlateSet(storageUnit);
+  const unitGlyph = displayUnitGlyph(renderUnit);
 
   const bbbWeightStorage = bbbWeightFromTm(session.trainingMaxSnapshot, storageUnit);
   const bbbWeightDisplay = convert(bbbWeightStorage, storageUnit, renderUnit);
+  const perSide = decompose(bbbWeightStorage, plateSet).perSide;
   const restHint = formatMmSs(settings.bbbRestTargetSeconds);
 
   const completedCount = (setLogsQuery.data ?? []).filter((l) => l.kind === 'bbb').length;
@@ -140,6 +145,22 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         <TitleBlock eyebrow={`${liftDisplayName(lift)} · supplementary`} title="Boring But Big." />
+
+        <Divider />
+
+        <View style={{ paddingHorizontal: spacing.xl, paddingTop: spacing.lg }}>
+          <TopSetBlock
+            eyebrow={`${BBB_SETS} sets of ${BBB_REPS} · ${BBB_PCT_OF_TM * 100}% TM`}
+            weight={bbbWeightDisplay}
+            unitGlyph={unitGlyph}
+            reps={BBB_REPS}
+            amrap={false}
+            perSide={perSide}
+            plateVariant="full"
+            bordered={false}
+            testID="bbb-plan-topset"
+          />
+        </View>
 
         <Divider />
 

@@ -127,12 +127,14 @@ describe('BbbPromptScreen', () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     expect(screen.getByText('Boring But Big.')).toBeTruthy();
     expect(screen.getByText(/Squat · supplementary/)).toBeTruthy();
+    // TopSetBlock (weight preview) restored at the top of the screen.
+    expect(screen.getByTestId('bbb-plan-topset')).toBeTruthy();
     // 5 individual set rows each showing 150 lb (TM 300 × 0.5).
     for (let i = 0; i < 5; i += 1) {
       expect(screen.getByTestId(`bbb-set-row-${i}`)).toBeTruthy();
     }
-    // Weight appears in each row; getByText finds at least one.
-    expect(screen.getAllByText('150').length).toBeGreaterThanOrEqual(1);
+    // Weight appears in both the TopSetBlock and set rows.
+    expect(screen.getAllByText('150').length).toBeGreaterThanOrEqual(2);
   });
 
   it('shows "MARK 5/5 COMPLETE" and "Complete set" when no sets are done', () => {
