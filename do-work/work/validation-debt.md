@@ -24,6 +24,10 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-12 (Expedition 90) BBB per-set redesign: BbbPromptScreen now shows 5 individual SetRows with
+  done/next state, "Complete set" incremental button, and "MARK x/5 COMPLETE" bulk button. 8 jest tests
+  all green (1204/1204 total). Owes Maestro smoke for the BBB set-list interaction flow (complete
+  one-at-a-time, mark-all-remaining, skip) before BBB-REDESIGN flips to `done`.
 - tick-11 (Expedition 89) DATA-BACKUP restore scroll fix: PasteField.maxLines={14} caps the TextInput
   height so CTA stays visible after large JSON paste. No jest test added (pure style change). Must be
   validated as part of the DATA-BACKUP Maestro smoke (share + paste + scroll to CTA flow).

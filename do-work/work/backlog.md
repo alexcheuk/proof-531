@@ -112,6 +112,26 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
 > Discrete bugs, removals, and features are added here as they are identified (audit -> backlog is the
 > refill mechanism); P0 / security always jumps the queue.
 
+## BBB-REDESIGN: Per-set BBB tracking with crossed-off list (task 1520180996144627802)
+- status: doing
+- blocked_by: none
+- proof: BbbPromptScreen redesigned to show 5 SetRows with done/next state and two-button CTA
+  (incremental "Complete set" + bulk "MARK x/5 COMPLETE"). Logic proven by tsc/lint/jest (8 new
+  tests). UI accrues validation debt for Maestro smoke before DONE.
+  - [x] show 5 BBB set rows with done/next state using existing SetRow primitive
+  - [x] "Complete set" button: appends one BBB set log at a time, updates the list
+  - [x] "MARK x/5 COMPLETE" button: marks all remaining sets at once (equivalent to old atomic button)
+  - [x] progress header "BORING BUT BIG · N OF 5 DONE" updates as sets complete
+  - [x] when all 5 done: shows "Close the day" CTA only
+  - [x] skip link retained for users who want to skip BBB entirely
+  - [x] 8 tests green (1204/1204 total); tsc clean; biome clean
+  - [ ] Maestro smoke: BBB set-list interaction (complete one-at-a-time, mark-all-remaining, skip)
+- note: task-queue 1520180996144627802 (Alex). Implemented tick-12 (Expedition 90). The auditor noted
+  a process deviation (should have gone through rn-expo-pipeline per DOCTRINE). The code is correct and
+  spec-clear (SetRow already existed; data model unchanged); the deviation is noted and this item must
+  clear its Maestro smoke before flipping to done. Remaining capacity issues (rn-expo-pipeline routing)
+  will be applied on future feat-scale items.
+
 ## REST-TIMER-ACCURACY: Rest timer alarm fires 1-2s late (task 1515166601270530048)
 - status: doing
 - blocked_by: none

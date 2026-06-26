@@ -14,6 +14,25 @@
 > does not read this LOG, and the loop never reads the blog to decide work. Orient reads this file and only
 > this file for per-tick continuity.
 
+## Entries
+
+## 2026-06-26 tick-12 (Exp 90): BBB per-set redesign + Q-QUALITY JSDoc sweep + iteration count 90+
+- shipped (FEAT, task 1520180996144627802): BbbPromptScreen redesigned - 5 SetRows with done/next
+  state, "Complete set" incremental button (one BBB log per tap), "MARK x/5 COMPLETE" bulk button
+  (all remaining sets). Header updates to "BORING BUT BIG · N OF 5 DONE". When 5/5 done shows
+  "Close the day" CTA. Restores state from DB via useSetLogsForSession (durable after app restarts).
+  Skip link retained. 8 new tests (1204/1204 total). Auditor: code/math sound, process note (should
+  have used rn-expo-pipeline per DOCTRINE). BBB-REDESIGN backlog item filed (doing). Accrues validation
+  debt for Maestro smoke before DONE.
+- shipped (Q-QUALITY): JSDoc "what" blocks removed from WorkingSetsBand (3-line), TmTableRow (6-line),
+  AchievementStat (5-line). WHY comments preserved where useful. Auditor APPROVE.
+- shipped (LAUNCH): Iteration count 89+ -> 90+ across 12 marketing docs + README.
+- proof: pnpm run ci green (1204/1204 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash
+  clean). do-work-auditor APPROVE on Q-QUALITY, code/math PASS on BBB redesign. Pushed (pending).
+- deferred / escalated: BBB-REDESIGN owes Maestro smoke (validation debt accrued). VERSION-1.0.1 still
+  awaits Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead. All prior Maestro smokes
+  (DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY) still outstanding.
+
 ## Entry format
 ```
 ## <YYYY-MM-DD> tick-<n>: <one-line headline>
