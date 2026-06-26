@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * Shared state container for bottom-sheet rep loggers (AMRAP, TM Test).
- *
  * Both log sheets share the same state shape:
  *   - `reps` and `pending` reset whenever `open` flips to true.
  *   - `handleSave` awaits async parents, clears pending on both success and

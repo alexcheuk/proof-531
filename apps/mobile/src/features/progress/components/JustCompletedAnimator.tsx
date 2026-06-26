@@ -10,23 +10,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-/**
- * One-shot fill-in + pulse around a child cell. Mount = animation plays;
- * unmount = animation is cancelled cleanly. Caller controls the lifecycle
- * by keying the component on a stable identifier (the just-completed
- * sessionId), so a new session id remounts and replays automatically and
- * a stale id never replays on a re-render.
- *
- * Lives at the feature layer (not in `design/primitives`) because "this
- * cell was just completed" is a behavioral concern, not a primitive one.
- *
- * History: a prior implementation drove this animation via a module-level
- * signal store + a stuck-true state flag inside `ProgressLiftPage`, which
- * created a Reanimated runtime race on the second consecutive session
- * close (black-screen-of-death). The cell-local mount-driven model
- * removes both the store and the state flag  -  there is no across-session
- * shared state for the runtime to confuse.
- */
+// Key on sessionId so a new session replays automatically; a stale id never replays on re-render.
+// Lives in features, not design/primitives: "just completed" is a behavioral concern, not a primitive.
+// History: module-level signal store + stuck-true flag in ProgressLiftPage caused a Reanimated race
+// on consecutive session closes (black-screen). Cell-local mount-driven model removes shared state.
 const FILL_IN_DURATION_MS = 480;
 const PULSE_DELAY_MS = FILL_IN_DURATION_MS - 80;
 const PULSE_UP_MS = 220;

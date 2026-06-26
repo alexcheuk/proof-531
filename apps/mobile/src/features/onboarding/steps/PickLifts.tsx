@@ -4,9 +4,6 @@ import { PrimaryPillButton } from '@/design/primitives/PrimaryPillButton';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
 import type { Lift, Unit } from '@/domain/types';
-/**
- * Step 2  -  Pick the lifts you want to train.
- */
 import { View } from 'react-native';
 import { LiftToggleRow } from '../components/LiftToggleRow';
 import { OnboardingShell } from '../components/OnboardingShell/OnboardingShell';

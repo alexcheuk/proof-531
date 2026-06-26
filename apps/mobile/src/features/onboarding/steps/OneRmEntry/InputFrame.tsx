@@ -12,11 +12,6 @@ export type InputFrameProps = {
   onChange: (patch: Partial<LiftInput>) => void;
 };
 
-/**
- * Mode-aware input cluster  -  single weight stepper in `direct` mode,
- * weight + reps in `calculate` mode. The mode toggle itself lives in the
- * parent so it can sit above this frame.
- */
 export function InputFrame({ data, unit, weightStep, onChange }: InputFrameProps) {
   const { spacing } = useTheme();
   const bar = barWeight(unit);
