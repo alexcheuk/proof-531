@@ -18,10 +18,6 @@ export type WorkingSetsBandProps = {
   completedIndices: ReadonlyArray<0 | 1 | 2>;
 };
 
-/**
- * "WORKING SETS · N of 3 done" band beneath the hero. Renders one SetRow
- * per scheme entry with the `done` checkmark and `UP NEXT` chip applied.
- */
 export function WorkingSetsBand({
   sets,
   tm,

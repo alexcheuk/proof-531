@@ -15,13 +15,7 @@ export type TmTableRowProps = {
   isLast: boolean;
 };
 
-/**
- * One row of the onboarding Review TM table. Renders:
- *   [#index]  [Lift name]   [1RM input]    [TM (90%)]
- *
- * Pure presentational  -  TM math runs through `trainingMaxFrom` so the
- * displayed value matches what `appendOnboarding` will persist.
- */
+// TM math via trainingMaxFrom so the displayed value matches what appendOnboarding will persist.
 export function TmTableRow({ lift, index, oneRM, unit, isLast }: TmTableRowProps) {
   const { colors } = useTheme();
   const tm = trainingMaxFrom(oneRM, unit);

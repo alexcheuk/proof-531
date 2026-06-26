@@ -1,11 +1,13 @@
 /**
- * Behavioral test for the BBB prompt screen  -  the intermediate stop
- * between AMRAP completion and the SessionComplete receipt.
+ * Behavioral tests for the BBB prompt screen.
  *
- * Asserts that:
- *   - The plan shows 5×10 at 50% TM with the lift label.
- *   - Both the "Mark BBB complete" CTA and the "Skip · close the day"
- *     pressable route to /session/complete?sessionId=… (replace).
+ * Asserts:
+ *   - Shows 5 set rows with BBB weight (50% TM) and 10 reps each.
+ *   - "Complete set" marks one set at a time (calls appendSetLog once).
+ *   - "Mark x/5 complete" marks all remaining sets (calls appendSetLog N times).
+ *   - When N sets already logged, "Mark N/5" and completed rows show done state.
+ *   - Skip routes to /session/complete without logging any sets.
+ *   - Rest hint reads settings.bbbRestTargetSeconds, not restTargetSeconds.
  */
 import { ThemeProvider } from '@/design/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,6 +16,7 @@ import type { ReactElement } from 'react';
 
 const mockReplace = jest.fn();
 const mockAppendSetLog = jest.fn();
+const mockInvalidateQueries = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
@@ -69,6 +72,13 @@ jest.mock('@/data/queries/useSettings', () => ({
   useSettings: () => mockSettingsState,
 }));
 
+// Mutable so tests can simulate 0, 2, or 5 BBB sets already logged.
+const mockSetLogsState: { data: Array<{ kind: string; id: number }> } = { data: [] };
+jest.mock('@/data/queries/useSetLogsForSession', () => ({
+  useSetLogsForSession: () => mockSetLogsState,
+  SET_LOGS_FOR_SESSION_KEY: (id: number | null) => ['setLogsForSession', id],
+}));
+
 import { BbbPromptScreen } from '../BbbPromptScreen';
 
 let queryClient: QueryClient;
@@ -84,8 +94,10 @@ describe('BbbPromptScreen', () => {
   beforeEach(() => {
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     mockReplace.mockClear();
+    mockInvalidateQueries.mockClear();
     mockAppendSetLog.mockReset();
     mockAppendSetLog.mockResolvedValue({});
+    mockSetLogsState.data = [];
     mockSessionState.data = {
       id: 7,
       lift: 'squat',
@@ -111,19 +123,57 @@ describe('BbbPromptScreen', () => {
     };
   });
 
-  it('renders the BBB plan (5×10 @ 50% TM) with the lift label', () => {
+  it('renders the BBB plan with lift label and 5 set rows at the correct weight', () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     expect(screen.getByText('Boring But Big.')).toBeTruthy();
     expect(screen.getByText(/Squat · supplementary/)).toBeTruthy();
-    expect(screen.getByText('5 sets of 10 · 50% TM')).toBeTruthy();
-    // The big weight readout is the displayed BBB weight (TM 300 × 0.5 = 150).
-    expect(screen.getByText('150')).toBeTruthy();
+    // 5 individual set rows each showing 150 lb (TM 300 × 0.5).
+    for (let i = 0; i < 5; i += 1) {
+      expect(screen.getByTestId(`bbb-set-row-${i}`)).toBeTruthy();
+    }
+    // Weight appears in each row; getByText finds at least one.
+    expect(screen.getAllByText('150').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('writes 5 BBB set_logs and routes to /session/complete on Mark BBB complete', async () => {
+  it('shows "MARK 5/5 COMPLETE" and "Complete set" when no sets are done', () => {
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    expect(screen.getByTestId('bbb-complete-set')).toBeTruthy();
+    expect(screen.getByText('MARK 5/5 COMPLETE')).toBeTruthy();
+    expect(screen.getByTestId('bbb-skip')).toBeTruthy();
+    // Should NOT show the all-done CTA yet.
+    expect(screen.queryByTestId('bbb-close')).toBeNull();
+  });
+
+  it('Complete set calls appendSetLog once and does not navigate', async () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     await act(async () => {
-      fireEvent.press(screen.getByTestId('bbb-mark-done'));
+      fireEvent.press(screen.getByTestId('bbb-complete-set'));
+    });
+    await waitFor(() => {
+      expect(mockAppendSetLog).toHaveBeenCalledTimes(1);
+    });
+    const call = mockAppendSetLog.mock.calls[0]?.[1] as {
+      sessionId: number;
+      index: number;
+      kind: string;
+      prescribedWeight: number;
+      prescribedReps: number;
+      actualReps: number;
+    };
+    expect(call.sessionId).toBe(7);
+    expect(call.index).toBe(0);
+    expect(call.kind).toBe('bbb');
+    expect(call.prescribedReps).toBe(10);
+    expect(call.actualReps).toBe(10);
+    expect(call.prescribedWeight).toBe(150);
+    // Does not navigate after one set.
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('Mark all remaining writes 5 set_logs and routes to /session/complete', async () => {
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('bbb-mark-all'));
     });
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith({
@@ -146,9 +196,42 @@ describe('BbbPromptScreen', () => {
       expect(call.kind).toBe('bbb');
       expect(call.prescribedReps).toBe(10);
       expect(call.actualReps).toBe(10);
-      // TM 300 × 0.5 = 150 in storage units.
       expect(call.prescribedWeight).toBe(150);
     }
+  });
+
+  it('when 2 sets already logged, shows "MARK 3/5 COMPLETE" and calls appendSetLog 3 times', async () => {
+    mockSetLogsState.data = [
+      { kind: 'bbb', id: 1 },
+      { kind: 'bbb', id: 2 },
+    ];
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    expect(screen.getByText('MARK 3/5 COMPLETE')).toBeTruthy();
+    expect(screen.getByText(/BORING BUT BIG · 2 OF 5 DONE/)).toBeTruthy();
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('bbb-mark-all'));
+    });
+    await waitFor(() => expect(mockReplace).toHaveBeenCalled());
+    expect(mockAppendSetLog).toHaveBeenCalledTimes(3);
+    // Logs start at index 2 (the first un-logged set).
+    const indices = mockAppendSetLog.mock.calls.map(
+      (c: unknown[]) => (c[1] as { index: number }).index,
+    );
+    expect(indices).toEqual([2, 3, 4]);
+  });
+
+  it('when 5 sets already logged, shows Close the day CTA and no complete/skip buttons', () => {
+    mockSetLogsState.data = [
+      { kind: 'bbb', id: 1 },
+      { kind: 'bbb', id: 2 },
+      { kind: 'bbb', id: 3 },
+      { kind: 'bbb', id: 4 },
+      { kind: 'bbb', id: 5 },
+    ];
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    expect(screen.getByTestId('bbb-close')).toBeTruthy();
+    expect(screen.queryByTestId('bbb-complete-set')).toBeNull();
+    expect(screen.queryByTestId('bbb-mark-all')).toBeNull();
   });
 
   it('Skip does NOT write any BBB set_logs and routes to /session/complete', () => {
@@ -163,7 +246,6 @@ describe('BbbPromptScreen', () => {
 
   it('rest hint reads settings.bbbRestTargetSeconds, NOT settings.restTargetSeconds', () => {
     // restTargetSeconds = 180 (working sets) vs bbbRestTargetSeconds = 90.
-    // The BBB rest hint must render the 1:30 from the BBB-specific field.
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     expect(screen.getByText(/REST 1:30 BETWEEN SETS/)).toBeTruthy();
     expect(screen.queryByText(/REST 3:00 BETWEEN SETS/)).toBeNull();
