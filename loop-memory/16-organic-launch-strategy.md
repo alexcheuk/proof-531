@@ -6,7 +6,7 @@ description: Research-backed organic marketing strategy for launching 531 Streng
 # 531 Strength  - Organic Launch Strategy
 
 **Researched**: 2026-05-28 (Expedition 36)
-**Last updated**: 2026-06-13 (Expedition 89)
+**Last updated**: 2026-06-26 (Expedition 90)
 **Status**: Android LIVE on Google Play (Expedition 83, versionCode 25). Version 1.0.1 build in progress (Expedition 89: bump from 1.0.0; includes DATA-BACKUP, MISSED-REP, IN-APP-REVIEW, warmup ramps, rest timer fix, and restore scroll fix). iOS App Store submission still in progress. r/531Discussion and r/weightroom drafts updated for Android-only launch (Expedition 84) and marked ready_to_post. IN-APP-REVIEW (tactic 12) implemented (Expedition 84): expo-store-review installed, storeReviewRequested flag in settings schema, hook fires once per install on first cycle complete. Needs next production build (1.0.1) to activate native dialog. Expedition 89: version bumped to 1.0.1, EAS production build submitted, restore-backup scroll bug fixed, iteration count advanced to 89+.
 
 ## The competitive anchor

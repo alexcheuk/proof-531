@@ -89,7 +89,7 @@ When the iOS approval email arrives, this is the playbook. Every tactic has a dr
 
 **What to post:** Option A from `docs/marketing/reddit-vibecoding-draft.md` -  the contrast-lead version ("r/vibecoding says vibe coding is for prototypes...").
 
-**Fill in:** GitHub link, App Store link, and update the "89+" iteration count to the actual current count at posting time.
+**Fill in:** GitHub link, App Store link, and update the "90+" iteration count to the actual current count at posting time.
 
 **Tone note:** This community is skeptical of AI-built apps for production use. The hook is the contrast: "you say this can't be production -  here's the evidence it can." Specificity about CI enforcement and property testing is what lands here, not "I used Claude to build an app."
 
