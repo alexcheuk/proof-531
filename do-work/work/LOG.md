@@ -16,6 +16,25 @@
 
 ## Entries
 
+## 2026-06-28 tick-15 (Exp 93): PerSideCaption padding fix + Q-QUALITY token normalization + iter 93+
+- shipped (BUG, task 1520959735703011519): PerSideCaption.tsx - added `paddingBottom: spacing.sm` (8px)
+  under the PER SIDE label row (Alex correction for tick-14's per-side visual work). gap:8 and paddingTop:8
+  also normalized to spacing.sm tokens (same values, now uses design system). Removed "what" JSDoc block.
+  Auditor PASS. Accrues validation debt (BBB + Today screen smoke) as part of BBB-REDESIGN flow.
+- shipped (Q-QUALITY, auditor PASS): CtaBar.tsx - trimmed "what" first paragraph from JSDoc; kept
+  positioning-ownership and safe-area WHY explanations as inline comments. Behavior-preserving removal.
+- shipped (WEB): index.astro JSON-LD featureList updated - added "Per-set BBB tracking with incremental
+  logging" and "Missed rep correction with automatic TM reset suggestion" (both shipped features, now
+  discoverable in structured data). Astro build clean: 166 pages.
+- shipped (LAUNCH): Iteration count 92+ -> 93+ across README + 10 marketing docs + strategy tracker.
+  Reddit draft last_reviewed dates updated to Expedition 93.
+- proof: pnpm run ci green (1205/1205 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash clean).
+  do-work-auditor PASS on Q-QUALITY. Pushed 266b121.
+- deferred / escalated: BBB-REDESIGN owes Maestro smoke (validation debt updated with tick-15 entry).
+  VERSION-1.0.1 still awaits Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead.
+  All prior Maestro smokes (DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY)
+  still outstanding.
+
 ## 2026-06-28 tick-14 (Exp 92): BBB crash fix + UX label polish + Q-QUALITY spacing tokens + iter 92+
 - shipped (BUG, task 1520940879571980418): BBB screen three-bug fix: (1) crash: onClose() moved from
   finally block to try block so the screen only navigates to complete on success, never on error;
