@@ -141,6 +141,7 @@ describe('BbbPromptScreen', () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     expect(screen.getByTestId('bbb-complete-set')).toBeTruthy();
     expect(screen.getByText('Complete set 1')).toBeTruthy();
+    // 5 remaining -> plural "SETS"
     expect(screen.getByText('MARK 5 SETS COMPLETE')).toBeTruthy();
     expect(screen.getByTestId('bbb-skip')).toBeTruthy();
     // Should NOT show the all-done CTA yet.
@@ -222,6 +223,18 @@ describe('BbbPromptScreen', () => {
       (c: unknown[]) => (c[1] as { index: number }).index,
     );
     expect(indices).toEqual([2, 3, 4]);
+  });
+
+  it('when 4 sets already logged, shows "MARK 1 SET COMPLETE" (singular)', () => {
+    mockSetLogsState.data = [
+      { kind: 'bbb', id: 1 },
+      { kind: 'bbb', id: 2 },
+      { kind: 'bbb', id: 3 },
+      { kind: 'bbb', id: 4 },
+    ];
+    const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
+    expect(screen.getByText('MARK 1 SET COMPLETE')).toBeTruthy();
+    expect(screen.getByText('Complete set 5')).toBeTruthy();
   });
 
   it('when 5 sets already logged, shows Close the day CTA and no complete/skip buttons', () => {

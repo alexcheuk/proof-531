@@ -235,7 +235,7 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
                 onPress={() => void onMarkAllRemaining()}
                 accessibilityLabel={`Mark all ${remaining} remaining BBB sets complete`}
               >
-                {`MARK ${remaining} SETS COMPLETE`}
+                {`MARK ${remaining} SET${remaining === 1 ? '' : 'S'} COMPLETE`}
               </SecondaryLink>
               <SecondaryLink
                 testID="bbb-skip"
