@@ -5,7 +5,7 @@ status: draft
 ready_to_post: true
 trigger: Android live on Google Play (done as of Expedition 83). Post 24h after r/531Discussion.
 drafted: 2026-05-28
-last_reviewed: 2026-06-28 (Expedition 92)
+last_reviewed: 2026-06-28 (Expedition 93)
 ---
 
 # r/weightroom -  Launch Post Draft

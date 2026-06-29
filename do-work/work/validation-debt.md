@@ -24,6 +24,10 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-15 (Expedition 93) PerSideCaption spacing polish: paddingBottom: spacing.sm (8px) added under the
+  PER SIDE label row; gap and paddingTop normalized from hardcoded 8 to spacing.sm tokens (same values).
+  Affects BbbPromptScreen, SetPhase, RestPhase, and TodayBody TopSetHero (all full-variant PlateBar consumers).
+  Auditor PASS. Owes Maestro smoke covering BBB and Today screens.
 - tick-14 (Expedition 92) BBB UX fixes: "Complete set N" labels, "MARK N SETS COMPLETE" label,
   onClose() moved to try block (no longer navigates on error). PlateBar gap increased to 16px for
   better visual spacing above PerSideCaption. 1204/1204 tests. Owes Maestro smoke as part of

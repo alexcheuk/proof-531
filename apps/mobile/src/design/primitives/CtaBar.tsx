@@ -3,19 +3,10 @@ import { type StyleProp, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 
-/**
- * Sticky bottom CTA strip. Houses a primary action element passed as
- * `children` on Today, Live, SessionComplete, and onboarding screens.
- *
- * Surface: `colors.bg0`. Positioning is intentionally NOT owned here  -  the
- * caller decides whether to place CtaBar at the bottom via
- * `position: 'absolute'`, `mt-auto`-style flex, or as the last child of a
- * column.
- *
- * Safe-area: bottom padding combines a 16px gutter with the device's bottom
- * inset (read via `useSafeAreaInsets`) so the home indicator never sits over
- * the button.
- */
+// Positioning is intentionally NOT owned here: the caller decides whether to place CtaBar at
+// the bottom via `position: 'absolute'`, flex, or as the last child of a column.
+// Safe-area: bottom padding combines a 16px gutter with the device's bottom inset so the
+// home indicator never sits over the button.
 export type CtaBarProps = {
   children: ReactNode;
   /** Bottom safe-area-inset padding. Defaults to true. */

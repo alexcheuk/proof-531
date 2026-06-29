@@ -10,19 +10,16 @@ export type PerSideCaptionProps = {
   testID?: string;
 };
 
-/**
- * "PER SIDE  -  2× 45 + 10 = 100 lb" caption row beneath the bar (full
- * variant only; mini omits this).
- */
 export function PerSideCaption({ grouped, total, unitGlyph, testID }: PerSideCaptionProps) {
-  const { colors } = useTheme();
+  const { colors, spacing } = useTheme();
 
   const rowStyle: ViewStyle = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
-    paddingTop: 8,
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: colors.line,
   };
