@@ -16,6 +16,23 @@
 
 ## Entries
 
+## 2026-06-28 tick-14 (Exp 92): BBB crash fix + UX label polish + Q-QUALITY spacing tokens + iter 92+
+- shipped (BUG, task 1520940879571980418): BBB screen three-bug fix: (1) crash: onClose() moved from
+  finally block to try block so the screen only navigates to complete on success, never on error;
+  (2) "Complete set N" label shows which set number (completedCount + 1); (3) "MARK N SETS COMPLETE"
+  replaces confusing "MARK 5/5 COMPLETE" (5/5 looked like all done, not "mark all remaining").
+  PlateBar gap increased from 10 to 16px for better visual breathing above PerSideCaption (per-side label).
+  8 tests updated; 1204/1204 total. Accrues Maestro smoke debt (BBB-REDESIGN flow).
+- shipped (Q-QUALITY, auditor pending): GoalPanel.tsx replaced 3x hardcoded `paddingHorizontal: 16`
+  with `spacing.lg` (16) from useTheme(); `spacing` added to destructure. Behavior-preserving (same value).
+- shipped (WEB): Footer.astro version bumped 1.0.0 -> 1.0.1.
+- shipped (LAUNCH): Iteration count 91+ -> 92+ across README + 10 marketing docs. Strategy tracker
+  updated to Expedition 92. Reddit drafts last_reviewed updated 2026-06-28.
+- proof: pnpm run ci green (1204/1204 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash clean).
+- deferred / escalated: BBB-REDESIGN owes Maestro smoke (validation debt updated). VERSION-1.0.1 still
+  awaits Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead. All prior Maestro smokes
+  (DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY) still outstanding.
+
 ## 2026-06-26 tick-13 (Exp 91): BBB weight preview regression fix + Q-QUALITY JSDoc sweep + iteration count 91+
 - shipped (BUG, task 1520187127348859113): Restored TopSetBlock weight preview on BbbPromptScreen.
   Tick-12 redesign dropped the TopSetBlock (big weight + plate visualization) that was there before.

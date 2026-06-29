@@ -42,7 +42,7 @@ export function GoalPanel({
   unset,
   testID,
 }: GoalPanelProps) {
-  const { colors, layout } = useTheme();
+  const { colors, layout, spacing } = useTheme();
 
   const onStep = (delta: number) => {
     void Haptics.selectionAsync();
@@ -121,7 +121,7 @@ export function GoalPanel({
       <View
         style={{
           paddingVertical: 18,
-          paddingHorizontal: 16,
+          paddingHorizontal: spacing.lg,
           flexDirection: 'row',
           alignItems: 'center',
           gap: 12,
@@ -177,7 +177,7 @@ export function GoalPanel({
           justifyContent: 'space-between',
           alignItems: 'baseline',
           paddingVertical: 11,
-          paddingHorizontal: 16,
+          paddingHorizontal: spacing.lg,
           borderTopWidth: 1,
           borderTopColor: colors.lineStrong,
         }}
@@ -204,7 +204,7 @@ export function GoalPanel({
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingVertical: 10,
-            paddingHorizontal: 16,
+            paddingHorizontal: spacing.lg,
             borderTopWidth: 1,
             borderTopColor: colors.lineStrong,
             gap: 12,

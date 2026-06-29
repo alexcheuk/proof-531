@@ -24,6 +24,10 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-14 (Expedition 92) BBB UX fixes: "Complete set N" labels, "MARK N SETS COMPLETE" label,
+  onClose() moved to try block (no longer navigates on error). PlateBar gap increased to 16px for
+  better visual spacing above PerSideCaption. 1204/1204 tests. Owes Maestro smoke as part of
+  the BBB-REDESIGN flow before it flips to `done`.
 - tick-13 (Expedition 91) BBB TopSetBlock restore: BbbPromptScreen now shows TopSetBlock (big weight +
   plate visualization) above the 5 SetRows, matching the pre-redesign experience. 1204/1204 tests.
   Owes Maestro smoke as part of the BBB-REDESIGN flow before it flips to `done`.

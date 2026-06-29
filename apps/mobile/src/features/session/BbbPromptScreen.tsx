@@ -125,11 +125,11 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
         });
       }
       await invalidateAll();
+      onClose();
     } catch (err) {
       console.error('BbbPromptScreen.onMarkAllRemaining failed', err);
     } finally {
       setLogging(false);
-      onClose();
     }
   };
 
@@ -228,14 +228,14 @@ export function BbbPromptScreen({ sessionId }: BbbPromptScreenProps) {
                 onPress={() => void onCompleteOneSet()}
                 disabled={logging}
               >
-                Complete set
+                {`Complete set ${completedCount + 1}`}
               </PrimaryPillButton>
               <SecondaryLink
                 testID="bbb-mark-all"
                 onPress={() => void onMarkAllRemaining()}
-                accessibilityLabel={`Mark ${remaining} of ${BBB_SETS} BBB sets complete`}
+                accessibilityLabel={`Mark all ${remaining} remaining BBB sets complete`}
               >
-                {`MARK ${remaining}/${BBB_SETS} COMPLETE`}
+                {`MARK ${remaining} SETS COMPLETE`}
               </SecondaryLink>
               <SecondaryLink
                 testID="bbb-skip"

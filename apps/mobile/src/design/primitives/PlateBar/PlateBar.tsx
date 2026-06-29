@@ -44,7 +44,7 @@ export function PlateBar({
 
   const containerStyle: ViewStyle = {
     flexDirection: 'column',
-    gap: mini ? 6 : 10,
+    gap: mini ? 6 : 16,
   };
 
   const barRowStyle: ViewStyle = {

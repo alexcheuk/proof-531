@@ -137,10 +137,11 @@ describe('BbbPromptScreen', () => {
     expect(screen.getAllByText('150').length).toBeGreaterThanOrEqual(2);
   });
 
-  it('shows "MARK 5/5 COMPLETE" and "Complete set" when no sets are done', () => {
+  it('shows "MARK 5 SETS COMPLETE" and "Complete set 1" when no sets are done', () => {
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
     expect(screen.getByTestId('bbb-complete-set')).toBeTruthy();
-    expect(screen.getByText('MARK 5/5 COMPLETE')).toBeTruthy();
+    expect(screen.getByText('Complete set 1')).toBeTruthy();
+    expect(screen.getByText('MARK 5 SETS COMPLETE')).toBeTruthy();
     expect(screen.getByTestId('bbb-skip')).toBeTruthy();
     // Should NOT show the all-done CTA yet.
     expect(screen.queryByTestId('bbb-close')).toBeNull();
@@ -202,13 +203,14 @@ describe('BbbPromptScreen', () => {
     }
   });
 
-  it('when 2 sets already logged, shows "MARK 3/5 COMPLETE" and calls appendSetLog 3 times', async () => {
+  it('when 2 sets already logged, shows "MARK 3 SETS COMPLETE" and "Complete set 3"', async () => {
     mockSetLogsState.data = [
       { kind: 'bbb', id: 1 },
       { kind: 'bbb', id: 2 },
     ];
     const screen = renderScreen(<BbbPromptScreen sessionId={7} />);
-    expect(screen.getByText('MARK 3/5 COMPLETE')).toBeTruthy();
+    expect(screen.getByText('MARK 3 SETS COMPLETE')).toBeTruthy();
+    expect(screen.getByText('Complete set 3')).toBeTruthy();
     expect(screen.getByText(/BORING BUT BIG · 2 OF 5 DONE/)).toBeTruthy();
     await act(async () => {
       fireEvent.press(screen.getByTestId('bbb-mark-all'));

@@ -127,9 +127,10 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] 8 tests green (1204/1204 total); tsc clean; biome clean
   - [ ] Maestro smoke: BBB set-list interaction (complete one-at-a-time, mark-all-remaining, skip)
 - note: task-queue 1520180996144627802 (Alex). Implemented tick-12 (Expedition 90). Tick-13 (Expedition 91):
-  TopSetBlock weight preview (weight + plate visualization) restored after regression - was accidentally
-  removed in the tick-12 redesign. Alex reported missing weight preview (task 1520187127348859113).
-  Still owes Maestro smoke before DONE.
+  TopSetBlock weight preview restored. Tick-14 (Expedition 92): BBB crash fix (task 1520940879571980418) -
+  onClose() moved from finally to try block so navigation only happens on success. Button labels improved:
+  "Complete set N" shows which set, "MARK N SETS COMPLETE" replaces confusing "MARK 5/5 COMPLETE".
+  PlateBar gap increased for visual polish above PerSideCaption. Still owes Maestro smoke before DONE.
 
 ## REST-TIMER-ACCURACY: Rest timer alarm fires 1-2s late (task 1515166601270530048)
 - status: doing

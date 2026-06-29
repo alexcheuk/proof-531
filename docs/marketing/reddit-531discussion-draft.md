@@ -5,7 +5,7 @@ status: draft
 ready_to_post: true
 trigger: Android live on Google Play (done as of Expedition 83). iOS App Store submission still in progress - post now or wait for iOS parity (Alex's call).
 drafted: 2026-05-28
-last_reviewed: 2026-06-26 (Expedition 91)
+last_reviewed: 2026-06-28 (Expedition 92)
 ---
 
 # r/531Discussion -  Launch Post Draft
