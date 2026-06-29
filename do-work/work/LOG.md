@@ -29,6 +29,8 @@
 - shipped (LAUNCH): Iteration count 91+ -> 92+ across README + 10 marketing docs. Strategy tracker
   updated to Expedition 92. Reddit drafts last_reviewed updated 2026-06-28.
 - proof: pnpm run ci green (1204/1204 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash clean).
+- blog: Expedition 92 field log commissioned (Logger Clem, "The label that lied first").
+  Beat: Verso's slip. Build pass. Committed 46858b0.
 - deferred / escalated: BBB-REDESIGN owes Maestro smoke (validation debt updated). VERSION-1.0.1 still
   awaits Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead. All prior Maestro smokes
   (DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY) still outstanding.
