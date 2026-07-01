@@ -55,21 +55,17 @@ export function HomeScreen() {
     }
   }, [settings.data, router]);
 
+  // Navigate to the tapped lift's Today screen. TodayScreen's
+  // `preview-other-active` mode handles the case where a different lift
+  // already has an in-progress session and shows an explicit "Open <lift>"
+  // CTA, so the redirect logic that was previously here is no longer needed
+  // and was causing "Begin session" on lift A to silently open lift B.
+  // (Discord 1522003692159500398)
   const handleBegin = useCallback(
     (lift: Lift) => {
-      // Single-session invariant (§4): if another lift is mid-session, do not
-      // start a second one. Navigate to that lift instead.
-      // Session creation itself happens in TodayScreen (preview mode) so we
-      // don't insert a row that an unrelated tap-back leaves orphaned.
-      // Skip the redirect when the in-progress lift is no longer enabled  -
-      // useToggleLift now cancels that session at toggle-time, but this is
-      // belt-and-braces in case any future code path leaves a ghost.
-      const shouldRedirect =
-        inProgressLift && inProgressLift !== lift && enabledLifts.includes(inProgressLift);
-      const target = shouldRedirect ? inProgressLift : lift;
-      goTo.today(router, target);
+      goTo.today(router, lift);
     },
-    [inProgressLift, enabledLifts, router],
+    [router],
   );
 
   const handleOpenToday = useCallback(

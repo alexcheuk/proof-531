@@ -16,7 +16,7 @@ type AppendSetLogInput = Omit<SetLog, 'id' | 'completedAt' | 'isPR' | 'estimated
 export async function appendSetLog(db: AnyDb, input: AppendSetLogInput): Promise<SetLog> {
   const baseRow = { ...input, completedAt: Date.now() };
 
-  if (input.kind === 'amrap') {
+  if (input.kind === 'amrap' || input.kind === 'tm-test') {
     const sessionRows = (await Promise.resolve(
       db.select().from(sessions).where(eq(sessions.id, input.sessionId)),
     )) as Array<{ lift: Lift }>;

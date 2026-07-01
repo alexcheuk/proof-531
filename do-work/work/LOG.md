@@ -16,6 +16,29 @@
 
 ## Entries
 
+## 2026-07-01 tick-16 (Exp 94): Lift picker bug + PR celebration TM test + AMRAP min reps + iter 94+
+- shipped (BUG, task 1522003692159500398 part 1): HomeScreen.tsx handleBegin simplified - removed
+  shouldRedirect logic that silently sent users to a different lift's Today screen. TodayScreen's
+  preview-other-active mode already handles cross-lift conflict with an explicit CTA. Test updated.
+- shipped (BUG, task 1522003692159500398 part 2): PR celebration gated to TM-test day only.
+  (a) appendSetLog now computes isPR for tm-test kind; (b) onSaveAmrap always routes to awaiting-bbb;
+  (c) onSaveTmTest routes to pr-celebration when isPR; (d) PrCelebrationScreen routes to /session/complete
+  for TM test (not bbb); (e) hasPR and e1RMStorage in useSessionCompleteData include tm-test logs.
+  3 new TM test tests; AMRAP PR test updated. 1215/1215 tests. Accrues validation debt.
+- shipped (FEAT, task 1522003692159500398 part 3): minRepsForPR() added to domain/epley.ts (TDD:
+  7 tests incl. 2 fast-check property tests). AmrapLogSheet shows "N+ REPS FOR PR" hint when
+  below PR threshold and there is an existing best. Accrues validation debt.
+- shipped (Q-QUALITY): handleBegin simplification in HomeScreen.tsx - removed 7-line incorrect
+  redirect logic (shouldRedirect), replaced with 1-line direct navigation. Behavior-preserving from
+  the correct-behavior standpoint; the removed code was causing the bug.
+- shipped (LAUNCH): Iteration count 93+ -> 94+ across 11 marketing docs + README. Strategy tracker
+  updated to Expedition 94. Decision-log entries for lift-picker fix and PR celebration gate.
+- proof: pnpm run ci green (1215/1215 tests, 188 suites; typecheck clean; lint clean; check-no-em-dash clean).
+  check-memory.mjs clean. Validation debt updated.
+- deferred / escalated: All three new items (lift picker, PR celebration, AMRAP min reps) owe Maestro
+  smokes for their UI changes. VERSION-1.0.1 still awaits Alex Play Console promotion. CASUAL-POST
+  awaiting Alex go-ahead. All prior Maestro smokes still outstanding.
+
 ## 2026-06-28 tick-15 (Exp 93): PerSideCaption padding fix + Q-QUALITY token normalization + iter 93+
 - shipped (BUG, task 1520959735703011519): PerSideCaption.tsx - added `paddingBottom: spacing.sm` (8px)
   under the PER SIDE label row (Alex correction for tick-14's per-side visual work). gap:8 and paddingTop:8

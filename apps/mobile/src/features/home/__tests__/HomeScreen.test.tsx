@@ -295,8 +295,11 @@ describe('HomeScreen', () => {
     expect(screen.getByTestId('lift-tab-squat').props.accessibilityState.selected).toBe(false);
   });
 
-  it('cross-lift Begin redirects to the in-progress lift and skips createSession', async () => {
+  it('cross-lift Begin navigates to the tapped lift even when another lift is in-progress', async () => {
     // Bench is mid-session. Squat tab is active by default.
+    // The old behavior silently redirected to bench; the new behavior navigates
+    // to the requested lift (squat) and lets TodayScreen's preview-other-active
+    // mode show an explicit "Open bench" CTA so the user understands the situation.
     mockActiveSessionState.data = {
       id: 42,
       lift: 'bench',
@@ -314,13 +317,10 @@ describe('HomeScreen', () => {
     // Squat page is the default. Tap its primary CTA ("Begin session").
     fireEvent.press(screen.getByTestId('lift-page-squat-cta'));
 
-    // createSession must NOT be called  -  we're redirecting to bench.
-    expect(mockCreateSession).not.toHaveBeenCalled();
-
-    // Router should be pushed to the bench session.
+    // Router should push to SQUAT (the tapped lift), not bench.
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
     const [arg] = mockRouterPush.mock.calls[0] as [{ pathname: string; params: { lift: string } }];
     expect(arg.pathname).toBe('/session/today');
-    expect(arg.params.lift).toBe('bench');
+    expect(arg.params.lift).toBe('squat');
   });
 });

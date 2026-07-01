@@ -149,7 +149,7 @@ describe('useLogWorkingSets  -  onSaveAmrap', () => {
     expect(setPhase).toHaveBeenCalledWith('awaiting-bbb');
   });
 
-  it('routes to pr-celebration when the AMRAP row was flagged isPR', async () => {
+  it('always routes to awaiting-bbb after AMRAP even when isPR (PR celebration reserved for TM-test day)', async () => {
     mockAppendSetLog.mockResolvedValueOnce({ id: 99, isPR: true });
     const setPhase = jest.fn();
     const props = baseProps({ setIndex: 2, setPhase });
@@ -159,8 +159,8 @@ describe('useLogWorkingSets  -  onSaveAmrap', () => {
       await result.current.onSaveAmrap(10);
     });
 
-    expect(setPhase).toHaveBeenCalledWith('pr-celebration');
-    expect(setPhase).not.toHaveBeenCalledWith('awaiting-bbb');
+    expect(setPhase).toHaveBeenCalledWith('awaiting-bbb');
+    expect(setPhase).not.toHaveBeenCalledWith('pr-celebration');
   });
 
   it('swallows save errors and does not advance phase', async () => {
@@ -177,5 +177,55 @@ describe('useLogWorkingSets  -  onSaveAmrap', () => {
     expect(setPhase).not.toHaveBeenCalled();
     expect(mockCompleteSession).not.toHaveBeenCalled();
     consoleError.mockRestore();
+  });
+});
+
+describe('useLogWorkingSets  -  onSaveTmTest', () => {
+  beforeEach(() => {
+    mockAppendSetLog.mockReset();
+    mockCompleteSession.mockReset();
+    mockAppendSetLog.mockResolvedValue({ id: 1, isPR: false });
+    mockCompleteSession.mockResolvedValue(undefined);
+  });
+
+  it('skips when sessionId is null', async () => {
+    const props = baseProps({ sessionId: null });
+    const { result } = renderHook(() => useLogWorkingSets(props), { wrapper });
+    await act(async () => {
+      await result.current.onSaveTmTest(3);
+    });
+    expect(mockAppendSetLog).not.toHaveBeenCalled();
+  });
+
+  it('appends a tm-test log, completes the session, transitions to complete when not a PR', async () => {
+    const setPhase = jest.fn();
+    const props = baseProps({ setPhase });
+    const { result } = renderHook(() => useLogWorkingSets(props), { wrapper });
+
+    await act(async () => {
+      await result.current.onSaveTmTest(1);
+    });
+
+    expect(mockAppendSetLog).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ kind: 'tm-test', actualReps: 1 }),
+    );
+    expect(mockCompleteSession).toHaveBeenCalledWith(expect.anything(), 42);
+    expect(setPhase).toHaveBeenCalledWith('complete');
+    expect(setPhase).not.toHaveBeenCalledWith('pr-celebration');
+  });
+
+  it('routes to pr-celebration when the TM-test row was flagged isPR', async () => {
+    mockAppendSetLog.mockResolvedValueOnce({ id: 5, isPR: true });
+    const setPhase = jest.fn();
+    const props = baseProps({ setPhase });
+    const { result } = renderHook(() => useLogWorkingSets(props), { wrapper });
+
+    await act(async () => {
+      await result.current.onSaveTmTest(5);
+    });
+
+    expect(setPhase).toHaveBeenCalledWith('pr-celebration');
+    expect(setPhase).not.toHaveBeenCalledWith('complete');
   });
 });

@@ -104,7 +104,7 @@ export function useLogWorkingSets({
       if (sessionId == null) return;
       const loggedIndex = setIndex;
       try {
-        const inserted = await appendSetLog(db, {
+        await appendSetLog(db, {
           sessionId,
           index: loggedIndex,
           kind: 'amrap',
@@ -122,12 +122,11 @@ export function useLogWorkingSets({
         clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        // After AMRAP, stop on the PR celebration screen if this AMRAP
-        // set a new record (Discord 1508314178257948682), otherwise drop
-        // straight on the BBB prompt (Discord 1508265973554348032). The
-        // celebration screen's CTA routes onward to /session/bbb so
-        // the user always sees BBB before the receipt.
-        setPhase(inserted.isPR ? 'pr-celebration' : 'awaiting-bbb');
+        // After AMRAP, always route to BBB so the user reviews their
+        // supplementary plan. PR celebration is reserved for TM-test day
+        // (D4) only, where the test itself is the meaningful performance
+        // moment. (Discord 1522003692159500398)
+        setPhase('awaiting-bbb');
       } catch (err) {
         console.error('useLogWorkingSets.onSaveAmrap failed', err);
       }
@@ -148,7 +147,7 @@ export function useLogWorkingSets({
     async (reps: number) => {
       if (sessionId == null) return;
       try {
-        await appendSetLog(db, {
+        const inserted = await appendSetLog(db, {
           sessionId,
           index: 0,
           kind: 'tm-test',
@@ -169,7 +168,11 @@ export function useLogWorkingSets({
         clearRestSnapshot(sessionId);
         await completeSession(db, sessionId);
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
-        setPhase('complete');
+        // Show PR celebration when the TM-test establishes a new estimated
+        // 1RM record (Discord 1522003692159500398: "only after a successful
+        // TM test"). Celebration screen routes to /session/complete for
+        // TM-test sessions (no BBB prompt on D4).
+        setPhase(inserted.isPR ? 'pr-celebration' : 'complete');
       } catch (err) {
         console.error('useLogWorkingSets.onSaveTmTest failed', err);
       }

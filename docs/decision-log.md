@@ -42,6 +42,28 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-07-01 - PR celebration gated to TM-test day; AMRAP min-reps hint added
+
+**Tags:** `behavior`, `domain`, `architecture`
+**Files:** `apps/mobile/src/data/accessors/setLog.ts`, `apps/mobile/src/features/session/hooks/useLogWorkingSets.ts`, `apps/mobile/src/features/session/hooks/useSessionCompleteData.ts`, `apps/mobile/src/features/session/PrCelebrationScreen.tsx`, `apps/mobile/src/domain/epley.ts`
+
+Three related decisions shipped together. (1) PR celebration removed from AMRAP (D1-D3): it was firing on every estimated-1RM record, which is not the moment Alex wants to celebrate. (2) TM test (D4) now detects isPR via Epley estimated1RM and routes to pr-celebration when set - "celebrate the test, not the estimate." PrCelebrationScreen routes to /session/complete (not /session/bbb) for TM-test sessions. (3) AmrapLogSheet gains a "N+ REPS FOR PR" hint computed from the new `minRepsForPR` pure domain function.
+
+**Why:** Alex explicitly asked in task 1522003692159500398 to stop showing the celebration on non-TM-test days and only show it after a successful TM test. The min-reps hint was requested in the same message as a companion feature.
+
+**Trade-off / what we didn't do:** An alternative was to always celebrate on TM test completion regardless of PR status. Chose isPR check for semantic consistency with AMRAP: celebration = new estimated record, not just completing a day.
+
+### 2026-07-01 - Lift picker Begin now navigates to tapped lift directly
+
+**Tags:** `behavior`, `bug`
+**Files:** `apps/mobile/src/features/home/HomeScreen.tsx`
+
+Removed the `shouldRedirect` logic from `handleBegin` in HomeScreen. Previously, pressing "Begin session" on lift A while lift B had an in-progress session would silently redirect to lift B's Today screen. The fix: navigate to the tapped lift and let TodayScreen's `preview-other-active` mode show an explicit "Open [lift B]" CTA, which clearly communicates the situation.
+
+**Why:** Alex reported this as a bug (task 1522003692159500398). The old redirect was confusing because users experienced "I pressed squat but got sent to bench." The TodayScreen already handled cross-lift conflict correctly; the HomeScreen redirect was redundant and wrong.
+
+**Trade-off / what we didn't do:** The removed `shouldRedirect` logic was originally added to enforce a single-session invariant. That invariant is still enforced at the TodayScreen layer (createSession is never called while another session is active - `preview-other-active` mode blocks it).
+
 ### 2026-06-13 - Version 1.0.1 release: PasteField maxLines bug fix triggers first patch bump
 
 **Tags:** `bug`, `ux`, `release`

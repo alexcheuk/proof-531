@@ -24,6 +24,14 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-16 (Expedition 94) Lift picker fix: handleBegin no longer redirects to in-progress lift;
+  TodayScreen preview-other-active mode handles the conflict. Affects the home screen carousel
+  interaction for multi-lift setups. Owes a home-to-today navigation smoke.
+- tick-16 (Expedition 94) PR celebration TM test: PrCelebrationScreen now routes to /session/complete
+  for TM test sessions; AMRAP never shows PR celebration. Affects the D4 post-session flow.
+  Owes a TM-test-PR and regular-AMRAP smoke.
+- tick-16 (Expedition 94) AMRAP min reps hint: "N+ REPS FOR PR" caption added to AmrapLogSheet
+  (shows when below PR threshold, hides when above). Owes AMRAP sheet interaction smoke.
 - tick-15 (Expedition 93) PerSideCaption spacing polish: paddingBottom: spacing.sm (8px) added under the
   PER SIDE label row; gap and paddingTop normalized from hardcoded 8 to spacing.sm tokens (same values).
   Affects BbbPromptScreen, SetPhase, RestPhase, and TodayBody TopSetHero (all full-variant PlateBar consumers).

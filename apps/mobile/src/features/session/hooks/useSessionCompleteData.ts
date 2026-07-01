@@ -130,7 +130,9 @@ export function deriveView({
   const workingLogs = logs.filter((l) => l.kind === 'working' || l.kind === 'amrap');
   const tmTestLog = logs.find((l) => l.kind === 'tm-test') ?? null;
   const isTmTestSession = tmTestLog !== null;
-  const hasPR = workingLogs.some((l) => l.isPR === true);
+  // Include TM-test logs so a new estimated 1RM from a TM test is recognized
+  // as a PR and surfaces the certificate + celebration (Discord 1522003692159500398).
+  const hasPR = logs.some((l) => l.isPR === true);
 
   // Date stamp parts  -  `endedAt` is set on the happy path.
   const stampTs = session.endedAt ?? null;
@@ -147,13 +149,17 @@ export function deriveView({
   // e1RM  -  derived from the AMRAP log when present; otherwise the heaviest
   // Epley estimate across working sets. Round once for display.
   const amrapLog = workingLogs.find((l) => l.kind === 'amrap');
+  // For TM-test sessions there is no AMRAP log, so fall back to the TM-test
+  // log's estimated1RM (computed and stored by appendSetLog when isPR is set).
   const newE1RMStorage =
-    amrapLog && amrapLog.estimated1RM !== undefined
+    amrapLog?.estimated1RM !== undefined
       ? amrapLog.estimated1RM
-      : workingLogs.reduce((max, l) => {
-          const v = estimateOneRm(l.prescribedWeight, l.actualReps);
-          return v > max ? v : max;
-        }, 0);
+      : tmTestLog?.estimated1RM !== undefined
+        ? tmTestLog.estimated1RM
+        : workingLogs.reduce((max, l) => {
+            const v = estimateOneRm(l.prescribedWeight, l.actualReps);
+            return v > max ? v : max;
+          }, 0);
   const e1RMDisplay = convert(newE1RMStorage, storageUnit, renderUnit);
   const showCertificate = hasPR && e1RMDisplay > 0;
 

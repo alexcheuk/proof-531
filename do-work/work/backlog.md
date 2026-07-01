@@ -320,6 +320,47 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   d55337cd-0e97-4b49-919d-f071dd4cb412). Alex must promote from INTERNAL to production in Play Console.
   IN-APP-REVIEW native dialog activates with this build (storeReviewRequested flag in settings DB).
 
+## LIFT-PICKER-BUG: Lift picker starts wrong session (task 1522003692159500398)
+- status: done
+- blocked_by: none
+- proof: handleBegin in HomeScreen.tsx simplified - remove silent redirect to in-progress lift.
+  TodayScreen's preview-other-active mode handles the conflict. HomeScreen.test.tsx updated.
+  CI green (1215/1215 tests, typecheck clean, lint clean).
+  - [x] diagnose: handleBegin redirect logic sends user to lift B when lift A is pressed and lift B
+        has an in-progress session; preview-other-active mode on TodayScreen already handles this
+  - [x] fix: remove shouldRedirect logic from handleBegin; always navigate to the tapped lift
+  - [x] update HomeScreen test: cross-lift Begin now navigates to the TAPPED lift, not in-progress
+- note: task-queue 1522003692159500398 (Alex, three-part report). Fix shipped tick-16 (Expedition 94).
+
+## PR-CELEBRATION-FIX: PR celebration only after TM test (task 1522003692159500398, part 2)
+- status: doing
+- blocked_by: none
+- proof: (1) appendSetLog now computes estimated1RM + isPR for tm-test kind (same as amrap).
+  (2) onSaveAmrap always goes to awaiting-bbb (no celebration on D1-D3). (3) onSaveTmTest
+  checks inserted.isPR and routes to pr-celebration or complete. (4) PrCelebrationScreen.onContinue
+  routes to complete for TM test, bbb for AMRAP. (5) hasPR in useSessionCompleteData includes
+  TM test logs. CI green (1215/1215 tests). UI change accrues validation debt.
+  - [x] setLog.ts: add PR detection for tm-test kind (estimated1RM + isPR + upsertPR)
+  - [x] useLogWorkingSets.ts: AMRAP always routes to awaiting-bbb
+  - [x] useLogWorkingSets.ts: TM test routes to pr-celebration when isPR, else complete
+  - [x] useSessionCompleteData.ts: hasPR includes tm-test logs; e1RM falls back to tm-test log
+  - [x] PrCelebrationScreen.tsx: onContinue routes to complete for TM test, bbb for AMRAP
+  - [x] useLogWorkingSets.test.tsx: updated AMRAP PR test + 3 new TM test tests
+  - [ ] on-device smoke: TM-test PR celebration path
+- note: task-queue 1522003692159500398 (Alex). Shipped tick-16 (Expedition 94). Accrues validation debt.
+
+## AMRAP-MIN-REPS: Show min reps needed for PR on AMRAP sheet (task 1522003692159500398, part 3)
+- status: doing
+- blocked_by: none
+- proof: minRepsForPR(weight, existingBestE1RM) added to domain/epley.ts (TDD: 7 tests incl. 2
+  fast-check property tests). AmrapLogSheet.tsx shows "N+ REPS FOR PR" when below PR threshold.
+  UI change accrues validation debt for AMRAP sheet smoke.
+  - [x] domain/epley.ts: add minRepsForPR function + account for reps=1 identity edge case
+  - [x] domain/__tests__/epley.test.ts: 7 new tests (unit + property)
+  - [x] AmrapLogSheet.tsx: import minRepsForPR, compute showPrMinHint, render "N+ REPS FOR PR" caption
+  - [ ] on-device smoke: AMRAP sheet shows correct min-reps hint and hides when PR threshold crossed
+- note: task-queue 1522003692159500398 (Alex). Shipped tick-16 (Expedition 94). Accrues validation debt.
+
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done
 - blocked_by: none

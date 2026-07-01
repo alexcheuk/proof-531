@@ -4,7 +4,7 @@ import { Row } from '@/design/primitives/Row';
 import { Sheet } from '@/design/primitives/Sheet';
 import { Text } from '@/design/primitives/Text';
 import { useTheme } from '@/design/theme';
-import { estimateOneRm } from '@/domain/epley';
+import { estimateOneRm, minRepsForPR } from '@/domain/epley';
 import { liftDisplayName } from '@/domain/labels';
 import type { Lift, Unit } from '@/domain/types';
 import { displayUnit, round } from '@/domain/units';
@@ -69,6 +69,10 @@ export function AmrapLogSheet({
   // Felt-quality affirmation as the user dials in reps well above the
   // prescribed minimum (the "+" of 5+/3+/1+). +3 over feels like a big set.
   const showBigSetCaption = reps >= prescribedReps + 3;
+  // Minimum reps needed to beat the existing best; null when no baseline.
+  // Hidden once the PR threshold is crossed (the chip already signals it).
+  const prMinReps = minRepsForPR(prescribedWeight, existingBest);
+  const showPrMinHint = prMinReps !== null && !isPotentialPR && !isTiePR;
 
   const bodyStyle: ViewStyle = {
     paddingHorizontal: spacing.xl,
@@ -134,6 +138,15 @@ export function AmrapLogSheet({
             testID="amrap-tie-caption"
           >
             TIES YOUR BEST · PUSH FOR +1
+          </CapsLabel>
+        ) : showPrMinHint ? (
+          <CapsLabel
+            weight="semibold"
+            color="ink2"
+            style={{ marginTop: spacing.sm, letterSpacing: 1.4, textAlign: 'center' }}
+            testID="amrap-pr-min-hint"
+          >
+            {`${prMinReps}+ REPS FOR PR`}
           </CapsLabel>
         ) : null}
 

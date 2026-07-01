@@ -104,10 +104,13 @@ export function PrCelebrationScreen({ sessionId }: PrCelebrationScreenProps) {
     longPulseVibrate();
   }, []);
 
-  const onContinue = () => goTo.bbb(router, sessionId, { replace: true });
-  useHardwareBack({ enabled: true, onBack: onContinue });
-
   const v = data.view;
+  // TM-test PR celebration routes to complete (no BBB on D4); AMRAP routes to BBB.
+  const onContinue = () =>
+    v?.isTmTestSession
+      ? goTo.complete(router, sessionId, { replace: true })
+      : goTo.bbb(router, sessionId, { replace: true });
+  useHardwareBack({ enabled: true, onBack: onContinue });
   const hasComparison = !!v && v.prevE1RMDisplay > 0 && v.e1RMDelta > 0;
   const sequenceReady = !!v;
 
