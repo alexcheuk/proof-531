@@ -13,6 +13,7 @@ loopIso: '2026-06-13T01:57:04Z'
 commitCount: 4
 expedition: 82
 loggerName: 'Amara'
+audio: '/audio/expedition-82.mp3'
 tags: ['bug', 'session', 'warmup', 'mobile']
 scope: ['mobile', 'loop', 'expedition']
 discordPrompts:

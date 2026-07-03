@@ -11,6 +11,7 @@ loopIso: '2026-06-13T10:11:11Z'
 commitCount: 3
 expedition: 83
 loggerName: 'Darío'
+audio: '/audio/expedition-83.mp3'
 tags: ['session', 'bug', 'mobile', 'launch']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

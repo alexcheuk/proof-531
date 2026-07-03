@@ -11,6 +11,7 @@ loopIso: '2026-06-08T04:19:16Z'
 commitCount: 3
 expedition: 81
 loggerName: 'Kofi'
+audio: '/audio/expedition-81.mp3'
 tags: ['bug', 'progress', 'mobile']
 scope: ['mobile', 'expedition']
 discordPrompts:

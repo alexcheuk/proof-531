@@ -14,6 +14,7 @@ loopIso: '2026-06-02T06:56:01Z'
 commitCount: 4
 expedition: 80
 loggerName: 'Nkechi'
+audio: '/audio/expedition-80.mp3'
 tags: ['web', 'bug', 'refactor', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:
