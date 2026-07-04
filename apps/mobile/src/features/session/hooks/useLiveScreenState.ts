@@ -103,14 +103,17 @@ function defaultFireDoneAlarm(sound: RestAlarmSound) {
     const Haptics = require('expo-haptics') as any;
 
     if (RN.Platform.OS === 'android') {
-      RN.Vibration.vibrate([0, 700, 100, 700]);
+      // biome-ignore format: trailing comma in typeof import() causes TS1005
+      const chrono = require('@/lib/restChronometer') as typeof import(
+        '@/lib/restChronometer'
+      );
+      // Same long double-buzz as the notification channels so foreground and
+      // background completion feel identical. Direct Vibration call because
+      // the channel pattern only applies to notification-driven alerts.
+      RN.Vibration.vibrate([...chrono.REST_DONE_VIBRATION_PATTERN]);
       // Foregrounded: no trigger notification was scheduled, so fire the sound alert directly.
       if (RN.AppState.currentState === 'active') {
-        // biome-ignore format: trailing comma in typeof import() causes TS1005
-        const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
-          '@/lib/restChronometer'
-        );
-        void fireRestDoneAlarmForeground(sound);
+        void chrono.fireRestDoneAlarmForeground(sound);
       }
     } else {
       // iOS: Error haptic is multi-pulse (alarm feel); expo-notifications handles the sound separately.

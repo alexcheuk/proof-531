@@ -12,16 +12,30 @@ const REST_NOTIFICATION_ID = 'rest';
 // channel is deleted in ensureRestChannels so settings don't show a stale dupe.
 const CHANNEL_TIMER_LEGACY = 'rest-timer';
 const CHANNEL_TIMER = 'rest-timer-v2';
-const CHANNEL_DONE = 'rest-done';
+// v2: adds the long vibration pattern. Android freezes vibration config at
+// channel creation, so existing installs keep the short default buzz on the
+// old id forever  -  the bump forces a fresh channel with the long pattern.
+const CHANNEL_DONE_LEGACY = 'rest-done';
+const CHANNEL_DONE = 'rest-done-v2';
 // Separate channel because Android freezes a channel's sound at creation:
 // the sound choice picks which channel the completion alert posts to.
 // This one plays the device's system alarm sound (whatever the user chose
 // in their Clock/Sound settings) instead of the notification default.
-const CHANNEL_DONE_ALARM = 'rest-done-alarm';
+// v2 for the same vibration-pattern reason as CHANNEL_DONE  -  the v1 id may
+// have been created (pattern-frozen) by OTA'd JS on clients built before the
+// long-vibration change.
+const CHANNEL_DONE_ALARM_LEGACY = 'rest-done-alarm';
+const CHANNEL_DONE_ALARM = 'rest-done-alarm-v2';
 // Stable Android URI for "the user's chosen default alarm sound"
 // (RingtoneManager.getDefaultUri(TYPE_ALARM)). Resolved at play time, so it
 // tracks whatever the user picks in system settings.
 const SYSTEM_ALARM_SOUND_URI = 'content://settings/system/alarm_alert';
+/**
+ * Long double-buzz for the completion alert: [delay, vibrate, ...] ms pairs
+ * (values must be positive  -  notify-kit rejects 0s). Shared with the
+ * foreground path in useLiveScreenState so both feel identical.
+ */
+export const REST_DONE_VIBRATION_PATTERN = [250, 1200, 350, 1200] as const;
 /** Action id for the notification "+30s" button. */
 export const REST_ADD_ACTION_ID = 'rest-add-30';
 /** Status-bar icon. ic_launcher always exists; a monochrome icon is a follow-up. */
@@ -49,10 +63,12 @@ export async function ensureRestChannels(): Promise<void> {
   const { AndroidImportance } = m;
   // Best-effort cleanup of the pre-v2 LOW channel so Android settings don't list
   // an orphaned "Rest timer" entry alongside the new one.
-  try {
-    await m.default.deleteChannel(CHANNEL_TIMER_LEGACY);
-  } catch {
-    // never created on this install, or already gone
+  for (const legacy of [CHANNEL_TIMER_LEGACY, CHANNEL_DONE_LEGACY, CHANNEL_DONE_ALARM_LEGACY]) {
+    try {
+      await m.default.deleteChannel(legacy);
+    } catch {
+      // never created on this install, or already gone
+    }
   }
   await m.default.createChannel({
     id: CHANNEL_TIMER,
@@ -70,6 +86,7 @@ export async function ensureRestChannels(): Promise<void> {
     importance: AndroidImportance.HIGH,
     sound: 'default',
     vibration: true,
+    vibrationPattern: [...REST_DONE_VIBRATION_PATTERN],
   });
   await m.default.createChannel({
     id: CHANNEL_DONE_ALARM,
@@ -77,6 +94,7 @@ export async function ensureRestChannels(): Promise<void> {
     importance: AndroidImportance.HIGH,
     sound: SYSTEM_ALARM_SOUND_URI,
     vibration: true,
+    vibrationPattern: [...REST_DONE_VIBRATION_PATTERN],
   });
 }
 
