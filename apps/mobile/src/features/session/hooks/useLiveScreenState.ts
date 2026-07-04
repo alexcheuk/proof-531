@@ -11,6 +11,7 @@ import {
   isTmTestSet,
   nextWorkingSetIndex,
 } from '@/domain/schemes';
+import type { RestAlarmSound } from '@/domain/types';
 import { round as snapWeight } from '@/domain/units';
 // setIndex bootstrapped from persisted set_logs rows so back-nav + resume picks up where the user left off.
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,6 +39,7 @@ const CANCEL_ARM_TIMEOUT_MS = 8000;
 
 export type UseLiveScreenStateOptions = {
   restSeconds?: number;
+  restAlarmSound?: RestAlarmSound;
   fireWarningHaptic?: () => void;
   fireDoneHaptic?: () => void;
 };
@@ -57,6 +59,8 @@ export type UseLiveScreenStateResult = {
   onSubRest: () => void;
   getRestDeadlineMs: () => number | null;
   syncRestDeadline: (endsAtMs: number) => void;
+  /** State mirror of the rest deadline  -  see useRestTimer.deadlineMs. */
+  restDeadlineMs: number | null;
   lastLogged: LastLoggedSet | null;
   isAmrap: boolean;
   isTmTest: boolean;
@@ -92,7 +96,7 @@ function defaultFireWarningHaptic() {
   }
 }
 
-function defaultFireDoneAlarm() {
+function defaultFireDoneAlarm(sound: RestAlarmSound) {
   try {
     const RN = require('react-native') as typeof import('react-native');
     // biome-ignore lint/suspicious/noExplicitAny: dynamic require for graceful degradation
@@ -106,7 +110,7 @@ function defaultFireDoneAlarm() {
         const { fireRestDoneAlarmForeground } = require('@/lib/restChronometer') as typeof import(
           '@/lib/restChronometer'
         );
-        void fireRestDoneAlarmForeground();
+        void fireRestDoneAlarmForeground(sound);
       }
     } else {
       // iOS: Error haptic is multi-pulse (alarm feel); expo-notifications handles the sound separately.
@@ -136,8 +140,13 @@ export function useLiveScreenState(
   const db = useDb();
   const queryClient = useQueryClient();
   const restSeconds = options.restSeconds ?? REST_SECONDS;
+  const restAlarmSound = options.restAlarmSound ?? 'alarm';
   const fireWarningHaptic = options.fireWarningHaptic ?? defaultFireWarningHaptic;
-  const fireDoneHaptic = options.fireDoneHaptic ?? defaultFireDoneAlarm;
+  const customFireDoneHaptic = options.fireDoneHaptic;
+  const fireDoneHaptic = useCallback(() => {
+    if (customFireDoneHaptic) customFireDoneHaptic();
+    else defaultFireDoneAlarm(restAlarmSound);
+  }, [customFireDoneHaptic, restAlarmSound]);
 
   const sessionQuery = useSession(sessionId);
   const session = sessionQuery.data;
@@ -371,6 +380,7 @@ export function useLiveScreenState(
     onSubRest: restTimer.subtractTime,
     getRestDeadlineMs: restTimer.getDeadlineMs,
     syncRestDeadline: restTimer.setDeadline,
+    restDeadlineMs: restTimer.deadlineMs,
     onUndoLastSet,
     onRequestReset,
     onConfirmResetFirstTap,

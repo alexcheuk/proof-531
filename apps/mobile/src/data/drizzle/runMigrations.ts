@@ -46,6 +46,7 @@ const REQUIRED_SETTINGS_COLUMNS = [
   'day',
   'rest_target_seconds',
   'bbb_rest_target_seconds',
+  'rest_alarm_sound',
   'live_screen_inverted',
   'store_review_requested',
 ] as const;
@@ -88,6 +89,11 @@ const ADDITIVE_COLUMNS: ReadonlyArray<{
     table: 'settings',
     column: 'store_review_requested',
     ddl: 'ALTER TABLE settings ADD COLUMN store_review_requested INTEGER NOT NULL DEFAULT 0',
+  },
+  {
+    table: 'settings',
+    column: 'rest_alarm_sound',
+    ddl: "ALTER TABLE settings ADD COLUMN rest_alarm_sound TEXT NOT NULL DEFAULT 'alarm'",
   },
 ];
 

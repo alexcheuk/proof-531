@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-07-04 - Rest alert made exact-alarm class; rest sound = device alarm via channel URI
+
+**Tags:** `bug`, `behavior`, `architecture`
+**Files:** `apps/mobile/src/lib/restChronometer.ts`, `apps/mobile/src/features/session/hooks/useRestNotification.ts`, `apps/mobile/src/features/session/hooks/useRestTimer.ts`, `apps/mobile/app.json`, `apps/mobile/src/features/settings/sections/RestAlarmSection.tsx`
+
+Post-mortem + feature. (1) The "rest timer drifts in the background" bug was not the in-app timer (it's wall-clock anchored) - it was the Android completion trigger: on Android 14+ `SCHEDULE_EXACT_ALARM` is denied by default, and notify-kit silently downgrades to an *inexact* alarm that Doze defers by minutes. Fix: declare `USE_EXACT_ALARM` (auto-granted; justified - the rest timer IS a timer), schedule via `AlarmType.SET_ALARM_CLOCK` (the only class OEM battery managers reliably honor), and surface runtime "allow exact alarms" / "disable battery optimization" rows in Settings when the OS state is degraded. (2) Rest-complete sound is now configurable (`settings.restAlarmSound`, default `alarm`): a second done-channel (`rest-done-alarm`) uses `content://settings/system/alarm_alert` - the user's own system alarm sound - since Android freezes channel sounds at creation, choice = channel selection. A "pick a specific sound" row deep-links to the channel's OS sound picker for arbitrary device sounds. (3) Same pass fixed iOS: the completion notification is now keyed to a new `deadlineMs` state from `useRestTimer`, so in-app ±30s finally reschedules it (it used to fire at the original time).
+
+**Why:** Alex reported the rest timer inaccurate when backgrounded and asked for the alert to play a system alarm sound on the speaker.
+
+**Trade-off / what we didn't do:** No custom native module to enumerate `RingtoneManager.TYPE_ALARM` ringtones in-app - the OS channel-settings picker gives the full device sound list for free, with zero native surface and no dev-client rebuild risk beyond the manifest permission. iOS keeps the default notification sound (iOS offers no system-sound enumeration to apps).
+
+**Follow-ups:** Needs a dev-client rebuild (`USE_EXACT_ALARM` is a manifest change). Verify on-device: alarm fires at T-0 with screen off; channel sound picker round-trips.
+
 ### 2026-07-01 - PR celebration gated to TM-test day; AMRAP min-reps hint added
 
 **Tags:** `behavior`, `domain`, `architecture`

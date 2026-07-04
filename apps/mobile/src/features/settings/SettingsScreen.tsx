@@ -25,6 +25,7 @@ import { LiveScreenLookSection } from './sections/LiveScreenLookSection';
 import { PlateSetSection } from './sections/PlateSetSection';
 import { ProgressionRulesSection } from './sections/ProgressionRulesSection';
 import { ReleaseSection } from './sections/ReleaseSection';
+import { RestAlarmSection } from './sections/RestAlarmSection';
 import { RestTargetSection } from './sections/RestTargetSection';
 import { TrainingMaxSection } from './sections/TrainingMaxSection';
 import { UnitsSection } from './sections/UnitsSection';
@@ -100,6 +101,8 @@ export function SettingsScreen() {
           restTargetSeconds={settings.restTargetSeconds}
           bbbRestTargetSeconds={settings.bbbRestTargetSeconds}
         />
+
+        <RestAlarmSection restAlarmSound={settings.restAlarmSound} />
 
         <LiveScreenLookSection inverted={settings.liveScreenInverted} />
 

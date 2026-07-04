@@ -255,3 +255,61 @@ describe('useRestTimer', () => {
     expect(done).not.toHaveBeenCalled();
   });
 });
+
+describe('useRestTimer deadlineMs exposure', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('is null while inactive and set once active', () => {
+    const { result, rerender } = renderHook(
+      ({ active }: { active: boolean }) =>
+        useRestTimer({ active, seconds: 10, fireWarningHaptic: jest.fn() }),
+      { initialProps: { active: false } },
+    );
+    expect(result.current.deadlineMs).toBeNull();
+
+    rerender({ active: true });
+    expect(result.current.deadlineMs).toBe(Date.now() + 10_000);
+
+    rerender({ active: false });
+    expect(result.current.deadlineMs).toBeNull();
+  });
+
+  it('moves by +30s on addTime and follows subtractTime', () => {
+    const { result } = renderHook(() =>
+      useRestTimer({ active: true, seconds: 60, fireWarningHaptic: jest.fn() }),
+    );
+    const initial = result.current.deadlineMs;
+    expect(initial).not.toBeNull();
+
+    act(() => result.current.addTime());
+    expect(result.current.deadlineMs).toBe((initial as number) + 30_000);
+
+    act(() => result.current.subtractTime());
+    expect(result.current.deadlineMs).toBe(Date.now() + 60_000);
+  });
+
+  it('mirrors an external setDeadline sync', () => {
+    const { result } = renderHook(() =>
+      useRestTimer({ active: true, seconds: 60, fireWarningHaptic: jest.fn() }),
+    );
+    const synced = Date.now() + 42_000;
+    act(() => result.current.setDeadline(synced));
+    expect(result.current.deadlineMs).toBe(synced);
+    expect(result.current.remaining).toBe(42);
+  });
+
+  it('does not change on ordinary ticks', () => {
+    const { result } = renderHook(() =>
+      useRestTimer({ active: true, seconds: 60, fireWarningHaptic: jest.fn() }),
+    );
+    const initial = result.current.deadlineMs;
+    act(() => jest.advanceTimersByTime(5000));
+    expect(result.current.deadlineMs).toBe(initial);
+  });
+});

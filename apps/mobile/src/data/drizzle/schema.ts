@@ -17,6 +17,10 @@ export const settings = sqliteTable('settings', {
   // wasted time. Default 90s. Additive column; see ADDITIVE_COLUMNS in
   // runMigrations.ts so existing installs pick it up via ALTER TABLE.
   bbbRestTargetSeconds: integer('bbb_rest_target_seconds').notNull(),
+  // Sound for the rest-complete alert: 'chime' = default notification sound,
+  // 'alarm' = the device's system alarm sound. Default 'alarm'. Additive
+  // column; see ADDITIVE_COLUMNS in runMigrations.ts.
+  restAlarmSound: text('rest_alarm_sound', { enum: ['chime', 'alarm'] }).notNull(),
   // Flips Live set + rest screens to inverted (ink-0 surface, paper
   // text), matching the PR celebration palette. Default 0 (off).
   // Additive column; existing installs pick it up via ALTER TABLE in
@@ -138,6 +142,7 @@ export const DEFAULT_SETTINGS_VALUES = {
   day: 1,
   restTargetSeconds: 180,
   bbbRestTargetSeconds: 90,
+  restAlarmSound: 'alarm' as const,
   liveScreenInverted: 0 as 0 | 1,
   storeReviewRequested: 0 as 0 | 1,
 };

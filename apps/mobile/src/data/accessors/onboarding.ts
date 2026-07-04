@@ -47,6 +47,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
           day: existing.day as Settings['day'],
           restTargetSeconds: existing.restTargetSeconds,
           bbbRestTargetSeconds: existing.bbbRestTargetSeconds,
+          restAlarmSound: existing.restAlarmSound,
           liveScreenInverted: !!existing.liveScreenInverted,
           storeReviewRequested: !!existing.storeReviewRequested,
         }
@@ -67,6 +68,7 @@ export async function completeOnboarding(db: AnyDb, input: FinishOnboardingInput
     day: next.day,
     restTargetSeconds: next.restTargetSeconds,
     bbbRestTargetSeconds: next.bbbRestTargetSeconds,
+    restAlarmSound: next.restAlarmSound,
     liveScreenInverted: next.liveScreenInverted ? 1 : 0,
     storeReviewRequested: next.storeReviewRequested ? 1 : 0,
   };

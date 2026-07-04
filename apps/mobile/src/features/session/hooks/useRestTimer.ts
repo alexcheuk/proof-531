@@ -18,6 +18,12 @@ export type UseRestTimerResult = {
   subtractTime: () => void;
   getDeadlineMs: () => number | null;
   setDeadline: (endsAtMs: number) => void;
+  /**
+   * The absolute deadline as state  -  changes only when the timer re-anchors
+   * (start, ±30s, external sync), never on ticks. Lets effects reschedule the
+   * OS "rest complete" notification whenever the real deadline moves.
+   */
+  deadlineMs: number | null;
 };
 
 const DEFAULT_WARNING_THRESHOLD = 3;
@@ -32,6 +38,7 @@ export function useRestTimer({
   fireDoneHaptic,
 }: UseRestTimerOptions): UseRestTimerResult {
   const [remaining, setRemaining] = useState(0);
+  const [deadlineMs, setDeadlineMs] = useState<number | null>(null);
   const warningFiredRef = useRef(false);
   // Done haptic fires only on the positive→≤0 transition. Initial remaining=0 (before seed effect) must not trigger.
   const doneFiredRef = useRef(false);
@@ -68,6 +75,7 @@ export function useRestTimer({
   useEffect(() => {
     if (!active) {
       deadlineRef.current = null;
+      setDeadlineMs(null);
       if (preciseAlarmRef.current != null) {
         clearTimeout(preciseAlarmRef.current);
         preciseAlarmRef.current = null;
@@ -84,6 +92,7 @@ export function useRestTimer({
       doneFiredRef.current = true;
     }
     deadlineRef.current = Date.now() + seed * 1000;
+    setDeadlineMs(deadlineRef.current);
     setRemaining(seed);
     if (!doneFiredRef.current) {
       armAlarmRef.current(deadlineRef.current);
@@ -126,6 +135,7 @@ export function useRestTimer({
   const addTime = useCallback(() => {
     if (!active || deadlineRef.current == null) return;
     deadlineRef.current += STEP_SECONDS * 1000;
+    setDeadlineMs(deadlineRef.current);
     const next = Math.round((deadlineRef.current - Date.now()) / 1000);
     // Re-arm so the warning fires again on the next pass through the threshold (not just the first).
     if (next > warningThresholdSeconds) {
@@ -143,6 +153,7 @@ export function useRestTimer({
     const current = Math.round((deadlineRef.current - Date.now()) / 1000);
     const next = Math.max(1, current - STEP_SECONDS);
     deadlineRef.current = Date.now() + next * 1000;
+    setDeadlineMs(deadlineRef.current);
     if (next > warningThresholdSeconds) {
       warningFiredRef.current = false;
     }
@@ -155,6 +166,7 @@ export function useRestTimer({
   const setDeadline = useCallback(
     (endsAtMs: number) => {
       deadlineRef.current = endsAtMs;
+      setDeadlineMs(endsAtMs);
       const next = Math.round((endsAtMs - Date.now()) / 1000);
       // Re-arm latches so a re-anchor that lands above the thresholds can still
       // fire the warning / done cues on the way down.
@@ -168,5 +180,5 @@ export function useRestTimer({
     [warningThresholdSeconds],
   );
 
-  return { remaining, addTime, subtractTime, getDeadlineMs, setDeadline };
+  return { remaining, addTime, subtractTime, getDeadlineMs, setDeadline, deadlineMs };
 }

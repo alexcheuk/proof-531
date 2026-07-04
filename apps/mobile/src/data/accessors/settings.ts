@@ -34,6 +34,7 @@ function toRow(s: Settings): SettingsInsert {
     day: s.day,
     restTargetSeconds: s.restTargetSeconds,
     bbbRestTargetSeconds: s.bbbRestTargetSeconds,
+    restAlarmSound: s.restAlarmSound,
     // Drizzle's column type for these is INTEGER NOT NULL (no `mode:
     // 'boolean'`) so we round-trip the flags as 0/1 ourselves.
     liveScreenInverted: s.liveScreenInverted ? 1 : 0,
@@ -53,6 +54,7 @@ function fromRow(row: SettingsRow): Settings {
     day: row.day as Day,
     restTargetSeconds: row.restTargetSeconds,
     bbbRestTargetSeconds: row.bbbRestTargetSeconds,
+    restAlarmSound: row.restAlarmSound,
     liveScreenInverted: !!row.liveScreenInverted,
     storeReviewRequested: !!row.storeReviewRequested,
   };

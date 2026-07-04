@@ -1,4 +1,5 @@
 import { isExpired } from '@/domain/restDeadline';
+import type { RestAlarmSound } from '@/domain/types';
 import {
   cancelRest,
   postRestChronometer,
@@ -14,8 +15,10 @@ import { type AppPhase, restNotifEffectForAppState } from './restNotificationAct
 /**
  * Drives the rest-complete notification.
  *
- * iOS: schedules a single "Rest complete" local notification at the deadline
- * (unchanged behavior; the live countdown is Android-only).
+ * iOS: schedules a single "Rest complete" local notification at the deadline.
+ * Keyed on `deadlineMs` (not the configured rest length) so an in-app ±30s or
+ * a restored snapshot reschedules the alert to match the real deadline  -
+ * previously the notification kept firing at the original time.
  *
  * Android: while resting, shows the OS-ticked live countdown notification only
  * when the app is backgrounded. The in-app timer is the experience while
@@ -25,25 +28,28 @@ import { type AppPhase, restNotifEffectForAppState } from './restNotificationAct
  */
 export function useRestNotification({
   active,
-  restSeconds,
+  deadlineMs,
   sessionId,
+  restAlarmSound,
   getDeadlineMs,
   setDeadline,
 }: {
   active: boolean;
-  restSeconds: number;
+  deadlineMs: number | null;
   sessionId: number | null;
+  restAlarmSound: RestAlarmSound;
   getDeadlineMs: () => number | null;
   setDeadline: (endsAtMs: number) => void;
 }): void {
   const iosNotificationId = useRef<string | null>(null);
 
-  // iOS  -  schedule the single completion notification; cancel on exit.
+  // iOS  -  (re)schedule the single completion notification; cancel on exit.
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    if (!active) return;
+    if (!active || deadlineMs == null) return;
 
-    const promise = scheduleRestDoneNotification(restSeconds);
+    const seconds = Math.max(1, Math.round((deadlineMs - Date.now()) / 1000));
+    const promise = scheduleRestDoneNotification(seconds);
     promise.then((id) => {
       iosNotificationId.current = id;
     });
@@ -53,7 +59,12 @@ export function useRestNotification({
       promise.then((id) => cancelRestDoneNotification(id));
       iosNotificationId.current = null;
     };
-  }, [active, restSeconds]);
+  }, [active, deadlineMs]);
+
+  // Keep the sound choice in a ref: a settings change mid-rest shouldn't
+  // tear down / re-post the Android notification, just apply on the next post.
+  const soundRef = useRef(restAlarmSound);
+  soundRef.current = restAlarmSound;
 
   // Android  -  live chronometer notification while backgrounded mid-rest.
   useEffect(() => {
@@ -86,8 +97,8 @@ export function useRestNotification({
       if (effect === 'post') {
         const endsAtMs = getDeadlineMs();
         if (endsAtMs != null) {
-          void postRestChronometer({ endsAtMs, sessionId });
-          void scheduleRestComplete({ endsAtMs, sessionId });
+          void postRestChronometer({ endsAtMs, sessionId, sound: soundRef.current });
+          void scheduleRestComplete({ endsAtMs, sessionId, sound: soundRef.current });
         }
       } else if (effect === 'reconcile') {
         void reconcile();

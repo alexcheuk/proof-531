@@ -1,4 +1,5 @@
 import { extendDeadline } from '@/domain/restDeadline';
+import type { RestAlarmSound } from '@/domain/types';
 import { Platform } from 'react-native';
 
 // notify-kit lazy-required and Android-guarded so the iOS bundle never loads the native module.
@@ -12,6 +13,15 @@ const REST_NOTIFICATION_ID = 'rest';
 const CHANNEL_TIMER_LEGACY = 'rest-timer';
 const CHANNEL_TIMER = 'rest-timer-v2';
 const CHANNEL_DONE = 'rest-done';
+// Separate channel because Android freezes a channel's sound at creation:
+// the sound choice picks which channel the completion alert posts to.
+// This one plays the device's system alarm sound (whatever the user chose
+// in their Clock/Sound settings) instead of the notification default.
+const CHANNEL_DONE_ALARM = 'rest-done-alarm';
+// Stable Android URI for "the user's chosen default alarm sound"
+// (RingtoneManager.getDefaultUri(TYPE_ALARM)). Resolved at play time, so it
+// tracks whatever the user picks in system settings.
+const SYSTEM_ALARM_SOUND_URI = 'content://settings/system/alarm_alert';
 /** Action id for the notification "+30s" button. */
 export const REST_ADD_ACTION_ID = 'rest-add-30';
 /** Status-bar icon. ic_launcher always exists; a monochrome icon is a follow-up. */
@@ -26,6 +36,11 @@ function load(): NotifeeNamespace | null {
   if (!isAndroid) return null;
   if (!cached) cached = require('react-native-notify-kit') as NotifeeNamespace;
   return cached;
+}
+
+/** Channel the completion alert posts to for a given sound choice. */
+export function doneChannelId(sound: RestAlarmSound): string {
+  return sound === 'alarm' ? CHANNEL_DONE_ALARM : CHANNEL_DONE;
 }
 
 export async function ensureRestChannels(): Promise<void> {
@@ -51,9 +66,16 @@ export async function ensureRestChannels(): Promise<void> {
   });
   await m.default.createChannel({
     id: CHANNEL_DONE,
-    name: 'Rest complete',
+    name: 'Rest complete (chime)',
     importance: AndroidImportance.HIGH,
     sound: 'default',
+    vibration: true,
+  });
+  await m.default.createChannel({
+    id: CHANNEL_DONE_ALARM,
+    name: 'Rest complete (alarm)',
+    importance: AndroidImportance.HIGH,
+    sound: SYSTEM_ALARM_SOUND_URI,
     vibration: true,
   });
 }
@@ -72,6 +94,7 @@ export async function requestRestPermission(): Promise<void> {
 export async function postRestChronometer(opts: {
   endsAtMs: number;
   sessionId: number;
+  sound: RestAlarmSound;
 }): Promise<void> {
   const m = load();
   if (!m) return;
@@ -81,7 +104,13 @@ export async function postRestChronometer(opts: {
       id: REST_NOTIFICATION_ID,
       title: 'Resting',
       body: 'Tap to return to your set.',
-      data: { endsAtMs: String(opts.endsAtMs), sessionId: String(opts.sessionId) },
+      // doneSound rides along so the background +30s handler (which has no
+      // access to settings) reschedules the completion alert on the right channel.
+      data: {
+        endsAtMs: String(opts.endsAtMs),
+        sessionId: String(opts.sessionId),
+        doneSound: opts.sound,
+      },
       android: {
         channelId: CHANNEL_TIMER,
         ongoing: true,
@@ -103,6 +132,7 @@ export async function postRestChronometer(opts: {
 export async function scheduleRestComplete(opts: {
   endsAtMs: number;
   sessionId: number;
+  sound: RestAlarmSound;
 }): Promise<void> {
   const m = load();
   if (!m) return;
@@ -114,9 +144,13 @@ export async function scheduleRestComplete(opts: {
         id: REST_NOTIFICATION_ID,
         title: 'Rest complete',
         body: "Time to lift. You've got this.",
-        data: { endsAtMs: String(opts.endsAtMs), sessionId: String(opts.sessionId) },
+        data: {
+          endsAtMs: String(opts.endsAtMs),
+          sessionId: String(opts.sessionId),
+          doneSound: opts.sound,
+        },
         android: {
-          channelId: CHANNEL_DONE,
+          channelId: doneChannelId(opts.sound),
           smallIcon: SMALL_ICON,
           pressAction: { id: 'default', launchActivity: 'default' },
         },
@@ -124,7 +158,13 @@ export async function scheduleRestComplete(opts: {
       {
         type: m.TriggerType.TIMESTAMP,
         timestamp: opts.endsAtMs,
-        alarmManager: { allowWhileIdle: true },
+        // SET_ALARM_CLOCK is the only alarm class Doze and OEM battery
+        // managers reliably deliver on time  -  exact-idle alarms can still be
+        // deferred by minutes on aggressive firmwares. It needs the exact-alarm
+        // permission (USE_EXACT_ALARM, declared in app.json); without it
+        // notify-kit silently downgrades to an INEXACT alarm, which is the
+        // "rest timer fires late in the background" failure mode.
+        alarmManager: { type: m.AlarmType.SET_ALARM_CLOCK },
       },
     );
   } catch {
@@ -164,7 +204,7 @@ export async function readDisplayedDeadline(): Promise<number | null> {
 }
 
 // Used when rest expires in the foreground  -  no trigger was scheduled, so the OS swap never fires.
-export async function fireRestDoneAlarmForeground(): Promise<void> {
+export async function fireRestDoneAlarmForeground(sound: RestAlarmSound): Promise<void> {
   const m = load();
   if (!m) return;
   try {
@@ -174,7 +214,7 @@ export async function fireRestDoneAlarmForeground(): Promise<void> {
       title: 'Rest complete',
       body: "Time to lift. You've got this.",
       android: {
-        channelId: CHANNEL_DONE,
+        channelId: doneChannelId(sound),
         smallIcon: SMALL_ICON,
         pressAction: { id: 'default', launchActivity: 'default' },
       },
@@ -194,10 +234,83 @@ export async function handleAddRestAction(
   const sessionId =
     typeof sessionIdRaw === 'string' ? Number.parseInt(sessionIdRaw, 10) : Number.NaN;
   if (!Number.isFinite(endsAt) || !Number.isFinite(sessionId)) return null;
+  // Carried on the notification since the headless handler can't reach settings.
+  // Falls back to 'alarm' (the DEFAULT_SETTINGS value) for notifications posted
+  // by builds that predate the doneSound payload.
+  const sound: RestAlarmSound = data.doneSound === 'chime' ? 'chime' : 'alarm';
   // Extend from whichever is later: the carried deadline or now (handles the
   // race where +30s is tapped just after T-0).
   const next = extendDeadline(Math.max(endsAt, Date.now()));
-  await postRestChronometer({ endsAtMs: next, sessionId });
-  await scheduleRestComplete({ endsAtMs: next, sessionId });
+  await postRestChronometer({ endsAtMs: next, sessionId, sound });
+  await scheduleRestComplete({ endsAtMs: next, sessionId, sound });
   return next;
+}
+
+/**
+ * Why the background alert can still be late, per subsystem. `null` = unknown
+ * or not applicable (always null on iOS, where the pre-scheduled local
+ * notification needs no alarm permission).
+ */
+export type RestReliability = {
+  /** false = Android denied exact alarms → the completion alert drifts under Doze. */
+  exactAlarmsEnabled: boolean | null;
+  /** true = the OS may throttle the app in the background (OEM battery managers). */
+  batteryOptimized: boolean | null;
+};
+
+export async function getRestReliability(): Promise<RestReliability> {
+  const m = load();
+  if (!m) return { exactAlarmsEnabled: null, batteryOptimized: null };
+  const result: RestReliability = { exactAlarmsEnabled: null, batteryOptimized: null };
+  try {
+    const settings = await m.default.getNotificationSettings();
+    const alarm = settings.android?.alarm;
+    if (alarm === m.AndroidNotificationSetting.ENABLED) result.exactAlarmsEnabled = true;
+    else if (alarm === m.AndroidNotificationSetting.DISABLED) result.exactAlarmsEnabled = false;
+  } catch {
+    // leave null  -  don't render a false warning off a failed read
+  }
+  try {
+    result.batteryOptimized = await m.default.isBatteryOptimizationEnabled();
+  } catch {
+    // leave null
+  }
+  return result;
+}
+
+/** Opens Android's "Alarms & reminders" special-access screen (API 31+). */
+export async function openExactAlarmSettings(): Promise<void> {
+  const m = load();
+  if (!m) return;
+  try {
+    await m.default.openAlarmPermissionSettings();
+  } catch {
+    // best-effort
+  }
+}
+
+/** Opens the OS battery-optimization exemption screen for this app. */
+export async function openBatteryOptimizationSettings(): Promise<void> {
+  const m = load();
+  if (!m) return;
+  try {
+    await m.default.openBatteryOptimizationSettings();
+  } catch {
+    // best-effort
+  }
+}
+
+/**
+ * Opens the OS notification-channel settings for the active completion
+ * channel, where the user can pick any sound on the device for the alert.
+ */
+export async function openRestDoneSoundSettings(sound: RestAlarmSound): Promise<void> {
+  const m = load();
+  if (!m) return;
+  try {
+    await ensureRestChannels();
+    await m.default.openNotificationSettings(doneChannelId(sound));
+  } catch {
+    // best-effort
+  }
 }

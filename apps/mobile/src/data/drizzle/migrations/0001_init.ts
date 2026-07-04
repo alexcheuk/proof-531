@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS settings (
   day INTEGER NOT NULL,
   rest_target_seconds INTEGER NOT NULL DEFAULT 90,
   bbb_rest_target_seconds INTEGER NOT NULL DEFAULT 90,
+  rest_alarm_sound TEXT NOT NULL DEFAULT 'alarm',
   live_screen_inverted INTEGER NOT NULL DEFAULT 0,
   store_review_requested INTEGER NOT NULL DEFAULT 0
 );

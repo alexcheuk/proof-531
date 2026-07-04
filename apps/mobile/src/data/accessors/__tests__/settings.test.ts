@@ -33,6 +33,15 @@ describe('settings accessor', () => {
     expect(s.restTargetSeconds).toBe(180);
   });
 
+  it('seeds restAlarmSound to alarm and round-trips a change to chime', async () => {
+    const db = freshDb();
+    const seeded = await getSettings(db);
+    expect(seeded.restAlarmSound).toBe('alarm');
+    await updateSettings(db, { restAlarmSound: 'chime' });
+    const reread = await getSettings(db);
+    expect(reread.restAlarmSound).toBe('chime');
+  });
+
   it('updateSettings round-trips restTargetSeconds', async () => {
     const db = freshDb();
     await seedDefaultSettings(db);

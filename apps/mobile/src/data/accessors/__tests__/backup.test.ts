@@ -29,6 +29,7 @@ async function seedFullDb(db: TestDb): Promise<void> {
     day: 1,
     restTargetSeconds: 180,
     bbbRestTargetSeconds: 90,
+    restAlarmSound: 'alarm',
     liveScreenInverted: 0,
     storeReviewRequested: 0,
   });

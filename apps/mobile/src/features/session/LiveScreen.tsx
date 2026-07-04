@@ -52,7 +52,11 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   const prsQuery = usePrs();
   const settingsQuery = useSettings();
   const restSeconds = settingsQuery.data?.restTargetSeconds;
-  const live = useLiveScreenState(sessionId, restSeconds !== undefined ? { restSeconds } : {});
+  const restAlarmSound = settingsQuery.data?.restAlarmSound ?? 'alarm';
+  const live = useLiveScreenState(sessionId, {
+    ...(restSeconds !== undefined ? { restSeconds } : {}),
+    restAlarmSound,
+  });
   const sessionStatus = sessionQuery.data?.status;
 
   useLiveScreenEffects({
@@ -67,8 +71,9 @@ function LiveScreenBody({ sessionId, inverted }: LiveScreenBodyProps) {
   // users get alerted even if they navigate away during rest.
   useRestNotification({
     active: live.phase === 'rest',
-    restSeconds: settingsQuery.data?.restTargetSeconds ?? 90,
+    deadlineMs: live.restDeadlineMs,
     sessionId,
+    restAlarmSound,
     getDeadlineMs: live.getRestDeadlineMs,
     setDeadline: live.syncRestDeadline,
   });
