@@ -10,6 +10,7 @@ loopIso: '2026-06-14T03:20:48Z'
 commitCount: 2
 expedition: 89
 loggerName: 'Reva'
+audio: '/audio/expedition-89.mp3'
 tags: ['release', 'settings', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

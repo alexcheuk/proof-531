@@ -12,6 +12,7 @@ loopIso: '2026-05-30T10:12:30Z'
 commitCount: 1
 expedition: 78
 loggerName: 'Idris'
+audio: '/audio/expedition-78.mp3'
 tags: ['bug', 'refactor', 'web', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 ---

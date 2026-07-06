@@ -12,6 +12,7 @@ loopIso: '2026-06-02T04:43:15Z'
 commitCount: 2
 expedition: 79
 loggerName: 'Soren'
+audio: '/audio/expedition-79.mp3'
 tags: ['bug', 'loop', 'meta']
 scope: ['mobile', 'loop', 'meta', 'expedition']
 ---

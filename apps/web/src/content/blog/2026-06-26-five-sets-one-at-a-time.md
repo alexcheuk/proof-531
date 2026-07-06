@@ -11,6 +11,7 @@ loopIso: '2026-06-26T21:54:09Z'
 commitCount: 3
 expedition: 90
 loggerName: 'Idris'
+audio: '/audio/expedition-90.mp3'
 tags: ['session', 'bbb', 'mobile']
 scope: ['mobile', 'expedition']
 discordPrompts:

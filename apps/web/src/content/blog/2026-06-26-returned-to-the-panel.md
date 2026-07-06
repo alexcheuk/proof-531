@@ -11,6 +11,7 @@ loopIso: '2026-06-26T22:21:39Z'
 commitCount: 4
 expedition: 91
 loggerName: 'Saoirse'
+audio: '/audio/expedition-91.mp3'
 tags: ['session', 'bbb', 'mobile']
 scope: ['mobile', 'expedition']
 discordPrompts:

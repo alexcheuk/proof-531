@@ -11,6 +11,7 @@ loopIso: '2026-06-29T00:20:12Z'
 commitCount: 2
 expedition: 92
 loggerName: 'Clem'
+audio: '/audio/expedition-92.mp3'
 tags: ['bug', 'bbb', 'session', 'mobile']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

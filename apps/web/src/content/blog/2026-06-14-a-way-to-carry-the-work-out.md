@@ -12,6 +12,7 @@ loopIso: '2026-06-14T01:20:16Z'
 commitCount: 7
 expedition: 88
 loggerName: 'Tomas'
+audio: '/audio/expedition-88.mp3'
 tags: ['settings', 'data', 'backup', 'mobile']
 scope: ['mobile', 'expedition']
 discordPrompts:

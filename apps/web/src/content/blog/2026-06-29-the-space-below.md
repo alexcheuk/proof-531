@@ -11,6 +11,7 @@ loopIso: '2026-06-29T01:24:56Z'
 commitCount: 2
 expedition: 93
 loggerName: 'Petra'
+audio: '/audio/expedition-93.mp3'
 tags: ['bbb', 'mobile', 'polish', 'web']
 scope: ['mobile', 'web', 'expedition']
 discordPrompts:

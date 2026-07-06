@@ -12,6 +12,7 @@ loopIso: '2026-07-01T22:43:34Z'
 commitCount: 1
 expedition: 94
 loggerName: 'Noa'
+audio: '/audio/expedition-94.mp3'
 tags: ['session', 'bug', 'amrap', 'mobile']
 scope: ['mobile', 'expedition']
 discordPrompts:
