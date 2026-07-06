@@ -1,8 +1,12 @@
 import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
+import { TM_KEY } from '@/data/queries/useLatestTm';
 import { LIFETIME_VOLUME_KEY } from '@/data/queries/useLifetimeVolume';
+import { PRS_KEY } from '@/data/queries/usePrs';
 import { SESSION_KEY } from '@/data/queries/useSession';
+import { SESSION_PR_IDS_KEY } from '@/data/queries/useSessionPrIds';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
 import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
+import { SETTINGS_KEY } from '@/data/queries/useSettings';
 import { goTo } from '@/lib/routes';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import * as KeepAwake from 'expo-keep-awake';
@@ -159,10 +163,10 @@ function invalidateSessionSurface(queryClient: QueryClient, sessionId: number): 
     queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY }),
     queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
     queryClient.invalidateQueries({ queryKey: SESSION_KEY(sessionId) }),
-    queryClient.invalidateQueries({ queryKey: ['settings'] }),
-    queryClient.invalidateQueries({ queryKey: ['trainingMaxes'] }),
-    queryClient.invalidateQueries({ queryKey: ['prs'] }),
-    queryClient.invalidateQueries({ queryKey: ['sessionPrIds'] }),
+    queryClient.invalidateQueries({ queryKey: SETTINGS_KEY }),
+    queryClient.invalidateQueries({ queryKey: TM_KEY }),
+    queryClient.invalidateQueries({ queryKey: PRS_KEY }),
+    queryClient.invalidateQueries({ queryKey: SESSION_PR_IDS_KEY }),
     queryClient.invalidateQueries({ queryKey: LIFETIME_VOLUME_KEY }),
     queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) }),
     // Prefix invalidate the Progress screen's per-lift projection cache so

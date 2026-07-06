@@ -1,8 +1,12 @@
 import { useDb } from '@/data/DbProvider';
 import { completeSession, resetSession } from '@/data/accessors/session';
+import { SESSION_KEY } from '@/data/queries/useSession';
 import { useSession } from '@/data/queries/useSession';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
-import { useSetLogsForSession } from '@/data/queries/useSetLogsForSession';
+import {
+  SET_LOGS_FOR_SESSION_KEY,
+  useSetLogsForSession,
+} from '@/data/queries/useSetLogsForSession';
 import { useUndoLastWorkingSet } from '@/data/queries/useUndoLastWorkingSet';
 import {
   type WorkingSetIndex,
@@ -348,8 +352,8 @@ export function useLiveScreenState(
       // cache for this session so the live screen, today screen, and
       // history all re-read.
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['session', session.id] }),
-        queryClient.invalidateQueries({ queryKey: ['setLogsForSession', session.id] }),
+        queryClient.invalidateQueries({ queryKey: SESSION_KEY(session.id) }),
+        queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(session.id) }),
         queryClient.invalidateQueries({ queryKey: SESSIONS_KEY }),
       ]);
     } catch (err) {

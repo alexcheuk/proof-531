@@ -1,5 +1,9 @@
 import { useDb } from '@/data/DbProvider';
 import { resetSession } from '@/data/accessors/session';
+import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
+import { SESSION_KEY } from '@/data/queries/useSession';
+import { SESSIONS_KEY } from '@/data/queries/useSessions';
+import { SET_LOGS_FOR_SESSION_KEY } from '@/data/queries/useSetLogsForSession';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useState } from 'react';
@@ -31,11 +35,11 @@ export function useTodaySessionActions(sessionId: number | null): UseTodaySessio
 
   const invalidateSessionQueries = useCallback(() => {
     if (sessionId != null) {
-      void queryClient.invalidateQueries({ queryKey: ['session', sessionId] });
-      void queryClient.invalidateQueries({ queryKey: ['setLogsForSession', sessionId] });
+      void queryClient.invalidateQueries({ queryKey: SESSION_KEY(sessionId) });
+      void queryClient.invalidateQueries({ queryKey: SET_LOGS_FOR_SESSION_KEY(sessionId) });
     }
-    void queryClient.invalidateQueries({ queryKey: ['activeSession'] });
-    void queryClient.invalidateQueries({ queryKey: ['sessions'] });
+    void queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY });
+    void queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
   }, [queryClient, sessionId]);
 
   const onRequestReset = useCallback(() => {

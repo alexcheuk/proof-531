@@ -1,6 +1,7 @@
 import { useDb } from '@/data/DbProvider';
 import { completeOnboarding } from '@/data/accessors/onboarding';
-import { useSettings } from '@/data/queries/useSettings';
+import { TM_KEY } from '@/data/queries/useLatestTm';
+import { SETTINGS_KEY, useSettings } from '@/data/queries/useSettings';
 import { estimateOneRm } from '@/domain/epley';
 import type { Lift } from '@/domain/types';
 import { round } from '@/domain/units';
@@ -62,8 +63,8 @@ export function useOnboardingFlow(): UseOnboardingFlowResult {
       // refetch but does NOT await it, so the gate would race the refetch
       // and bounce us right back to /onboarding. refetchQueries awaits.
       await Promise.all([
-        queryClient.refetchQueries({ queryKey: ['trainingMaxes'] }),
-        queryClient.refetchQueries({ queryKey: ['settings'] }),
+        queryClient.refetchQueries({ queryKey: TM_KEY }),
+        queryClient.refetchQueries({ queryKey: SETTINGS_KEY }),
       ]);
       goTo.home(router);
     } catch (err) {
