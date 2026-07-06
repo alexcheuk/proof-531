@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, isNotNull, not } from 'drizzle-orm';
 import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import type { Lift, Unit } from '../../domain/types';
 import { liftProgress, prs, sessions, setLogs } from '../drizzle/schema';
+import { getActiveSession } from './session';
 import { setTrainingMax } from './trainingMax';
 
 // biome-ignore lint/suspicious/noExplicitAny: structural-poly across sqlite drivers
@@ -11,6 +12,23 @@ type Session = typeof sessions.$inferSelect;
 
 export async function rollbackLift(db: AnyDb, lift: Lift, n: number): Promise<number> {
   if (n < 1) return 0;
+
+  // Cancel any in_progress session for this lift before rolling back completed
+  // sessions. Without this, a session started then reset (but not completed)
+  // survives the rollback as a ghost: liftProgress.week is rewound but the
+  // stale in_progress row's week stays ahead. createSession then returns that
+  // ghost instead of creating a new session at the correct rolled-back week,
+  // and the user sees "Day N" in the preview but starts Day N+k.
+  // (Discord 1523487664270213179)
+  const activeForLift = await getActiveSession(db);
+  if (activeForLift && activeForLift.lift === lift) {
+    await Promise.resolve(
+      db
+        .update(sessions)
+        .set({ status: 'cancelled', endedAt: Date.now() })
+        .where(eq(sessions.id, activeForLift.id)),
+    );
+  }
 
   const completed = (await Promise.resolve(
     db

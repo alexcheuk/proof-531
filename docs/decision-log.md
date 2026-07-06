@@ -42,6 +42,17 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-07-05 - Session desync after reset + rollback: fixed by cancelling in_progress session first
+
+**Tags:** `bug`, `data`
+**Files:** `apps/mobile/src/data/accessors/rollbackLift.ts`, `apps/mobile/src/features/settings/hooks/useSettingsDialogs.ts`
+
+Post-mortem. The bug (Discord 1523487664270213179): user resets an in_progress session (via TodayScreen top-bar reset), then rolls back completed sessions via Settings. `resetSession` leaves the session row in_progress; `rollbackLift` rewinds `liftProgress.week` but only touches completed sessions. Result: `liftProgress.week` says "Day 2" but an in_progress session at "Day 3" is still in the DB. `createSession` finds the in_progress session and returns it instead of creating a fresh one, so the Live screen prescribes Day 3 weights while the preview showed Day 2. Progress page shows a gap at Day 2.
+
+Fix: `rollbackLift` now cancels any in_progress session for the affected lift before updating `liftProgress`. `confirmRollback` invalidates `ACTIVE_SESSION_KEY`. Two new accessor tests prove the cancel-before-rewind behavior.
+
+**Why this shape:** cancelling on rollback is correct - the user committed to rolling back, so any half-started session at the higher week should be discarded. The alternative (blocking rollback when an in_progress session exists) would surprise users who reset-and-rollback as a correction flow.
+
 ### 2026-07-04 - Rest alert made exact-alarm class; rest sound = device alarm via channel URI
 
 **Tags:** `bug`, `behavior`, `architecture`

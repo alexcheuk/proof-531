@@ -263,6 +263,24 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [x] fix all em dashes in code comments, test describe strings, and string literals throughout apps/mobile/src
   - [x] verify CI green after extension
 
+## SESSION-DESYNC: Session desync after reset + rollback (task 1523487664270213179)
+- status: done
+- blocked_by: none
+- proof: rollbackLift now cancels any in_progress session for the lift before rewinding liftProgress;
+  ACTIVE_SESSION_KEY invalidated after rollback; 2 new tests prove the cancel-before-rewind behavior.
+  Data-layer fix: tsc + lint + jest (1229 tests). No UI change, no Maestro smoke needed.
+  - [x] diagnose: after resetSession (session stays in_progress) + rollbackLift, liftProgress.week
+        rewound but in_progress session's week field is still at the old value. createSession returns
+        the stale in_progress session instead of creating a fresh one at the rolled-back week.
+  - [x] fix: rollbackLift cancels any in_progress session for the affected lift before updating
+        liftProgress (Discord 1523487664270213179)
+  - [x] fix: confirmRollback invalidates ACTIVE_SESSION_KEY so UI reflects the cancelled session
+  - [x] tests: 2 new tests in rollbackLift.test.ts (cancel-before-rewind scenario; does not
+        cancel in_progress sessions for other lifts)
+- note: task-queue 1523487664270213179 (Alex). Fixed tick-17 (Expedition 95). Pure data/logic fix;
+  proven by tsc + lint + jest. The only user-visible behavior change: after rollback, any previously
+  in_progress (reset but not completed) session for the same lift is now cancelled, which is correct.
+
 ## CASUAL-POST: Casual Android launch story post (task-queue 1515444127339249875)
 - status: doing
 - blocked_by: none

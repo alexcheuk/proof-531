@@ -3,6 +3,7 @@ import { BackupError, exportBackup, importBackup } from '@/data/accessors/backup
 import { migrateStorageUnit } from '@/data/accessors/migrateStorageUnit';
 import { resetEverything } from '@/data/accessors/reset';
 import { rollbackLift } from '@/data/accessors/rollbackLift';
+import { ACTIVE_SESSION_KEY } from '@/data/queries/useActiveSession';
 import { TM_KEY } from '@/data/queries/useLatestTm';
 import { PRS_KEY } from '@/data/queries/usePrs';
 import { SESSIONS_KEY } from '@/data/queries/useSessions';
@@ -128,6 +129,7 @@ export function useSettingsDialogs(currentStorageUnit: Unit): UseSettingsDialogs
       setRollingBack(true);
       try {
         await rollbackLift(db, lift, n);
+        await queryClient.invalidateQueries({ queryKey: ACTIVE_SESSION_KEY });
         await queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
         await queryClient.invalidateQueries({ queryKey: PRS_KEY });
         await queryClient.invalidateQueries({ queryKey: TM_KEY });

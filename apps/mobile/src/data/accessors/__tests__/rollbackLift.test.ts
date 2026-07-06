@@ -4,7 +4,7 @@ import { runMigrations } from '../../drizzle/runMigrations';
 import * as schema from '../../drizzle/schema';
 import { getLiftProgress } from '../liftProgress';
 import { countCompletedSessionsForLift, rollbackLift } from '../rollbackLift';
-import { completeSession, createSession } from '../session';
+import { completeSession, createSession, getActiveSession, resetSession } from '../session';
 import { seedDefaultSettings } from '../settings';
 import { setTrainingMax } from '../trainingMax';
 
@@ -102,6 +102,61 @@ describe('rollbackLift', () => {
     const benchAfter = await getLiftProgress(db, 'bench');
     expect(benchAfter.week).toBe(benchBefore.week);
     expect(benchAfter.currentCycle).toBe(benchBefore.currentCycle);
+  });
+
+  it('cancels an in_progress session for the lift before rolling back', async () => {
+    // Regression: reset + rollback desync (Discord 1523487664270213179).
+    // Scenario: user completes Day 1, starts Day 2, resets Day 2 (session stays
+    // in_progress), then rolls back Day 1. liftProgress goes back to week=1 but
+    // the in_progress Day 2 session (week=2) was never cancelled. createSession
+    // then returns the ghost Day 2 session instead of creating a fresh Day 1 session.
+    const { db } = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'bench', 200, 'lbs');
+
+    // Complete Day 1
+    const s1 = await createSession(db, 'bench');
+    await completeSession(db, s1.id as number);
+
+    // Start and reset Day 2 (leaves an in_progress session)
+    const s2 = await createSession(db, 'bench');
+    await resetSession(db, s2.id as number);
+
+    const activeBefore = await getActiveSession(db);
+    expect(activeBefore?.id).toBe(s2.id);
+    expect(activeBefore?.status).toBe('in_progress');
+    expect(activeBefore?.week).toBe(2);
+
+    // Rollback Day 1 - should cancel the in_progress Day 2 session first
+    const deleted = await rollbackLift(db, 'bench', 1);
+    expect(deleted).toBe(1);
+
+    // The in_progress Day 2 session must be cancelled - no ghost remains
+    const activeAfter = await getActiveSession(db);
+    expect(activeAfter).toBeNull();
+
+    // liftProgress is back at week=1 ready for a clean Day 1 redo
+    const progress = await getLiftProgress(db, 'bench');
+    expect(progress.week).toBe(1);
+  });
+
+  it('does not cancel in_progress sessions for other lifts during rollback', async () => {
+    const { db } = freshDb();
+    await seedDefaultSettings(db);
+    await setTrainingMax(db, 'squat', 300, 'lbs');
+    await setTrainingMax(db, 'bench', 200, 'lbs');
+
+    // Complete a squat session, then start a bench session (stays in_progress)
+    const sq = await createSession(db, 'squat');
+    await completeSession(db, sq.id as number);
+    const bSession = await createSession(db, 'bench');
+
+    // Rolling back squat should NOT touch the bench in_progress session
+    await rollbackLift(db, 'squat', 1);
+
+    const active = await getActiveSession(db);
+    expect(active?.id).toBe(bSession.id);
+    expect(active?.status).toBe('in_progress');
   });
 
   it('deletes the pr row when no amrap logs survive', async () => {
