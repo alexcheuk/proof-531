@@ -16,6 +16,30 @@
 
 ## Entries
 
+## 2026-07-05 tick-17 (Exp 95): Session desync rollback fix + Q-QUALITY query-key constants + iter 95+
+- shipped (BUG, task 1523487664270213179): rollbackLift now cancels any in_progress session for the
+  affected lift before rewinding liftProgress. The desync: after resetSession (session stays in_progress
+  with week=N) + rollbackLift (liftProgress.week rewinds to M < N), createSession would return the
+  stale in_progress session (week=N) instead of creating a fresh one. 2 new rollbackLift tests prove
+  the cancel-before-rewind behavior. confirmRollback now also invalidates ACTIVE_SESSION_KEY. 1229/1229
+  tests, typecheck clean, lint clean. No UI change, no Maestro smoke needed. Closed SESSION-DESYNC.
+- shipped (Q-QUALITY, auditor PASS): replaced hardcoded TanStack Query key strings with their exported
+  constants in 4 files (useTodaySessionActions.ts, useLiveScreenState.ts, useLiveScreenEffects.ts,
+  useOnboardingFlow.ts). Keys affected: ACTIVE_SESSION_KEY, SESSIONS_KEY, SESSION_KEY(id),
+  SET_LOGS_FOR_SESSION_KEY(id), SETTINGS_KEY, TM_KEY, PRS_KEY, SESSION_PR_IDS_KEY. Behavior-preserving:
+  identical query invalidation targets, just referenced via constants instead of inline literals.
+  Reduces latent key-drift risk when query hooks are refactored.
+- shipped (WEB): process.astro version bumped from 1.0.0 to 1.0.1. Astro build clean (168 pages).
+- shipped (LAUNCH): iteration count advanced to 95+ across README + 13 marketing docs + launch strategy
+  tracker. launch strategy tracker updated with Expedition 95 session desync fix note.
+- proof: pnpm -w run ci green (1229/1229 tests, 189 suites; typecheck clean; lint clean;
+  check-no-em-dash clean; astro build 168 pages). do-work-auditor PASS on Q-QUALITY slice.
+  Pushed to main.
+- deferred / escalated: All previously deferred Maestro smokes still outstanding (BBB-REDESIGN,
+  DATA-BACKUP, MISSED-REP, WARMUP-PERDAY, PROG-GRID-FIX, REST-TIMER-ACCURACY, PR-CELEBRATION-FIX,
+  AMRAP-MIN-REPS, LIFT-PICKER-BUG-visual). VERSION-1.0.1 awaiting Alex Play Console promotion.
+  CASUAL-POST awaiting Alex go-ahead.
+
 ## 2026-07-01 tick-16 (Exp 94): Lift picker bug + PR celebration TM test + AMRAP min reps + iter 94+
 - shipped (BUG, task 1522003692159500398 part 1): HomeScreen.tsx handleBegin simplified - removed
   shouldRedirect logic that silently sent users to a different lift's Today screen. TodayScreen's
