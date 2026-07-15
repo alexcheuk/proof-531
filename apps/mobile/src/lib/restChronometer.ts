@@ -12,12 +12,19 @@ const REST_NOTIFICATION_ID = 'rest';
 // channel is deleted in ensureRestChannels so settings don't show a stale dupe.
 const CHANNEL_TIMER_LEGACY = 'rest-timer';
 const CHANNEL_TIMER = 'rest-timer-v2';
-const CHANNEL_DONE = 'rest-done';
+// V1 channels are deleted in ensureRestChannels (frozen vibration + no bypassDnd at creation).
+const CHANNEL_DONE_LEGACY = 'rest-done';
+const CHANNEL_DONE = 'rest-done-v2';
 // Separate channel because Android freezes a channel's sound at creation:
 // the sound choice picks which channel the completion alert posts to.
 // This one plays the device's system alarm sound (whatever the user chose
 // in their Clock/Sound settings) instead of the notification default.
-const CHANNEL_DONE_ALARM = 'rest-done-alarm';
+// V1 channel deleted below (no vibrationPattern / bypassDnd at creation).
+const CHANNEL_DONE_ALARM_LEGACY = 'rest-done-alarm';
+const CHANNEL_DONE_ALARM = 'rest-done-alarm-v2';
+// 3x 2s pulse: the per-channel vibrationPattern is frozen at creation, so bumping
+// the channel ID is the only way to apply the new pattern to existing installs.
+const DONE_VIBRATION_PATTERN = [0, 2000, 1000, 2000, 1000, 2000];
 // Stable Android URI for "the user's chosen default alarm sound"
 // (RingtoneManager.getDefaultUri(TYPE_ALARM)). Resolved at play time, so it
 // tracks whatever the user picks in system settings.
@@ -47,12 +54,13 @@ export async function ensureRestChannels(): Promise<void> {
   const m = load();
   if (!m) return;
   const { AndroidImportance } = m;
-  // Best-effort cleanup of the pre-v2 LOW channel so Android settings don't list
-  // an orphaned "Rest timer" entry alongside the new one.
-  try {
-    await m.default.deleteChannel(CHANNEL_TIMER_LEGACY);
-  } catch {
-    // never created on this install, or already gone
+  // Best-effort cleanup of legacy channels so Android settings don't list orphans.
+  for (const id of [CHANNEL_TIMER_LEGACY, CHANNEL_DONE_LEGACY, CHANNEL_DONE_ALARM_LEGACY]) {
+    try {
+      await m.default.deleteChannel(id);
+    } catch {
+      // never created on this install, or already gone
+    }
   }
   await m.default.createChannel({
     id: CHANNEL_TIMER,
@@ -70,6 +78,8 @@ export async function ensureRestChannels(): Promise<void> {
     importance: AndroidImportance.HIGH,
     sound: 'default',
     vibration: true,
+    vibrationPattern: DONE_VIBRATION_PATTERN,
+    bypassDnd: true,
   });
   await m.default.createChannel({
     id: CHANNEL_DONE_ALARM,
@@ -77,6 +87,8 @@ export async function ensureRestChannels(): Promise<void> {
     importance: AndroidImportance.HIGH,
     sound: SYSTEM_ALARM_SOUND_URI,
     vibration: true,
+    vibrationPattern: DONE_VIBRATION_PATTERN,
+    bypassDnd: true,
   });
 }
 

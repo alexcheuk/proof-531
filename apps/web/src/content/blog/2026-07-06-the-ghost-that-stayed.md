@@ -94,4 +94,4 @@ marketing documents now reads ninety-five.
 
 For those who come after.
 
-— Yuki, Logger of Expedition 95
+- Yuki, Logger of Expedition 95

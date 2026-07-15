@@ -107,7 +107,8 @@ function defaultFireDoneAlarm(sound: RestAlarmSound) {
     const Haptics = require('expo-haptics') as any;
 
     if (RN.Platform.OS === 'android') {
-      RN.Vibration.vibrate([0, 700, 100, 700]);
+      // 3x 2s pulse to match Alex's request and the channel vibrationPattern on CHANNEL_DONE_*_V2.
+      RN.Vibration.vibrate([0, 2000, 1000, 2000, 1000, 2000]);
       // Foregrounded: no trigger notification was scheduled, so fire the sound alert directly.
       if (RN.AppState.currentState === 'active') {
         // biome-ignore format: trailing comma in typeof import() causes TS1005
