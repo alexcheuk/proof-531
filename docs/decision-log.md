@@ -42,6 +42,19 @@ Keep entries short. The decision log is a feeder for the dev blog; depth lives i
 
 ## Entries
 
+### 2026-07-15 - Rest timer alarm: 3x2s vibration pattern + bypassDnd on completion channels
+
+**Tags:** `bug`, `ux`
+**Files:** `apps/mobile/src/lib/haptics.ts`, `apps/mobile/src/lib/restChronometer.ts`, `apps/mobile/src/features/session/hooks/useLiveScreenState.ts`
+
+Alex reported the rest timer alarm doesn't play through Bluetooth headphones and asked for a longer vibration pattern (2s pulses, 1s pause x3). Vibration pattern updated to `[0, 2000, 1000, 2000, 1000, 2000]` everywhere (JS `Vibration.vibrate`, `longPulseVibrate` in `haptics.ts`, and Android notification channel `vibrationPattern`). Notification channels bumped to V2 IDs (`rest-done-v2`, `rest-done-alarm-v2`) because Android freezes channel properties at creation; `bypassDnd: true` added to completion channels so the alarm fires even in Do Not Disturb mode.
+
+**Why `bypassDnd: true`:** a rest timer is an alarm by intent, not a passive notification. The calm-e-ink posture is about in-app aesthetics, not suppressing alarms the user set. Gym sessions happen in environments where the user may have set DnD for focus; the rest timer alarm is exactly what should still fire.
+
+**Trade-off / what we didn't do:** the Bluetooth audio routing issue (alarm sound playing through phone speaker, not BT headphones) cannot be fully fixed without using `STREAM_MUSIC` (expo-av) to play a media-stream sound. The vibration pattern improvement partially compensates; proper BT audio fix is a future item requiring expo-av or a similar native module.
+
+**Follow-ups:** on-device smoke to verify double-vibrate (JS Vibration + channel vibration in foreground) isn't annoying; BT headphone audio fix requires expo-av.
+
 ### 2026-07-05 - Session desync after reset + rollback: fixed by cancelling in_progress session first
 
 **Tags:** `bug`, `data`

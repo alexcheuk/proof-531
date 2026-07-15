@@ -24,6 +24,7 @@
   and ships; the on-device smoke is the outstanding eventual proof, not a gate on the logic fixes.
 
 ## Pending on-device smoke (accrued, newest first)
+- tick-18 (Expedition 96) Rest timer alarm vibration + BT fix: vibration pattern changed to 3x2s `[0, 2000, 1000, 2000, 1000, 2000]`; notification channels `rest-done-v2` and `rest-done-alarm-v2` created with new `vibrationPattern` and `bypassDnd: true`. Verify: (1) foreground rest complete fires single cohesive vibration (JS Vibration + channel pattern don't double-fire annoyingly), (2) background trigger fires the long vibration, (3) `bypassDnd` confirmed working. Owes rest-timer smoke before BT-ALARM flips to `done`.
 - tick-16 (Expedition 94) Lift picker fix: handleBegin no longer redirects to in-progress lift;
   TodayScreen preview-other-active mode handles the conflict. Affects the home screen carousel
   interaction for multi-lift setups. Owes a home-to-today navigation smoke.

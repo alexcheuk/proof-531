@@ -379,6 +379,16 @@ items (sizing per `loop-memory/00-loop-pacing.md`).
   - [ ] on-device smoke: AMRAP sheet shows correct min-reps hint and hides when PR threshold crossed
 - note: task-queue 1522003692159500398 (Alex). Shipped tick-16 (Expedition 94). Accrues validation debt.
 
+## BT-ALARM: Rest timer alarm audio through Bluetooth headphones (task 1525594971451818104)
+- status: doing
+- blocked_by: none
+- proof: alarm plays audibly through BT headphones on-device; vibration pattern (3x2s) confirmed not double-firing in foreground.
+  - [x] vibration pattern updated to [0, 2000, 1000, 2000, 1000, 2000] everywhere (haptics.ts, useLiveScreenState, channels)
+  - [x] notification channels bumped to V2 IDs (rest-done-v2, rest-done-alarm-v2) with vibrationPattern + bypassDnd
+  - [ ] proper BT audio fix: play alarm through STREAM_MUSIC so it routes to BT headphones (requires expo-av or similar)
+  - [ ] on-device smoke: rest timer alarm fires through BT headphones; verify no double-vibrate in foreground
+- note: task-queue 1525594971451818104 (Alex). Shipped tick-18 (Expedition 96) - vibration pattern + channel improvements. The BT audio routing issue (sound through phone speaker, not BT) is an Android STREAM_ALARM limitation; proper fix needs expo-av to use STREAM_MUSIC. The vibration improvement partially compensates. bypassDnd added so alarm fires in DnD mode. Validation debt accrued for on-device smoke.
+
 ## LOOP-EMDASH-MARKETING: Sweep pre-existing em dashes from docs/marketing/
 - status: done
 - blocked_by: none
