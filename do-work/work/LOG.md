@@ -16,6 +16,27 @@
 
 ## Entries
 
+## 2026-07-15 tick-18 (Exp 96): Rest timer alarm vibration + channels + Q-QUALITY JSDoc + iter 96+
+- shipped (FIX, task 1525594971451818104 - BT alarm + long vibrate): vibration pattern updated to
+  3x2s pulse [0,2000,1000,2000,1000,2000] in haptics.ts (longPulseVibrate), useLiveScreenState
+  (defaultFireDoneAlarm foreground path), and new V2 notification channels (rest-done-v2,
+  rest-done-alarm-v2) with vibrationPattern + bypassDnd:true. Legacy channels cleaned up in
+  ensureRestChannels. Android channel properties are frozen at creation so new IDs were required.
+  bypassDnd decision logged to docs/decision-log.md. BT audio routing (STREAM_ALARM doesn't
+  route to BT on all devices) remains a future expo-av item tracked under BT-ALARM backlog.
+  Fixed blog post Expedition 95 sign-off em-dash (Yuki -> spaced hyphen).
+- shipped (Q-QUALITY, auditor APPROVE): removed 8-line what+why JSDoc block from
+  useAmrapPrEdgeHaptic.ts; replaced with single WHY comment. Behavior-preserving.
+- shipped (LAUNCH): iteration count 95+ -> 96+ across README + 8 marketing docs.
+  Launch strategy tracker updated to Expedition 96.
+- proof: pnpm run ci green (1229/1229 tests, 189 suites; typecheck clean; lint clean;
+  check-no-em-dash clean). Auditor APPROVE on Q-QUALITY slice. Pushed to main (b49da96).
+- deferred / escalated: BT-ALARM full fix (expo-av for STREAM_MUSIC routing) filed as new
+  backlog item. Double-vibrate foreground concern flagged for validation. All prior Maestro
+  smokes still outstanding (BBB-REDESIGN, DATA-BACKUP, MISSED-REP, WARMUP-PERDAY,
+  PROG-GRID-FIX, REST-TIMER-ACCURACY, PR-CELEBRATION-FIX, AMRAP-MIN-REPS). VERSION-1.0.1
+  awaiting Alex Play Console promotion. CASUAL-POST awaiting Alex go-ahead.
+
 ## 2026-07-05 tick-17 (Exp 95): Session desync rollback fix + Q-QUALITY query-key constants + iter 95+
 - shipped (BUG, task 1523487664270213179): rollbackLift now cancels any in_progress session for the
   affected lift before rewinding liftProgress. The desync: after resetSession (session stays in_progress
