@@ -112,7 +112,7 @@ The app is free, local-first, no account. [link]
 
 But the most useful thing I've learned: agent loops are mirrors for the quality of your context management. The drift is immediate when you stop writing things down. The agents need clean inheritance the same way a new teammate needs documentation -  except the handoff happens every thirty minutes.
 
-96+ iterations in. Still running.
+97+ iterations in. Still running.
 
 ---
 

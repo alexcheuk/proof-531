@@ -62,34 +62,52 @@ export async function ensureRestChannels(): Promise<void> {
       // never created on this install, or already gone
     }
   }
-  await m.default.createChannel({
-    id: CHANNEL_TIMER,
-    name: 'Rest timer',
-    // DEFAULT (not LOW) keeps the ongoing countdown out of the shade's "Silent"
-    // group. DEFAULT plays a sound on first post; the chronometer sets
-    // onlyAlertOnce so it dings once when a rest starts, not on every OS tick.
-    // vibration stays off to match the app's quiet gym-timer feel.
-    importance: AndroidImportance.DEFAULT,
-    vibration: false,
-  });
-  await m.default.createChannel({
-    id: CHANNEL_DONE,
-    name: 'Rest complete (chime)',
-    importance: AndroidImportance.HIGH,
-    sound: 'default',
-    vibration: true,
-    vibrationPattern: DONE_VIBRATION_PATTERN,
-    bypassDnd: true,
-  });
-  await m.default.createChannel({
-    id: CHANNEL_DONE_ALARM,
-    name: 'Rest complete (alarm)',
-    importance: AndroidImportance.HIGH,
-    sound: SYSTEM_ALARM_SOUND_URI,
-    vibration: true,
-    vibrationPattern: DONE_VIBRATION_PATTERN,
-    bypassDnd: true,
-  });
+  // Each channel creation is independently wrapped: a failure on one channel (e.g.
+  // bypassDnd unsupported on the device's Android version) must not prevent the
+  // others from being created. A thrown createChannel call that isn't individually
+  // caught would propagate through ensureRestChannels() and be swallowed silently
+  // by every caller, leaving ALL channels uncreated and breaking notifications
+  // completely -- the P0 reported after tick-18.
+  try {
+    await m.default.createChannel({
+      id: CHANNEL_TIMER,
+      name: 'Rest timer',
+      // DEFAULT (not LOW) keeps the ongoing countdown out of the shade's "Silent"
+      // group. DEFAULT plays a sound on first post; the chronometer sets
+      // onlyAlertOnce so it dings once when a rest starts, not on every OS tick.
+      // vibration stays off to match the app's quiet gym-timer feel.
+      importance: AndroidImportance.DEFAULT,
+      vibration: false,
+    });
+  } catch {
+    // best-effort: channel may already exist with frozen properties
+  }
+  try {
+    await m.default.createChannel({
+      id: CHANNEL_DONE,
+      name: 'Rest complete (chime)',
+      importance: AndroidImportance.HIGH,
+      sound: 'default',
+      vibration: true,
+      vibrationPattern: DONE_VIBRATION_PATTERN,
+      bypassDnd: true,
+    });
+  } catch {
+    // best-effort
+  }
+  try {
+    await m.default.createChannel({
+      id: CHANNEL_DONE_ALARM,
+      name: 'Rest complete (alarm)',
+      importance: AndroidImportance.HIGH,
+      sound: SYSTEM_ALARM_SOUND_URI,
+      vibration: true,
+      vibrationPattern: DONE_VIBRATION_PATTERN,
+      bypassDnd: true,
+    });
+  } catch {
+    // best-effort
+  }
 }
 
 /** Android 13+ runtime notification permission. Resolves regardless of outcome. */

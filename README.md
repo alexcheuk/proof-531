@@ -27,45 +27,45 @@ No account required. No ads. No subscription. No data leaves your phone.
 ## Screenshots
 
 <p>
-<img src="docs/screenshots/screenshot-6.png" width="200" alt="Today screen — Bench, Cycle 2 Day 1, plate visualization, START SESSION" />
+<img src="docs/screenshots/screenshot-6.png" width="200" alt="Today screen - Bench, Cycle 2 Day 1, plate visualization, START SESSION" />
 &nbsp;
-<img src="docs/screenshots/screenshot-7.png" width="200" alt="Live AMRAP — Bench now., LOG AMRAP sheet, e1RM calculation" />
+<img src="docs/screenshots/screenshot-7.png" width="200" alt="Live AMRAP - Bench now., LOG AMRAP sheet, e1RM calculation" />
 &nbsp;
-<img src="docs/screenshots/screenshot-8.png" width="200" alt="Session receipt — In the book., new record stamp, PR certificate, CLOSE THE DAY" />
+<img src="docs/screenshots/screenshot-8.png" width="200" alt="Session receipt - In the book., new record stamp, PR certificate, CLOSE THE DAY" />
 </p>
 <p>
-<img src="docs/screenshots/screenshot-1.png" width="200" alt="PR celebration — YOU HIT A NEW BENCH PR, Stronger., +25 LB" />
+<img src="docs/screenshots/screenshot-1.png" width="200" alt="PR celebration - YOU HIT A NEW BENCH PR, Stronger., +25 LB" />
 &nbsp;
-<img src="docs/screenshots/screenshot-5.png" width="200" alt="Session receipt — In the book., e1RM, SET LOGS, CLOSE THE DAY" />
+<img src="docs/screenshots/screenshot-5.png" width="200" alt="Session receipt - In the book., e1RM, SET LOGS, CLOSE THE DAY" />
 </p>
 
 ## What it does
 
-Enter your training maxes once. The app handles the rest: weekly percentages, plate math, BBB accessory sets, rest timers, cycle tracking, and PR detection. Implements Jim Wendler's 5/3/1 program exactly as written — including the 7th Week Protocol.
+Enter your training maxes once. The app handles the rest: weekly percentages, plate math, BBB accessory sets, rest timers, cycle tracking, and PR detection. Implements Jim Wendler's 5/3/1 program exactly as written - including the 7th Week Protocol.
 
 **Program**
 
-- **5/3/1 structure** — Day 1 (5/5/5+), Day 2 (3/3/3+), Day 3 (5/3/1+), Day 4 TM verification (7th Week Protocol — no deload week)
-- **BBB accessory sets** — Boring But Big 5x10 calculated automatically at 50% Training Max
-- **All four lifts** — squat, bench press, overhead press, deadlift
+- **5/3/1 structure** - Day 1 (5/5/5+), Day 2 (3/3/3+), Day 3 (5/3/1+), Day 4 TM verification (7th Week Protocol - no deload week)
+- **BBB accessory sets** - Boring But Big 5x10 calculated automatically at 50% Training Max
+- **All four lifts** - squat, bench press, overhead press, deadlift
 
 **During a session**
 
-- **Plate calculator** — visual bar + plate layout for every working set, no input required
-- **Rest timer** — background-safe countdown with alarm on completion; Android shows a live chronometer notification
-- **AMRAP logging** — tap your reps, get your estimated 1RM, detect PRs automatically
+- **Plate calculator** - visual bar + plate layout for every working set, no input required
+- **Rest timer** - background-safe countdown with alarm on completion; Android shows a live chronometer notification
+- **AMRAP logging** - tap your reps, get your estimated 1RM, detect PRs automatically
 
 **Tracking**
 
-- **PR detection** — estimated 1RM logged after every AMRAP; certificate on new records
-- **Cycle progress** — grid view of every session in the current cycle
-- **TM adjustment suggestions** — after TM test week, calm data-driven suggestions
-- **Lift rollback** — undo the last N sessions for any lift (settings Danger Zone)
+- **PR detection** - estimated 1RM logged after every AMRAP; certificate on new records
+- **Cycle progress** - grid view of every session in the current cycle
+- **TM adjustment suggestions** - after TM test week, calm data-driven suggestions
+- **Lift rollback** - undo the last N sessions for any lift (settings Danger Zone)
 
 **Privacy**
 
-- **Local-only** — SQLite on-device, zero telemetry, no account, nothing ever leaves your phone
-- **lbs + kg** — full unit support with correct increment rules per lift
+- **Local-only** - SQLite on-device, zero telemetry, no account, nothing ever leaves your phone
+- **lbs + kg** - full unit support with correct increment rules per lift
 
 ## Install
 
@@ -76,7 +76,7 @@ Enter your training maxes once. The app handles the rest: weekly percentages, pl
 
 ## How it's built
 
-The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12-15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits - all autonomously. 96+ iterations have run; every line of code is the product of 30-minute agent sessions.
+The entire app is built by a **Claude coding agent** running on a 30-minute cron. Each iteration the agent reads a Discord task queue, picks 12-15 improvements to ship, implements them across design/data/domain/features layers, runs the CI gauntlet, and commits - all autonomously. 97+ iterations have run; every line of code is the product of 30-minute agent sessions.
 
 The agent team: `rn-designer` → `rn-frontend` → `rn-qa`. Orchestrated via the `rn-expo-pipeline` and `do-work` skills in `.claude/skills/`.
 
@@ -104,8 +104,8 @@ See [531strength.com/process](https://531strength.com/process) for a full walkth
 ```
 apps/mobile/src/
   app/          # expo-router routes (thin shells only)
-  design/       # tokens, theme, primitives — only place hex/px live
-  domain/       # pure 5/3/1 math — no React, no async, no DB
+  design/       # tokens, theme, primitives - only place hex/px live
+  domain/       # pure 5/3/1 math - no React, no async, no DB
   data/         # Drizzle ORM + expo-sqlite, TanStack Query hooks
   features/     # screen composition
   lib/          # pure helpers: haptics, time, plate logic, routes
@@ -115,10 +115,10 @@ apps/mobile/src/
 
 Four hard rules, enforced by a reviewer agent on every commit:
 
-1. Hex/px literals live only in `design/` — all other layers import from tokens
-2. `domain/` is pure — no React, no async, no Drizzle; property-tested with fast-check
-3. Components consume data via hooks — never import Drizzle directly
-4. `app/` routes are thin shells — no logic, just param extraction and feature composition
+1. Hex/px literals live only in `design/` - all other layers import from tokens
+2. `domain/` is pure - no React, no async, no Drizzle; property-tested with fast-check
+3. Components consume data via hooks - never import Drizzle directly
+4. `app/` routes are thin shells - no logic, just param extraction and feature composition
 
 These boundaries exist because the app is built by an agent: the reviewer enforces them automatically, so the system cannot drift even across hundreds of iterations.
 
@@ -135,7 +135,7 @@ pnpm build:dev
 # OR build in the cloud (needs `eas login`)
 eas build --profile development -p android
 
-# Boot Metro — connect the dev-client APK
+# Boot Metro - connect the dev-client APK
 pnpm --filter @fivethreeone/mobile start
 ```
 
@@ -163,8 +163,8 @@ maestro test .maestro/flows/01-onboarding.yaml  # individual flow
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Stack, layout, boundary rules |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to add a task, run the orchestrator |
 | [`docs/decision-log.md`](docs/decision-log.md) | Notable decisions and their reasoning |
-| [`CLAUDE.md`](CLAUDE.md) | Agent orientation — start here if you're a Claude agent |
+| [`CLAUDE.md`](CLAUDE.md) | Agent orientation - start here if you're a Claude agent |
 
 ## License
 
-Source available — free to run for personal use; redistribution and commercial use require explicit permission. See [`LICENSE`](./LICENSE) for full terms and [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling (short version: SQLite on-device, zero telemetry, nothing ever leaves your phone).
+Source available - free to run for personal use; redistribution and commercial use require explicit permission. See [`LICENSE`](./LICENSE) for full terms and [`docs/PRIVACY.md`](docs/PRIVACY.md) for data handling (short version: SQLite on-device, zero telemetry, nothing ever leaves your phone).

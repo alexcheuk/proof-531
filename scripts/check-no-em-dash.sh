@@ -5,9 +5,10 @@
 # semicolon, parentheses, or a spaced hyphen instead.
 #
 # SCOPE: do-work/, loop-memory/, docs/decision-log.md, apps/mobile/src/, docs/marketing/,
-#        apps/web/src/content/blog/, apps/web/src/pages/, apps/web/src/components/
+#        apps/web/src/content/blog/, apps/web/src/pages/, apps/web/src/components/, README.md
 #   apps/mobile/src/** swept tick-5 (LOOP-EMDASH-MOBILE); docs/marketing/** swept tick-7.
 #   apps/web/ prose swept tick-8; blog/*.md + sign-off framework lines swept tick-10 (Exp 88).
+#   README.md swept tick-19 (Exp 97).
 #   WEB-SIGNOFF auto-proceeded Option A after 9 ticks of silence (DOCTRINE 3-tick threshold).
 #
 # EXCLUDED files (intentional U+2014 usage to define or quote the rule):
@@ -30,6 +31,7 @@ violations=$(grep -rn $'\xe2\x80\x94' \
   "$ROOT/apps/web/src/content/blog" \
   "$ROOT/apps/web/src/pages" \
   "$ROOT/apps/web/src/components" \
+  "$ROOT/README.md" \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.md" \
