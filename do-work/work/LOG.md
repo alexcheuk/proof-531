@@ -16,6 +16,33 @@
 
 ## Entries
 
+## 2026-07-18 tick-19 (Exp 97): P0 notification fix + README em-dash sweep + iter 97+
+- UNACKED task (1528131662083526738): "Your last changes broke notifications and alarm completely"
+  Root cause: tick-18 changed restChronometer.ts to delete V1 channels and create V2 channels.
+  The three createChannel() calls inside ensureRestChannels() were NOT individually wrapped in
+  try/catch. If ANY createChannel threw (e.g. bypassDnd unsupported on the device's Android
+  version), the function threw, the caller caught it silently, and returned without posting ANY
+  notification. Both the chronometer and the rest-complete alarm were completely gone. P0.
+- shipped (FIX, P0, task 1528131662083526738): each createChannel call in ensureRestChannels()
+  now has its own try/catch. Happy-path behavior is identical. Failure path degrades gracefully:
+  a failed V2 channel creation no longer prevents the timer channel or other channels from being
+  created. BT-ALARM backlog updated with the P0 fix checkbox.
+- shipped (Q-QUALITY, auditor APPROVE): native-module correctness - per-channel error isolation.
+  Behavior-preserving on happy path. Auditor verified 1229/1229 tests, typecheck + lint clean.
+- shipped (REMOVAL/LOOP): swept 11 pre-existing em dashes from README.md (alt text, prose,
+  bullet items); extended scripts/check-no-em-dash.sh to cover README.md; CI guard extended.
+  Auditor flagged these in job-2 review; fixed same tick. Added LOOP-EMDASH-README done item.
+- shipped (LAUNCH): iteration count 96+ to 97+ across README + 9 marketing docs.
+  loop-memory/16-organic-launch-strategy.md status updated.
+- escalated (#needs-input): posted that CASUAL-POST is ready for Alex's go-ahead (launch
+  marketing pin 1515284085780512778 asks to "make it happen"; SOUL growth-autonomy rule means
+  public posts wait for Alex. Prompt sent, waiting for reply).
+- proof: pnpm run ci green (1229/1229 tests, 189 suites; typecheck clean; lint clean;
+  check-no-em-dash clean). do-work-auditor PASS. Pushed.
+- deferred: BT audio routing (STREAM_MUSIC for BT headphones) still needs expo-av (new native dep
+  risk per pacing rules). All prior Maestro smokes outstanding. CASUAL-POST blocked on Alex reply.
+  VERSION-1.0.1 awaiting Alex Play Console promotion.
+
 ## 2026-07-15 tick-18 (Exp 96): Rest timer alarm vibration + channels + Q-QUALITY JSDoc + iter 96+
 - shipped (FIX, task 1525594971451818104 - BT alarm + long vibrate): vibration pattern updated to
   3x2s pulse [0,2000,1000,2000,1000,2000] in haptics.ts (longPulseVibrate), useLiveScreenState
