@@ -63,6 +63,7 @@ Its scope:
 - `apps/mobile/src/`: swept and added in tick-5 (LOOP-EMDASH-MOBILE).
 - `docs/marketing/`: swept (396 violations across 13 files) and added in tick-7 (LOOP-EMDASH-MARKETING).
 - `apps/web/**`: swept (prose only) in tick-8 - NOT yet in CI guard (3 sign-off rendering lines remain).
+- `README.md`: swept (11 violations) and added in tick-19 (Exp 97).
 
 When you sweep a new corpus clean, add it to the script's grep roots and to the SCOPE comment in
 the same commit, so the guard and the reality stay in lockstep.
